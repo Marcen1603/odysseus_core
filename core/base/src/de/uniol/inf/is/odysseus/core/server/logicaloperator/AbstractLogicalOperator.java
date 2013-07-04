@@ -67,6 +67,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private Map<Integer, Subscription<IPhysicalOperator>> physSubscriptionTo = new HashMap<Integer, Subscription<IPhysicalOperator>>();
 	// cache access to bounded physOperators
 	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<Integer, IPhysicalOperator>();
+	private boolean physInputOperatorsChanged = true;
+	private boolean isAllPhysicalSetCache = false;
 
 	transient private List<Exception> errors = new ArrayList<Exception>();
 
@@ -101,14 +103,14 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		oos.defaultWriteObject();
 	}
 
-	private void readObject(ObjectInputStream ois) throws IOException {		
-		try{
-			ois.defaultReadObject(); 
+	private void readObject(ObjectInputStream ois) throws IOException {
+		try {
+			ois.defaultReadObject();
 			ownerHandler = new OwnerHandler();
-		}catch(ClassNotFoundException ex){
+		} catch (ClassNotFoundException ex) {
 			ex.printStackTrace();
 		}
-		
+
 	}
 
 	/*
@@ -264,7 +266,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.ILogicalOperator #setPOName (java.lang.String)
 	 */
 	@Override
-	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc="Name of the operator (e.g. for visulization).")
+	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc = "Name of the operator (e.g. for visulization).")
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -298,7 +300,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAny(owners);
 	}
-	
+
 	@Override
 	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAll(owners);
@@ -320,7 +322,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
-	@Parameter(name = "Id", type = StringParameter.class, optional = true, doc="Systemwide unique id")
+	@Parameter(name = "Id", type = StringParameter.class, optional = true, doc = "Systemwide unique id")
 	final public void setUniqueIdentifier(String id) {
 		this.uniqueIdentifier = id;
 	}
@@ -332,12 +334,17 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public boolean isAllPhysicalInputSet() {
-		for (Integer i : this.subscribedToSource.keySet()) {
-			if (this.physInputOperators.get(i) == null) {
-				return false;
+		if (physInputOperatorsChanged) {
+			for (Integer i : this.subscribedToSource.keySet()) {
+				if (this.physInputOperators.get(i) == null) {
+					isAllPhysicalSetCache = false;
+					break;
+				}
 			}
+			isAllPhysicalSetCache = true;
+			physInputOperatorsChanged = false;
 		}
-		return true;
+		return isAllPhysicalSetCache;
 	}
 
 	/*
@@ -349,6 +356,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
 		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
+		physInputOperatorsChanged = true;
 	}
 
 	@Override
@@ -741,12 +749,12 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		}
 		return copy;
 	}
-	
+
 	@Override
 	public boolean needsLocalResources() {
-		
+
 		return false;
-		
+
 	}
 
 }
