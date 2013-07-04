@@ -561,7 +561,7 @@ public class WebserviceServer {
 					useNio, loginNeeded, objectHandler, false);
 			sink.subscribeToSource(roots.get(0), sourceInPort, sourceOutPort,
 					roots.get(0).getOutputSchema());
-			sink.open(null);
+			sink.open(query);
 		} else {
 			// TODO solution for a plan with more roots
 		}
