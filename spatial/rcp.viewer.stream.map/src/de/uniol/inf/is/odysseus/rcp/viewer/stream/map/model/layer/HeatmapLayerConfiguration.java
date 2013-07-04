@@ -16,6 +16,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
 	private String query;
 	private int geometricAttributePosition;
+	private int valueAttributePosition;
 	private RGB minColor;	// Save RGB and not color, cause Color is not serializable
 	private RGB maxColor;
 	private int alpha;
@@ -34,6 +35,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super.setSrid(4326); //???
 		setQuery(toCopy.getQuery());
 		setGeometricAttributePosition(toCopy.getGeometricAttributePosition()); //Here should be a point
+		setValueAttributePosition(toCopy.getValueAttributePosition());
 		setMinColor(toCopy.getMinColor());
 		setMaxColor(toCopy.getMaxColor());
 		setAlpha(toCopy.getAlpha());
@@ -53,6 +55,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super.setSrid(4326); //???
 		setQuery("");
 		setGeometricAttributePosition(0); //Here should be a point
+		setValueAttributePosition(1); // Here should be the value
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
 		setAlpha(50);
@@ -72,6 +75,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		super.setSrid(4326); //???
 		setQuery("");
 		setGeometricAttributePosition(0); //Here should be a point
+		setValueAttributePosition(1); // Here should be the value
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
 		setAlpha(150);
@@ -230,6 +234,14 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setLngNE(double lngNE) {
 		this.lngNE = lngNE;
+	}
+
+	public int getValueAttributePosition() {
+		return valueAttributePosition;
+	}
+
+	public void setValueAttributePosition(int valueAttributePosition) {
+		this.valueAttributePosition = valueAttributePosition;
 	}
 
 }

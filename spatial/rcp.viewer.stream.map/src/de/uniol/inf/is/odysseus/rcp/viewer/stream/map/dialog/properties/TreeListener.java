@@ -57,7 +57,7 @@ public class TreeListener implements ISelectionChangedListener {
 			} else if (selection.getFirstElement() instanceof TraceLayer) {
 				// Show the settings for the tracemap
 				TraceLayer tracemap = (TraceLayer) selection.getFirstElement();
-				createTraceLayerpMenu(tracemap);
+				createTraceLayerMenu(tracemap);
 
 			} else {
 				// Show normal content - not for thematic maps
@@ -94,7 +94,7 @@ public class TreeListener implements ISelectionChangedListener {
 		parentDialog.setLayerConfiguration(config);
 	}
 
-	private void createTraceLayerpMenu(TraceLayer tracemap) {
+	private void createTraceLayerMenu(TraceLayer tracemap) {
 		// Remove everything except the Tree on the left
 		removeContent(container);
 		TracemapLayerConfiguration newConfig = new TracemapLayerConfiguration(
@@ -132,6 +132,24 @@ public class TreeListener implements ISelectionChangedListener {
 			public void widgetSelected(SelectionEvent e) {
 				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
 				tracemapLayerConfig.setGeometricAttributePosition((spinner
+						.getSelection()));
+				treeListener.updateParentConfig(tracemapLayerConfig);
+			}
+		});
+
+		// Position of value-Attribute
+		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
+		valueAttrLabel.setText("Position Value-Attribute: ");
+
+		Spinner valueAttrInput = new Spinner(settingsContainer, SWT.NONE);
+		valueAttrInput.setValues(newConfig.getValueAttributePosition(), 0,
+				255, 0, 1, 1);
+		valueAttrInput.addSelectionListener(new SpinnerListener(newConfig,
+				valueAttrInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
+				tracemapLayerConfig.setValueAttributePosition((spinner
 						.getSelection()));
 				treeListener.updateParentConfig(tracemapLayerConfig);
 			}
@@ -310,7 +328,7 @@ public class TreeListener implements ISelectionChangedListener {
 		scrollContainer.setLayout(new GridLayout(1, false));
 		scrollContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
-		
+
 		// New container
 		Composite heatmapContainer = new Composite(scrollContainer, SWT.NONE);
 		heatmapContainer.setLayout(new GridLayout(2, false));
@@ -337,6 +355,24 @@ public class TreeListener implements ISelectionChangedListener {
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setGeometricAttributePosition((spinner
+						.getSelection()));
+				treeListener.updateParentConfig(heatmapLayerConfig);
+			}
+		});
+
+		// Position of value-Attribute
+		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
+		valueAttrLabel.setText("Position Value-Attribute: ");
+
+		Spinner valueAttrInput = new Spinner(settingsContainer, SWT.NONE);
+		valueAttrInput.setValues(newConfig.getValueAttributePosition(), 0,
+				255, 0, 1, 1);
+		valueAttrInput.addSelectionListener(new SpinnerListener(newConfig,
+				valueAttrInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
+				heatmapLayerConfig.setValueAttributePosition((spinner
 						.getSelection()));
 				treeListener.updateParentConfig(heatmapLayerConfig);
 			}
@@ -670,7 +706,7 @@ public class TreeListener implements ISelectionChangedListener {
 		scrollContainer.setContent(heatmapContainer);
 		heatmapContainer.setSize(heatmapContainer.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT));
-		
+
 		// Redraw the container
 		container.layout();
 	}

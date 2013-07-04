@@ -198,15 +198,15 @@ public class Heatmap extends RasterLayer {
 			// Get the data from the Tuple (Where it is and value)
 			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 			GeometryCollection geoColl = (GeometryCollection) tuple
-					.getAttribute(0);
+					.getAttribute(config.getGeometricAttributePosition());
 			Point point = geoColl.getCentroid();
 
 			double value = 0;
 			try {
-				value = (int) tuple.getAttribute(1);
+				value = (int) tuple.getAttribute(config.getValueAttributePosition());
 			} catch (ClassCastException e) {
 				// Ok, not an int, then it's a double
-				value = (double) tuple.getAttribute(1);
+				value = (double) tuple.getAttribute(config.getValueAttributePosition());
 			}
 
 			// Calculate, where this belongs in the heatmap

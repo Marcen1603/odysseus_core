@@ -25,6 +25,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	private boolean markEndpoint;
 	private int lineWidth;
 	private int geometricAttributePosition;
+	private int valueAttributePosition;
 	
 	public TracemapLayerConfiguration(String name) {
 		super(name);
@@ -34,6 +35,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 		autoTransparency = true;
 		lineWidth = 3;
 		geometricAttributePosition = 0;
+		valueAttributePosition = 1;
 		markEndpoint = false;
 	}
 	
@@ -46,6 +48,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 		setAutoTransparency(toCopy.isAutoTransparency());
 		setLineWidth(toCopy.getLineWidth());
 		setGeometricAttributePosition(toCopy.getGeometricAttributePosition());
+		setValueAttributePosition(toCopy.getValueAttributePosition());
 		setMarkEndpoint(toCopy.isMarkEndpoint());
 	}
 
@@ -158,5 +161,13 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setMarkEndpoint(boolean markEndpoint) {
 		this.markEndpoint = markEndpoint;
+	}
+
+	public int getValueAttributePosition() {
+		return valueAttributePosition;
+	}
+
+	public void setValueAttributePosition(int valueAttributePosition) {
+		this.valueAttributePosition = valueAttributePosition;
 	}
 }

@@ -91,7 +91,7 @@ public class TraceLayer extends RasterLayer {
 			// Get the data from the Tuple (point, id and starttime)
 			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
 			GeometryCollection geoColl = (GeometryCollection) tuple
-					.getAttribute(0);
+					.getAttribute(config.getGeometricAttributePosition());
 			Point point = geoColl.getCentroid();
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
 			PointInTime startTime = timeInterval.getStart();
@@ -105,7 +105,7 @@ public class TraceLayer extends RasterLayer {
 			TraceElement lineElement = new TraceElement(point.getCoordinate(),
 					startTime);
 
-			int id = (int) tuple.getAttribute(1);
+			int id = (int) tuple.getAttribute(config.getValueAttributePosition());
 
 			// If this is the first coordinate for this key,
 			// create a new ArrayList
