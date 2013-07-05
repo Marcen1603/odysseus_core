@@ -6,6 +6,7 @@ import java.util.Map;
 
 import weka.classifiers.Classifier;
 import weka.core.Instance;
+import weka.core.Utils;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -31,7 +32,9 @@ public class WekaClassifier<M extends ITimeInterval> implements IClassifier<M> {
 		t.dataset().setClassIndex(t.dataset().numAttributes() - 1);
 		try {
 			double classValue = classifier.classifyInstance(t);
-			return classValue;
+			if(!Utils.isMissingValue(classValue)){
+				return classValue;
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

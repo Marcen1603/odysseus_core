@@ -93,6 +93,9 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 				return null;
 			}
 			Instances instances = WekaConverter.convertToInstances(tuples, this.war);
+			if(instances.size()<=0){
+				return null;
+			}
 			instances.setClassIndex(this.classIndex);
 			wekaLearner.buildClassifier(instances);
 			WekaClassifier<M> classifier = new WekaClassifier<>(war.getNominals(), AbstractClassifier.makeCopy(wekaLearner));
