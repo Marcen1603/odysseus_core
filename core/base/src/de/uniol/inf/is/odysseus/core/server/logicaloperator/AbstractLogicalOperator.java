@@ -66,9 +66,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	private Map<Integer, Subscription<IPhysicalOperator>> physSubscriptionTo = new HashMap<Integer, Subscription<IPhysicalOperator>>();
 	// cache access to bounded physOperators
-	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<Integer, IPhysicalOperator>();
-	private int subscribedInputSizeCache = 0;
-	private boolean isAllPhysicalSetCache = false;
+	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<Integer, IPhysicalOperator>();	
+	private boolean recalcAllPhyInputSet = true;
+	private boolean cachedAllPhysicalInputSet = false;
 
 	transient private List<Exception> errors = new ArrayList<Exception>();
 
@@ -334,23 +334,29 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public boolean isAllPhysicalInputSet() {
-		for (Integer i : this.subscribedToSource.keySet()) {
-			if (this.physInputOperators.get(i) == null) {
-				return false;
+		if (recalcAllPhyInputSet) {
+			cachedAllPhysicalInputSet = true;
+			for (Integer i : this.subscribedToSource.keySet()) {
+				if (this.physInputOperators.get(i) == null) {
+					cachedAllPhysicalInputSet = false;
+					break;
+				}
 			}
+			recalcAllPhyInputSet = false;
 		}
-		return true;
-//		if (subscribedInputSizeCache != this.subscribedToSource.keySet().size()) {
-//			for (Integer i : this.subscribedToSource.keySet()) {
-//				if (this.physInputOperators.get(i) == null) {
-//					isAllPhysicalSetCache = false;
-//					break;
-//				}
-//			}
-//			isAllPhysicalSetCache = true;
-//			subscribedInputSizeCache = this.subscribedToSource.keySet().size();
-//		}
-//		return isAllPhysicalSetCache;
+		return cachedAllPhysicalInputSet;
+
+		// if (subscribedInputSizeCache != this.subscribedToSource.keySet().size()) {
+		// for (Integer i : this.subscribedToSource.keySet()) {
+		// if (this.physInputOperators.get(i) == null) {
+		// isAllPhysicalSetCache = false;
+		// break;
+		// }
+		// }
+		// isAllPhysicalSetCache = true;
+		// subscribedInputSizeCache = this.subscribedToSource.keySet().size();
+		// }
+		// return isAllPhysicalSetCache;
 	}
 
 	/*
@@ -361,7 +367,8 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());	
+		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
+		this.recalcAllPhyInputSet = true;
 	}
 
 	@Override
@@ -406,6 +413,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 				this.subscribedToSource.put(sinkInPort, sub);
 				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
 				recalcOutputSchemata = true;
+				this.recalcAllPhyInputSet = true;
 			}
 		}
 
@@ -427,6 +435,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void unsubscribeFromSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		if (this.subscribedToSource.remove(sinkInPort) != null) {
 			recalcOutputSchemata = true;
+			this.recalcAllPhyInputSet = true;
 			source.unsubscribeSink(this, sinkInPort, sourceOutPort, schema);
 		}
 	}
@@ -442,6 +451,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 				subscription.getTarget().unsubscribeSink(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			}
 			recalcOutputSchemata = true;
+			this.recalcAllPhyInputSet = true;
 		}
 	}
 
@@ -481,6 +491,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 			this.subscriptions.add(sub);
 			sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
 			recalcOutputSchemata = true;
+			this.recalcAllPhyInputSet = true;
 		}
 	}
 
@@ -499,6 +510,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		if (this.subscriptions.remove(subscription)) {
 			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			recalcOutputSchemata = true;
+			this.recalcAllPhyInputSet = true;
 		}
 	}
 
@@ -520,6 +532,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void clearPhysicalSubscriptions() {
 		this.physInputOperators.clear();
 		this.physSubscriptionTo.clear();
+		this.recalcAllPhyInputSet = true;
 	}
 
 	@Override
