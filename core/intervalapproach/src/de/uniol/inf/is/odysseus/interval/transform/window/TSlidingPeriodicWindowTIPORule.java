@@ -44,12 +44,13 @@ public class TSlidingPeriodicWindowTIPORule extends
 	@Override
 	public boolean isExecutable(WindowAO operator,
 			TransformationConfiguration transformConfig) {
+		if (operator.isAllPhysicalInputSet()) {
+			WindowType windowType = operator.getWindowType();
+			if ( windowType == WindowType.TIME
+					&& operator.getWindowSlide() > 0) {
 		if (transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet()) {
-				WindowType windowType = operator.getWindowType();
-				if ( windowType == WindowType.TIME
-						&& operator.getWindowSlide() > 0) {
+			
 					return true;
 				}
 			}

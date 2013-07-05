@@ -44,12 +44,13 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	@Override
 	public boolean isExecutable(WindowAO operator,
 			TransformationConfiguration transformConfig) {
+		if (operator.isAllPhysicalInputSet())
+			if (operator.getWindowType() == WindowType.TUPLE
+					&& operator.getWindowSlide() == -1) {
+				if (operator.isPartitioned()) {
 		if (transformConfig.getDataTypes().contains("relational") && transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
-			if (operator.isAllPhysicalInputSet())
-				if (operator.getWindowType() == WindowType.TUPLE
-						&& operator.getWindowSlide() == -1) {
-					if (operator.isPartitioned()) {
+			
 						return true;
 					}
 				}
