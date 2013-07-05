@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.transform;
-
-import java.util.List;
+package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalThreadedMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousMapPO;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -37,7 +35,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TMapAORule extends AbstractTransformationRule<MapAO> {
+public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule<MapAO> {
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -55,13 +53,15 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	 */
 	@Override
 	public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
+		IPhysicalOperator mapPO;
+
 		final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
 		for (int i = 0; i < expressions.length; i++) {
 			expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
 		}
-		final IPhysicalOperator mapPO = new ProbabilisticContinuousMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions);
+		mapPO = new ProbabilisticDiscreteMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
 
-		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
+		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	/*
@@ -71,9 +71,17 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	 */
 	@Override
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && (this.isProbabilistic(operator))) {
-			if (operator.getPhysSubscriptionTo() != null) {
-				return true;
+		if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+			boolean isProbabilisticDiscrete = false;
+			for (SDFExpression expr : operator.getExpressions()) {
+				if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {
+					isProbabilisticDiscrete = true;
+				}
+			}
+			if (isProbabilisticDiscrete) {
+				if (operator.getPhysSubscriptionTo() != null) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -86,7 +94,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	 */
 	@Override
 	public final String getName() {
-		return "MapAO -> ProbabilisticMapPO";
+		return "MapAO -> ProbabilisticDiscreteMapPO";
 	}
 
 	/*
@@ -109,25 +117,4 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 		return MapAO.class;
 	}
 
-	/**
-	 * Checks whether at least one attribute in the expressions is a probabilistic attribute.
-	 * 
-	 * @param mapAO
-	 *            The map operator
-	 * @return <code>true</code> iff at least one attribute in the expressions is a probabilistic attribute
-	 */
-	private boolean isProbabilistic(final MapAO mapAO) {
-		boolean isProbabilistic = false;
-		for (final SDFExpression expression : mapAO.getExpressions()) {
-			final List<SDFAttribute> attributes = expression.getAllAttributes();
-
-			for (final SDFAttribute attribute : attributes) {
-				if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-					isProbabilistic = true;
-				}
-			}
-		}
-		return isProbabilistic;
-
-	}
 }

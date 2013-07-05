@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.transform;
+package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionTISweepArea;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -41,9 +39,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
+public class TContinuousEquiJoinAOSetDMRule extends AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
 
 	@Override
 	public int getPriority() {
@@ -51,17 +47,18 @@ public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<C
 	}
 
 	@Override
-	public void execute(final ContinuousProbabilisticEquiJoinPO joinPO, final TransformationConfiguration transformConfig) {
-		final LinearRegressionTISweepArea[] areas = new LinearRegressionTISweepArea[2];
+	public void execute(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
+
+		final int[][] joinAttributePos = new int[2][];
 
 		for (int port = 0; port < 2; port++) {
 			final int otherPort = port ^ 1;
-			if (JoinTransformationHelper.checkPhysicalPath(joinPO.getSubscribedToSource(port).getTarget())) {
+			if (JoinTransformationHelper.checkPhysicalPath(operator.getSubscribedToSource(port).getTarget())) {
 				final Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-				if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs, joinPO.getSubscribedToSource(port).getSchema(), joinPO.getSubscribedToSource(otherPort).getSchema())) {
+				if (JoinTransformationHelper.checkPredicate(operator.getPredicate(), neededAttrs, operator.getSubscribedToSource(port).getSchema(), operator.getSubscribedToSource(otherPort).getSchema())) {
 
-					final SDFSchema schema = joinPO.getSubscribedToSource(port).getSchema();
+					final SDFSchema schema = operator.getSubscribedToSource(port).getSchema();
 					final List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
 					for (final Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
@@ -69,25 +66,31 @@ public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<C
 							joinAttributes.add(pair.getE1());
 						}
 					}
-					final int[] joinPos = SchemaUtils.getAttributePos(schema, joinAttributes);
+					joinAttributePos[port] = SchemaUtils.getAttributePos(schema, joinAttributes);
 
 					final List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 					viewAttributes.removeAll(joinAttributes);
+					@SuppressWarnings("unused")
 					final int[] viewPos = SchemaUtils.getAttributePos(schema, viewAttributes);
-					areas[port] = new LinearRegressionTISweepArea(joinPos, viewPos);
-					joinPO.setBetas(areas[port].getRegressionCoefficients(), port);
 				}
 			}
 		}
 
-		joinPO.setAreas(areas);
-
+		// ContinuousProbabilisticEquiJoinMergeFunction<ITimeIntervalProbabilistic> mergeFunction = new ContinuousProbabilisticEquiJoinMergeFunction<ITimeIntervalProbabilistic>(
+		// operator.getOutputSchema().size(), joinAttributePos);
+		//
+		// for (int port = 0; port < 2; port++) {
+		// mergeFunction.setBetas(operator.getBetas(port), port);
+		// mergeFunction.setSigmas(operator.getSigmas(port), port);
+		// }
+		// operator.setDataMerge(mergeFunction);
+		this.update(operator);
 	}
 
 	@Override
-	public boolean isExecutable(final ContinuousProbabilisticEquiJoinPO operator, final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
-			if (operator.getAreas() == null) {
+	public boolean isExecutable(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
+		if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+			if (operator.getDataMerge() == null) {
 				return true;
 			}
 		}
@@ -96,7 +99,7 @@ public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<C
 
 	@Override
 	public String getName() {
-		return "ProbabilisticContinuousJoinPO set SweepArea";
+		return "Insert DataMergeFunction ProbabilisticContinuousJoinPO (Probabilistic)";
 	}
 
 	@Override
@@ -105,7 +108,7 @@ public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<C
 	}
 
 	@Override
-	public Class<? super ContinuousProbabilisticEquiJoinPO> getConditionClass() {
+	public Class<? super ContinuousProbabilisticEquiJoinPO<?, ?>> getConditionClass() {
 		return ContinuousProbabilisticEquiJoinPO.class;
 	}
 

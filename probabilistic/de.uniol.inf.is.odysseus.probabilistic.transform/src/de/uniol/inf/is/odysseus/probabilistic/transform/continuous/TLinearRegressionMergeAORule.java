@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.transform;
+package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionAO;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionMergeAO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionMergePO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * Transformation rule for linear regression operator.
+ * Transformation rule for linear regression merge operator.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRegressionAO> {
+public class TLinearRegressionMergeAORule extends AbstractTransformationRule<LinearRegressionMergeAO> {
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -49,9 +49,9 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
-		this.defaultExecute(operator, linearRegressionPO, config, true, true);
+	public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
+		final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(), operator.getRegressionCoefficientsPos());
+		this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
 	}
 
 	/*
@@ -60,7 +60,7 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
+	public final boolean isExecutable(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
 		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
@@ -76,7 +76,7 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
 	 */
 	@Override
 	public final String getName() {
-		return "LinearRegressionAO -> LinearRegressionPO";
+		return "LinearRegressionMergeAO -> LinearRegressionMergePO";
 	}
 
 	/*
@@ -95,7 +95,7 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
 	 */
 	@Override
-	public final Class<? super LinearRegressionAO> getConditionClass() {
-		return LinearRegressionAO.class;
+	public final Class<? super LinearRegressionMergeAO> getConditionClass() {
+		return LinearRegressionMergeAO.class;
 	}
 }

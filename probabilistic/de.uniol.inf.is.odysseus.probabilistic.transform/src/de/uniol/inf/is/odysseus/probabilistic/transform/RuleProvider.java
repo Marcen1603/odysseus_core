@@ -18,6 +18,16 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEquiJoinAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEquiJoinAOSetDMRule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEquiJoinAOSetSARule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TEMAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionMergeAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TAggregateProbabilisticRule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TDiscreteJoinAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteMapAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteSelectAORule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
@@ -33,15 +43,24 @@ public class RuleProvider implements ITransformRuleProvider {
 
 		rules.add(new TProbabilisticValidatorRule());
 
+		// Operators for discrete probabilistic value processing
 		// Probabilistic Aggregation Functions
 		rules.add(new TAggregateProbabilisticRule());
 
 		// Select AO -> PO Rule
-		rules.add(new TSelectAORule());
+		rules.add(new TProbabilisiticDiscreteSelectAORule());
 		// Map AO -> PO Rule
-		rules.add(new TMapAORule());
+		rules.add(new TProbabilisiticDiscreteMapAORule());
 		// Join AO -> PO Rule for discrete probabilistic values
 		rules.add(new TDiscreteJoinAORule());
+
+		// Operators for continuous probabilistic value processing
+		// EM AO -> PO Rule
+		rules.add(new TEMAORule());
+		// LinearRegression AO -> PO Rule
+		rules.add(new TLinearRegressionAORule());
+		// LinearRegressionMerge AO -> PO Rule
+		rules.add(new TLinearRegressionMergeAORule());
 		// Equi Join
 		// Join AO -> PO Rule
 		rules.add(new TContinuousEquiJoinAORule());
@@ -49,14 +68,6 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TContinuousEquiJoinAOSetSARule());
 		// Set Join PO Data Merge Rule
 		rules.add(new TContinuousEquiJoinAOSetDMRule());
-
-		// LinearRegression AO -> PO Rule
-		rules.add(new TLinearRegressionAORule());
-		// LinearRegressionMerge AO -> PO Rule
-		rules.add(new TLinearRegressionMergeAORule());
-
-		// EM AO -> PO Rule
-		rules.add(new TEMAORule());
 		return rules;
 	}
 

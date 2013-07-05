@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.transform;
+package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import java.util.Map;
 import java.util.Map.Entry;

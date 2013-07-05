@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.transform;
-
-import java.util.List;
+package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteSelectPO;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -34,11 +29,11 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * Transformation rule for probabilistic Select operator.
+ * Transformation rule for Select operator for discrete probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
+public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationRule<SelectAO> {
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -58,19 +53,20 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	@Override
 	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
 		IPhysicalOperator selectPO;
-		if (this.isProbabilistic(selectAO)) {
-			final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(((RelationalPredicate) selectAO.getPredicate()).getExpression());
 
-			int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), SchemaUtils.getDiscreteProbabilisticAttributes(expression.getAllAttributes()));
-			selectPO = new ProbabilisticDiscreteSelectPO(selectAO.getPredicate(), probabilisticAttributePos);
-			if (selectAO.getHeartbeatRate() > 0) {
-				((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
-			}
-		} else {
-			selectPO = new SelectPO(selectAO.getPredicate());
-			if (selectAO.getHeartbeatRate() > 0) {
-				((SelectPO) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
-			}
+		// TODO Split into conjunctivePredicates
+		// RelationalPredicate predicate = ((RelationalPredicate) selectAO.getPredicate());
+		//
+		// List<IPredicate> conjunctivePredicates = predicate.splitPredicate();
+		// for (IPredicate conjunctivePredicate : conjunctivePredicates) {
+		//
+		// }
+		final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(((RelationalPredicate) selectAO.getPredicate()).getExpression());
+
+		int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), SchemaUtils.getDiscreteProbabilisticAttributes(expression.getAllAttributes()));
+		selectPO = new ProbabilisticDiscreteSelectPO(selectAO.getPredicate(), probabilisticAttributePos);
+		if (selectAO.getHeartbeatRate() > 0) {
+			((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
 		}
 		this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
 	}
@@ -83,8 +79,10 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	@Override
 	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
 		if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
+			if (SchemaUtils.containsDiscreteProbabilisticAttributes(operator.getPredicate().getAttributes())) {
+				if (operator.isAllPhysicalInputSet()) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -97,7 +95,7 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	 */
 	@Override
 	public final String getName() {
-		return "SelectAO -> ProbabilisticSelectPO";
+		return "SelectAO -> ProbabilisticDiscreteSelectPO";
 	}
 
 	/*
@@ -120,22 +118,4 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 		return SelectAO.class;
 	}
 
-	/**
-	 * Checks whether at least one attribute in the select predicate is a probabilistic attribute.
-	 * 
-	 * @param selectAO
-	 *            The select operator
-	 * @return <code>true</code> iff at least one attribute in the select predicate is a probabilistic attribute
-	 */
-	private boolean isProbabilistic(final SelectAO selectAO) {
-		final List<SDFAttribute> attributes = selectAO.getPredicate().getAttributes();
-
-		boolean isProbabilistic = false;
-		for (final SDFAttribute attribute : attributes) {
-			if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-				isProbabilistic = true;
-			}
-		}
-		return isProbabilistic;
-	}
 }

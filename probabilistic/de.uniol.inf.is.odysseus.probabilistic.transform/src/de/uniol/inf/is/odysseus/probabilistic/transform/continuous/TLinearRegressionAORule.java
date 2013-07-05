@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.transform;
+package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.EMAO;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.EMPO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionAO;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * Transformation rule for Expectation Maximization (EM) operator.
+ * Transformation rule for linear regression operator.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TEMAORule extends AbstractTransformationRule<EMAO> {
+public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRegressionAO> {
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -49,9 +49,9 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void execute(final EMAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList(), operator.getMixtures());
-		this.defaultExecute(operator, emPO, config, true, true);
+	public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) {
+		final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
+		this.defaultExecute(operator, linearRegressionPO, config, true, true);
 	}
 
 	/*
@@ -60,7 +60,7 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final boolean isExecutable(final EMAO operator, final TransformationConfiguration config) {
+	public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
 		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
@@ -76,7 +76,7 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 	 */
 	@Override
 	public final String getName() {
-		return "EMAO -> EMPO";
+		return "LinearRegressionAO -> LinearRegressionPO";
 	}
 
 	/*
@@ -95,8 +95,7 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
 	 */
 	@Override
-	public final Class<? super EMAO> getConditionClass() {
-		return EMAO.class;
+	public final Class<? super LinearRegressionAO> getConditionClass() {
+		return LinearRegressionAO.class;
 	}
-
 }
