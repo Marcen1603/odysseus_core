@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 /**
  * Standard query build configuration for probabilistic data streams supporting
- * Rewrite, Query Sharing and Reconstruction
+ * Rewrite, Query Sharing and Reconstruction.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */

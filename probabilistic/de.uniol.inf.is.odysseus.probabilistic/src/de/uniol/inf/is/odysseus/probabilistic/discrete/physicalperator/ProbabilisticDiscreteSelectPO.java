@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
  */
 public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<T> {
 	/** Logger. */
-	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteSelectPO.class);
 
 	private int[] probabilisticAttributePos;
@@ -96,15 +95,10 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 
 		// Create all possible worlds
 		Object[][] worlds = new Object[worldNum][probabilisticAttributePos.length];
-		double instances = 0;
+		double instances = 1.0;
 		for (int i = 0; i < probabilisticAttributePos.length; i++) {
-			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
 			int world = 0;
-			if (instances == 0.0) {
-				instances = 1.0;
-			} else {
-				instances *= attribute.getValues().size();
-			}
+			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
 			int num = (int) (worlds.length / (attribute.getValues().size() * instances));
 			while (num > 0) {
 				Iterator<?> iter = attribute.getValues().entrySet().iterator();
@@ -120,8 +114,8 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 				}
 				num--;
 			}
+			instances *= attribute.getValues().size();
 		}
-
 		// Evaluate each world and store the possible ones in the output tuple
 		for (int w = 0; w < worlds.length; w++) {
 			for (int i = 0; i < probabilisticAttributePos.length; i++) {
@@ -134,8 +128,10 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 					AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
 					AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(probabilisticAttributePos[i]);
 					double probability = inAttribute.getValues().get(worlds[w][i]);
-					outAttribute.getValues().put((Double) worlds[w][i], probability);
-					outSum[i] += probability;
+					if (!outAttribute.getValues().containsKey((Double) worlds[w][i])) {
+						outAttribute.getValues().put((Double) worlds[w][i], probability);
+						outSum[i] += probability;
+					}
 				}
 			}
 		}
@@ -148,7 +144,6 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 		// Transfer the tuple iff the joint probability is positive (maybe set quality filter later to reduce the number of tuples)
 		if (jointProbability > 0.0) {
 			((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
-			System.out.println("Transfer-> " + outputVal);
 			transfer((T) outputVal);
 		}
 	}
