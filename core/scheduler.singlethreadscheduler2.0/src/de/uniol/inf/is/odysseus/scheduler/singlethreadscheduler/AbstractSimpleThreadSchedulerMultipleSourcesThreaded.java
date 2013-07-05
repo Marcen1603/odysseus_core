@@ -33,6 +33,7 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded exten
 				List<IIterableSource<?>> copyList = new ArrayList<IIterableSource<?>>(sourceExecutor.getSources());
 				for (IIterableSource<?> runningSource : copyList) {
 					if (!sources.contains(runningSource)) {
+						logger.debug("Removing source " + runningSource + " from " + sourceExecutor);
 						sourceExecutor.removeSource(runningSource);
 						logger.debug("Remove source " + runningSource + " from " + sourceExecutor);
 						if (sourceExecutor.getRunningSources() == 0) {

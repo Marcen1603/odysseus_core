@@ -16,22 +16,21 @@ import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 
-public class MultipleSourceExecutor extends Thread implements IEventListener,
-		ISourceExecutor {
+public class MultipleSourceExecutor extends Thread implements IEventListener, ISourceExecutor {
 
 	Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
 	boolean alldone = false;
 	private boolean interrupt = false;
 	// Sort source regarding delay
 	// treemultiset does not work (it assume that some accesspos are equal although they don't...)
-//	final private Multiset<IIterableSource<?>> sources = TreeMultiset
-//			.create(new Comparator<IIterableSource<?>>() {
-//				@Override
-//				public int compare(IIterableSource<?> left,
-//						IIterableSource<?> right) {
-//					return Long.compare(left.getDelay(), right.getDelay());
-//				}
-//			});
+	// final private Multiset<IIterableSource<?>> sources = TreeMultiset
+	// .create(new Comparator<IIterableSource<?>>() {
+	// @Override
+	// public int compare(IIterableSource<?> left,
+	// IIterableSource<?> right) {
+	// return Long.compare(left.getDelay(), right.getDelay());
+	// }
+	// });
 	final private Multiset<IIterableSource<?>> sources = HashMultiset.create();
 	final private AbstractSimpleThreadScheduler caller;
 	final private Map<IIterableSource<?>, Long> lastRuns = new HashMap<>();
@@ -39,8 +38,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	private static long counter = 0;
 
-	public MultipleSourceExecutor(
-			AbstractSimpleThreadScheduler singleThreadScheduler) {
+	public MultipleSourceExecutor(AbstractSimpleThreadScheduler singleThreadScheduler) {
 		this.setName("MultiSourceExecutor #" + (counter++) + " ");
 		this.caller = singleThreadScheduler;
 
@@ -60,8 +58,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			while (!open) {
 				for (IIterableSource<?> s : sources) {
 					if (s.isOpen()) {
-						logger.debug("Opened " + this.hashCode()
-								+ "... Start Processing of Source " + s);
+						logger.debug("Opened " + this.hashCode() + "... Start Processing of Source " + s);
 						open = true;
 						break;
 					}
@@ -78,13 +75,16 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		}
 		logger.debug("At least one source is open");
 		while (!interrupt && !isInterrupted() && caller.isRunning()) {
-			if(this.sourcesChangeRequested){				
-				try {
-					sources.wait(1000);
-				} catch (InterruptedException e) {				
-				}
-			}
 			synchronized (sources) { // No interruptions while one run
+				if (this.sourcesChangeRequested) {
+					try {
+						sources.wait(1000);
+					} catch (InterruptedException e) {
+					} catch (IllegalMonitorStateException e) {
+						e.printStackTrace();
+					}
+				}
+
 				boolean waitedForFirstSource = false;
 
 				for (IIterableSource<?> s : sources) {
@@ -114,8 +114,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 								transfer(s);
 							} else { // Handle all but the first source
 								long ct2 = System.currentTimeMillis();
-								if (lastRun == null
-										|| ct2 - lastRun >= s.getDelay()) {
+								if (lastRun == null || ct2 - lastRun >= s.getDelay()) {
 									transfer(s);
 								}
 							}
@@ -125,6 +124,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 						for (IIterableSource<?> others : sources) {
 							if (!others.isDone()) {
 								alldone = false;
+								break;
 							}
 						}
 						while (alldone) {
@@ -150,8 +150,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			if (lastRun == null) {
 				lastRun = -1L;
 			}
-			logger.trace("Transfer for " + s + " d=" + s.getDelay() + " real="
-					+ (ct2 - lastRun) + " n=" + ct2 + " last=" + lastRun);
+			logger.trace("Transfer for " + s + " d=" + s.getDelay() + " real=" + (ct2 - lastRun) + " n=" + ct2 + " last=" + lastRun);
 		}
 		s.transferNext();
 		lastRuns.put(s, ct2);
@@ -176,7 +175,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	@Override
 	public synchronized void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
 		synchronized (sources) {
-			notifyAll();
+			sources.notifyAll();
 		}
 	}
 

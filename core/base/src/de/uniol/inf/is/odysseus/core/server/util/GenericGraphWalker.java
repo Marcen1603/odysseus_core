@@ -15,9 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.core.server.util;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 
-import sun.awt.util.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;
@@ -29,17 +29,17 @@ import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 public class GenericGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
 
-	List<S> visited;
-	List<IPhysicalOperator> visitedPhysical;
+	Collection<S> visited;
+	Collection<IPhysicalOperator> visitedPhysical;
 	
 	public GenericGraphWalker(){
-		this.visited = new IdentityArrayList<S>();
-		this.visitedPhysical = new IdentityArrayList<IPhysicalOperator>();
+		this.visited = new HashSet<S>();
+		this.visitedPhysical = new HashSet<IPhysicalOperator>();
 	}
 	
 	public void clearVisited(){
-		this.visited = new IdentityArrayList<S>();
-		this.visitedPhysical = new IdentityArrayList<IPhysicalOperator>();
+		this.visited = new HashSet<S>();
+		this.visitedPhysical = new HashSet<IPhysicalOperator>();
 	}
 	
 	/**
