@@ -253,18 +253,17 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	@Override
 	public final ProbabilisticTuple<T> restrict(final int[] attrList, final boolean createNew) {
 		// The new dimension of each distribution
-		final int[] newDistrDimensions = new int[this.distributions.length];
-
+		final int[] newDistributionDimensions = new int[this.distributions.length];
 
 		// Determine the new dimensions of each distribution after the restriction
-		List<Integer> restrictAttributes = new ArrayList<Integer>(attrList.length);
-		for (int attr : attrList) {
-			final Object newAttr = this.attributes[attr];
-			if (newAttr.getClass() == ProbabilisticContinuousDouble.class) {
-				restrictAttributes.add(new Integer(attr));
-				final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) newAttr;
-				final int distrIndex = value.getDistribution();
-				newDistrDimensions[distrIndex]++;
+		List<Integer> restrictAttributePos = new ArrayList<Integer>(attrList.length);
+		for (int attributePos : attrList) {
+			final Object attribute = this.attributes[attributePos];
+			if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
+				restrictAttributePos.add(new Integer(attributePos));
+				final ProbabilisticContinuousDouble continuousAttribute = (ProbabilisticContinuousDouble) attribute;
+				final int distributionPos = continuousAttribute.getDistribution();
+				newDistributionDimensions[distributionPos]++;
 			}
 		}
 
@@ -272,16 +271,16 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		final RealMatrix[] restrictMatrixes = new RealMatrix[this.distributions.length];
 		// For each distribution that will exist after the restriction construct a restriction matrix
 		for (int i = 0; i < this.distributions.length; i++) {
-			if (newDistrDimensions[i] > 0) {
+			if (newDistributionDimensions[i] > 0) {
 				NormalDistributionMixture distribution = this.distributions[i];
-				restrictMatrixes[i] = MatrixUtils.createRealMatrix(newDistrDimensions[i], distribution.getDimension());
+				restrictMatrixes[i] = MatrixUtils.createRealMatrix(newDistributionDimensions[i], distribution.getDimension());
 				List<Integer> distributionAttributes = new ArrayList<Integer>(distribution.getAttributes().length);
-				for (int j = 0, k = 0; j < distribution.getAttributes().length; j++) {
-					int attr = distribution.getAttribute(j);
-					distributionAttributes.add(new Integer(attr));
-					if (restrictAttributes.contains(new Integer(attr))) {
-						restrictMatrixes[i].setEntry(k, j, 1.0);
-						k++;
+				for (int pos = 0, newPos = 0; pos < distribution.getAttributes().length; pos++) {
+					int attributePos = distribution.getAttribute(pos);
+					distributionAttributes.add(new Integer(attributePos));
+					if (restrictAttributePos.contains(new Integer(attributePos))) {
+						restrictMatrixes[i].setEntry(newPos, pos, 1.0);
+						newPos++;
 					}
 				}
 			}
@@ -317,60 +316,64 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 * @return The restricted tuple
 	 */
 	public final ProbabilisticTuple<T> restrict(final int[] attrList, final RealMatrix[] restrictMatrix, final boolean createNew) {
-		final Object[] newAttrs = new Object[attrList.length];
-
+		final Object[] newAttributes = new Object[attrList.length];
 
 		// Link to the attribute data, no copy needed
-		for (int i = 0; i < attrList.length; i++) {
-			newAttrs[i] = this.attributes[attrList[i]];
+		for (int pos = 0; pos < attrList.length; pos++) {
+			newAttributes[pos] = this.attributes[attrList[pos]];
 		}
-		int distrNum=0;
-		for (int i = 0, d = 0; i < this.distributions.length; i++) {
+		// Get the required size of the distribution layer
+		int distributionsLayerSize = 0;
+		for (int i = 0; i < this.distributions.length; i++) {
 			if (restrictMatrix[i] != null) {
-				distrNum++;
+				distributionsLayerSize++;
 			}
 		}
-		//FIXME Only the number of not null restrict matrixes
-		final NormalDistributionMixture[] newDistrs = new NormalDistributionMixture[distrNum];
-		for (int i = 0, d = 0; i < this.distributions.length; i++) {
-			if (restrictMatrix[i] != null) {
-				final int oldDimension = this.distributions[i].getDimension();
-				final int newDimension = restrictMatrix[i].getRowDimension();
+		final NormalDistributionMixture[] newDistributions = new NormalDistributionMixture[distributionsLayerSize];
+		for (int oldLayerIndex = 0, newLayerIndex = 0; oldLayerIndex < this.distributions.length; oldLayerIndex++) {
+			if (restrictMatrix[oldLayerIndex] != null) {
+				final int oldDimension = this.distributions[oldLayerIndex].getDimension();
+				final int newDimension = restrictMatrix[oldLayerIndex].getRowDimension();
 
 				// Create the new distributions using the old distribution and the restriction matrix
-				newDistrs[d] = this.distributions[i].clone();
+				newDistributions[newLayerIndex] = this.distributions[oldLayerIndex].clone();
 				// First, update the covariance matrix and the mean in all mixtures
-				final NormalDistributionMixture distr = newDistrs[d];
-				for (final NormalDistribution mixture : distr.getMixtures().keySet()) {
+				final NormalDistributionMixture distribution = newDistributions[newLayerIndex];
+				for (final NormalDistribution mixture : distribution.getMixtures().keySet()) {
 					final RealMatrix covarianceMatrix = CovarianceMatrixUtils.toMatrix(mixture.getCovarianceMatrix());
-					mixture.setCovarianceMatrix(CovarianceMatrixUtils.fromMatrix(restrictMatrix[i].multiply(covarianceMatrix).multiply(restrictMatrix[i].transpose())));
-					mixture.setMean(restrictMatrix[i].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMean())).multiply(restrictMatrix[i].transpose()).getColumn(0));
+					mixture.setCovarianceMatrix(CovarianceMatrixUtils.fromMatrix(restrictMatrix[oldLayerIndex].multiply(covarianceMatrix).multiply(restrictMatrix[oldLayerIndex].transpose())));
+					mixture.setMean(restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMean())).multiply(restrictMatrix[oldLayerIndex].transpose()).getColumn(0));
 				}
 
 				// Second, update the support vector and the attribute link from the payload
-				final int[] oldDistrAttrList = distr.getAttributes();
-				final int[] newDistrAttrList = new int[newDimension];
-				final Interval[] newDistrSupportList = new Interval[newDimension];
-				int dimension = 0;
-				for (int j = 0; j < oldDimension; j++) {
-					final int oldAttrPos = oldDistrAttrList[j];
-					for (int k = 0; k < attrList.length; k++) {
-						if (oldAttrPos == attrList[k]) {
-							newDistrAttrList[dimension] = k;
-							newDistrSupportList[dimension] = distr.getSupport()[j];
-							((ProbabilisticContinuousDouble) newAttrs[k]).setDistribution(d);
+				final int[] oldDistributionAttributes = distribution.getAttributes();
+				final int[] newDistributionAttributes = new int[newDimension];
+				final Interval[] support = new Interval[newDimension];
 
+				int dimension = 0;
+				for (int d = 0; d < oldDimension; d++) {
+					final int oldAttributePos = oldDistributionAttributes[d];
+					for (int attributeIndex = 0; attributeIndex < attrList.length; attributeIndex++) {
+						if (oldAttributePos == attrList[attributeIndex]) {
+							// Set the new index of the attribute in the payload
+							newDistributionAttributes[dimension] = attributeIndex;
+							// Change the index of the support vector to the new dimension
+							support[dimension] = distribution.getSupport()[d];
+							// Update the link from the payload to the right index in the distribution layer
+							((ProbabilisticContinuousDouble) newAttributes[attributeIndex]).setDistribution(newLayerIndex);
 							dimension++;
 							break;
 						}
 					}
 				}
-				distr.setAttributes(newDistrAttrList);
-				distr.setSupport(newDistrSupportList);
-				d++;
+				// Update the attribute links to the payload
+				distribution.setAttributes(newDistributionAttributes);
+				// Update the support for the distribution
+				distribution.setSupport(support);
+				newLayerIndex++;
 			}
 		}
-		return this.restrictCreation(createNew, newAttrs, newDistrs);
+		return this.restrictCreation(createNew, newAttributes, newDistributions);
 	}
 
 	/*
