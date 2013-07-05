@@ -57,6 +57,24 @@ public final class SchemaUtils {
 	}
 
 	/**
+	 * Returns true if this schema contains a continuous probabilistic attribute. More formally, returns true if and only if this schema contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is continuous
+	 * 
+	 * @param schema
+	 *            The {@link SDFSchema schema}
+	 * @return <code>true</code> if this schema contains a continuous {@link SDFProbabilisticDatatype probabilistic attribute}
+	 */
+	public static boolean containsContinuousProbabilisticAttributes(final SDFSchema schema) {
+		if (schema != null) {
+			for (final SDFAttribute attribute : schema.getAttributes()) {
+				if (isContinuousProbabilisticAttribute(attribute)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns true if this list contains a continuous probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is continuous
 	 * 
 	 * @param attributes
@@ -86,6 +104,24 @@ public final class SchemaUtils {
 			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
 			if (datatype.isContinuous()) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if this schema contains a discrete probabilistic attribute. More formally, returns true if and only if this schema contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is discrete
+	 * 
+	 * @param schema
+	 *            The {@link SDFSchema schema}
+	 * @return <code>true</code> if this schema contains a discrete {@link SDFProbabilisticDatatype probabilistic attribute}
+	 */
+	public static boolean containsDiscreteProbabilisticAttributes(final SDFSchema schema) {
+		if (schema != null) {
+			for (final SDFAttribute attribute : schema.getAttributes()) {
+				if (isDiscreteProbabilisticAttribute(attribute)) {
+					return true;
+				}
 			}
 		}
 		return false;

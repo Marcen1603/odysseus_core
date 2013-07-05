@@ -38,8 +38,6 @@ public class RuleProvider implements ITransformRuleProvider {
 
 		// Select AO -> PO Rule
 		rules.add(new TSelectAORule());
-		// Project AO -> PO Rule
-		rules.add(new TProjectAORule());
 		// Map AO -> PO Rule
 		rules.add(new TMapAORule());
 		// Join AO -> PO Rule for discrete probabilistic values
