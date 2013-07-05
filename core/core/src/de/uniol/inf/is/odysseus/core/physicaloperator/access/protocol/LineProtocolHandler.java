@@ -44,7 +44,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private int nanodelay;
 	private int delayeach = 0;
 	private long delayCounter = 0L;
-
+	
 	protected boolean readFirstLine = true;
 	protected boolean firstLineSkipped = false;
 	private long dumpEachLine = -1;
@@ -104,7 +104,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void open() throws UnknownHostException, IOException {
+	public void open() throws UnknownHostException, IOException {		
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
 			if ((this.getAccess().equals(IAccessPattern.PULL)) || (this.getAccess().equals(IAccessPattern.ROBUST_PULL))) {
@@ -119,6 +119,9 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		lineCounter = 0;
 		isDone = false;
 		firstLineSkipped = false;
+		if(debug){
+			ProtocolMonitor.getInstance().addToMonitor(this);
+		}
 	}
 
 	@Override
@@ -133,6 +136,10 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
             }
         }
 		getTransportHandler().close();
+		if(debug){
+			ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
+			ProtocolMonitor.getInstance().removeFromMonitor(this);
+		}
 	}
 
 	@Override
@@ -182,7 +189,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				LOG.debug(lineCounter + " " + time);
 				measurements.append(lineCounter).append(";").append(time - basetime).append("\n");
 				if (lastLine == lineCounter) {
-					System.out.println(measurements);
+					//System.out.println(measurements);
+					ProtocolMonitor.getInstance().informMonitor(this, lineCounter);
 					isDone = true;
 				}
 			}		
@@ -238,8 +246,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction, access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
-		instance.init(options);
-
+		instance.init(options);		
 		return instance;
 	}
 
