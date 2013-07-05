@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.ruleengine.ruleflow;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
@@ -22,5 +23,6 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 
 public interface IRuleFlow extends Iterable<IRuleFlowGroup> {
 	public void addRuleFlowGroup(IRuleFlowGroup group);	
-	public Iterator<IRule<?,?>> iteratorRules(IRuleFlowGroup group);
+	public Iterator<IRule<?, ?>> iteratorRules(IRuleFlowGroup group);
+	public Iterator<IRule<?, ?>> iteratorRules(IRuleFlowGroup group, Collection<Class<?>> filter);
 }

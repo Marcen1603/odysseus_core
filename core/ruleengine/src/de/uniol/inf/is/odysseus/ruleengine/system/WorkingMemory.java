@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
@@ -146,7 +147,7 @@ public class WorkingMemory {
 	public int process() {
 		LOGGER.trace("Rule engine started and now looking for matches...");
 		for (IRuleFlowGroup group : this.env.getRuleFlow()) {			
-			LOGGER.trace("Running group: " + group + "...");			
+//			LOGGER.info("Running group: " + group + "...");						
 			runGroup(group);
 			while(hasChanged){
 				runGroup(group);
@@ -169,7 +170,8 @@ public class WorkingMemory {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void runGroup(IRuleFlowGroup group){
 		hasChanged = false;
-		Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group);
+		Set<Class<?>> clazzes = new HashSet(objectMap.keySet());
+		Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group, clazzes);
 		while (iterator.hasNext()) {
 			IRule rule = iterator.next();
 			Collection<Object> matchingObjects = objectMap.get(rule.getConditionClass());
@@ -177,8 +179,8 @@ public class WorkingMemory {
 				// no objects for this condition clazz
 				continue;
 			}
-			for(Object matchingObject : matchingObjects){
-				rule.setCurrentWorkingMemory(this);
+			rule.setCurrentWorkingMemory(this);
+			for(Object matchingObject : matchingObjects){				
 				if(rule.isExecutable(matchingObject, this.env.getConfiguration())){
 					rule.execute(matchingObject, this.env.getConfiguration());					
 					if(this.hasChanged){
