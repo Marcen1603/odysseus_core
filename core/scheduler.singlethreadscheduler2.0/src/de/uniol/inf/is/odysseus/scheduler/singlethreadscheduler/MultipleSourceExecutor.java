@@ -78,7 +78,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener, IS
 			synchronized (sources) { // No interruptions while one run
 				if (this.sourcesChangeRequested) {
 					try {
-						sources.wait(1000);
+						sources.wait(10);
 					} catch (InterruptedException e) {
 					} catch (IllegalMonitorStateException e) {
 						e.printStackTrace();
