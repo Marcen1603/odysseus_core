@@ -36,29 +36,24 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	private Interval[] support;
 	private final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>();
 
-	public NormalDistributionMixture(final double mean,
-			final CovarianceMatrix covarianceMatrix) {
+	public NormalDistributionMixture(final double mean, final CovarianceMatrix covarianceMatrix) {
 		this(new double[] { mean }, covarianceMatrix);
 	}
 
-	public NormalDistributionMixture(final double[] mean,
-			final CovarianceMatrix covarianceMatrix) {
+	public NormalDistributionMixture(final double[] mean, final CovarianceMatrix covarianceMatrix) {
 		final int dimension = mean.length;
 		this.attributes = new int[dimension];
 		this.mixtures.put(new NormalDistribution(mean, covarianceMatrix), 1.0);
 		this.scale = 1.0;
 		this.support = new Interval[dimension];
 		for (int i = 0; i < this.support.length; i++) {
-			this.support[i] = new Interval(Double.NEGATIVE_INFINITY,
-					Double.POSITIVE_INFINITY);
+			this.support[i] = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		}
 	}
 
-	public NormalDistributionMixture(
-			final Map<NormalDistribution, Double> mixtures) {
+	public NormalDistributionMixture(final Map<NormalDistribution, Double> mixtures) {
 		int dimension = 0;
-		for (final Entry<NormalDistribution, Double> mixture : mixtures
-				.entrySet()) {
+		for (final Entry<NormalDistribution, Double> mixture : mixtures.entrySet()) {
 			dimension = mixture.getKey().getMean().length;
 			this.mixtures.put(mixture.getKey(), mixture.getValue());
 		}
@@ -66,24 +61,19 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		this.scale = 1.0;
 		this.support = new Interval[dimension];
 		for (int i = 0; i < this.support.length; i++) {
-			this.support[i] = new Interval(Double.NEGATIVE_INFINITY,
-					Double.POSITIVE_INFINITY);
+			this.support[i] = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 		}
 	}
 
-	public NormalDistributionMixture(
-			final NormalDistributionMixture normalDistributionMixture) {
+	public NormalDistributionMixture(final NormalDistributionMixture normalDistributionMixture) {
 		this.attributes = normalDistributionMixture.attributes.clone();
 		this.scale = normalDistributionMixture.scale;
-		for (final NormalDistribution distribution : normalDistributionMixture.mixtures
-				.keySet()) {
-			this.mixtures.put(distribution.clone(),
-					normalDistributionMixture.mixtures.get(distribution));
+		for (final NormalDistribution distribution : normalDistributionMixture.mixtures.keySet()) {
+			this.mixtures.put(distribution.clone(), normalDistributionMixture.mixtures.get(distribution));
 		}
 		this.support = new Interval[normalDistributionMixture.support.length];
 		for (int i = 0; i < normalDistributionMixture.support.length; i++) {
-			this.support[i] = new Interval(normalDistributionMixture.support[i].inf(),
-			        normalDistributionMixture.support[i].sup());
+			this.support[i] = new Interval(normalDistributionMixture.support[i].inf(), normalDistributionMixture.support[i].sup());
 		}
 	}
 
@@ -139,15 +129,17 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		for (final Entry<NormalDistribution, Double> mixture : this.mixtures
-				.entrySet()) {
+		for (final Entry<NormalDistribution, Double> mixture : this.mixtures.entrySet()) {
 			if (sb.length() > 1) {
 				sb.append(";");
 			}
-			sb.append(mixture.getKey().toString()).append(":")
-					.append(mixture.getValue());
+			sb.append(mixture.getKey().toString()).append(":").append(mixture.getValue());
 		}
-		sb.append(")");
+		sb.append("),[");
+		for (Interval sup : support) {
+			sb.append(sup);
+		}
+		sb.append("],").append(scale);
 		return sb.toString();
 	}
 

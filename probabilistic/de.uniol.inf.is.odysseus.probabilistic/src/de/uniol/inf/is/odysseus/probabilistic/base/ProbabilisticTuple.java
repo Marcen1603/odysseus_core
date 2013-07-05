@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -225,7 +227,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		this.distributions = newDistrs;
 		return this;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -250,28 +252,41 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	@Override
 	public final ProbabilisticTuple<T> restrict(final int[] attrList, final boolean createNew) {
+		// The new dimension of each distribution
 		final int[] newDistrDimensions = new int[this.distributions.length];
 
-		int matrixes = 0;
-		for (final int element : attrList) {
-			final Object newAttr = this.attributes[element];
+
+		// Determine the new dimensions of each distribution after the restriction
+		List<Integer> restrictAttributes = new ArrayList<Integer>(attrList.length);
+		for (int attr : attrList) {
+			final Object newAttr = this.attributes[attr];
 			if (newAttr.getClass() == ProbabilisticContinuousDouble.class) {
+				restrictAttributes.add(new Integer(attr));
 				final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) newAttr;
 				final int distrIndex = value.getDistribution();
 				newDistrDimensions[distrIndex]++;
-				matrixes++;
 			}
 		}
-		final RealMatrix[] restrictMatrixes = new RealMatrix[matrixes];
-		for (int i = 0, j = 0; i < this.distributions.length; i++) {
+
+		// The restriction matrixes for each existing distribution
+		final RealMatrix[] restrictMatrixes = new RealMatrix[this.distributions.length];
+		// For each distribution that will exist after the restriction construct a restriction matrix
+		for (int i = 0; i < this.distributions.length; i++) {
 			if (newDistrDimensions[i] > 0) {
-				restrictMatrixes[j] = MatrixUtils.createRealMatrix(newDistrDimensions[i], this.distributions[i].getDimension());
-				for (int row = 0, column = 0; (row < restrictMatrixes[j].getRowDimension()) && (column < restrictMatrixes[j].getColumnDimension()); row++, column++) {
-					restrictMatrixes[j].setEntry(row, column, 1.0);
+				NormalDistributionMixture distribution = this.distributions[i];
+				restrictMatrixes[i] = MatrixUtils.createRealMatrix(newDistrDimensions[i], distribution.getDimension());
+				List<Integer> distributionAttributes = new ArrayList<Integer>(distribution.getAttributes().length);
+				for (int j = 0, k = 0; j < distribution.getAttributes().length; j++) {
+					int attr = distribution.getAttribute(j);
+					distributionAttributes.add(new Integer(attr));
+					if (restrictAttributes.contains(new Integer(attr))) {
+						restrictMatrixes[i].setEntry(k, j, 1.0);
+						k++;
+					}
 				}
-				j++;
 			}
 		}
+
 		return this.restrict(attrList, restrictMatrixes, createNew);
 	}
 
@@ -302,41 +317,40 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 * @return The restricted tuple
 	 */
 	public final ProbabilisticTuple<T> restrict(final int[] attrList, final RealMatrix[] restrictMatrix, final boolean createNew) {
-		final int[] newDistrDimensions = new int[this.distributions.length];
-
 		final Object[] newAttrs = new Object[attrList.length];
-		final NormalDistributionMixture[] newDistrs = new NormalDistributionMixture[restrictMatrix.length];
 
+
+		// Link to the attribute data, no copy needed
 		for (int i = 0; i < attrList.length; i++) {
 			newAttrs[i] = this.attributes[attrList[i]];
-			if (newAttrs[i].getClass() == ProbabilisticContinuousDouble.class) {
-				final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) newAttrs[i];
-				final int distrIndex = value.getDistribution();
-				newDistrDimensions[distrIndex]++;
+		}
+		int distrNum=0;
+		for (int i = 0, d = 0; i < this.distributions.length; i++) {
+			if (restrictMatrix[i] != null) {
+				distrNum++;
 			}
 		}
-
-		int newDistrIndex = 0;
-		for (int i = 0; i < this.distributions.length; i++) {
-			if (newDistrDimensions[i] > 0) {
+		//FIXME Only the number of not null restrict matrixes
+		final NormalDistributionMixture[] newDistrs = new NormalDistributionMixture[distrNum];
+		for (int i = 0, d = 0; i < this.distributions.length; i++) {
+			if (restrictMatrix[i] != null) {
 				final int oldDimension = this.distributions[i].getDimension();
-				final int newDimension = restrictMatrix[newDistrIndex].getRowDimension();
+				final int newDimension = restrictMatrix[i].getRowDimension();
 
-				newDistrs[newDistrIndex] = this.distributions[i].clone();
-
-				final NormalDistributionMixture distr = newDistrs[newDistrIndex];
+				// Create the new distributions using the old distribution and the restriction matrix
+				newDistrs[d] = this.distributions[i].clone();
+				// First, update the covariance matrix and the mean in all mixtures
+				final NormalDistributionMixture distr = newDistrs[d];
 				for (final NormalDistribution mixture : distr.getMixtures().keySet()) {
 					final RealMatrix covarianceMatrix = CovarianceMatrixUtils.toMatrix(mixture.getCovarianceMatrix());
-
-					mixture.setCovarianceMatrix(CovarianceMatrixUtils.fromMatrix(restrictMatrix[newDistrIndex].multiply(covarianceMatrix).multiply(restrictMatrix[newDistrIndex].transpose())));
-
-					mixture.setMean(restrictMatrix[newDistrIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMean())).multiply(restrictMatrix[newDistrIndex].transpose()).getColumn(0));
+					mixture.setCovarianceMatrix(CovarianceMatrixUtils.fromMatrix(restrictMatrix[i].multiply(covarianceMatrix).multiply(restrictMatrix[i].transpose())));
+					mixture.setMean(restrictMatrix[i].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMean())).multiply(restrictMatrix[i].transpose()).getColumn(0));
 				}
 
+				// Second, update the support vector and the attribute link from the payload
 				final int[] oldDistrAttrList = distr.getAttributes();
 				final int[] newDistrAttrList = new int[newDimension];
 				final Interval[] newDistrSupportList = new Interval[newDimension];
-
 				int dimension = 0;
 				for (int j = 0; j < oldDimension; j++) {
 					final int oldAttrPos = oldDistrAttrList[j];
@@ -344,7 +358,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 						if (oldAttrPos == attrList[k]) {
 							newDistrAttrList[dimension] = k;
 							newDistrSupportList[dimension] = distr.getSupport()[j];
-							((ProbabilisticContinuousDouble) newAttrs[k]).setDistribution(newDistrIndex);
+							((ProbabilisticContinuousDouble) newAttrs[k]).setDistribution(d);
 
 							dimension++;
 							break;
@@ -353,7 +367,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 				}
 				distr.setAttributes(newDistrAttrList);
 				distr.setSupport(newDistrSupportList);
-				newDistrIndex++;
+				d++;
 			}
 		}
 		return this.restrictCreation(createNew, newAttrs, newDistrs);
@@ -539,6 +553,5 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		}
 		return retBuff.toString();
 	}
-	
-	
+
 }

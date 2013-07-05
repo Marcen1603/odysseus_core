@@ -75,7 +75,7 @@ public class ProbabilisticContinuousProjectPO<T extends IMetaAttribute> extends 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
 	@Override
-	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
+	protected void process_next(final ProbabilisticTuple<T> object, final int port) {
 		final ProbabilisticTuple<T> out = object.restrict(this.restrictList, false);
 		this.transfer(out);
 	}
