@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
@@ -156,7 +156,7 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 		joinPO.setTransferFunction(new TITransferArea());
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		((CombinedMergeFunction) joinPO.getMetadataMerge())
-				.add(new ProbabilisticMergeFunction());
+				.add(new ProbabilisticMetadataMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
 		LinearRegressionTISweepArea[] areas = new LinearRegressionTISweepArea[2];

@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteJoinPO;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class TDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
+public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
 	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
@@ -58,7 +58,7 @@ public class TDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
 
 		final IPredicate pred = operator.getPredicate();
 
-		final ProbabilisticDiscreteJoinPO joinPO = new ProbabilisticDiscreteJoinPO(SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(0)), SchemaUtils.getDiscreteProbabilisticAttributePos(operator.getInputSchema(1)));
+		final ProbabilisticDiscreteJoinTIPO joinPO = new ProbabilisticDiscreteJoinTIPO();
 		joinPO.setJoinPredicate(pred.clone());
 
 		// if in both input paths there is no window, we

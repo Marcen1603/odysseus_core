@@ -1,46 +1,40 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMergeFunction;
 
 /**
- * Merge function for probabilistic data streams
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <K>
+ * @param <T>
  */
-public class ProbabilisticMergeFunction implements
-		IInlineMetadataMergeFunction<ITimeIntervalProbabilistic> {
+public class ProbabilisticMergeFunction<T extends Tuple<K>, K extends ITimeIntervalProbabilistic> extends AbstractRelationalMergeFunction<T, K> implements IDataMergeFunction<T, K> {
 
-	@Override
-	public void mergeInto(final ITimeIntervalProbabilistic result,
-			final ITimeIntervalProbabilistic inLeft,
-			final ITimeIntervalProbabilistic inRight) {
-		result.setExistence(inLeft.getExistence() * inRight.getExistence());
+	public ProbabilisticMergeFunction(final int resultSchemaSize) {
+		super(resultSchemaSize);
+	}
+
+	protected ProbabilisticMergeFunction(final ProbabilisticMergeFunction<T, K> original) {
+		super(original.schemaSize);
 	}
 
 	@Override
-	public ProbabilisticMergeFunction clone() {
-		return new ProbabilisticMergeFunction();
+	public T merge(final T left, final T right, final IMetadataMergeFunction<K> metamerge, final Order order) {
+		return (T) left.merge(left, right, metamerge, order);
 	}
 
 	@Override
-	public Class<? extends IMetaAttribute> getMetadataType() {
-		return ITimeIntervalProbabilistic.class;
+	public void init() {
+	}
+
+	@Override
+	public ProbabilisticMergeFunction<T, K> clone() {
+		return new ProbabilisticMergeFunction<T, K>(this);
 	}
 
 }

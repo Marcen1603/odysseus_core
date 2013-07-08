@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TEMAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionMergeAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TAggregateProbabilisticRule;
-import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TDiscreteJoinAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteJoinAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteMapAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteSelectAORule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
@@ -40,21 +40,38 @@ public class RuleProvider implements ITransformRuleProvider {
 	public final List<IRule<?, ?>> getRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TProbabilisticAORule());
-
 		rules.add(new TProbabilisticValidatorRule());
 
-		// Operators for discrete probabilistic value processing
+		rules.addAll(this.getProbabilisticDiscreteOperatorRules());
+		rules.addAll(this.getProbabilisticContinuousOperatorRules());
+		return rules;
+	}
+
+	/**
+	 * Transformation rules for operators processing discrete probabilistic values.
+	 * 
+	 * @return Transformation rules for discrete probabilistic values
+	 */
+	public final List<IRule<?, ?>> getProbabilisticDiscreteOperatorRules() {
+		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		// Probabilistic Aggregation Functions
 		rules.add(new TAggregateProbabilisticRule());
-
 		// Select AO -> PO Rule
 		rules.add(new TProbabilisiticDiscreteSelectAORule());
 		// Map AO -> PO Rule
 		rules.add(new TProbabilisiticDiscreteMapAORule());
 		// Join AO -> PO Rule for discrete probabilistic values
-		rules.add(new TDiscreteJoinAORule());
+		rules.add(new TProbabilisiticDiscreteJoinAORule());
+		return rules;
+	}
 
-		// Operators for continuous probabilistic value processing
+	/**
+	 * Transformation rules for operators processing continuous probabilistic values.
+	 * 
+	 * @return Transformation rules for continuous probabilistic values
+	 */
+	public final List<IRule<?, ?>> getProbabilisticContinuousOperatorRules() {
+		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		// EM AO -> PO Rule
 		rules.add(new TEMAORule());
 		// LinearRegression AO -> PO Rule
@@ -70,5 +87,4 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TContinuousEquiJoinAOSetDMRule());
 		return rules;
 	}
-
 }

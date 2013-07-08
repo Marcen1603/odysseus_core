@@ -31,31 +31,24 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
 /**
- * Standard query build configuration for probabilistic data streams supporting
- * Rewrite, Query Sharing and Reconstruction.
+ * Standard query build configuration for probabilistic data streams supporting Rewrite, Query Sharing and Reconstruction.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class StandardProbabilisticQueryBuildConfiguration extends
-		AbstractQueryBuildConfiguration {
+public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
 
 	public StandardProbabilisticQueryBuildConfiguration() {
-		Set<String> dataTypes = new HashSet<String>();
+		final Set<String> dataTypes = new HashSet<String>();
 		dataTypes.add("probabilistic");
 		dataTypes.add("relational");
-		this.settings
-				.add(new ParameterTransformationConfiguration(
-						new TransformationConfiguration(dataTypes,
-								ITimeInterval.class, IProbabilistic.class,
-								ITimeIntervalProbabilistic.class)));
+		this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration(dataTypes, ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class)));
 		this.settings.add(ParameterDoRewrite.TRUE);
 		this.settings.add(ParameterPerformQuerySharing.TRUE);
 		this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
 		this.settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 
-	public StandardProbabilisticQueryBuildConfiguration(
-			final List<IQueryBuildSetting<?>> settings) {
+	public StandardProbabilisticQueryBuildConfiguration(final List<IQueryBuildSetting<?>> settings) {
 		this.settings.addAll(settings);
 	}
 

@@ -54,14 +54,10 @@ public class Probabilistic implements IProbabilistic {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.ICSVToString#csvToString(char,
-	 * java.lang.Character, java.text.NumberFormat, java.text.NumberFormat,
-	 * boolean)
+	 * @see de.uniol.inf.is.odysseus.core.ICSVToString#csvToString(char, java.lang.Character, java.text.NumberFormat, java.text.NumberFormat, boolean)
 	 */
 	@Override
-	public String csvToString(char delimiter, Character textSeperator,
-			NumberFormat floatingFormatter, NumberFormat numberFormatter,
-			boolean withMetadata) {
+	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		if (floatingFormatter != null) {
 			return floatingFormatter.format(this.existence);
 		} else {
@@ -75,7 +71,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see de.uniol.inf.is.odysseus.core.ICSVToString#getCSVHeader(char)
 	 */
 	@Override
-	public String getCSVHeader(char delimiter) {
+	public String getCSVHeader(final char delimiter) {
 		return "probability";
 	}
 
@@ -92,9 +88,7 @@ public class Probabilistic implements IProbabilistic {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#getExistence
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#getExistence ()
 	 */
 	@Override
 	public double getExistence() {
@@ -104,9 +98,7 @@ public class Probabilistic implements IProbabilistic {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#setExistence
-	 * (double)
+	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#setExistence (double)
 	 */
 	@Override
 	public void setExistence(final double existence) {
@@ -130,7 +122,7 @@ public class Probabilistic implements IProbabilistic {
 	 */
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
-		return classes;
+		return Probabilistic.classes;
 	}
 
 }

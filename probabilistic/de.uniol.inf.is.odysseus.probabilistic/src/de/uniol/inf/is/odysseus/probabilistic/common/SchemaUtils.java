@@ -196,6 +196,7 @@ public final class SchemaUtils {
 		return pos;
 	}
 
+	
 	/**
 	 * Returns all attributes from the schema that are continuous probabilistic attributes.
 	 * 

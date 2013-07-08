@@ -26,17 +26,14 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class TimeIntervalProbabilistic extends TimeInterval implements
-		ITimeIntervalProbabilistic {
+public class TimeIntervalProbabilistic extends TimeInterval implements ITimeIntervalProbabilistic {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -9030157268224460919L;
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[] {
-			ITimeInterval.class, IProbabilistic.class,
-			ITimeIntervalProbabilistic.class };
+	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class };
 	private final IProbabilistic probabilistic;
 
 	public TimeIntervalProbabilistic() {
@@ -44,8 +41,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements
 		this.probabilistic = new Probabilistic();
 	}
 
-	public TimeIntervalProbabilistic(
-			final TimeIntervalProbabilistic intervalProbabilistic) {
+	public TimeIntervalProbabilistic(final TimeIntervalProbabilistic intervalProbabilistic) {
 		super(intervalProbabilistic);
 		this.probabilistic = intervalProbabilistic.probabilistic.clone();
 	}
@@ -57,17 +53,16 @@ public class TimeIntervalProbabilistic extends TimeInterval implements
 
 	@Override
 	public String toString() {
-		return "( i= " + super.toString() + " | " + " p=" + this.probabilistic
-				+ ")";
+		return "( i= " + super.toString() + " | " + " p=" + this.probabilistic + ")";
 	}
 
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.probabilistic.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
 	@Override
-	public String getCSVHeader(char delimiter) {
+	public String getCSVHeader(final char delimiter) {
 		return super.getCSVHeader(delimiter) + delimiter + this.probabilistic.getCSVHeader(delimiter);
 	}
 
@@ -83,6 +78,6 @@ public class TimeIntervalProbabilistic extends TimeInterval implements
 
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
-		return classes;
+		return TimeIntervalProbabilistic.classes;
 	}
 }

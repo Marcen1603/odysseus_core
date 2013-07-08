@@ -15,36 +15,29 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
 
 /**
- * Probabilistic meta data for probabilistic realtional tuple.
+ * Merge function for probabilistic data streams
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public interface IProbabilistic extends IMetaAttribute, IClone {
-	/**
-	 * Gets the value of the tuple existence. The tuple existence describes the probability that the given tuple exists in the real world.
-	 * 
-	 * @return The tuple existence
-	 */
-	double getExistence();
+public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeFunction<ITimeIntervalProbabilistic> {
 
-	/**
-	 * Sets the value of the tuple existence property. The tuple existence describes the probability that the given tuple exists in the real world.
-	 * 
-	 * @param existence
-	 *            The tuple existence
-	 */
-	void setExistence(double existence);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#clone()
-	 */
 	@Override
-	public IProbabilistic clone();
+	public void mergeInto(final ITimeIntervalProbabilistic result, final ITimeIntervalProbabilistic inLeft, final ITimeIntervalProbabilistic inRight) {
+		result.setExistence(inLeft.getExistence() * inRight.getExistence());
+	}
+
+	@Override
+	public ProbabilisticMetadataMergeFunction clone() {
+		return new ProbabilisticMetadataMergeFunction();
+	}
+
+	@Override
+	public Class<? extends IMetaAttribute> getMetadataType() {
+		return ITimeIntervalProbabilistic.class;
+	}
 
 }

@@ -214,13 +214,13 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            indicates if create a copy
 	 * @return the extended tuple
 	 */
-	public ProbabilisticTuple<T> append(Object object, final NormalDistributionMixture distribution, boolean createNew) {
-		Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + 1);
+	public ProbabilisticTuple<T> append(final Object object, final NormalDistributionMixture distribution, final boolean createNew) {
+		final Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + 1);
 		newAttrs[this.attributes.length] = object;
-		NormalDistributionMixture[] newDistrs = Arrays.copyOf(this.distributions, this.distributions.length + 1);
+		final NormalDistributionMixture[] newDistrs = Arrays.copyOf(this.distributions, this.distributions.length + 1);
 		newDistrs[this.distributions.length] = distribution;
 		if (createNew) {
-			ProbabilisticTuple<T> newTuple = new ProbabilisticTuple<T>(this, newAttrs, newDistrs, this.requiresDeepClone());
+			final ProbabilisticTuple<T> newTuple = new ProbabilisticTuple<T>(this, newAttrs, newDistrs, this.requiresDeepClone());
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -256,8 +256,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		final int[] newDistributionDimensions = new int[this.distributions.length];
 
 		// Determine the new dimensions of each distribution after the restriction
-		List<Integer> restrictAttributePos = new ArrayList<Integer>(attrList.length);
-		for (int attributePos : attrList) {
+		final List<Integer> restrictAttributePos = new ArrayList<Integer>(attrList.length);
+		for (final int attributePos : attrList) {
 			final Object attribute = this.attributes[attributePos];
 			if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
 				restrictAttributePos.add(new Integer(attributePos));
@@ -272,11 +272,11 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		// For each distribution that will exist after the restriction construct a restriction matrix
 		for (int i = 0; i < this.distributions.length; i++) {
 			if (newDistributionDimensions[i] > 0) {
-				NormalDistributionMixture distribution = this.distributions[i];
+				final NormalDistributionMixture distribution = this.distributions[i];
 				restrictMatrixes[i] = MatrixUtils.createRealMatrix(newDistributionDimensions[i], distribution.getDimension());
-				List<Integer> distributionAttributes = new ArrayList<Integer>(distribution.getAttributes().length);
+				final List<Integer> distributionAttributes = new ArrayList<Integer>(distribution.getAttributes().length);
 				for (int pos = 0, newPos = 0; pos < distribution.getAttributes().length; pos++) {
-					int attributePos = distribution.getAttribute(pos);
+					final int attributePos = distribution.getAttribute(pos);
 					distributionAttributes.add(new Integer(attributePos));
 					if (restrictAttributePos.contains(new Integer(attributePos))) {
 						restrictMatrixes[i].setEntry(newPos, pos, 1.0);
@@ -384,9 +384,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	@Override
 	protected final IStreamObject<T> process_merge(final IStreamObject<T> left, final IStreamObject<T> right, final Order order) {
 		if (order == Order.LeftRight) {
-			return processMergeInternal((ProbabilisticTuple<T>) left, (ProbabilisticTuple<T>) right);
+			return this.processMergeInternal((ProbabilisticTuple<T>) left, (ProbabilisticTuple<T>) right);
 		} else {
-			return processMergeInternal((ProbabilisticTuple<T>) right, (ProbabilisticTuple<T>) left);
+			return this.processMergeInternal((ProbabilisticTuple<T>) right, (ProbabilisticTuple<T>) left);
 		}
 	}
 
@@ -419,9 +419,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			rightAttributes = right.getAttributes();
 			requiresDeepClone |= right.requiresDeepClone();
 		}
-		NormalDistributionMixture[] newDistributions = mergeDistributions(leftDistributions, rightDistributions, attributesLength);
-		Object[] newAttributes = mergeAttributes(leftAttributes, rightAttributes, distributionsLength);
-		ProbabilisticTuple<T> r = new ProbabilisticTuple<T>(newAttributes, newDistributions, requiresDeepClone);
+		final NormalDistributionMixture[] newDistributions = this.mergeDistributions(leftDistributions, rightDistributions, attributesLength);
+		final Object[] newAttributes = this.mergeAttributes(leftAttributes, rightAttributes, distributionsLength);
+		final ProbabilisticTuple<T> r = new ProbabilisticTuple<T>(newAttributes, newDistributions, requiresDeepClone);
 		return r;
 	}
 
@@ -446,7 +446,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		if (rightAttributes != null) {
 			length += rightAttributes.length;
 		}
-		Object[] newAttributes = new Object[length];
+		final Object[] newAttributes = new Object[length];
 		if (leftAttributes != null) {
 			System.arraycopy(leftAttributes, 0, newAttributes, 0, leftAttributes.length);
 		}
@@ -455,7 +455,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		}
 		for (int i = start; i < length; i++) {
 			if (newAttributes[i].getClass() == ProbabilisticContinuousDouble.class) {
-				ProbabilisticContinuousDouble value = ((ProbabilisticContinuousDouble) newAttributes[i]);
+				final ProbabilisticContinuousDouble value = ((ProbabilisticContinuousDouble) newAttributes[i]);
 				newAttributes[i] = new ProbabilisticContinuousDouble(value.getDistribution() + offset);
 			}
 		}
@@ -483,7 +483,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		if (rightDistributions != null) {
 			length += rightDistributions.length;
 		}
-		NormalDistributionMixture[] newDistributions = new NormalDistributionMixture[length];
+		final NormalDistributionMixture[] newDistributions = new NormalDistributionMixture[length];
 		if (leftDistributions != null) {
 			for (int i = 0; i < leftDistributions.length; i++) {
 				newDistributions[i] = leftDistributions[i].clone();
@@ -497,9 +497,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			// System.arraycopy(rightDistributions, 0, newDistributions, leftDistributions.length, rightDistributions.length);
 		}
 		for (int i = start; i < length; i++) {
-			int dimension = newDistributions[i].getDimension();
+			final int dimension = newDistributions[i].getDimension();
 
-			int[] newAttrsPos = new int[dimension];
+			final int[] newAttrsPos = new int[dimension];
 			for (int j = 0; j < dimension; j++) {
 				newAttrsPos[j] = newDistributions[i].getAttribute(j) + offset;
 			}
@@ -546,12 +546,12 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	@Override
 	public final String toString() {
-		StringBuffer retBuff = new StringBuffer();
+		final StringBuffer retBuff = new StringBuffer();
 		retBuff.append(super.toString());
-		if ((getDistributions() != null) && (getDistributions().length > 0)) {
+		if ((this.getDistributions() != null) && (this.getDistributions().length > 0)) {
 			retBuff.append("|DIS|");
-			for (int i = 0; i < getDistributions().length; i++) {
-				retBuff.append(getDistribution(i));
+			for (int i = 0; i < this.getDistributions().length; i++) {
+				retBuff.append(this.getDistribution(i));
 			}
 		}
 		return retBuff.toString();

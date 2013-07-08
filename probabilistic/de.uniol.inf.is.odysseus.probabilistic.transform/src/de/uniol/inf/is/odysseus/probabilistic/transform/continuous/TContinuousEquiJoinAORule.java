@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ContinuousProbabilisticEquiJoinPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -70,7 +70,7 @@ public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO
 		}
 
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
-		((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMergeFunction());
+		((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
 		this.defaultExecute(joinAO, joinPO, transformConfig, true, true);
