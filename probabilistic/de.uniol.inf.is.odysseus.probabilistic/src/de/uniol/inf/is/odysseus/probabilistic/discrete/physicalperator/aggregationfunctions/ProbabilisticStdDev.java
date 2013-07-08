@@ -25,22 +25,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
  * 
  *         FIXME Implement probabilistic StdDev aggregation function
  */
-public class ProbabilisticStdDev extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticStdDev extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -45894921488698597L;
-	//private static Map<Integer, ProbabilisticStdDev> instances = new HashMap<Integer, ProbabilisticStdDev>();
+	// private static Map<Integer, ProbabilisticStdDev> instances = new HashMap<Integer, ProbabilisticStdDev>();
 	@SuppressWarnings("unused")
 	private final int pos;
 	final private String datatype;
 
-	public static ProbabilisticStdDev getInstance(final int pos, boolean partialAggregateInput, String datatype) {
+	public static ProbabilisticStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
 		return new ProbabilisticStdDev(pos, partialAggregateInput, datatype);
 	}
 
-	protected ProbabilisticStdDev(final int pos,boolean partialAggregateInput, String datatype) {
+	protected ProbabilisticStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
 		super("STDDEV", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
@@ -48,13 +47,11 @@ public class ProbabilisticStdDev extends
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in, datatype);
+		return new ElementPartialAggregate<Tuple<?>>(in, this.datatype);
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
-			final boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
 		final ElementPartialAggregate<Tuple<?>> pa = null;
 
 		return pa;

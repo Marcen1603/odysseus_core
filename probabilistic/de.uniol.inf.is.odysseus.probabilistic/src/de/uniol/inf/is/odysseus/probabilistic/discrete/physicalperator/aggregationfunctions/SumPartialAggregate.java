@@ -21,41 +21,40 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class SumPartialAggregate<T> implements IPartialAggregate<T> {
-    double sum = 0;
+	double sum = 0;
 
-    public SumPartialAggregate() {
-        this.sum = 0.0;
-    }
+	public SumPartialAggregate() {
+		this.sum = 0.0;
+	}
 
-    public SumPartialAggregate(final double value, final double probability) {
-        this.sum = value * probability;
-    }
+	public SumPartialAggregate(final double value, final double probability) {
+		this.sum = value * probability;
+	}
 
-    public SumPartialAggregate(final double sum) {
-        this.sum = sum;
-    }
+	public SumPartialAggregate(final double sum) {
+		this.sum = sum;
+	}
 
-    public SumPartialAggregate(final SumPartialAggregate<T> sumPartialAggregate) {
-        this.sum = sumPartialAggregate.sum;
-    }
+	public SumPartialAggregate(final SumPartialAggregate<T> sumPartialAggregate) {
+		this.sum = sumPartialAggregate.sum;
+	}
 
-    public double getSum() {
-        return this.sum;
-    }
+	public double getSum() {
+		return this.sum;
+	}
 
-    public void add(final double value, final double probability) {
-        this.sum += value * probability;
-    }
+	public void add(final double value, final double probability) {
+		this.sum += value * probability;
+	}
 
-    @Override
-    public String toString() {
-        final StringBuffer ret = new StringBuffer("SumPartialAggregate (").append(this.hashCode()).append(")")
-                .append(this.sum);
-        return ret.toString();
-    }
+	@Override
+	public String toString() {
+		final StringBuffer ret = new StringBuffer("SumPartialAggregate (").append(this.hashCode()).append(")").append(this.sum);
+		return ret.toString();
+	}
 
-    @Override
-    public SumPartialAggregate<T> clone() {
-        return new SumPartialAggregate<T>(this);
-    }
+	@Override
+	public SumPartialAggregate<T> clone() {
+		return new SumPartialAggregate<T>(this);
+	}
 }

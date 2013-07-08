@@ -27,8 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticSum extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -37,7 +36,7 @@ public class ProbabilisticSum extends
 	private static Map<Integer, ProbabilisticSum> instances = new HashMap<Integer, ProbabilisticSum>();
 	private final int pos;
 
-	public static ProbabilisticSum getInstance(final int pos, boolean partialAggregateInput) {
+	public static ProbabilisticSum getInstance(final int pos, final boolean partialAggregateInput) {
 		ProbabilisticSum ret = ProbabilisticSum.instances.get(pos);
 		if (ret == null) {
 			ret = new ProbabilisticSum(pos, partialAggregateInput);
@@ -46,7 +45,7 @@ public class ProbabilisticSum extends
 		return ret;
 	}
 
-	protected ProbabilisticSum(final int pos, boolean partialAggregateInput) {
+	protected ProbabilisticSum(final int pos, final boolean partialAggregateInput) {
 		super("SUM", partialAggregateInput);
 		this.pos = pos;
 	}
@@ -55,27 +54,22 @@ public class ProbabilisticSum extends
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
 		final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
 
-		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in
-				.getAttribute(this.pos)).getValues().entrySet()) {
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.add(value.getKey(), value.getValue());
 		}
 		return pa;
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
-			final boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
 		SumPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
-			pa = new SumPartialAggregate<Tuple<?>>(
-					((SumPartialAggregate<Tuple<?>>) p).getSum());
+			pa = new SumPartialAggregate<Tuple<?>>(((SumPartialAggregate<Tuple<?>>) p).getSum());
 		} else {
 			pa = (SumPartialAggregate<Tuple<?>>) p;
 		}
 
-		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge
-				.getAttribute(this.pos)).getValues().entrySet()) {
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.add(value.getKey(), value.getValue());
 		}
 

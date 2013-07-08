@@ -28,23 +28,22 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
  * 
  *         FIXME Implement probabilistic Min aggregation function
  */
-public class ProbabilisticMin extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticMin extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4241950598685654559L;
-	//private static Map<Integer, ProbabilisticMin> instances = new HashMap<Integer, ProbabilisticMin>();
+	// private static Map<Integer, ProbabilisticMin> instances = new HashMap<Integer, ProbabilisticMin>();
 	@SuppressWarnings("unused")
 	private final int pos;
 	final private String datatype;
 
-	public static ProbabilisticMin getInstance(final int pos, boolean partialAggregateInput, String datatype) {
+	public static ProbabilisticMin getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
 
 		return new ProbabilisticMin(pos, partialAggregateInput, datatype);
 	}
 
-	protected ProbabilisticMin(final int pos, boolean partialAggregateInput, String datatype) {
+	protected ProbabilisticMin(final int pos, final boolean partialAggregateInput, final String datatype) {
 		super("MIN", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
@@ -52,13 +51,11 @@ public class ProbabilisticMin extends
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in, datatype);
+		return new ElementPartialAggregate<Tuple<?>>(in, this.datatype);
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
-			final boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
 		final ElementPartialAggregate<Tuple<?>> pa = null;
 
 		return pa;
@@ -71,7 +68,7 @@ public class ProbabilisticMin extends
 	}
 
 	private Object[] computeBins() {
-		Object[] bins = new Object[] {};
+		final Object[] bins = new Object[] {};
 		final int[] p = new int[] {};
 		final int[] b = new int[] {};
 		int i = 1;
