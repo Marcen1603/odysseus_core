@@ -35,8 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticInt
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticIntegerHandler extends
-		AbstractDataHandler<ProbabilisticInteger> {
+public class ProbabilisticIntegerHandler extends AbstractDataHandler<ProbabilisticInteger> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticIntegerHandler.types.add("ProbabilisticInteger");
@@ -52,8 +51,7 @@ public class ProbabilisticIntegerHandler extends
 	}
 
 	@Override
-	public ProbabilisticInteger readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticInteger readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
@@ -68,10 +66,9 @@ public class ProbabilisticIntegerHandler extends
 	public ProbabilisticInteger readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Integer.parseInt(discreteValue[0]),
-					Double.parseDouble(discreteValue[1]));
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
+			values.put(Integer.parseInt(discreteValue[0]), Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticInteger(values);
 	}

@@ -22,91 +22,86 @@ public class QSIMVN {
 
 	private static final double pi = Math.PI;
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		// System.out.println(Util.generatePrimes(8));
 		// >> r = [4 3 2 1;3 5 -1 1;2 -1 4 2;1 1 2 5];
 		// % >> a = -inf*[1 1 1 1 ]'; b = [ 1 2 3 4 ]';
 		// % >> [ p e ] = qsimvn( 5000, r, a, b ); disp([ p e ])
 
-		Matrix R = new Matrix(new double[][] { { 4, 3, 2, 1 }, { 3, 5, -1, 1 },
-				{ 2, -1, 4, 2 }, { 1, 1, 2, 5 } });
+		final Matrix R = new Matrix(new double[][] { { 4, 3, 2, 1 }, { 3, 5, -1, 1 }, { 2, -1, 4, 2 }, { 1, 1, 2, 5 } });
 
-		Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY },
-				{ Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY },
-				{ Double.NEGATIVE_INFINITY } });
+		final Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY } });
 
-		Matrix b = new Matrix(new double[][] { { 1 }, { 2 }, { 3 }, { 4 } });
+		final Matrix b = new Matrix(new double[][] { { 1 }, { 2 }, { 3 }, { 4 } });
 
-		QSIMVNResult ret = cumulativeProbability(5000, R, a, b);
-		System.out.println("p = " + ret.p + "   e = "
-				+ new DecimalFormat("#.###############").format(ret.e));
+		final QSIMVNResult ret = QSIMVN.cumulativeProbability(5000, R, a, b);
+		System.out.println("p = " + ret.p + "   e = " + new DecimalFormat("#.###############").format(ret.e));
 	}
 
-	public static QSIMVNResult cumulativeProbability(int m, Matrix r, Matrix a, Matrix b) {
+	public static QSIMVNResult cumulativeProbability(final int m, final Matrix r, final Matrix a, final Matrix b) {
 		// [n, n] = size(r);
 		// size of r must be quadratic i guess ...
-		int n = r.getRowDimension();
+		final int n = r.getRowDimension();
 
 		// [ ch as bs ] = chlrdr( r, a, b );
-		ChlrdrResult r2 = chlrdr(r, a, b);
-		double ct = r2.ch.get(1, 1);
-		double ai = r2.as.get(1);
-		double bi = r2.bs.get(1);
-		double cn = 37.5;
+		final ChlrdrResult r2 = QSIMVN.chlrdr(r, a, b);
+		final double ct = r2.ch.get(1, 1);
+		final double ai = r2.as.get(1);
+		final double bi = r2.bs.get(1);
+		final double cn = 37.5;
 		double c = 0;
 		double d = 0;
-		if (Math.abs(ai) < cn * ct) {
+		if (Math.abs(ai) < (cn * ct)) {
 			c = Util.phi(ai / ct);
 		} else {
 			c = (1 + Util.sign(ai)) / 2;
 		}
-		if (Math.abs(bi) < cn * ct) {
+		if (Math.abs(bi) < (cn * ct)) {
 			d = Util.phi(bi / ct);
 		} else {
 			d = (1 + Util.sign(bi)) / 2;
 		}
-		double ci = c;
-		double dci = d - ci;
+		final double ci = c;
+		final double dci = d - ci;
 		double p = 0;
 		double e = 0;
-		double ns = 12;
+		final double ns = 12;
 
-		double nv = Util.max(new double[] { m / ns, 1 }); // double nv = max( [
-															// m/ns 1 ] );
+		final double nv = Util.max(new double[] { m / ns, 1 }); // double nv = max( [
+		// m/ns 1 ] );
 		// %q = 2.^( [1:n-1]'/n) ; % Niederreiter point set generators
-		Matrix ps = Matrix.primes((int) (5 * n * Util.log(n + 1) / 4)).sqrt();
-		Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //% Richtmyer
-														// generators
+		final Matrix ps = Matrix.primes((int) ((5 * n * Util.log(n + 1)) / 4)).sqrt();
+		final Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //% Richtmyer
+															// generators
 
 		// %
 		// % Randomization loop for ns samples
 		// %
 		for (int i = 1; i <= ns; i++) { // for i = 1 : ns
 			double vi = 0;
-			Matrix xr = Matrix.rand(n - 1);
+			final Matrix xr = Matrix.rand(n - 1);
 			for (int j = 1; j <= nv; j++) {
 				// Loop for nv quasirandom points
-				Matrix x = q.matlabMultiply(j).add(xr).mod(1).matlabMultiply(2)
-						.substract(1).abs(); // % periodizing transformation
-				double vp = mvndns(n, r2.ch, ci, dci, x, r2.as, r2.bs);
-				vi = vi + (vp - vi) / j;
+				final Matrix x = q.matlabMultiply(j).add(xr).mod(1).matlabMultiply(2).substract(1).abs(); // % periodizing transformation
+				final double vp = QSIMVN.mvndns(n, r2.ch, ci, dci, x, r2.as, r2.bs);
+				vi = vi + ((vp - vi) / j);
 			}
 			d = (vi - p) / i;
 			p = p + d;
 			if (Math.abs(d) > 0) {
-				double a1 = (e / d);
-				double b2 = 2 * (i - 2) / i;
-				double v1 = Math.pow(a1, b2);
+				final double a1 = (e / d);
+				final double b2 = (2 * (i - 2)) / i;
+				final double v1 = Math.pow(a1, b2);
 				double v2 = Math.sqrt(1 + v1);
 				if (Double.isNaN(v2)) {
 					// sometimes wants to compute sqrt of negative number
 					v2 = 0;
 				}
-				double val = Math.abs(d) * v2;
+				final double val = Math.abs(d) * v2;
 				e = val;
 			} else {
 				if (i > 1) {
-					double val = Math.sqrt((i - 2) / i);
+					final double val = Math.sqrt((i - 2) / i);
 					e = e * val;
 				}
 			}
@@ -128,11 +123,10 @@ public class QSIMVN {
 	 * @param a
 	 * @param b
 	 */
-	public static double mvndns(int n, Matrix ch, double ci, double dci,
-			Matrix x, Matrix a, Matrix b) {
+	public static double mvndns(final int n, final Matrix ch, final double ci, final double dci, final Matrix x, final Matrix a, final Matrix b) {
 		// function p = mvndns( n, ch, ci, dci, x, a, b )
-		Matrix y = Matrix.zeros(n - 1);
-		double cn = 37.5;
+		final Matrix y = Matrix.zeros(n - 1);
+		final double cn = 37.5;
 		double s = 0;
 		double c = ci;
 		double dc = dci;
@@ -141,20 +135,19 @@ public class QSIMVN {
 
 		for (int i = 2; i <= n; i++) {
 
-			double xxx = c + x.get(i - 1) * dc;
+			final double xxx = c + (x.get(i - 1) * dc);
 			y.set(i - 1, Util.phinv(xxx));
-			s = ch.getSubRow(i, 1, i - 1).matlabMultiply(
-					y.getSubVector(1, i - 1));
+			s = ch.getSubRow(i, 1, i - 1).matlabMultiply(y.getSubVector(1, i - 1));
 
-			double ct = ch.get(i, i);
-			double ai = a.get(i) - s;
-			double bi = b.get(i) - s;
-			if (Math.abs(ai) < cn * ct) {
+			final double ct = ch.get(i, i);
+			final double ai = a.get(i) - s;
+			final double bi = b.get(i) - s;
+			if (Math.abs(ai) < (cn * ct)) {
 				c = Util.phi(ai / ct);
 			} else {
 				c = (1 + Util.sign(ai)) / 2;
 			}
-			if (Math.abs(bi) < cn * ct) {
+			if (Math.abs(bi) < (cn * ct)) {
 				d = Util.phi(bi / ct);
 			} else {
 				d = (1 + Util.sign(bi)) / 2;
@@ -166,22 +159,22 @@ public class QSIMVN {
 		return p;
 	}
 
-	public static ChlrdrResult chlrdr(Matrix r, Matrix a, Matrix b) {
+	public static ChlrdrResult chlrdr(final Matrix r, final Matrix a, final Matrix b) {
 		// function [ c, ap, bp ] = chlrdr( R, a, b )
 		// %
 		// % Computes permuted lower Cholesky factor c for R which may be
 		// singular,
 		// % also permuting integration limit vectors a and b.
 		// %
-		double ep = 1e-10; // % singularity tolerance;
+		final double ep = 1e-10; // % singularity tolerance;
 		// %
 		// [n, n] = size(R);
 		// size of R must be quadratic i guess ...
-		int n = r.getRowDimension();
-		Matrix c = r;
-		Matrix ap = a;
-		Matrix bp = b;
-		Matrix d = c.diag().max(0).sqrt();
+		final int n = r.getRowDimension();
+		final Matrix c = r;
+		final Matrix ap = a;
+		final Matrix bp = b;
+		final Matrix d = c.diag().max(0).sqrt();
 		for (int i = 1; i <= n; i++) {
 			if (d.get(i) > 0) {
 
@@ -192,8 +185,8 @@ public class QSIMVN {
 				bp.set(i, bp.get(i) / d.get(i));
 			}
 		}
-		Matrix y = Matrix.zeros(n, 1);
-		double sqtp = Util.sqrt(2 * pi);
+		final Matrix y = Matrix.zeros(n, 1);
+		final double sqtp = Util.sqrt(2 * QSIMVN.pi);
 		for (int k = 1; k <= n; k++) {
 			int im = k;
 			double ckk = 0;
@@ -217,8 +210,7 @@ public class QSIMVN {
 						// added at java convcersion
 						s = 0;
 					} else {
-						s = c.getSubRow(i, 1, k - 1).matlabMultiply(
-								y.getSubVector(1, k - 1));
+						s = c.getSubRow(i, 1, k - 1).matlabMultiply(y.getSubVector(1, k - 1));
 
 					}
 				}
@@ -256,22 +248,15 @@ public class QSIMVN {
 				c.setSubCol(k, k + 1, c.getSubRow(im, k + 1, im - 1).trans());
 				c.setSubRow(im, k + 1, t.trans());
 			}
-			if (ckk > ep * k) {
+			if (ckk > (ep * k)) {
 				c.setElement(k, k, ckk);
 				c.setSubRow(k, k + 1, n, 0);
 				for (int i = k + 1; i <= n; i++) {
 					c.setElement(i, k, c.get(i, k) / ckk);
-					c.setSubRow(
-							i,
-							k + 1,
-							c.getSubRow(i, k + 1, i).substract(
-									c.getSubColumn(k, k + 1, i).trans()
-											.matlabMultiply(c.get(i, k))));
+					c.setSubRow(i, k + 1, c.getSubRow(i, k + 1, i).substract(c.getSubColumn(k, k + 1, i).trans().matlabMultiply(c.get(i, k))));
 				}
 				if (Math.abs(dem) > ep) {
-					y.set(k,
-							(Util.exp(Math.pow(-am, 2) / 2) - Util.exp(Math
-									.pow(-bm, 2) / 2)) / (sqtp * dem));
+					y.set(k, (Util.exp(Math.pow(-am, 2) / 2) - Util.exp(Math.pow(-bm, 2) / 2)) / (sqtp * dem));
 				} else {
 					if (am < -10) {
 						y.set(k, bm);

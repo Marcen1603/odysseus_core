@@ -64,7 +64,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 	public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
 		final ProbabilisticDiscreteJoinTISweepArea[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
-		IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
+		final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
 		IMetadataMergeFunction metadataMerge;
 		if (transformConfig.getMetaTypes().size() > 1) {
 			metadataMerge = new CombinedMergeFunction();
@@ -72,19 +72,19 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 		} else {
 			metadataMerge = TIMergeFunction.getInstance();
 		}
-		List<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes());
+		final List<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes());
 		final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
 		final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 
-		List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
+		final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
 		leftAttributes.retainAll(attributes);
 
-		List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
+		final List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
 		rightAttributes.retainAll(attributes);
 		rightAttributes.removeAll(leftAttributes);
 
-		int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
-		int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
+		final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
+		final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
 		for (int port = 0; port < 2; port++) {
 			areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);

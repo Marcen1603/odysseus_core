@@ -38,9 +38,9 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
  */
 public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** The sweep area to hold the data. */
-	private DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
+	private final DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
 	/** The attribute positions. */
-	private int[] attributes;
+	private final int[] attributes;
 
 	/**
 	 * Creates a new EM operator.
@@ -52,7 +52,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 	 */
 	public EMPO(final int[] attributes, final int mixtures) {
 		this.attributes = attributes;
-		area = new BatchEMTISweepArea(attributes, mixtures);
+		this.area = new BatchEMTISweepArea(attributes, mixtures);
 	}
 
 	/**
@@ -84,31 +84,31 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 	 */
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		NormalDistributionMixture[] distributions = object.getDistributions();
-		ProbabilisticTuple<T> outputVal = object.clone();
+		final NormalDistributionMixture[] distributions = object.getDistributions();
+		final ProbabilisticTuple<T> outputVal = object.clone();
 		// Purge old elements out of the sweep area.
 		synchronized (this.area) {
-			area.purgeElements(object, Order.LeftRight);
+			this.area.purgeElements(object, Order.LeftRight);
 		}
 		// Insert the new element into the sweep area.
 		// Expectation-step and Maximization-step will be done during insert.
-		synchronized (area) {
-			area.insert(object);
+		synchronized (this.area) {
+			this.area.insert(object);
 		}
 
 		// Construct the multivariate distribution
-		Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
-		BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
+		final Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
+		final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
 		for (int i = 0; i < emArea.getMixtures(); i++) {
-			NormalDistribution distribution = new NormalDistribution(emArea.getMean(i).getColumn(0), CovarianceMatrixUtils.fromMatrix(emArea.getCovarianceMatrix(i)));
+			final NormalDistribution distribution = new NormalDistribution(emArea.getMean(i).getColumn(0), CovarianceMatrixUtils.fromMatrix(emArea.getCovarianceMatrix(i)));
 			components.put(distribution, emArea.getWeight(i));
 		}
-		NormalDistributionMixture mixture = new NormalDistributionMixture(components);
-		mixture.setAttributes(attributes);
-		NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+		final NormalDistributionMixture mixture = new NormalDistributionMixture(components);
+		mixture.setAttributes(this.attributes);
+		final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
 
-		for (int a = 0; a < this.attributes.length; a++) {
-			outputVal.setAttribute(this.attributes[a], new ProbabilisticContinuousDouble(distributions.length));
+		for (final int attribute : this.attributes) {
+			outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
 		}
 		// Copy the old distribution to the new tuple
 		System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);

@@ -20,7 +20,7 @@ public class QSIMVNResult {
 	public double p;
 	public double e;
 
-	public QSIMVNResult(double p, double e) {
+	public QSIMVNResult(final double p, final double e) {
 		this.p = p;
 		this.e = e;
 	}

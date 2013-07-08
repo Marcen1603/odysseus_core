@@ -39,8 +39,8 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 
 	public AbstractProbabilisticValue() {
 	}
-	
-	public AbstractProbabilisticValue(final V value, Double probability) {
+
+	public AbstractProbabilisticValue(final V value, final Double probability) {
 		this.values.put(value, probability);
 	}
 
@@ -48,7 +48,7 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 		this.values.putAll(values);
 	}
 
-	public AbstractProbabilisticValue(AbstractProbabilisticValue<V> other) {
+	public AbstractProbabilisticValue(final AbstractProbabilisticValue<V> other) {
 		for (final Entry<V, Double> value : other.values.entrySet()) {
 			this.values.put(value.getKey(), value.getValue());
 		}
@@ -88,23 +88,25 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((values == null) ? 0 : values.hashCode());
+		result = (prime * result) + ((this.values == null) ? 0 : this.values.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() == obj.getClass()) {
-			AbstractProbabilisticValue<?> other = (AbstractProbabilisticValue<?>) obj;
+		}
+		if (this.getClass() == obj.getClass()) {
+			final AbstractProbabilisticValue<?> other = (AbstractProbabilisticValue<?>) obj;
 
 			if (this.getValues().size() != other.getValues().size()) {
 				return false;
 			}
-			for (Entry<?, Double> thisEntry : this.getValues().entrySet()) {
+			for (final Entry<?, Double> thisEntry : this.getValues().entrySet()) {
 				if (!other.getValues().containsKey(thisEntry.getKey())) {
 					return false;
 				}

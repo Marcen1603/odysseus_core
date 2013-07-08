@@ -27,7 +27,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerati
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicateResult;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
@@ -85,14 +84,14 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object.getAttributes(), object.requiresDeepClone());
+		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object.getAttributes(), object.requiresDeepClone());
 		outputVal.setMetadata((T) object.getMetadata().clone());
-		ProbabilisticContinuousPredicateResult result = predicate.probabilisticEvaluate(outputVal);
+		final ProbabilisticContinuousPredicateResult result = this.predicate.probabilisticEvaluate(outputVal);
 		if (result.getProbability() > 0.0) {
-			int attributePosition = predicate.getAttributePositions()[0];
+			final int attributePosition = this.predicate.getAttributePositions()[0];
 			((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());
-			outputVal.setDistribution(attributePosition, (NormalDistributionMixture) result.getValue());
-			transfer(outputVal);
+			outputVal.setDistribution(attributePosition, result.getValue());
+			this.transfer(outputVal);
 		}
 	}
 

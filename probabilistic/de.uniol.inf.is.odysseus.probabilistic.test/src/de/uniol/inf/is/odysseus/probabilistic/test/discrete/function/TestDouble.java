@@ -36,8 +36,6 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 @Test
 public class TestDouble {
 
-
-
 	/**
 	 * Test "+"-operator for discrete values.
 	 * 
@@ -121,8 +119,6 @@ public class TestDouble {
 						SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
 	}
-
-	
 
 	@DataProvider(name = "discretePlusDouble")
 	public final Object[][] provideDiscretePlusDoubleValues() {

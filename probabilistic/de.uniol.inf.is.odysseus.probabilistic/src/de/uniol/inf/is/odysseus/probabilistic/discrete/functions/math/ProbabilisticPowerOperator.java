@@ -33,8 +33,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticPowerOperator extends
-		AbstractProbabilisticBinaryOperator<ProbabilisticDouble> {
+public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticDouble> {
 
 	/**
 	 * 
@@ -53,18 +52,15 @@ public class ProbabilisticPowerOperator extends
 
 	@Override
 	public ProbabilisticDouble getValue() {
-		AbstractProbabilisticValue<?> a = getInputValue(0);
-		double b = getNumericalInputValue(1);
-		return getValueInternal(a, b);
+		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
+		final double b = this.getNumericalInputValue(1);
+		return this.getValueInternal(a, b);
 	}
 
-	protected ProbabilisticDouble getValueInternal(
-			AbstractProbabilisticValue<?> a, double b) {
-		Map<Double, Double> values = new HashMap<Double, Double>(a.getValues()
-				.size());
-		for (Entry<?, Double> aEntry : a.getValues().entrySet()) {
-			double value = FastMath.pow(
-					((Number) aEntry.getKey()).doubleValue(), b);
+	protected ProbabilisticDouble getValueInternal(final AbstractProbabilisticValue<?> a, final double b) {
+		final Map<Double, Double> values = new HashMap<Double, Double>(a.getValues().size());
+		for (final Entry<?, Double> aEntry : a.getValues().entrySet()) {
+			final double value = FastMath.pow(((Number) aEntry.getKey()).doubleValue(), b);
 			// Does the value already exists in the map, i.e., a^0
 			if (values.containsKey(value)) {
 				values.put(value, values.get(value) + aEntry.getValue());
@@ -91,14 +87,12 @@ public class ProbabilisticPowerOperator extends
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(
-			IOperator<ProbabilisticDouble> operator) {
+	public boolean isLeftDistributiveWith(final IOperator<ProbabilisticDouble> operator) {
 		return false;
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(
-			IOperator<ProbabilisticDouble> operator) {
+	public boolean isRightDistributiveWith(final IOperator<ProbabilisticDouble> operator) {
 		return false;
 	}
 
@@ -108,26 +102,18 @@ public class ProbabilisticPowerOperator extends
 	}
 
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE,
-					SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
-					SDFProbabilisticDatatype.PROBABILISTIC_INTEGER,
-					SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
-					SDFProbabilisticDatatype.PROBABILISTIC_LONG },
-			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
-					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG },
+			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
+		if (argPos > (this.getArity() - 1)) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes[argPos];
+		return ProbabilisticPowerOperator.accTypes[argPos];
 	}
 
 }

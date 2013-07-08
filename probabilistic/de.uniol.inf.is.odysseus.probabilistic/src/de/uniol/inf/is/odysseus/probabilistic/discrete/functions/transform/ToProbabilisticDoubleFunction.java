@@ -28,8 +28,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ToProbabilisticDoubleFunction extends
-		AbstractFunction<ProbabilisticDouble> {
+public class ToProbabilisticDoubleFunction extends AbstractFunction<ProbabilisticDouble> {
 
 	/**
 	 * 
@@ -48,9 +47,9 @@ public class ToProbabilisticDoubleFunction extends
 
 	@Override
 	public ProbabilisticDouble getValue() {
-		double[][] values = (double[][]) this.getInputValue(0);
-		Map<Double, Double> valueMap = new HashMap<Double, Double>();
-		for (double[] value : values) {
+		final double[][] values = (double[][]) this.getInputValue(0);
+		final Map<Double, Double> valueMap = new HashMap<Double, Double>();
+		for (final double[] value : values) {
 			valueMap.put(value[0], value[1]);
 		}
 		return new ProbabilisticDouble(valueMap);
@@ -61,21 +60,17 @@ public class ToProbabilisticDoubleFunction extends
 		return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE,
-			SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
+		if (argPos > (this.getArity() - 1)) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ToProbabilisticDoubleFunction.accTypes;
 	}
 
 }

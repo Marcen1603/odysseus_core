@@ -46,57 +46,57 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		NormalDistributionMixture a = getDistributions(((ProbabilisticContinuousDouble) getInputValue(0)).getDistribution());
-		NormalDistributionMixture b = getDistributions(((ProbabilisticContinuousDouble) getInputValue(1)).getDistribution());
+		final NormalDistributionMixture a = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(0)).getDistribution());
+		final NormalDistributionMixture b = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(1)).getDistribution());
 		// return getValueInternal(a, b);
-		throw new RuntimeException("Operator (" + getSymbol() + ") not implemented");
+		throw new RuntimeException("Operator (" + this.getSymbol() + ") not implemented");
 	}
 
-	protected NormalDistributionMixture getValueInternal(NormalDistributionMixture a, NormalDistributionMixture b) {
-		Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>();
-		for (Map.Entry<NormalDistribution, Double> aEntry : a.getMixtures().entrySet()) {
-			RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getKey().getMean());
-			RealMatrix aCovarianceMatrix = aEntry.getKey().getCovarianceMatrix().getMatrix();
+	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
+		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>();
+		for (final Map.Entry<NormalDistribution, Double> aEntry : a.getMixtures().entrySet()) {
+			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getKey().getMean());
+			final RealMatrix aCovarianceMatrix = aEntry.getKey().getCovarianceMatrix().getMatrix();
 			RealMatrix aInverseCovarianceMatrix;
 			try {
-				CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(aCovarianceMatrix);
-				DecompositionSolver solver = choleskyDecomposition.getSolver();
+				final CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(aCovarianceMatrix);
+				final DecompositionSolver solver = choleskyDecomposition.getSolver();
 				aInverseCovarianceMatrix = solver.getInverse();
-			} catch (Exception e) {
-				LUDecomposition luDecomposition = new LUDecomposition(aCovarianceMatrix);
-				DecompositionSolver solver = luDecomposition.getSolver();
+			} catch (final Exception e) {
+				final LUDecomposition luDecomposition = new LUDecomposition(aCovarianceMatrix);
+				final DecompositionSolver solver = luDecomposition.getSolver();
 				aInverseCovarianceMatrix = solver.getInverse();
 			}
 
-			for (Map.Entry<NormalDistribution, Double> bEntry : b.getMixtures().entrySet()) {
-				RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getKey().getMean());
-				RealMatrix bCovarianceMatrix = bEntry.getKey().getCovarianceMatrix().getMatrix();
+			for (final Map.Entry<NormalDistribution, Double> bEntry : b.getMixtures().entrySet()) {
+				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getKey().getMean());
+				final RealMatrix bCovarianceMatrix = bEntry.getKey().getCovarianceMatrix().getMatrix();
 
 				RealMatrix bInverseCovarianceMatrix;
 				RealMatrix cCovarianceMatrix;
 
 				try {
-					CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(bCovarianceMatrix);
-					DecompositionSolver solver = choleskyDecomposition.getSolver();
+					final CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(bCovarianceMatrix);
+					final DecompositionSolver solver = choleskyDecomposition.getSolver();
 					bInverseCovarianceMatrix = solver.getInverse();
-				} catch (Exception e) {
-					LUDecomposition luDecomposition = new LUDecomposition(bCovarianceMatrix);
-					DecompositionSolver solver = luDecomposition.getSolver();
+				} catch (final Exception e) {
+					final LUDecomposition luDecomposition = new LUDecomposition(bCovarianceMatrix);
+					final DecompositionSolver solver = luDecomposition.getSolver();
 					bInverseCovarianceMatrix = solver.getInverse();
 				}
-				RealMatrix aInversePlusBInverse = aInverseCovarianceMatrix.add(bInverseCovarianceMatrix);
+				final RealMatrix aInversePlusBInverse = aInverseCovarianceMatrix.add(bInverseCovarianceMatrix);
 				try {
-					CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(aInversePlusBInverse);
-					DecompositionSolver solver = choleskyDecomposition.getSolver();
+					final CholeskyDecomposition choleskyDecomposition = new CholeskyDecomposition(aInversePlusBInverse);
+					final DecompositionSolver solver = choleskyDecomposition.getSolver();
 					cCovarianceMatrix = solver.getInverse();
-				} catch (Exception e) {
-					LUDecomposition luDecomposition = new LUDecomposition(aInversePlusBInverse);
-					DecompositionSolver solver = luDecomposition.getSolver();
+				} catch (final Exception e) {
+					final LUDecomposition luDecomposition = new LUDecomposition(aInversePlusBInverse);
+					final DecompositionSolver solver = luDecomposition.getSolver();
 					cCovarianceMatrix = solver.getInverse();
 				}
-				RealMatrix cMean = cCovarianceMatrix.multiply(aInverseCovarianceMatrix).multiply(aMean).add(cCovarianceMatrix.multiply(bInverseCovarianceMatrix).multiply(bMean));
+				final RealMatrix cMean = cCovarianceMatrix.multiply(aInverseCovarianceMatrix).multiply(aMean).add(cCovarianceMatrix.multiply(bInverseCovarianceMatrix).multiply(bMean));
 
-				NormalDistribution c = new NormalDistribution(cMean.getColumn(0), CovarianceMatrixUtils.fromMatrix(cCovarianceMatrix));
+				final NormalDistribution c = new NormalDistribution(cMean.getColumn(0), CovarianceMatrixUtils.fromMatrix(cCovarianceMatrix));
 				mixtures.put(c, aEntry.getValue() * bEntry.getValue());
 			}
 		}
@@ -125,27 +125,27 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(IOperator<NormalDistributionMixture> operator) {
-		return operator.getClass() == ProbabilisticPlusOperator.class || operator.getClass() == ProbabilisticMinusOperator.class || operator.getClass() == PlusOperator.class || operator.getClass() == MinusOperator.class;
+	public boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+		return (operator.getClass() == ProbabilisticPlusOperator.class) || (operator.getClass() == ProbabilisticMinusOperator.class) || (operator.getClass() == PlusOperator.class) || (operator.getClass() == MinusOperator.class);
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(IOperator<NormalDistributionMixture> operator) {
-		return operator.getClass() == ProbabilisticPlusOperator.class || operator.getClass() == ProbabilisticMinusOperator.class || operator.getClass() == PlusOperator.class || operator.getClass() == MinusOperator.class;
+	public boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+		return (operator.getClass() == ProbabilisticPlusOperator.class) || (operator.getClass() == ProbabilisticMinusOperator.class) || (operator.getClass() == PlusOperator.class) || (operator.getClass() == MinusOperator.class);
 	}
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
 			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
+		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ProbabilisticContinuousMultiplicationOperator.accTypes;
 	}
 
 }

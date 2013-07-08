@@ -25,22 +25,21 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
  * 
  *         FIXME Implement probabilistic Max aggregation function
  */
-public class ProbabilisticMax extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticMax extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8103927421161762878L;
-	//private static Map<Integer, ProbabilisticMax> instances = new HashMap<Integer, ProbabilisticMax>();
+	// private static Map<Integer, ProbabilisticMax> instances = new HashMap<Integer, ProbabilisticMax>();
 	@SuppressWarnings("unused")
 	private final int pos;
 	final private String datatype;
 
-	public static ProbabilisticMax getInstance(final int pos, boolean partialAggregateInput, String datatype) {
+	public static ProbabilisticMax getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
 		return new ProbabilisticMax(pos, partialAggregateInput, datatype);
 	}
 
-	protected ProbabilisticMax(final int pos, boolean partialAggregateInput, String datatype) {
+	protected ProbabilisticMax(final int pos, final boolean partialAggregateInput, final String datatype) {
 		super("MAX", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
@@ -48,13 +47,11 @@ public class ProbabilisticMax extends
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in, datatype);
+		return new ElementPartialAggregate<Tuple<?>>(in, this.datatype);
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
-			final boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
 		final ElementPartialAggregate<Tuple<?>> pa = null;
 
 		return pa;

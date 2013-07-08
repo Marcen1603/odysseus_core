@@ -56,14 +56,12 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * @param <K>
  * @param <T>
  */
-public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extends ProbabilisticTuple<K>>
-		extends JoinTIPO<K, T> {
+public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extends ProbabilisticTuple<K>> extends JoinTIPO<K, T> {
 
 	private final RealMatrix[] sigmas;
 	private final RealMatrix[] betas;
 	@SuppressWarnings("unused")
-	private static Logger LOG = LoggerFactory
-			.getLogger(ContinuousProbabilisticEquiJoinPO.class);
+	private static Logger LOG = LoggerFactory.getLogger(ContinuousProbabilisticEquiJoinPO.class);
 
 	public ContinuousProbabilisticEquiJoinPO() {
 		super();
@@ -71,36 +69,36 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 		this.betas = new RealMatrix[2];
 	}
 
-	public RealMatrix getBetas(int port) {
+	public RealMatrix getBetas(final int port) {
 		return this.betas[port];
 	}
 
-	public void setBetas(RealMatrix betas, int port) {
+	public void setBetas(final RealMatrix betas, final int port) {
 		this.betas[port] = betas;
 	}
 
-	public RealMatrix getSigmas(int port) {
+	public RealMatrix getSigmas(final int port) {
 		return this.sigmas[port];
 	}
 
-	public void setSigmas(RealMatrix sigmas, int port) {
+	public void setSigmas(final RealMatrix sigmas, final int port) {
 		this.sigmas[port] = sigmas;
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(final T object, final int port) {
 		// transferFunction.newElement(object, port);
 		System.out.println("New Element: " + object + " on port " + port);
 		// if (isDone()) {
 		// return;
 		// }
 
-		int otherport = port ^ 1;
-		Order order = Order.fromOrdinal(port);
+		final int otherport = port ^ 1;
+		final Order order = Order.fromOrdinal(port);
 
-		if (inOrder) {
+		if (this.inOrder) {
 			synchronized (this.areas[otherport]) {
-				areas[otherport].purgeElements(object, order);
+				this.areas[otherport].purgeElements(object, order);
 			}
 		}
 
@@ -113,18 +111,18 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 		Iterator<T> qualifies;
 		synchronized (this.areas) {
 			synchronized (this.areas[otherport]) {
-				qualifies = areas[otherport].queryCopy(object, order);
+				qualifies = this.areas[otherport].queryCopy(object, order);
 			}
-			synchronized (areas[port]) {
-				areas[port].insert(object);
+			synchronized (this.areas[port]) {
+				this.areas[port].insert(object);
 			}
 		}
 
 		while (qualifies.hasNext()) {
-			T next = qualifies.next();
-			T newElement = dataMerge.merge(object, next, metadataMerge, order);
+			final T next = qualifies.next();
+			final T newElement = this.dataMerge.merge(object, next, this.metadataMerge, order);
 
-			transferFunction.transfer(newElement);
+			this.transferFunction.transfer(newElement);
 
 			System.out.println("Transfer: " + object + " on port " + port);
 		}
@@ -134,60 +132,51 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 	 * @param args
 	 */
 	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
-		Collection<SDFAttribute> leftAttr = new ArrayList<SDFAttribute>();
+		final Collection<SDFAttribute> leftAttr = new ArrayList<SDFAttribute>();
 		leftAttr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE));
 		leftAttr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
 		leftAttr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
 
-		Collection<SDFAttribute> rightAttr = new ArrayList<SDFAttribute>();
+		final Collection<SDFAttribute> rightAttr = new ArrayList<SDFAttribute>();
 		rightAttr.add(new SDFAttribute("", "x", SDFDatatype.DOUBLE));
 		rightAttr.add(new SDFAttribute("", "y", SDFDatatype.DOUBLE));
 		rightAttr.add(new SDFAttribute("", "z", SDFDatatype.DOUBLE));
 
-		SDFSchema[] schemas = new SDFSchema[] { new SDFSchema("", leftAttr),
-				new SDFSchema("", rightAttr) };
+		final SDFSchema[] schemas = new SDFSchema[] { new SDFSchema("", leftAttr), new SDFSchema("", rightAttr) };
 
-		ContinuousProbabilisticEquiJoinPO joinPO = new ContinuousProbabilisticEquiJoinPO<>();
+		final ContinuousProbabilisticEquiJoinPO joinPO = new ContinuousProbabilisticEquiJoinPO<>();
 
-		joinPO.setJoinPredicate(new RelationalPredicate(new SDFExpression(
-				"a=x", MEP.getInstance())));
+		joinPO.setJoinPredicate(new RelationalPredicate(new SDFExpression("a=x", MEP.getInstance())));
 		joinPO.setTransferFunction(new TITransferArea());
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
-		((CombinedMergeFunction) joinPO.getMetadataMerge())
-				.add(new ProbabilisticMetadataMergeFunction());
+		((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
-		LinearRegressionTISweepArea[] areas = new LinearRegressionTISweepArea[2];
+		final LinearRegressionTISweepArea[] areas = new LinearRegressionTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
-			int otherPort = port ^ 1;
+			final int otherPort = port ^ 1;
 
-			Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+			final Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-			if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(),
-					neededAttrs, schemas[port], schemas[otherPort])) {
-				SDFSchema schema = schemas[port];
+			if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs, schemas[port], schemas[otherPort])) {
+				final SDFSchema schema = schemas[port];
 
-				List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
+				final List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
-				for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-					if (SchemaUtils.isContinuousProbabilisticAttribute(pair
-							.getE2())) {
+				for (final Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+					if (SchemaUtils.isContinuousProbabilisticAttribute(pair.getE2())) {
 						joinAttributes.add(pair.getE1());
 					}
 				}
-				int[] joinPos = SchemaUtils.getAttributePos(schema,
-						joinAttributes);
+				final int[] joinPos = SchemaUtils.getAttributePos(schema, joinAttributes);
 
-				List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
-						schema.getAttributes());
+				final List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 				viewAttributes.removeAll(joinAttributes);
-				int[] viewPos = SchemaUtils.getAttributePos(schema,
-						viewAttributes);
-				areas[port] = new LinearRegressionTISweepArea(
-						joinPos, viewPos);
+				final int[] viewPos = SchemaUtils.getAttributePos(schema, viewAttributes);
+				areas[port] = new LinearRegressionTISweepArea(joinPos, viewPos);
 				joinPO.setBetas(areas[port].getRegressionCoefficients(), port);
 			}
 
@@ -195,33 +184,28 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 
 		joinPO.setAreas(areas);
 
-		int[][] joinAttributePos = new int[2][];
+		final int[][] joinAttributePos = new int[2][];
 
 		for (int port = 0; port < 2; port++) {
-			int otherPort = port ^ 1;
-			Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
+			final int otherPort = port ^ 1;
+			final Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs = new TreeSet<Pair<SDFAttribute, SDFAttribute>>();
 
-			if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(),
-					neededAttrs, schemas[port], schemas[otherPort])) {
+			if (JoinTransformationHelper.checkPredicate(joinPO.getPredicate(), neededAttrs, schemas[port], schemas[otherPort])) {
 
-				SDFSchema schema = schemas[port];
+				final SDFSchema schema = schemas[port];
 
-				List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
+				final List<SDFAttribute> joinAttributes = new ArrayList<SDFAttribute>();
 
-				for (Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
-					if (SchemaUtils.isContinuousProbabilisticAttribute(pair
-							.getE2())) {
+				for (final Pair<SDFAttribute, SDFAttribute> pair : neededAttrs) {
+					if (SchemaUtils.isContinuousProbabilisticAttribute(pair.getE2())) {
 						joinAttributes.add(pair.getE1());
 					}
 				}
-				joinAttributePos[port] = SchemaUtils.getAttributePos(schema,
-						joinAttributes);
+				joinAttributePos[port] = SchemaUtils.getAttributePos(schema, joinAttributes);
 
-				List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(
-						schema.getAttributes());
+				final List<SDFAttribute> viewAttributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 				viewAttributes.removeAll(joinAttributes);
-				int[] viewPos = SchemaUtils.getAttributePos(schema,
-						viewAttributes);
+				final int[] viewPos = SchemaUtils.getAttributePos(schema, viewAttributes);
 			}
 
 		}
@@ -237,46 +221,39 @@ public class ContinuousProbabilisticEquiJoinPO<K extends ITimeInterval, T extend
 		// }
 		// operator.setDataMerge(mergeFunction);
 
-		Object[] attributes1 = new Object[] { 1.0, 2.0, 3.0 };
-		Object[] attributes2 = new Object[] { 4.0, 5.0, 6.0 };
-		Object[] attributes3 = new Object[] { 7.0, 8.0, 9.0 };
-		Object[] attributes4 = new Object[] { 10.0, 11.0, 12.0 };
-		Object[] attributes5 = new Object[] { 13.0, 14.0, 15.0 };
-		Object[] attributes6 = new Object[] { 16.0, 17.0, 18.0 };
-		Object[] attributes7 = new Object[] { 19.0, 20.0, 21.0 };
+		final Object[] attributes1 = new Object[] { 1.0, 2.0, 3.0 };
+		final Object[] attributes2 = new Object[] { 4.0, 5.0, 6.0 };
+		final Object[] attributes3 = new Object[] { 7.0, 8.0, 9.0 };
+		final Object[] attributes4 = new Object[] { 10.0, 11.0, 12.0 };
+		final Object[] attributes5 = new Object[] { 13.0, 14.0, 15.0 };
+		final Object[] attributes6 = new Object[] { 16.0, 17.0, 18.0 };
+		final Object[] attributes7 = new Object[] { 19.0, 20.0, 21.0 };
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple1 = new ProbabilisticTuple<>(
-				attributes1, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple1 = new ProbabilisticTuple<>(attributes1, true);
 		tuple1.setMetadata(new TimeIntervalProbabilistic());
 		tuple1.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple2 = new ProbabilisticTuple<>(
-				attributes2, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple2 = new ProbabilisticTuple<>(attributes2, true);
 		tuple2.setMetadata(new TimeIntervalProbabilistic());
 		tuple2.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple3 = new ProbabilisticTuple<>(
-				attributes3, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple3 = new ProbabilisticTuple<>(attributes3, true);
 		tuple3.setMetadata(new TimeIntervalProbabilistic());
 		tuple3.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple4 = new ProbabilisticTuple<>(
-				attributes4, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple4 = new ProbabilisticTuple<>(attributes4, true);
 		tuple4.setMetadata(new TimeIntervalProbabilistic());
 		tuple4.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple5 = new ProbabilisticTuple<>(
-				attributes5, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple5 = new ProbabilisticTuple<>(attributes5, true);
 		tuple5.setMetadata(new TimeIntervalProbabilistic());
 		tuple5.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple6 = new ProbabilisticTuple<>(
-				attributes6, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple6 = new ProbabilisticTuple<>(attributes6, true);
 		tuple6.setMetadata(new TimeIntervalProbabilistic());
 		tuple6.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		ProbabilisticTuple<ITimeIntervalProbabilistic> tuple7 = new ProbabilisticTuple<>(
-				attributes7, true);
+		final ProbabilisticTuple<ITimeIntervalProbabilistic> tuple7 = new ProbabilisticTuple<>(attributes7, true);
 		tuple7.setMetadata(new TimeIntervalProbabilistic());
 		tuple7.getMetadata().setStart(PointInTime.currentPointInTime());
 

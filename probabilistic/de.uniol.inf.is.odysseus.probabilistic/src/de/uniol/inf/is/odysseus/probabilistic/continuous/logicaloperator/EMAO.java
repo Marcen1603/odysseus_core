@@ -122,7 +122,7 @@ public class EMAO extends UnaryLogicalOp {
 	 * @return The positions of the attributes
 	 */
 	public final int[] determineAttributesList() {
-		return SchemaUtils.getAttributePos(getInputSchema(), getAttributes());
+		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getAttributes());
 	}
 
 	/*
@@ -142,16 +142,16 @@ public class EMAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public final void initialize() {
-		Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-			if (getAttributes().contains(inAttr)) {
+		final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
+			if (this.getAttributes().contains(inAttr)) {
 				outputAttributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
 			} else {
 				outputAttributes.add(inAttr);
 			}
 		}
 
-		SDFSchema outputSchema = new SDFSchema(getInputSchema().getURI(), outputAttributes);
+		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), outputAttributes);
 		this.setOutputSchema(outputSchema);
 	}
 }

@@ -36,14 +36,14 @@ public class ProbabilisticGreaterEqualsOperator extends GreaterEqualsOperator {
 			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG, SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
+		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ProbabilisticGreaterEqualsOperator.accTypes;
 	}
 
 }

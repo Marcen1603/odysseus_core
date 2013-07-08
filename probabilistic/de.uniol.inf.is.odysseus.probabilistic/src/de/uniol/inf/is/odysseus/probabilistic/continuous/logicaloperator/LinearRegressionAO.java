@@ -39,77 +39,76 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression")
 public class LinearRegressionAO extends UnaryLogicalOp {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 6621664432018792263L;
-    private List<SDFAttribute> dependentAttributes;
-    private List<SDFAttribute> explanatoryAttributes;
+	private static final long serialVersionUID = 6621664432018792263L;
+	private List<SDFAttribute> dependentAttributes;
+	private List<SDFAttribute> explanatoryAttributes;
 
-    public LinearRegressionAO() {
-        super();
-    }
+	public LinearRegressionAO() {
+		super();
+	}
 
-    public LinearRegressionAO(final LinearRegressionAO linearRegressionAO) {
-        super(linearRegressionAO);
-        this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
-        this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.explanatoryAttributes);
+	public LinearRegressionAO(final LinearRegressionAO linearRegressionAO) {
+		super(linearRegressionAO);
+		this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
+		this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.explanatoryAttributes);
 
-    }
+	}
 
-    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
 	public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
-        this.dependentAttributes = dependentAttributes;
-    }
+		this.dependentAttributes = dependentAttributes;
+	}
 
-    @GetParameter(name = "DEPENDENT")
+	@GetParameter(name = "DEPENDENT")
 	public final List<SDFAttribute> getDependentAttributes() {
-        if (this.dependentAttributes == null) {
-            this.dependentAttributes = new ArrayList<SDFAttribute>();
-        }
-        return this.dependentAttributes;
-    }
+		if (this.dependentAttributes == null) {
+			this.dependentAttributes = new ArrayList<SDFAttribute>();
+		}
+		return this.dependentAttributes;
+	}
 
-    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
 	public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
-        this.explanatoryAttributes = explanatoryAttributes;
-    }
+		this.explanatoryAttributes = explanatoryAttributes;
+	}
 
-    @GetParameter(name = "EXPLANATORY")
+	@GetParameter(name = "EXPLANATORY")
 	public final List<SDFAttribute> getExplanatoryAttributes() {
-        if (this.explanatoryAttributes == null) {
-            this.explanatoryAttributes = new ArrayList<SDFAttribute>();
-        }
-        return this.explanatoryAttributes;
-    }
+		if (this.explanatoryAttributes == null) {
+			this.explanatoryAttributes = new ArrayList<SDFAttribute>();
+		}
+		return this.explanatoryAttributes;
+	}
 
-    public final int[] determineDependentList() {
-        return SchemaUtils.getAttributePos(getInputSchema(), getDependentAttributes());
-    }
+	public final int[] determineDependentList() {
+		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getDependentAttributes());
+	}
 
-    public final int[] determineExplanatoryList() {
-        return SchemaUtils.getAttributePos(getInputSchema(), getExplanatoryAttributes());
-    }
+	public final int[] determineExplanatoryList() {
+		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getExplanatoryAttributes());
+	}
 
-
-    @Override
+	@Override
 	public final AbstractLogicalOperator clone() {
-        return new LinearRegressionAO(this);
-    }
+		return new LinearRegressionAO(this);
+	}
 
-    @Override
+	@Override
 	public final void initialize() {
-        Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        for (SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-            if (getExplanatoryAttributes().contains(inAttr)) {
-                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
-            } else {
-                attributes.add(inAttr);
-            }
-        }
-        attributes.add(new SDFAttribute("", "$coefficients", SDFDatatype.MATRIX_DOUBLE));
+		final Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
+			if (this.getExplanatoryAttributes().contains(inAttr)) {
+				attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+			} else {
+				attributes.add(inAttr);
+			}
+		}
+		attributes.add(new SDFAttribute("", "$coefficients", SDFDatatype.MATRIX_DOUBLE));
 
-        SDFSchema outputSchema = new SDFSchema(getInputSchema().getURI(), attributes);
-        this.setOutputSchema(outputSchema);
-    }
+		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), attributes);
+		this.setOutputSchema(outputSchema);
+	}
 }

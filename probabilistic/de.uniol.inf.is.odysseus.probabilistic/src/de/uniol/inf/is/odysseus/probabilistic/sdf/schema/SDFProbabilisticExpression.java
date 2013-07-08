@@ -56,7 +56,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	public SDFProbabilisticExpression(final IExpression<?> expression, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
 		super(expression, attributeResolver, parser);
-		init(expression, null, attributeResolver, parser);
+		this.init(expression, null, attributeResolver, parser);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	public SDFProbabilisticExpression(final IExpression<?> expression, final IAttributeResolver attributeResolver, final IExpressionParser parser, final String string) {
 		super(expression, attributeResolver, parser, string);
-		init(expression, null, attributeResolver, parser);
+		this.init(expression, null, attributeResolver, parser);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	public SDFProbabilisticExpression(final SDFExpression expression) {
 		super(expression);
-		init(expression.getMEPExpression(), expression.getExpressionString(), expression.getAttributeResolver(), expression.getExpressionParser());
+		this.init(expression.getMEPExpression(), expression.getExpressionString(), expression.getAttributeResolver(), expression.getExpressionParser());
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	public SDFProbabilisticExpression(final String string, final IExpressionParser parser) {
 		super(string, parser);
-		init(null, string, null, parser);
+		this.init(null, string, null, parser);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	public SDFProbabilisticExpression(final String uri, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
 		super(uri, string, attributeResolver, parser);
-		init(null, string, attributeResolver, parser);
+		this.init(null, string, attributeResolver, parser);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	private void init(final IExpression<?> expression, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
 		if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
-			setDistributions(((AbstractProbabilisticFunction<?>) this.getMEPExpression()).getDistributions());
+			this.setDistributions(((AbstractProbabilisticFunction<?>) this.getMEPExpression()).getDistributions());
 		}
 	}
 
@@ -140,7 +140,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 *            The distributions
 	 */
 	public final void bindDistributions(final NormalDistributionMixture[] newDistributions) {
-		if ((getMEPExpression() instanceof Constant) || (getMEPExpression() instanceof Variable)) {
+		if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
 			return;
 		}
 		this.distributions.clear();

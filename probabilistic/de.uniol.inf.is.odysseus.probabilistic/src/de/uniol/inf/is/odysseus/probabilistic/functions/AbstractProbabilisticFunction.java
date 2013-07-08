@@ -22,21 +22,20 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 
-public abstract class AbstractProbabilisticFunction<T> extends
-		AbstractFunction<T> {
+public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<T> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1726038091049996390L;
-	private List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
+	private final List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
 
 	/**
 	 * 
 	 * @param distributionIndex
 	 * @return
 	 */
-	public NormalDistributionMixture getDistributions(int distributionIndex) {
+	public NormalDistributionMixture getDistributions(final int distributionIndex) {
 		return this.distributions.get(distributionIndex);
 	}
 

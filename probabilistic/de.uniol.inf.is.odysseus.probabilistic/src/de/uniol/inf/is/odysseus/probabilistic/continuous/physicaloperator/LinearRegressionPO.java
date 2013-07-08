@@ -42,7 +42,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 	 *            The list of explanatory attribute positions
 	 */
 	public LinearRegressionPO(final int[] dependentList, final int[] explanatoryList) {
-		area = new LinearRegressionTISweepArea(dependentList, explanatoryList);
+		this.area = new LinearRegressionTISweepArea(dependentList, explanatoryList);
 	}
 
 	/**
@@ -74,27 +74,27 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		synchronized (area) {
-			area.insert(object);
+		synchronized (this.area) {
+			this.area.insert(object);
 		}
-		if (area.isEstimable()) {
-			RealMatrix regressionCoefficients = area.getRegressionCoefficients();
-			RealMatrix residual = area.getResidual();
+		if (this.area.isEstimable()) {
+			final RealMatrix regressionCoefficients = this.area.getRegressionCoefficients();
+			final RealMatrix residual = this.area.getResidual();
 
-			NormalDistributionMixture mixture = new NormalDistributionMixture(new double[residual.getColumnDimension()], CovarianceMatrixUtils.fromMatrix(residual));
-			mixture.setAttributes(area.getExplanatoryAttributePos());
+			final NormalDistributionMixture mixture = new NormalDistributionMixture(new double[residual.getColumnDimension()], CovarianceMatrixUtils.fromMatrix(residual));
+			mixture.setAttributes(this.area.getExplanatoryAttributePos());
 
-			NormalDistributionMixture[] distributions = object.getDistributions();
-			Object[] attributes = object.getAttributes();
+			final NormalDistributionMixture[] distributions = object.getDistributions();
+			final Object[] attributes = object.getAttributes();
 
-			ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[attributes.length + 1], new NormalDistributionMixture[distributions.length + 1], object.requiresDeepClone());
+			final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[attributes.length + 1], new NormalDistributionMixture[distributions.length + 1], object.requiresDeepClone());
 			outputVal.setDistribution(distributions.length, mixture);
 
 			System.arraycopy(distributions, 0, outputVal.getDistributions(), 0, distributions.length);
 			System.arraycopy(object.getAttributes(), 0, outputVal.getAttributes(), 0, object.getAttributes().length);
 
-			for (int i = 0; i < area.getExplanatoryAttributePos().length; i++) {
-				int pos = area.getExplanatoryAttributePos()[i];
+			for (int i = 0; i < this.area.getExplanatoryAttributePos().length; i++) {
+				final int pos = this.area.getExplanatoryAttributePos()[i];
 				outputVal.setAttribute(pos, new ProbabilisticContinuousDouble(distributions.length));
 			}
 			outputVal.setAttribute(object.getAttributes().length, regressionCoefficients.getData());

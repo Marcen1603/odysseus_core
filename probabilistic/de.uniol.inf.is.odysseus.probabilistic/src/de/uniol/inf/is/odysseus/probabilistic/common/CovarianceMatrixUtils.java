@@ -37,7 +37,7 @@ public final class CovarianceMatrixUtils {
 	 * @return The matrix
 	 */
 	public static RealMatrix toMatrix(final CovarianceMatrix triangleMatrix) {
-		int size = triangleMatrix.size();
+		final int size = triangleMatrix.size();
 		final RealMatrix matrix = MatrixUtils.createRealMatrix(size, size);
 		int left = 0;
 		int right = size;
@@ -59,17 +59,17 @@ public final class CovarianceMatrixUtils {
 	 * @return The triangle covariance matrix
 	 */
 	public static CovarianceMatrix fromMatrix(final RealMatrix matrix) {
-		int dimension = matrix.getColumnDimension();
+		final int dimension = matrix.getColumnDimension();
 		int left = 0;
 		int right = dimension;
-		double[] entries = new double[CovarianceMatrixUtils.getCovarianceTriangleSizeFromDimension(dimension)];
+		final double[] entries = new double[CovarianceMatrixUtils.getCovarianceTriangleSizeFromDimension(dimension)];
 		for (int i = 0; i < dimension; i++) {
 			final double[] row = matrix.getRow(i);
 			System.arraycopy(row, i, entries, left, right);
 			left += right;
 			right--;
 		}
-		CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
+		final CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
 		return covarianceMatrix;
 	}
 
@@ -92,7 +92,7 @@ public final class CovarianceMatrixUtils {
 	 * @return The dimension of the covariance matrix
 	 */
 	public static int getCovarianceDimensionFromTriangleSize(final int triangleSize) {
-		return (int) ((1.0 / 2.0) * (Math.sqrt(INVERSE_SUM * triangleSize + 1.0) - 1.0));
+		return (int) ((1.0 / 2.0) * (Math.sqrt((CovarianceMatrixUtils.INVERSE_SUM * triangleSize) + 1.0) - 1.0));
 	}
 
 	/**

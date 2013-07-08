@@ -24,27 +24,30 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttrib
 
 public class ProbabilisticViewableSDFAttribute extends ViewableSDFAttribute {
 
-    public ProbabilisticViewableSDFAttribute(final SDFAttribute attribute, final String typeName, final int index, final int port) {
-        super(attribute, typeName, index, port);
-    }
+	public ProbabilisticViewableSDFAttribute(final SDFAttribute attribute,
+			final String typeName, final int index, final int port) {
+		super(attribute, typeName, index, port);
+	}
 
-    @Override
-    public Object evaluate(final Tuple<? extends IMetaAttribute> tuple) {
-        final ProbabilisticTuple<?> obj = (ProbabilisticTuple<?>) tuple;
+	@Override
+	public Object evaluate(final Tuple<? extends IMetaAttribute> tuple) {
+		final ProbabilisticTuple<?> obj = (ProbabilisticTuple<?>) tuple;
 
-        final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) this.getSDFDatatype();
+		final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) this
+				.getSDFDatatype();
 
-        if (type.isContinuous()) {
-            final ProbabilisticContinuousDouble attr = (ProbabilisticContinuousDouble) obj.getAttribute(this.index);
-            return obj.getDistribution(attr.getDistribution());
-        } else if (type.isDiscrete()) {
-            return obj.getAttribute(this.index);
-        }
+		if (type.isContinuous()) {
+			final ProbabilisticContinuousDouble attr = (ProbabilisticContinuousDouble) obj
+					.getAttribute(this.index);
+			return obj.getDistribution(attr.getDistribution());
+		} else if (type.isDiscrete()) {
+			return obj.getAttribute(this.index);
+		}
 
-        return null;
-    }
-    
-    public int getIndex() {
-        return index;
-    }
+		return null;
+	}
+
+	public int getIndex() {
+		return this.index;
+	}
 }

@@ -24,15 +24,16 @@ import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
 
-public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute> extends AbstractChart<T, M>{
+public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute>
+		extends AbstractChart<T, M> {
 
 	public AbstractProbabilityChart() {
 		// We need this
 	}
-	
+
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void initWithOperator(IPhysicalOperator observingOperator) {
+	public void initWithOperator(final IPhysicalOperator observingOperator) {
 		// create connection
 		if (observingOperator instanceof DefaultStreamConnection<?>) {
 			this.connection = (IStreamConnection<IStreamObject<?>>) observingOperator;
@@ -41,17 +42,17 @@ public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute> exte
 		}
 
 		// initConnection
-		for (ISubscription<? extends ISource<?>> s : this.connection
+		for (final ISubscription<? extends ISource<?>> s : this.connection
 				.getSubscriptions()) {
 			this.viewSchema.put(s.getSinkInPort(),
 					new ProbabilisticViewSchema<T>(s.getSchema(), s.getTarget()
 							.getMetaAttributeSchema(), s.getSinkInPort()));
 		}
-		if (validate()) {
+		if (this.validate()) {
 			this.connection.addStreamElementListener(this);
 			this.connection.connect();
-			chartSettingsChanged();
-			
+			this.chartSettingsChanged();
+
 		}
 	}
 }

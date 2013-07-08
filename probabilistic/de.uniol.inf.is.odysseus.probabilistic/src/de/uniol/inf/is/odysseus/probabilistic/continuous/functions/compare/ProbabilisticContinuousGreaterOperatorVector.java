@@ -23,14 +23,14 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
  */
 public class ProbabilisticContinuousGreaterOperatorVector extends ProbabilisticContinuousGreaterEqualsOperatorVector {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = -2524539771244683448L;
+	private static final long serialVersionUID = -2524539771244683448L;
 
-    @Override
-    public String getSymbol() {
-        return ">";
-    }
+	@Override
+	public String getSymbol() {
+		return ">";
+	}
 
 }

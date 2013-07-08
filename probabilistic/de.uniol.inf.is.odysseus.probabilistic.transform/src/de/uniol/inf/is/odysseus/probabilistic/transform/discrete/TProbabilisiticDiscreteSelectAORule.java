@@ -54,7 +54,7 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
 		IPhysicalOperator selectPO;
 
-		// TODO Split into conjunctivePredicates
+		// TODO Split into conjunctive predicates
 		// RelationalPredicate predicate = ((RelationalPredicate) selectAO.getPredicate());
 		//
 		// List<IPredicate> conjunctivePredicates = predicate.splitPredicate();
@@ -63,7 +63,7 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 		// }
 		final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(((RelationalPredicate) selectAO.getPredicate()).getExpression());
 
-		int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), SchemaUtils.getDiscreteProbabilisticAttributes(expression.getAllAttributes()));
+		final int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), SchemaUtils.getDiscreteProbabilisticAttributes(expression.getAllAttributes()));
 		selectPO = new ProbabilisticDiscreteSelectPO(selectAO.getPredicate(), probabilisticAttributePos);
 		if (selectAO.getHeartbeatRate() > 0) {
 			((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));

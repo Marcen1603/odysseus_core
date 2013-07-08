@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticDoubleToLongFunction extends
-		AbstractProbabilisticFunction<ProbabilisticLong> {
+public class ProbabilisticDoubleToLongFunction extends AbstractProbabilisticFunction<ProbabilisticLong> {
 
 	/**
 	 * 
@@ -50,9 +49,8 @@ public class ProbabilisticDoubleToLongFunction extends
 
 	@Override
 	public ProbabilisticLong getValue() {
-		Map<Long, Double> values = new HashMap<Long, Double>();
-		for (Entry<?, Double> value : ((AbstractProbabilisticValue<?>) getInputValue(0))
-				.getValues().entrySet()) {
+		final Map<Long, Double> values = new HashMap<Long, Double>();
+		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
 			values.put(((Number) value.getKey()).longValue(), value.getValue());
 		}
 		return new ProbabilisticLong(values);
@@ -66,16 +64,14 @@ public class ProbabilisticDoubleToLongFunction extends
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
-			throw new IllegalArgumentException(
-					"doubleToLong has only 1 argument.");
+			throw new IllegalArgumentException("doubleToLong has only 1 argument.");
 		}
-		return accTypes;
+		return ProbabilisticDoubleToLongFunction.accTypes;
 	}
 
 }

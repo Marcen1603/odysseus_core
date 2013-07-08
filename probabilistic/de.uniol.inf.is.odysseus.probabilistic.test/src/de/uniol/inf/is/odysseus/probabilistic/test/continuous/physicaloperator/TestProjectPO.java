@@ -21,7 +21,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 	}
 
 	@Override
-	public void transfer(Tuple<IMetaAttribute> object) {
+	public void transfer(final Tuple<IMetaAttribute> object) {
 		System.out.println("Out: " + object);
 	}
 
@@ -33,11 +33,12 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	@DataProvider(name = "tuple")
 	public final Object[][] provideTuple() {
-		return new Object[][] { { provideSimpleTuple() },
-				{ provideUnivariateTuple() }, { provideMultivariateTuple1() },
-				{ provideMultivariateTuple2() },
-				{ provideMultivariateTuple3() },
-				{ provideMultivariateTuple4() } };
+		return new Object[][] { { this.provideSimpleTuple() },
+				{ this.provideUnivariateTuple() },
+				{ this.provideMultivariateTuple1() },
+				{ this.provideMultivariateTuple2() },
+				{ this.provideMultivariateTuple3() },
+				{ this.provideMultivariateTuple4() } };
 	}
 
 	private IStreamObject<?> provideSimpleTuple() {
@@ -149,9 +150,9 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 		return tuple;
 	}
 
-	private void appendDistribution(ProbabilisticTuple<?> tuple,
-			NormalDistributionMixture mixture) {
-		int distributionIndex = tuple.getDistributions().length;
+	private void appendDistribution(final ProbabilisticTuple<?> tuple,
+			final NormalDistributionMixture mixture) {
+		final int distributionIndex = tuple.getDistributions().length;
 		tuple.append(new ProbabilisticContinuousDouble(distributionIndex),
 				mixture, false);
 	}

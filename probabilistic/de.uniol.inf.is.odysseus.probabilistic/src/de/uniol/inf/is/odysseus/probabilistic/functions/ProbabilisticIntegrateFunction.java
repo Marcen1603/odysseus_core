@@ -28,45 +28,32 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticIntegrateFunction extends
-		ProbabilisticIntegrateMultivariateFunction {
+public class ProbabilisticIntegrateFunction extends ProbabilisticIntegrateMultivariateFunction {
 
 	/**
      * 
      */
 	private static final long serialVersionUID = 144107943090837242L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
-			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
-					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
-			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
-					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
+			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
 
 	@Override
 	public Double getValue() {
-		ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this
-				.getInputValue(0);
-		RealVector lowerBound = MatrixUtils
-				.createRealVector(new double[] { getNumericalInputValue(1) });
-		RealVector upperBound = MatrixUtils
-				.createRealVector(new double[] { getNumericalInputValue(2) });
-		return getValueInternal(continuousDouble, lowerBound, upperBound);
+		final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
+		final RealVector lowerBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(1) });
+		final RealVector upperBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(2) });
+		return this.getValueInternal(continuousDouble, lowerBound, upperBound);
 	}
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(
-					this.getSymbol()
-							+ " has only "
-							+ this.getArity()
-							+ " argument: A distribution, a covariance matrix and the lower and upper support.");
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution, a covariance matrix and the lower and upper support.");
 		}
-		return accTypes[argPos];
+		return ProbabilisticIntegrateFunction.accTypes[argPos];
 	}
 
 }

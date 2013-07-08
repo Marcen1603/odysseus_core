@@ -89,9 +89,9 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 		try {
 			/** Boolean functions for discrete probabilistic values */
-//			functions.add(new ProbabilisticAndOperator());
-//			functions.add(new ProbabilisticOrOperator());
-//			functions.add(new ProbabilisticNotOperator());
+			// functions.add(new ProbabilisticAndOperator());
+			// functions.add(new ProbabilisticOrOperator());
+			// functions.add(new ProbabilisticNotOperator());
 
 			functions.add(new ProbabilisticEqualsOperator());
 			functions.add(new ProbabilisticSmallerEqualsOperator());
@@ -139,8 +139,8 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticContinuousEqualsOperatorVector());
 			// ProbabilisticFunctionProvider.LOG.info(String.format(
 			// "Register functions: %s", functions));
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+		} catch (final Exception e) {
+			ProbabilisticFunctionProvider.LOG.error(e.getMessage(), e);
 		}
 		return functions;
 	}

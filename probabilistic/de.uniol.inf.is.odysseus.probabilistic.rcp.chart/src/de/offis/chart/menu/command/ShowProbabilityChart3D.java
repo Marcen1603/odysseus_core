@@ -26,18 +26,20 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.AbstractCom
 
 public class ShowProbabilityChart3D extends AbstractCommand {
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IPhysicalOperator op = super.getSelectedOperator(event);
-		
-		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		final IPhysicalOperator op = super.getSelectedOperator(event);
+
+		final IWorkbenchPage activePage = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
 		try {
-			ProbabilityChart3D view = (ProbabilityChart3D)activePage.showView("de.offis.chart.charts.probabilitychart3d", "probabilitychart3d", IWorkbenchPage.VIEW_ACTIVATE);
+			final ProbabilityChart3D view = (ProbabilityChart3D) activePage
+					.showView("de.offis.chart.charts.probabilitychart3d",
+							"probabilitychart3d", IWorkbenchPage.VIEW_ACTIVATE);
 			view.initWithOperator(op);
-		} catch (PartInitException e) {
+		} catch (final PartInitException e) {
 			e.printStackTrace();
-		}			
-		
-		
+		}
+
 		return null;
 	}
 }

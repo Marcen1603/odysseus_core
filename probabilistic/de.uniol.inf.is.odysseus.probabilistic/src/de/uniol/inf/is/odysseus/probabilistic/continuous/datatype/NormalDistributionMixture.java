@@ -136,10 +136,10 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 			sb.append(mixture.getKey().toString()).append(":").append(mixture.getValue());
 		}
 		sb.append("),[");
-		for (Interval sup : support) {
+		for (final Interval sup : this.support) {
 			sb.append(sup);
 		}
-		sb.append("],").append(scale);
+		sb.append("],").append(this.scale);
 		return sb.toString();
 	}
 

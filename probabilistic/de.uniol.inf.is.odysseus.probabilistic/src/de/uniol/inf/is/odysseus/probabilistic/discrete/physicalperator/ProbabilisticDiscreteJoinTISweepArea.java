@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilisti
  * 
  */
 public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabilistic, T extends Tuple<K>> extends JoinTISweepArea<T> implements Cloneable {
-	private int[] leftProbabilisticAttributePos;
-	private int[] rightProbabilisticAttributePos;
+	private final int[] leftProbabilisticAttributePos;
+	private final int[] rightProbabilisticAttributePos;
 	protected IDataMergeFunction<? super T, K> dataMerge;
 	protected IMetadataMergeFunction<K> metadataMerge;
 
@@ -30,7 +30,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * @param leftProbabilisticAttributePos
 	 * @param rightProbabilisticAttributePos
 	 */
-	public ProbabilisticDiscreteJoinTISweepArea(int[] leftProbabilisticAttributePos, int[] rightProbabilisticAttributePos, IDataMergeFunction<? super T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge) {
+	public ProbabilisticDiscreteJoinTISweepArea(final int[] leftProbabilisticAttributePos, final int[] rightProbabilisticAttributePos, final IDataMergeFunction<? super T, K> dataMerge, final IMetadataMergeFunction<K> metadataMerge) {
 		super();
 		this.leftProbabilisticAttributePos = leftProbabilisticAttributePos;
 		this.rightProbabilisticAttributePos = rightProbabilisticAttributePos;
@@ -42,7 +42,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * 
 	 * @param area
 	 */
-	public ProbabilisticDiscreteJoinTISweepArea(ProbabilisticDiscreteJoinTISweepArea area) {
+	public ProbabilisticDiscreteJoinTISweepArea(final ProbabilisticDiscreteJoinTISweepArea area) {
 		super();
 		this.leftProbabilisticAttributePos = area.leftProbabilisticAttributePos.clone();
 		this.rightProbabilisticAttributePos = area.rightProbabilisticAttributePos.clone();
@@ -53,7 +53,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea#query(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
-	public Iterator<T> query(T element, Order order) {
+	public Iterator<T> query(final T element, final Order order) {
 		return new ProbabilisticDiscreteQueryIterator(element, order);
 	}
 
@@ -62,24 +62,24 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea#queryCopy(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
-	public Iterator<T> queryCopy(T element, Order order) {
-		LinkedList<T> result = new LinkedList<T>();
+	public Iterator<T> queryCopy(final T element, final Order order) {
+		final LinkedList<T> result = new LinkedList<T>();
 		synchronized (this.getElements()) {
 			T world;
 			switch (order) {
 			case LeftRight:
-				for (T next : this.getElements()) {
+				for (final T next : this.getElements()) {
 
-					world = evaluateWorld(getQueryPredicate(), element, next, leftProbabilisticAttributePos, rightProbabilisticAttributePos, order);
+					world = this.evaluateWorld(this.getQueryPredicate(), element, next, this.leftProbabilisticAttributePos, this.rightProbabilisticAttributePos, order);
 					if (world.getMetadata().getExistence() > 0.0) {
 						result.add(world);
 					}
 				}
 				break;
 			case RightLeft:
-				for (T next : this.getElements()) {
+				for (final T next : this.getElements()) {
 
-					world = evaluateWorld(getQueryPredicate(), next, element, rightProbabilisticAttributePos, leftProbabilisticAttributePos, order);
+					world = this.evaluateWorld(this.getQueryPredicate(), next, element, this.rightProbabilisticAttributePos, this.leftProbabilisticAttributePos, order);
 					if (world.getMetadata().getExistence() > 0.0) {
 						result.add(world);
 					}
@@ -96,21 +96,21 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * 
 	 */
 	private class ProbabilisticDiscreteQueryIterator implements Iterator<T> {
-		private Iterator<T> iter;
+		private final Iterator<T> iter;
 
 		T currentElement;
 
-		private Order order;
+		private final Order order;
 
-		private T element;
+		private final T element;
 
 		/**
 		 * 
 		 * @param element
 		 * @param order
 		 */
-		public ProbabilisticDiscreteQueryIterator(T element, Order order) {
-			this.iter = getElements().iterator();
+		public ProbabilisticDiscreteQueryIterator(final T element, final Order order) {
+			this.iter = ProbabilisticDiscreteJoinTISweepArea.this.getElements().iterator();
 			this.order = order;
 			this.element = element;
 		}
@@ -125,11 +125,12 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 				return true;
 			}
 
-			switch (order) {
+			switch (this.order) {
 			case LeftRight:
-				while (iter.hasNext()) {
-					T next = iter.next();
-					T world = evaluateWorld(getQueryPredicate(), element, next, leftProbabilisticAttributePos, rightProbabilisticAttributePos, order);
+				while (this.iter.hasNext()) {
+					final T next = this.iter.next();
+					final T world = ProbabilisticDiscreteJoinTISweepArea.this.evaluateWorld(ProbabilisticDiscreteJoinTISweepArea.this.getQueryPredicate(), this.element, next, ProbabilisticDiscreteJoinTISweepArea.this.leftProbabilisticAttributePos,
+							ProbabilisticDiscreteJoinTISweepArea.this.rightProbabilisticAttributePos, this.order);
 					if (world.getMetadata().getExistence() > 0.0) {
 						this.currentElement = world;
 						return true;
@@ -137,9 +138,10 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 				}
 				break;
 			case RightLeft:
-				while (iter.hasNext()) {
-					T next = iter.next();
-					T world = evaluateWorld(getQueryPredicate(), next, element, rightProbabilisticAttributePos, leftProbabilisticAttributePos, order);
+				while (this.iter.hasNext()) {
+					final T next = this.iter.next();
+					final T world = ProbabilisticDiscreteJoinTISweepArea.this.evaluateWorld(ProbabilisticDiscreteJoinTISweepArea.this.getQueryPredicate(), next, this.element, ProbabilisticDiscreteJoinTISweepArea.this.rightProbabilisticAttributePos,
+							ProbabilisticDiscreteJoinTISweepArea.this.leftProbabilisticAttributePos, this.order);
 					if (world.getMetadata().getExistence() > 0.0) {
 						this.currentElement = world;
 						return true;
@@ -158,15 +160,15 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 		@Override
 		public T next() {
 			if (this.currentElement != null) {
-				T tmpElement = this.currentElement;
+				final T tmpElement = this.currentElement;
 				this.currentElement = null;
 				return tmpElement;
 			}
-			if (!hasNext()) {
+			if (!this.hasNext()) {
 				throw new NoSuchElementException();
 			}
 
-			return next();
+			return this.next();
 		}
 
 		/**
@@ -191,22 +193,22 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private T evaluateWorld(IPredicate<? super T> predicate, T left, T right, int[] leftProbabilisticAttributePos, int[] rightProbabilisticAttributePos, Order order) {
+	private T evaluateWorld(final IPredicate<? super T> predicate, final T left, final T right, final int[] leftProbabilisticAttributePos, final int[] rightProbabilisticAttributePos, final Order order) {
 		final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, Order.LeftRight);
 		final double[] outSum = new double[leftProbabilisticAttributePos.length + rightProbabilisticAttributePos.length];
-		for (int i = 0; i < rightProbabilisticAttributePos.length; i++) {
-			((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePos[i])).getValues().clear();
+		for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePos) {
+			((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePo)).getValues().clear();
 		}
-		for (int i = 0; i < leftProbabilisticAttributePos.length; i++) {
-			((AbstractProbabilisticValue<?>) outputVal.getAttribute(leftProbabilisticAttributePos[i])).getValues().clear();
+		for (final int leftProbabilisticAttributePo : leftProbabilisticAttributePos) {
+			((AbstractProbabilisticValue<?>) outputVal.getAttribute(leftProbabilisticAttributePo)).getValues().clear();
 		}
 
 		// Dummy tuple to hold the different worlds during evaluation
-		T leftSelectObject = (T) left.clone();
-		Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePos);
+		final T leftSelectObject = (T) left.clone();
+		final Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePos);
 
-		T rightSelectObject = (T) right.clone();
-		Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePos);
+		final T rightSelectObject = (T) right.clone();
+		final Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePos);
 
 		// Evaluate each world and store the possible ones in the output tuple
 		for (int lw = 0; lw < leftWorlds.length; lw++) {
@@ -220,20 +222,20 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 
 				if (predicate.evaluate(leftSelectObject, rightSelectObject)) {
 					for (int i = 0; i < rightProbabilisticAttributePos.length; i++) {
-						AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) right.getAttribute(rightProbabilisticAttributePos[i]);
-						AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePos[i]);
-						double probability = inAttribute.getValues().get(rightWorlds[rw][i]);
-						if (!outAttribute.getValues().containsKey((Double) rightWorlds[rw][i])) {
+						final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) right.getAttribute(rightProbabilisticAttributePos[i]);
+						final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePos[i]);
+						final double probability = inAttribute.getValues().get(rightWorlds[rw][i]);
+						if (!outAttribute.getValues().containsKey(rightWorlds[rw][i])) {
 							outAttribute.getValues().put((Double) rightWorlds[rw][i], probability);
 							outSum[leftProbabilisticAttributePos.length + i] += probability;
 						}
 					}
 
 					for (int i = 0; i < leftProbabilisticAttributePos.length; i++) {
-						AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) left.getAttribute(leftProbabilisticAttributePos[i]);
-						AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(leftProbabilisticAttributePos[i]);
-						double probability = inAttribute.getValues().get(leftWorlds[lw][i]);
-						if (!outAttribute.getValues().containsKey((Double) leftWorlds[lw][i])) {
+						final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) left.getAttribute(leftProbabilisticAttributePos[i]);
+						final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(leftProbabilisticAttributePos[i]);
+						final double probability = inAttribute.getValues().get(leftWorlds[lw][i]);
+						if (!outAttribute.getValues().containsKey(leftWorlds[lw][i])) {
 							outAttribute.getValues().put((Double) leftWorlds[lw][i], probability);
 							outSum[i] += probability;
 						}
@@ -242,8 +244,8 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 			}
 		}
 		double jointProbability = 1.0;
-		for (int i = 0; i < outSum.length; i++) {
-			jointProbability *= outSum[i];
+		for (final double element : outSum) {
+			jointProbability *= element;
 		}
 		outputVal.getMetadata().setExistence(jointProbability);
 		return outputVal;

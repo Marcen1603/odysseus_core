@@ -21,8 +21,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalThreadedMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
@@ -61,7 +59,7 @@ public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule
 		}
 		mapPO = new ProbabilisticDiscreteMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
 
-		defaultExecute(mapAO, mapPO, transformConfig, true, true);
+		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	/*
@@ -73,7 +71,7 @@ public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
 		if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			boolean isProbabilisticDiscrete = false;
-			for (SDFExpression expr : operator.getExpressions()) {
+			for (final SDFExpression expr : operator.getExpressions()) {
 				if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {
 					isProbabilisticDiscrete = true;
 				}

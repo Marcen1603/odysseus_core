@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.EqualsOperator2;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
@@ -23,13 +20,13 @@ public class ProbabilisticEqualsOperator extends EqualsOperator2 {
 			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG, SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
+		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ProbabilisticEqualsOperator.accTypes;
 	}
 }

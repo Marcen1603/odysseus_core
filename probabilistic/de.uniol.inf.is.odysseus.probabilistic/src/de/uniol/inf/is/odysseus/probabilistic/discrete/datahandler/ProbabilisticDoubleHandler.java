@@ -33,8 +33,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticDoubleHandler extends
-		AbstractDataHandler<ProbabilisticDouble> {
+public class ProbabilisticDoubleHandler extends AbstractDataHandler<ProbabilisticDouble> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticDoubleHandler.types.add("ProbabilisticDouble");
@@ -50,8 +49,7 @@ public class ProbabilisticDoubleHandler extends
 	}
 
 	@Override
-	public ProbabilisticDouble readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Double, Double> values = new HashMap<Double, Double>();
 		for (int i = 0; i < length; i++) {
@@ -66,10 +64,9 @@ public class ProbabilisticDoubleHandler extends
 	public ProbabilisticDouble readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Double, Double> values = new HashMap<Double, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Double.parseDouble(discreteValue[0]),
-					Double.parseDouble(discreteValue[1]));
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
+			values.put(Double.parseDouble(discreteValue[0]), Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticDouble(values);
 	}
@@ -103,7 +100,6 @@ public class ProbabilisticDoubleHandler extends
 
 	@Override
 	public int memSize(final Object attribute) {
-		return (((ProbabilisticDouble) attribute).getValues().size()
-				* Double.SIZE * 2) / 8;
+		return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
 	}
 }

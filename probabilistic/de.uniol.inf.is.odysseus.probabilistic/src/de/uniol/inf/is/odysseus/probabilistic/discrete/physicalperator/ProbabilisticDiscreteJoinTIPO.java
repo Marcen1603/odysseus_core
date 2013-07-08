@@ -39,41 +39,41 @@ public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic,
 	private static Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteJoinTIPO.class);
 
 	@Override
-	protected void process_next(T object, int port) {
-		transferFunction.newElement(object, port);
+	protected void process_next(final T object, final int port) {
+		this.transferFunction.newElement(object, port);
 
-		if (isDone()) {
+		if (this.isDone()) {
 			return;
 		}
-		if (LOG.isDebugEnabled()) {
-			if (!isOpen()) {
-				LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
+		if (ProbabilisticDiscreteJoinTIPO.LOG.isDebugEnabled()) {
+			if (!this.isOpen()) {
+				ProbabilisticDiscreteJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
 				return;
 			}
 		}
-		int otherport = port ^ 1;
-		Order order = Order.fromOrdinal(port);
+		final int otherport = port ^ 1;
+		final Order order = Order.fromOrdinal(port);
 		Iterator<T> qualifies;
 
 		synchronized (this) {
 
-			if (inOrder) {
-				areas[otherport].purgeElements(object, order);
+			if (this.inOrder) {
+				this.areas[otherport].purgeElements(object, order);
 			}
 
-			if (isDone()) {
-				propagateDone();
+			if (this.isDone()) {
+				this.propagateDone();
 				return;
 			}
 
-			qualifies = areas[otherport].queryCopy(object, order);
+			qualifies = this.areas[otherport].queryCopy(object, order);
 
-			areas[port].insert(object);
+			this.areas[port].insert(object);
 		}
 		while (qualifies.hasNext()) {
-			T next = qualifies.next();
+			final T next = qualifies.next();
 			// We already merge the two tuples in the sweep area to not expand the worlds again
-			transferFunction.transfer(next);
+			this.transferFunction.transfer(next);
 		}
 	}
 

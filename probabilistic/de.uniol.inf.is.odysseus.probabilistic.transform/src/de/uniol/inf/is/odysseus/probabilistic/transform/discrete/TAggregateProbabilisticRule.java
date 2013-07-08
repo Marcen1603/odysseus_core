@@ -80,7 +80,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 						posArray[i] = inputSchema.indexOf(attr);
 						// For most cases its the only datatype ... so keep one of them
 						inDatatype = attr.getDatatype().getURI();
-						if (attr.getDatatype().isPartialAggregate()){
+						if (attr.getDatatype().isPartialAggregate()) {
 							partialAggregateInput = true;
 						}
 					}

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 
 import java.util.Map;
 
-
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -29,7 +28,7 @@ public class ProbabilisticByte extends AbstractProbabilisticValue<Byte> {
 	 */
 	private static final long serialVersionUID = 7352353470010419001L;
 
-	public ProbabilisticByte(final Byte value, Double probability) {
+	public ProbabilisticByte(final Byte value, final Double probability) {
 		super(value, probability);
 	}
 
@@ -37,7 +36,7 @@ public class ProbabilisticByte extends AbstractProbabilisticValue<Byte> {
 		super(values);
 	}
 
-	public ProbabilisticByte(ProbabilisticByte other) {
+	public ProbabilisticByte(final ProbabilisticByte other) {
 		super(other);
 	}
 

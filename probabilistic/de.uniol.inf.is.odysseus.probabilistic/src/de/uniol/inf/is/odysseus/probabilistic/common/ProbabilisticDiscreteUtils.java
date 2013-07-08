@@ -13,26 +13,27 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabil
  * 
  */
 public final class ProbabilisticDiscreteUtils {
-	public static Object[][] getWorlds(Tuple<?> input, int[] probabilisticAttributePos) {
-		Iterator<?>[] attributeIters = new Iterator<?>[probabilisticAttributePos.length];
+	@SuppressWarnings("unchecked")
+	public static Object[][] getWorlds(final Tuple<?> input, final int[] probabilisticAttributePos) {
+		final Iterator<?>[] attributeIters = new Iterator<?>[probabilisticAttributePos.length];
 		int worldNum = 1;
 		for (int i = 0; i < probabilisticAttributePos.length; i++) {
-			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) input.getAttribute(probabilisticAttributePos[i]);
+			final AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) input.getAttribute(probabilisticAttributePos[i]);
 			worldNum *= attribute.getValues().size();
 			attributeIters[i] = attribute.getValues().entrySet().iterator();
 		}
 
 		// Create all possible worlds
-		Object[][] worlds = new Object[worldNum][probabilisticAttributePos.length];
+		final Object[][] worlds = new Object[worldNum][probabilisticAttributePos.length];
 		double instances = 1.0;
 		for (int i = 0; i < probabilisticAttributePos.length; i++) {
 			int world = 0;
-			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) input.getAttribute(probabilisticAttributePos[i]);
+			final AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) input.getAttribute(probabilisticAttributePos[i]);
 			int num = (int) (worlds.length / (attribute.getValues().size() * instances));
 			while (num > 0) {
-				Iterator<?> iter = attribute.getValues().entrySet().iterator();
+				final Iterator<?> iter = attribute.getValues().entrySet().iterator();
 				while (iter.hasNext()) {
-					Entry<?, Double> entry = ((Map.Entry<?, Double>) iter.next());
+					final Entry<?, Double> entry = ((Map.Entry<?, Double>) iter.next());
 					for (int j = 0; j < instances; j++) {
 						worlds[world][i] = entry.getKey();
 						world++;

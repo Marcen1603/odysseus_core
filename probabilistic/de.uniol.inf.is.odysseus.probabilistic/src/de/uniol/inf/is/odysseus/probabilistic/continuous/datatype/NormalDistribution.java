@@ -30,13 +30,11 @@ public class NormalDistribution implements Serializable, Cloneable {
 	/** The mean of the distribution */
 	private double[] mean;
 
-	public NormalDistribution(final double mean,
-			final CovarianceMatrix covarianceMatrix) {
+	public NormalDistribution(final double mean, final CovarianceMatrix covarianceMatrix) {
 		this(new double[] { mean }, covarianceMatrix);
 	}
 
-	public NormalDistribution(final double[] mean,
-			final CovarianceMatrix covarianceMatrix) {
+	public NormalDistribution(final double[] mean, final CovarianceMatrix covarianceMatrix) {
 		this.mean = mean;
 		this.covarianceMatrix = covarianceMatrix;
 	}

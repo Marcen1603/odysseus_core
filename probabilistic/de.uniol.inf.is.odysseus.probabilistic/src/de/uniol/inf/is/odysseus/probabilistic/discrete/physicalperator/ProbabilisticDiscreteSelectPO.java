@@ -15,16 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.probabilistic.common.ProbabilisticDiscreteUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
@@ -38,7 +35,7 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 	/** Logger. */
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteSelectPO.class);
 
-	private int[] probabilisticAttributePos;
+	private final int[] probabilisticAttributePos;
 
 	/**
 	 * Default constructor.
@@ -48,7 +45,7 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 	 * @param probabilisticAttributePos
 	 *            The positions of discrete probabilistic attributes
 	 */
-	public ProbabilisticDiscreteSelectPO(final IPredicate<? super T> predicate, int[] probabilisticAttributePos) {
+	public ProbabilisticDiscreteSelectPO(final IPredicate<? super T> predicate, final int[] probabilisticAttributePos) {
 		super(predicate);
 		this.probabilisticAttributePos = probabilisticAttributePos;
 	}
@@ -72,63 +69,37 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final T object, final int port) {
-		T outputVal = (T) object.clone();
+		final T outputVal = (T) object.clone();
 		// Dummy tuple to hold the different worlds during evaluation
-		T selectObject = (T) object.clone();
+		final T selectObject = (T) object.clone();
 
 		// Input and output joint probabilities
-		double[] inSum = new double[probabilisticAttributePos.length];
-		double[] outSum = new double[probabilisticAttributePos.length];
+		final double[] inSum = new double[this.probabilisticAttributePos.length];
+		final double[] outSum = new double[this.probabilisticAttributePos.length];
 
-		Iterator<?>[] attributeIters = new Iterator<?>[probabilisticAttributePos.length];
-		int worldNum = 1;
-		for (int i = 0; i < probabilisticAttributePos.length; i++) {
-			((AbstractProbabilisticValue<?>) outputVal.getAttribute(probabilisticAttributePos[i])).getValues().clear();
-			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
-			worldNum *= attribute.getValues().size();
-			for (Double proberbility : attribute.getValues().values()) {
-				inSum[i] += proberbility;
+		for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
+			((AbstractProbabilisticValue<?>) outputVal.getAttribute(this.probabilisticAttributePos[i])).getValues().clear();
+			final AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(this.probabilisticAttributePos[i]);
+			for (final Double probability : attribute.getValues().values()) {
+				inSum[i] += probability;
 			}
-			attributeIters[i] = attribute.getValues().entrySet().iterator();
-
 		}
 
-		// Create all possible worlds
-		Object[][] worlds = new Object[worldNum][probabilisticAttributePos.length];
-		double instances = 1.0;
-		for (int i = 0; i < probabilisticAttributePos.length; i++) {
-			int world = 0;
-			AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
-			int num = (int) (worlds.length / (attribute.getValues().size() * instances));
-			while (num > 0) {
-				Iterator<?> iter = attribute.getValues().entrySet().iterator();
-				while (iter.hasNext()) {
-					Entry<?, Double> entry = ((Map.Entry<?, Double>) iter.next());
-					for (int j = 0; j < instances; j++) {
-						if (world == worlds.length) {
-							LOG.error("Strange things happening in the world");
-						}
-						worlds[world][i] = entry.getKey();
-						world++;
-					}
-				}
-				num--;
-			}
-			instances *= attribute.getValues().size();
-		}
+		final Object[][] worlds = ProbabilisticDiscreteUtils.getWorlds(object, this.probabilisticAttributePos);
+
 		// Evaluate each world and store the possible ones in the output tuple
 		for (int w = 0; w < worlds.length; w++) {
-			for (int i = 0; i < probabilisticAttributePos.length; i++) {
-				selectObject.setAttribute(probabilisticAttributePos[i], worlds[w][i]);
+			for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
+				selectObject.setAttribute(this.probabilisticAttributePos[i], worlds[w][i]);
 			}
-			boolean result = getPredicate().evaluate((T) selectObject);
+			final boolean result = this.getPredicate().evaluate(selectObject);
 
 			if (result) {
-				for (int i = 0; i < probabilisticAttributePos.length; i++) {
-					AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) object.getAttribute(probabilisticAttributePos[i]);
-					AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(probabilisticAttributePos[i]);
-					double probability = inAttribute.getValues().get(worlds[w][i]);
-					if (!outAttribute.getValues().containsKey((Double) worlds[w][i])) {
+				for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
+					final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) object.getAttribute(this.probabilisticAttributePos[i]);
+					final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(this.probabilisticAttributePos[i]);
+					final double probability = inAttribute.getValues().get(worlds[w][i]);
+					if (!outAttribute.getValues().containsKey(worlds[w][i])) {
 						outAttribute.getValues().put((Double) worlds[w][i], probability);
 						outSum[i] += probability;
 					}
@@ -137,14 +108,14 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 		}
 		// Update the joint probability
 		double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
-		for (int i = 0; i < probabilisticAttributePos.length; i++) {
+		for (int i = 0; i < this.probabilisticAttributePos.length; i++) {
 			jointProbability /= inSum[i];
 			jointProbability *= outSum[i];
 		}
 		// Transfer the tuple iff the joint probability is positive (maybe set quality filter later to reduce the number of tuples)
 		if (jointProbability > 0.0) {
 			((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
-			transfer((T) outputVal);
+			this.transfer(outputVal);
 		}
 	}
 

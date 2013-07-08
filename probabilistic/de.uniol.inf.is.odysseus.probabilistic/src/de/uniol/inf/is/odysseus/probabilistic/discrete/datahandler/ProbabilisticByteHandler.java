@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticByte;
 
-public class ProbabilisticByteHandler extends
-		AbstractDataHandler<ProbabilisticByte> {
+public class ProbabilisticByteHandler extends AbstractDataHandler<ProbabilisticByte> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticByteHandler.types.add("ProbabilisticByte");
@@ -47,8 +46,7 @@ public class ProbabilisticByteHandler extends
 	}
 
 	@Override
-	public ProbabilisticByte readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticByte readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Byte, Double> values = new HashMap<Byte, Double>();
 		for (int i = 0; i < length; i++) {
@@ -63,10 +61,9 @@ public class ProbabilisticByteHandler extends
 	public ProbabilisticByte readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Byte, Double> values = new HashMap<Byte, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Byte.parseByte(discreteValue[0]),
-					Double.parseDouble(discreteValue[1]));
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
+			values.put(Byte.parseByte(discreteValue[0]), Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticByte(values);
 	}

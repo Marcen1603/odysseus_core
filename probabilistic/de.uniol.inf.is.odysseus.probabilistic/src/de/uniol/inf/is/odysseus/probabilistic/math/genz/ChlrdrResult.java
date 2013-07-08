@@ -21,7 +21,7 @@ public class ChlrdrResult {
 	public Matrix as;
 	public Matrix bs;
 
-	public ChlrdrResult(Matrix ch, Matrix as, Matrix bs) {
+	public ChlrdrResult(final Matrix ch, final Matrix as, final Matrix bs) {
 		super();
 		this.ch = ch;
 		this.as = as;

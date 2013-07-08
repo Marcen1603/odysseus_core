@@ -26,8 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticMultiplicationNumberLHSOperator extends
-		ProbabilisticMultiplicationOperator {
+public class ProbabilisticMultiplicationNumberLHSOperator extends ProbabilisticMultiplicationOperator {
 
 	/**
 	 * 
@@ -36,21 +35,13 @@ public class ProbabilisticMultiplicationNumberLHSOperator extends
 
 	@Override
 	public ProbabilisticDouble getValue() {
-		ProbabilisticDouble a = new ProbabilisticDouble(
-				getNumericalInputValue(0), 1.0);
-		AbstractProbabilisticValue<?> b = getInputValue(1);
-		return getValueInternal(a, b);
+		final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
+		final AbstractProbabilisticValue<?> b = this.getInputValue(1);
+		return this.getValueInternal(a, b);
 	}
 
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
-					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
-			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE,
-					SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
-					SDFProbabilisticDatatype.PROBABILISTIC_INTEGER,
-					SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
-					SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
+			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
 
 	@Override
 	public boolean isCommutative() {
@@ -58,16 +49,14 @@ public class ProbabilisticMultiplicationNumberLHSOperator extends
 	}
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
+		if (argPos > (this.getArity() - 1)) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes[argPos];
+		return ProbabilisticMultiplicationNumberLHSOperator.accTypes[argPos];
 	}
 
 }

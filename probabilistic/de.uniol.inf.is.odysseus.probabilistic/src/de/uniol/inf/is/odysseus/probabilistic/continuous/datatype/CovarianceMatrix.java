@@ -39,12 +39,10 @@ public class CovarianceMatrix implements Serializable, Cloneable {
 		this.size = CovarianceMatrixUtils.getCovarianceDimensionFromTriangleSize(this.entries.length);
 		this.distributions = new NormalDistribution[this.size];
 	}
-	
+
 	public CovarianceMatrix(final CovarianceMatrix covarianceMatrix) {
-		this.entries = Arrays.copyOf(covarianceMatrix.entries,
-				covarianceMatrix.entries.length);
-		this.distributions = Arrays.copyOf(covarianceMatrix.distributions,
-				covarianceMatrix.distributions.length);
+		this.entries = Arrays.copyOf(covarianceMatrix.entries, covarianceMatrix.entries.length);
+		this.distributions = Arrays.copyOf(covarianceMatrix.distributions, covarianceMatrix.distributions.length);
 		this.size = covarianceMatrix.size;
 	}
 
@@ -74,8 +72,7 @@ public class CovarianceMatrix implements Serializable, Cloneable {
 	 * @param index
 	 * @param distribution
 	 */
-	public void setDistribution(final int index,
-			final NormalDistribution distribution) {
+	public void setDistribution(final int index, final NormalDistribution distribution) {
 		this.distributions[index] = distribution;
 	}
 

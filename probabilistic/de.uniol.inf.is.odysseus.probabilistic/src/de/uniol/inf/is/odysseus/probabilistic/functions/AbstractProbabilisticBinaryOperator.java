@@ -25,8 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
  * 
  * @param <T>
  */
-public abstract class AbstractProbabilisticBinaryOperator<T> extends
-		AbstractProbabilisticFunction<T> implements IBinaryOperator<T> {
+public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractProbabilisticFunction<T> implements IBinaryOperator<T> {
 
 	/**
 	 * 
@@ -49,15 +48,14 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends
 	}
 
 	@Override
-	public boolean isDistributiveWith(IOperator<T> operator) {
-		return isLeftDistributiveWith(operator)
-				&& isRightDistributiveWith(operator);
+	public boolean isDistributiveWith(final IOperator<T> operator) {
+		return this.isLeftDistributiveWith(operator) && this.isRightDistributiveWith(operator);
 	}
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("" + getArgument(0));
-		buffer.append(" ").append(getSymbol()).append(" " + getArgument(1));
+		final StringBuffer buffer = new StringBuffer("" + this.getArgument(0));
+		buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
 		return buffer.toString();
 	}
 

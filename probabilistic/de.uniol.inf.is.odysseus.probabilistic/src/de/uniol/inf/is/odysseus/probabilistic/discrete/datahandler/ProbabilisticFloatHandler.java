@@ -35,8 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticFlo
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticFloatHandler extends
-		AbstractDataHandler<ProbabilisticFloat> {
+public class ProbabilisticFloatHandler extends AbstractDataHandler<ProbabilisticFloat> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticFloatHandler.types.add("ProbabilisticFloat");
@@ -52,8 +51,7 @@ public class ProbabilisticFloatHandler extends
 	}
 
 	@Override
-	public ProbabilisticFloat readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticFloat readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Float, Double> values = new HashMap<Float, Double>();
 		for (int i = 0; i < length; i++) {
@@ -68,10 +66,9 @@ public class ProbabilisticFloatHandler extends
 	public ProbabilisticFloat readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Float, Double> values = new HashMap<Float, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Float.parseFloat(discreteValue[0]),
-					Double.parseDouble(discreteValue[1]));
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
+			values.put(Float.parseFloat(discreteValue[0]), Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticFloat(values);
 	}

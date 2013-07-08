@@ -32,8 +32,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticMinusOperator extends
-		AbstractProbabilisticBinaryOperator<ProbabilisticDouble> {
+public class ProbabilisticMinusOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticDouble> {
 	/**
 	 * 
 	 */
@@ -51,22 +50,18 @@ public class ProbabilisticMinusOperator extends
 
 	@Override
 	public ProbabilisticDouble getValue() {
-		AbstractProbabilisticValue<?> a = getInputValue(0);
-		AbstractProbabilisticValue<?> b = getInputValue(1);
-		return getValueInternal(a, b);
+		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
+		final AbstractProbabilisticValue<?> b = this.getInputValue(1);
+		return this.getValueInternal(a, b);
 	}
 
-	protected ProbabilisticDouble getValueInternal(
-			AbstractProbabilisticValue<?> a, AbstractProbabilisticValue<?> b) {
-		Map<Double, Double> values = new HashMap<Double, Double>(a.getValues()
-				.size() * b.getValues().size());
-		for (Entry<?, Double> aEntry : a.getValues().entrySet()) {
-			for (Entry<?, Double> bEntry : b.getValues().entrySet()) {
-				double value = ((Number) aEntry.getKey()).doubleValue()
-						- ((Number) bEntry.getKey()).doubleValue();
+	protected ProbabilisticDouble getValueInternal(final AbstractProbabilisticValue<?> a, final AbstractProbabilisticValue<?> b) {
+		final Map<Double, Double> values = new HashMap<Double, Double>(a.getValues().size() * b.getValues().size());
+		for (final Entry<?, Double> aEntry : a.getValues().entrySet()) {
+			for (final Entry<?, Double> bEntry : b.getValues().entrySet()) {
+				final double value = ((Number) aEntry.getKey()).doubleValue() - ((Number) bEntry.getKey()).doubleValue();
 				if (values.containsKey(value)) {
-					values.put(value, values.get(value) + aEntry.getValue()
-							* bEntry.getValue());
+					values.put(value, values.get(value) + (aEntry.getValue() * bEntry.getValue()));
 				} else {
 					values.put(value, aEntry.getValue() * bEntry.getValue());
 				}
@@ -96,36 +91,27 @@ public class ProbabilisticMinusOperator extends
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(
-			IOperator<ProbabilisticDouble> operator) {
+	public boolean isLeftDistributiveWith(final IOperator<ProbabilisticDouble> operator) {
 		return false;
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(
-			IOperator<ProbabilisticDouble> operator) {
+	public boolean isRightDistributiveWith(final IOperator<ProbabilisticDouble> operator) {
 		return false;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFProbabilisticDatatype.PROBABILISTIC_BYTE,
-			SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
-			SDFProbabilisticDatatype.PROBABILISTIC_INTEGER,
-			SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
-			SDFProbabilisticDatatype.PROBABILISTIC_LONG };
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
+			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
+		if (argPos > (this.getArity() - 1)) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ProbabilisticMinusOperator.accTypes;
 	}
 
 }

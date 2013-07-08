@@ -56,24 +56,24 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 
 	@Override
 	public ProbabilisticContinuousPredicateResult getValue() {
-		ProbabilisticContinuousDouble a = getInputValue(0);
-		NormalDistributionMixture mixtures = getDistributions(a.getDistribution());
+		final ProbabilisticContinuousDouble a = this.getInputValue(0);
+		final NormalDistributionMixture mixtures = this.getDistributions(a.getDistribution());
 
-		Double b = getNumericalInputValue(1);
-		double[] lowerBoundData = new double[mixtures.getDimension()];
+		final Double b = this.getNumericalInputValue(1);
+		final double[] lowerBoundData = new double[mixtures.getDimension()];
 		Arrays.fill(lowerBoundData, Double.NEGATIVE_INFINITY);
-		double[] upperBoundData = new double[mixtures.getDimension()];
+		final double[] upperBoundData = new double[mixtures.getDimension()];
 		Arrays.fill(upperBoundData, b);
 
-		RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
-		RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
+		final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
+		final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
-		double value = ProbabilisticContinuousSelectUtils.cumulativeProbability(mixtures, lowerBound, upperBound);
+		final double value = ProbabilisticContinuousSelectUtils.cumulativeProbability(mixtures, lowerBound, upperBound);
 		mixtures.setScale(mixtures.getScale() * value);
-		Interval[] support = new Interval[mixtures.getDimension()];
+		final Interval[] support = new Interval[mixtures.getDimension()];
 		for (int i = 0; i < mixtures.getDimension(); i++) {
-			double lower = FastMath.max(mixtures.getSupport(i).inf(), lowerBound.getEntry(i));
-			double upper = FastMath.min(mixtures.getSupport(i).sup(), upperBound.getEntry(i));
+			final double lower = FastMath.max(mixtures.getSupport(i).inf(), lowerBound.getEntry(i));
+			final double upper = FastMath.min(mixtures.getSupport(i).sup(), upperBound.getEntry(i));
 			support[i] = new Interval(lower, upper);
 		}
 		mixtures.setSupport(support);
@@ -96,12 +96,12 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(IOperator<ProbabilisticContinuousPredicateResult> operator) {
+	public boolean isLeftDistributiveWith(final IOperator<ProbabilisticContinuousPredicateResult> operator) {
 		return false;
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(IOperator<ProbabilisticContinuousPredicateResult> operator) {
+	public boolean isRightDistributiveWith(final IOperator<ProbabilisticContinuousPredicateResult> operator) {
 		return false;
 	}
 
@@ -115,14 +115,14 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.FLOAT, SDFDatatype.DOUBLE, SDFDatatype.LONG } };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
+		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes[argPos];
+		return ProbabilisticContinuousSmallerEqualsOperator.accTypes[argPos];
 	}
 
 }

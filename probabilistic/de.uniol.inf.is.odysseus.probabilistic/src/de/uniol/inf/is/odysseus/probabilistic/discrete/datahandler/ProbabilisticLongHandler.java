@@ -35,8 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticLon
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticLongHandler extends
-		AbstractDataHandler<ProbabilisticLong> {
+public class ProbabilisticLongHandler extends AbstractDataHandler<ProbabilisticLong> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticLongHandler.types.add("ProbabilisticLong");
@@ -52,8 +51,7 @@ public class ProbabilisticLongHandler extends
 	}
 
 	@Override
-	public ProbabilisticLong readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticLong readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Long, Double> values = new HashMap<Long, Double>();
 		for (int i = 0; i < length; i++) {
@@ -68,10 +66,9 @@ public class ProbabilisticLongHandler extends
 	public ProbabilisticLong readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Long, Double> values = new HashMap<Long, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Long.parseLong(discreteValue[0]),
-					Double.parseDouble(discreteValue[1]));
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
+			values.put(Long.parseLong(discreteValue[0]), Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticLong(values);
 	}

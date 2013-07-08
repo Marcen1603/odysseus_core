@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 
 import java.util.Map;
 
-
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -32,7 +31,7 @@ public class ProbabilisticDouble extends AbstractProbabilisticValue<Double> {
 	public ProbabilisticDouble() {
 	}
 
-	public ProbabilisticDouble(final Double value, Double probability) {
+	public ProbabilisticDouble(final Double value, final Double probability) {
 		super(value, probability);
 	}
 
@@ -40,7 +39,7 @@ public class ProbabilisticDouble extends AbstractProbabilisticValue<Double> {
 		super(values);
 	}
 
-	public ProbabilisticDouble(ProbabilisticDouble other) {
+	public ProbabilisticDouble(final ProbabilisticDouble other) {
 		super(other);
 	}
 

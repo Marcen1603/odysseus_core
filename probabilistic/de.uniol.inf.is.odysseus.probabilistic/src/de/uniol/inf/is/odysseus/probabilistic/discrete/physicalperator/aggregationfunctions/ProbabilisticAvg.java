@@ -27,8 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticAvg extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticAvg extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
 
 	/**
 	 * 
@@ -40,7 +39,7 @@ public class ProbabilisticAvg extends
 	private static final double BOUND = 0.75;
 	private final int pos;
 
-	public static ProbabilisticAvg getInstance(final int pos, boolean partialAggregateInput) {
+	public static ProbabilisticAvg getInstance(final int pos, final boolean partialAggregateInput) {
 		ProbabilisticAvg ret = ProbabilisticAvg.instances.get(pos);
 		if (ret == null) {
 			ret = new ProbabilisticAvg(pos, partialAggregateInput);
@@ -49,36 +48,30 @@ public class ProbabilisticAvg extends
 		return ret;
 	}
 
-	protected ProbabilisticAvg(final int pos, boolean partialAggregateInput) {
+	protected ProbabilisticAvg(final int pos, final boolean partialAggregateInput) {
 		super("AVG", partialAggregateInput);
 		this.pos = pos;
 	}
 
 	@Override
 	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		final AvgPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(
-				ProbabilisticAvg.ERROR, ProbabilisticAvg.BOUND);
-		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in
-				.getAttribute(this.pos)).getValues().entrySet()) {
+		final AvgPartialAggregate<Tuple<?>> pa = new AvgPartialAggregate<Tuple<?>>(ProbabilisticAvg.ERROR, ProbabilisticAvg.BOUND);
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.update(value.getKey(), value.getValue());
 		}
 		return pa;
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(
-			final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge,
-			final boolean createNew) {
+	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
 		AvgPartialAggregate<Tuple<?>> pa = null;
 		if (createNew) {
-			pa = new AvgPartialAggregate<Tuple<?>>(ProbabilisticAvg.ERROR,
-					ProbabilisticAvg.BOUND);
+			pa = new AvgPartialAggregate<Tuple<?>>(ProbabilisticAvg.ERROR, ProbabilisticAvg.BOUND);
 		} else {
 			pa = (AvgPartialAggregate<Tuple<?>>) p;
 		}
 
-		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge
-				.getAttribute(this.pos)).getValues().entrySet()) {
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.update(value.getKey(), value.getValue());
 		}
 		return pa;

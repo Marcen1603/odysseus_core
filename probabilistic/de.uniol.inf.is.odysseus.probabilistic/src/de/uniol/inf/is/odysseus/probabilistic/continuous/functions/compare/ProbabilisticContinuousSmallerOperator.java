@@ -23,14 +23,14 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
  */
 public class ProbabilisticContinuousSmallerOperator extends ProbabilisticContinuousSmallerEqualsOperator {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = -1978828532807864673L;
+	private static final long serialVersionUID = -1978828532807864673L;
 
-    @Override
-    public String getSymbol() {
-        return "<";
-    }
+	@Override
+	public String getSymbol() {
+		return "<";
+	}
 
 }

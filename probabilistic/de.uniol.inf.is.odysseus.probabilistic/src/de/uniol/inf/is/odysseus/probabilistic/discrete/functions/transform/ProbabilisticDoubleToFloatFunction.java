@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticDoubleToFloatFunction extends
-		AbstractProbabilisticFunction<ProbabilisticFloat> {
+public class ProbabilisticDoubleToFloatFunction extends AbstractProbabilisticFunction<ProbabilisticFloat> {
 
 	/**
 	 * 
@@ -50,9 +49,8 @@ public class ProbabilisticDoubleToFloatFunction extends
 
 	@Override
 	public ProbabilisticFloat getValue() {
-		Map<Float, Double> values = new HashMap<Float, Double>();
-		for (Entry<?, Double> value : ((AbstractProbabilisticValue<?>) getInputValue(0))
-				.getValues().entrySet()) {
+		final Map<Float, Double> values = new HashMap<Float, Double>();
+		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
 			values.put(((Number) value.getKey()).floatValue(), value.getValue());
 		}
 		return new ProbabilisticFloat(values);
@@ -66,16 +64,14 @@ public class ProbabilisticDoubleToFloatFunction extends
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
-			throw new IllegalArgumentException(
-					"doubleToFloat has only 1 argument.");
+			throw new IllegalArgumentException("doubleToFloat has only 1 argument.");
 		}
-		return accTypes;
+		return ProbabilisticDoubleToFloatFunction.accTypes;
 	}
 
 }

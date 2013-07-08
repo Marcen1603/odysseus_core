@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.probabilistic.test.discrete.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import com.google.common.collect.ImmutableSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
@@ -30,11 +29,12 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 			.getLogger(TestSelectPO.class);
 
 	public TestMapPO() {
-		super(getSchema(), getTestExpression(), false, false);
+		super(TestMapPO.getSchema(), TestMapPO.getTestExpression(), false,
+				false);
 	}
 
 	@Override
-	public void transfer(Tuple<IMetaAttribute> object) {
+	public void transfer(final Tuple<IMetaAttribute> object) {
 		System.out.println(object);
 		Assert.assertTrue(((IProbabilistic) object.getMetadata())
 				.getExistence() <= 1.0);
@@ -43,7 +43,7 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 	@Test(dataProvider = "discreteProbabilisticTuple")
 	public final void testProcess(final Tuple<IMetaAttribute> object) {
 		object.setMetadata(new Probabilistic());
-		process_next(object, 0);
+		this.process_next(object, 0);
 
 	}
 
@@ -93,14 +93,15 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 	}
 
 	private static SDFExpression[] getTestExpression() {
-		DirectAttributeResolver resolver = new DirectAttributeResolver(
-				getSchema());
-		MEP mep = MEP.getInstance();
+		final DirectAttributeResolver resolver = new DirectAttributeResolver(
+				TestMapPO.getSchema());
+		final MEP mep = MEP.getInstance();
 		mep.addFunctionProvider(new ProbabilisticFunctionProvider());
-		SDFExpression[] expressions = new SDFExpression[] {
+		final SDFExpression[] expressions = new SDFExpression[] {
 				new SDFExpression("", "a * b", resolver, MEP.getInstance()),
 				new SDFExpression("", "b * c", resolver, MEP.getInstance()),
-				new SDFExpression("", "c * toProbabilisticDouble([1.0,0.5])", resolver, MEP.getInstance()) };
+				new SDFExpression("", "c * toProbabilisticDouble([1.0,0.5])",
+						resolver, MEP.getInstance()) };
 		return expressions;
 	}
 
@@ -111,7 +112,7 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 	// }
 
 	private static SDFSchema getSchema() {
-		Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
+		final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
 		attr.add(new SDFAttribute("", "a",
 				SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "b",
@@ -120,7 +121,7 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 				SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "d",
 				SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-		SDFSchema schema = new SDFSchema("", attr);
+		final SDFSchema schema = new SDFSchema("", attr);
 		return schema;
 	}
 }

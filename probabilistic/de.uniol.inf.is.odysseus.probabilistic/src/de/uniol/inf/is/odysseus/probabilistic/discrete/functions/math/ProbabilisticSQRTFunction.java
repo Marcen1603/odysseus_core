@@ -32,20 +32,14 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticSQRTFunction extends
-		AbstractProbabilisticFunction<ProbabilisticDouble> {
+public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<ProbabilisticDouble> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1757085950523543990L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFProbabilisticDatatype.PROBABILISTIC_BYTE,
-			SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
-			SDFProbabilisticDatatype.PROBABILISTIC_INTEGER,
-			SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
-			SDFProbabilisticDatatype.PROBABILISTIC_LONG };
+	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
+			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG };
 
 	@Override
 	public int getArity() {
@@ -53,16 +47,14 @@ public class ProbabilisticSQRTFunction extends
 	}
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ProbabilisticSQRTFunction.accTypes;
 	}
 
 	@Override
@@ -72,17 +64,14 @@ public class ProbabilisticSQRTFunction extends
 
 	@Override
 	public ProbabilisticDouble getValue() {
-		AbstractProbabilisticValue<?> a = getInputValue(0);
-		return getValueInternal(a);
+		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
+		return this.getValueInternal(a);
 	}
 
-	protected ProbabilisticDouble getValueInternal(
-			AbstractProbabilisticValue<?> a) {
-		Map<Double, Double> values = new HashMap<Double, Double>(a.getValues()
-				.size());
-		for (Entry<?, Double> aEntry : a.getValues().entrySet()) {
-			double value = FastMath.sqrt(((Number) aEntry.getKey())
-					.doubleValue());
+	protected ProbabilisticDouble getValueInternal(final AbstractProbabilisticValue<?> a) {
+		final Map<Double, Double> values = new HashMap<Double, Double>(a.getValues().size());
+		for (final Entry<?, Double> aEntry : a.getValues().entrySet()) {
+			final double value = FastMath.sqrt(((Number) aEntry.getKey()).doubleValue());
 			if (values.containsKey(value)) {
 				values.put(value, values.get(value) + aEntry.getValue());
 			} else {

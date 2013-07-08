@@ -18,8 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 
-public abstract class AbstractProbabilisticUnaryOperator<T> extends
-		AbstractProbabilisticFunction<T> implements IOperator<T> {
+public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProbabilisticFunction<T> implements IOperator<T> {
 
 	/**
 	 * 

@@ -35,17 +35,14 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribu
  * 
  * @param <M>
  */
-public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribute>
-		extends AbstractRelationalMergeFunction<ProbabilisticTuple<M>, M>
-		implements IDataMergeFunction<ProbabilisticTuple<M>, M> {
+public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribute> extends AbstractRelationalMergeFunction<ProbabilisticTuple<M>, M> implements IDataMergeFunction<ProbabilisticTuple<M>, M> {
 
 	private final RealMatrix[][] betas;
 	private final RealMatrix[][] sigmas;
 	private final int[][] joinAttributePos;
 	private final int[][] viewAttributePos;
 
-	public ContinuousProbabilisticEquiJoinMergeFunction(
-			ContinuousProbabilisticEquiJoinMergeFunction<M> mergeFunction) {
+	public ContinuousProbabilisticEquiJoinMergeFunction(final ContinuousProbabilisticEquiJoinMergeFunction<M> mergeFunction) {
 		super(mergeFunction.schemaSize);
 		this.betas = mergeFunction.betas.clone();
 		this.sigmas = mergeFunction.sigmas.clone();
@@ -58,8 +55,7 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 		return new ContinuousProbabilisticEquiJoinMergeFunction<M>(this);
 	}
 
-	public ContinuousProbabilisticEquiJoinMergeFunction(int outputSchemaSize,
-			int[][] joinAttributePos, int[][] viewAttributePos) {
+	public ContinuousProbabilisticEquiJoinMergeFunction(final int outputSchemaSize, final int[][] joinAttributePos, final int[][] viewAttributePos) {
 		super(outputSchemaSize);
 		this.betas = new RealMatrix[2][];
 		this.sigmas = new RealMatrix[2][];
@@ -68,9 +64,7 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 	}
 
 	@Override
-	public ProbabilisticTuple<M> merge(ProbabilisticTuple<M> left,
-			ProbabilisticTuple<M> right, IMetadataMergeFunction<M> metamerge,
-			Order order) {
+	public ProbabilisticTuple<M> merge(final ProbabilisticTuple<M> left, final ProbabilisticTuple<M> right, final IMetadataMergeFunction<M> metamerge, final Order order) {
 
 		// if (order == Order.LeftRight) {
 		// for (int i = 0; i < result.getAttributes().length; i++) {
@@ -95,8 +89,7 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 		// }
 		// }
 
-		ProbabilisticTuple<M> result = (ProbabilisticTuple<M>) left.merge(left,
-				right, metamerge, order);
+		final ProbabilisticTuple<M> result = (ProbabilisticTuple<M>) left.merge(left, right, metamerge, order);
 
 		return result;
 	}
@@ -106,70 +99,48 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 
 	}
 
-	public void setBetas(RealMatrix[] betas, int port) {
+	public void setBetas(final RealMatrix[] betas, final int port) {
 		this.betas[port] = betas;
 	}
 
-	public void setSigmas(RealMatrix[] sigmas, int port) {
+	public void setSigmas(final RealMatrix[] sigmas, final int port) {
 		this.sigmas[port] = sigmas;
 	}
-//
-//	private void updateDistribution(ProbabilisticTuple<M> tuple,
-//			int[] attributePos) {
-//
-//	}
-//
-//	private void getDistibution(int joinAttributePos, int port,
-//			int viewAttributePos) {
-//		int otherport = port ^ 1;
-//
-//	}
 
-	public NormalDistribution getJoinDistribution(
-			NormalDistribution distribution, int port, int viewIndex) {
-		RealMatrix mean = MatrixUtils.createRealMatrix(1,
-				distribution.getMean().length);
+	//
+	// private void updateDistribution(ProbabilisticTuple<M> tuple,
+	// int[] attributePos) {
+	//
+	// }
+	//
+	// private void getDistibution(int joinAttributePos, int port,
+	// int viewAttributePos) {
+	// int otherport = port ^ 1;
+	//
+	// }
+
+	public NormalDistribution getJoinDistribution(final NormalDistribution distribution, final int port, final int viewIndex) {
+		final RealMatrix mean = MatrixUtils.createRealMatrix(1, distribution.getMean().length);
 		mean.setColumn(0, distribution.getMean());
 
-		RealMatrix covarianceMatrix = distribution.getCovarianceMatrix()
-				.getMatrix();
-		RealMatrix newMean = MatrixUtils.createRealMatrix(
-				1,
-				betas[port][viewIndex].getColumnDimension()
-						+ mean.getColumnDimension());
+		final RealMatrix covarianceMatrix = distribution.getCovarianceMatrix().getMatrix();
+		final RealMatrix newMean = MatrixUtils.createRealMatrix(1, this.betas[port][viewIndex].getColumnDimension() + mean.getColumnDimension());
 		newMean.setSubMatrix(mean.getData(), 0, 0);
-		newMean.setSubMatrix(betas[port][viewIndex].getData(), 0,
-				mean.getColumnDimension());
+		newMean.setSubMatrix(this.betas[port][viewIndex].getData(), 0, mean.getColumnDimension());
 
-		RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(
-				covarianceMatrix.getRowDimension()
-						+ sigmas[port][viewIndex].getRowDimension(),
-				covarianceMatrix.getColumnDimension()
-						+ sigmas[port][viewIndex].getColumnDimension());
+		final RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(covarianceMatrix.getRowDimension() + this.sigmas[port][viewIndex].getRowDimension(), covarianceMatrix.getColumnDimension() + this.sigmas[port][viewIndex].getColumnDimension());
 
 		newCovarianceMatrix.setSubMatrix(covarianceMatrix.getData(), 0, 0);
 
-		newCovarianceMatrix.setSubMatrix(betas[port][viewIndex].transpose()
-				.multiply(newCovarianceMatrix).getData(), 0,
-				covarianceMatrix.getColumnDimension());
+		newCovarianceMatrix.setSubMatrix(this.betas[port][viewIndex].transpose().multiply(newCovarianceMatrix).getData(), 0, covarianceMatrix.getColumnDimension());
 
-		newCovarianceMatrix.setSubMatrix(
-				newCovarianceMatrix.multiply(betas[port][viewIndex]).getData(),
-				covarianceMatrix.getRowDimension(), 0);
+		newCovarianceMatrix.setSubMatrix(newCovarianceMatrix.multiply(this.betas[port][viewIndex]).getData(), covarianceMatrix.getRowDimension(), 0);
 
-		newCovarianceMatrix.setSubMatrix(
-				sigmas[port][viewIndex].add(
-						betas[port][viewIndex].transpose()
-								.multiply(newCovarianceMatrix)
-								.multiply(betas[port][viewIndex])).getData(),
-				covarianceMatrix.getRowDimension(),
-				covarianceMatrix.getColumnDimension());
+		newCovarianceMatrix.setSubMatrix(this.sigmas[port][viewIndex].add(this.betas[port][viewIndex].transpose().multiply(newCovarianceMatrix).multiply(this.betas[port][viewIndex])).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
 
-		CovarianceMatrix covariance = CovarianceMatrixUtils
-				.fromMatrix(newCovarianceMatrix);
+		final CovarianceMatrix covariance = CovarianceMatrixUtils.fromMatrix(newCovarianceMatrix);
 
-		NormalDistribution joinDistribution = new NormalDistribution(
-				newMean.getData()[0], covariance);
+		final NormalDistribution joinDistribution = new NormalDistribution(newMean.getData()[0], covariance);
 
 		return joinDistribution;
 	}

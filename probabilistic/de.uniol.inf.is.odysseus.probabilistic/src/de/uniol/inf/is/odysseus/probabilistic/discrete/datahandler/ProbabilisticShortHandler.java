@@ -35,8 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticSho
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticShortHandler extends
-		AbstractDataHandler<ProbabilisticShort> {
+public class ProbabilisticShortHandler extends AbstractDataHandler<ProbabilisticShort> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticShortHandler.types.add("ProbabilisticShort");
@@ -52,8 +51,7 @@ public class ProbabilisticShortHandler extends
 	}
 
 	@Override
-	public ProbabilisticShort readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticShort readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {
@@ -68,10 +66,9 @@ public class ProbabilisticShortHandler extends
 	public ProbabilisticShort readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Short, Double> values = new HashMap<Short, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
-			values.put(Short.parseShort(discreteValue[0]),
-					Double.parseDouble(discreteValue[1]));
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
+			values.put(Short.parseShort(discreteValue[0]), Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticShort(values);
 	}

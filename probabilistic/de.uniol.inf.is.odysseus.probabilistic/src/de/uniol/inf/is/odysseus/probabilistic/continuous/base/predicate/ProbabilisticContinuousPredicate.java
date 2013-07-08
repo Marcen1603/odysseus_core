@@ -80,8 +80,8 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 *            The probabilistic predicate
 	 */
 	public ProbabilisticContinuousPredicate(final ProbabilisticContinuousPredicate predicate) {
-		this.attributePositions = (int[]) predicate.attributePositions.clone();
-		this.fromRightChannel = (boolean[]) predicate.fromRightChannel.clone();
+		this.attributePositions = predicate.attributePositions.clone();
+		this.fromRightChannel = predicate.fromRightChannel.clone();
 		if (predicate.expression == null) {
 			this.expression = null;
 		} else {
@@ -97,7 +97,7 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 */
 	@Override
 	public final void init(final SDFSchema left, final SDFSchema right) {
-		init(left, right, true);
+		this.init(left, right, true);
 	}
 
 	/*
@@ -107,11 +107,11 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 */
 	@Override
 	public final boolean evaluate(final ProbabilisticTuple<?> input) {
-		Object[] values = new Object[this.attributePositions.length];
+		final Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
-		((SDFProbabilisticExpression) this.expression).bindDistributions(input.getDistributions());
+		this.expression.bindDistributions(input.getDistributions());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
@@ -128,11 +128,11 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 */
 	@Override
 	public final ProbabilisticContinuousPredicateResult probabilisticEvaluate(final ProbabilisticTuple<?> input) {
-		Object[] values = new Object[this.attributePositions.length];
+		final Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(this.attributePositions[i]);
 		}
-		((SDFProbabilisticExpression) this.expression).bindDistributions(input.getDistributions());
+		this.expression.bindDistributions(input.getDistributions());
 		this.expression.bindAdditionalContent(input.getAdditionalContent());
 		this.expression.bindVariables(values);
 		return this.expression.getValue();
@@ -145,17 +145,17 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 */
 	@Override
 	public final boolean evaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
-		Object[] values = new Object[this.attributePositions.length];
+		final Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r;
-			if (fromRightChannel[i]) {
+			if (this.fromRightChannel[i]) {
 				r = right;
 			} else {
 				r = left;
 			}
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
-		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+		final Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 		additionalContent.putAll(left.getAdditionalContent());
 		additionalContent.putAll(right.getAdditionalContent());
 
@@ -166,7 +166,7 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 		if (right.getDistributions() != null) {
 			length += right.getDistributions().length;
 		}
-		NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
+		final NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
 		if (left.getDistributions() != null) {
 			System.arraycopy(left.getDistributions(), 0, distributions, 0, left.getDistributions().length);
 		}
@@ -186,17 +186,17 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 */
 	@Override
 	public final ProbabilisticContinuousPredicateResult probabilisticEvaluate(final ProbabilisticTuple<?> left, final ProbabilisticTuple<?> right) {
-		Object[] values = new Object[this.attributePositions.length];
+		final Object[] values = new Object[this.attributePositions.length];
 		for (int i = 0; i < values.length; ++i) {
 			Tuple<?> r;
-			if (fromRightChannel[i]) {
+			if (this.fromRightChannel[i]) {
 				r = right;
 			} else {
 				r = left;
 			}
 			values[i] = r.getAttribute(this.attributePositions[i]);
 		}
-		Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
+		final Map<String, Serializable> additionalContent = new HashMap<String, Serializable>();
 		additionalContent.putAll(left.getAdditionalContent());
 		additionalContent.putAll(right.getAdditionalContent());
 
@@ -207,7 +207,7 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 		if (right.getDistributions() != null) {
 			length += right.getDistributions().length;
 		}
-		NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
+		final NormalDistributionMixture[] distributions = new NormalDistributionMixture[length];
 		if (left.getDistributions() != null) {
 			System.arraycopy(left.getDistributions(), 0, distributions, 0, left.getDistributions().length);
 		}
@@ -237,7 +237,7 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 */
 	@Override
 	public final void replaceAttribute(final SDFAttribute curAttr, final SDFAttribute newAttr) {
-		replacementMap.put(curAttr, newAttr);
+		this.replacementMap.put(curAttr, newAttr);
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 * @return The expression
 	 */
 	public final SDFProbabilisticExpression getExpression() {
-		return expression;
+		return this.expression;
 	}
 
 	/**
@@ -259,10 +259,10 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 * @return The index of the attribute
 	 */
 	private int indexOf(final SDFSchema schema, final SDFAttribute attribute) {
-		SDFAttribute cqlAttr = getReplacement(attribute);
-		Iterator<SDFAttribute> iter = schema.iterator();
+		final SDFAttribute cqlAttr = this.getReplacement(attribute);
+		final Iterator<SDFAttribute> iter = schema.iterator();
 		for (int i = 0; iter.hasNext(); ++i) {
-			SDFAttribute a = iter.next();
+			final SDFAttribute a = iter.next();
 			if (cqlAttr.equalsCQL(a)) {
 				return i;
 			}
@@ -280,7 +280,7 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	private SDFAttribute getReplacement(final SDFAttribute attribute) {
 		SDFAttribute result = attribute;
 		SDFAttribute tmp = null;
-		while ((tmp = replacementMap.get(result)) != null) {
+		while ((tmp = this.replacementMap.get(result)) != null) {
 			result = tmp;
 		}
 		return result;
@@ -296,19 +296,19 @@ public class ProbabilisticContinuousPredicate extends AbstractPredicate<Probabil
 	 *            Flag indicating the preferred schema: <code>true</code> use the schema from the right
 	 */
 	private void init(final SDFSchema left, final SDFSchema right, final boolean checkRightSchema) {
-		List<SDFAttribute> attributes = expression.getAllAttributes();
+		final List<SDFAttribute> attributes = this.expression.getAllAttributes();
 		this.attributePositions = new int[attributes.size()];
 		this.fromRightChannel = new boolean[attributes.size()];
 
 		int i = 0;
-		for (SDFAttribute curAttribute : attributes) {
-			int pos = indexOf(left, curAttribute);
+		for (final SDFAttribute curAttribute : attributes) {
+			int pos = this.indexOf(left, curAttribute);
 			if (pos == -1) {
-				if (right == null && checkRightSchema) {
+				if ((right == null) && checkRightSchema) {
 					throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + left + " and rightSchema is null!");
 				}
 				if (checkRightSchema) {
-					pos = indexOf(right, curAttribute);
+					pos = this.indexOf(right, curAttribute);
 					if (pos == -1) {
 						throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + right);
 					}

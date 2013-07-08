@@ -86,7 +86,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	@Override
 	public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {
 		super.insert(s);
-		updateRegression(dependentAttributePos, explanatoryAttributePos);
+		this.updateRegression(this.dependentAttributePos, this.explanatoryAttributePos);
 	}
 
 	/*
@@ -97,7 +97,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	@Override
 	public final void insertAll(final List<ProbabilisticTuple<? extends ITimeInterval>> toBeInserted) {
 		super.insertAll(toBeInserted);
-		updateRegression(dependentAttributePos, explanatoryAttributePos);
+		this.updateRegression(this.dependentAttributePos, this.explanatoryAttributePos);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	 * @return The regression coefficients
 	 */
 	public final RealMatrix getRegressionCoefficients() {
-		return regressionCoefficients;
+		return this.regressionCoefficients;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	 * @return The attribute positions
 	 */
 	public final int[] getExplanatoryAttributePos() {
-		return explanatoryAttributePos;
+		return this.explanatoryAttributePos;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	 * @return The attribute positions
 	 */
 	public final int[] getDependentAttributePos() {
-		return dependentAttributePos;
+		return this.dependentAttributePos;
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	 * @return <code>true</code> if the linear regression is estimable.
 	 */
 	public final boolean isEstimable() {
-		return this.size() > (explanatoryAttributePos.length + dependentAttributePos.length);
+		return this.size() > (this.explanatoryAttributePos.length + this.dependentAttributePos.length);
 	}
 
 	/**
@@ -178,13 +178,13 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	 *            Position array of all explanatory attributes
 	 */
 	private synchronized void updateRegression(final int[] dependentAttributePos, final int[] explanatoryAttributePos) {
-		if (isEstimable()) {
-			Iterator<ProbabilisticTuple<? extends ITimeInterval>> iter = this.iterator();
+		if (this.isEstimable()) {
+			final Iterator<ProbabilisticTuple<? extends ITimeInterval>> iter = this.iterator();
 
-			int attributes = dependentAttributePos.length + explanatoryAttributePos.length;
+			final int attributes = dependentAttributePos.length + explanatoryAttributePos.length;
 			ProbabilisticTuple<? extends ITimeInterval> element = null;
-			double[][] dependentAttributesData = new double[dependentAttributePos.length][this.size()];
-			double[][] explanatoryAttributesData = new double[explanatoryAttributePos.length][this.size()];
+			final double[][] dependentAttributesData = new double[dependentAttributePos.length][this.size()];
+			final double[][] explanatoryAttributesData = new double[explanatoryAttributePos.length][this.size()];
 
 			int dimension = 0;
 			while (iter.hasNext()) {
@@ -199,12 +199,12 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 				}
 				dimension++;
 			}
-			RealMatrix dependentAttributes = MatrixUtils.createRealMatrix(dependentAttributesData).transpose();
-			RealMatrix explanatoryAttributes = MatrixUtils.createRealMatrix(explanatoryAttributesData).transpose();
-			RealMatrix dependentAttributesTranspose = dependentAttributes.transpose();
-			RealMatrix explanatoryAttributesTranspose = explanatoryAttributes.transpose();
+			final RealMatrix dependentAttributes = MatrixUtils.createRealMatrix(dependentAttributesData).transpose();
+			final RealMatrix explanatoryAttributes = MatrixUtils.createRealMatrix(explanatoryAttributesData).transpose();
+			final RealMatrix dependentAttributesTranspose = dependentAttributes.transpose();
+			final RealMatrix explanatoryAttributesTranspose = explanatoryAttributes.transpose();
 			RealMatrix dependentAttributesInverse = null;
-			RealMatrix dependentAttributesInverseTmp = dependentAttributesTranspose.multiply(dependentAttributes);
+			final RealMatrix dependentAttributesInverseTmp = dependentAttributesTranspose.multiply(dependentAttributes);
 			DecompositionSolver solver;
 			try {
 				solver = new CholeskyDecomposition(dependentAttributesInverseTmp).getSolver();
@@ -212,9 +212,9 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 				solver = new LUDecomposition(dependentAttributesInverseTmp).getSolver();
 			}
 			dependentAttributesInverse = solver.getInverse();
-			RealMatrix identity = MatrixUtils.createRealIdentityMatrix(dimension);
-			setRegressionCoefficients(dependentAttributesInverse.multiply(dependentAttributesTranspose).multiply(explanatoryAttributes));
-			setResidual((explanatoryAttributesTranspose.multiply(identity.subtract(dependentAttributes.multiply(dependentAttributesInverse).multiply(dependentAttributesTranspose))).multiply(explanatoryAttributes)).scalarMultiply(1 / (dimension - attributes)));
+			final RealMatrix identity = MatrixUtils.createRealIdentityMatrix(dimension);
+			this.setRegressionCoefficients(dependentAttributesInverse.multiply(dependentAttributesTranspose).multiply(explanatoryAttributes));
+			this.setResidual((explanatoryAttributesTranspose.multiply(identity.subtract(dependentAttributes.multiply(dependentAttributesInverse).multiply(dependentAttributesTranspose))).multiply(explanatoryAttributes)).scalarMultiply(1 / (dimension - attributes)));
 		}
 	}
 

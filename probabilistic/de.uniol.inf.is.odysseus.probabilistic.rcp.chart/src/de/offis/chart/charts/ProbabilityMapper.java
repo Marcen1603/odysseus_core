@@ -26,43 +26,48 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 @SuppressWarnings("unused")
 public class ProbabilityMapper implements net.ericaro.surfaceplotter.Mapper {
 
-    private Map<NormalDistributionFunctionND, Double> funcs = new ConcurrentHashMap<NormalDistributionFunctionND, Double>();
+	private final Map<NormalDistributionFunctionND, Double> funcs = new ConcurrentHashMap<NormalDistributionFunctionND, Double>();
 
-    private double scale = 1.0;
-    private Interval[] interval;
+	private double scale = 1.0;
+	private Interval[] interval;
 
-    public void setup(NormalDistributionMixture mixture) {
-        funcs.clear();
-        for (Entry<NormalDistribution, Double> e : mixture.getMixtures().entrySet()) {
-            double[] means = e.getKey().getMean();
-            CovarianceMatrix m = e.getKey().getCovarianceMatrix();
-            funcs.put(new NormalDistributionFunctionND(means, m), e.getValue());
-        }
+	public void setup(final NormalDistributionMixture mixture) {
+		this.funcs.clear();
+		for (final Entry<NormalDistribution, Double> e : mixture.getMixtures()
+				.entrySet()) {
+			final double[] means = e.getKey().getMean();
+			final CovarianceMatrix m = e.getKey().getCovarianceMatrix();
+			this.funcs.put(new NormalDistributionFunctionND(means, m),
+					e.getValue());
+		}
 
-        this.scale = mixture.getScale();
-        this.interval = mixture.getSupport();
-    }
+		this.scale = mixture.getScale();
+		this.interval = mixture.getSupport();
+	}
 
-    @Override
-    public float f1(float x, float y) {
-//        if ((interval != null) && (interval.length >= 2)) {
-//            if ((interval[0] != null) && ((x < interval[0].inf()) || (x > interval[0].sup())))
-//                return 0f;
-//
-//            if ((interval[1] != null) && ((y < interval[1].inf()) || (y > interval[1].sup())))
-//                return 0f;
-//        }
-        double result = 0.0;
+	@Override
+	public float f1(final float x, final float y) {
+		// if ((interval != null) && (interval.length >= 2)) {
+		// if ((interval[0] != null) && ((x < interval[0].inf()) || (x >
+		// interval[0].sup())))
+		// return 0f;
+		//
+		// if ((interval[1] != null) && ((y < interval[1].inf()) || (y >
+		// interval[1].sup())))
+		// return 0f;
+		// }
+		double result = 0.0;
 
-        for (Entry<NormalDistributionFunctionND, Double> e : funcs.entrySet()) {
-            result += e.getValue() * e.getKey().getValue(new double[] { x, y });
-        }
+		for (final Entry<NormalDistributionFunctionND, Double> e : this.funcs
+				.entrySet()) {
+			result += e.getValue() * e.getKey().getValue(new double[] { x, y });
+		}
 
-        return (float) (result * scale);
-    }
+		return (float) (result * this.scale);
+	}
 
-    @Override
-    public float f2(float x, float y) {
-        return 0;
-    }
+	@Override
+	public float f2(final float x, final float y) {
+		return 0;
+	}
 }

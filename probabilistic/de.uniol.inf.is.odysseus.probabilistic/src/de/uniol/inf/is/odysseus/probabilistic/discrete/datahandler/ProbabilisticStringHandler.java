@@ -40,15 +40,14 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticStr
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticStringHandler extends
-		AbstractDataHandler<ProbabilisticString> {
+public class ProbabilisticStringHandler extends AbstractDataHandler<ProbabilisticString> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
 		ProbabilisticStringHandler.types.add("ProbabilisticString");
 	}
 	private static Charset charset = Charset.forName("UTF-8");
-	private static CharsetEncoder encoder = charset.newEncoder();
-	private static CharsetDecoder decoder = charset.newDecoder();
+	private static CharsetEncoder encoder = ProbabilisticStringHandler.charset.newEncoder();
+	private static CharsetDecoder decoder = ProbabilisticStringHandler.charset.newDecoder();
 
 	@Override
 	public IDataHandler<ProbabilisticString> getInstance(final SDFSchema schema) {
@@ -60,16 +59,15 @@ public class ProbabilisticStringHandler extends
 	}
 
 	@Override
-	public ProbabilisticString readData(final ObjectInputStream inputStream)
-			throws IOException {
+	public ProbabilisticString readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (int i = 0; i < length; i++) {
 			try {
-				String value = (String) inputStream.readObject();
+				final String value = (String) inputStream.readObject();
 				final Double probability = inputStream.readDouble();
 				values.put(value, probability);
-			} catch (ClassNotFoundException e) {
+			} catch (final ClassNotFoundException e) {
 				throw new IOException(e);
 			}
 		}
@@ -80,8 +78,8 @@ public class ProbabilisticStringHandler extends
 	public ProbabilisticString readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<String, Double> values = new HashMap<String, Double>();
-		for (int i = 0; i < discreteValues.length; i++) {
-			final String[] discreteValue = discreteValues[i].split(":");
+		for (final String discreteValue2 : discreteValues) {
+			final String[] discreteValue = discreteValue2.split(":");
 			values.put(discreteValue[0], Double.parseDouble(discreteValue[1]));
 		}
 		return new ProbabilisticString(values);
@@ -93,14 +91,14 @@ public class ProbabilisticStringHandler extends
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (int i = 0; i < length; i++) {
 			try {
-				int stringLength = buffer.getInt();
-				int limit = buffer.limit();
+				final int stringLength = buffer.getInt();
+				final int limit = buffer.limit();
 				buffer.limit(buffer.position() + stringLength);
-				String value = decoder.decode(buffer).toString();
+				final String value = ProbabilisticStringHandler.decoder.decode(buffer).toString();
 				buffer.limit(limit);
 				final Double probability = buffer.getDouble();
 				values.put(value, probability);
-			} catch (CharacterCodingException e) {
+			} catch (final CharacterCodingException e) {
 				e.printStackTrace();
 			}
 		}
@@ -113,12 +111,11 @@ public class ProbabilisticStringHandler extends
 		buffer.putInt(values.getValues().size());
 		for (final Entry<String, Double> value : values.getValues().entrySet()) {
 			try {
-				ByteBuffer encodedValue = encoder.encode(CharBuffer.wrap(value
-						.getKey()));
+				final ByteBuffer encodedValue = ProbabilisticStringHandler.encoder.encode(CharBuffer.wrap(value.getKey()));
 				buffer.putInt(encodedValue.remaining());
 				buffer.put(encodedValue);
 				buffer.putDouble(value.getValue());
-			} catch (CharacterCodingException e) {
+			} catch (final CharacterCodingException e) {
 				e.printStackTrace();
 			}
 		}
@@ -135,15 +132,13 @@ public class ProbabilisticStringHandler extends
 		final ProbabilisticString values = (ProbabilisticString) attribute;
 		for (final Entry<String, Double> value : values.getValues().entrySet()) {
 			try {
-				ByteBuffer encodedValue = encoder.encode(CharBuffer.wrap(value
-						.getKey()));
+				final ByteBuffer encodedValue = ProbabilisticStringHandler.encoder.encode(CharBuffer.wrap(value.getKey()));
 				size += encodedValue.remaining();
-			} catch (CharacterCodingException e) {
+			} catch (final CharacterCodingException e) {
 				e.printStackTrace();
 			}
 		}
-		return (((ProbabilisticString) attribute).getValues().size()
-				* Double.SIZE + size) / 8;
+		return ((((ProbabilisticString) attribute).getValues().size() * Double.SIZE) + size) / 8;
 	}
 
 }

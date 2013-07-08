@@ -6,10 +6,11 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribu
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
 
@@ -30,14 +31,14 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		NormalDistributionMixture a = getDistributions(((ProbabilisticContinuousDouble) getInputValue(0)).getDistribution());
-		NormalDistributionMixture b = getDistributions(((ProbabilisticContinuousDouble) getInputValue(1)).getDistribution());
+		final NormalDistributionMixture a = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(0)).getDistribution());
+		final NormalDistributionMixture b = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(1)).getDistribution());
 
-//		return getValueInternal(a, b);
-		throw new RuntimeException("Operator (" + getSymbol() + ") not implemented");
+		// return getValueInternal(a, b);
+		throw new RuntimeException("Operator (" + this.getSymbol() + ") not implemented");
 	}
 
-	protected NormalDistributionMixture getValueInternal(NormalDistributionMixture a, NormalDistributionMixture b) {
+	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
 		return null;
 	}
 
@@ -62,26 +63,26 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(IOperator<NormalDistributionMixture> operator) {
+	public boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
 		return false;
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(IOperator<NormalDistributionMixture> operator) {
+	public boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
 		return false;
 	}
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
+		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes;
+		return ProbabilisticContinuousMinusOperator.accTypes;
 	}
 
 }

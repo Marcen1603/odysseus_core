@@ -30,8 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticDoubleToIntegerFunction extends
-		AbstractProbabilisticFunction<ProbabilisticInteger> {
+public class ProbabilisticDoubleToIntegerFunction extends AbstractProbabilisticFunction<ProbabilisticInteger> {
 
 	/**
 	 * 
@@ -50,9 +49,8 @@ public class ProbabilisticDoubleToIntegerFunction extends
 
 	@Override
 	public ProbabilisticInteger getValue() {
-		Map<Integer, Double> values = new HashMap<Integer, Double>();
-		for (Entry<?, Double> value : ((AbstractProbabilisticValue<?>) getInputValue(0))
-				.getValues().entrySet()) {
+		final Map<Integer, Double> values = new HashMap<Integer, Double>();
+		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
 			values.put(((Number) value.getKey()).intValue(), value.getValue());
 		}
 		return new ProbabilisticInteger(values);
@@ -66,16 +64,14 @@ public class ProbabilisticDoubleToIntegerFunction extends
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
-			throw new IllegalArgumentException(
-					"doubleToInteger has only 1 argument.");
+			throw new IllegalArgumentException("doubleToInteger has only 1 argument.");
 		}
-		return accTypes;
+		return ProbabilisticDoubleToIntegerFunction.accTypes;
 	}
 
 }

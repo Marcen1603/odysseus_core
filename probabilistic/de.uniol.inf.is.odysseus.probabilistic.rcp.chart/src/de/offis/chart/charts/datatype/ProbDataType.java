@@ -21,15 +21,15 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.Abstract
 
 public class ProbDataType extends AbstractViewableDatatype<Object> {
 
-	public ProbDataType() {		
+	public ProbDataType() {
 		super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 		super.addProvidedSDFDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
 		super.addProvidedClass(ProbabilisticContinuousDouble.class);
 		super.addProvidedClass(ProbabilisticDouble.class);
 	}
-	
+
 	@Override
-	public Object convertToValue(Object value) {
+	public Object convertToValue(final Object value) {
 		return value;
 	}
 

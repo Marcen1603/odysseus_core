@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 
 import java.util.Map;
 
-
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -29,7 +28,7 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	 */
 	private static final long serialVersionUID = -9174297465866495711L;
 
-	public ProbabilisticFloat(final Float value, Double probability) {
+	public ProbabilisticFloat(final Float value, final Double probability) {
 		super(value, probability);
 	}
 
@@ -37,7 +36,7 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 		super(values);
 	}
 
-	public ProbabilisticFloat(ProbabilisticFloat other) {
+	public ProbabilisticFloat(final ProbabilisticFloat other) {
 		super(other);
 	}
 

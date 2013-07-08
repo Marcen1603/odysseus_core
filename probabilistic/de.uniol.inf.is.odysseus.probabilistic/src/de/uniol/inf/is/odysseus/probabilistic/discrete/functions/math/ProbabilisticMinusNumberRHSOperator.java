@@ -26,8 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticMinusNumberRHSOperator extends
-		ProbabilisticMinusOperator {
+public class ProbabilisticMinusNumberRHSOperator extends ProbabilisticMinusOperator {
 
 	/**
 	 * 
@@ -36,21 +35,14 @@ public class ProbabilisticMinusNumberRHSOperator extends
 
 	@Override
 	public ProbabilisticDouble getValue() {
-		AbstractProbabilisticValue<?> a = getInputValue(0);
-		ProbabilisticDouble b = new ProbabilisticDouble(
-				getNumericalInputValue(1), 1.0);
-		return getValueInternal(a, b);
+		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
+		final ProbabilisticDouble b = new ProbabilisticDouble(this.getNumericalInputValue(1), 1.0);
+		return this.getValueInternal(a, b);
 	}
 
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE,
-					SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
-					SDFProbabilisticDatatype.PROBABILISTIC_INTEGER,
-					SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-					SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE,
-					SDFProbabilisticDatatype.PROBABILISTIC_LONG },
-			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER,
-					SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG },
+			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
 
 	@Override
 	public boolean isCommutative() {
@@ -58,16 +50,14 @@ public class ProbabilisticMinusNumberRHSOperator extends
 	}
 
 	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
+	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
+			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
+		if (argPos > (this.getArity() - 1)) {
+			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return accTypes[argPos];
+		return ProbabilisticMinusNumberRHSOperator.accTypes[argPos];
 	}
 
 }

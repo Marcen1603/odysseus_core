@@ -66,7 +66,7 @@ public final class SchemaUtils {
 	public static boolean containsContinuousProbabilisticAttributes(final SDFSchema schema) {
 		if (schema != null) {
 			for (final SDFAttribute attribute : schema.getAttributes()) {
-				if (isContinuousProbabilisticAttribute(attribute)) {
+				if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
 					return true;
 				}
 			}
@@ -84,7 +84,7 @@ public final class SchemaUtils {
 	public static boolean containsContinuousProbabilisticAttributes(final List<SDFAttribute> attributes) {
 		if (attributes != null) {
 			for (final SDFAttribute attribute : attributes) {
-				if (isContinuousProbabilisticAttribute(attribute)) {
+				if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
 					return true;
 				}
 			}
@@ -101,7 +101,7 @@ public final class SchemaUtils {
 	 */
 	public static boolean isContinuousProbabilisticAttribute(final SDFAttribute attribute) {
 		if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
+			final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
 			if (datatype.isContinuous()) {
 				return true;
 			}
@@ -119,7 +119,7 @@ public final class SchemaUtils {
 	public static boolean containsDiscreteProbabilisticAttributes(final SDFSchema schema) {
 		if (schema != null) {
 			for (final SDFAttribute attribute : schema.getAttributes()) {
-				if (isDiscreteProbabilisticAttribute(attribute)) {
+				if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
 					return true;
 				}
 			}
@@ -137,7 +137,7 @@ public final class SchemaUtils {
 	public static boolean containsDiscreteProbabilisticAttributes(final List<SDFAttribute> attributes) {
 		if (attributes != null) {
 			for (final SDFAttribute attribute : attributes) {
-				if (isDiscreteProbabilisticAttribute(attribute)) {
+				if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
 					return true;
 				}
 			}
@@ -154,7 +154,7 @@ public final class SchemaUtils {
 	 */
 	public static boolean isDiscreteProbabilisticAttribute(final SDFAttribute attribute) {
 		if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
-			SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
+			final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
 			if (datatype.isDiscrete()) {
 				return true;
 			}
@@ -170,10 +170,10 @@ public final class SchemaUtils {
 	 * @return An array of all attribute indexes in the schema that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 	public static int[] getContinuousProbabilisticAttributePos(final SDFSchema schema) {
-		List<SDFAttribute> attributes = getContinuousProbabilisticAttributes(schema);
-		int[] pos = new int[attributes.size()];
+		final List<SDFAttribute> attributes = SchemaUtils.getContinuousProbabilisticAttributes(schema);
+		final int[] pos = new int[attributes.size()];
 		for (int i = 0; i < attributes.size(); i++) {
-			SDFAttribute attribute = attributes.get(i);
+			final SDFAttribute attribute = attributes.get(i);
 			pos[i] = schema.indexOf(attribute);
 		}
 		return pos;
@@ -187,16 +187,15 @@ public final class SchemaUtils {
 	 * @return An array of all attribute indexes in the schema that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 	public static int[] getDiscreteProbabilisticAttributePos(final SDFSchema schema) {
-		List<SDFAttribute> attributes = getDiscreteProbabilisticAttributes(schema);
-		int[] pos = new int[attributes.size()];
+		final List<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(schema);
+		final int[] pos = new int[attributes.size()];
 		for (int i = 0; i < attributes.size(); i++) {
-			SDFAttribute attribute = attributes.get(i);
+			final SDFAttribute attribute = attributes.get(i);
 			pos[i] = schema.indexOf(attribute);
 		}
 		return pos;
 	}
 
-	
 	/**
 	 * Returns all attributes from the schema that are continuous probabilistic attributes.
 	 * 
@@ -205,9 +204,9 @@ public final class SchemaUtils {
 	 * @return A list of all attributes in the schema that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final SDFSchema schema) {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attribute : schema.getAttributes()) {
-			if (isContinuousProbabilisticAttribute(attribute)) {
+		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute attribute : schema.getAttributes()) {
+			if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
 				attributes.add(attribute);
 			}
 		}
@@ -222,9 +221,9 @@ public final class SchemaUtils {
 	 * @return A list of all attributes in the list that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final List<SDFAttribute> attributes) {
-		List<SDFAttribute> result = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attribute : attributes) {
-			if (isContinuousProbabilisticAttribute(attribute)) {
+		final List<SDFAttribute> result = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute attribute : attributes) {
+			if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
 				result.add(attribute);
 			}
 		}
@@ -240,9 +239,9 @@ public final class SchemaUtils {
 	 */
 
 	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final SDFSchema schema) {
-		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attribute : schema.getAttributes()) {
-			if (isDiscreteProbabilisticAttribute(attribute)) {
+		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute attribute : schema.getAttributes()) {
+			if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
 				attributes.add(attribute);
 			}
 		}
@@ -258,9 +257,9 @@ public final class SchemaUtils {
 	 */
 
 	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final List<SDFAttribute> attributes) {
-		List<SDFAttribute> result = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attribute : attributes) {
-			if (isDiscreteProbabilisticAttribute(attribute)) {
+		final List<SDFAttribute> result = new ArrayList<SDFAttribute>();
+		for (final SDFAttribute attribute : attributes) {
+			if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
 				result.add(attribute);
 			}
 		}
@@ -277,9 +276,9 @@ public final class SchemaUtils {
 	 * @return An array with the idnexes of the attributes in the schema
 	 */
 	public static int[] getAttributePos(final SDFSchema schema, final List<SDFAttribute> attributes) {
-		int[] pos = new int[attributes.size()];
+		final int[] pos = new int[attributes.size()];
 		int i = 0;
-		for (SDFAttribute attribute : attributes) {
+		for (final SDFAttribute attribute : attributes) {
 			if (!schema.contains(attribute)) {
 				throw new IllegalArgumentException("No such attribute " + attribute + " in schema " + schema);
 			} else {
@@ -301,13 +300,13 @@ public final class SchemaUtils {
 	 */
 	public static boolean isEquiExpression(final IExpression<?> expression) {
 		if (expression instanceof AndOperator) {
-			return isEquiExpression(((AndOperator) expression).getArgument(0)) && isEquiExpression(((AndOperator) expression).getArgument(1));
+			return SchemaUtils.isEquiExpression(((AndOperator) expression).getArgument(0)) && SchemaUtils.isEquiExpression(((AndOperator) expression).getArgument(1));
 
 		}
 		if (expression instanceof EqualsOperator) {
-			EqualsOperator eq = (EqualsOperator) expression;
-			IExpression<?> arg1 = eq.getArgument(0);
-			IExpression<?> arg2 = eq.getArgument(1);
+			final EqualsOperator eq = (EqualsOperator) expression;
+			final IExpression<?> arg1 = eq.getArgument(0);
+			final IExpression<?> arg2 = eq.getArgument(1);
 			if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
 				return true;
 			}
@@ -325,8 +324,8 @@ public final class SchemaUtils {
 	 * @return <code>true</code> iff the relational predicate is of the given form
 	 */
 	public static boolean isEquiPredicate(final RelationalPredicate predicate) {
-		IExpression<?> expression = predicate.getExpression().getMEPExpression();
-		return isEquiExpression(expression);
+		final IExpression<?> expression = predicate.getExpression().getMEPExpression();
+		return SchemaUtils.isEquiExpression(expression);
 	}
 
 	/**
@@ -339,8 +338,8 @@ public final class SchemaUtils {
 	 * @return <code>true</code> iff the relational predicate is of the given form
 	 */
 	public static boolean isEquiPredicate(final ProbabilisticContinuousPredicate predicate) {
-		IExpression<?> expression = predicate.getExpression().getMEPExpression();
-		return isEquiExpression(expression);
+		final IExpression<?> expression = predicate.getExpression().getMEPExpression();
+		return SchemaUtils.isEquiExpression(expression);
 	}
 
 	/**

@@ -9,7 +9,6 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
@@ -31,11 +30,12 @@ public class TestSelectPO extends
 			.getLogger(TestSelectPO.class);
 
 	public TestSelectPO() {
-		super(getTestPredicate(), getProbabilisticAttributePos());
+		super(TestSelectPO.getTestPredicate(), TestSelectPO
+				.getProbabilisticAttributePos());
 	}
 
 	@Override
-	public void transfer(ProbabilisticTuple<IProbabilistic> object) {
+	public void transfer(final ProbabilisticTuple<IProbabilistic> object) {
 		System.out.println(object);
 		Assert.assertTrue(object.getMetadata().getExistence() <= 1.0);
 	}
@@ -44,7 +44,7 @@ public class TestSelectPO extends
 	public final void testProcess(
 			final ProbabilisticTuple<IProbabilistic> object) {
 		object.setMetadata(new Probabilistic());
-		process_next(object, 0);
+		this.process_next(object, 0);
 
 	}
 
@@ -234,24 +234,25 @@ public class TestSelectPO extends
 	// }
 
 	private static RelationalPredicate getTestPredicate() {
-		SDFSchema schema = getSchema();
-		DirectAttributeResolver resolver = new DirectAttributeResolver(
-				getSchema());
-		SDFExpression expression = new SDFExpression("",
+		final SDFSchema schema = TestSelectPO.getSchema();
+		final DirectAttributeResolver resolver = new DirectAttributeResolver(
+				TestSelectPO.getSchema());
+		final SDFExpression expression = new SDFExpression("",
 				"a < 3.0 && b > 4.0 && c < 9.0", resolver, MEP.getInstance());
-		RelationalPredicate predicate = new RelationalPredicate(expression);
+		final RelationalPredicate predicate = new RelationalPredicate(
+				expression);
 		predicate.init(schema, null, false);
 		return predicate;
 	}
 
 	private static int[] getProbabilisticAttributePos() {
-		return SchemaUtils.getAttributePos(getSchema(), SchemaUtils
-				.getDiscreteProbabilisticAttributes(getTestPredicate()
-						.getAttributes()));
+		return SchemaUtils.getAttributePos(TestSelectPO.getSchema(),
+				SchemaUtils.getDiscreteProbabilisticAttributes(TestSelectPO
+						.getTestPredicate().getAttributes()));
 	}
 
 	private static SDFSchema getSchema() {
-		Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
+		final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
 		attr.add(new SDFAttribute("", "a",
 				SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "b",
@@ -260,7 +261,7 @@ public class TestSelectPO extends
 				SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "d",
 				SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-		SDFSchema schema = new SDFSchema("", attr);
+		final SDFSchema schema = new SDFSchema("", attr);
 		return schema;
 	}
 }

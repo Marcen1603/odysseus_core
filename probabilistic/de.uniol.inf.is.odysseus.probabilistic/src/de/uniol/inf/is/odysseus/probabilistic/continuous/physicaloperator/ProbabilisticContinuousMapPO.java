@@ -56,7 +56,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 */
 	public ProbabilisticContinuousMapPO(final SDFSchema inputSchema, final SDFProbabilisticExpression[] expressions) {
 		this.inputSchema = inputSchema;
-		init(inputSchema, expressions);
+		this.init(inputSchema, expressions);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 */
 	public ProbabilisticContinuousMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions) {
 		this.inputSchema = inputSchema;
-		init(inputSchema, expressions);
+		this.init(inputSchema, expressions);
 	}
 
 	/**
@@ -81,11 +81,11 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 *            The expressions
 	 */
 	private void init(final SDFSchema schema, final SDFExpression[] expressionsList) {
-		SDFProbabilisticExpression[] probabilisticExpressions = new SDFProbabilisticExpression[expressionsList.length];
+		final SDFProbabilisticExpression[] probabilisticExpressions = new SDFProbabilisticExpression[expressionsList.length];
 		for (int i = 0; i < expressionsList.length; ++i) {
 			probabilisticExpressions[i] = new SDFProbabilisticExpression(expressionsList[i]);
 		}
-		init(schema, probabilisticExpressions);
+		this.init(schema, probabilisticExpressions);
 	}
 
 	/**
@@ -100,12 +100,12 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 		this.expressions = expressionsList;
 		this.variables = new int[expressionsList.length][];
 		int i = 0;
-		for (SDFExpression expression : expressionsList) {
-			List<SDFAttribute> neededAttributes = expression.getAllAttributes();
-			int[] newArray = new int[neededAttributes.size()];
+		for (final SDFExpression expression : expressionsList) {
+			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+			final int[] newArray = new int[neededAttributes.size()];
 			this.variables[i++] = newArray;
 			int j = 0;
-			for (SDFAttribute curAttribute : neededAttributes) {
+			for (final SDFAttribute curAttribute : neededAttributes) {
 				newArray[j++] = schema.indexOf(curAttribute);
 			}
 		}
@@ -119,7 +119,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 */
 	public ProbabilisticContinuousMapPO(final ProbabilisticContinuousMapPO<T> probabilisticMapPO) {
 		this.inputSchema = probabilisticMapPO.inputSchema.clone();
-		init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
+		this.init(probabilisticMapPO.inputSchema, probabilisticMapPO.expressions);
 	}
 
 	/*
@@ -140,11 +140,11 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
+		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {
 			for (int i = 0; i < this.expressions.length; ++i) {
-				Object[] values = new Object[this.variables[i].length];
+				final Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					values[j] = object.getAttribute(this.variables[i][j]);
 				}
@@ -161,7 +161,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 		// FIXME !!! Handle pointer to distributions !!! i.e. changing index,
 		// missing pointer, and changing order
 		outputVal.setDistributions(object.getDistributions().clone());
-		transfer(outputVal);
+		this.transfer(outputVal);
 	}
 
 	/*
@@ -185,8 +185,8 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 		if (!(ipo instanceof ProbabilisticContinuousMapPO)) {
 			return false;
 		}
-		ProbabilisticContinuousMapPO mapPo = (ProbabilisticContinuousMapPO) ipo;
-		if (this.hasSameSources(mapPo) && this.inputSchema.compareTo(mapPo.inputSchema) == 0) {
+		final ProbabilisticContinuousMapPO mapPo = (ProbabilisticContinuousMapPO) ipo;
+		if (this.hasSameSources(mapPo) && (this.inputSchema.compareTo(mapPo.inputSchema) == 0)) {
 			if (this.expressions.length == mapPo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
 					if (!this.expressions[i].equals(mapPo.expressions[i])) {

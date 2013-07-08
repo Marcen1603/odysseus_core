@@ -45,8 +45,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribu
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * Implementation of a probabilistic view to generate a distribution for an
- * equi-join
+ * Implementation of a probabilistic view to generate a distribution for an equi-join
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
@@ -57,77 +56,65 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 	private final SDFSchema schema;
 	@SuppressWarnings("unused")
 	private Integer[] continuousPos;
-	private Integer[] joinAttributePos;
+	private final Integer[] joinAttributePos;
 	private Integer[] viewAttributePos;
-	private DefaultTISweepArea<ProbabilisticTuple<T>> sweepArea = new DefaultTISweepArea<ProbabilisticTuple<T>>();
+	private final DefaultTISweepArea<ProbabilisticTuple<T>> sweepArea = new DefaultTISweepArea<ProbabilisticTuple<T>>();
 	private RealMatrix[] sigmas;
 	private RealMatrix[] betas;
 
 	public ProbabilisticViewFunction(final Integer[] pos, final SDFSchema schema) {
 		this.joinAttributePos = pos;
 		this.schema = schema;
-		init(this.schema);
+		this.init(this.schema);
 	}
 
-	public ProbabilisticViewFunction(
-			final ProbabilisticViewFunction<T> probabilisticViewPO) {
+	public ProbabilisticViewFunction(final ProbabilisticViewFunction<T> probabilisticViewPO) {
 		this.joinAttributePos = probabilisticViewPO.joinAttributePos;
 		this.viewAttributePos = probabilisticViewPO.viewAttributePos;
 		this.schema = probabilisticViewPO.schema.clone();
-		init(this.schema);
+		this.init(this.schema);
 	}
 
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;
 	}
 
-	protected void merge(final ProbabilisticTuple<T> left,
-			final ProbabilisticTuple<T> right) {
-		sweepArea.purgeElements(right, Order.LeftRight);
-		sweepArea.insert(right);
-		int attributes = right.getAttributes().length;
-		if (sweepArea.size() > attributes) {
-			for (int i = 0; i < viewAttributePos.length; i++) {
-				updateLeastSquareEstimate(this.sweepArea, joinAttributePos,
-						viewAttributePos, i);
+	protected void merge(final ProbabilisticTuple<T> left, final ProbabilisticTuple<T> right) {
+		this.sweepArea.purgeElements(right, Order.LeftRight);
+		this.sweepArea.insert(right);
+		final int attributes = right.getAttributes().length;
+		if (this.sweepArea.size() > attributes) {
+			for (int i = 0; i < this.viewAttributePos.length; i++) {
+				this.updateLeastSquareEstimate(this.sweepArea, this.joinAttributePos, this.viewAttributePos, i);
 			}
 		}
 
-		IMetadataMergeFunction<T> mergeFunction = new CombinedMergeFunction<T>();
+		final IMetadataMergeFunction<T> mergeFunction = new CombinedMergeFunction<T>();
 
-		ProbabilisticTuple<T> tuple = (ProbabilisticTuple<T>) left.merge(left,
-				right, mergeFunction, Order.LeftRight);
-		int offset = left.getDistributions().length
-				+ right.getDistributions().length;
-		NormalDistributionMixture[] distributions = new NormalDistributionMixture[offset
-				+ viewAttributePos.length];
+		final ProbabilisticTuple<T> tuple = (ProbabilisticTuple<T>) left.merge(left, right, mergeFunction, Order.LeftRight);
+		final int offset = left.getDistributions().length + right.getDistributions().length;
+		final NormalDistributionMixture[] distributions = new NormalDistributionMixture[offset + this.viewAttributePos.length];
 
 		tuple.setDistributions(distributions);
 		for (int i = 0; i < left.getDistributions().length; i++) {
 			tuple.setDistribution(i, left.getDistribution(i));
 		}
 		for (int i = 0; i < right.getDistributions().length; i++) {
-			tuple.setDistribution(left.getDistributions().length + i,
-					right.getDistribution(i));
+			tuple.setDistribution(left.getDistributions().length + i, right.getDistribution(i));
 		}
-		for (int i = 0; i < viewAttributePos.length; i++) {
-			Map<NormalDistribution, Double> viewMixtures = new HashMap<NormalDistribution, Double>();
+		for (int i = 0; i < this.viewAttributePos.length; i++) {
+			final Map<NormalDistribution, Double> viewMixtures = new HashMap<NormalDistribution, Double>();
 
-			for (int j = 0; j < joinAttributePos.length; j++) {
-				NormalDistributionMixture distributionMixture = left
-						.getDistribution(joinAttributePos[j]);
-				Map<NormalDistribution, Double> mixtures = distributionMixture
-						.getMixtures();
-				for (Entry<NormalDistribution, Double> mixture : mixtures
-						.entrySet()) {
-					NormalDistribution distribution = mixture.getKey();
-					NormalDistribution viewDistribution = updateDistributions(
-							distribution, i);
+			for (final Integer joinAttributePo : this.joinAttributePos) {
+				final NormalDistributionMixture distributionMixture = left.getDistribution(joinAttributePo);
+				final Map<NormalDistribution, Double> mixtures = distributionMixture.getMixtures();
+				for (final Entry<NormalDistribution, Double> mixture : mixtures.entrySet()) {
+					final NormalDistribution distribution = mixture.getKey();
+					final NormalDistribution viewDistribution = this.updateDistributions(distribution, i);
 					viewMixtures.put(viewDistribution, mixture.getValue());
 				}
 			}
-			tuple.setDistribution(offset + i, new NormalDistributionMixture(
-					viewMixtures));
+			tuple.setDistribution(offset + i, new NormalDistributionMixture(viewMixtures));
 			tuple.setAttribute(i, offset + i);
 		}
 
@@ -138,26 +125,25 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		return new ProbabilisticViewFunction<T>(this);
 	}
 
-	private void init(SDFSchema schema) {
-		List<Integer> continuousList = new ArrayList<Integer>();
-		List<Integer> viewList = new ArrayList<Integer>();
+	private void init(final SDFSchema schema) {
+		final List<Integer> continuousList = new ArrayList<Integer>();
+		final List<Integer> viewList = new ArrayList<Integer>();
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
-			SDFAttribute attr = schema.getAttributes().get(i);
+			final SDFAttribute attr = schema.getAttributes().get(i);
 			if (attr.getDatatype() instanceof SDFProbabilisticDatatype) {
-				SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attr
-						.getDatatype();
+				final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attr.getDatatype();
 				if (datatype.isContinuous()) {
 					continuousList.add(i);
 				}
 			}
-			if (!Arrays.asList(joinAttributePos).contains(i)) {
+			if (!Arrays.asList(this.joinAttributePos).contains(i)) {
 				viewList.add(i);
 			}
 		}
 		this.continuousPos = continuousList.toArray(new Integer[0]);
 		this.viewAttributePos = viewList.toArray(new Integer[0]);
-		this.sigmas = new RealMatrix[viewAttributePos.length];
-		this.betas = new RealMatrix[viewAttributePos.length];
+		this.sigmas = new RealMatrix[this.viewAttributePos.length];
+		this.betas = new RealMatrix[this.viewAttributePos.length];
 	}
 
 	/**
@@ -172,66 +158,51 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 	 * @param index
 	 *            Index of the current estimate
 	 */
-	private void updateLeastSquareEstimate(
-			ITemporalSweepArea<ProbabilisticTuple<T>> sweepArea,
-			Integer[] joinAttributePos, Integer[] viewAttributePos, int index) {
+	private void updateLeastSquareEstimate(final ITemporalSweepArea<ProbabilisticTuple<T>> sweepArea, final Integer[] joinAttributePos, final Integer[] viewAttributePos, final int index) {
 
-		Iterator<ProbabilisticTuple<T>> iter = sweepArea.iterator();
+		final Iterator<ProbabilisticTuple<T>> iter = sweepArea.iterator();
 
-		int attributes = joinAttributePos.length + viewAttributePos.length;
+		final int attributes = joinAttributePos.length + viewAttributePos.length;
 		ProbabilisticTuple<T> element = null;
-		double[][] joinAttributesData = new double[joinAttributePos.length][sweepArea
-				.size()];
-		double[][] viewAttributesData = new double[viewAttributePos.length][sweepArea
-				.size()];
+		final double[][] joinAttributesData = new double[joinAttributePos.length][sweepArea.size()];
+		final double[][] viewAttributesData = new double[viewAttributePos.length][sweepArea.size()];
 
 		int dimension = 0;
 		while (iter.hasNext()) {
 			element = iter.next();
 			for (int i = 0; i < element.getAttributes().length; i++) {
 				for (int j = 0; j < joinAttributePos.length; j++) {
-					joinAttributesData[j][dimension] = element
-							.getAttribute(joinAttributePos[j]);
+					joinAttributesData[j][dimension] = element.getAttribute(joinAttributePos[j]);
 				}
 				for (int j = 0; j < viewAttributePos.length; j++) {
-					viewAttributesData[j][dimension] = element
-							.getAttribute(viewAttributePos[j]);
+					viewAttributesData[j][dimension] = element.getAttribute(viewAttributePos[j]);
 				}
 			}
 			dimension++;
 		}
 		System.out.println("Dimension " + dimension);
-		RealMatrix joinAttributes = MatrixUtils.createRealMatrix(
-				joinAttributesData).transpose();
+		final RealMatrix joinAttributes = MatrixUtils.createRealMatrix(joinAttributesData).transpose();
 		System.out.println("A " + joinAttributes);
 
-		RealMatrix viewAttributes = MatrixUtils.createRealMatrix(
-				viewAttributesData).transpose();
+		final RealMatrix viewAttributes = MatrixUtils.createRealMatrix(viewAttributesData).transpose();
 		System.out.println("B " + viewAttributes);
 
-		RealMatrix joinAttributesTranspose = joinAttributes.transpose();
+		final RealMatrix joinAttributesTranspose = joinAttributes.transpose();
 		System.out.println("At " + joinAttributesTranspose);
 
-		RealMatrix viewAttributesTranspose = viewAttributes.transpose();
+		final RealMatrix viewAttributesTranspose = viewAttributes.transpose();
 		System.out.println("Bt " + viewAttributesTranspose);
 
-		RealMatrix joinAttributesInverse = new LUDecomposition(
-				joinAttributesTranspose.multiply(joinAttributes)).getSolver()
-				.getInverse();
+		final RealMatrix joinAttributesInverse = new LUDecomposition(joinAttributesTranspose.multiply(joinAttributes)).getSolver().getInverse();
 		System.out.println("A^-1 " + joinAttributesInverse);
 
-		RealMatrix identity = MatrixUtils.createRealIdentityMatrix(dimension);
+		final RealMatrix identity = MatrixUtils.createRealIdentityMatrix(dimension);
 		System.out.println("I " + identity);
 
-		RealMatrix beta = joinAttributesInverse.multiply(
-				joinAttributesTranspose).multiply(viewAttributes);
+		final RealMatrix beta = joinAttributesInverse.multiply(joinAttributesTranspose).multiply(viewAttributes);
 		System.out.println(beta);
 
-		RealMatrix sigma = (viewAttributesTranspose.multiply(identity
-				.subtract(joinAttributes.multiply(joinAttributesInverse)
-						.multiply(joinAttributesTranspose)))
-				.multiply(viewAttributes))
-				.scalarMultiply(1 / (dimension - attributes));
+		final RealMatrix sigma = (viewAttributesTranspose.multiply(identity.subtract(joinAttributes.multiply(joinAttributesInverse).multiply(joinAttributesTranspose))).multiply(viewAttributes)).scalarMultiply(1 / (dimension - attributes));
 
 		System.out.println(sigma);
 
@@ -239,52 +210,31 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		this.sigmas[index] = sigma;
 	}
 
-	private NormalDistribution updateDistributions(
-			NormalDistribution distribution, int index) {
+	private NormalDistribution updateDistributions(final NormalDistribution distribution, final int index) {
 
-		RealMatrix mean = MatrixUtils.createRealMatrix(1,
-				distribution.getMean().length);
+		final RealMatrix mean = MatrixUtils.createRealMatrix(1, distribution.getMean().length);
 		mean.setColumn(0, distribution.getMean());
 
-		RealMatrix covarianceMatrix = distribution.getCovarianceMatrix()
-				.getMatrix();
-		RealMatrix newMean = MatrixUtils.createRealMatrix(1,
-				betas[index].getColumnDimension() + mean.getColumnDimension());
+		final RealMatrix covarianceMatrix = distribution.getCovarianceMatrix().getMatrix();
+		final RealMatrix newMean = MatrixUtils.createRealMatrix(1, this.betas[index].getColumnDimension() + mean.getColumnDimension());
 		newMean.setSubMatrix(mean.getData(), 0, 0);
-		newMean.setSubMatrix(betas[index].getData(), 0,
-				mean.getColumnDimension());
+		newMean.setSubMatrix(this.betas[index].getData(), 0, mean.getColumnDimension());
 
-		RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(
-				covarianceMatrix.getRowDimension()
-						+ sigmas[index].getRowDimension(),
-				covarianceMatrix.getColumnDimension()
-						+ sigmas[index].getColumnDimension());
+		final RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(covarianceMatrix.getRowDimension() + this.sigmas[index].getRowDimension(), covarianceMatrix.getColumnDimension() + this.sigmas[index].getColumnDimension());
 
 		newCovarianceMatrix.setSubMatrix(covarianceMatrix.getData(), 0, 0);
 
-		newCovarianceMatrix.setSubMatrix(
-				betas[index].transpose().multiply(newCovarianceMatrix)
-						.getData(), 0, covarianceMatrix.getColumnDimension());
+		newCovarianceMatrix.setSubMatrix(this.betas[index].transpose().multiply(newCovarianceMatrix).getData(), 0, covarianceMatrix.getColumnDimension());
 
-		newCovarianceMatrix.setSubMatrix(
-				newCovarianceMatrix.multiply(betas[index]).getData(),
-				covarianceMatrix.getRowDimension(), 0);
+		newCovarianceMatrix.setSubMatrix(newCovarianceMatrix.multiply(this.betas[index]).getData(), covarianceMatrix.getRowDimension(), 0);
 
-		newCovarianceMatrix.setSubMatrix(
-				sigmas[index].add(
-						betas[index].transpose().multiply(newCovarianceMatrix)
-								.multiply(betas[index])).getData(),
-				covarianceMatrix.getRowDimension(),
-				covarianceMatrix.getColumnDimension());
+		newCovarianceMatrix.setSubMatrix(this.sigmas[index].add(this.betas[index].transpose().multiply(newCovarianceMatrix).multiply(this.betas[index])).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
 
-		CovarianceMatrix covariance = CovarianceMatrixUtils
-				.fromMatrix(newCovarianceMatrix);
+		final CovarianceMatrix covariance = CovarianceMatrixUtils.fromMatrix(newCovarianceMatrix);
 
-		NormalDistribution smoothedDistributions = new NormalDistribution(
-				newMean.getData()[0], covariance);
+		final NormalDistribution smoothedDistributions = new NormalDistribution(newMean.getData()[0], covariance);
 
 		return smoothedDistributions;
 	}
-
 
 }

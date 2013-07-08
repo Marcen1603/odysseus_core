@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.AbstractCom
 
 public class ShowProbabilityChart2D extends AbstractCommand {
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IPhysicalOperator op = super.getSelectedOperator(event);
-		if(op!=null){			
-			openView(new ProbabilityChart2D(), op);
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
+		final IPhysicalOperator op = super.getSelectedOperator(event);
+		if (op != null) {
+			this.openView(new ProbabilityChart2D(), op);
 		}
 		return null;
 	}
