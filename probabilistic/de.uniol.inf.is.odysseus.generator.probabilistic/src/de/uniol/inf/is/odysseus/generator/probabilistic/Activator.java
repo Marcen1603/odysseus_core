@@ -16,6 +16,9 @@
 
 package de.uniol.inf.is.odysseus.generator.probabilistic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -25,33 +28,47 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Activator implements BundleActivator {
-    private static BundleContext context;
+	private static final int SERVERS = 3;
+	private static final int PORT = 65450;
+	private static BundleContext context;
+	private final List<StreamServer> servers = new ArrayList<StreamServer>();
 
-    static BundleContext getContext() {
-        return Activator.context;
-    }
+	static BundleContext getContext() {
+		return Activator.context;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-     * )
-     */
-    @Override
-    public void start(final BundleContext bundleContext) throws Exception {
-        Activator.context = bundleContext;
-        final StreamServer server = new StreamServer(54321, new ProbabilisticDataProvider());
-        server.start();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
+	 */
+	@Override
+	public void start(final BundleContext bundleContext) throws Exception {
+		Activator.context = bundleContext;
+		for (int i = 0; i < Activator.SERVERS; i++) {
+			final StreamServer server = new StreamServer(Activator.PORT + i,
+					new ProbabilisticDataProvider());
+			server.start();
+			this.servers.add(server);
+		}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    @Override
-    public void stop(final BundleContext bundleContext) throws Exception {
-        Activator.context = null;
-    }
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	@Override
+	public void stop(final BundleContext bundleContext) throws Exception {
+		Activator.context = null;
+		for (int i = 0; i < Activator.SERVERS; i++) {
+			this.servers.get(i).printStats();
+			this.servers.get(i).stopClients();
+		}
+	}
 
 }
