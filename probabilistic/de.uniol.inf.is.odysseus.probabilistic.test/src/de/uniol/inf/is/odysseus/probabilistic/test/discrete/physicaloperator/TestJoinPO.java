@@ -319,6 +319,8 @@ public class TestJoinPO
 				System.out.println(object);
 				Assert.assertTrue(((IProbabilistic) object.getMetadata())
 						.getExistence() <= 1.0);
+				Assert.assertEquals(object.getAttribute(4), "LEFT");
+				Assert.assertEquals(object.getAttribute(9), "RIGHT");
 			}
 		};
 	}
