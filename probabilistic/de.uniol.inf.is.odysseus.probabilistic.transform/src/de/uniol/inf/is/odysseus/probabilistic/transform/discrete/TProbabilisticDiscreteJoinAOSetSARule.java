@@ -53,7 +53,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 	 */
 	@Override
 	public int getPriority() {
-		return 1;
+		return 11;
 	}
 
 	/**

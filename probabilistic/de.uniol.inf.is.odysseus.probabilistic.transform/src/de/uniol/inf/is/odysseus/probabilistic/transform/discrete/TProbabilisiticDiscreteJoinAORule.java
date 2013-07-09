@@ -46,7 +46,7 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 	 */
 	@Override
 	public int getPriority() {
-		return 1;
+		return 11;
 	}
 
 	/*

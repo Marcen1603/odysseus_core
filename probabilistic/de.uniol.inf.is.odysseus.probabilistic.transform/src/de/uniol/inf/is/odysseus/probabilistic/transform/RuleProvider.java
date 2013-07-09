@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TAggregateProba
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteJoinAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteMapAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteSelectAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisticDiscreteJoinAOSetSARule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
@@ -56,12 +57,14 @@ public class RuleProvider implements ITransformRuleProvider {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		// Probabilistic Aggregation Functions
 		rules.add(new TAggregateProbabilisticRule());
-		// Select AO -> PO Rule
-		rules.add(new TProbabilisiticDiscreteSelectAORule());
+		// Join AO -> PO Rule
+		rules.add(new TProbabilisiticDiscreteJoinAORule());
+		rules.add(new TProbabilisticDiscreteJoinAOSetSARule());
 		// Map AO -> PO Rule
 		rules.add(new TProbabilisiticDiscreteMapAORule());
-		// Join AO -> PO Rule for discrete probabilistic values
-		rules.add(new TProbabilisiticDiscreteJoinAORule());
+		// Select AO -> PO Rule
+		rules.add(new TProbabilisiticDiscreteSelectAORule());
+
 		return rules;
 	}
 
