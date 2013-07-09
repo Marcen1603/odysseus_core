@@ -23,8 +23,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.datatype.Viewable
 public class Activator extends AbstractUIPlugin {
 	@Override
 	public void start(final BundleContext context) throws Exception {
-		super.start(context);
-
 		ViewableDatatypeRegistry.getInstance().register(new ProbDataType());
+	}
+	
+	@Override
+	public void stop(BundleContext context) throws Exception {
 	}
 }
