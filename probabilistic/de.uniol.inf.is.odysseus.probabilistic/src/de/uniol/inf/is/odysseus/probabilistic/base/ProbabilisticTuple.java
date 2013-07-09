@@ -521,7 +521,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	private ProbabilisticTuple<T> restrictCreation(final boolean createNew, final Object[] newAttrs, final NormalDistributionMixture[] newDistrs) {
 		if (createNew) {
-			final ProbabilisticTuple<T> newTuple = new ProbabilisticTuple<T>(this, newAttrs, newDistrs, false);
+			final ProbabilisticTuple<T> newTuple = new ProbabilisticTuple<T>(this, newAttrs, newDistrs, this.requiresDeepClone());
 			return newTuple;
 		}
 		this.attributes = newAttrs;
@@ -548,11 +548,14 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	public final String toString() {
 		final StringBuffer retBuff = new StringBuffer();
 		retBuff.append(super.toString());
+		retBuff.append("|DIS|");
 		if ((this.getDistributions() != null) && (this.getDistributions().length > 0)) {
-			retBuff.append("|DIS|");
+
 			for (int i = 0; i < this.getDistributions().length; i++) {
 				retBuff.append(this.getDistribution(i));
 			}
+		}else {
+			retBuff.append("-");
 		}
 		return retBuff.toString();
 	}

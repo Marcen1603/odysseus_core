@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -43,10 +44,10 @@ public final class SchemaUtils {
 	 * Returns true if this list contains a probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute}
 	 * 
 	 * @param attributes
-	 *            The list of {@link SDFAttribute attributes}
+	 *            The {@link Collection attributes}
 	 * @return <code>true</code> if this list contains a {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean containsProbabilisticAttributes(final List<SDFAttribute> attributes) {
+	public static boolean containsProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		boolean containsProbabilisticAttribute = false;
 		for (final SDFAttribute attribute : attributes) {
 			if (attribute.getDatatype() instanceof SDFProbabilisticDatatype) {
@@ -78,10 +79,10 @@ public final class SchemaUtils {
 	 * Returns true if this list contains a continuous probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is continuous
 	 * 
 	 * @param attributes
-	 *            The list of {@link SDFAttribute attributes}
+	 *            The {@link Collection attributes}
 	 * @return <code>true</code> if this list contains a continuous {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean containsContinuousProbabilisticAttributes(final List<SDFAttribute> attributes) {
+	public static boolean containsContinuousProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		if (attributes != null) {
 			for (final SDFAttribute attribute : attributes) {
 				if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
@@ -131,10 +132,10 @@ public final class SchemaUtils {
 	 * Returns true if this list contains a discrete probabilistic attribute. More formally, returns true if and only if this list contains at least one attribute that is an {@link SDFProbabilisticDatatype probabilistic attribute} that is discrete
 	 * 
 	 * @param attributes
-	 *            The list of {@link SDFAttribute attributes}
+	 *            The {@link Collection attributes}
 	 * @return <code>true</code> if this list contains a discrete {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
-	public static boolean containsDiscreteProbabilisticAttributes(final List<SDFAttribute> attributes) {
+	public static boolean containsDiscreteProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		if (attributes != null) {
 			for (final SDFAttribute attribute : attributes) {
 				if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
@@ -217,10 +218,10 @@ public final class SchemaUtils {
 	 * Returns all attributes from the list that are continuous probabilistic attributes.
 	 * 
 	 * @param attributes
-	 *            The {@link List attributes}
+	 *            The {@link Collection attributes}
 	 * @return A list of all attributes in the list that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
-	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final List<SDFAttribute> attributes) {
+	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		final List<SDFAttribute> result = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute attribute : attributes) {
 			if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
@@ -252,11 +253,11 @@ public final class SchemaUtils {
 	 * Returns all attributes from the list that are discrete probabilistic attributes.
 	 * 
 	 * @param attributes
-	 *            The {@link List attributes}
+	 *            The {@link Collection attributes}
 	 * @return A list of all attributes in the list that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 
-	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final List<SDFAttribute> attributes) {
+	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		final List<SDFAttribute> result = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute attribute : attributes) {
 			if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
@@ -272,10 +273,10 @@ public final class SchemaUtils {
 	 * @param schema
 	 *            The schema
 	 * @param attributes
-	 *            The list of attributes
+	 *            The {@link Collection attributes}
 	 * @return An array with the idnexes of the attributes in the schema
 	 */
-	public static int[] getAttributePos(final SDFSchema schema, final List<SDFAttribute> attributes) {
+	public static int[] getAttributePos(final SDFSchema schema, final Collection<SDFAttribute> attributes) {
 		final int[] pos = new int[attributes.size()];
 		int i = 0;
 		for (final SDFAttribute attribute : attributes) {

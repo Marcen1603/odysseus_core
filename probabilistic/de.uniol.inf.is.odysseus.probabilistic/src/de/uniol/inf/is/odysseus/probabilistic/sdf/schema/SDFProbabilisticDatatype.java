@@ -77,8 +77,8 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 		super(name, type, subType, true);
 	}
 
-	/** Probabilistic result used in probabilistic discrete predicates. */
-	public static final SDFDatatype PROBABILISTIC_DISCRETE_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticDiscretePredicateResult");
+	/** Probabilistic tuple. */
+	public static final SDFDatatype PROBABILISTIC_TUPLE = new SDFProbabilisticDatatype("ProbabilisticTuple");
 	/** Probabilistic result used in probabilistic continuous predicates. */
 	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
 	/** Probabilistic discrete double datatype. */

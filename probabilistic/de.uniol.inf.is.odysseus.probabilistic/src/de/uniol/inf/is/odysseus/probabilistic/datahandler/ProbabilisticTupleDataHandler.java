@@ -23,9 +23,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -44,19 +46,39 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 public class ProbabilisticTupleDataHandler extends AbstractDataHandler<ProbabilisticTuple<?>> {
 	static protected List<String> types = new ArrayList<String>();
 	static {
-		ProbabilisticTupleDataHandler.types.add("ProbabilisticTuple");
+		ProbabilisticTupleDataHandler.types.add(SDFProbabilisticDatatype.PROBABILISTIC_TUPLE.getURI());
 	}
 
 	private IDataHandler<?>[] dataHandlers = null;
 	private final ProbabilisticDistributionHandler probabilisticDistributionHandler = new ProbabilisticDistributionHandler();
 	private int maxDistributions;
+	private boolean requiresDeepClone = false;
+	private final boolean nullMode;
 
 	// Default Constructor for declarative Service needed
 	public ProbabilisticTupleDataHandler() {
+		nullMode = false;
 	}
 
-	private ProbabilisticTupleDataHandler(final SDFSchema schema) {
+	protected ProbabilisticTupleDataHandler(boolean nullMode) {
+		this.nullMode = nullMode;
+	}
+
+	protected ProbabilisticTupleDataHandler(final SDFSchema schema, boolean nullMode) {
+		this.nullMode = nullMode;
 		this.createDataHandler(schema);
+	}
+
+	@Override
+	public IDataHandler<ProbabilisticTuple<?>> getInstance(SDFSchema schema) {
+		return new ProbabilisticTupleDataHandler(schema, false);
+	}
+
+	@Override
+	public IDataHandler<ProbabilisticTuple<?>> getInstance(List<String> schema) {
+		ProbabilisticTupleDataHandler handler = new ProbabilisticTupleDataHandler(false);
+		handler.init(schema);
+		return handler;
 	}
 
 	public void init(final SDFSchema schema) {
@@ -81,7 +103,13 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		synchronized (buffer) {
 			final Object[] attributes = new Object[this.dataHandlers.length];
 			for (int i = 0; i < this.dataHandlers.length; i++) {
-				attributes[i] = this.dataHandlers[i].readData(buffer);
+				byte type = -1;
+				if (nullMode) {
+					type = buffer.get();
+				}
+				if (!nullMode || type != 0) {
+					attributes[i] = this.dataHandlers[i].readData(buffer);
+				}
 			}
 			final NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
 			int distributions = 0;
@@ -105,7 +133,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 					distributionsDimensions[distributionIndex]++;
 				}
 			}
-			r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+			r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
 			r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
 		}
 		return r;
@@ -126,7 +154,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 				distributions = i;
 			}
 		}
-		r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+		r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
 		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
 		return r;
 	}
@@ -149,7 +177,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 			distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input[i]);
 			distributions = i;
 		}
-		r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+		r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
 		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
 		return r;
 	}
@@ -167,7 +195,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 			distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input.get(i));
 			distributions = i;
 		}
-		r = new ProbabilisticTuple<IMetaAttribute>(attributes, false);
+		r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
 		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
 		return r;
 	}
@@ -211,11 +239,6 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		return Collections.unmodifiableList(ProbabilisticTupleDataHandler.types);
 	}
 
-	@Override
-	protected IDataHandler<ProbabilisticTuple<?>> getInstance(final SDFSchema schema) {
-		return new ProbabilisticTupleDataHandler(schema);
-	}
-
 	private void createDataHandler(final SDFSchema schema) {
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		this.maxDistributions = 0;
@@ -239,6 +262,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 				uri = "MULTI_VALUE";
 			}
 			if (probabilisticType != null) {
+				this.requiresDeepClone = true;
 				if (probabilisticType.isContinuous()) {
 					this.maxDistributions++;
 				}
@@ -254,6 +278,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 
 	private void createDataHandler(final List<String> schema) {
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
+		this.requiresDeepClone = true;
 		this.maxDistributions = 0;
 		int i = 0;
 		for (final String attribute : schema) {
