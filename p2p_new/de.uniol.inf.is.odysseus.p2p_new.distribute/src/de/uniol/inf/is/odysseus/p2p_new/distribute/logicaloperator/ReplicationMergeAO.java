@@ -5,32 +5,32 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
- * A {@link DistributionMergeAO} can be used to merge results from semantically equivalent 
+ * A {@link ReplicationMergeAO} can be used to merge results from semantically equivalent 
  * {@link ILogicalQuery}s. <br />
- * The {@link DistributionMergeAO} does not have any parameters but it must have at least two inputs. 
+ * The {@link ReplicationMergeAO} does not have any parameters but it must have at least two inputs. 
  * It can be used in PQL: <br />
  * <code>output = DISTRIBUTION_MERGE(input1,input2,...inputn)</code> 
  * @author Michael Brand
  */
 @LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE)
-public class DistributionMergeAO extends BinaryLogicalOp {
+public class ReplicationMergeAO extends BinaryLogicalOp {
 	
 	/**
-	 * Constructs a new {@link DistributionMergeAO}.
+	 * Constructs a new {@link ReplicationMergeAO}.
 	 * @see BinaryLogicalOp#BinaryLogicalOp()
 	 */
-	public DistributionMergeAO() {
+	public ReplicationMergeAO() {
 		
 		super();
 		
 	}
 	
 	/**
-	 * Constructs a new {@link DistributionMergeAO} as a copy of an existing one.
-	 * @param mergeAO Die {@link DistributionMergeAO} to be copied.
+	 * Constructs a new {@link ReplicationMergeAO} as a copy of an existing one.
+	 * @param mergeAO Die {@link ReplicationMergeAO} to be copied.
 	 * @see BinaryLogicalOp#BinaryLogicalOp(AbstractLogicalOperator)
 	 */
-	public DistributionMergeAO(DistributionMergeAO mergeAO) {
+	public ReplicationMergeAO(ReplicationMergeAO mergeAO) {
 		
 		super(mergeAO);
 		
@@ -39,7 +39,7 @@ public class DistributionMergeAO extends BinaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		
-		return new DistributionMergeAO(this);
+		return new ReplicationMergeAO(this);
 		
 	}
 

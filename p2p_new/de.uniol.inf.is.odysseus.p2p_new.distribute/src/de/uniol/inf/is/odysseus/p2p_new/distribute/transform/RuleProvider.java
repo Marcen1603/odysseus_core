@@ -8,19 +8,19 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
- * The Provider of the {@link TDistributionMergeAORule}.
+ * The Provider of the {@link TReplicationMergeAORule}.
  * @author Michael Brand
  */
 public class RuleProvider implements ITransformRuleProvider {
 
 	/**
-	 * Returns a new {@link TDistributionMergeAORule}.
+	 * Returns a new {@link TReplicationMergeAORule}.
 	 */
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		
 		List<IRule<?, ?>> rules = Lists.newArrayList();
-		rules.add(new TDistributionMergeAORule());
+		rules.add(new TReplicationMergeAORule());
 		return rules;
 		
 	}

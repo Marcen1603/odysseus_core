@@ -18,15 +18,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
- * A {@link DistributionMergePO} can be used to realize a {@link DistributionMergeAO}. <br />
- * The {@link DistributionMergePO} uses a {@link PriorityQueue} and can handle {@link IPunctuations}.
+ * A {@link ReplicationMergePO} can be used to realize a {@link ReplicationMergeAO}. <br />
+ * The {@link ReplicationMergePO} uses a {@link PriorityQueue} and can handle {@link IPunctuations}.
  * @author Michael Brand
  */
-public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval>> 
+public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>> 
 		extends AbstractPipe<T, T> {
 	
 	/**
-	 * The {@link PriorityQueue} to keep in mind which elements have been seen by this {@link DistributionMergePO}.
+	 * The {@link PriorityQueue} to keep in mind which elements have been seen by this {@link ReplicationMergePO}.
 	 */
 	private PriorityQueue<IPair<IStreamable, Integer>> inputQueue;
 	
@@ -69,9 +69,9 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 	}
 
 	/**
-	 * Constructs a new {@link DistributionMergePO}.
+	 * Constructs a new {@link ReplicationMergePO}.
 	 */
-	public DistributionMergePO() {
+	public ReplicationMergePO() {
 		
 		super();
 		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
@@ -79,10 +79,10 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 	}
 
 	/**
-	 * Constructs a new {@link DistributionMergePO} as a copy of an existing one.
-	 * @param mergePO The {@link DistributionMergePO} to be copied.
+	 * Constructs a new {@link ReplicationMergePO} as a copy of an existing one.
+	 * @param mergePO The {@link ReplicationMergePO} to be copied.
 	 */
-	public DistributionMergePO(DistributionMergePO<T> mergePO) {
+	public ReplicationMergePO(ReplicationMergePO<T> mergePO) {
 		
 		super(mergePO);
 		this.inputQueue = new PriorityQueue<IPair<IStreamable, Integer>>(10, comp);
@@ -93,7 +93,7 @@ public class DistributionMergePO<T extends IStreamObject<? extends ITimeInterval
 	@Override
 	public AbstractPipe<T, T> clone() {
 		
-		return new DistributionMergePO<T>(this);
+		return new ReplicationMergePO<T>(this);
 		
 	}
 

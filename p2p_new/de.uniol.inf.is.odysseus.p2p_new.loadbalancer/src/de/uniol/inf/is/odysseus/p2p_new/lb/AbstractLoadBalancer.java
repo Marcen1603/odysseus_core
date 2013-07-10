@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.DistributionMergeAO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.ReplicationMergeAO;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
 /**
@@ -365,9 +365,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * the sink, if <code>degreeOfParallelism</code> is <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink. <br />
 	 * a {@link RenameAO} with no operation subscribed to the sink, if <code>degreeOfParallelism</code> is <code>1</code> and 
 	 * {@link ILogicalOperator#needsLocalResources()} is false for the sink. <br />
-	 * a {@link DistributionMergeAO} subscribed to the sink, if <code>degreeOfParallelism</code> is greater than <code>1</code> and 
+	 * a {@link ReplicationMergeAO} subscribed to the sink, if <code>degreeOfParallelism</code> is greater than <code>1</code> and 
 	 * {@link ILogicalOperator#needsLocalResources()} is false for the sink. <br />
-	 * a {@link DistributionMergeAO} subscribed to all sources of the sink and subscribed as a source to the sink, 
+	 * a {@link ReplicationMergeAO} subscribed to all sources of the sink and subscribed as a source to the sink, 
 	 * if <code>degreeOfParallelism</code> is greater than <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink.
 	 */
 	protected QueryPart createLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism) {
@@ -402,7 +402,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} else if(!operator.needsLocalResources() && degreeOfParallelism > 1) {
 				
 				// Don't map operator to local part; merging needed before
-				final DistributionMergeAO mergeAO = new DistributionMergeAO();
+				final ReplicationMergeAO mergeAO = new ReplicationMergeAO();
 				localOperators.add(mergeAO);
 				mergeAO.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
 				LOG.debug("Subscribed {} to {}", operator, mergeAO);
@@ -410,7 +410,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} else {	// operator.needsLocalResources() && degreeOfParallelism > 1
 				
 				// Map operator to local part; Merging needed before
-				final DistributionMergeAO mergeAO = new DistributionMergeAO();
+				final ReplicationMergeAO mergeAO = new ReplicationMergeAO();
 				localOperators.add(mergeAO);
 				localOperators.add(operator);
 				

@@ -2,18 +2,18 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.DistributionMergeAO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator.DistributionMergePO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.ReplicationMergeAO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator.ReplicationMergePO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * The rule of transformation for the {@link DistributionMergeAO}. Any {@link DistributionMergeAO} will be 
- * transformed into a new {@link DistributionMergePO}.
+ * The rule of transformation for the {@link ReplicationMergeAO}. Any {@link ReplicationMergeAO} will be 
+ * transformed into a new {@link ReplicationMergePO}.
  * @author Michael Brand
  */
-public class TDistributionMergeAORule extends AbstractTransformationRule<DistributionMergeAO> {
+public class TReplicationMergeAORule extends AbstractTransformationRule<ReplicationMergeAO> {
 
 	 @Override
 	 public int getPriority() {
@@ -25,14 +25,14 @@ public class TDistributionMergeAORule extends AbstractTransformationRule<Distrib
 	  
 	 @SuppressWarnings("rawtypes")
 	@Override
-	 public void execute(DistributionMergeAO mergeAO, TransformationConfiguration config) { 
+	 public void execute(ReplicationMergeAO mergeAO, TransformationConfiguration config) { 
 		 
-		 defaultExecute(mergeAO, new DistributionMergePO(), config, true, true);
+		 defaultExecute(mergeAO, new ReplicationMergePO(), config, true, true);
 		 
 	 }
 	 
 	 @Override
-	public boolean isExecutable(DistributionMergeAO mergeAO, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(ReplicationMergeAO mergeAO, TransformationConfiguration transformConfig) {
 		 
 		return mergeAO.isAllPhysicalInputSet() &&
 				transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName());
@@ -54,9 +54,9 @@ public class TDistributionMergeAORule extends AbstractTransformationRule<Distrib
 	}
 	
 	@Override
-	public Class<? super DistributionMergeAO> getConditionClass() {	
+	public Class<? super ReplicationMergeAO> getConditionClass() {	
 		
-		return DistributionMergeAO.class;
+		return ReplicationMergeAO.class;
 		
 	}
 	
