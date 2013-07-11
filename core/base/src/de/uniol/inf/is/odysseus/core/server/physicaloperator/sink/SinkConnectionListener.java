@@ -68,46 +68,50 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Exception during creating socket server", e);
 		}
-		while (true) {
-			Socket socket = null;
-			try {
-				boolean connectionAllowed = false;
-				logger.debug("Waiting for Server to connect on "+port);
-				socket = server.accept();
-				logger.debug("Connection from "
-						+ socket.getRemoteSocketAddress());
-				if (loginNeeded){
-					BufferedReader in = 
-						    new BufferedReader(
-						    new InputStreamReader(
-						    socket.getInputStream()));					
-					
-					String username = in.readLine();
-					String password = in.readLine();
-					String tenant = in.readLine();
-					ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes(), tenant);
-					if (user != null){
-						// TODO: Test if User has right to access sink
+		
+		if( server != null ) {
+			while (true) {
+				Socket socket = null;
+				try {
+					boolean connectionAllowed = false;
+					logger.debug("Waiting for Server to connect on "+port);
+					socket = server.accept();
+					logger.debug("Connection from "
+							+ socket.getRemoteSocketAddress());
+					if (loginNeeded){
+						BufferedReader in = 
+							    new BufferedReader(
+							    new InputStreamReader(
+							    socket.getInputStream()));					
+						
+						String username = in.readLine();
+						String password = in.readLine();
+						String tenant = in.readLine();
+						ISession user = UserManagement.getSessionmanagement().login(username, password.getBytes(), tenant);
+						if (user != null){
+							// TODO: Test if User has right to access sink
+							connectionAllowed = true;
+						}
+					}else{
 						connectionAllowed = true;
 					}
-				}else{
-					connectionAllowed = true;
-				}
-				if (connectionAllowed) {
-					logger.debug("Adding Handler");
-					ISinkStreamHandler temp = sinkStreamHandlerBuilder.newInstance(socket);
-					synchronized (subscribe) {
-						subscribe.add(temp);
+					if (connectionAllowed) {
+						logger.debug("Adding Handler");
+						ISinkStreamHandler temp = sinkStreamHandlerBuilder.newInstance(socket);
+						synchronized (subscribe) {
+							subscribe.add(temp);
+						}
+						logger.debug("Adding Handler done");
+					}else{
+						logger.debug("Connection "+(connectionAllowed==false?"not allowed.":" failed"));
 					}
-					logger.debug("Adding Handler done");
-				}else{
-					logger.debug("Connection "+(connectionAllowed==false?"not allowed.":" failed"));
+				} catch (IOException e) {
+					logger.error("Exception during getting new connection", e);
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-		}
+		} 
+		logger.error("Could not create server for socket sink");
 	}
 }

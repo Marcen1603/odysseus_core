@@ -34,6 +34,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 
 	public List<ISinkStreamHandler> subscribe = new ArrayList<ISinkStreamHandler>();
 	private ISinkConnection listener;
+	private boolean isStarted;
 	private IObjectHandler objectHandler = null;
 
 	public SocketSinkPO(int serverPort, String host, ISinkStreamHandlerBuilder sinkStreamHandlerBuilder, boolean useNIO, boolean loginNeeded, IObjectHandler objectHandler, boolean push) {
@@ -51,10 +52,17 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	public SocketSinkPO(SocketSinkPO socketSinkPO) {
 		throw new RuntimeException("Clone not supported");
 	}
+	
+	public void startListening() {
+		if( !isStarted ) {
+			listener.start();
+			isStarted = true;
+		}
+	}
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		listener.start();
+		startListening();
 	}
 		
 	@Override

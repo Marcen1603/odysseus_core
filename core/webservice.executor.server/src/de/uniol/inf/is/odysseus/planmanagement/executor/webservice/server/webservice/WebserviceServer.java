@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
@@ -58,7 +59,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MapParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSinkStreamHandlerBuilder;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -461,18 +461,15 @@ public class WebserviceServer {
 			int port = 0;
 			if (!socketPortMap.containsKey(queryId)) {
 				// no socketsink available so create one
-				int minPort = Integer.valueOf(OdysseusConfiguration.getInt(
-						"minSinkPort", SINK_MIN_PORT));
-				int maxPort = Integer.valueOf(OdysseusConfiguration.getInt(
-						"maxSinkPort", SINK_MAX_PORT));
+				int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
+				int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 				port = getNextFreePort(minPort, maxPort);
 				addSocketSink(queryId, port);
 			} else {
 				// there is already a socketsink so we can use the port
 				port = socketPortMap.get(queryId);
 			}
-			ConnectionInformation connectInfo = new ConnectionInformation(port,
-					InetAddress.getLocalHost().getHostAddress());
+			ConnectionInformation connectInfo = new ConnectionInformation(port, InetAddress.getLocalHost().getHostAddress());
 			return new ConnectionInformationResponse(connectInfo, true);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -487,23 +484,20 @@ public class WebserviceServer {
 		IPhysicalQuery query = plan.getQueryById(queryId);
 		List<IPhysicalOperator> roots = query.getRoots();
 		if (roots.size() == 1) {
-			ISinkStreamHandlerBuilder sinkStreamHandlerBuilder = new ByteBufferSinkStreamHandlerBuilder();
-			boolean useNio = true;
-			boolean loginNeeded = false;
-			int sourceInPort = 0;
-			int sourceOutPort = 0;
-			// copied from TRelationSocketSinkAORule
-			IDataHandler<?> handler = new TupleDataHandler().getInstance(roots
-					.get(0).getOutputSchema());
-			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
-					handler);
-			ISink sink = new SocketSinkPO(port, "", sinkStreamHandlerBuilder,
-					useNio, loginNeeded, objectHandler, false);
-			sink.subscribeToSource(roots.get(0), sourceInPort, sourceOutPort,
-					roots.get(0).getOutputSchema());
-			sink.open(query);
+			
+			final IPhysicalOperator root = roots.get(0);
+			final ISource<?> rootAsSource = (ISource<?>)root;
+			
+			IDataHandler<?> handler = new TupleDataHandler().getInstance(root.getOutputSchema());
+			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(handler);
+			SocketSinkPO sink = new SocketSinkPO(port, "", new ByteBufferSinkStreamHandlerBuilder(), true, false, objectHandler, false);
+			
+			rootAsSource.connectSink((ISink) sink, 0, 0, root.getOutputSchema());
+			sink.startListening();
+			
 		} else {
 			// TODO solution for a plan with more roots
+			// see JIRA: ODY-595
 		}
 	}
 
