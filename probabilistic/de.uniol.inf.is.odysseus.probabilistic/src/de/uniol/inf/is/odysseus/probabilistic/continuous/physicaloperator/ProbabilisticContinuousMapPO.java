@@ -220,7 +220,11 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 						obj = lastObjects.get(this.variables[i][j].objectPosToUse);
 					}
 					if (obj != null) {
-						values[j] = obj.getAttribute(this.variables[i][j].pos);
+						Object attribute = obj.getAttribute(this.variables[i][j].pos);
+						if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
+							attribute = restrictedObject.getDistribution(((ProbabilisticContinuousDouble) attribute).getDistribution());
+						}
+						values[j] = attribute;
 					}
 				}
 

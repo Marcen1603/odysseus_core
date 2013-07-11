@@ -46,8 +46,8 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		final NormalDistributionMixture a = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(0)).getDistribution());
-		final NormalDistributionMixture b = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(1)).getDistribution());
+		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
+		final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
 		return getValueInternal(a, b);
 	}
 

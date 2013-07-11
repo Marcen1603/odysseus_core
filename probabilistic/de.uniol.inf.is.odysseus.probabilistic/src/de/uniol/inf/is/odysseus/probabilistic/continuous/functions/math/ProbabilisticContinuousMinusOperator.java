@@ -39,8 +39,8 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		final NormalDistributionMixture a = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(0)).getDistribution());
-		final NormalDistributionMixture b = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(1)).getDistribution());
+		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
+		final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
 		return getValueInternal(a, b);
 	}
 
@@ -49,7 +49,6 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 		for (final Map.Entry<NormalDistribution, Double> aEntry : a.getMixtures().entrySet()) {
 			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getKey().getMean());
 			final RealMatrix aCovarianceMatrix = aEntry.getKey().getCovarianceMatrix().getMatrix();
-
 			for (final Map.Entry<NormalDistribution, Double> bEntry : b.getMixtures().entrySet()) {
 				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getKey().getMean());
 				final RealMatrix bCovarianceMatrix = bEntry.getKey().getCovarianceMatrix().getMatrix();
