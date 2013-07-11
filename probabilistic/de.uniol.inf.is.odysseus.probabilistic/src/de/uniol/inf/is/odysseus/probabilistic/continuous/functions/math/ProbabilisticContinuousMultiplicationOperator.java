@@ -48,8 +48,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 	public NormalDistributionMixture getValue() {
 		final NormalDistributionMixture a = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(0)).getDistribution());
 		final NormalDistributionMixture b = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(1)).getDistribution());
-		// return getValueInternal(a, b);
-		throw new RuntimeException("Operator (" + this.getSymbol() + ") not implemented");
+		return getValueInternal(a, b);
 	}
 
 	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
