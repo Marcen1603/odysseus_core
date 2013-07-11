@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
@@ -68,7 +69,10 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	public void setModel() {
 		if (this.occurrencesUpdater != null) {
-			this.occurrencesUpdater.update(getSourceViewer());
+			ISourceViewer viewer = getSourceViewer();
+			if (viewer != null) {
+				this.occurrencesUpdater.update(viewer);
+			}
 		}
 //		if (getDocumentProvider() != null && getEditorInput() != null
 //				&& getDocumentProvider().getDocument(getEditorInput()) != null
