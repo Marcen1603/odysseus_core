@@ -83,12 +83,12 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
 
 	@Override
 	public boolean isCommutative() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isAssociative() {
-		return false;
+		return true;
 	}
 
 	@Override
