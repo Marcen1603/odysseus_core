@@ -1,7 +1,15 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
@@ -28,13 +36,24 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
 	public NormalDistributionMixture getValue() {
 		final NormalDistributionMixture a = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(0)).getDistribution());
 		final NormalDistributionMixture b = this.getDistributions(((ProbabilisticContinuousDouble) this.getInputValue(1)).getDistribution());
-
-		// return getValueInternal(a, b);
-		throw new RuntimeException("Operator (" + this.getSymbol() + ") not implemented");
+		return getValueInternal(a, b);
 	}
 
 	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
-		return null;
+		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>();
+		for (final Map.Entry<NormalDistribution, Double> aEntry : a.getMixtures().entrySet()) {
+			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getKey().getMean());
+			final RealMatrix aCovarianceMatrix = aEntry.getKey().getCovarianceMatrix().getMatrix();
+
+			for (final Map.Entry<NormalDistribution, Double> bEntry : b.getMixtures().entrySet()) {
+				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getKey().getMean());
+				final RealMatrix bCovarianceMatrix = bEntry.getKey().getCovarianceMatrix().getMatrix();
+
+				NormalDistribution distribution = new NormalDistribution(aMean.add(bMean).getColumn(0), CovarianceMatrixUtils.fromMatrix(aCovarianceMatrix.add(bCovarianceMatrix)));
+				mixtures.put(distribution, aEntry.getValue() * bEntry.getValue());
+			}
+		}
+		return new NormalDistributionMixture(mixtures);
 	}
 
 	@Override
@@ -67,7 +86,8 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
 		return false;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE };
+	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT,
+			SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
 
 	@Override
 	public SDFDatatype[] getAcceptedTypes(final int argPos) {
