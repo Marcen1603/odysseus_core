@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
@@ -99,21 +99,21 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 
 	private double univariateCumulativeProbability(final NormalDistributionMixture distribution, final double lowerBound, final double upperBound) {
 		double probability = 0.0;
-		for (final Entry<NormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
-			final NormalDistribution normalDistribution = mixture.getKey();
+		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
+			final MultivariateNormalDistribution normalDistribution = mixture.getKey();
 			final Double weight = mixture.getValue();
-			final org.apache.commons.math3.distribution.NormalDistribution tmpDistribution = new org.apache.commons.math3.distribution.NormalDistribution(normalDistribution.getMean()[0], normalDistribution.getCovarianceMatrix().getEntries()[0]);
-			probability += tmpDistribution.cumulativeProbability(lowerBound, upperBound) * weight;
+			final NormalDistribution tmpDistribution = new NormalDistribution(normalDistribution.getMeans()[0], normalDistribution.getCovariances().getEntry(0, 0));
+			probability += tmpDistribution.probability(lowerBound, upperBound) * weight;
 		}
 		return probability;
 	}
 
 	private double multivariateCumulativeProbability(final NormalDistributionMixture distribution, final RealVector lowerBound, final RealVector upperBound) {
 		double probability = 0.0;
-		for (final Entry<NormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
-			final NormalDistribution normalDistribution = mixture.getKey();
+		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
+			final MultivariateNormalDistribution normalDistribution = mixture.getKey();
 			final Double weight = mixture.getValue();
-			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovarianceMatrix().getMatrix().getData());
+			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
 			final Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
 			final Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
 			probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).p * weight;
@@ -121,54 +121,4 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 		return probability;
 	}
 
-	/**
-	 * Test main
-	 * 
-	 * @param args
-	 */
-	@SuppressWarnings("unused")
-	public static void main(final String[] args) {
-		final ProbabilisticIntegrateMultivariateFunction function = new ProbabilisticIntegrateMultivariateFunction();
-
-		final int variate = 4;
-		final int multi = 4;
-		final List<CovarianceMatrix> covarianceMatrixStore = new ArrayList<CovarianceMatrix>(variate);
-		for (int i = 0; i < variate; i++) {
-			final int size = multi + 6;
-			final double[] entries = new double[size];
-			for (int j = 0; j < entries.length; j++) {
-				entries[j] = j + 1;
-			}
-			covarianceMatrixStore.add(new CovarianceMatrix(entries));
-		}
-		final ProbabilisticContinuousDouble mixtureDistribution = new ProbabilisticContinuousDouble(0);
-		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>();
-		final double[] mean = new double[multi];
-		for (int i = 0; i < multi; i++) {
-			mean[i] = i;
-		}
-		for (int i = 0; i < multi; i++) {
-			final Integer dimension = i;
-
-			final NormalDistribution distribution = new NormalDistribution(mean, covarianceMatrixStore.get(0));
-			mixtures.put(distribution, 1.0 / multi);
-		}
-
-		function.getDistributions().add(new NormalDistributionMixture(mixtures));
-
-		final Map<String, Serializable> content = new HashMap<String, Serializable>();
-		// content.put("covariance_matrix_store", covarianceMatrixStore);
-		// function.setAdditionalContent(content);
-		function.setArguments(new Constant<ProbabilisticContinuousDouble>(mixtureDistribution, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<double[][]>(new double[][] { { 1.0, 1.0, 1.0, 1.0 } }, SDFDatatype.VECTOR_DOUBLE), new Constant<double[][]>(new double[][] { { 2.0,
-				2.0, 2.0, 2.0 } }, SDFDatatype.VECTOR_DOUBLE));
-
-		final Double value = function.getValue();
-		System.out.println("Mixture: " + mixtureDistribution);
-		System.out.println("CoVariance: " + covarianceMatrixStore);
-		for (final CovarianceMatrix covarianceMatrix : covarianceMatrixStore) {
-			System.out.println("CoVariance Matrix : " + CovarianceMatrixUtils.toMatrix(covarianceMatrix) + " Size: " + covarianceMatrix.size());
-		}
-		System.out.println(value);
-		assert (value == 3.0);
-	}
 }

@@ -2,9 +2,10 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import java.util.Map;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -34,11 +35,13 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
 
 	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final Double b) {
 		NormalDistributionMixture result = a.clone();
-		for (Map.Entry<NormalDistribution, Double> mixture : result.getMixtures().entrySet()) {
-			double[] means = mixture.getKey().getMean();
+		result.getMixtures().clear();
+		for (Map.Entry<MultivariateNormalDistribution, Double> entry : a.getMixtures().entrySet()) {
+			double[] means = entry.getKey().getMeans();
 			for (int i = 0; i < means.length; i++) {
 				means[i] += b;
 			}
+			result.getMixtures().put(new MultivariateNormalDistribution(means, entry.getKey().getCovariances().getData().clone()), entry.getValue());
 		}
 		Interval[] support = new Interval[result.getSupport().length];
 		for (int i = 0; i < result.getSupport().length; i++) {

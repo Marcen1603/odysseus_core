@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.common;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
-
 /**
  * Utility class for covariance handling.
  * 
@@ -30,21 +28,30 @@ public final class CovarianceMatrixUtils {
 	private static final double INVERSE_SUM = 8.0;
 
 	/**
-	 * Converts the given covarince matrix into a {@link RealMatrix}.
+	 * Converts the given covariance matrix into a {@link RealMatrix}.
 	 * 
-	 * @param triangleMatrix
+	 * @param entries
 	 *            The triangle covariance matrix
 	 * @return The matrix
 	 */
-	public static RealMatrix toMatrix(final CovarianceMatrix triangleMatrix) {
-		final int size = triangleMatrix.size();
+	public static RealMatrix toMatrix(final double[] entries) {
+		final int size = getCovarianceDimensionFromTriangleSize(entries.length);
 		final RealMatrix matrix = MatrixUtils.createRealMatrix(size, size);
 		int left = 0;
 		int right = size;
 		for (int i = 0; i < size; i++) {
 			final double[] row = matrix.getRow(i);
-			System.arraycopy(triangleMatrix.getEntries(), left, row, i, right);
+			System.arraycopy(entries, left, row, i, right);
 			matrix.setRow(i, row);
+			left += right;
+			right--;
+		}
+		left = 0;
+		right = size;
+		for (int i = 0; i < size; i++) {
+			final double[] column = matrix.getColumn(i);
+			System.arraycopy(entries, left, column, i, right);
+			matrix.setColumn(i, column);
 			left += right;
 			right--;
 		}
@@ -58,7 +65,7 @@ public final class CovarianceMatrixUtils {
 	 *            The matrix
 	 * @return The triangle covariance matrix
 	 */
-	public static CovarianceMatrix fromMatrix(final RealMatrix matrix) {
+	public static double[] fromMatrix(final RealMatrix matrix) {
 		final int dimension = matrix.getColumnDimension();
 		int left = 0;
 		int right = dimension;
@@ -69,8 +76,7 @@ public final class CovarianceMatrixUtils {
 			left += right;
 			right--;
 		}
-		final CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
-		return covarianceMatrix;
+		return entries;
 	}
 
 	/**
@@ -101,4 +107,5 @@ public final class CovarianceMatrixUtils {
 	private CovarianceMatrixUtils() {
 		throw new UnsupportedOperationException();
 	}
+
 }

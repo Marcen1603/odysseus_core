@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -43,8 +42,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideSimpleTuple() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0 },
-				new CovarianceMatrix(new double[] { 1.5 }));
+				new double[] { 2.0 }, new double[] { 1.5 });
 		final Object[] attrs = new Object[] { "FirstAttribute",
 				new ProbabilisticContinuousDouble(0) };
 		mixture.setAttributes(new int[] { 1 });
@@ -58,8 +56,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideUnivariateTuple() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0 },
-				new CovarianceMatrix(new double[] { 1.5 }));
+				new double[] { 2.0 }, new double[] { 1.5 });
 		final Object[] attrs = new Object[] { "FirstAttribute",
 				new ProbabilisticContinuousDouble(0), "ThirdAttribute" };
 		mixture.setAttributes(new int[] { 1 });
@@ -73,8 +70,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideMultivariateTuple1() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0, 3.0 }, new CovarianceMatrix(new double[] {
-						1.5, 2.0, 2.5 }));
+				new double[] { 2.0, 3.0 }, new double[] { 1.5, 2.0, 2.5 });
 		final Object[] attrs = new Object[] {
 				new ProbabilisticContinuousDouble(0), "FirstAttribute",
 				"ThirdAttribute", new ProbabilisticContinuousDouble(0) };
@@ -90,8 +86,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideMultivariateTuple2() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0, 3.0 }, new CovarianceMatrix(new double[] {
-						1.5, 2.0, 2.5 }));
+				new double[] { 2.0, 3.0 }, new double[] { 1.5, 2.0, 2.5 });
 		final Object[] attrs = new Object[] { "FirstAttribute",
 				new ProbabilisticContinuousDouble(0), "ThirdAttribute",
 				new ProbabilisticContinuousDouble(0) };
@@ -107,8 +102,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideMultivariateTuple3() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0, 3.0 }, new CovarianceMatrix(new double[] {
-						1.5, 2.0, 2.5 }));
+				new double[] { 2.0, 3.0 }, new double[] { 1.5, 2.0, 2.5 });
 		final Object[] attrs = new Object[] { "FirstAttribute",
 				new ProbabilisticContinuousDouble(0), "ThirdAttribute",
 				new ProbabilisticContinuousDouble(0) };
@@ -124,16 +118,14 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideMultivariateTuple4() {
 		final NormalDistributionMixture mixture1 = new NormalDistributionMixture(
-				new double[] { 2.0 },
-				new CovarianceMatrix(new double[] { 1.5 }));
+				new double[] { 2.0 }, new double[] { 1.5 });
 
 		mixture1.setAttributes(new int[] { 3 });
 		mixture1.setScale(1.0);
 		mixture1.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
 
 		final NormalDistributionMixture mixture2 = new NormalDistributionMixture(
-				new double[] { 3.0 },
-				new CovarianceMatrix(new double[] { 2.5 }));
+				new double[] { 3.0 }, new double[] { 2.5 });
 
 		mixture2.setAttributes(new int[] { 1 });
 		mixture2.setScale(1.0);
@@ -150,10 +142,4 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 		return tuple;
 	}
 
-	private void appendDistribution(final ProbabilisticTuple<?> tuple,
-			final NormalDistributionMixture mixture) {
-		final int distributionIndex = tuple.getDistributions().length;
-		tuple.append(new ProbabilisticContinuousDouble(distributionIndex),
-				mixture, false);
-	}
 }

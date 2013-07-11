@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
@@ -54,7 +54,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 		NormalDistributionMixture distributionMixture = null;
 		final int size = buffer.getInt();
 		if (size > 0) {
-			final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>(size);
+			final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>(size);
 			final int dimension = buffer.getInt();
 			for (int m = 0; m < size; m++) {
 				final double weight = buffer.getDouble();
@@ -67,8 +67,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 					entries[i] = buffer.getDouble();
 				}
 
-				final CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
-				final NormalDistribution distribution = new NormalDistribution(mean, covarianceMatrix);
+				final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
 				mixtures.put(distribution, weight);
 			}
 			final double scale = buffer.getDouble();
@@ -92,7 +91,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	@Override
 	public NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
 		final int size = inputStream.readInt();
-		final Map<NormalDistribution, Double> mixtures = new HashMap<NormalDistribution, Double>(size);
+		final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>(size);
 		final int dimension = inputStream.readInt();
 		for (int m = 0; m < size; m++) {
 			final double weight = inputStream.readDouble();
@@ -105,8 +104,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 				entries[i] = inputStream.readDouble();
 			}
 
-			final CovarianceMatrix covarianceMatrix = new CovarianceMatrix(entries);
-			final NormalDistribution distribution = new NormalDistribution(mean, covarianceMatrix);
+			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
 			mixtures.put(distribution, weight);
 		}
 		final double scale = inputStream.readDouble();
@@ -149,13 +147,13 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 		buffer.putInt(value.getMixtures().size());
 		buffer.putInt(value.getDimension());
 
-		for (final Entry<NormalDistribution, Double> mixture : value.getMixtures().entrySet()) {
+		for (final Entry<MultivariateNormalDistribution, Double> mixture : value.getMixtures().entrySet()) {
 			buffer.putDouble(mixture.getValue());
-			final double[] mean = mixture.getKey().getMean();
+			final double[] mean = mixture.getKey().getMeans();
 			for (final double element : mean) {
 				buffer.putDouble(element);
 			}
-			final double[] entries = mixture.getKey().getCovarianceMatrix().getEntries();
+			final double[] entries = CovarianceMatrixUtils.fromMatrix(mixture.getKey().getCovariances());
 			for (final double entrie : entries) {
 				buffer.putDouble(entrie);
 			}

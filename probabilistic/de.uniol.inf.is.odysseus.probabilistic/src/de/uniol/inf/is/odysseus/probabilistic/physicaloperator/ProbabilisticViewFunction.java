@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -38,9 +39,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.Output
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
@@ -103,14 +101,14 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 			tuple.setDistribution(left.getDistributions().length + i, right.getDistribution(i));
 		}
 		for (int i = 0; i < this.viewAttributePos.length; i++) {
-			final Map<NormalDistribution, Double> viewMixtures = new HashMap<NormalDistribution, Double>();
+			final Map<MultivariateNormalDistribution, Double> viewMixtures = new HashMap<MultivariateNormalDistribution, Double>();
 
 			for (final Integer joinAttributePo : this.joinAttributePos) {
 				final NormalDistributionMixture distributionMixture = left.getDistribution(joinAttributePo);
-				final Map<NormalDistribution, Double> mixtures = distributionMixture.getMixtures();
-				for (final Entry<NormalDistribution, Double> mixture : mixtures.entrySet()) {
-					final NormalDistribution distribution = mixture.getKey();
-					final NormalDistribution viewDistribution = this.updateDistributions(distribution, i);
+				final Map<MultivariateNormalDistribution, Double> mixtures = distributionMixture.getMixtures();
+				for (final Entry<MultivariateNormalDistribution, Double> mixture : mixtures.entrySet()) {
+					final MultivariateNormalDistribution distribution = mixture.getKey();
+					final MultivariateNormalDistribution viewDistribution = this.updateDistributions(distribution, i);
 					viewMixtures.put(viewDistribution, mixture.getValue());
 				}
 			}
@@ -210,12 +208,12 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 		this.sigmas[index] = sigma;
 	}
 
-	private NormalDistribution updateDistributions(final NormalDistribution distribution, final int index) {
+	private MultivariateNormalDistribution updateDistributions(final MultivariateNormalDistribution distribution, final int index) {
 
-		final RealMatrix mean = MatrixUtils.createRealMatrix(1, distribution.getMean().length);
-		mean.setColumn(0, distribution.getMean());
+		final RealMatrix mean = MatrixUtils.createRealMatrix(1, distribution.getMeans().length);
+		mean.setColumn(0, distribution.getMeans());
 
-		final RealMatrix covarianceMatrix = distribution.getCovarianceMatrix().getMatrix();
+		final RealMatrix covarianceMatrix = distribution.getCovariances();
 		final RealMatrix newMean = MatrixUtils.createRealMatrix(1, this.betas[index].getColumnDimension() + mean.getColumnDimension());
 		newMean.setSubMatrix(mean.getData(), 0, 0);
 		newMean.setSubMatrix(this.betas[index].getData(), 0, mean.getColumnDimension());
@@ -230,9 +228,7 @@ public class ProbabilisticViewFunction<T extends ITimeInterval> {
 
 		newCovarianceMatrix.setSubMatrix(this.sigmas[index].add(this.betas[index].transpose().multiply(newCovarianceMatrix).multiply(this.betas[index])).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
 
-		final CovarianceMatrix covariance = CovarianceMatrixUtils.fromMatrix(newCovarianceMatrix);
-
-		final NormalDistribution smoothedDistributions = new NormalDistribution(newMean.getData()[0], covariance);
+		final MultivariateNormalDistribution smoothedDistributions = new MultivariateNormalDistribution(newMean.getData()[0], newCovarianceMatrix.getData());
 
 		return smoothedDistributions;
 	}

@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 
@@ -82,8 +81,7 @@ public class TestProbabilisticTuple {
 		for (Integer i = 0; i < length; i++) {
 			if (positionList.contains(i)) {
 				mixtures[positionList.indexOf(i)] = new NormalDistributionMixture(
-						new double[] { 1.5 }, new CovarianceMatrix(
-								new double[] { 2.5 }));
+						new double[] { 1.5 }, new double[][] { { 2.5 } });
 				attrs[i] = new ProbabilisticContinuousDouble(
 						positionList.indexOf(i));
 				mixtures[positionList.indexOf(i)]
@@ -104,8 +102,7 @@ public class TestProbabilisticTuple {
 		for (Integer i = 0; i < length; i++) {
 			if (positionList.contains(i)) {
 				mixtures[positionList.indexOf(i)] = new NormalDistributionMixture(
-						new double[] { 2.0 }, new CovarianceMatrix(
-								new double[] { 1.5 }));
+						new double[] { 2.0 }, new double[][] { { 1.5 } });
 				attrs[i] = new ProbabilisticContinuousDouble(
 						positionList.indexOf(i));
 				mixtures[positionList.indexOf(i)]

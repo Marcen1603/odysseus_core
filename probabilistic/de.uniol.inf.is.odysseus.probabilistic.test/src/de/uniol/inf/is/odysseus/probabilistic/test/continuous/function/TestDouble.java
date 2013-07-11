@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperator;
@@ -307,11 +306,9 @@ public class TestDouble {
 	@DataProvider(name = "continuousSmallerEqualsDouble")
 	public final Object[][] provideContinuousSmallerEqualsDoubleValues() {
 		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
+				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
+				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		return new Object[][] {
 				{ new ProbabilisticContinuousDouble(0), univariateMixtures,
 						3.0, 0.9973020261614356 },
@@ -322,11 +319,9 @@ public class TestDouble {
 	@DataProvider(name = "continuousEqualsDouble")
 	public final Object[][] provideContinuousEqualsDoubleValues() {
 		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
+				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
+				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		return new Object[][] {
 				{ new ProbabilisticContinuousDouble(0), univariateMixtures,
 						3.0, 0.0 },
@@ -337,11 +332,9 @@ public class TestDouble {
 	@DataProvider(name = "continuousGreaterEqualsDouble")
 	public final Object[][] provideContinuousGreaterEqualsDoubleValues() {
 		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
+				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new CovarianceMatrix(new double[] {
-						1.0, 0.0, 1.0 }));
+				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		return new Object[][] {
 				{ new ProbabilisticContinuousDouble(0), univariateMixtures,
 						3.0, 1.8222246957988279E-6 },

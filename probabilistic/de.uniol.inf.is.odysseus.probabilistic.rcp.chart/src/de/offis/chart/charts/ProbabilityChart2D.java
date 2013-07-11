@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -41,7 +42,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -368,10 +368,10 @@ public class ProbabilityChart2D extends
 			d++;
 		}
 		dimension = d;
-		for (final Entry<NormalDistribution, Double> e : mix.getMixtures()
-				.entrySet()) {
-			final double means = e.getKey().getMean()[dimension];
-			final double m = e.getKey().getCovarianceMatrix().getMatrix()
+		for (final Entry<MultivariateNormalDistribution, Double> e : mix
+				.getMixtures().entrySet()) {
+			final double means = e.getKey().getMeans()[dimension];
+			final double m = e.getKey().getCovariances()
 					.getEntry(dimension, dimension);
 			funcs.put(new NormalDistributionFunction2D(means, m), e.getValue());
 		}

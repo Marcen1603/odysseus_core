@@ -19,13 +19,13 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 
@@ -97,10 +97,10 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 		}
 
 		// Construct the multivariate distribution
-		final Map<NormalDistribution, Double> components = new HashMap<NormalDistribution, Double>();
+		final Map<MultivariateNormalDistribution, Double> components = new HashMap<MultivariateNormalDistribution, Double>();
 		final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
 		for (int i = 0; i < emArea.getMixtures(); i++) {
-			final NormalDistribution distribution = new NormalDistribution(emArea.getMean(i).getColumn(0), CovarianceMatrixUtils.fromMatrix(emArea.getCovarianceMatrix(i)));
+			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(emArea.getMean(i).getColumn(0), emArea.getCovarianceMatrix(i).getData());
 			components.put(distribution, emArea.getWeight(i));
 		}
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(components);

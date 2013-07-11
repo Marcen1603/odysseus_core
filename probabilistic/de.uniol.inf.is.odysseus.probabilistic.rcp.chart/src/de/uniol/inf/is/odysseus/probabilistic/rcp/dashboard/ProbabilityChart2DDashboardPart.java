@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -33,14 +34,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
-
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -386,11 +385,10 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 			d++;
 		}
 		dimension = d;
-		for (final Entry<NormalDistribution, Double> mixtureEntry : distribution
+		for (final Entry<MultivariateNormalDistribution, Double> mixtureEntry : distribution
 				.getMixtures().entrySet()) {
-			final double mean = mixtureEntry.getKey().getMean()[dimension];
-			final double variance = mixtureEntry.getKey().getCovarianceMatrix()
-					.getMatrix().getEntry(dimension, dimension);
+			final double mean = mixtureEntry.getKey().getMeans()[dimension];
+			final double variance = mixtureEntry.getKey().getCovariances().getEntry(dimension, dimension);
 			mixtures.put(new NormalDistributionFunction2D(mean, variance),
 					mixtureEntry.getValue());
 		}

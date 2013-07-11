@@ -22,22 +22,20 @@ import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.FastMath;
 
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
-
 public class NormalDistributionFunctionND {
 
-	private final CovarianceMatrix matrix;
+	private final RealMatrix covariances;
 	private final double[] means;
 
 	public NormalDistributionFunctionND(final double[] means,
-			final CovarianceMatrix matrix) {
-		this.matrix = matrix;
+			final RealMatrix covariances) {
+		this.covariances = covariances;
 		this.means = means;
 	}
 
 	public double getValue(final double[] x) {
 		final int k = x.length;
-		final RealMatrix z = this.matrix.getMatrix();
+		final RealMatrix z = this.covariances;
 		double z_det = 0.0;
 		RealMatrix z_inverse = null;
 		try {

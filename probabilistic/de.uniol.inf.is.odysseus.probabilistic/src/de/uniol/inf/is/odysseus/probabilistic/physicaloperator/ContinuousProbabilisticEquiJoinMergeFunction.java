@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -25,9 +26,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.CovarianceMatrix;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 
 /**
  * 
@@ -119,11 +117,11 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 	//
 	// }
 
-	public NormalDistribution getJoinDistribution(final NormalDistribution distribution, final int port, final int viewIndex) {
-		final RealMatrix mean = MatrixUtils.createRealMatrix(1, distribution.getMean().length);
-		mean.setColumn(0, distribution.getMean());
+	public MultivariateNormalDistribution getJoinDistribution(final MultivariateNormalDistribution distribution, final int port, final int viewIndex) {
+		final RealMatrix mean = MatrixUtils.createRealMatrix(1, distribution.getMeans().length);
+		mean.setColumn(0, distribution.getMeans());
 
-		final RealMatrix covarianceMatrix = distribution.getCovarianceMatrix().getMatrix();
+		final RealMatrix covarianceMatrix = distribution.getCovariances();
 		final RealMatrix newMean = MatrixUtils.createRealMatrix(1, this.betas[port][viewIndex].getColumnDimension() + mean.getColumnDimension());
 		newMean.setSubMatrix(mean.getData(), 0, 0);
 		newMean.setSubMatrix(this.betas[port][viewIndex].getData(), 0, mean.getColumnDimension());
@@ -138,9 +136,7 @@ public class ContinuousProbabilisticEquiJoinMergeFunction<M extends IMetaAttribu
 
 		newCovarianceMatrix.setSubMatrix(this.sigmas[port][viewIndex].add(this.betas[port][viewIndex].transpose().multiply(newCovarianceMatrix).multiply(this.betas[port][viewIndex])).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
 
-		final CovarianceMatrix covariance = CovarianceMatrixUtils.fromMatrix(newCovarianceMatrix);
-
-		final NormalDistribution joinDistribution = new NormalDistribution(newMean.getData()[0], covariance);
+		final MultivariateNormalDistribution joinDistribution = new MultivariateNormalDistribution(newMean.getData()[0], newCovarianceMatrix.getData());
 
 		return joinDistribution;
 	}

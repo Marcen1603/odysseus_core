@@ -81,7 +81,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 			final RealMatrix regressionCoefficients = this.area.getRegressionCoefficients();
 			final RealMatrix residual = this.area.getResidual();
 
-			final NormalDistributionMixture mixture = new NormalDistributionMixture(new double[residual.getColumnDimension()], CovarianceMatrixUtils.fromMatrix(residual));
+			final NormalDistributionMixture mixture = new NormalDistributionMixture(new double[residual.getColumnDimension()], residual.getData());
 			mixture.setAttributes(this.area.getExplanatoryAttributePos());
 
 			final NormalDistributionMixture[] distributions = object.getDistributions();
