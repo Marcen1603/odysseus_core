@@ -95,9 +95,11 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 	public boolean isExecutable(final JoinAO operator, final TransformationConfiguration config) {
 		final IPredicate<?> predicate = operator.getPredicate();
 		if (predicate != null) {
-			final List<SDFAttribute> attributes = predicate.getAttributes();
-			if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
-				return true;
+			if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+				final List<SDFAttribute> attributes = predicate.getAttributes();
+				if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
+					return true;
+				}
 			}
 		}
 		return false;

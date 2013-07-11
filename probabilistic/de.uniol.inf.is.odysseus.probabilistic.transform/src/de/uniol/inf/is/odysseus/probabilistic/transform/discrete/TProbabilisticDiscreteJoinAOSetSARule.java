@@ -100,8 +100,8 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 	 */
 	@Override
 	public boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
-		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
-			if (operator.getAreas() == null) {
+		if (operator.getAreas() == null) {
+			if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
 				return true;
 			}
 		}
