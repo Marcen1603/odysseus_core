@@ -35,8 +35,8 @@ public class ProbabilisticAvg extends AbstractAggregateFunction<ProbabilisticTup
 	private static final long serialVersionUID = -2188835286391575126L;
 	private static Map<Integer, ProbabilisticAvg> instances = new HashMap<Integer, ProbabilisticAvg>();
 	// TODO Move to a global configuration
-	private static final double ERROR = 0.25;
-	private static final double BOUND = 0.75;
+	private static final double ERROR = 0.004;
+	private static final double BOUND = 1.0 / Math.E;
 	private final int pos;
 
 	public static ProbabilisticAvg getInstance(final int pos, final boolean partialAggregateInput) {

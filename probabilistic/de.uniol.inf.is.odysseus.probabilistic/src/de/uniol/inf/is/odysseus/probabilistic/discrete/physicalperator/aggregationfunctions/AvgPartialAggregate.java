@@ -96,7 +96,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 *            Approximation error
 	 */
 	public AvgPartialAggregate(final double epsilon) {
-		this(epsilon, 1 / Math.E);
+		this(epsilon, 1.0 / Math.E);
 	}
 
 	/**
@@ -369,11 +369,6 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 */
 	private double factorial(final int n) {
 		return ArithmeticUtils.factorialDouble(n);
-		// double factorial = 1.0;
-		// for (int i = 1; i <= n; i++) {
-		// factorial = factorial * i;
-		// }
-		// return factorial;
 	}
 
 	/**
