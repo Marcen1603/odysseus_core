@@ -34,6 +34,12 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.Proba
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousDivisionNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMinusNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberLHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberLHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterThanOperator;
@@ -137,6 +143,14 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticContinuousGreaterOperatorVector());
 			functions.add(new ProbabilisticContinuousEqualsOperator());
 			functions.add(new ProbabilisticContinuousEqualsOperatorVector());
+
+			/** Arithmetic functions for discrete probabilistic values */
+			functions.add(new ProbabilisticContinuousMinusNumberRHSOperator());
+			functions.add(new ProbabilisticContinuousPlusNumberRHSOperator());
+			functions.add(new ProbabilisticContinuousPlusNumberLHSOperator());
+			functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
+			functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
+			functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
 			// ProbabilisticFunctionProvider.LOG.info(String.format(
 			// "Register functions: %s", functions));
 		} catch (final Exception e) {
