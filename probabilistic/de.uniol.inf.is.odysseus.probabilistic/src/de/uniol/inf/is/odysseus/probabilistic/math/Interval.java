@@ -62,8 +62,16 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 		return new Interval(this.inf + other.inf, this.sup + other.sup);
 	}
 
+	public Interval add(final double value) {
+		return new Interval(this.inf + value, this.sup + value);
+	}
+
 	public Interval sub(final Interval other) {
 		return new Interval(this.inf - other.sup, this.sup - other.inf);
+	}
+
+	public Interval sub(final double value) {
+		return new Interval(this.inf - value, this.sup - value);
 	}
 
 	public Interval mul(final Interval other) {
@@ -71,6 +79,10 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 		final double sup = Math.max(Math.max(this.inf * other.inf, this.inf * other.sup), Math.max(this.sup * other.inf, this.sup * other.sup));
 
 		return new Interval(inf, sup);
+	}
+
+	public Interval mul(final double value) {
+		return new Interval(this.inf * value, this.sup * value);
 	}
 
 	public Interval div(final Interval other) throws IntervalArithmeticException {
@@ -82,6 +94,10 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 		} else {
 			throw new IntervalArithmeticException("Division by interval containing zero");
 		}
+	}
+
+	public Interval div(final double value) {
+		return new Interval(this.inf / value, this.sup / value);
 	}
 
 	public Interval union(final Interval other) {

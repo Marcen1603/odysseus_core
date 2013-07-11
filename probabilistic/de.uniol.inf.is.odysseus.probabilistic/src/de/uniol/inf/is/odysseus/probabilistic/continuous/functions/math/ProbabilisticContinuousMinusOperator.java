@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -57,7 +57,14 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 				mixtures.put(distribution, aEntry.getValue() * bEntry.getValue());
 			}
 		}
-		return new NormalDistributionMixture(mixtures);
+		NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
+		Interval[] support = new Interval[a.getSupport().length];
+		for (int i = 0; i < a.getSupport().length; i++) {
+			support[i] = a.getSupport(i).sub(b.getSupport(i));
+		}
+		result.setSupport(support);
+		result.setScale(a.getScale() * b.getScale());
+		return result;
 	}
 
 	@Override
@@ -91,7 +98,8 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 	}
 
 	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT,
-		SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
+			SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG };
+
 	@Override
 	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {

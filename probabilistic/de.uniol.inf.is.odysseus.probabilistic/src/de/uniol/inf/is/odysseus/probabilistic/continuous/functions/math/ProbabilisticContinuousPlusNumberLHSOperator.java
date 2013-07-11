@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**

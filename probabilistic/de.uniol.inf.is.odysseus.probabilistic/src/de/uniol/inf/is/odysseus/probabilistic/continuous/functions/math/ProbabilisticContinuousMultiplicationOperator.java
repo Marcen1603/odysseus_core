@@ -16,10 +16,10 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.math.PlusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -100,7 +100,14 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 			}
 		}
 
-		return new NormalDistributionMixture(mixtures);
+		NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
+		Interval[] support = new Interval[a.getSupport().length];
+		for (int i = 0; i < a.getSupport().length; i++) {
+			support[i] = a.getSupport(i).mul(b.getSupport(i));
+		}
+		result.setSupport(support);
+		result.setScale(a.getScale() * b.getScale());
+		return result;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -41,6 +42,11 @@ public abstract class AbstractProbabilisticContinuousDivisionNumberOperator exte
 			}
 			mixture.getKey().setCovarianceMatrix(CovarianceMatrixUtils.fromMatrix(mixture.getKey().getCovarianceMatrix().getMatrix().scalarMultiply(1.0 / b)));
 		}
+		Interval[] support = new Interval[result.getSupport().length];
+		for (int i = 0; i < result.getSupport().length; i++) {
+			support[i] = result.getSupport(i).div(b);
+		}
+		result.setSupport(support);
 		return result;
 	}
 

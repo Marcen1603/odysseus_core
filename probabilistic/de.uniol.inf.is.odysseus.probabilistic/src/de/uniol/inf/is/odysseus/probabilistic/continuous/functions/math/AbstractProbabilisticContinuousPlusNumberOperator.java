@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -39,6 +40,11 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
 				means[i] += b;
 			}
 		}
+		Interval[] support = new Interval[result.getSupport().length];
+		for (int i = 0; i < result.getSupport().length; i++) {
+			support[i] = result.getSupport(i).add(b);
+		}
+		result.setSupport(support);
 		return result;
 	}
 
