@@ -73,7 +73,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 		this.support = new Interval[normalDistributionMixture.support.length];
 		for (int i = 0; i < normalDistributionMixture.support.length; i++) {
-			this.support[i] = new Interval(normalDistributionMixture.support[i].inf(), normalDistributionMixture.support[i].sup());
+			this.support[i] = normalDistributionMixture.support[i].clone();
 		}
 	}
 

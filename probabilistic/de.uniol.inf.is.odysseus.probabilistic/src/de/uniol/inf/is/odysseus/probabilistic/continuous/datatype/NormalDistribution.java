@@ -40,7 +40,7 @@ public class NormalDistribution implements Serializable, Cloneable {
 	}
 
 	public NormalDistribution(final NormalDistribution distribution) {
-		this.mean = distribution.mean;
+		this.mean = distribution.mean.clone();
 		this.covarianceMatrix = distribution.covarianceMatrix.clone();
 	}
 
