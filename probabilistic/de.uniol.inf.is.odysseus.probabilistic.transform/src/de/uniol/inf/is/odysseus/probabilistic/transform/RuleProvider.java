@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEq
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TEMAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionMergeAORule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TProbabilisiticContinuousMapAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TAggregateProbabilisticRule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteJoinAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteMapAORule;
@@ -75,6 +76,8 @@ public class RuleProvider implements ITransformRuleProvider {
 	 */
 	public final List<IRule<?, ?>> getProbabilisticContinuousOperatorRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
+		// Map AO -> PO Rule
+		rules.add(new TProbabilisiticContinuousMapAORule());
 		// EM AO -> PO Rule
 		rules.add(new TEMAORule());
 		// LinearRegression AO -> PO Rule
