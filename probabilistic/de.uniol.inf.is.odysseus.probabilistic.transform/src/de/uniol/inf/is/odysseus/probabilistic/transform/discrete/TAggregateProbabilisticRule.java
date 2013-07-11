@@ -30,10 +30,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
-import de.uniol.inf.is.odysseus.probabilistic.Activator;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions.ProbabilisticConstants;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.transform.Activator;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -90,9 +89,9 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 					if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
 						final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
 						if (datatype.isContinuous()) {
-							builder = registry.getBuilder(SchemaUtils.DATATYPE, ProbabilisticConstants.CONTINUOUS_PROBABILISTIC_NAMESPACE + p.getE2().getName());
+							builder = registry.getBuilder(SchemaUtils.DATATYPE, p.getE2().getName());
 						} else {
-							builder = registry.getBuilder(SchemaUtils.DATATYPE, ProbabilisticConstants.PROBABILISTIC_NAMESPACE + p.getE2().getName());
+							builder = registry.getBuilder(SchemaUtils.DATATYPE, p.getE2().getName());
 						}
 					} else {
 						builder = registry.getBuilder(SchemaUtils.DATATYPE, p.getE2().getName());

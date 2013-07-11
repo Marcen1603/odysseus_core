@@ -19,15 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
 	/**
 	 * 
@@ -51,8 +51,8 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		final SumPartialAggregate<Tuple<?>> pa = new SumPartialAggregate<Tuple<?>>();
+	public IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>();
 
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.add(value.getKey(), value.getValue());
@@ -61,12 +61,12 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
-		SumPartialAggregate<Tuple<?>> pa = null;
+	public IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		SumPartialAggregate<ProbabilisticTuple<?>> pa = null;
 		if (createNew) {
-			pa = new SumPartialAggregate<Tuple<?>>(((SumPartialAggregate<Tuple<?>>) p).getSum());
+			pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum());
 		} else {
-			pa = (SumPartialAggregate<Tuple<?>>) p;
+			pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
 		}
 
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
@@ -78,9 +78,9 @@ public class ProbabilisticSum extends AbstractAggregateFunction<Tuple<?>, Tuple<
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
-		final SumPartialAggregate<Tuple<?>> pa = (SumPartialAggregate<Tuple<?>>) p;
-		final Tuple<?> r = new Tuple(1, false);
+	public ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		final SumPartialAggregate<ProbabilisticTuple<?>> pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
+		final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, false);
 		r.setAttribute(0, new Double(pa.getSum()));
 		return r;
 	}

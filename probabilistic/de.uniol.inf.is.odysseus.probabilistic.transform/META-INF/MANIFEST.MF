@@ -43,4 +43,4 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.apache.commons.math3.linear,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/TransformRuleService.xml
+Service-Component: OSGI-INF/TransformRuleService.xml, OSGI-INF/AggregateFunctionBuilderRegistry.xml

@@ -22,13 +22,14 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  *         FIXME Implement probabilistic Min aggregation function
  */
-public class ProbabilisticMin extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 	/**
 	 * 
 	 */
@@ -50,20 +51,20 @@ public class ProbabilisticMin extends AbstractAggregateFunction<Tuple<?>, Tuple<
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		return new ElementPartialAggregate<Tuple<?>>(in, this.datatype);
+	public IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		return new ElementPartialAggregate<ProbabilisticTuple<?>>(in, this.datatype);
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
-		final ElementPartialAggregate<Tuple<?>> pa = null;
+	public IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		final ElementPartialAggregate<ProbabilisticTuple<?>> pa = null;
 
 		return pa;
 	}
 
 	@Override
-	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
-		final ElementPartialAggregate<Tuple<?>> pa = (ElementPartialAggregate<Tuple<?>>) p;
+	public ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		final ElementPartialAggregate<ProbabilisticTuple<?>> pa = (ElementPartialAggregate<ProbabilisticTuple<?>>) p;
 		return pa.getElem();
 	}
 

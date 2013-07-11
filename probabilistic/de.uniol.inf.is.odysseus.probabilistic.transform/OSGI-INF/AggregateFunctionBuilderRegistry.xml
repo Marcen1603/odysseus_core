@@ -15,6 +15,6 @@
     limitations under the License.
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.probabilistic.transform.AggregateFunctionBuilderRegistry">
-   <implementation class="de.uniol.inf.is.odysseus.probabilistic.Activator"/>
+   <implementation class="de.uniol.inf.is.odysseus.probabilistic.transform.Activator"/>
    <reference bind="bindAggregateFunctionBuilderRegistry" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry" name="IAggregateFunctionBuilderRegistry" policy="static" unbind="unbindAggregateFunctionBuilderRegistry"/>
 </scr:component>
