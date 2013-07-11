@@ -62,6 +62,21 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	}
 
 	/**
+	 * Creates a new probabilistic tuple with the given number of attributes.
+	 * 
+	 * @param count
+	 *            The number of attributes
+	 * @param distributions
+	 *            The number of distributions
+	 * @param requiresDeepClone
+	 *            Flag indicating deep clone during transfer between operators
+	 */
+	public ProbabilisticTuple(final int count, final int distributions, final boolean requiresDeepClone) {
+		super(count, requiresDeepClone);
+		this.distributions = new NormalDistributionMixture[distributions];
+	}
+
+	/**
 	 * Creates a new probabilistic tuple with the given attributes.
 	 * 
 	 * @param attributes
@@ -554,7 +569,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			for (int i = 0; i < this.getDistributions().length; i++) {
 				retBuff.append(this.getDistribution(i));
 			}
-		}else {
+		} else {
 			retBuff.append("-");
 		}
 		return retBuff.toString();

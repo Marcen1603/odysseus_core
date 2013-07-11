@@ -27,6 +27,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
@@ -45,6 +47,8 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	private SDFProbabilisticExpression[] expressions;
 	/** The input schema used for semantic equal operations during runtime. */
 	private final SDFSchema inputSchema;
+	/** The number of output distributions. */
+	private int distributions;
 
 	/**
 	 * Default constructor used for probabilistic expression.
@@ -98,6 +102,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 */
 	private void init(final SDFSchema schema, final SDFProbabilisticExpression[] expressionsList) {
 		this.expressions = expressionsList;
+		this.distributions = 0;
 		this.variables = new int[expressionsList.length][];
 		int i = 0;
 		for (final SDFExpression expression : expressionsList) {
@@ -107,6 +112,9 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 			int j = 0;
 			for (final SDFAttribute curAttribute : neededAttributes) {
 				newArray[j++] = schema.indexOf(curAttribute);
+			}
+			if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
+				distributions++;
 			}
 		}
 	}
@@ -140,10 +148,10 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
+		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, this.distributions, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		synchronized (this.expressions) {
-			for (int i = 0; i < this.expressions.length; ++i) {
+			for (int i = 0, d = 0; i < this.expressions.length; ++i) {
 				final Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					values[j] = object.getAttribute(this.variables[i][j]);
@@ -152,15 +160,19 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 				this.expressions[i].bindDistributions(object.getDistributions());
 				this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
 				this.expressions[i].bindVariables(values);
-				outputVal.setAttribute(i, this.expressions[i].getValue());
+				if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
+					NormalDistributionMixture distribution = (NormalDistributionMixture) this.expressions[i].getValue();
+					distribution.getAttributes()[0] = i;
+					outputVal.setDistribution(d, distribution);
+					d++;
+				} else {
+					outputVal.setAttribute(i, this.expressions[i].getValue());
+				}
 				if (this.expressions[i].getType().requiresDeepClone()) {
 					outputVal.setRequiresDeepClone(true);
 				}
 			}
 		}
-		// FIXME !!! Handle pointer to distributions !!! i.e. changing index,
-		// missing pointer, and changing order
-		outputVal.setDistributions(object.getDistributions().clone());
 		this.transfer(outputVal);
 	}
 
