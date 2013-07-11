@@ -205,7 +205,20 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "[" + this.inf + "," + this.sup + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		if (inf == Double.NEGATIVE_INFINITY) {
+			sb.append("-oo");
+		} else {
+			sb.append(inf);
+		}
+		sb.append(",");
+		if (sup == Double.POSITIVE_INFINITY) {
+			sb.append("oo");
+		} else {
+			sb.append(sup);
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 }

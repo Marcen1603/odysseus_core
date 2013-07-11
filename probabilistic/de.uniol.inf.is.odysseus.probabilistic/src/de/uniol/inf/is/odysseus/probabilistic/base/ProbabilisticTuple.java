@@ -565,8 +565,10 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		retBuff.append(super.toString());
 		retBuff.append("|DIS|");
 		if ((this.getDistributions() != null) && (this.getDistributions().length > 0)) {
-
 			for (int i = 0; i < this.getDistributions().length; i++) {
+				if (i > 0) {
+					retBuff.append("|");
+				}
 				retBuff.append(this.getDistribution(i));
 			}
 		} else {
