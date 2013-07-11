@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator;
 
 import java.util.Iterator;
 import java.util.LinkedList;

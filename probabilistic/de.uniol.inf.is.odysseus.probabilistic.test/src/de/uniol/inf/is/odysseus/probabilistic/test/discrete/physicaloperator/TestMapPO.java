@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 import de.uniol.inf.is.odysseus.probabilistic.ProbabilisticFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.ProbabilisticDiscreteMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

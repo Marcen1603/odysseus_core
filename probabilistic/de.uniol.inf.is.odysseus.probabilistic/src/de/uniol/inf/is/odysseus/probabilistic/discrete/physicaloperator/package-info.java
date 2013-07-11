@@ -17,4 +17,4 @@
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator;
