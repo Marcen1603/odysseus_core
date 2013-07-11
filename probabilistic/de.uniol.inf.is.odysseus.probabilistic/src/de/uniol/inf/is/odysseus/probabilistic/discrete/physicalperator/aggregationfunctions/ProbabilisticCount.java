@@ -19,15 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+public class ProbabilisticCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
 	/**
 	 * 
@@ -51,8 +51,8 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> init(final Tuple<?> in) {
-		final CountPartialAggregate<Tuple<?>> pa = new CountPartialAggregate<Tuple<?>>();
+	public IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>();
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.add(value.getValue());
 		}
@@ -60,12 +60,12 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
 	}
 
 	@Override
-	public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final Tuple<?> toMerge, final boolean createNew) {
-		CountPartialAggregate<Tuple<?>> pa = null;
+	public IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
 		if (createNew) {
-			pa = new CountPartialAggregate<Tuple<?>>(((CountPartialAggregate<Tuple<?>>) p).getCount());
+			pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount());
 		} else {
-			pa = (CountPartialAggregate<Tuple<?>>) p;
+			pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
 		}
 
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
@@ -77,9 +77,9 @@ public class ProbabilisticCount extends AbstractAggregateFunction<Tuple<?>, Tupl
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Tuple<?> evaluate(final IPartialAggregate<Tuple<?>> p) {
-		final CountPartialAggregate<Tuple<?>> pa = (CountPartialAggregate<Tuple<?>>) p;
-		final Tuple<?> r = new Tuple(1, false);
+	public ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
+		final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, false);
 		r.setAttribute(0, new Double(pa.getCount()));
 		return r;
 	}
