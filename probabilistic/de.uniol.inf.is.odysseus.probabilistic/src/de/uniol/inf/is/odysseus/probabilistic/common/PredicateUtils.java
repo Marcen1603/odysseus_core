@@ -5,12 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
@@ -79,6 +81,17 @@ public final class PredicateUtils {
 			}
 		}
 		return attributes;
+	}
+
+	public static List<SDFExpression> getExpressions(IPredicate<?> predicate) {
+		List<SDFExpression> expressions = new ArrayList<SDFExpression>();
+		List<IPredicate> predicates = splitPredicate(predicate);
+		for (IPredicate pre : predicates) {
+			if (pre instanceof RelationalPredicate) {
+				expressions.add(((RelationalPredicate) pre).getExpression());
+			}
+		}
+		return expressions;
 	}
 
 	private PredicateUtils() {

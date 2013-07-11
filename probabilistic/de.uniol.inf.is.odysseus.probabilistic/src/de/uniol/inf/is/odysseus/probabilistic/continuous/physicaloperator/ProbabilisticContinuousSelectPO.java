@@ -15,19 +15,29 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHeartbeatGenerationStrategy;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerationStrategy;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicate;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicateResult;
+import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
  * Implementation of a probabilistic Select operator.
@@ -39,20 +49,26 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	/** Logger. */
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticContinuousSelectPO.class);
-
+	/** Attribute positions list required for variable bindings. */
+	private VarHelper[][] variables; // Expression.Index
+	/** The expressions. */
+	private SDFProbabilisticExpression[] expressions;
 	/** The predicate. */
-	private final ProbabilisticContinuousPredicate predicate;
+	private final IPredicate<?> predicate;
 	/** The heartbeat generation strategy. */
 	private IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<ProbabilisticTuple<T>>();
+	private SDFSchema inputSchema;
 
 	/**
 	 * Default constructor.
 	 * 
-	 * @param predicate
+	 * @param iPredicate
 	 *            The predicate
 	 */
-	public ProbabilisticContinuousSelectPO(final ProbabilisticContinuousPredicate predicate) {
-		this.predicate = predicate.clone();
+	public ProbabilisticContinuousSelectPO(final SDFSchema inputSchema, final IPredicate<?> iPredicate) {
+		this.inputSchema = inputSchema;
+		this.predicate = iPredicate.clone();
+		init(this.inputSchema, this.predicate);
 	}
 
 	/**
@@ -62,8 +78,10 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	 *            The copy
 	 */
 	public ProbabilisticContinuousSelectPO(final ProbabilisticContinuousSelectPO<T> po) {
+		this.inputSchema = po.inputSchema.clone();
 		this.predicate = po.predicate.clone();
 		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
+		init(this.inputSchema, this.predicate);
 	}
 
 	/*
@@ -76,6 +94,35 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	private void init(final SDFSchema schema, final IPredicate<?> predicate) {
+		List<SDFExpression> expressionsList = PredicateUtils.getExpressions(predicate);
+		this.expressions = new SDFProbabilisticExpression[expressionsList.size()];
+		for (int i = 0; i < expressionsList.size(); i++) {
+			this.expressions[i] = new SDFProbabilisticExpression(expressionsList.get(i));
+		}
+		this.variables = new VarHelper[this.expressions.length][];
+		Set<SDFAttribute> neededAttributesSet = new HashSet<>();
+		int i = 0;
+		for (final SDFExpression expression : expressionsList) {
+			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+			neededAttributesSet.addAll(neededAttributes);
+		}
+		for (final SDFExpression expression : expressionsList) {
+			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
+
+			final VarHelper[] newArray = new VarHelper[neededAttributes.size()];
+
+			this.variables[i++] = newArray;
+			int j = 0;
+			for (final SDFAttribute curAttribute : neededAttributes) {
+				newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
+			}
+			// if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
+			// distributions++;
+			// }
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -84,15 +131,41 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(object.getAttributes(), object.requiresDeepClone());
-		outputVal.setMetadata((T) object.getMetadata().clone());
-		final ProbabilisticContinuousPredicateResult result = this.predicate.probabilisticEvaluate(outputVal);
-		if (result.getProbability() > 0.0) {
-			final int attributePosition = this.predicate.getAttributePositions()[0];
-			((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());
-			outputVal.setDistribution(attributePosition, result.getValue());
-			this.transfer(outputVal);
+		final ProbabilisticTuple<T> outputVal = object.clone();
+
+		synchronized (this.expressions) {
+			for (int i = 0, d = 0; i < this.expressions.length; ++i) {
+				Object[] values = new Object[this.variables[i].length];
+				for (int j = 0; j < this.variables[i].length; ++j) {
+					Object attribute = outputVal.getAttribute(this.variables[i][j].pos);
+					if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
+						attribute = outputVal.getDistribution(((ProbabilisticContinuousDouble) attribute).getDistribution());
+					}
+					values[j] = attribute;
+				}
+
+				this.expressions[i].bindMetaAttribute(outputVal.getMetadata());
+				this.expressions[i].bindDistributions(outputVal.getDistributions());
+				this.expressions[i].bindAdditionalContent(outputVal.getAdditionalContent());
+				this.expressions[i].bindVariables(values);
+
+				Object expr = this.expressions[i].getValue();
+				if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
+					NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
+					distribution.getAttributes()[0] = i;
+					outputVal.setDistribution(d, distribution);
+					outputVal.setAttribute(i, new ProbabilisticContinuousDouble(d));
+					((IProbabilistic) outputVal.getMetadata()).setExistence(((IProbabilistic) outputVal.getMetadata()).getExistence()*distribution.getScale());
+					d++;
+				} else {
+					outputVal.setAttribute(i, expr);
+				}
+			}
 		}
+		// ((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());
+		// outputVal.setDistribution(attributePosition, result.getValue());
+		this.transfer(outputVal);
+		// }
 	}
 
 	/*
@@ -109,7 +182,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	 * 
 	 * @return The predicate
 	 */
-	public final IPredicate<? super ProbabilisticTuple<T>> getPredicate() {
+	public final IPredicate<?> getPredicate() {
 		return this.predicate;
 	}
 

@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticContinuousPredicateResult> {
+public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
 
 	/**
      * 
@@ -39,7 +39,7 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 	}
 
 	@Override
-	public ProbabilisticContinuousPredicateResult getValue() {
+	public NormalDistributionMixture getValue() {
 		final ProbabilisticContinuousDouble a = this.getInputValue(0);
 		final NormalDistributionMixture mixtures = this.getDistributions(a.getDistribution()).clone();
 
@@ -61,12 +61,12 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 			support[i] = new Interval(lower, upper);
 		}
 		mixtures.setSupport(support);
-		return new ProbabilisticContinuousPredicateResult(value, mixtures);
+		return mixtures;
 	}
 
 	@Override
 	public SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
+		return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
 	}
 
 	@Override
@@ -85,12 +85,12 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 	}
 
 	@Override
-	public boolean isLeftDistributiveWith(final IOperator<ProbabilisticContinuousPredicateResult> operator) {
+	public boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
 		return false;
 	}
 
 	@Override
-	public boolean isRightDistributiveWith(final IOperator<ProbabilisticContinuousPredicateResult> operator) {
+	public boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
 		return false;
 	}
 
