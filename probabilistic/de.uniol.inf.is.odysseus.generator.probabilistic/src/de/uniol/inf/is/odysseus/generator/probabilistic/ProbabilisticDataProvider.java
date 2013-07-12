@@ -110,22 +110,23 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			final List<String> distributions = new ArrayList<String>();
 			final String[] values = line.split(",");
 			for (final String value : values) {
-				if (!value.isEmpty()) {
-					if (value.contains("[")) {
+				String v = value.trim();
+				if (!v.isEmpty()) {
+					if (v.contains("[")) {
 						// Send continuous distribution
-						distributions.add(value);
+						distributions.add(v);
 					} else {
 						if (value.contains(";")) {
 							// Send discrete probabilistic value
-							this.generateDiscreteAttribute(tuple, value);
+							this.generateDiscreteAttribute(tuple, v);
 						} else {
-							if (value.contains(".")) {
+							if (v.contains(".")) {
 								// Send double value
-								tuple.addDouble(value);
+								tuple.addDouble(v);
 							} else {
 								// Send continuous probabilistic value (Index to
 								// distribution)
-								tuple.addInteger(value);
+								tuple.addInteger(v);
 							}
 						}
 					}
@@ -133,7 +134,8 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			}
 
 			for (final String value : distributions) {
-				this.generateContinuousAttribute(tuple, value);
+				String v = value.trim();
+				this.generateContinuousAttribute(tuple, v);
 			}
 			System.out.println(tuple);
 			return tuple;
@@ -149,9 +151,9 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			final String[] probabilisticParameter = probabilisticValue
 					.split(":");
 			// The value
-			tuple.addDouble(probabilisticParameter[0]);
+			tuple.addDouble(probabilisticParameter[0].trim());
 			// The probability
-			tuple.addDouble(probabilisticParameter[1]);
+			tuple.addDouble(probabilisticParameter[1].trim());
 		}
 	}
 
@@ -169,7 +171,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			final String[] parameter = components[1].split(";");
 			if (parameter.length > 0) {
 				// The scale factor
-				tuple.addDouble(parameter[0]);
+				tuple.addDouble(parameter[0].trim());
 			} else {
 				tuple.addDouble(1.0);
 			}
@@ -178,7 +180,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 						parameter[1].length() - 1).split(":");
 				for (int i = 0; i < (dimension * 2); i++) {
 					// The support on each dimension
-					tuple.addDouble(supportParameter[i]);
+					tuple.addDouble(supportParameter[i].trim());
 				}
 			} else {
 				for (int i = 0; i < (dimension * 2); i++) {
@@ -207,20 +209,20 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			final int dimension, final String string) {
 		final String[] probabilisticValues = string.split(";");
 		// The weight
-		final String weight = probabilisticValues[0];
+		final String weight = probabilisticValues[0].trim();
 		final String[] meanParameter = probabilisticValues[1].substring(1,
 				probabilisticValues[1].length() - 1).split(":");
 
 		tuple.addDouble(weight);
 		for (final String element : meanParameter) {
 			// The mean in dimension i
-			tuple.addDouble(element);
+			tuple.addDouble(element.trim());
 		}
 		final String[] covarianceParameter = probabilisticValues[2].substring(
 				1, probabilisticValues[2].length() - 1).split(":");
 		for (final String element : covarianceParameter) {
 			// The Covariance Entry i
-			tuple.addDouble(element);
+			tuple.addDouble(element.trim());
 		}
 	}
 

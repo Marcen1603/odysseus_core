@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 
@@ -22,6 +23,8 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 public class SampleAO extends UnaryLogicalOp {
 	/** The attributes to sample from. */
 	private List<SDFAttribute> attributes;
+	/** The number of samples. */
+	private int samples;
 
 	/**
 	 * Creates a new Sample logical operator.
@@ -39,10 +42,11 @@ public class SampleAO extends UnaryLogicalOp {
 	public SampleAO(final SampleAO sampleAO) {
 		super(sampleAO);
 		this.attributes = new ArrayList<SDFAttribute>(sampleAO.attributes);
+		this.samples = sampleAO.samples;
 	}
 
 	/**
-	 * Sets the attributes to classify.
+	 * Sets the attributes to sample from.
 	 * 
 	 * @param attributes
 	 *            The list of attributes
@@ -53,7 +57,7 @@ public class SampleAO extends UnaryLogicalOp {
 	}
 
 	/**
-	 * Gets the attributes to classify.
+	 * Gets the attributes to sample from.
 	 * 
 	 * @return The list of attributes
 	 */
@@ -63,6 +67,27 @@ public class SampleAO extends UnaryLogicalOp {
 			this.attributes = new ArrayList<SDFAttribute>();
 		}
 		return this.attributes;
+	}
+
+	/**
+	 * Sets the number of samples .
+	 * 
+	 * @param samples
+	 *            The number of samples
+	 */
+	@Parameter(type = IntegerParameter.class, name = "SAMPLES", isList = false, optional = false)
+	public final void setSamples(final int samples) {
+		this.samples = samples;
+	}
+
+	/**
+	 * Gets the number of samples.
+	 * 
+	 * @return The number of samples
+	 */
+	@GetParameter(name = "SAMPLES")
+	public final int getSamples() {
+		return this.samples;
 	}
 
 	/**

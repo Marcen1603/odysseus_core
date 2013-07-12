@@ -21,6 +21,8 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
 public class SamplePO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** The attribute positions. */
 	private final int[] attributes;
+	/** The number of samples. */
+	private int samples;
 
 	/**
 	 * Creates a new Sample operator.
@@ -28,8 +30,9 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 	 * @param attributes
 	 *            The attribute positions
 	 */
-	public SamplePO(final int[] attributes) {
+	public SamplePO(final int[] attributes, int samples) {
 		this.attributes = attributes;
+		this.samples = samples;
 	}
 
 	/**
@@ -41,6 +44,7 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 	public SamplePO(final SamplePO<T> samplePO) {
 		super(samplePO);
 		this.attributes = samplePO.attributes.clone();
+		this.samples = samplePO.samples;
 	}
 
 	/*
@@ -61,20 +65,22 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		final NormalDistributionMixture[] distributions = object.getDistributions();
-		final ProbabilisticTuple<T> outputVal = object.clone();
+		for (int i = 0; i < this.samples; i++) {
+			final ProbabilisticTuple<T> outputVal = object.clone();
 
-		for (final int attributePos : this.attributes) {
-			final NormalDistributionMixture distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
-			final int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
-			final double sample = this.sample(distribution, dimension);
-			if (distribution.getSupport(dimension).contains(sample)) {
-				outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
-			} else {
-				outputVal.setAttribute(attributePos, 0.0);
+			for (final int attributePos : this.attributes) {
+				final NormalDistributionMixture distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
+				final int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
+				final double sample = this.sample(distribution, dimension);
+				if (distribution.getSupport(dimension).contains(sample)) {
+					outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
+				} else {
+					outputVal.setAttribute(attributePos, 0.0);
+				}
 			}
+			// KTHXBYE
+			this.transfer(outputVal);
 		}
-		// KTHXBYE
-		this.transfer(outputVal);
 	}
 
 	/*

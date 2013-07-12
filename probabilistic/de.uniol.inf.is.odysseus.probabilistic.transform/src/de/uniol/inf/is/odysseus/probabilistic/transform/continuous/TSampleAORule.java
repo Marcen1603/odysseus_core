@@ -33,7 +33,7 @@ public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
 	 */
 	@Override
 	public final void execute(final SampleAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator samplePO = new SamplePO<ITimeInterval>(operator.determineAttributesList());
+		final IPhysicalOperator samplePO = new SamplePO<ITimeInterval>(operator.determineAttributesList(), operator.getSamples());
 		this.defaultExecute(operator, samplePO, config, true, true);
 	}
 
