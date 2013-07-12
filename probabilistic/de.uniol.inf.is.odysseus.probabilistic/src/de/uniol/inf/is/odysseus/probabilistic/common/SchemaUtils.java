@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.EqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicate;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
@@ -325,20 +324,6 @@ public final class SchemaUtils {
 	 * @return <code>true</code> iff the relational predicate is of the given form
 	 */
 	public static boolean isEquiPredicate(final RelationalPredicate predicate) {
-		final IExpression<?> expression = predicate.getExpression().getMEPExpression();
-		return SchemaUtils.isEquiExpression(expression);
-	}
-
-	/**
-	 * Return true if the given relational predicate is of the form:
-	 * 
-	 * A.x=B.y AND A.y=B.z AND * ...
-	 * 
-	 * @param predicate
-	 *            The relational predicate
-	 * @return <code>true</code> iff the relational predicate is of the given form
-	 */
-	public static boolean isEquiPredicate(final ProbabilisticContinuousPredicate predicate) {
 		final IExpression<?> expression = predicate.getExpression().getMEPExpression();
 		return SchemaUtils.isEquiExpression(expression);
 	}

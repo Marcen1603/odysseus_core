@@ -71,12 +71,7 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 			for (final int attributePos : this.attributes) {
 				final NormalDistributionMixture distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
 				final int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
-				final double sample = this.sample(distribution, dimension);
-				if (distribution.getSupport(dimension).contains(sample)) {
-					outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
-				} else {
-					outputVal.setAttribute(attributePos, 0.0);
-				}
+				outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
 			}
 			// KTHXBYE
 			this.transfer(outputVal);
@@ -95,8 +90,12 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 
 	private Double sample(final NormalDistributionMixture mixture, final int dimension) {
 		double sample = 1.0;
+		// FIXME Is sampling on each mixture correct?
 		for (final Map.Entry<MultivariateNormalDistribution, Double> entry : mixture.getMixtures().entrySet()) {
 			sample += (entry.getKey().sample()[dimension] * entry.getValue());
+		}
+		if (!mixture.getSupport(dimension).contains(sample)) {
+			sample = 0.0;
 		}
 		return sample;
 

@@ -38,6 +38,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	private int[] attributes;
 	private double scale;
 	private Interval[] support;
+	// FIXME Replace by List<Pair<>> ?
 	private final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>();
 
 	public NormalDistributionMixture(final double mean, final double[][] covariances) {

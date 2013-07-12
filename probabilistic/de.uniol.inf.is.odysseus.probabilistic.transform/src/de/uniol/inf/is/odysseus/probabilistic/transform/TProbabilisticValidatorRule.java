@@ -47,8 +47,8 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
 
 	@Override
 	public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
-		if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
-			if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+		if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+			if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
 				return true;
 			}
 		}

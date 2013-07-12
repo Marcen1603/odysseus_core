@@ -26,9 +26,7 @@ Service-Component: OSGI-INF/QueryBuildConfiguration.xml,OSGI-INF/ProbabilisticDa
  OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml,OSGI-INF/ProbabilisticAggregationFunctionBuilder.xml
 Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.base,
- de.uniol.inf.is.odysseus.probabilistic.base.predicate,
  de.uniol.inf.is.odysseus.probabilistic.common,
- de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate,
  de.uniol.inf.is.odysseus.probabilistic.continuous.datatype,
  de.uniol.inf.is.odysseus.probabilistic.continuous.functions.bool,
  de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare,

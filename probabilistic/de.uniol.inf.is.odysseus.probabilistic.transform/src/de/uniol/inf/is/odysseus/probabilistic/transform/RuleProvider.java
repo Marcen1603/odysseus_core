@@ -45,7 +45,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TProbabilisticAORule());
 		rules.add(new TProbabilisticValidatorRule());
-
+		rules.add(new TRelationalExistenceToPayloadRule());
+		
 		rules.addAll(this.getProbabilisticDiscreteOperatorRules());
 		rules.addAll(this.getProbabilisticContinuousOperatorRules());
 		return rules;
