@@ -36,11 +36,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastLinkedList;
@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
  * 
  * @author Dennis Geesen Created at: 14.05.2012
  */
-public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class ClusteringPO<M extends ILatencyTimeInterval> extends AbstractPipe<Tuple<M>, Tuple<M>> {
 
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>(new FastLinkedList<Tuple<M>>());
 	// private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
@@ -100,13 +100,14 @@ public class ClusteringPO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>
 					long tillclustering = System.nanoTime();
 					Map<Integer, List<Tuple<M>>> results = clusterer.processClustering(qualifies);
 					long afterclustering = System.nanoTime();
+					long latency = clusterer.getMaxLatency();
 					for (Entry<Integer, List<Tuple<M>>> cluster : results.entrySet()) {
 						for (Tuple<M> result : cluster.getValue()) {
 							Tuple<M> newTuple = result.append(cluster.getKey());
 							M metadata = (M) result.getMetadata().clone();
 							newTuple.setMetadata(metadata);
 							newTuple.getMetadata().setStartAndEnd(startP, endP);
-							// ((ILatency)newTuple.getMetadata()).setLatencyStart(start);
+							newTuple.getMetadata().setLatencyStart(latency);
 							// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
 							newTuple.setMetadata("LATENCY_BEFORE", tillclustering);
 							newTuple.setMetadata("LATENCY_AFTER", afterclustering);

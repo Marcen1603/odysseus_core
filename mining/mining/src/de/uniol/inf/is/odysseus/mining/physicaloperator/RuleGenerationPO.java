@@ -41,6 +41,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	private double minconfidence = 0.9d;
 	private DefaultTISweepArea<Tuple<M>> sweepArea = new DefaultTISweepArea<Tuple<M>>();
 	private int counter = 0;
+	private M currentMetadata;
 
 	public RuleGenerationPO(int itemposition, int supportposition, double confidence) {
 		this.itemposition = itemposition;
@@ -83,7 +84,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		// System.out.println("--------------------------------------------------------------");
 
 		processData(element.getMetadata().getStart());
-
+		this.currentMetadata = element.getMetadata();
 		// if we have already this set, we use the newer one
 		Iterator<Tuple<M>> qualified = this.sweepArea.queryOverlaps(element.getMetadata());
 		while (qualified.hasNext()) {
@@ -103,8 +104,9 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	 */
 	private synchronized void processData(PointInTime start) {
 		counter = 0;
-		if (this.sweepArea.getMaxTs() != null && start.after(this.sweepArea.getMaxTs())) {
-
+		long tillLearn = System.nanoTime();
+		M metadata = currentMetadata;
+		if (this.sweepArea.getMaxTs() != null && start.after(this.sweepArea.getMaxTs())) {			
 			Iterator<Tuple<M>> qualified = this.sweepArea.queryElementsStartingBefore(start);
 
 			FPTree<M> tree = new FPTree<M>();
@@ -122,21 +124,21 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 					List<Tuple<M>> tuples = next.getAttribute(itemposition);
 					int support = next.getAttribute(supportposition);
 					Pattern<M> o = new Pattern<M>(tuples, support);
-					generateRuleForItemSet(o.clone(), tree, start);
+					generateRuleForItemSet(o.clone(), tree, start, tillLearn, metadata);
 				}
 			}
 		}
 
 	}
 
-	private void generateRuleForItemSet(Pattern<M> o, FPTree<M> tree, PointInTime start) {
+	private void generateRuleForItemSet(Pattern<M> o, FPTree<M> tree, PointInTime start, long tillLearn, M metadata) {
 		if (o.length() >= 2) {
 			List<Pattern<M>> oneConsequences = o.splitIntoSinglePatterns();
-			generateRules(o, oneConsequences, tree, start);
+			generateRules(o, oneConsequences, tree, start, tillLearn, metadata);
 		}
 	}
 
-	private void generateRules(Pattern<M> frequentitemset, List<Pattern<M>> consequences, FPTree<M> tree, PointInTime start) {
+	private void generateRules(Pattern<M> frequentitemset, List<Pattern<M>> consequences, FPTree<M> tree, PointInTime start, long tillLearn, M metadata) {
 
 		if (consequences.size() == 0) {
 			return;
@@ -152,20 +154,21 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 				consequence.setSupport(tree.getSupport(consequence));
 				frequentitemset.setSupport(tree.getSupport(frequentitemset));
 				double conf = frequentitemset.getSupport() / (double) premise.getSupport();
-				// System.out.println("FOUND: \t" + premise + " => " +
-				// consequence + "(conf=" + conf + ")");
+//				System.out.println("FOUND: \t" + premise + " => " + consequence + "(conf=" + conf + ")");
 				if (conf >= minconfidence) {
-					// System.out.println("OUT: \t" + premise + " => " +
-					// consequence + "(conf=" + conf + ")");
+//					 System.out.println("OUT: \t" + premise + " => " + consequence + "(conf=" + conf + ")");
 					Tuple<M> newtuple = new Tuple<M>(2, false);
 					@SuppressWarnings("unchecked")
-					M metadata = (M) frequentitemset.getMetadata().clone();
-					newtuple.setMetadata((M) metadata);
+					M newmetadata = (M) metadata.clone();
+					newtuple.setMetadata((M) newmetadata);
 					newtuple.getMetadata().setStart(frequentitemset.getMinTime());
 					newtuple.getMetadata().setEnd(start);
 					newtuple.setAttribute(0, counter);
 					AssociationRule<M> rule = new AssociationRule<M>(premise, consequence, conf);
 					newtuple.setAttribute(1, rule);
+					long afterLearn = System.nanoTime();
+					newtuple.setMetadata("LATENCY_BEFORE", tillLearn);
+					newtuple.setMetadata("LATENCY_AFTER", afterLearn);
 					counter++;					
 					transfer(newtuple);
 				} else {
@@ -173,7 +176,7 @@ public class RuleGenerationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 				}
 			}
 			List<Pattern<M>> higherConsequences = generateSuperset(consequences);
-			generateRules(frequentitemset, higherConsequences, tree, start);
+			generateRules(frequentitemset, higherConsequences, tree, start, tillLearn, metadata);
 		}
 	}
 

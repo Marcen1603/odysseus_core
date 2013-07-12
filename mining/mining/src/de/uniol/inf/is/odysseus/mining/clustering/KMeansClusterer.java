@@ -7,16 +7,17 @@ import java.util.Map;
 import java.util.Random;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.mining.distance.EuclidianDistance;
 import de.uniol.inf.is.odysseus.mining.distance.IDistance;
 
-public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
+public class KMeansClusterer<M extends ILatencyTimeInterval> implements IClusterer<M> {
 
 	private IDistance distanceFunction = new EuclidianDistance();
 	private int k = 3;
 	private SDFSchema schema;
+	private long maxLatency = Long.MIN_VALUE;
 
 	public KMeansClusterer(int k, SDFSchema schema) {
 		this.schema = schema;
@@ -31,6 +32,7 @@ public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 			// initially, all is part of cluster -1!
 			newTuple.setMetadata("CLUSTERID", -1);
 			pool.add(newTuple);
+			maxLatency = Math.max(maxLatency, newTuple.getMetadata().getLatencyStart());
 		}
 		// we need at least k tuples for a k-means clustering
 		if (pool.size() >= k) {
@@ -96,6 +98,11 @@ public class KMeansClusterer<M extends ITimeInterval> implements IClusterer<M> {
 	public void setOptions(Map<String, String> options) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public long getMaxLatency() {
+		return maxLatency;		
 	}
 
 }

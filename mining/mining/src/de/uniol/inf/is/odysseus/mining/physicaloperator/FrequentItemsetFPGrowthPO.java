@@ -95,9 +95,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 	protected void process_next(Tuple<M> object, int port) {
 		processLock.lock();
 		lastMetadata = (M) object.getMetadata().clone();
-		if(counter==5000){
-			System.out.println(counter);
-		}
+//		if(counter==5000){
+////			System.out.println(counter);
+//		}
 //		if (counter % 100 == 0) {
 //			long now = System.currentTimeMillis();
 //			long needed = (now - lastTime);
