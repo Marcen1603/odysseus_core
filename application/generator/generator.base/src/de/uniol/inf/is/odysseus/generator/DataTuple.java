@@ -78,7 +78,7 @@ public class DataTuple {
     }
 
     public void addByte(String string) {
-        this.attributes.add(Byte.parseByte(string));
+        this.attributes.add(Byte.parseByte(string.trim()));
     }
 	    
 	public void addInteger(Integer value) {
@@ -86,7 +86,7 @@ public class DataTuple {
 	}
 	
 	public void addInteger(String string) {
-		this.attributes.add(Integer.parseInt(string));		
+		this.attributes.add(Integer.parseInt(string.trim()));		
 	}
 
 	public void addShort(short value){
@@ -98,7 +98,7 @@ public class DataTuple {
 	}
 	
 	public void addDouble(String string) {
-		this.attributes.add(Double.parseDouble(string));		
+		this.attributes.add(Double.parseDouble(string.trim()));		
 	}
 
 	public void addLong(Long value) {
@@ -130,7 +130,7 @@ public class DataTuple {
 	}
 	
 	public void addLong(String string) {
-		this.attributes.add(Long.parseLong(string));		
+		this.attributes.add(Long.parseLong(string.trim()));		
 	}
 
 	public void addBoolean(boolean value) {
@@ -138,7 +138,7 @@ public class DataTuple {
 	}
 	
 	public void addBoolean(String value){
-		this.attributes.add(Boolean.parseBoolean(value));
+		this.attributes.add(Boolean.parseBoolean(value.trim()));
 	}
 
 	public void addBoolean(double value) {
