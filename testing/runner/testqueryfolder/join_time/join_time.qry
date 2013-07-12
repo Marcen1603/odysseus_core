@@ -1,0 +1,45 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+wind = ACCESS({
+	source='wind', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '$input0'],
+		['csv.delimiter', ';'],
+		['csv.trim', 'true'],
+		['delay', '200']
+	], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['speed', 'INTEGER'], 
+		['direction', 'STRING'], 
+		['name', 'STRING'],
+		['location', 'INTEGER']
+]})
+temperature = ACCESS({
+	source='temperature', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '$input1'],
+		['csv.delimiter', ';'],
+		['csv.trim', 'true'],
+		['delay', '100']
+		], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['temperature', 'INTEGER'], 
+		['name', 'STRING'],
+		['location', 'INTEGER']
+]})
+window_wind = window({size = 5, advance = 1, type = 'time', unit = 'SECONDS'}, wind)
+window_temperature = window({size = 5, advance = 1, type = 'time', unit = 'SECONDS'}, temperature)
+cross = join({predicate = RelationalPredicate('wind.speed > 25 AND temperature.temperature > 12')}, window_wind, window_temperature)
+file0 = filesink({file='$output0'}, cross)
