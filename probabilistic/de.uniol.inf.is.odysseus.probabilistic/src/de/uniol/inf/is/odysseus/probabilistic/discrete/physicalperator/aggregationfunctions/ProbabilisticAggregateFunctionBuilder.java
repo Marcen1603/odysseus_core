@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions.ProbabilisticConstants;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -37,9 +36,9 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
 	private final static String STDDEV = "STDDEV";
 	private static Collection<String> names = new LinkedList<String>();
 	{
-		names.add(SUM);
-		names.add(COUNT);
-		names.add(AVG);
+		ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.SUM);
+		ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.COUNT);
+		ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.AVG);
 	};
 
 	@Override
@@ -55,11 +54,11 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
 	@Override
 	public IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final int[] pos, final boolean partialAggregateInput, final String datatype) {
 		IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
-		if (key.getName().equalsIgnoreCase(AVG)) {
+		if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
 			aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput);
-		} else if (key.getName().equalsIgnoreCase(SUM)) {
+		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.SUM)) {
 			aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput);
-		} else if (key.getName().equalsIgnoreCase(COUNT)) {
+		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COUNT)) {
 			aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase("MIN")) {
 			aggFunc = ProbabilisticMin.getInstance(pos[0], partialAggregateInput, datatype);
