@@ -21,12 +21,13 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.latency.Latency;
 
 /**
  * @author Jonas Jacobi
  */
-public class IntervalLatency extends TimeInterval implements ILatency {
+public class IntervalLatency extends TimeInterval implements ILatency, ILatencyTimeInterval {
 
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[]{ 
