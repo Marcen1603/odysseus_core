@@ -357,9 +357,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 				// FIXME Cleanup!
 				distribution.getMixtures().clear();
 				for (final Map.Entry<MultivariateNormalDistribution, Double> entry : this.distributions[oldLayerIndex].getMixtures().entrySet()) {
-					MultivariateNormalDistribution mixture = entry.getKey();
-					double[] means = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose()).getColumn(0);
-					RealMatrix covariances = restrictMatrix[oldLayerIndex].multiply(mixture.getCovariances()).multiply(restrictMatrix[oldLayerIndex].transpose());
+					final MultivariateNormalDistribution mixture = entry.getKey();
+					final double[] means = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose()).getColumn(0);
+					final RealMatrix covariances = restrictMatrix[oldLayerIndex].multiply(mixture.getCovariances()).multiply(restrictMatrix[oldLayerIndex].transpose());
 					newDistributions[newLayerIndex].getMixtures().put(new MultivariateNormalDistribution(means, covariances.getData()), entry.getValue());
 				}
 

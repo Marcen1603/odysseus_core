@@ -34,16 +34,16 @@ public abstract class AbstractProbabilisticContinuousMinusNumberOperator extends
 	}
 
 	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final Double b) {
-		NormalDistributionMixture result = a.clone();
+		final NormalDistributionMixture result = a.clone();
 		result.getMixtures().clear();
-		for (Map.Entry<MultivariateNormalDistribution, Double> entry : a.getMixtures().entrySet()) {
-			double[] means = entry.getKey().getMeans();
+		for (final Map.Entry<MultivariateNormalDistribution, Double> entry : a.getMixtures().entrySet()) {
+			final double[] means = entry.getKey().getMeans();
 			for (int i = 0; i < means.length; i++) {
 				means[i] -= b;
 			}
 			result.getMixtures().put(new MultivariateNormalDistribution(means, entry.getKey().getCovariances().getData().clone()), entry.getValue());
 		}
-		Interval[] support = new Interval[result.getSupport().length];
+		final Interval[] support = new Interval[result.getSupport().length];
 		for (int i = 0; i < result.getSupport().length; i++) {
 			support[i] = result.getSupport(i).sub(b);
 		}

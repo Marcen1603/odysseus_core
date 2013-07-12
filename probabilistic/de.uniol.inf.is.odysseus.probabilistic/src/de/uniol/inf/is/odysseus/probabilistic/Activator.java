@@ -34,8 +34,6 @@ public class Activator implements BundleActivator {
 		return Activator.context;
 	}
 
-
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -56,5 +54,4 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
-	
 }

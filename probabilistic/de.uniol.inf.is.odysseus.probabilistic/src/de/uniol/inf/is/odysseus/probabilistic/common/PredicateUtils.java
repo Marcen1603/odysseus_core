@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
@@ -23,7 +22,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  */
 public final class PredicateUtils {
 
-	public static boolean isAndPredicate(IPredicate<?> predicate) {
+	public static boolean isAndPredicate(final IPredicate<?> predicate) {
 		if (predicate instanceof AndPredicate) {
 			return ComplexPredicateHelper.isAndPredicate(predicate);
 		} else if (predicate instanceof RelationalPredicate) {
@@ -32,7 +31,7 @@ public final class PredicateUtils {
 		return false;
 	}
 
-	public static boolean isOrPredicate(IPredicate<?> predicate) {
+	public static boolean isOrPredicate(final IPredicate<?> predicate) {
 		if (predicate instanceof OrPredicate) {
 			return ComplexPredicateHelper.isOrPredicate(predicate);
 		} else if (predicate instanceof RelationalPredicate) {
@@ -41,7 +40,7 @@ public final class PredicateUtils {
 		return false;
 	}
 
-	public static boolean isNotPredicate(IPredicate<?> predicate) {
+	public static boolean isNotPredicate(final IPredicate<?> predicate) {
 		if (predicate instanceof NotPredicate) {
 			return ComplexPredicateHelper.isNotPredicate(predicate);
 		} else if (predicate instanceof RelationalPredicate) {
@@ -51,42 +50,42 @@ public final class PredicateUtils {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static List<IPredicate> splitPredicate(IPredicate<?> predicate) {
-		if (isAndPredicate(predicate)) {
+	public static List<IPredicate> splitPredicate(final IPredicate<?> predicate) {
+		if (PredicateUtils.isAndPredicate(predicate)) {
 			if (predicate instanceof AndPredicate) {
 				return ComplexPredicateHelper.splitPredicate(predicate);
 			} else if (predicate instanceof RelationalPredicate) {
 				return ((RelationalPredicate) predicate).splitPredicate();
 			}
 		}
-		ArrayList<IPredicate> predicates = new ArrayList<IPredicate>();
+		final ArrayList<IPredicate> predicates = new ArrayList<IPredicate>();
 		predicates.add(predicate);
 		return predicates;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Set<SDFAttribute> getAttributes(IPredicate<?> predicate) {
-		Set<SDFAttribute> attributes = new HashSet<SDFAttribute>();
-		List<IPredicate> predicates = splitPredicate(predicate);
-		for (IPredicate pre : predicates) {
+	public static Set<SDFAttribute> getAttributes(final IPredicate<?> predicate) {
+		final Set<SDFAttribute> attributes = new HashSet<SDFAttribute>();
+		final List<IPredicate> predicates = PredicateUtils.splitPredicate(predicate);
+		for (final IPredicate pre : predicates) {
 			if (pre instanceof RelationalPredicate) {
 				attributes.addAll(((RelationalPredicate) pre).getAttributes());
 			} else {
 				if (pre instanceof OrPredicate) {
-					attributes.addAll(getAttributes(((OrPredicate) pre).getLeft()));
-					attributes.addAll(getAttributes(((OrPredicate) pre).getRight()));
+					attributes.addAll(PredicateUtils.getAttributes(((OrPredicate) pre).getLeft()));
+					attributes.addAll(PredicateUtils.getAttributes(((OrPredicate) pre).getRight()));
 				} else if (pre instanceof NotPredicate) {
-					attributes.addAll(getAttributes(((NotPredicate) pre).getChild()));
+					attributes.addAll(PredicateUtils.getAttributes(((NotPredicate) pre).getChild()));
 				}
 			}
 		}
 		return attributes;
 	}
 
-	public static List<SDFExpression> getExpressions(IPredicate<?> predicate) {
-		List<SDFExpression> expressions = new ArrayList<SDFExpression>();
-		List<IPredicate> predicates = splitPredicate(predicate);
-		for (IPredicate pre : predicates) {
+	public static List<SDFExpression> getExpressions(final IPredicate<?> predicate) {
+		final List<SDFExpression> expressions = new ArrayList<SDFExpression>();
+		final List<IPredicate> predicates = PredicateUtils.splitPredicate(predicate);
+		for (final IPredicate pre : predicates) {
 			if (pre instanceof RelationalPredicate) {
 				expressions.add(((RelationalPredicate) pre).getExpression());
 			}

@@ -35,7 +35,7 @@ public final class CovarianceMatrixUtils {
 	 * @return The matrix
 	 */
 	public static RealMatrix toMatrix(final double[] entries) {
-		final int size = getCovarianceDimensionFromTriangleSize(entries.length);
+		final int size = CovarianceMatrixUtils.getCovarianceDimensionFromTriangleSize(entries.length);
 		final RealMatrix matrix = MatrixUtils.createRealMatrix(size, size);
 		int left = 0;
 		int right = size;

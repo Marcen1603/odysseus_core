@@ -221,18 +221,18 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		if (inf == Double.NEGATIVE_INFINITY) {
+		if (this.inf == Double.NEGATIVE_INFINITY) {
 			sb.append("-oo");
 		} else {
-			sb.append(inf);
+			sb.append(this.inf);
 		}
 		sb.append(",");
-		if (sup == Double.POSITIVE_INFINITY) {
+		if (this.sup == Double.POSITIVE_INFINITY) {
 			sb.append("oo");
 		} else {
-			sb.append(sup);
+			sb.append(this.sup);
 		}
 		sb.append("]");
 		return sb.toString();

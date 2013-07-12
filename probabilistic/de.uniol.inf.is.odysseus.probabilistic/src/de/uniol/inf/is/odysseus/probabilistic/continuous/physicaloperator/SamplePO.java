@@ -64,9 +64,9 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 		final ProbabilisticTuple<T> outputVal = object.clone();
 
 		for (final int attributePos : this.attributes) {
-			NormalDistributionMixture distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
-			int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
-			double sample = this.sample(distribution, dimension);
+			final NormalDistributionMixture distribution = distributions[((ProbabilisticContinuousDouble) object.getAttribute(attributePos)).getDistribution()];
+			final int dimension = Ints.asList(distribution.getAttributes()).indexOf(attributePos);
+			final double sample = this.sample(distribution, dimension);
 			if (distribution.getSupport(dimension).contains(sample)) {
 				outputVal.setAttribute(attributePos, this.sample(distribution, dimension));
 			} else {
@@ -87,9 +87,9 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 		return new SamplePO<T>(this);
 	}
 
-	private Double sample(NormalDistributionMixture mixture, int dimension) {
+	private Double sample(final NormalDistributionMixture mixture, final int dimension) {
 		double sample = 1.0;
-		for (Map.Entry<MultivariateNormalDistribution, Double> entry : mixture.getMixtures().entrySet()) {
+		for (final Map.Entry<MultivariateNormalDistribution, Double> entry : mixture.getMixtures().entrySet()) {
 			sample += (entry.getKey().sample()[dimension] * entry.getValue());
 		}
 		return sample;

@@ -23,11 +23,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -57,26 +55,26 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 
 	// Default Constructor for declarative Service needed
 	public ProbabilisticTupleDataHandler() {
-		nullMode = false;
+		this.nullMode = false;
 	}
 
-	protected ProbabilisticTupleDataHandler(boolean nullMode) {
+	protected ProbabilisticTupleDataHandler(final boolean nullMode) {
 		this.nullMode = nullMode;
 	}
 
-	protected ProbabilisticTupleDataHandler(final SDFSchema schema, boolean nullMode) {
+	protected ProbabilisticTupleDataHandler(final SDFSchema schema, final boolean nullMode) {
 		this.nullMode = nullMode;
 		this.createDataHandler(schema);
 	}
 
 	@Override
-	public IDataHandler<ProbabilisticTuple<?>> getInstance(SDFSchema schema) {
+	public IDataHandler<ProbabilisticTuple<?>> getInstance(final SDFSchema schema) {
 		return new ProbabilisticTupleDataHandler(schema, false);
 	}
 
 	@Override
-	public IDataHandler<ProbabilisticTuple<?>> getInstance(List<String> schema) {
-		ProbabilisticTupleDataHandler handler = new ProbabilisticTupleDataHandler(false);
+	public IDataHandler<ProbabilisticTuple<?>> getInstance(final List<String> schema) {
+		final ProbabilisticTupleDataHandler handler = new ProbabilisticTupleDataHandler(false);
 		handler.init(schema);
 		return handler;
 	}
@@ -104,10 +102,10 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 			final Object[] attributes = new Object[this.dataHandlers.length];
 			for (int i = 0; i < this.dataHandlers.length; i++) {
 				byte type = -1;
-				if (nullMode) {
+				if (this.nullMode) {
 					type = buffer.get();
 				}
-				if (!nullMode || type != 0) {
+				if (!this.nullMode || (type != 0)) {
 					attributes[i] = this.dataHandlers[i].readData(buffer);
 				}
 			}

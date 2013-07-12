@@ -4,13 +4,10 @@ import java.util.Arrays;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.util.FastMath;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.base.predicate.ProbabilisticContinuousPredicateResult;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
@@ -56,7 +53,7 @@ public class ProbabilisticContinuousEqualsOperatorVector extends AbstractProbabi
 		a.setScale(Double.POSITIVE_INFINITY);
 		final Interval[] support = new Interval[a.getDimension()];
 		for (int i = 0; i < a.getDimension(); i++) {
-			Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
+			final Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
 			support[i] = a.getSupport(i).intersection(interval);
 		}
 		a.setSupport(support);

@@ -40,7 +40,7 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 	public NormalDistributionMixture getValue() {
 		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
 		final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
-		return getValueInternal(a, b);
+		return this.getValueInternal(a, b);
 	}
 
 	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
@@ -52,12 +52,12 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getKey().getMeans());
 				final RealMatrix bCovarianceMatrix = bEntry.getKey().getCovariances();
 
-				MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(aMean.subtract(bMean).getColumn(0), aCovarianceMatrix.subtract(bCovarianceMatrix).getData());
+				final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(aMean.subtract(bMean).getColumn(0), aCovarianceMatrix.subtract(bCovarianceMatrix).getData());
 				mixtures.put(distribution, aEntry.getValue() * bEntry.getValue());
 			}
 		}
-		NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
-		Interval[] support = new Interval[a.getSupport().length];
+		final NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
+		final Interval[] support = new Interval[a.getSupport().length];
 		for (int i = 0; i < a.getSupport().length; i++) {
 			support[i] = a.getSupport(i).sub(b.getSupport(i));
 		}

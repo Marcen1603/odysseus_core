@@ -72,8 +72,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 				try {
 					final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
 					mixtures.put(distribution, weight);
-				} catch (Exception e) {
-					LOG.warn(e.getMessage(), e);
+				} catch (final Exception e) {
+					this.LOG.warn(e.getMessage(), e);
 				}
 
 			}

@@ -30,10 +30,11 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabilisticFunction<Double> {
 

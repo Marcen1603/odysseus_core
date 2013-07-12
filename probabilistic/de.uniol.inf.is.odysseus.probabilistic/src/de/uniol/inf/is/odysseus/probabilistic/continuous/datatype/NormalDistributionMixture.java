@@ -81,7 +81,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		this.attributes = normalDistributionMixture.attributes.clone();
 		this.scale = normalDistributionMixture.scale;
 		for (final MultivariateNormalDistribution distr : normalDistributionMixture.mixtures.keySet()) {
-			MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(distr.getMeans().clone(), distr.getCovariances().copy().getData());
+			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(distr.getMeans().clone(), distr.getCovariances().copy().getData());
 			this.mixtures.put(distribution, normalDistributionMixture.mixtures.get(distr));
 		}
 		this.support = new Interval[normalDistributionMixture.support.length];
@@ -146,7 +146,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 			if (sb.length() > 1) {
 				sb.append(";");
 			}
-			MultivariateNormalDistribution distribution = mixture.getKey();
+			final MultivariateNormalDistribution distribution = mixture.getKey();
 			sb.append("𝒩({");
 			for (int i = 0; i < distribution.getMeans().length; i++) {
 				if (i > 0) {
@@ -155,13 +155,13 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 				sb.append(distribution.getMeans()[i]);
 			}
 			sb.append("},{");
-			RealMatrix covariances = distribution.getCovariances();
-			for (int i =0;i<covariances.getColumnDimension();i++){
+			final RealMatrix covariances = distribution.getCovariances();
+			for (int i = 0; i < covariances.getColumnDimension(); i++) {
 				if (i > 0) {
 					sb.append(",");
 				}
 				sb.append("{");
-				for (int j =0;j<covariances.getRowDimension();j++){
+				for (int j = 0; j < covariances.getRowDimension(); j++) {
 					if (j > 0) {
 						sb.append(",");
 					}

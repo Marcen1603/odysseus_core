@@ -16,8 +16,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 
 /**
  * 
- * @author Christian Kuka <christian@kuka.cc>
- * FIXME rename to Sample after removing SampleAO from core
+ * @author Christian Kuka <christian@kuka.cc> FIXME rename to Sample after removing SampleAO from core
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM")
 public class SampleAO extends UnaryLogicalOp {

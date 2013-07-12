@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -139,14 +138,14 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 			this.expressions[i] = expressionsList[i].clone();
 		}
 		this.variables = new VarHelper[expressionsList.length][];
-		Set<SDFAttribute> neededAttributesSet = new HashSet<>();
+		final Set<SDFAttribute> neededAttributesSet = new HashSet<>();
 		int i = 0;
 		for (final SDFExpression expression : expressionsList) {
 			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 			neededAttributesSet.addAll(neededAttributes);
 		}
 		this.neededAttributePos = SchemaUtils.getAttributePos(this.inputSchema, neededAttributesSet);
-		SDFSchema restrictedSchema = new SDFSchema(schema.getURI(), neededAttributesSet);
+		final SDFSchema restrictedSchema = new SDFSchema(schema.getURI(), neededAttributesSet);
 		for (final SDFExpression expression : expressionsList) {
 			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 
@@ -177,7 +176,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 				}
 			}
 			if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-				distributions++;
+				this.distributions++;
 			}
 		}
 	}
@@ -201,23 +200,23 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		boolean nullValueOccured = false;
-		ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, this.distributions, false);
-		ProbabilisticTuple<T> restrictedObject = object.restrict(this.neededAttributePos, false);
+		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, this.distributions, false);
+		final ProbabilisticTuple<T> restrictedObject = object.restrict(this.neededAttributePos, false);
 		outputVal.setMetadata((T) restrictedObject.getMetadata().clone());
 		int lastObjectSize = this.lastObjects.size();
-		if (lastObjectSize > maxHistoryElements) {
-			lastObjects.removeLast();
+		if (lastObjectSize > this.maxHistoryElements) {
+			this.lastObjects.removeLast();
 			lastObjectSize--;
 		}
-		lastObjects.addFirst(restrictedObject);
+		this.lastObjects.addFirst(restrictedObject);
 		lastObjectSize++;
 		synchronized (this.expressions) {
 			for (int i = 0, d = 0; i < this.expressions.length; ++i) {
-				Object[] values = new Object[this.variables[i].length];
+				final Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					ProbabilisticTuple<T> obj = null;
 					if (lastObjectSize > this.variables[i][j].objectPosToUse) {
-						obj = lastObjects.get(this.variables[i][j].objectPosToUse);
+						obj = this.lastObjects.get(this.variables[i][j].objectPosToUse);
 					}
 					if (obj != null) {
 						Object attribute = obj.getAttribute(this.variables[i][j].pos);
@@ -233,9 +232,9 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 					this.expressions[i].bindDistributions(restrictedObject.getDistributions());
 					this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
 					this.expressions[i].bindVariables(values);
-					Object expr = this.expressions[i].getValue();
+					final Object expr = this.expressions[i].getValue();
 					if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-						NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
+						final NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
 						distribution.getAttributes()[0] = i;
 						outputVal.setDistribution(d, distribution);
 						outputVal.setAttribute(i, new ProbabilisticContinuousDouble(d));
@@ -246,10 +245,10 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 					if (expr == null) {
 						nullValueOccured = true;
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
-						LOG.error("Cannot calc result ", e);
+						ProbabilisticContinuousMapPO.LOG.error("Cannot calc result ", e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
@@ -259,8 +258,8 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 				}
 			}
 		}
-		if (!nullValueOccured || (nullValueOccured && allowNull)) {
-			transfer(outputVal);
+		if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
+			this.transfer(outputVal);
 		}
 	}
 
@@ -281,17 +280,17 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+	public boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
 		if (!(ipo instanceof ProbabilisticContinuousMapPO)) {
 			return false;
 		}
-		ProbabilisticContinuousMapPO pmpo = (ProbabilisticContinuousMapPO) ipo;
+		final ProbabilisticContinuousMapPO pmpo = (ProbabilisticContinuousMapPO) ipo;
 
 		if (!this.getOutputSchema().equals(pmpo.getOutputSchema())) {
 			return false;
 		}
 
-		if (this.hasSameSources(pmpo) && this.inputSchema.compareTo(pmpo.inputSchema) == 0) {
+		if (this.hasSameSources(pmpo) && (this.inputSchema.compareTo(pmpo.inputSchema) == 0)) {
 			if (this.expressions.length == pmpo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
 					if (!this.expressions[i].equals(pmpo.expressions[i])) {
@@ -307,7 +306,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	}
 
 	public boolean isStatebased() {
-		return statebased;
+		return this.statebased;
 	}
 
 }

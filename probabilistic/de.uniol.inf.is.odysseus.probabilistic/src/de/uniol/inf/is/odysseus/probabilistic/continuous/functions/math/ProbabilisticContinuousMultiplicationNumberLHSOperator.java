@@ -35,8 +35,8 @@ public class ProbabilisticContinuousMultiplicationNumberLHSOperator extends Abst
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		Double a = this.getNumericalInputValue(0);
+		final Double a = this.getNumericalInputValue(0);
 		final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
-		return getValueInternal(b, a);
+		return this.getValueInternal(b, a);
 	}
 }

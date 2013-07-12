@@ -35,7 +35,7 @@ public class ProbabilisticContinuousPlusNumberRHSOperator extends AbstractProbab
 	@Override
 	public NormalDistributionMixture getValue() {
 		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
-		Double b = this.getNumericalInputValue(1);
-		return getValueInternal(a, b);
+		final Double b = this.getNumericalInputValue(1);
+		return this.getValueInternal(a, b);
 	}
 }

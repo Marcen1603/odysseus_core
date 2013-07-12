@@ -47,7 +47,7 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 	public NormalDistributionMixture getValue() {
 		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
 		final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
-		return getValueInternal(a, b);
+		return this.getValueInternal(a, b);
 	}
 
 	protected NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
@@ -99,8 +99,8 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 			}
 		}
 
-		NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
-		Interval[] support = new Interval[a.getSupport().length];
+		final NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
+		final Interval[] support = new Interval[a.getSupport().length];
 		for (int i = 0; i < a.getSupport().length; i++) {
 			support[i] = a.getSupport(i).mul(b.getSupport(i));
 		}
