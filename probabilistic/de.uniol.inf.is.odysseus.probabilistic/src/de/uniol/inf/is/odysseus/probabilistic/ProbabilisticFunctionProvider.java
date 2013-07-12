@@ -43,6 +43,8 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.Probabil
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateFunction;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateMultivariateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterThanOperator;
@@ -68,8 +70,6 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.Proba
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToLongFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToShortFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ToProbabilisticDoubleFunction;
-import de.uniol.inf.is.odysseus.probabilistic.functions.ProbabilisticIntegrateFunction;
-import de.uniol.inf.is.odysseus.probabilistic.functions.ProbabilisticIntegrateMultivariateFunction;
 
 /**
  * Function provider for probabilistic functions.

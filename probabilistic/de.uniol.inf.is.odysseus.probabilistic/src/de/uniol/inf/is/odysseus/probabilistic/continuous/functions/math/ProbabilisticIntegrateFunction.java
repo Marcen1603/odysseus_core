@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.functions;
+package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticIntegrateFunction extends ProbabilisticIntegrateMultivariateFunction {

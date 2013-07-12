@@ -102,11 +102,12 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 		}
 		this.variables = new VarHelper[this.expressions.length][];
 		Set<SDFAttribute> neededAttributesSet = new HashSet<>();
-		int i = 0;
+
 		for (final SDFExpression expression : expressionsList) {
 			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 			neededAttributesSet.addAll(neededAttributes);
 		}
+		int i = 0;
 		for (final SDFExpression expression : expressionsList) {
 			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 
@@ -128,18 +129,21 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		final ProbabilisticTuple<T> outputVal = object.clone();
-
+		double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
 		synchronized (this.expressions) {
-			for (int i = 0, d = 0; i < this.expressions.length; ++i) {
+			double scale = 1.0;
+			for (int i = 0; i < this.expressions.length; ++i) {
+				int d = 0;
 				Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					Object attribute = outputVal.getAttribute(this.variables[i][j].pos);
 					if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-						attribute = outputVal.getDistribution(((ProbabilisticContinuousDouble) attribute).getDistribution());
+						d = ((ProbabilisticContinuousDouble) attribute).getDistribution();
+						attribute = outputVal.getDistribution(d);
+						scale = ((NormalDistributionMixture) attribute).getScale();
 					}
 					values[j] = attribute;
 				}
@@ -152,20 +156,22 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 				Object expr = this.expressions[i].getValue();
 				if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
 					NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
-					distribution.getAttributes()[0] = i;
+					jointProbability *= scale / distribution.getScale();
+					// distribution.getAttributes()[0] = i;
 					outputVal.setDistribution(d, distribution);
-					outputVal.setAttribute(i, new ProbabilisticContinuousDouble(d));
-					((IProbabilistic) outputVal.getMetadata()).setExistence(((IProbabilistic) outputVal.getMetadata()).getExistence()*distribution.getScale());
+					//outputVal.setAttribute(i, new ProbabilisticContinuousDouble(d));
+					((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
 					d++;
 				} else {
 					outputVal.setAttribute(i, expr);
 				}
 			}
 		}
-		// ((IProbabilistic) outputVal.getMetadata()).setExistence(result.getProbability());
-		// outputVal.setDistribution(attributePosition, result.getValue());
-		this.transfer(outputVal);
-		// }
+
+		// Transfer the tuple iff the joint probability is positive (maybe set quality filter later to reduce the number of tuples)
+		if (jointProbability > 0.0) {
+			this.transfer(outputVal);
+		}
 	}
 
 	/*

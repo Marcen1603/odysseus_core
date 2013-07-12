@@ -135,6 +135,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			for (final String value : distributions) {
 				this.generateContinuousAttribute(tuple, value);
 			}
+			System.out.println(tuple);
 			return tuple;
 		}
 		return null;

@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.functions;
+package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
@@ -28,15 +23,18 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
-
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
 public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabilisticFunction<Double> {
 
 	/**

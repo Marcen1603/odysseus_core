@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -42,6 +44,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class ProbabilisticDistributionHandler extends AbstractDataHandler<NormalDistributionMixture> {
+	private final Logger LOG = LoggerFactory.getLogger(ProbabilisticDistributionHandler.class);
 	static protected List<String> types = new ArrayList<String>();
 
 	/*
@@ -66,9 +69,13 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 				for (int i = 0; i < entries.length; i++) {
 					entries[i] = buffer.getDouble();
 				}
+				try {
+					final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
+					mixtures.put(distribution, weight);
+				} catch (Exception e) {
+					LOG.warn(e.getMessage(), e);
+				}
 
-				final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-				mixtures.put(distribution, weight);
 			}
 			final double scale = buffer.getDouble();
 			final Interval[] support = new Interval[dimension];

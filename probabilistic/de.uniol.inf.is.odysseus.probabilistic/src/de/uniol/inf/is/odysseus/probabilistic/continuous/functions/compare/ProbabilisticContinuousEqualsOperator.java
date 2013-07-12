@@ -40,28 +40,25 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		final ProbabilisticContinuousDouble a = this.getInputValue(0);
-		final NormalDistributionMixture mixtures = this.getDistributions(a.getDistribution()).clone();
+		final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
 
 		final Double b = this.getNumericalInputValue(1);
-		final double[] lowerBoundData = new double[mixtures.getDimension()];
+		final double[] lowerBoundData = new double[a.getDimension()];
 		Arrays.fill(lowerBoundData, b);
-		final double[] upperBoundData = new double[mixtures.getDimension()];
+		final double[] upperBoundData = new double[a.getDimension()];
 		Arrays.fill(upperBoundData, b);
 
 		final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
 		final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
-		final double value = 0.0;
-		mixtures.setScale(mixtures.getScale() * value);
-		final Interval[] support = new Interval[mixtures.getDimension()];
-		for (int i = 0; i < mixtures.getDimension(); i++) {
-			final double lower = FastMath.max(mixtures.getSupport(i).inf(), lowerBound.getEntry(i));
-			final double upper = FastMath.min(mixtures.getSupport(i).sup(), upperBound.getEntry(i));
-			support[i] = new Interval(lower, upper);
+		a.setScale(Double.POSITIVE_INFINITY);
+		final Interval[] support = new Interval[a.getDimension()];
+		for (int i = 0; i < a.getDimension(); i++) {
+			Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
+			support[i] = a.getSupport(i).intersection(interval);
 		}
-		mixtures.setSupport(support);
-		return mixtures;
+		a.setSupport(support);
+		return a;
 	}
 
 	@Override

@@ -56,7 +56,7 @@ public class ProbabilisticContinuousGreaterEqualsOperator extends AbstractProbab
 
 	@Override
 	public NormalDistributionMixture getValue() {
-		final NormalDistributionMixture a = this.getInputValue(0);
+		final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
 
 		final Double b = this.getNumericalInputValue(1);
 		final double[] lowerBoundData = new double[a.getDimension()];
@@ -68,12 +68,11 @@ public class ProbabilisticContinuousGreaterEqualsOperator extends AbstractProbab
 		final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
 		final double value = ProbabilisticContinuousSelectUtils.cumulativeProbability(a, lowerBound, upperBound);
-		a.setScale(a.getScale() * value);
+		a.setScale(a.getScale() / value);
 		final Interval[] support = new Interval[a.getDimension()];
 		for (int i = 0; i < a.getDimension(); i++) {
-			final double lower = FastMath.max(a.getSupport(i).inf(), lowerBound.getEntry(i));
-			final double upper = FastMath.min(a.getSupport(i).sup(), upperBound.getEntry(i));
-			support[i] = new Interval(lower, upper);
+			Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
+			support[i] = a.getSupport(i).intersection(interval);
 		}
 		a.setSupport(support);
 		return a;
