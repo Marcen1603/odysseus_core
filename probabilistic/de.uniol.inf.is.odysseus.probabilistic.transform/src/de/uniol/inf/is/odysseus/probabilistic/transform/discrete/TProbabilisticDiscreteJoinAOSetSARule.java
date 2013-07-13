@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
@@ -72,7 +73,10 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 		} else {
 			metadataMerge = TIMergeFunction.getInstance();
 		}
-		final List<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes());
+		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		if (joinPO.getPredicate() != null) {
+			attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes()));
+		}
 		final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
 		final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 
@@ -101,8 +105,10 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 	@Override
 	public boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
 		if (operator.getAreas() == null) {
-			if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
-				return true;
+			if (operator instanceof ProbabilisticDiscreteJoinTIPO) {
+				if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+					return true;
+				}
 			}
 		}
 		return false;

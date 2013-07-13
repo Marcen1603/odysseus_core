@@ -63,6 +63,11 @@ public class LinearRegressionMergeAO extends UnaryLogicalOp {
 		return schema.indexOf(schema.findAttribute("$coefficients"));
 	}
 
+	public final int getResidualPos() {
+		final SDFSchema schema = this.getInputSchema();
+		return schema.indexOf(schema.findAttribute("$residual"));
+	}
+
 	public final int[] determineDependentList() {
 		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getDependentAttributes());
 	}

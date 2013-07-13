@@ -53,6 +53,15 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		this(means, CovarianceMatrixUtils.toMatrix(covariances).getData());
 	}
 
+	public NormalDistributionMixture(final int dimension) {
+		this.attributes = new int[dimension];
+		this.scale = 1.0;
+		this.support = new Interval[dimension];
+		for (int i = 0; i < this.support.length; i++) {
+			this.support[i] = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+		}
+	}
+
 	public NormalDistributionMixture(final double[] means, final double[][] covariances) {
 		final int dimension = means.length;
 		this.attributes = new int[dimension];

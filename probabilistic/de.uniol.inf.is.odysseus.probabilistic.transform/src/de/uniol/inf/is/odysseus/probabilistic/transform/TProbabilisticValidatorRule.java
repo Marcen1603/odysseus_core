@@ -16,6 +16,9 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -30,18 +33,18 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
+	/** The Logger. */
+	private static Logger LOG = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
 
 	@Override
 	public final int getPriority() {
 		return 1;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
-		if (!((CombinedMergeFunction) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
-			// TODO: Make logger
-			System.err.println(this + " WARN: No Probabilistic merge function set for " + operator);
+		if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
+			LOG.error(this + " WARN: No Probabilistic merge function set for " + operator);
 		}
 	}
 

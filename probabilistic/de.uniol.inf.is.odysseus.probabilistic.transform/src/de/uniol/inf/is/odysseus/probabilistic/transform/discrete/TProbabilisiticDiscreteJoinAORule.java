@@ -16,7 +16,7 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
-import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
+import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
@@ -96,7 +97,7 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 		final IPredicate<?> predicate = operator.getPredicate();
 		if (predicate != null) {
 			if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
-				final List<SDFAttribute> attributes = predicate.getAttributes();
+				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
 				if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
 					return true;
 				}

@@ -80,13 +80,13 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 			final RealMatrix regressionCoefficients = this.area.getRegressionCoefficients();
 			final RealMatrix residual = this.area.getResidual();
 
-			final NormalDistributionMixture mixture = new NormalDistributionMixture(new double[residual.getColumnDimension()], residual.getData());
+			final NormalDistributionMixture mixture = new NormalDistributionMixture(residual.getColumnDimension());
 			mixture.setAttributes(this.area.getExplanatoryAttributePos());
 
 			final NormalDistributionMixture[] distributions = object.getDistributions();
 			final Object[] attributes = object.getAttributes();
 
-			final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[attributes.length + 1], new NormalDistributionMixture[distributions.length + 1], object.requiresDeepClone());
+			final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(new Object[attributes.length + 2], new NormalDistributionMixture[distributions.length + 1], object.requiresDeepClone());
 			outputVal.setDistribution(distributions.length, mixture);
 
 			System.arraycopy(distributions, 0, outputVal.getDistributions(), 0, distributions.length);
@@ -97,7 +97,7 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 				outputVal.setAttribute(pos, new ProbabilisticContinuousDouble(distributions.length));
 			}
 			outputVal.setAttribute(object.getAttributes().length, regressionCoefficients.getData());
-
+			outputVal.setAttribute(object.getAttributes().length+1, residual.getData());
 			outputVal.setMetadata((T) object.getMetadata().clone());
 			this.transfer(outputVal);
 		}

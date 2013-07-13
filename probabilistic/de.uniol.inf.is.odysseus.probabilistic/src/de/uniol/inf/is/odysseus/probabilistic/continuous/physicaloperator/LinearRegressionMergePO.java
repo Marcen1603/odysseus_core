@@ -26,6 +26,8 @@ import java.util.Map.Entry;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -41,9 +43,12 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
  * @param <T>
  */
 public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+	/** Logger. */
+	private static final Logger LOG = LoggerFactory.getLogger(LinearRegressionMergePO.class);
 	private final int[] explanatoryAttributePos;
 	private final int[] dependentAttributePos;
 	private final int regressionCoefficientsPos;
+	private final int residualPos;
 
 	/**
 	 * 
@@ -51,12 +56,14 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 	 * @param dependentList
 	 * @param explanatoryList
 	 * @param regressionCoefficientsPos
+	 * @param residualPos
 	 */
-	public LinearRegressionMergePO(final SDFSchema inputSchema, final int[] dependentList, final int[] explanatoryList, final int regressionCoefficientsPos) {
+	public LinearRegressionMergePO(final SDFSchema inputSchema, final int[] dependentList, final int[] explanatoryList, final int regressionCoefficientsPos, final int residualPos) {
 		super();
 		this.explanatoryAttributePos = explanatoryList;
 		this.dependentAttributePos = dependentList;
 		this.regressionCoefficientsPos = regressionCoefficientsPos;
+		this.residualPos = residualPos;
 	}
 
 	/**
@@ -68,6 +75,7 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		this.explanatoryAttributePos = linearRegressionMergePO.explanatoryAttributePos.clone();
 		this.dependentAttributePos = linearRegressionMergePO.dependentAttributePos.clone();
 		this.regressionCoefficientsPos = linearRegressionMergePO.regressionCoefficientsPos;
+		this.residualPos = linearRegressionMergePO.residualPos;
 	}
 
 	/**
@@ -89,33 +97,43 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		final int currentMixturePos = ((ProbabilisticContinuousDouble) object.getAttribute(this.dependentAttributePos[0])).getDistribution();
 		final NormalDistributionMixture currentMixture = object.getDistribution(currentMixturePos);
 
-		final int residualIndex = ((ProbabilisticContinuousDouble) object.getAttribute(this.explanatoryAttributePos[0])).getDistribution();
-		final RealMatrix residual = this.getResidual(object, residualIndex);
+		final int distributionIndex = ((ProbabilisticContinuousDouble) object.getAttribute(this.explanatoryAttributePos[0])).getDistribution();
+		final RealMatrix residual = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.residualPos));
 		final RealMatrix regressionCoefficients = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.regressionCoefficientsPos));
 
 		final Map<MultivariateNormalDistribution, Double> newMixtureComponents = new HashMap<MultivariateNormalDistribution, Double>();
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : currentMixture.getMixtures().entrySet()) {
 
 			RealMatrix mean = MatrixUtils.createColumnRealMatrix(mixture.getKey().getMeans());
+			final RealMatrix regressionCoefficientsMatrix = MatrixUtils.createRealMatrix(mean.getRowDimension(), mean.getColumnDimension());
+			regressionCoefficientsMatrix.setSubMatrix(regressionCoefficients.getData(), mean.getRowDimension() - regressionCoefficients.getRowDimension(), regressionCoefficients.getColumnDimension() - 1);
 			final RealMatrix covarianceMatrix = mixture.getKey().getCovariances();
 
 			// Create the new \mu = (\mu, \mu \beta)
-			final double[] newMean = new double[mean.getColumnDimension() + regressionCoefficients.getColumnDimension()];
-			System.arraycopy(mean.getData()[0], 0, newMean, 0, mean.getColumnDimension());
-			mean = mean.multiply(regressionCoefficients);
-			System.arraycopy(mean.getData()[0], 0, newMean, mean.getColumnDimension(), mean.getColumnDimension());
+			final double[] newMean = new double[mean.getRowDimension() + regressionCoefficients.getRowDimension()];
+			System.arraycopy(mean.getColumn(0), 0, newMean, 0, mean.getRowDimension());
 
-			final RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(covarianceMatrix.getRowDimension() + residual.getRowDimension(), covarianceMatrix.getColumnDimension() + residual.getColumnDimension());
+			System.arraycopy(mean.transpose().multiply(regressionCoefficientsMatrix).getColumn(0), 0, newMean, mean.getRowDimension(), regressionCoefficients.getRowDimension());
+
+			RealMatrix newCovarianceMatrix = MatrixUtils.createRealMatrix(covarianceMatrix.getRowDimension() + residual.getRowDimension(), covarianceMatrix.getColumnDimension() + residual.getColumnDimension());
 
 			//
 			// ( \sigma_A | \sigma_A \beta)
 			// ( \beta^T \sigma_A | \beta^T \sigma_A \beta + \sigma)
 			//
 			newCovarianceMatrix.setSubMatrix(covarianceMatrix.getData(), 0, 0);
-			newCovarianceMatrix.setSubMatrix(covarianceMatrix.multiply(regressionCoefficients).getData(), 0, covarianceMatrix.getColumnDimension());
-			newCovarianceMatrix.setSubMatrix(regressionCoefficients.transpose().multiply(covarianceMatrix).getData(), covarianceMatrix.getRowDimension(), 0);
-			newCovarianceMatrix.setSubMatrix(regressionCoefficients.transpose().multiply(covarianceMatrix).multiply(regressionCoefficients).add(residual).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
-			newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
+			newCovarianceMatrix.setSubMatrix(covarianceMatrix.multiply(regressionCoefficientsMatrix).getData(), 0, covarianceMatrix.getColumnDimension());
+			newCovarianceMatrix.setSubMatrix(regressionCoefficientsMatrix.transpose().multiply(covarianceMatrix).getData(), covarianceMatrix.getRowDimension(), 0);
+			newCovarianceMatrix.setSubMatrix(regressionCoefficientsMatrix.transpose().multiply(covarianceMatrix).multiply(regressionCoefficientsMatrix).add(residual).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
+			try {
+				newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
+			} catch (Exception e) {
+				final double[] diagonal = new double[newCovarianceMatrix.getColumnDimension()];
+				Arrays.fill(diagonal, 10E-5);
+				newCovarianceMatrix = newCovarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
+				newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
+				//LOG.error(e.getMessage(), e);
+			}
 		}
 
 		// Create the new mixture pointing to all attributes (dependent first,
@@ -131,8 +149,8 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		for (final int explanatoryAttributePo : this.explanatoryAttributePos) {
 			object.setAttribute(explanatoryAttributePo, new ProbabilisticContinuousDouble(currentMixturePos));
 		}
-		distributions.remove(residualIndex);
-		for (int i = residualIndex; i < distributions.size(); i++) {
+		distributions.remove(distributionIndex);
+		for (int i = distributionIndex; i < distributions.size(); i++) {
 			for (final int j : distributions.get(i).getAttributes()) {
 				((ProbabilisticContinuousDouble) object.getAttribute(j)).setDistribution(i);
 			}
@@ -149,22 +167,5 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 	@Override
 	public AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
 		return new LinearRegressionMergePO<T>(this);
-	}
-
-	/**
-	 * Gets the residual matrix at the given index from the given probabilistic tuple.
-	 * 
-	 * @param object
-	 *            The probabilistic tuple
-	 * @param residualIndex
-	 *            The index of the residual
-	 * @return The residual matrix
-	 */
-	private RealMatrix getResidual(final ProbabilisticTuple<T> object, final int residualIndex) {
-		final NormalDistributionMixture mixture = object.getDistribution(residualIndex);
-		for (final Entry<MultivariateNormalDistribution, Double> entry : mixture.getMixtures().entrySet()) {
-			return entry.getKey().getCovariances();
-		}
-		return null;
 	}
 }

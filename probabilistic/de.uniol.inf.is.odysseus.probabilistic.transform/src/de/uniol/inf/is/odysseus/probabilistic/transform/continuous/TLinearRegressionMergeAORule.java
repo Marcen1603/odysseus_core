@@ -50,7 +50,7 @@ public class TLinearRegressionMergeAORule extends AbstractTransformationRule<Lin
 	 */
 	@Override
 	public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(), operator.getRegressionCoefficientsPos());
+		final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(), operator.getRegressionCoefficientsPos(), operator.getResidualPos());
 		this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
 	}
 
