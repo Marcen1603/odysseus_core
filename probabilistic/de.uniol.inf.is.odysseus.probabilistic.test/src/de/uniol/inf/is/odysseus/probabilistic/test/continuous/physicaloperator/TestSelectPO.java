@@ -1,79 +1,70 @@
 package de.uniol.inf.is.odysseus.probabilistic.test.continuous.physicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.Probabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
+public class TestSelectPO extends
+		ProbabilisticContinuousSelectPO<IProbabilistic> {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TestSelectPO.class);
 
-	public TestProjectPO() {
-		super(new int[] { 1 });
+	public TestSelectPO() {
+		// super(TestSelectPO.getTestPredicate(), TestSelectPO
+		// .getProbabilisticAttributePos());
+		super(TestSelectPO.getSchema(), TestSelectPO.getTestPredicate());
 	}
 
 	@Override
-	public void transfer(final Tuple<IMetaAttribute> object) {
-		System.out.println("Out: " + object);
+	public void transfer(final ProbabilisticTuple<IProbabilistic> object) {
+		System.out.println(object);
+		Assert.assertTrue(object.getMetadata().getExistence() <= 1.0);
 	}
 
-	@Test(dataProvider = "tuple")
-	public final void testprocess(final ProbabilisticTuple<IMetaAttribute> tuple) {
-		System.out.println("In: " + tuple);
-		this.process_next(tuple, 0);
+	@Test(dataProvider = "continuousProbabilisticTuple")
+	public final void testProcess(
+			final ProbabilisticTuple<IProbabilistic> object) {
+		object.setMetadata(new Probabilistic());
+		this.process_next(object, 0);
+
 	}
 
-	@DataProvider(name = "tuple")
-	public final Object[][] provideTuple() {
-		return new Object[][] { { this.provideSimpleTuple() },
-				{ this.provideUnivariateTuple() },
-				{ this.provideMultivariateTuple1() },
+	@DataProvider(name = "continuousProbabilisticTuple")
+	public final Object[][] provideDiscreteProbabilisticTuple() {
+		return new Object[][] { { this.provideMultivariateTuple1() },
 				{ this.provideMultivariateTuple2() },
 				{ this.provideMultivariateTuple3() },
 				{ this.provideMultivariateTuple4() } };
-	}
-
-	private IStreamObject<?> provideSimpleTuple() {
-		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0 }, new double[] { 1.5 });
-		final Object[] attrs = new Object[] { "FirstAttribute",
-				new ProbabilisticContinuousDouble(0) };
-		mixture.setAttributes(new int[] { 1 });
-		mixture.setScale(1.0);
-		mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
-		final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(
-				attrs, new NormalDistributionMixture[] { mixture }, true);
-		tuple.setMetadata(new Probabilistic());
-		return tuple;
-	}
-
-	private IStreamObject<?> provideUnivariateTuple() {
-		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0 }, new double[] { 1.5 });
-		final Object[] attrs = new Object[] { "FirstAttribute",
-				new ProbabilisticContinuousDouble(0), "ThirdAttribute" };
-		mixture.setAttributes(new int[] { 1 });
-		mixture.setScale(1.0);
-		mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0) });
-		final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(
-				attrs, new NormalDistributionMixture[] { mixture }, true);
-		tuple.setMetadata(new Probabilistic());
-		return tuple;
 	}
 
 	private IStreamObject<?> provideMultivariateTuple1() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
 				new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
 		final Object[] attrs = new Object[] {
-				new ProbabilisticContinuousDouble(0), "FirstAttribute",
-				"ThirdAttribute", new ProbabilisticContinuousDouble(0) };
+				new ProbabilisticContinuousDouble(0),
+				new ProbabilisticContinuousDouble(0) };
 		mixture.setAttributes(new int[] { 1, 3 });
 		mixture.setScale(1.0);
 		mixture.setSupport(new Interval[] { new Interval(-3.0, 6.0),
@@ -86,9 +77,9 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 
 	private IStreamObject<?> provideMultivariateTuple2() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
-				new double[] { 2.0, 3.0 }, new double[] {2.0, 2.0, 2.0 });
-		final Object[] attrs = new Object[] { "FirstAttribute",
-				new ProbabilisticContinuousDouble(0), "ThirdAttribute",
+				new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
+		final Object[] attrs = new Object[] {
+				new ProbabilisticContinuousDouble(0),
 				new ProbabilisticContinuousDouble(0) };
 		mixture.setAttributes(new int[] { 1, 3 });
 		mixture.setScale(1.0);
@@ -103,8 +94,8 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 	private IStreamObject<?> provideMultivariateTuple3() {
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(
 				new double[] { 2.0, 3.0 }, new double[] { 2.0, 2.0, 2.0 });
-		final Object[] attrs = new Object[] { "FirstAttribute",
-				new ProbabilisticContinuousDouble(0), "ThirdAttribute",
+		final Object[] attrs = new Object[] {
+				new ProbabilisticContinuousDouble(0),
 				new ProbabilisticContinuousDouble(0) };
 		mixture.setAttributes(new int[] { 3, 1 });
 		mixture.setScale(1.0);
@@ -131,8 +122,8 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 		mixture2.setScale(1.0);
 		mixture2.setSupport(new Interval[] { new Interval(-7.0, 14.0) });
 
-		final Object[] attrs = new Object[] { "FirstAttribute",
-				new ProbabilisticContinuousDouble(1), "ThirdAttribute",
+		final Object[] attrs = new Object[] {
+				new ProbabilisticContinuousDouble(1),
 				new ProbabilisticContinuousDouble(0) };
 
 		final ProbabilisticTuple<IMetaAttribute> tuple = new ProbabilisticTuple<>(
@@ -142,4 +133,25 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 		return tuple;
 	}
 
+	private static RelationalPredicate getTestPredicate() {
+		final SDFSchema schema = TestSelectPO.getSchema();
+		final DirectAttributeResolver resolver = new DirectAttributeResolver(
+				TestSelectPO.getSchema());
+		final SDFExpression expression = new SDFExpression("",
+				"b < 3.0 && b > 4.0", resolver, MEP.getInstance());
+		final RelationalPredicate predicate = new RelationalPredicate(
+				expression);
+		predicate.init(schema, null, false);
+		return predicate;
+	}
+
+	private static SDFSchema getSchema() {
+		final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
+		attr.add(new SDFAttribute("", "a",
+				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+		attr.add(new SDFAttribute("", "b",
+				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+		final SDFSchema schema = new SDFSchema("", attr);
+		return schema;
+	}
 }
