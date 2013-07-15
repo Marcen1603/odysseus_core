@@ -42,7 +42,7 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TStreamGroupingWithAggregationTIPORule());
 		rules.add(new TSystemTimestampRule());
 		rules.add(new TUnionTIPORule());
-		rules.add(new TSelectAORule());
+		rules.add(new TSelectTimeintervalAORule());
 		rules.add(new TFilterAORule());
 
 		rules.add(new TJoinAORule());

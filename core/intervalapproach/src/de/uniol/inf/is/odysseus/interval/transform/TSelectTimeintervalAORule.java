@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
+public class TSelectTimeintervalAORule extends AbstractTransformationRule<SelectAO> {
 
 	@Override
 	public int getPriority() {		
