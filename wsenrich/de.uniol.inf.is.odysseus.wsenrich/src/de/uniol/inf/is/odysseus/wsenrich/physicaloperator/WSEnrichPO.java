@@ -185,6 +185,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	@Override
 	protected synchronized void process_close() {	
 		//actually nothing to do
+		
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class UriGetBuilder implements IRequestBuilder {
 	/**
 	 * The arguments as Key-Value-Pairs
 	 */
-	List<Option> arguments;
+	private List<Option> arguments;
 	
 	/**
 	 * The resulting Url

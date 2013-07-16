@@ -34,6 +34,11 @@ public class HttpEntityToStringConverter {
 	private static final String CORRECT_GREATER = ">";
 	
 	/**
+	 * Static Variable for the correct begin of a xml Document
+	 */
+	private static final String CORRECT_DOCUMENT_BEGIN = "<?xml";
+	
+	/**
 	 * The HttpEntity
 	 */
 	private HttpEntity entity;
@@ -84,6 +89,7 @@ public class HttpEntityToStringConverter {
 				StringBuffer temp = new StringBuffer(IOUtils.toString(entity.getContent(), "UTF-8"));
 				replaceHtmlCodecs(temp, WRONG_LESS, CORRECT_LESS);
 				replaceHtmlCodecs(temp, WRONG_GREATER, CORRECT_GREATER);
+				checkForCorrectDocumentBegin(temp);
 				this.output = temp.toString();
 			} catch (IllegalStateException | IOException e) {
 				logger.error("There was an error while converting the HttpEntity to a String. Cause {}", e.getMessage());
@@ -95,6 +101,7 @@ public class HttpEntityToStringConverter {
 				StringBuffer temp = new StringBuffer(IOUtils.toString(entity.getContent(), charset));
 				replaceHtmlCodecs(temp, WRONG_LESS, CORRECT_LESS);
 				replaceHtmlCodecs(temp, WRONG_GREATER, CORRECT_GREATER);
+				checkForCorrectDocumentBegin(temp);
 				this.output = temp.toString();
 			} catch (IllegalStateException | IOException e) {
 				logger.error("There was an error while converting the HttpEntity to a String. Cause {}", e.getMessage());
@@ -138,6 +145,17 @@ public class HttpEntityToStringConverter {
 			 return replaceHtmlCodecs(temp, htmlCode, replacement);	
 		} else 
 			return temp;	
+	}
+	
+	private StringBuffer checkForCorrectDocumentBegin(StringBuffer temp) {
+		int match = temp.indexOf(CORRECT_DOCUMENT_BEGIN);
+		if(match < 0) {
+			return temp;
+		}
+		if(match != 0) {
+			temp.replace(0, temp.length(), temp.substring(match, temp.length()));
+		}
+		return temp;
 	}
 	
 }

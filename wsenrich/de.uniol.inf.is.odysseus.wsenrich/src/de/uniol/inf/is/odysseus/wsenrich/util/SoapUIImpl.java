@@ -10,8 +10,6 @@ import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter;
 import com.eviware.soapui.model.iface.Operation;
 import com.eviware.soapui.support.SoapUIException;
 
-import de.uniol.inf.is.odysseus.wsenrich.exceptions.OperationNotFoundException;
-
 public class SoapUIImpl implements ISoapMessageCreator {
 	
 	/**
@@ -134,5 +132,6 @@ public class SoapUIImpl implements ISoapMessageCreator {
 	public String getName() {
 		return "SOAP";
 	}
+	
 }
 

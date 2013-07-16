@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,6 +14,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XPathKeyFinder implements IKeyFinder {
@@ -69,7 +71,7 @@ public class XPathKeyFinder implements IKeyFinder {
 		builderFactory.setNamespaceAware(false);
 		try {
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			this.xmlDocument = builder.parse(new ByteArrayInputStream(this.message.getBytes(charset)));
+			this.xmlDocument = builder.parse(new InputSource(new StringReader(this.message)));
 		} catch (IOException | SAXException | ParserConfigurationException e) {
 			logger.error("Generaly Error while parsing XML-Document. Cause: {}", e.getMessage());
 		}
