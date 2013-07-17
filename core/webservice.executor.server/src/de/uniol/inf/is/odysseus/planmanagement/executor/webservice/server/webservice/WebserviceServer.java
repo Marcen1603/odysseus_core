@@ -171,8 +171,8 @@ public class WebserviceServer {
 			@WebParam(name = "query") String query,
 			@WebParam(name = "transformationconfig") String transCfg)
 			throws CreateQueryException, InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
 		try {
-			ISession user = loginWithSecurityToken(securityToken);
 			IntegerCollectionResponse response = new IntegerCollectionResponse(
 					ExecutorServiceBinding.getExecutor().addQuery(query,
 							parser, user, transCfg), true);
