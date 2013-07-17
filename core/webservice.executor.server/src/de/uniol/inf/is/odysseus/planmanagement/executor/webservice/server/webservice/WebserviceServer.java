@@ -177,7 +177,7 @@ public class WebserviceServer {
 					ExecutorServiceBinding.getExecutor().addQuery(query,
 							parser, user, transCfg), true);
 			return response;
-		} catch (PlanManagementException e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new CreateQueryException(e.toString());
 		}
