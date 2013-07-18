@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -21,8 +22,8 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 7771591123865284928L;
 	private int transactions = Integer.MAX_VALUE;
 	private String learner = "";
-	private int minsupport = 3;
 	private Map<String, String> options = new HashMap<>();
+	private double support;
 
 	public FrequentItemsetAO() {
 
@@ -30,7 +31,7 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 
 	public FrequentItemsetAO(FrequentItemsetAO frequentItemsetAO) {
 		this.learner = frequentItemsetAO.learner;
-		this.minsupport = frequentItemsetAO.minsupport;
+		this.support = frequentItemsetAO.support;
 		this.transactions = frequentItemsetAO.transactions;
 		this.options = new HashMap<>(frequentItemsetAO.options);
 	}
@@ -87,13 +88,21 @@ public class FrequentItemsetAO extends AbstractLogicalOperator {
 		return this.options;
 	}
 
-	@Parameter(name = "support", optional = true, type = IntegerParameter.class)
-	public void setMinSupport(int support) {
-		this.minsupport = support;
+	@Parameter(name = "support", optional = true, type = DoubleParameter.class)
+	public void setSupport(double support) {
+		this.support = support;
+	}
+	
+	public double getSupport(){
+		return this.support;
 	}
 
 	public int getMinSupport() {
-		return minsupport;
+		if(support<=1.0){
+			return (int) (this.transactions*support);
+		}else{
+			return (int)support;
+		}		
 	}
 
 	@Parameter(name = "transactions", optional = true, type = IntegerParameter.class)

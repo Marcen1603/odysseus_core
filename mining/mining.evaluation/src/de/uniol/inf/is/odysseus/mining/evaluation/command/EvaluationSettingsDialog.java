@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.mining.evaluation.Activator;
+import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellModifier, IStructuredContentProvider, ITableLabelProvider {
 
@@ -113,7 +114,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
 		Button newLineButton = new Button(parent, SWT.PUSH);
-		newLineButton.setText("Add new Constant");
+		newLineButton.setText("Add new constant");
 		newLineButton.setLayoutData(gridData);
 		newLineButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -124,6 +125,23 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 				e.value = "1, 2";
 				variables.add(e);
 				refreshTable();
+			}
+		});
+		
+		Button removeLineButton = new Button(parent, SWT.PUSH);
+		removeLineButton.setText("Remove constant");
+		removeLineButton.setLayoutData(gridData);
+		removeLineButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				for(TableItem ti : tableViewer.getTable().getSelection()){
+					if(ti.getData() instanceof VariableEntry){
+						VariableEntry e = (VariableEntry) ti.getData();						
+						variables.remove(e);
+						refreshTable();
+					}
+				}
+				
 			}
 		});
 

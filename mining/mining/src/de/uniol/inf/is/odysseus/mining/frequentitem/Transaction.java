@@ -16,7 +16,9 @@
 package de.uniol.inf.is.odysseus.mining.frequentitem;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -30,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  */
 public class Transaction<M extends ITimeInterval> {
 
-	private List<Tuple<M>> elements = new ArrayList<Tuple<M>>();
+	private Collection<Tuple<M>> elements = new HashSet<Tuple<M>>();
 	private PointInTime minTime = PointInTime.getZeroTime();
 	private PointInTime maxTime = PointInTime.getInfinityTime();
 
@@ -47,8 +49,8 @@ public class Transaction<M extends ITimeInterval> {
 		}
 	}
 
-	public List<Tuple<M>> getElements() {
-		return Collections.unmodifiableList(elements);
+	public Collection<Tuple<M>> getElements() {
+		return Collections.unmodifiableCollection(elements);
 	}
 
 	@Override

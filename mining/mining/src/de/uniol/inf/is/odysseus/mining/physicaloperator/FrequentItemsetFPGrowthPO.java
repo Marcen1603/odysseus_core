@@ -185,6 +185,9 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 					long afterFPM = System.nanoTime();
 					int i = 0;
 					for (Pattern<M> p : results) {
+						if(p.getSupport()<this.minsupport){
+							continue;
+						}
 						Tuple<M> newtuple = new Tuple<M>(3, false);
 						@SuppressWarnings("unchecked")
 						M left = (M) p.getMetadata().clone();

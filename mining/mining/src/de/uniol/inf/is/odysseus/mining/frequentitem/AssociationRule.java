@@ -86,7 +86,7 @@ public class AssociationRule<M extends ITimeInterval> {
 	 */
 	@Override
 	public String toString() {
-		return this.premise+" => "+this.consequence+" ("+this.confidence+")";		
+		return this.premise.getSupport()+" => "+this.consequence.getSupport()+" ("+this.confidence+")";		
 	}
 	
 

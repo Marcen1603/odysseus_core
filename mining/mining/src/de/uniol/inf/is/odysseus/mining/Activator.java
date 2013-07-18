@@ -19,14 +19,23 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.mining.predicate.RulePredicateBuilder;
+import de.uniol.inf.is.odysseus.relational.base.predicate.ForPredicate.Type;
 
 public class Activator implements BundleActivator {
+	
+	private static final String FOR_ALL_RULE_PREDICATE = "ForAllRulePredicate";
+	private static final String FOR_ANY_RULE_PREDICATE = "ForAnyRulePredicate";
 	
 	private static BundleContext context;
 
 	static BundleContext getContext() {
 		return context;
 	}
+
+	private static IOperatorBuilderFactory builderfactory;
 	
 
 	/*
@@ -58,5 +67,29 @@ public class Activator implements BundleActivator {
 		dd.removeDatatype(MiningDatatypes.ASSOCIATION_RULE.getURI());
 		dd.removeDatatype(MiningDatatypes.CLASSIFIER.getURI());
 	}
+	
+	public void bindOperatorBuilderFactory(IOperatorBuilderFactory obf){
+		builderfactory = obf;
+		if(obf instanceof OperatorBuilderFactory){
+			// TODO: operator builder factory not static...
+			// ok, it should be correctly bound now, so that static should be accessible
+			OperatorBuilderFactory.putPredicateBuilder(FOR_ALL_RULE_PREDICATE, new RulePredicateBuilder(Type.ALL));
+			OperatorBuilderFactory.putPredicateBuilder(FOR_ANY_RULE_PREDICATE, new RulePredicateBuilder(Type.ANY));
+		}
+	}
+	
+	public void unbindOperatorBuilderFactory(IOperatorBuilderFactory obf){
+		builderfactory = null;
+		if(obf instanceof OperatorBuilderFactory){
+			// TODO: operator builder factory not static...
+			// ok, it should be correctly bound now, so that static should be accessible
+			OperatorBuilderFactory.removePredicateBuilder(FOR_ALL_RULE_PREDICATE);
+			OperatorBuilderFactory.removePredicateBuilder(FOR_ANY_RULE_PREDICATE);
+		}
+	}
+
+	public static IOperatorBuilderFactory getBuilderfactory() {
+		return builderfactory;
+	}	
 
 }

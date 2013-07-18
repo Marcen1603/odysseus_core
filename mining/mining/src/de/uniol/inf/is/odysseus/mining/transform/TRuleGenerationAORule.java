@@ -30,7 +30,7 @@
 
 package de.uniol.inf.is.odysseus.mining.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.RuleGenerationAO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.RuleGenerationPO;
@@ -52,7 +52,7 @@ public class TRuleGenerationAORule extends AbstractTransformationRule<RuleGenera
 
 	@Override
 	public void execute(RuleGenerationAO operator, TransformationConfiguration config) {		
-		RuleGenerationPO<ITimeInterval> po = new RuleGenerationPO<ITimeInterval>(operator.getItemsetPosition(), operator.getSupportPosition(), operator.getConfidence());
+		RuleGenerationPO<ILatencyTimeInterval> po = new RuleGenerationPO<ILatencyTimeInterval>(operator.getItemsetPosition(), operator.getSupportPosition(), operator.getConfidence());
 		po.setOutputSchema(operator.getOutputSchema(0), 0);		
 		replace(operator, po, config);
 		retract(operator);

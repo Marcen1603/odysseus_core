@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
@@ -114,6 +115,29 @@ public class FPTree<M extends ITimeInterval> {
 		}
 		return support;
 	}
+	
+	
+	public int getSupportFromHeader(Pattern<M> pattern){
+		int support = Integer.MAX_VALUE;
+		// build a sorted list		
+		FList<M> flist = new FList<>();
+		for(Tuple<M> t : pattern.getPattern()){
+			flist.insertTuple(t);
+		}
+		List<Pair<Tuple<M>, Integer>> list = flist.getSortedList(0);
+		// if the smallest element has a support of S, the whole pattern may only have a smaller support
+		// so, we only have to check the smallest one, or not?! 
+		for(Pair<Tuple<M>, Integer> v : list){
+			int innerSupport = 0;
+			FPTreeNode<M> node = this.headerTable.get(v.getE1());
+			while(node!=null){
+				innerSupport = innerSupport + node.getCount();
+				node = node.getLink();
+			}
+			support = Math.min(support, innerSupport);
+		}		
+		return support;
+	}
 
 	public synchronized List<FPTreeNode<M>> getSinglePrefixPath() {
 		List<FPTreeNode<M>> spp = new ArrayList<FPTreeNode<M>>();
@@ -180,7 +204,7 @@ public class FPTree<M extends ITimeInterval> {
 
 	public synchronized void insertTree(Pattern<M> p) {
 		try {
-			insertIntoTree(p.getPattern(), this.root, p.getSupport());
+			insertIntoTree(p.getPattern(), this.root, 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

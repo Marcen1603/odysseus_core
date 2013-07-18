@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class FList<M extends IMetaAttribute> {
 		}		
 	}
 	
-	public void remove(List<Tuple<M>> tuples){
+	public void remove(Collection<Tuple<M>> tuples){
 		for(Tuple<M> t : tuples){
 			int index = pointers.indexOf(t);
 			int newcount = counts.get(index)-1;
