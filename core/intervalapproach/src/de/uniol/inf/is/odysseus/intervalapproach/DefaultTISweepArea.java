@@ -452,10 +452,25 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			Iterator<T> it = this.getElements().iterator();
 			while (it.hasNext()) {
 				T next = it.next();
-				it.remove();
+				it.remove();				
 				result.add(next);
 			}
 		}
 		return result.iterator();
+	}
+	
+	public void insertOrUpdate(T element, Comparator<T> comparator){
+		synchronized (getElements()) {
+			synchronized (getElements()) {
+				Iterator<T> it = this.getElements().iterator();
+				while (it.hasNext()) {
+					T next = it.next();
+					if(comparator.compare(next, element)==0){
+						it.remove();
+					}												
+				}
+				insert(element);
+			}		
+		}		
 	}
 }
