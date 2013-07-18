@@ -455,13 +455,23 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId)
 			throws InvalidUserDataException {
+		
+		return getConnectionInformation( securityToken, queryId, 
+				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)), 
+				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)));
+	}
+	
+	public ConnectionInformationResponse getConnectionInformation(
+			@WebParam(name = "securitytoken") String securityToken,
+			@WebParam(name = "queryId") int queryId,
+			@WebParam(name = "minPort") int minPort,
+			@WebParam(name = "maxPort") int maxPort) 
+			throws InvalidUserDataException {
 		try {
 			loginWithSecurityToken(securityToken);
 			int port = 0;
 			if (!socketPortMap.containsKey(queryId)) {
 				// no socketsink available so create one
-				int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-				int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
 				port = getNextFreePort(minPort, maxPort);
 				addSocketSink(queryId, port);
 			} else {
@@ -475,7 +485,7 @@ public class WebserviceServer {
 			return new ConnectionInformationResponse(null, false);
 		}
 	}
-
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addSocketSink(int queryId, int port) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor()
