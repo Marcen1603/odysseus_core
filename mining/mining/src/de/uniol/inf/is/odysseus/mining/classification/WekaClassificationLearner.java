@@ -8,6 +8,7 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.GaussianProcesses;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.Logistic;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.SMOreg;
 import weka.classifiers.functions.SimpleLinearRegression;
@@ -60,7 +61,7 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 					wekaLearner = new SMO();
 					break;
 				case "MULTILAYER-PERCEPTRON":
-					wekaLearner = new Logistic();
+					wekaLearner = new MultilayerPerceptron();
 					break;
 				case "SIMPLE-LOGISTIC":
 					wekaLearner = new SimpleLogistic();

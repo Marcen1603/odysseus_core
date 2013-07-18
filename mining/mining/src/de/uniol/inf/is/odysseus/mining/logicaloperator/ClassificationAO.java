@@ -23,6 +23,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
  * @author Dennis Geesen
@@ -32,13 +34,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 public class ClassificationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1231999597473176237L;
+	private SDFAttribute classifierAttribute;
 
 	public ClassificationAO() {
-
+		
 	}
 
 	public ClassificationAO(ClassificationAO classificationAO) {
-		
+		this.classifierAttribute = classificationAO.classifierAttribute;
 	}
 
 	@Override
@@ -60,5 +63,14 @@ public class ClassificationAO extends AbstractLogicalOperator {
 	@Override
 	public ClassificationAO clone() {
 		return new ClassificationAO(this);
+	}
+
+	public SDFAttribute getClassifier() {
+		return classifierAttribute;
+	}
+
+	@Parameter(name="classifier", type=ResolvedSDFAttributeParameter.class, doc="The attribute with the classifier")
+	public void setClassifier(SDFAttribute classifierAttribute) {
+		this.classifierAttribute = classifierAttribute;
 	}
 }

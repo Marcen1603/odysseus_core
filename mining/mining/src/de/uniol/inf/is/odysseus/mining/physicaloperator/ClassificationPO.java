@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
@@ -42,22 +43,25 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 
 	protected static Logger logger = LoggerFactory.getLogger(ClassificationPO.class);
 	private static final int TREE_PORT = 1;
-	private SDFSchema inputSchema;
+	private SDFSchema inputTreeschema;
 	private DefaultTISweepArea<Tuple<M>> treeSA = new DefaultTISweepArea<>();
 	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
 	@SuppressWarnings("unchecked")
 	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];	
 	protected IMetadataMergeFunction<M> metadataMerge;
 	protected ITransferArea<Tuple<M>, Tuple<M>> transferFunction;
+	private int classifierAttribute;
 
-	public ClassificationPO(SDFSchema inputschema, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
-		this.inputSchema = inputschema;
+	public ClassificationPO(SDFSchema inputTreeschema, SDFAttribute classifier, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
+		this.inputTreeschema = inputTreeschema;
+		this.classifierAttribute = inputTreeschema.indexOf(classifier);
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 	}
 
 	public ClassificationPO(ClassificationPO<M> classificationTreePO) {
-		this.inputSchema = classificationTreePO.inputSchema;
+		this.classifierAttribute = classificationTreePO.classifierAttribute;
+		this.inputTreeschema = classificationTreePO.inputTreeschema;
 		this.metadataMerge = classificationTreePO.metadataMerge.clone();
 		this.transferFunction = classificationTreePO.transferFunction.clone();
 	}
@@ -110,7 +114,7 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	}
 
 	protected void classifyAndTransfer(Tuple<M> classifierTuple, Tuple<M> toClassify) {
-		IClassifier<M> classifier = classifierTuple.getAttribute(0);
+		IClassifier<M> classifier = classifierTuple.getAttribute(classifierAttribute);
 		long tillLearn = System.nanoTime();
 		Object clazz = classifier.classify(toClassify);
 		if (clazz == null) {
