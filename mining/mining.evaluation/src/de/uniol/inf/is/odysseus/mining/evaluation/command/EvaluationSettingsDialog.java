@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.mining.evaluation.Activator;
-import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellModifier, IStructuredContentProvider, ITableLabelProvider {
 
