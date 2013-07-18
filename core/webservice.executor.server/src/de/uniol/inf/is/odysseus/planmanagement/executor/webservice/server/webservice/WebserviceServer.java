@@ -456,12 +456,12 @@ public class WebserviceServer {
 			@WebParam(name = "queryId") int queryId)
 			throws InvalidUserDataException {
 		
-		return getConnectionInformation( securityToken, queryId, 
+		return getConnectionInformationWithPorts( securityToken, queryId, 
 				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)), 
 				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)));
 	}
 	
-	public ConnectionInformationResponse getConnectionInformation(
+	public ConnectionInformationResponse getConnectionInformationWithPorts(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryId") int queryId,
 			@WebParam(name = "minPort") int minPort,
