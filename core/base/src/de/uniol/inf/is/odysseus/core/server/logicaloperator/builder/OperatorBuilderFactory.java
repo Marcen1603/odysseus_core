@@ -58,6 +58,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 
 	public static void putPredicateBuilder(String identifier,
 			IPredicateBuilder builder) {
+		identifier = identifier.toUpperCase();
 		if (predicateBuilders.containsKey(identifier)) {
 			throw new IllegalArgumentException(
 					"multiple definitions of predicate builder: " + identifier);
@@ -67,10 +68,12 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	}
 
 	public static void removePredicateBuilder(String identifier) {
+		identifier = identifier.toUpperCase();
 		predicateBuilders.remove(identifier);
 	}
 
 	public static IPredicateBuilder getPredicateBuilder(String predicateType) {
+		predicateType = predicateType.toUpperCase();
 		return predicateBuilders.get(predicateType);
 	}
 

@@ -59,6 +59,8 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	final private Map<String, SDFDatatypeConstraint> dtConstraints;
 
+	private SDFSchema subSchema;
+
 	/**
 	 * Create a new SDFAttribute
 	 * @param sourceName The source name of the attribute
@@ -69,6 +71,11 @@ public class SDFAttribute extends SDFElement implements
 		this(sourceName, attributeName, datatype, null, null);
 	}
 
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype datatype, SDFSchema subschema) {
+		this(sourceName, attributeName, datatype, null, null);
+		this.subSchema = subschema;
+	}
+	
 	/**
 	 * Creates a new SDFAttribute
 	 * @param sourceName The source name of the attribute
@@ -321,6 +328,14 @@ public class SDFAttribute extends SDFElement implements
 	@Deprecated
 	public String toPointString() {
 		return getURI(false, ".");
+	}
+
+	public SDFSchema getSubSchema() {
+		return subSchema;
+	}
+
+	public void setSubSchema(SDFSchema subSchema) {
+		this.subSchema = subSchema;
 	}
 
 
