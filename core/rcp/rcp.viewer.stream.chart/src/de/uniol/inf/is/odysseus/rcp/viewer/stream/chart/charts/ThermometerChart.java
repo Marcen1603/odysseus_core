@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 
 import java.awt.BasicStroke;
@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.ThermometerPlot;
 import org.jfree.data.general.DefaultValueDataset;
@@ -39,39 +40,40 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 	private ThermometerPlot plot;
 
 	private double mininum = 0.0d;
-	private double maximum = 400.0d;	
+	private double maximum = 400.0d;
 	private double upperWarning = maximum * 0.75d;
 	private double upperCritical = maximum * 0.90d;
-	
+
 	@Override
-	protected void init() {	
+	protected void init() {
 		super.init();
-		selectedValue = 0;		
+		selectedValue = 0;
 		reloadChart();
 		resetBounds();
 	}
-	
-	
-	private void resetBounds(){
-		plot.setUpperBound(this.maximum);
-		plot.setLowerBound(this.mininum);
-		
-		plot.setSubrange(ThermometerPlot.NORMAL, this.mininum, this.upperWarning);
-		plot.setSubrange(ThermometerPlot.WARNING, this.upperWarning, this.upperCritical);
-		plot.setSubrange(ThermometerPlot.CRITICAL, this.upperCritical, this.maximum);
+
+	private void resetBounds() {
+		if (plot != null) {
+			plot.setUpperBound(this.maximum);
+			plot.setLowerBound(this.mininum);
+
+			plot.setSubrange(ThermometerPlot.NORMAL, this.mininum, this.upperWarning);
+			plot.setSubrange(ThermometerPlot.WARNING, this.upperWarning, this.upperCritical);
+			plot.setSubrange(ThermometerPlot.CRITICAL, this.upperCritical, this.maximum);
+		}
 	}
 
 	@Override
 	protected void processElement(final List<Double> tuple, IMetaAttribute metadata, int port) {
-		getSite().getShell().getDisplay().asyncExec(new Runnable() {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					dataset.setValue(tuple.get(selectedValue));										
+					dataset.setValue(tuple.get(selectedValue));
 				} catch (SWTException e) {
 					dispose();
 					return;
-				} catch(Exception ex){
+				} catch (Exception ex) {
 					ex.printStackTrace(System.err);
 				}
 			}
@@ -80,11 +82,10 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 	}
 
 	@Override
-	public String isValidSelection(
-			Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public String isValidSelection(Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		return checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
-	
+
 	@Override
 	protected void decorateChart(JFreeChart thechart) {
 
@@ -96,11 +97,11 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 		plot.setThermometerStroke(new BasicStroke(1.0f));
 		plot.setThermometerPaint(Color.DARK_GRAY);
 		plot.setUseSubrangePaint(true);
-		
+
 		// change subranges
 		plot.setSubrange(ThermometerPlot.NORMAL, Double.MAX_VALUE, Double.MAX_VALUE);
 		plot.setSubrange(ThermometerPlot.WARNING, Double.MAX_VALUE, Double.MAX_VALUE);
-		plot.setSubrange(ThermometerPlot.CRITICAL, Double.MAX_VALUE, Double.MAX_VALUE);	
+		plot.setSubrange(ThermometerPlot.CRITICAL, Double.MAX_VALUE, Double.MAX_VALUE);
 		// change mercury colors
 		plot.setMercuryPaint(Color.GREEN);
 		plot.setSubrangePaint(ThermometerPlot.NORMAL, Color.GREEN);
@@ -109,7 +110,7 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 
 		// change background color
 		plot.setBackgroundPaint(DEFAULT_BACKGROUND);
-
+		plot.setOutlinePaint(DEFAULT_BACKGROUND);
 		plot.setUnits(ThermometerPlot.UNITS_NONE);
 		plot.setUpperBound(400);
 		JFreeChart chart = new JFreeChart(getTitle(), // chart title
@@ -125,19 +126,19 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 	@Override
 	public String getViewID() {
 		return VIEW_ID_PREFIX + ".thermometerchart";
-	}	
+	}
 
 	@ChartSetting(name = "Lower Bound", type = Type.GET)
 	public Double getMininum() {
 		return mininum;
 	}
-	
+
 	@ChartSetting(name = "Lower Bound", type = Type.SET)
 	public void setMininum(Double mininum) {
 		this.mininum = mininum;
 		resetBounds();
 	}
-	
+
 	@ChartSetting(name = "Upper Bound", type = Type.GET)
 	public Double getMaximum() {
 		return maximum;
@@ -171,11 +172,9 @@ public class ThermometerChart extends AbstractJFreeChart<Double, IMetaAttribute>
 		resetBounds();
 	}
 
-
 	@Override
 	protected void reloadChart() {
-		resetBounds();		
+		resetBounds();
 	}
-
 
 }

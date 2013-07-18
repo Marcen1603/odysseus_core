@@ -121,10 +121,10 @@ public class DialChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 		plot.setView(0.0, 0.0, 1.0, 1.0);
 		plot.setDataset(this.dataset);
 		StandardDialFrame dialFrame = new StandardDialFrame();
-		dialFrame.setBackgroundPaint(Color.lightGray);
-		dialFrame.setForegroundPaint(Color.darkGray);
+		dialFrame.setBackgroundPaint(Color.WHITE);
+		dialFrame.setForegroundPaint(Color.BLACK);
 		plot.setDialFrame(dialFrame);
-
+		plot.setBackgroundPaint(DEFAULT_BACKGROUND);
 		GradientPaint gp = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(), new Color(170, 170, 220));
 		DialBackground db = new DialBackground(gp);
 		db.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.VERTICAL));
@@ -145,6 +145,7 @@ public class DialChart extends AbstractJFreeChart<Double, IMetaAttribute> {
 
 		JFreeChart chart = new JFreeChart(plot);
 		chart.setTitle(getTitle());
+		chart.setBackgroundPaint(DEFAULT_BACKGROUND);
 		return chart;
 	}
 
