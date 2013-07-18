@@ -9,12 +9,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfigura
 public abstract class ButtonListener extends SelectionAdapter{
 
 	LayerConfiguration layerConfiguration;
-	TreeListener treeListener;
+	MapPropertiesDialog mapPropertiesDialog;
 	Button correspondingButton;
 	
-	public ButtonListener(LayerConfiguration layerConfiguration, TreeListener treeListener, Button correspondingButton) {
+	public ButtonListener(LayerConfiguration layerConfiguration, MapPropertiesDialog mapPropertiesDialog, Button correspondingButton) {
 		this.layerConfiguration = layerConfiguration;
-		this.treeListener = treeListener;
+		this.mapPropertiesDialog = mapPropertiesDialog;
 		this.correspondingButton = correspondingButton;
 	}
 	

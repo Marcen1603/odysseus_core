@@ -14,15 +14,15 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerC
 public class TraceColorListener extends SelectionAdapter {
 
 	TracemapLayerConfiguration tracemapLayerConfiguration;
-	TreeListener treeListener;
+	MapPropertiesDialog mapPropertiesDialog;
 	Label correspondingLabel;
 	int id;
 
 	public TraceColorListener(
 			TracemapLayerConfiguration tracemapLayerConfiguration, int id,
-			TreeListener treeListener, Label correspondingLabel) {
+			MapPropertiesDialog mapPropertiesDialog, Label correspondingLabel) {
 		this.tracemapLayerConfiguration = tracemapLayerConfiguration;
-		this.treeListener = treeListener;
+		this.mapPropertiesDialog = mapPropertiesDialog;
 		this.correspondingLabel = correspondingLabel;
 		this.id = id;
 	}
@@ -46,6 +46,6 @@ public class TraceColorListener extends SelectionAdapter {
 				newColor.green, newColor.blue);
 		tracemapLayerConfiguration.setColorForId(id, color);
 		correspondingLabel.setBackground(color);
-		treeListener.updateParentConfig(tracemapLayerConfiguration);	
+		mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfiguration);	
 	}
 }

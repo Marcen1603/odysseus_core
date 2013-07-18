@@ -16,12 +16,12 @@ public abstract class SpinnerListener extends SelectionAdapter {
 	
 	LayerConfiguration layerConfig;
 	Spinner spinner;
-	TreeListener treeListener;
+	 MapPropertiesDialog mapPropertiesDialog;
 	
-	public SpinnerListener(LayerConfiguration layerConfiguration, Spinner spinner, TreeListener treeListener) {
+	public SpinnerListener(LayerConfiguration layerConfiguration, Spinner spinner, MapPropertiesDialog mapPropertiesDialog) {
 		this.layerConfig = layerConfiguration;
 		this.spinner = spinner;
-		this.treeListener = treeListener;
+		this.mapPropertiesDialog = mapPropertiesDialog;
 	}
 	
 	@Override

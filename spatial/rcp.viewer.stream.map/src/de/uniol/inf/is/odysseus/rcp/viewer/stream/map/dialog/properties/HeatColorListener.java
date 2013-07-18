@@ -17,12 +17,12 @@ public abstract class HeatColorListener extends SelectionAdapter{
 
 	
 	HeatmapLayerConfiguration heatmapLayerConfiguration;
-	TreeListener treeListener;
+	MapPropertiesDialog mapPropertiesDialog;
 	Label correspondingLabel;
 	
-	public HeatColorListener(HeatmapLayerConfiguration heatmapLayerConfiguration, TreeListener treeListener, Label correspondingLabel) {
+	public HeatColorListener(HeatmapLayerConfiguration heatmapLayerConfiguration, MapPropertiesDialog mapPropertiesDialog, Label correspondingLabel) {
 		this.heatmapLayerConfiguration = heatmapLayerConfiguration;
-		this.treeListener = treeListener;
+		this.mapPropertiesDialog = mapPropertiesDialog;
 		this.correspondingLabel = correspondingLabel;
 	}	
 	

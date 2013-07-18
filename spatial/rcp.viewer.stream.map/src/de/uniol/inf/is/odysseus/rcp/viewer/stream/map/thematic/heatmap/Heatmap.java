@@ -115,6 +115,15 @@ public class Heatmap extends RasterLayer {
 		return image;
 	}
 
+	/**
+	 * Creates the color-array, for each tile one color. With this colors the 
+	 * image can be creates. 
+	 * @param x
+	 * @param y
+	 * @param minColor
+	 * @param maxColor
+	 * @return
+	 */
 	private Color[][] createColorArray(int x, int y, Color minColor,
 			Color maxColor) {
 		Color[][] colors = new Color[x][y];
@@ -243,9 +252,7 @@ public class Heatmap extends RasterLayer {
 					minSum = valueSum[posX][posY];
 					this.minValue = minSum;
 				}
-
 			}
-
 		}
 
 		totalValue = tempTotalValue;
