@@ -27,7 +27,7 @@ public class ReplicationMergeAO extends BinaryLogicalOp {
 	
 	/**
 	 * Constructs a new {@link ReplicationMergeAO} as a copy of an existing one.
-	 * @param mergeAO Die {@link ReplicationMergeAO} to be copied.
+	 * @param mergeAO The {@link ReplicationMergeAO} to be copied.
 	 * @see BinaryLogicalOp#BinaryLogicalOp(AbstractLogicalOperator)
 	 */
 	public ReplicationMergeAO(ReplicationMergeAO mergeAO) {
