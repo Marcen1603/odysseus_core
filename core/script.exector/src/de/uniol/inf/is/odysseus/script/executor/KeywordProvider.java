@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.script.keyword.DropAllSinksPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropAllSourcesPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.DropStoredProcedure;
 import de.uniol.inf.is.odysseus.script.keyword.ExecuteQueryPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.keyword.FragmentationTypePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LoginUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.LogoutUserPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.keyword.ParserPreParserKeyword;
@@ -61,6 +62,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(ParserPreParserKeyword.PARSER, ParserPreParserKeyword.class);
 		keywords.put(TransCfgPreParserKeyword.TRANSCFG, TransCfgPreParserKeyword.class);			
 		keywords.put(DistributionTypePreParserKeyword.KEYWORD, DistributionTypePreParserKeyword.class);
+		keywords.put(FragmentationTypePreParserKeyword.KEYWORD, FragmentationTypePreParserKeyword.class);
 		keywords.put(CreateStoredProcedureKeyword.STORED_PROCEDURE, CreateStoredProcedureKeyword.class);
 		keywords.put(DropStoredProcedure.DROPPROCEDURE, DropStoredProcedure.class);
 		keywords.put(PlanGenerationMethodPreParserKeyword.PLANGENERATIONMETHOD, PlanGenerationMethodPreParserKeyword.class);

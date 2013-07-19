@@ -22,8 +22,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.Configuration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 
@@ -78,7 +80,12 @@ public class QueryBuildConfiguration extends
 		if( !contains(ParameterDistributionType.class)) {
 			set(new ParameterDistributionType(ParameterDistributionType.UNDEFINED));
 		}
-		
+		if (!contains(ParameterDoDataFragmentation.class)){
+			set(ParameterDoDataFragmentation.FALSE);
+		}
+		if( !contains(ParameterFragmentationType.class)) {
+			set(new ParameterFragmentationType(ParameterFragmentationType.UNDEFINED));
+		}		
 		if (!contains(ParameterPerformQuerySharing.class)){
 			set(ParameterPerformQuerySharing.FALSE);
 		}
