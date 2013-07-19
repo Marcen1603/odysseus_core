@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
@@ -173,6 +174,18 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name);
 
 	ImmutableCollection<String> getLogicalQueryDistributorNames();
+	
+	/**
+	 * Returns the data fragmentation strategy by the given name, if it is bound.
+	 * @author Michael Brand
+	 */
+	Optional<IDataFragmentation> getDataFragmentation(String name);
+
+	/**
+	 * Returns a collection of the names of all bound data fragmentation strategies.
+	 * @author Michael Brand
+	 */
+	ImmutableCollection<String> getDataFragmentationNames();
 
 	// Facade for Compiler
 	public List<ILogicalQuery> translateQuery(String query, String parserID,

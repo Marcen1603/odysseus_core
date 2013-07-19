@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
@@ -123,6 +124,13 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps
 			.newHashMap();
+	
+	/**
+	 * Mapping (name -> implementation) of all integrated data fragmentation strategies.
+	 * @author Michael Brand
+	 */
+	private Map<String, IDataFragmentation> dataFragmentationStrategies = Maps.
+			newHashMap();
 
 	private IPlanAdaptionEngine planAdaptionEngine = null;
 
@@ -333,7 +341,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			admissionQuerySelector = null;
 		}
 	}
-
+	
 	public final void bindLogicalQueryDistributor(ILogicalQueryDistributor d) {
 
 		logicalQueryDistributors.put(d.getName(), d);
@@ -349,7 +357,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			LOG.debug("Logical query distributor unbound '{}'", distributorName);
 		}
 	}
-
+	
 	@Override
 	public final ImmutableCollection<String> getLogicalQueryDistributorNames() {
 		return ImmutableSet.copyOf(logicalQueryDistributors.keySet());
@@ -359,6 +367,53 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public final Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(
 			String name) {
 		return Optional.fromNullable(logicalQueryDistributors.get(name));
+	}
+	
+	/**
+	 * Binds the referenced {@link IDataFragmentation}. <br />
+	 * Called by OSGI-DS.
+	 * @see #unbindDataFragmentation(IDataFragmentation)
+	 * @param dfStrategy An instance of an {@link IDataFragmentation} implementation.
+	 * @author Michael Brand
+	 */
+	public final void bindDataFragmentation(IDataFragmentation dfStrategy) {
+
+		dataFragmentationStrategies.put(dfStrategy.getName(), dfStrategy);
+		LOG.debug("Data fragmentation strategy bound '{}'", dfStrategy.getName());
+		
+	}
+	
+	/**
+	 * Unbinds an referenced {@link IDataFragmentation}, if <code>dfStrategy</code> is the binded one. <br />
+	 * Called by OSGI-DS.
+	 * @see #bindDataFragmentation(IDataFragmentation)
+	 * @param dfStrategy An instance of an {@link IDataFragmentation} implementation.
+	 * @author Michael Brand
+	 */
+	public final void unbindDataFragmentation(IDataFragmentation dfStrategy) {
+		
+		String strategyName = dfStrategy.getName();
+		if(dataFragmentationStrategies.containsKey(strategyName)) {
+			
+			dataFragmentationStrategies.remove(strategyName);
+			LOG.debug("Data fragmentation strategy unbound '{}'", strategyName);
+			
+		}
+		
+	}
+	
+	@Override
+	public final ImmutableCollection<String> getDataFragmentationNames() {
+		
+		return ImmutableSet.copyOf(dataFragmentationStrategies.keySet());
+		
+	}
+
+	@Override
+	public final Optional<IDataFragmentation> getDataFragmentation(String name) {
+		
+		return Optional.fromNullable(dataFragmentationStrategies.get(name));
+		
 	}
 
 	public void bindPlanAdaption(IPlanAdaptionEngine adaption) {
