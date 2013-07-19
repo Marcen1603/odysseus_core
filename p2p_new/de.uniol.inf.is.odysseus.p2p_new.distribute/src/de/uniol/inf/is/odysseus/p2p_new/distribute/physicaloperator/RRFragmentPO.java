@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.RRFragmentAO;
@@ -100,10 +102,28 @@ public class RRFragmentPO<T extends IStreamObject<?>>
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		
+		this.transfer(object, this.route(object));
+
+	}
+	
+	@Override
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+		
+		this.sendPunctuation(punctuation, this.route(punctuation));
+		
+	}
+	
+	/**
+	 * Routes an incoming object to the next output port.
+	 * @param object The incoming {@link IStreamable} object.
+	 * @return The output port to which <code>object</code> shall be transfered.
+	 */
+	private synchronized int route(IStreamable object) {
+		
 		int outputPort = (int) (this.objectCounter % this.numFragments);
 		this.objectCounter++;
-		this.transfer(object, outputPort);
-
+		return outputPort;
+		
 	}
 	
 }
