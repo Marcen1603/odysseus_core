@@ -26,11 +26,13 @@ import java.util.List;
  * 
  */
 public class TupleFactory {
-	
+		
 	private static String delimiter = "\\|";
 
 	public static Tuple createTuple(String tupleString) {
-		
+		if(tupleString == null || tupleString.equals("null")) {
+			return null;
+		}
 		String[] attributeArray = tupleString.replaceAll("\\s", "").split(delimiter);
 		long startTimestamp = Long.parseLong(attributeArray[attributeArray.length - 2]);
 		long endTimestamp;
@@ -44,8 +46,11 @@ public class TupleFactory {
 	
 	public static List<Tuple> createTuples(List<String> tupleStrings) {
 		List<Tuple> tuples = new ArrayList<Tuple>();
-		for(String tuple : tupleStrings) {
-			tuples.add(createTuple(tuple));
+		for (String tuple : tupleStrings) {
+			Tuple t = createTuple(tuple);
+			if (t != null) {
+				tuples.add(t);
+			}
 		}
 		return tuples;
 	}

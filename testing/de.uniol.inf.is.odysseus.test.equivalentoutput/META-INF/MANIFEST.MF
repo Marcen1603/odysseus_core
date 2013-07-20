@@ -27,3 +27,4 @@ Export-Package: de.uniol.inf.is.odysseus.equivalentoutput,
  org.apache.commons.lang3.time,
  org.apache.commons.lang3.tuple,
  templates
+Import-Package: org.slf4j

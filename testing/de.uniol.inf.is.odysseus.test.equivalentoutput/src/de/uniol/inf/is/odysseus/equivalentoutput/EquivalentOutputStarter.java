@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.equivalentoutput.duplicate.DuplicateCheck;
 import de.uniol.inf.is.odysseus.equivalentoutput.enums.StatusCode;
 import de.uniol.inf.is.odysseus.equivalentoutput.equality.EqualityCheck;
@@ -38,25 +41,27 @@ import de.uniol.inf.is.odysseus.equivalentoutput.tuple.TupleFactory;
  * 
  */
 public class EquivalentOutputStarter {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(EquivalentOutputStarter.class);
 
 	public static void main(String[] args) {
 		List<StatusCode> checks = check(args, false);
 		for (StatusCode check : checks) {
 			switch (check) {
 			case EQUIVALENT_FILES:
-				System.out.println("Both inputs are equivalent and in order");
+				LOG.debug("Both inputs are equivalent and in order");
 				break;
 			case ERROR_WRONG_PARAMETERS:
-				System.err.println("Not provided enough or wrong parameters");
+				LOG.error("Not provided enough or wrong parameters");
 				break;
 			case ERROR_OUT_OF_ORDER:
-				System.err.println("One or both files were not in order");
+				LOG.error("One or both files were not in order");
 				break;
 			case ERROR_NOT_EQUIVALENT:
-				System.err.println("Both files were not equivalent");
+				LOG.error("Both files were not equivalent");
 				break;
 			case ERROR_DUPLICATES:
-				System.err.println("One or both files contained duplicates");
+				LOG.error("One or both files contained duplicates");
 				break;
 			}
 		}
@@ -70,7 +75,7 @@ public class EquivalentOutputStarter {
 	public static List<StatusCode> check(String[] args, boolean merge) {
 		List<StatusCode> codes = new ArrayList<StatusCode>();
 		if (!(args.length == 2 || args.length == 3)) {
-			System.err.println("Please provide two input files");
+			LOG.error("Please provide two input files");
 			codes.add(StatusCode.ERROR_WRONG_PARAMETERS);
 			return codes;
 		}
@@ -78,14 +83,16 @@ public class EquivalentOutputStarter {
 			List<String> input0Strings = StreamReader.readFile(args[0]);
 			List<String> input1Strings = StreamReader.readFile(args[1]);
 			
-			System.out.println("Optimized " + args[0]);
-			System.out.println("Not optimized " + args[1]);
+			LOG.debug("Optimized " + args[0]);
+			LOG.debug("Not optimized " + args[1]);
 
 			if (args.length == 3) {
 				TupleFactory.setDelimiter(args[2]);
 			}
 
+			LOG.debug("Reading " + args[0]);
 			List<Tuple> input0 = TupleFactory.createTuples(input0Strings);
+			LOG.debug("Reading " + args[1]);
 			List<Tuple> input1 = TupleFactory.createTuples(input1Strings);
 
 			if (!DuplicateCheck.check(input0, input1, true)) {
@@ -110,7 +117,7 @@ public class EquivalentOutputStarter {
 				codes.add(StatusCode.ERROR_NOT_EQUIVALENT);
 			}
 		} catch (IOException ex) {
-			System.err.println(ex);
+			LOG.error("", ex);
 			codes.add(StatusCode.ERROR_WRONG_PARAMETERS);
 		}
 

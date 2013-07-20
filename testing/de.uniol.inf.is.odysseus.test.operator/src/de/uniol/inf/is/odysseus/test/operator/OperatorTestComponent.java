@@ -67,12 +67,12 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 	private String errortext;
 
 	private BufferedWriter out;
+
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.test.runner.ITestComponent#setUp()
 	 */
 	@Override
 	public void setUp() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -233,7 +233,7 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 		File[] folders = dir.listFiles();
 		for(File folder : folders) {
 			// only directories are allowed here
-			if(folder.isDirectory()) {
+			if(folder.isDirectory() && folder.listFiles().length != 0) {
 				queryFolders.put(folder.getAbsolutePath(), folder);
 			}
 		}
