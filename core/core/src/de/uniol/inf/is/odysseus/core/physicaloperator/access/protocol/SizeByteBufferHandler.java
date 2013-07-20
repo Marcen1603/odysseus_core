@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -86,6 +87,33 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 4, messageSizeBytes);
 		getTransportHandler().send(rawBytes);
+	}
+
+	@Override
+	public boolean hasNext() throws IOException {
+		if (getTransportHandler().getInputStream() != null) {
+			return getTransportHandler().getInputStream().available() > 0;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public T getNext() throws IOException {
+		InputStream input = getTransportHandler().getInputStream();
+		int size = 0;
+		int offset = 0;
+		while (input.available() > 0) {
+			size = input.read();
+			input.read(objectHandler.getByteBuffer().array(), offset, size);
+			offset += size;
+		}
+		try {
+			return objectHandler.create();
+		} catch (ClassNotFoundException | BufferUnderflowException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	@Override
