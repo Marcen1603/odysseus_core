@@ -163,6 +163,17 @@ public final class SchemaUtils {
 	}
 
 	/**
+	 * Returns true if this attribute is a discrete probabilistic or continuous probabilistic attribute. More formally, returns true if and only if this attribute is an {@link SDFProbabilisticDatatype probabilistic attribute} that is discrete or continous.
+	 * 
+	 * @param attribute
+	 *            The {@link SDFAttribute attribute}
+	 * @return <code>true</code> if this attribute is a discrete or continous {@link SDFProbabilisticDatatype probabilistic attribute}
+	 */
+	public static boolean isProbabilisticAttribute(final SDFAttribute attribute) {
+		return isDiscreteProbabilisticAttribute(attribute) || isContinuousProbabilisticAttribute(attribute);
+	}
+
+	/**
 	 * Returns the position indexes all continuous probabilistic attributes in the schema.
 	 * 
 	 * @param schema

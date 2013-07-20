@@ -12,18 +12,30 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.menu.command;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.menu.command;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import de.offis.chart.charts.ProbabilityChart2D;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilityChart2D;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.menu.command.AbstractCommand;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class ShowProbabilityChart2D extends AbstractCommand {
+	/*
+	 * 
+	 * @see
+	 * org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands
+	 * .ExecutionEvent)
+	 */
 	@Override
-	public Object execute(final ExecutionEvent event) throws ExecutionException {
+	public final Object execute(final ExecutionEvent event)
+			throws ExecutionException {
 		final IPhysicalOperator op = super.getSelectedOperator(event);
 		if (op != null) {
 			this.openView(new ProbabilityChart2D(), op);

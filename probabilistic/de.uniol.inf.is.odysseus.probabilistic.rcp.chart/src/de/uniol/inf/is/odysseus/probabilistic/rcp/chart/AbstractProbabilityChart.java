@@ -12,9 +12,8 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.charts;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
-import de.offis.chart.charts.datatype.ProbabilisticViewSchema;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -22,18 +21,34 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
+import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
+ * @param <M>
+ */
 public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute>
 		extends AbstractChart<T, M> {
-
+	/**
+	 * Default constructor.
+	 */
 	public AbstractProbabilityChart() {
-		// We need this
+
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#
+	 * initWithOperator
+	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 */
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void initWithOperator(final IPhysicalOperator observingOperator) {
+	public final void initWithOperator(final IPhysicalOperator observingOperator) {
 		// create connection
 		if (observingOperator instanceof DefaultStreamConnection<?>) {
 			this.connection = (IStreamConnection<IStreamObject<?>>) observingOperator;

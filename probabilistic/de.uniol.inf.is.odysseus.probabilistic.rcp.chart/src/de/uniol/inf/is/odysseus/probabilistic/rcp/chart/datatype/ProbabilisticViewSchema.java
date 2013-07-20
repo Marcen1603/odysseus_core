@@ -12,34 +12,48 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.charts.datatype;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype;
 
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
+ */
 public class ProbabilisticViewSchema<T> extends ViewSchema<T> {
-
+	/**
+	 * 
+	 * @param outputSchema
+	 *            The output schema
+	 * @param metaSchema
+	 *            The mata data schema
+	 * @param port
+	 *            The port
+	 */
 	public ProbabilisticViewSchema(final SDFSchema outputSchema,
 			final SDFMetaAttributeList metaSchema, final int port) {
 		super(outputSchema, metaSchema, port);
 	}
 
-	private boolean isProbalisticDatatype(final SDFDatatype type) {
-		return type.getClass().equals(SDFProbabilisticDatatype.class);
-	}
-
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema#init()
+	 */
 	@Override
-	protected void init() {
+	protected final void init() {
 		int index = 0;
 		for (final SDFAttribute a : this.outputSchema) {
-			if (this.isProbalisticDatatype(a.getDatatype())) {
+			if (SchemaUtils.isProbabilisticAttribute(a)) {
 				final IViewableAttribute attribute = new ProbabilisticViewableSDFAttribute(
 						a, this.outputSchema.getURI(), index, this.port);
 				if (ViewSchema.isAllowedDataType(attribute.getSDFDatatype())) {
@@ -56,19 +70,5 @@ public class ProbabilisticViewSchema<T> extends ViewSchema<T> {
 				this.choosenAttributes.add(a);
 			}
 		}
-
-		// for (final SDFMetaAttribute m : this.metadataSchema) {
-		// for (final Method method : m.getMetaAttributeClass().getMethods()) {
-		// if (!method.getName().endsWith("hashCode")) {
-		// final IViewableAttribute attribute = new ViewableMetaAttribute(m,
-		// method, this.port);
-		// if ((method.getParameterTypes().length == 0) &&
-		// ViewSchema.isAllowedDataType(attribute.getSDFDatatype())) {
-		// this.viewableAttributes.add(new ViewableMetaAttribute(m, method,
-		// this.port));
-		// }
-		// }
-		// }
-		// }
 	}
 }

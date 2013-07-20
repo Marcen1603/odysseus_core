@@ -1,5 +1,21 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.ericaro.surfaceplotter.JSurfacePanel;
@@ -18,7 +34,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-import de.offis.chart.charts.ProbabilityMapper;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -28,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilisticMapper;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
@@ -46,27 +62,50 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 	/** First sink operator in the query. */
 	private IPhysicalOperator operator;
 
+	/** The selected attributes. */
 	private String[] attributes;
+	/** The continuous attributes marker. */
 	private Boolean[] continuousAttributes;
+	/** The discrete attributes marker. */
+	private Boolean[] discreteAttributes;
+	/** The positions to restrict to. */
 	private int[] positions;
 
+	/** The number of samples. */
 	private int samples = 1000;
-	private double minX = -10.0;
-	private double maxX = 10.0;
-	private double minY = -10.0;
-	private double maxY = 10.0;
+	/** Upper Bound for X-Axis. */
+	private double xMax;
+	/** Upper Bound for y-Axis. */
+	private double yMax;
+	/** Upper Bound for z-Axis. */
+	private double zMax;
+	/** Lower Bound for X-Axis. */
+	private double xMin;
+	/** Lower Bound for y-Axis. */
+	private double yMin;
+	/** Lower Bound for z-Axis. */
+	private double zMin;
+	/** The progressive surface model. */
 	private final ProgressiveSurfaceModel surfaceModel = new ProgressiveSurfaceModel();
-	private final ProbabilityMapper mapper = new ProbabilityMapper();
-
+	/** The mapper. */
+	private final ProbabilisticMapper mapper = new ProbabilisticMapper();
+	/** The actions. */
 	private ChangeSelectedAttributesAction<NormalDistributionMixture> changeAttributesAction;
+	/** The settings action. */
 	private ChangeSettingsAction changeSettingsAction;
+	/** The chart. */
 	private Composite chartComposite;
 
 	// protected static ImageDescriptor IMG_MONITOR_EDIT =
 	// ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
 	// protected static ImageDescriptor IMG_COG =
 	// ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
-
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#createPartControl
+	 * (org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.ToolBar)
+	 */
 	@Override
 	public final void createPartControl(final Composite parent,
 			final ToolBar toolbar) {
@@ -91,6 +130,12 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
+	 * #streamElementRecieved(java.lang.Object, int)
+	 */
 	@Override
 	public final void streamElementRecieved(final IStreamObject<?> element,
 			final int port) {
@@ -110,9 +155,6 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 							ProbabilityChart3DDashboardPart.this.getMapper()
 									.setup(distribution);
 						}
-					} else {
-						// ProbabilityChart3DDashboardPart.this.updateSerie(currentserie,
-						// (AbstractProbabilisticValue<?>) value);
 					}
 				}
 
@@ -129,24 +171,42 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
+	 * #punctuationElementRecieved
+	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation, int)
+	 */
 	@Override
 	public void punctuationElementRecieved(final IPunctuation point,
 			final int port) {
-		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
+	 * #securityPunctuationElementRecieved
+	 * (de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation,
+	 * int)
+	 */
 	@Override
 	public void securityPunctuationElementRecieved(
 			final ISecurityPunctuation sp, final int port) {
-		// TODO Auto-generated method stub
 
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener#settingChanged
+	 * (java.lang.String, java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public void settingChanged(final String settingName, final Object oldValue,
 			final Object newValue) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -171,6 +231,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 		this.positions = ProbabilityChart3DDashboardPart.determinePositions(
 				this.operator.getOutputSchema(), this.attributes);
 		this.continuousAttributes = new Boolean[this.positions.length];
+		Arrays.fill(this.continuousAttributes, false);
 		for (int i = 0; i < this.positions.length; i++) {
 			final SDFAttribute attribute = this.operator.getOutputSchema().get(
 					this.positions[i]);
@@ -180,130 +241,176 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 						.getDatatype();
 				if (datatype.isContinuous()) {
 					this.continuousAttributes[i] = true;
-				} else {
-					this.continuousAttributes[i] = false;
 				}
-			} else {
-				this.continuousAttributes[i] = false;
 			}
 		}
 	}
 
-	private boolean isContinuous(final int index) {
-		if ((index < 0) && (index >= this.continuousAttributes.length)) {
+	/**
+	 * Checks whether the attribute at the given position is a continuous
+	 * probabilistic attribute.
+	 * 
+	 * @param pos
+	 *            The position
+	 * @return <code>true</code> if the attribute at the given position is a
+	 *         continuous probabilistic attribute
+	 */
+	private boolean isContinuous(final int pos) {
+		if ((pos < 0) && (pos >= this.continuousAttributes.length)) {
 			return false;
 		}
-		return this.continuousAttributes[index];
+		return this.continuousAttributes[pos];
 	}
 
 	/**
-	 * Sets the value of the samples property.
+	 * Gets the value of the samples property.
 	 * 
-	 * @param samples
-	 *            The samples value
-	 */
-	public final void setSamples(final int samples) {
-		this.samples = samples;
-	}
-
-	/**
-	 * Gets the number of samples.
-	 * 
-	 * @return The number of samples
+	 * @return The samples value
 	 */
 	public final int getSamples() {
 		return this.samples;
 	}
 
 	/**
-	 * Sets the value of the minX property.
+	 * Sets the value of the samples property.
 	 * 
-	 * @param minX
-	 *            The minX value
+	 * @param samples
+	 *            The number of samples
 	 */
-	public final void setMinX(final double minX) {
-		this.minX = minX;
+	public final void setSamples(final int samples) {
+		this.samples = samples;
 	}
 
 	/**
-	 * Gets the minimal X value.
+	 * Gets the value of the xMax property.
 	 * 
-	 * @return The minimal X value
+	 * @return The xMax value
 	 */
-	public final double getMinX() {
-		return this.minX;
+	public final double getXMax() {
+		return this.xMax;
 	}
 
 	/**
-	 * Sets the value of the maxX property.
+	 * Sets the value of the xMax property.
 	 * 
-	 * @param maxX
-	 *            The maxX value
+	 * @param x
+	 *            The xMax value
 	 */
-	public final void setMaxX(final double maxX) {
-		this.maxX = maxX;
+	public final void setXMax(final double x) {
+		this.xMax = x;
 	}
 
 	/**
-	 * Gets the maximal X value.
+	 * Gets the value of the yMax property.
 	 * 
-	 * @return The maximal X value
+	 * @return The yMax value
 	 */
-	public final double getMaxX() {
-		return this.maxX;
+	public final double getYMax() {
+		return this.yMax;
 	}
 
 	/**
-	 * Sets the value of the minY property.
+	 * Sets the value of the yMax property.
 	 * 
-	 * @param minY
-	 *            The minY value
+	 * @param y
+	 *            The yMax value
 	 */
-	public final void setMinY(final double minY) {
-		this.minY = minY;
+	public final void setYMax(final double y) {
+		this.yMax = y;
 	}
 
 	/**
-	 * Gets the minimal Y value.
+	 * Gets the value of the xMin property.
 	 * 
-	 * @return The minimal Y value
+	 * @return The xMin value
 	 */
-	public final double getMinY() {
-		return this.minY;
+	public final double getXMin() {
+		return this.xMin;
 	}
 
 	/**
-	 * Sets the value of the maxY property.
+	 * Sets the value of the xMin property.
 	 * 
-	 * @param maxY
-	 *            The maxY value
+	 * @param x
+	 *            The xMin value
 	 */
-	public final void setMaxY(final double maxY) {
-		this.maxY = maxY;
+	public final void setXMin(final double x) {
+		this.xMin = x;
 	}
 
 	/**
-	 * Gets the maximal Y value.
+	 * Gets the value of the yMin property.
 	 * 
-	 * @return The maximal Y value
+	 * @return The yMin value
 	 */
-	public final double getMaxY() {
-		return this.maxY;
+	public final double getYMin() {
+		return this.yMin;
 	}
 
 	/**
+	 * Sets the value of the yMin property.
 	 * 
-	 * @param outputSchema
+	 * @param y
+	 *            The yMin value
+	 */
+	public final void setYMin(final double y) {
+		this.yMin = y;
+	}
+
+	/**
+	 * Gets the value of the zMin property.
+	 * 
+	 * @return The zMin value
+	 */
+	public final double getZMin() {
+		return this.zMin;
+	}
+
+	/**
+	 * Sets the value of the zMin property.
+	 * 
+	 * @param z
+	 *            The zMin value
+	 */
+	public final void setZMin(final double z) {
+		this.zMin = z;
+	}
+
+	/**
+	 * Gets the value of the zMax property.
+	 * 
+	 * @return The zMax value
+	 */
+	public final double getZMax() {
+		return this.zMax;
+	}
+
+	/**
+	 * Sets the value of the zMax property.
+	 * 
+	 * @param z
+	 *            The zMax value
+	 */
+	public final void setZMax(final double z) {
+		this.zMax = z;
+	}
+
+	/**
+	 * Returns the indexes of the given list of attributes in the given schema.
+	 * 
+	 * @param schema
+	 *            The schema
 	 * @param attributes
-	 * @return
+	 *            The attributes
+	 * @return The positions for each attribute
 	 */
-	private static int[] determinePositions(final SDFSchema outputSchema,
+	private static int[] determinePositions(final SDFSchema schema,
 			final String[] attributes) {
 		final int[] positions = new int[attributes.length];
 
 		for (int i = 0; i < attributes.length; i++) {
-			for (int j = 0; j < outputSchema.size(); j++) {
-				if (outputSchema.get(j).getAttributeName()
+			for (int j = 0; j < schema.size(); j++) {
+				if (schema.get(j).getAttributeName()
 						.equalsIgnoreCase(attributes[i])) {
 					positions[i] = j;
 					break;
@@ -314,17 +421,25 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 		return positions;
 	}
 
+	/**
+	 * Creates the surface panel.
+	 * 
+	 * @return The chart
+	 */
 	private JSurfacePanel createChart() {
 		final JSurfacePanel chart = new JSurfacePanel();
 		this.initSurfaceModel();
 		chart.setModel(this.getSurfaceModel());
 		chart.setConfigurationVisible(false);
 		chart.setDoubleBuffered(true);
-		chart.setTitleText("Prob Chart 3D");
+		chart.setTitleText("Probabilistic Chart (3D)");
 
 		return chart;
 	}
 
+	/**
+	 * Initialize the surface model.
+	 */
 	private void initSurfaceModel() {
 		this.surfaceModel.setMapper(this.getMapper());
 		this.surfaceModel.setDisplayXY(true);
@@ -337,34 +452,56 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 		// sm.setContourLines(1000);
 		// sm.setDispDivisions(1000);
 
-		this.surfaceModel.setXMax((float) this.getMaxX());
-		this.surfaceModel.setXMin((float) this.getMinX());
-		this.surfaceModel.setYMax((float) this.getMaxY());
-		this.surfaceModel.setYMin((float) this.getMinY());
-		this.surfaceModel.setZMax(1.0f);
-		this.surfaceModel.setZMin(0.0f);
+		this.surfaceModel.setXMax((float) this.getXMax());
+		this.surfaceModel.setXMin((float) this.getXMin());
+		this.surfaceModel.setYMax((float) this.getYMax());
+		this.surfaceModel.setYMin((float) this.getYMin());
+		this.surfaceModel.setZMax((float) this.getZMax());
+		this.surfaceModel.setZMin((float) this.getZMin());
 		this.surfaceModel.setAutoScaleZ(true);
 	}
 
+	/**
+	 * Gets the value of the surfaceModel property.
+	 * 
+	 * @return the surface model
+	 */
 	private ProgressiveSurfaceModel getSurfaceModel() {
 		return this.surfaceModel;
 	}
 
-	private ProbabilityMapper getMapper() {
+	/**
+	 * Gets the value of the mapper property.
+	 * 
+	 * @return The mapper
+	 */
+	private ProbabilisticMapper getMapper() {
 		return this.mapper;
 	}
 
+	/**
+	 * Create the action bars for the view.
+	 */
 	private void contributeToActionBars() {
 		// IActionBars bars = getViewSite().getActionBars();
 		// fillLocalMenu(bars.getMenuManager());
 		// fillLocalMenu(bars.getToolBarManager());
 	}
 
+	/**
+	 * Register actions.
+	 * 
+	 * @param manager
+	 *            The contribution manager
+	 */
 	private void fillLocalMenu(final IContributionManager manager) {
 		manager.add(this.changeAttributesAction);
 		manager.add(this.changeSettingsAction);
 	}
 
+	/**
+	 * Create the actions for the view.
+	 */
 	private void createActions() {
 		// this.changeAttributesAction = new
 		// ChangeSelectedAttributesAction<NormalDistributionMixture>(this.getSite().getShell(),

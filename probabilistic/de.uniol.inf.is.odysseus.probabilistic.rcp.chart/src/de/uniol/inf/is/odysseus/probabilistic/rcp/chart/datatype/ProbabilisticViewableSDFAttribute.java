@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.charts.datatype;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -22,15 +22,36 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class ProbabilisticViewableSDFAttribute extends ViewableSDFAttribute {
-
+	/**
+	 * 
+	 * @param attribute
+	 *            The SDF attribute
+	 * @param typeName
+	 *            The type name
+	 * @param index
+	 *            The index
+	 * @param port
+	 *            The port
+	 */
 	public ProbabilisticViewableSDFAttribute(final SDFAttribute attribute,
 			final String typeName, final int index, final int port) {
 		super(attribute, typeName, index, port);
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute
+	 * #evaluate(de.uniol.inf.is.odysseus.core.collection.Tuple)
+	 */
 	@Override
-	public Object evaluate(final Tuple<? extends IMetaAttribute> tuple) {
+	public final Object evaluate(final Tuple<? extends IMetaAttribute> tuple) {
 		final ProbabilisticTuple<?> obj = (ProbabilisticTuple<?>) tuple;
 
 		final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) this
@@ -47,7 +68,12 @@ public class ProbabilisticViewableSDFAttribute extends ViewableSDFAttribute {
 		return null;
 	}
 
-	public int getIndex() {
+	/**
+	 * Gets the value of the index proiperty.
+	 * 
+	 * @return The value of the index property
+	 */
+	public final int getIndex() {
 		return this.index;
 	}
 }

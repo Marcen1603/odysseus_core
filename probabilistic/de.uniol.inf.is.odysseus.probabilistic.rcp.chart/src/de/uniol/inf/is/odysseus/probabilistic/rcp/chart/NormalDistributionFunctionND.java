@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.charts;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.LUDecomposition;
@@ -22,43 +22,65 @@ import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.FastMath;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class NormalDistributionFunctionND {
-
-	private final RealMatrix covariances;
+	/** The covariance matrix. */
+	private final RealMatrix covariance;
+	/** The means. */
 	private final double[] means;
 
+	/**
+	 * Creates a new {@link NormalDistributionFunctionND} with the given means
+	 * and covariance.
+	 * 
+	 * @param means
+	 *            The means
+	 * @param covariance
+	 *            The covariance
+	 */
 	public NormalDistributionFunctionND(final double[] means,
-			final RealMatrix covariances) {
-		this.covariances = covariances;
-		this.means = means;
+			final RealMatrix covariance) {
+		this.covariance = covariance.copy();
+		this.means = means.clone();
 	}
 
-	public double getValue(final double[] x) {
+	/**
+	 * Evaluates the given multivariate distribution for the given value.
+	 * 
+	 * @param x
+	 *            The value
+	 * @return The density at the given value
+	 */
+	public final double getValue(final double[] x) {
 		final int k = x.length;
-		final RealMatrix z = this.covariances;
-		double z_det = 0.0;
-		RealMatrix z_inverse = null;
+		final RealMatrix z = this.covariance;
+		double zDet = 0.0;
+		RealMatrix zInverse = null;
 		try {
 			final CholeskyDecomposition decomposition = new CholeskyDecomposition(
 					z);
-			z_det = decomposition.getDeterminant();
-			z_inverse = decomposition.getSolver().getInverse();
+			zDet = decomposition.getDeterminant();
+			zInverse = decomposition.getSolver().getInverse();
 		} catch (NonSymmetricMatrixException
 				| NonPositiveDefiniteMatrixException e) {
 			final LUDecomposition decomposition = new LUDecomposition(z);
-			z_det = decomposition.getDeterminant();
-			z_inverse = decomposition.getSolver().getInverse();
+			zDet = decomposition.getDeterminant();
+			zInverse = decomposition.getSolver().getInverse();
 		}
-		final RealMatrix x_col = MatrixUtils.createColumnRealMatrix(x);
-		final RealMatrix means_col = MatrixUtils
+		final RealMatrix xCol = MatrixUtils.createColumnRealMatrix(x);
+		final RealMatrix meansCol = MatrixUtils
 				.createColumnRealMatrix(this.means);
-		final RealMatrix x_sub_m = x_col.subtract(means_col);
+		final RealMatrix xSubM = xCol.subtract(meansCol);
 
 		final double first = 1 / (FastMath.pow(2 * Math.PI, k / 2) * FastMath
-				.pow(z_det, 1 / 2));
-		final RealMatrix factor1 = x_sub_m.transpose();
-		final RealMatrix factor2 = factor1.multiply(z_inverse);
-		final RealMatrix factor3 = x_sub_m;
+				.pow(zDet, 1 / 2));
+		final RealMatrix factor1 = xSubM.transpose();
+		final RealMatrix factor2 = factor1.multiply(zInverse);
+		final RealMatrix factor3 = xSubM;
 		final RealMatrix f4 = factor2.multiply(factor3);
 		final double f5 = f4.getEntry(0, 0);
 		final double second = -0.5 * f5;

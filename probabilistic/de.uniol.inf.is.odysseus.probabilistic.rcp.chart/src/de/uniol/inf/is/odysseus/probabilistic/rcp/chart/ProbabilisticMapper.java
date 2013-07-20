@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.charts;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,21 +24,32 @@ import org.apache.commons.math3.linear.RealMatrix;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
-@SuppressWarnings("unused")
-public class ProbabilityMapper implements net.ericaro.surfaceplotter.Mapper {
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
 
-	private final Map<NormalDistributionFunctionND, Double> funcs = new ConcurrentHashMap<NormalDistributionFunctionND, Double>();
-
+	/** The mixtures. */
+	private final Map<NormalDistributionFunctionND, Double> mixtures = new ConcurrentHashMap<NormalDistributionFunctionND, Double>();
+	/** The scale. */
 	private double scale = 1.0;
+	/** The interval. */
 	private Interval[] interval;
 
-	public void setup(final NormalDistributionMixture mixture) {
-		this.funcs.clear();
+	/**
+	 * 
+	 * @param mixture
+	 *            The normal distribution mixture
+	 */
+	public final void setup(final NormalDistributionMixture mixture) {
+		this.mixtures.clear();
 		for (final Entry<MultivariateNormalDistribution, Double> e : mixture
 				.getMixtures().entrySet()) {
 			final double[] means = e.getKey().getMeans();
 			final RealMatrix m = e.getKey().getCovariances();
-			this.funcs.put(new NormalDistributionFunctionND(means, m),
+			this.mixtures.put(new NormalDistributionFunctionND(means, m),
 					e.getValue());
 		}
 
@@ -46,29 +57,31 @@ public class ProbabilityMapper implements net.ericaro.surfaceplotter.Mapper {
 		this.interval = mixture.getSupport();
 	}
 
+	/*
+	 * 
+	 * @see net.ericaro.surfaceplotter.Mapper#f1(float, float)
+	 */
 	@Override
-	public float f1(final float x, final float y) {
-		// if ((interval != null) && (interval.length >= 2)) {
-		// if ((interval[0] != null) && ((x < interval[0].inf()) || (x >
-		// interval[0].sup())))
-		// return 0f;
-		//
-		// if ((interval[1] != null) && ((y < interval[1].inf()) || (y >
-		// interval[1].sup())))
-		// return 0f;
-		// }
+	public final float f1(final float x, final float y) {
 		double result = 0.0;
-
-		for (final Entry<NormalDistributionFunctionND, Double> e : this.funcs
+		for (final Entry<NormalDistributionFunctionND, Double> e : this.mixtures
 				.entrySet()) {
-			result += e.getValue() * e.getKey().getValue(new double[] { x, y });
+			if ((this.interval[0].contains(x))
+					&& (this.interval[1].contains(y))) {
+				result += e.getValue()
+						* e.getKey().getValue(new double[] { x, y });
+			}
 		}
 
 		return (float) (result * this.scale);
 	}
 
+	/*
+	 * 
+	 * @see net.ericaro.surfaceplotter.Mapper#f2(float, float)
+	 */
 	@Override
-	public float f2(final float x, final float y) {
+	public final float f2(final float x, final float y) {
 		return 0;
 	}
 }

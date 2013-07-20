@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  */
-package de.offis.chart.charts;
+package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,20 +22,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.function.Function2D;
-import org.jfree.data.function.NormalDistributionFunction2D;
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import de.offis.chart.charts.datatype.ProbabilisticViewSchema;
-import de.offis.chart.charts.datatype.ProbabilisticViewableSDFAttribute;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -45,61 +43,90 @@ import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewSchema;
+import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype.ProbabilisticViewableSDFAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class ProbabilityChart2D extends
 		AbstractJFreeChart<Object, IMetaAttribute> {
-
+	/** The data set to draw. */
 	private final XYSeriesCollection dataset = new XYSeriesCollection();
-
-	private double maxX = 100.0;
-	private double maxY = 1.0;
-	private double minX = -100.0;
-	private double minY = 0.0;
-
+	/** Upper Bound for X-Axis. */
+	private double xMax;
+	/** Upper Bound for y-Axis. */
+	private double yMax;
+	/** Lower Bound for X-Axis. */
+	private double xMin;
+	/** Lower Bound for y-Axis. */
+	private double yMin;
+	/** Number of samples. */
 	private int samples = 1000;
-
+	/** Auto adjust the drawing area. */
 	private boolean autoadjust = false;
+	/** Margins to he borders. */
 	private final double margin = 0.05; // 5 percent
-
+	/** Number of data to redraw. */
 	private int redrawEach = 0;
+	/** Counter for redrawe. */
 	private int count = 0;
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#getViewID
+	 * ()
+	 */
 	@Override
-	public String getViewID() {
+	public final String getViewID() {
 		return "de.offis.chart.charts.probabilitychart2d";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart#
+	 * chartSettingsChanged()
+	 */
 	@Override
-	public void chartSettingsChanged() {
+	public final void chartSettingsChanged() {
 		if (!this.autoadjust) {
-			if (!Double.isNaN(this.minY)) {
+			if (!Double.isNaN(this.yMin)) {
 				this.getChart().getXYPlot().getRangeAxis()
-						.setLowerBound(this.minY * (1.0 - this.margin));
+						.setLowerBound(this.yMin * (1.0 - this.margin));
 			}
-			if (!Double.isNaN(this.maxY)) {
+			if (!Double.isNaN(this.yMax)) {
 				this.getChart().getXYPlot().getRangeAxis()
-						.setUpperBound(this.maxY * (1.0 + this.margin));
+						.setUpperBound(this.yMax * (1.0 + this.margin));
 			}
-			if (!Double.isNaN(this.minX)) {
+			if (!Double.isNaN(this.xMin)) {
 				this.getChart().getXYPlot().getDomainAxis()
-						.setLowerBound(this.minX * (1.0 - this.margin));
+						.setLowerBound(this.xMin * (1.0 - this.margin));
 			}
-			if (!Double.isNaN(this.maxX)) {
+			if (!Double.isNaN(this.xMax)) {
 				this.getChart().getXYPlot().getDomainAxis()
-						.setUpperBound(this.maxX * (1.0 + this.margin));
+						.setUpperBound(this.xMax * (1.0 + this.margin));
 			}
 		}
 
 		this.dataset.removeAllSeries();
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable
+	 * #isValidSelection(java.util.Map)
+	 */
 	@Override
-	public String isValidSelection(
+	public final String isValidSelection(
 			final Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		int sel = 0;
 		for (final Entry<Integer, Set<IViewableAttribute>> e : selectAttributes
@@ -123,91 +150,178 @@ public class ProbabilityChart2D extends
 		return "The number of choosen attributes should be at least one!";
 	}
 
-	public XYDataset getDataset() {
+	/**
+	 * 
+	 * @return The data set
+	 */
+	public final XYDataset getDataset() {
 		return this.dataset;
 	}
 
+	/**
+	 * Gets the value of the xMax property.
+	 * 
+	 * @return The xMax value
+	 */
 	@ChartSetting(name = "Upper Bound for X-Axis", type = Type.GET)
-	public double getMaxX() {
-		return this.maxX;
+	public final double getXMax() {
+		return this.xMax;
 	}
 
+	/**
+	 * Sets the value of the xMax property.
+	 * 
+	 * @param x
+	 *            The xMax value
+	 */
 	@ChartSetting(name = "Upper Bound for X-Axis", type = Type.SET)
-	public void setMaxX(final double maxX) {
-		this.maxX = maxX;
+	public final void setXMax(final double x) {
+		this.xMax = x;
 	}
 
+	/**
+	 * Gets the value of the yMax property.
+	 * 
+	 * @return The yMax value
+	 */
 	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.GET)
-	public double getMaxY() {
-		return this.maxY;
+	public final double getYMax() {
+		return this.yMax;
 	}
 
+	/**
+	 * Sets the value of the yMax property.
+	 * 
+	 * @param y
+	 *            The yMax value
+	 */
 	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.SET)
-	public void setMaxY(final double maxY) {
-		if ((maxY >= 0.0) && (maxY <= 1.0)) {
-			this.maxY = maxY;
-		}
+	public final void setYMax(final double y) {
+		this.yMax = y;
 	}
 
+	/**
+	 * Gets the value of the xMin property.
+	 * 
+	 * @return The xMin value
+	 */
 	@ChartSetting(name = "Lower Bound for X-Axis", type = Type.GET)
-	public double getMinX() {
-		return this.minX;
+	public final double getXMin() {
+		return this.xMin;
 	}
 
+	/**
+	 * Sets the value of the xMin property.
+	 * 
+	 * @param x
+	 *            The xMin value
+	 */
 	@ChartSetting(name = "Lower Bound for X-Axis", type = Type.SET)
-	public void setMinX(final double minX) {
-		this.minX = minX;
+	public final void setXMin(final double x) {
+		this.xMin = x;
 	}
 
+	/**
+	 * Gets the value of the yMin property.
+	 * 
+	 * @return The yMin value
+	 */
 	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.GET)
-	public double getMinY() {
-		return this.minY;
+	public final double getYMin() {
+		return this.yMin;
 	}
 
+	/**
+	 * Sets the value of the yMin property.
+	 * 
+	 * @param y
+	 *            The yMin value
+	 */
 	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.SET)
-	public void setMinY(final double minY) {
-		if ((minY >= 0.0) && (minY <= 1.0)) {
-			this.minY = minY;
-		}
+	public final void setYMin(final double y) {
+		this.yMin = y;
 	}
 
+	/**
+	 * Gets the value of the autoadjust property.
+	 * 
+	 * @return The autoadjust value
+	 */
 	@ChartSetting(name = "Autoadjust Bounds", type = Type.GET)
-	public Boolean isAutoadjust() {
+	public final Boolean isAutoadjust() {
 		return this.autoadjust;
 	}
 
+	/**
+	 * Sets the value of the autoadjust property.
+	 * 
+	 * @param autoadjust
+	 *            Whether to enable or disable auto adjust
+	 */
 	@ChartSetting(name = "Autoadjust Bounds", type = Type.SET)
-	public void setAutoadjust(final Boolean autoadjust) {
+	public final void setAutoadjust(final Boolean autoadjust) {
 		this.autoadjust = autoadjust;
 	}
 
+	/**
+	 * Gets the value of the samples property.
+	 * 
+	 * @return The samples value
+	 */
 	@ChartSetting(name = "Number of samples", type = Type.GET)
-	public int getSamples() {
+	public final int getSamples() {
 		return this.samples;
 	}
 
+	/**
+	 * Sets the value of the samples property.
+	 * 
+	 * @param samples
+	 *            The number of samples
+	 */
 	@ChartSetting(name = "Number of samples", type = Type.SET)
-	public void setSamples(final int samples) {
+	public final void setSamples(final int samples) {
 		this.samples = samples;
 	}
 
+	/**
+	 * Gets the value of the redrawEach property.
+	 * 
+	 * @return The redrawEach value
+	 */
 	@ChartSetting(name = "Redraw after each", type = Type.GET)
-	public int getRedrawEach() {
+	public final int getRedrawEach() {
 		return this.redrawEach;
 	}
 
+	/**
+	 * Sets the value of the redrawEach property.
+	 * 
+	 * @param redrawEach
+	 *            The number of data
+	 */
 	@ChartSetting(name = "Redraw after each", type = Type.SET)
-	public void setRedrawEach(final int redrawEach) {
+	public final void setRedrawEach(final int redrawEach) {
 		this.redrawEach = redrawEach;
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#init()
+	 */
 	@Override
 	protected void init() {
 
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart#
+	 * createChart()
+	 */
 	@Override
-	protected JFreeChart createChart() {
+	protected final JFreeChart createChart() {
 		final JFreeChart chart = ChartFactory.createXYLineChart(
 				this.getTitle(), "", "", this.getDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
@@ -219,13 +333,24 @@ public class ProbabilityChart2D extends
 		return chart;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart#
+	 * decorateChart(org.jfree.chart.JFreeChart)
+	 */
 	@Override
 	protected void decorateChart(final JFreeChart thechart) {
 
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#initConnection
+	 * (de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection)
+	 */
 	@Override
-	protected void initConnection(
+	protected final void initConnection(
 			final IStreamConnection<IStreamObject<?>> streamConnection) {
 		for (final ISubscription<? extends ISource<?>> s : streamConnection
 				.getSubscriptions()) {
@@ -243,8 +368,15 @@ public class ProbabilityChart2D extends
 		}
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#processElement
+	 * (java.util.List, de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute,
+	 * int)
+	 */
 	@Override
-	protected void processElement(final List<Object> tuple,
+	protected final void processElement(final List<Object> tuple,
 			final IMetaAttribute metadata, final int port) {
 		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
@@ -303,44 +435,61 @@ public class ProbabilityChart2D extends
 		});
 	}
 
+	/**
+	 * Adjust the drawing area if the area does not include the given position.
+	 * 
+	 * @param valueX
+	 *            The x value
+	 * @param valueY
+	 *            The y value
+	 */
 	private void adjust(final double valueX, final double valueY) {
 		// for X
-		if (Double.isNaN(this.maxX)) {
-			this.maxX = valueX;
+		if (Double.isNaN(this.xMax)) {
+			this.xMax = valueX;
 		}
-		if (Double.isNaN(this.minX)) {
-			this.minX = valueX;
+		if (Double.isNaN(this.xMin)) {
+			this.xMin = valueX;
 		}
-		if (valueX > this.maxX) {
-			this.maxX = valueX;
-		} else if (valueX < this.minX) {
-			this.minX = valueX;
+		if (valueX > this.xMax) {
+			this.xMax = valueX;
+		} else if (valueX < this.xMin) {
+			this.xMin = valueX;
 		}
 
 		if (this.autoadjust) {
 			this.getChart().getXYPlot().getRangeAxis()
-					.setLowerBound(this.minY * (1.0 - this.margin));
+					.setLowerBound(this.yMin * (1.0 - this.margin));
 			this.getChart().getXYPlot().getRangeAxis()
-					.setUpperBound(this.maxY * (1.0 + this.margin));
+					.setUpperBound(this.yMax * (1.0 + this.margin));
 
 			this.getChart().getXYPlot().getDomainAxis()
-					.setLowerBound(this.minX * (1.0 - this.margin));
+					.setLowerBound(this.xMin * (1.0 - this.margin));
 			this.getChart().getXYPlot().getDomainAxis()
-					.setUpperBound(this.maxX * (1.0 + this.margin));
+					.setUpperBound(this.xMax * (1.0 + this.margin));
 		}
 
 	}
 
-	private boolean containsSeriesWithKey(final Comparable<?> key) {
-		for (final Object o : this.dataset.getSeries()) {
-			final XYSeries s = (XYSeries) o;
-			if (s.getKey().equals(key)) {
-				return true;
-			}
-		}
-		return false;
+	/**
+	 * Checks whether the data set includes the given key.
+	 * 
+	 * @param key
+	 *            The comparable key
+	 * @return <code>true</code> if the data set includes the key
+	 */
+	private boolean containsSeriesWithKey(final String key) {
+		return this.dataset.indexOf(key) >= 0;
 	}
 
+	/**
+	 * Updates the given series with the given discrete probabilistic value.
+	 * 
+	 * @param series
+	 *            The series
+	 * @param value
+	 *            The probabilistic value
+	 */
 	private void updateSerie(final XYSeries series,
 			final AbstractProbabilisticValue<?> value) {
 		for (final Entry<?, Double> e : value.getValues().entrySet()) {
@@ -352,58 +501,74 @@ public class ProbabilityChart2D extends
 		}
 	}
 
+	/**
+	 * Updates the given series with the given continuous probabilistic value.
+	 * 
+	 * @param series
+	 *            The series
+	 * @param mixture
+	 *            The normal distribution mixture
+	 * @param dimensionIndex
+	 *            The dimension
+	 */
 	private void updateSerie(final XYSeries series,
-			final NormalDistributionMixture mix, final int index) {
-		if (mix.getDimension() < 1) {
+			final NormalDistributionMixture mixture, final int dimensionIndex) {
+		if (mixture.getDimension() < 1) {
 			return; // no dimension
 		}
 
-		final HashMap<NormalDistributionFunction2D, Double> funcs = new HashMap<>();
+		final Map<NormalDistribution, Double> functions = new HashMap<>();
 		final int dimension;
 		int d = 0;
-		while (d < mix.getDimension()) {
-			if (mix.getAttribute(d) == index) {
+		while (d < mixture.getDimension()) {
+			if (mixture.getAttribute(d) == dimensionIndex) {
 				break;
 			}
 			d++;
 		}
 		dimension = d;
-		for (final Entry<MultivariateNormalDistribution, Double> e : mix
+		for (final Entry<MultivariateNormalDistribution, Double> e : mixture
 				.getMixtures().entrySet()) {
 			final double means = e.getKey().getMeans()[dimension];
-			final double m = e.getKey().getCovariances()
+			final double sigma = e.getKey().getCovariances()
 					.getEntry(dimension, dimension);
-			funcs.put(new NormalDistributionFunction2D(means, m), e.getValue());
+			functions.put(new NormalDistribution(means, sigma), e.getValue());
 		}
-		final Interval[] interval = mix.getSupport();
-		final double scale = mix.getScale();
+		final Interval[] interval = mixture.getSupport();
+		final double scale = mixture.getScale();
 
-		final Function2D f = new Function2D() {
+		final Function2D function = new Function2D() {
 
 			@Override
 			public double getValue(final double x) {
-				if ((x < interval[dimension].inf())
-						|| (x > interval[dimension].sup())) {
+				if (!interval[dimension].contains(x)) {
 					return 0.0;
 				}
 
 				double sum = 0;
-				for (final Entry<NormalDistributionFunction2D, Double> func : funcs
+				for (final Entry<NormalDistribution, Double> func : functions
 						.entrySet()) {
-					sum += func.getKey().getValue(x) * func.getValue();
+					sum += func.getKey().density(x) * func.getValue();
 				}
 				return sum * scale;
 			}
 		};
 		@SuppressWarnings("unchecked")
 		final List<XYDataItem> items = DatasetUtilities
-				.sampleFunction2DToSeries(f, this.getMinX(), this.getMaxX(),
-						this.getSamples(), series.getKey()).getItems();
+				.sampleFunction2DToSeries(function, this.getXMin(),
+						this.getXMax(), this.getSamples(), series.getKey())
+				.getItems();
 		for (final XYDataItem item : items) {
 			series.add(item);
 		}
 	}
 
+	/*
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#reloadChart
+	 * ()
+	 */
 	@Override
 	protected void reloadChart() {
 

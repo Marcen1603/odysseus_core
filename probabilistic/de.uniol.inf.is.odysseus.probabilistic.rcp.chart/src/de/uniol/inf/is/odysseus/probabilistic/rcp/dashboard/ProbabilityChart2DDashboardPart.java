@@ -1,10 +1,28 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -16,7 +34,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.function.Function2D;
-import org.jfree.data.function.NormalDistributionFunction2D;
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
@@ -34,12 +51,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
+
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -51,15 +69,27 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 			.getLogger(ProbabilityChart2DDashboardPart.class);
 	/** First sink operator in the query. */
 	private IPhysicalOperator operator;
-
+	/** The selected attributes. */
 	private String[] attributes;
+	/** The continuous attributes marker. */
 	private Boolean[] continuousAttributes;
+	/** The discrete attributes marker. */
+	private Boolean[] discreteAttributes;
+	/** The positions to restrict to. */
 	private int[] positions;
+	/** The data set to draw. */
 	private final XYSeriesCollection dataset = new XYSeriesCollection();
-
+	/** Upper Bound for X-Axis. */
+	private double xMax;
+	/** Upper Bound for y-Axis. */
+	private double yMax;
+	/** Lower Bound for X-Axis. */
+	private double xMin;
+	/** Lower Bound for y-Axis. */
+	private double yMin;
+	/** Number of samples. */
 	private int samples = 1000;
-	private double minX = -100.0;
-	private double maxX = 100.0;
+	/** The chart. */
 	private ChartComposite chartComposite;
 
 	/*
@@ -70,7 +100,8 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * (org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.ToolBar)
 	 */
 	@Override
-	public void createPartControl(final Composite parent, final ToolBar toolbar) {
+	public final void createPartControl(final Composite parent,
+			final ToolBar toolbar) {
 		final String attributeList = this.getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
@@ -94,7 +125,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * #streamElementRecieved(java.lang.Object, int)
 	 */
 	@Override
-	public void streamElementRecieved(final IStreamObject<?> element,
+	public final void streamElementRecieved(final IStreamObject<?> element,
 			final int port) {
 		final ProbabilisticTuple<?> probabilisticElement = (ProbabilisticTuple<?>) element;
 		final ProbabilisticTuple<?> restrictedElement = probabilisticElement
@@ -110,7 +141,8 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 					if (!ProbabilityChart2DDashboardPart.this
 							.containsSeriesWithKey(key)) {
 						currentserie = new XYSeries(key);
-						// currentserie.setMaximumItemCount(ProbabilityChart2D.this.samples);
+						currentserie
+								.setMaximumItemCount(ProbabilityChart2DDashboardPart.this.samples);
 						ProbabilityChart2DDashboardPart.this.dataset
 								.addSeries(currentserie);
 					} else {
@@ -124,7 +156,8 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 								currentserie, restrictedElement
 										.getDistribution(continuousAttribute
 												.getDistribution()), i);
-					} else {
+					} else if (ProbabilityChart2DDashboardPart.this
+							.isDiscrete(i)) {
 						ProbabilityChart2DDashboardPart.this.updateSerie(
 								currentserie,
 								(AbstractProbabilisticValue<?>) value);
@@ -142,7 +175,14 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
 	}
 
-	protected boolean containsSeriesWithKey(final String key) {
+	/**
+	 * Checks whether the data set includes the given key.
+	 * 
+	 * @param key
+	 *            The comparable key
+	 * @return <code>true</code> if the data set includes the key
+	 */
+	protected final boolean containsSeriesWithKey(final String key) {
 		return this.dataset.indexOf(key) >= 0;
 	}
 
@@ -157,7 +197,6 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void punctuationElementRecieved(final IPunctuation point,
 			final int port) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -173,7 +212,6 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void securityPunctuationElementRecieved(
 			final ISecurityPunctuation sp, final int port) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -187,7 +225,6 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void settingChanged(final String settingName, final Object oldValue,
 			final Object newValue) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -199,7 +236,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * java.util.List)
 	 */
 	@Override
-	public void onStart(final List<IPhysicalOperator> physicalRoots)
+	public final void onStart(final List<IPhysicalOperator> physicalRoots)
 			throws Exception {
 		super.onStart(physicalRoots);
 		if (physicalRoots.size() > 1) {
@@ -211,87 +248,148 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 		this.operator = physicalRoots.get(0);
 		this.positions = ProbabilityChart2DDashboardPart.determinePositions(
 				this.operator.getOutputSchema(), this.attributes);
+
 		this.continuousAttributes = new Boolean[this.positions.length];
+		Arrays.fill(this.continuousAttributes, false);
+
+		this.discreteAttributes = new Boolean[this.positions.length];
+		Arrays.fill(this.discreteAttributes, false);
 		for (int i = 0; i < this.positions.length; i++) {
 			final SDFAttribute attribute = this.operator.getOutputSchema().get(
 					this.positions[i]);
-			if (attribute.getDatatype().getClass()
-					.equals(SDFProbabilisticDatatype.class)) {
-				final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute
-						.getDatatype();
-				if (datatype.isContinuous()) {
-					this.continuousAttributes[i] = true;
-				} else {
-					this.continuousAttributes[i] = false;
-				}
-			} else {
-				this.continuousAttributes[i] = false;
+			if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
+				this.continuousAttributes[i] = true;
+			} else if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
+				this.discreteAttributes[i] = true;
 			}
 		}
 	}
 
-	private boolean isContinuous(final int index) {
-		if ((index < 0) && (index >= this.continuousAttributes.length)) {
+	/**
+	 * Checks whether the attribute at the given position is a continuous
+	 * probabilistic attribute.
+	 * 
+	 * @param pos
+	 *            The position
+	 * @return <code>true</code> if the attribute at the given position is a
+	 *         continuous probabilistic attribute
+	 */
+	private boolean isContinuous(final int pos) {
+		if ((pos < 0) && (pos >= this.continuousAttributes.length)) {
 			return false;
 		}
-		return this.continuousAttributes[index];
+		return this.continuousAttributes[pos];
+	}
+
+	/**
+	 * Checks whether the attribute at the given position is a discrete
+	 * probabilistic attribute.
+	 * 
+	 * @param pos
+	 *            The position
+	 * @return <code>true</code> if the attribute at the given position is a
+	 *         discrete probabilistic attribute
+	 */
+	private boolean isDiscrete(final int pos) {
+		if ((pos < 0) && (pos >= this.discreteAttributes.length)) {
+			return false;
+		}
+		return this.discreteAttributes[pos];
+	}
+
+	/**
+	 * Gets the value of the samples property.
+	 * 
+	 * @return The samples value
+	 */
+	public final int getSamples() {
+		return this.samples;
 	}
 
 	/**
 	 * Sets the value of the samples property.
 	 * 
 	 * @param samples
-	 *            The samples value
+	 *            The number of samples
 	 */
-	public void setSamples(final int samples) {
+	public final void setSamples(final int samples) {
 		this.samples = samples;
 	}
 
 	/**
-	 * Gets the number of samples.
+	 * Gets the value of the xMax property.
 	 * 
-	 * @return The number of samples
+	 * @return The xMax value
 	 */
-	public int getSamples() {
-		return this.samples;
+	public final double getXMax() {
+		return this.xMax;
 	}
 
 	/**
-	 * Sets the value of the minX property.
+	 * Sets the value of the xMax property.
 	 * 
-	 * @param minX
-	 *            The minX value
+	 * @param x
+	 *            The xMax value
 	 */
-	public void setMinX(final double minX) {
-		this.minX = minX;
+	public final void setXMax(final double x) {
+		this.xMax = x;
 	}
 
 	/**
-	 * Gets the minimal X value.
+	 * Gets the value of the yMax property.
 	 * 
-	 * @return The minimal X value
+	 * @return The yMax value
 	 */
-	public double getMinX() {
-		return this.minX;
+	public final double getYMax() {
+		return this.yMax;
 	}
 
 	/**
-	 * Sets the value of the maxX property.
+	 * Sets the value of the yMax property.
 	 * 
-	 * @param maxX
-	 *            The maxX value
+	 * @param y
+	 *            The yMax value
 	 */
-	public void setMaxX(final double maxX) {
-		this.maxX = maxX;
+	public final void setYMax(final double y) {
+		this.yMax = y;
 	}
 
 	/**
-	 * Gets the maximal X value.
+	 * Gets the value of the xMin property.
 	 * 
-	 * @return The maximal X value
+	 * @return The xMin value
 	 */
-	public double getMaxX() {
-		return this.maxX;
+	public final double getXMin() {
+		return this.xMin;
+	}
+
+	/**
+	 * Sets the value of the xMin property.
+	 * 
+	 * @param x
+	 *            The xMin value
+	 */
+	public final void setXMin(final double x) {
+		this.xMin = x;
+	}
+
+	/**
+	 * Gets the value of the yMin property.
+	 * 
+	 * @return The yMin value
+	 */
+	public final double getYMin() {
+		return this.yMin;
+	}
+
+	/**
+	 * Sets the value of the yMin property.
+	 * 
+	 * @param y
+	 *            The yMin value
+	 */
+	public final void setYMin(final double y) {
+		this.yMin = y;
 	}
 
 	/**
@@ -304,30 +402,34 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
+	 * Creates the line chart.
 	 * 
-	 * @return
+	 * @return The chart
 	 */
 	private JFreeChart createChart() {
 		final JFreeChart chart = ChartFactory.createXYLineChart(
-				"ProbabilisticChart2D", "", "", this.getDataset(),
+				"Probabilistic Chart (2D)", "", "", this.getDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getXYPlot().setRenderer(new XYSplineRenderer());
 		return chart;
 	}
 
 	/**
+	 * Returns the indexes of the given list of attributes in the given schema.
 	 * 
-	 * @param outputSchema
+	 * @param schema
+	 *            The schema
 	 * @param attributes
-	 * @return
+	 *            The attributes
+	 * @return The positions for each attribute
 	 */
-	private static int[] determinePositions(final SDFSchema outputSchema,
+	private static int[] determinePositions(final SDFSchema schema,
 			final String[] attributes) {
 		final int[] positions = new int[attributes.length];
 
 		for (int i = 0; i < attributes.length; i++) {
-			for (int j = 0; j < outputSchema.size(); j++) {
-				if (outputSchema.get(j).getAttributeName()
+			for (int j = 0; j < schema.size(); j++) {
+				if (schema.get(j).getAttributeName()
 						.equalsIgnoreCase(attributes[i])) {
 					positions[i] = j;
 					break;
@@ -358,69 +460,66 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * Update series with continuous probabilistic value.
+	 * Updates the given series with the given continuous probabilistic value.
 	 * 
 	 * @param series
 	 *            The series
-	 * @param distribution
-	 *            The distribution
-	 * @param index
-	 *            The dimension index
+	 * @param mixture
+	 *            The normal distribution mixture
+	 * @param dimensionIndex
+	 *            The dimension
 	 */
 	private void updateSerie(final XYSeries series,
-			final NormalDistributionMixture distribution, final int index) {
-		if (distribution.getDimension() < 1) {
-			ProbabilityChart2DDashboardPart.LOG.warn("Invalid dimension: "
-					+ distribution.getDimension());
+			final NormalDistributionMixture mixture, final int dimensionIndex) {
+		if (mixture.getDimension() < 1) {
 			return; // no dimension
 		}
 
-		final HashMap<NormalDistributionFunction2D, Double> mixtures = new HashMap<>();
+		final Map<NormalDistribution, Double> functions = new HashMap<>();
 		final int dimension;
 		int d = 0;
-		while (d < distribution.getDimension()) {
-			if (distribution.getAttribute(d) == index) {
+		while (d < mixture.getDimension()) {
+			if (mixture.getAttribute(d) == dimensionIndex) {
 				break;
 			}
 			d++;
 		}
 		dimension = d;
-		for (final Entry<MultivariateNormalDistribution, Double> mixtureEntry : distribution
+		for (final Entry<MultivariateNormalDistribution, Double> e : mixture
 				.getMixtures().entrySet()) {
-			final double mean = mixtureEntry.getKey().getMeans()[dimension];
-			final double variance = mixtureEntry.getKey().getCovariances().getEntry(dimension, dimension);
-			mixtures.put(new NormalDistributionFunction2D(mean, variance),
-					mixtureEntry.getValue());
+			final double means = e.getKey().getMeans()[dimension];
+			final double sigma = e.getKey().getCovariances()
+					.getEntry(dimension, dimension);
+			functions.put(new NormalDistribution(means, sigma), e.getValue());
 		}
-		final Interval[] support = distribution.getSupport();
-		final double scale = distribution.getScale();
+		final Interval[] interval = mixture.getSupport();
+		final double scale = mixture.getScale();
 
 		final Function2D function = new Function2D() {
 
 			@Override
 			public double getValue(final double x) {
-				if ((support[dimension] != null)
-						&& ((x < support[dimension].inf()) || (x > support[dimension]
-								.sup()))) {
+				if (!interval[dimension].contains(x)) {
 					return 0.0;
 				}
 
 				double sum = 0;
-				for (final Entry<NormalDistributionFunction2D, Double> func : mixtures
+				for (final Entry<NormalDistribution, Double> func : functions
 						.entrySet()) {
-					sum += func.getKey().getValue(x) * func.getValue();
+					sum += func.getKey().density(x) * func.getValue();
 				}
 				return sum * scale;
 			}
 		};
 		@SuppressWarnings("unchecked")
 		final List<XYDataItem> items = DatasetUtilities
-				.sampleFunction2DToSeries(function, this.getMinX(),
-						this.getMaxX(), this.getSamples(), series.getKey())
+				.sampleFunction2DToSeries(function, this.getXMin(),
+						this.getXMax(), this.getSamples(), series.getKey())
 				.getItems();
 		for (final XYDataItem item : items) {
 			series.add(item);
 		}
+
 	}
 
 }

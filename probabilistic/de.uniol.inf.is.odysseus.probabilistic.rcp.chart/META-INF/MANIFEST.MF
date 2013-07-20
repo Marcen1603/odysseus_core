@@ -19,10 +19,11 @@ Bundle-ClassPath: batik-awt-util.jar,
  jcommon-1.0.17.jar,
  surfaceplotter-2.0.1.jar,
  .
-Bundle-Activator: de.offis.chart.charts.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.rcp.Activator
 Import-Package: com.google.common.base,
  com.google.common.collect,
  de.uniol.inf.is.odysseus.probabilistic.base,
+ de.uniol.inf.is.odysseus.probabilistic.common,
  de.uniol.inf.is.odysseus.probabilistic.continuous.datatype,
  de.uniol.inf.is.odysseus.probabilistic.discrete.datatype,
  de.uniol.inf.is.odysseus.probabilistic.math,

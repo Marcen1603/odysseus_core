@@ -27,12 +27,12 @@
    <extension
          point="org.eclipse.ui.commands">
        <command
-            defaultHandler="de.offis.chart.menu.command.ShowProbabilityChart2D"
+            defaultHandler="de.uniol.inf.is.odysseus.probabilistic.rcp.chart.menu.command.ShowProbabilityChart2D"
             id="de.offis.chart.menu.command.ShowProbabilityChart2D"
             name="ProbabilityChart2D Command">
       </command>
        <command
-            defaultHandler="de.offis.chart.menu.command.ShowProbabilityChart3D"
+            defaultHandler="de.uniol.inf.is.odysseus.probabilistic.rcp.chart.menu.command.ShowProbabilityChart3D"
             id="de.offis.chart.menu.command.ShowProbabilityChart3D"
             name="ProbabilityChart3D Command">
       </command>
@@ -42,7 +42,7 @@
       <view
             allowMultiple="true"
             category="Odysseus"
-            class="de.offis.chart.charts.ProbabilityChart2D"
+            class="de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilityChart2D"
             id="de.offis.chart.charts.probabilitychart2d"
             name="ProbabilityChart2D"
             restorable="false">
@@ -50,7 +50,7 @@
             <view
             allowMultiple="true"
             category="Odysseus"
-            class="de.offis.chart.charts.ProbabilityChart3D"
+            class="de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilityChart3D"
             id="de.offis.chart.charts.probabilitychart3d"
             name="ProbabilityChart3D"
             restorable="false">
