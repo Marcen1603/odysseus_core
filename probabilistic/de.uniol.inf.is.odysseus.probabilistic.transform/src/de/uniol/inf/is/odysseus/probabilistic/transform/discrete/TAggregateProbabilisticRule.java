@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import java.util.Map;
@@ -38,7 +37,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class TAggregateProbabilisticRule extends AbstractTransformationRule<AggregateTIPO<?, ?, ?>> {
 	/*

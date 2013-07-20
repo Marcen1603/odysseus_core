@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,17 +36,20 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class RuleProvider implements ITransformRuleProvider {
-
+/*
+ * 
+ * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider#getRules()
+ */
 	@Override
 	public final List<IRule<?, ?>> getRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
 		rules.add(new TProbabilisticAORule());
 		rules.add(new TProbabilisticValidatorRule());
 		rules.add(new TRelationalExistenceToPayloadRule());
-		
+
 		rules.addAll(this.getProbabilisticDiscreteOperatorRules());
 		rules.addAll(this.getProbabilisticContinuousOperatorRules());
 		return rules;

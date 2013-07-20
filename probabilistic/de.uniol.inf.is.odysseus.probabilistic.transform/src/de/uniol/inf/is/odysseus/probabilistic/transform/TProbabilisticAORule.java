@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,19 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class TProbabilisticAORule extends AbstractTransformationRule<ProbabilisticAO> {
-
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
 	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public final void execute(final ProbabilisticAO operator, final TransformationConfiguration config) {
 		// FIXME Why do I do that?? (CK)
@@ -47,25 +54,42 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
 
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public final boolean isExecutable(final ProbabilisticAO operator, final TransformationConfiguration config) {
-		if (operator.isAllPhysicalInputSet()) {	if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
 	public final String getName() {
 		return "ProbabilisticAO -> MetadataUpdatePO(probabilistic)";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
 	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
 	public final Class<? super ProbabilisticAO> getConditionClass() {
 		return ProbabilisticAO.class;

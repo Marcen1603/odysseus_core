@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
 import java.util.ArrayList;
@@ -36,18 +35,25 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class TContinuousEquiJoinAOSetDMRule extends AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
-
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void execute(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
+	public final void execute(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
 
 		final int[][] joinAttributePos = new int[2][];
 
@@ -87,8 +93,12 @@ public class TContinuousEquiJoinAOSetDMRule extends AbstractTransformationRule<C
 		this.update(operator);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
+	public final boolean isExecutable(final ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>> operator, final TransformationConfiguration config) {
 		if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			if (operator.getDataMerge() == null) {
 				return true;
@@ -97,18 +107,30 @@ public class TContinuousEquiJoinAOSetDMRule extends AbstractTransformationRule<C
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "Insert DataMergeFunction ProbabilisticContinuousJoinPO (Probabilistic)";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super ContinuousProbabilisticEquiJoinPO<?, ?>> getConditionClass() {
+	public final Class<? super ContinuousProbabilisticEquiJoinPO<?, ?>> getConditionClass() {
 		return ContinuousProbabilisticEquiJoinPO.class;
 	}
 

@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,22 +39,34 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO> {
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void execute(final JoinAO joinAO, final TransformationConfiguration transformConfig) {
+	public final void execute(final JoinAO joinAO, final TransformationConfiguration transformConfig) {
 
 		final IPredicate<?> pred = joinAO.getPredicate();
 
 		final ContinuousProbabilisticEquiJoinPO joinPO = new ContinuousProbabilisticEquiJoinPO();
-		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
+		if (pred == null) {
+			joinPO.setJoinPredicate(new TruePredicate());
+		} else {
+			joinPO.setJoinPredicate(pred.clone());
+		}
 		boolean windowFound = false;
 		for (int port = 0; port < 2; port++) {
 			if (!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())) {
@@ -77,8 +89,12 @@ public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO
 
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(final JoinAO operator, final TransformationConfiguration transformConfig) {
+	public final boolean isExecutable(final JoinAO operator, final TransformationConfiguration transformConfig) {
 		if (((operator.getPredicate() != null) && (operator.isAllPhysicalInputSet()) && !(operator instanceof LeftJoinAO))) {
 			if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
 				return false;
@@ -102,18 +118,30 @@ public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "JoinAO -> continuous probabilistic Equi Join";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super JoinAO> getConditionClass() {
+	public final Class<? super JoinAO> getConditionClass() {
 		return JoinAO.class;
 	}
 }

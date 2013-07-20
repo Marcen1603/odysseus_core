@@ -170,11 +170,11 @@ public final class SchemaUtils {
 	 * @return An array of all attribute indexes in the schema that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 	public static int[] getContinuousProbabilisticAttributePos(final SDFSchema schema) {
-		final List<SDFAttribute> attributes = SchemaUtils.getContinuousProbabilisticAttributes(schema);
+		final Collection<SDFAttribute> attributes = SchemaUtils.getContinuousProbabilisticAttributes(schema);
 		final int[] pos = new int[attributes.size()];
-		for (int i = 0; i < attributes.size(); i++) {
-			final SDFAttribute attribute = attributes.get(i);
-			pos[i] = schema.indexOf(attribute);
+		int i = 0;
+		for (SDFAttribute attribute : attributes) {
+			pos[i++] = schema.indexOf(attribute);
 		}
 		return pos;
 	}
@@ -187,11 +187,11 @@ public final class SchemaUtils {
 	 * @return An array of all attribute indexes in the schema that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 	public static int[] getDiscreteProbabilisticAttributePos(final SDFSchema schema) {
-		final List<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(schema);
+		final Collection<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(schema);
 		final int[] pos = new int[attributes.size()];
-		for (int i = 0; i < attributes.size(); i++) {
-			final SDFAttribute attribute = attributes.get(i);
-			pos[i] = schema.indexOf(attribute);
+		int i = 0;
+		for (SDFAttribute attribute : attributes) {
+			pos[i++] = schema.indexOf(attribute);
 		}
 		return pos;
 	}
@@ -203,7 +203,7 @@ public final class SchemaUtils {
 	 *            The {@link SDFSchema schema}
 	 * @return A list of all attributes in the schema that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
-	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final SDFSchema schema) {
+	public static Collection<SDFAttribute> getContinuousProbabilisticAttributes(final SDFSchema schema) {
 		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute attribute : schema.getAttributes()) {
 			if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
@@ -220,7 +220,7 @@ public final class SchemaUtils {
 	 *            The {@link Collection attributes}
 	 * @return A list of all attributes in the list that are continuous {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
-	public static List<SDFAttribute> getContinuousProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
+	public static Collection<SDFAttribute> getContinuousProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		final List<SDFAttribute> result = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute attribute : attributes) {
 			if (SchemaUtils.isContinuousProbabilisticAttribute(attribute)) {
@@ -238,7 +238,7 @@ public final class SchemaUtils {
 	 * @return A list of all attributes in the schema that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 
-	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final SDFSchema schema) {
+	public static Collection<SDFAttribute> getDiscreteProbabilisticAttributes(final SDFSchema schema) {
 		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute attribute : schema.getAttributes()) {
 			if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {
@@ -256,7 +256,7 @@ public final class SchemaUtils {
 	 * @return A list of all attributes in the list that are discrete {@link SDFProbabilisticDatatype probabilistic attributes}
 	 */
 
-	public static List<SDFAttribute> getDiscreteProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
+	public static Collection<SDFAttribute> getDiscreteProbabilisticAttributes(final Collection<SDFAttribute> attributes) {
 		final List<SDFAttribute> result = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute attribute : attributes) {
 			if (SchemaUtils.isDiscreteProbabilisticAttribute(attribute)) {

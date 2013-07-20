@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import org.slf4j.Logger;
@@ -34,20 +33,32 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
 	/** The Logger. */
-	private static Logger LOG = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
+	private static Logger logger = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
 	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
 		if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
-			LOG.error(this + " WARN: No Probabilistic merge function set for " + operator);
+			TProbabilisticValidatorRule.logger.error(this + " WARN: No Probabilistic merge function set for " + operator);
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
 		if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
@@ -58,11 +69,19 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
 	public final String getName() {
 		return "Probabilistic Validation";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
 	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.VALIDATE;

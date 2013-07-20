@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
 import java.util.ArrayList;
@@ -38,20 +37,27 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<ContinuousProbabilisticEquiJoinPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
-
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
 	@Override
-	public int getPriority() {
+	public final int getPriority() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void execute(final ContinuousProbabilisticEquiJoinPO joinPO, final TransformationConfiguration transformConfig) {
+	public final void execute(final ContinuousProbabilisticEquiJoinPO joinPO, final TransformationConfiguration transformConfig) {
 		final LinearRegressionTISweepArea[] areas = new LinearRegressionTISweepArea[2];
 
 		for (int port = 0; port < 2; port++) {
@@ -84,8 +90,12 @@ public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<C
 
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean isExecutable(final ContinuousProbabilisticEquiJoinPO operator, final TransformationConfiguration transformConfig) {
+	public final boolean isExecutable(final ContinuousProbabilisticEquiJoinPO operator, final TransformationConfiguration transformConfig) {
 		if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
 			if (operator.getAreas() == null) {
 				return true;
@@ -94,18 +104,30 @@ public class TContinuousEquiJoinAOSetSARule extends AbstractTransformationRule<C
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "ProbabilisticContinuousJoinPO set SweepArea";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
+	public final IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
 	@Override
-	public Class<? super ContinuousProbabilisticEquiJoinPO> getConditionClass() {
+	public final Class<? super ContinuousProbabilisticEquiJoinPO> getConditionClass() {
 		return ContinuousProbabilisticEquiJoinPO.class;
 	}
 

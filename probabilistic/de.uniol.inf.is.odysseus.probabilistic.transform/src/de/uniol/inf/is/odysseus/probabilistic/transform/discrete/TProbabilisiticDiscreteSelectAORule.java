@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -40,7 +42,7 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 	 */
 	@Override
 	public final int getPriority() {
-		return 11;
+		return TransformationConstants.PRIORITY;
 	}
 
 	/*
@@ -48,13 +50,13 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 	 * 
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
 		final int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), PredicateUtils.getAttributes(selectAO.getPredicate()));
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final IPhysicalOperator selectPO = new ProbabilisticDiscreteSelectPO(selectAO.getPredicate(), probabilisticAttributePos);
 		if (selectAO.getHeartbeatRate() > 0) {
-			((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
+			((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>(selectAO.getHeartbeatRate()));
 		}
 		this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
 	}
