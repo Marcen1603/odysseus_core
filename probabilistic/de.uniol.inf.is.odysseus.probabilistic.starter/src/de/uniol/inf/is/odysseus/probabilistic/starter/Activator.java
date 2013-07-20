@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.starter;
 
 import org.osgi.framework.BundleActivator;
@@ -23,9 +22,14 @@ import org.osgi.framework.BundleContext;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Activator implements BundleActivator {
-
+	/** The bundle context. */
 	private static BundleContext context;
 
+	/**
+	 * Gets the bundle context.
+	 * 
+	 * @return The bundle context
+	 */
 	static BundleContext getContext() {
 		return Activator.context;
 	}
@@ -38,7 +42,7 @@ public class Activator implements BundleActivator {
 	 * )
 	 */
 	@Override
-	public void start(final BundleContext bundleContext) throws Exception {
+	public final void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 	}
 
@@ -49,7 +53,7 @@ public class Activator implements BundleActivator {
 	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void stop(final BundleContext bundleContext) throws Exception {
+	public final void stop(final BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 
