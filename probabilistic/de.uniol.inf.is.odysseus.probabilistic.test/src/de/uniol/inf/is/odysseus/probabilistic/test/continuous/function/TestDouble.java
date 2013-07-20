@@ -16,11 +16,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.test.continuous.function;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -34,6 +29,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.Proba
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.test.TestConstants;
 
 /**
  * 
@@ -42,44 +38,6 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 @Test
 public class TestDouble {
-
-	/**
-	 * @throws Exception
-	 */
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	/**
- * 
- */
-	@BeforeTest
-	public void setUpAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterTest
-	public void tearDownAll() {
-
-	}
-
-	/**
- * 
- */
-	@AfterMethod
-	public void tearDown() {
-
-	}
 
 	// @Test(dataProvider = "continuousSmallerThanDouble")
 	// public void testDoubleSmallerThan(ProbabilisticContinuousDouble left,
@@ -107,17 +65,11 @@ public class TestDouble {
 	 *            The expected result
 	 */
 	@Test(dataProvider = "continuousSmallerEqualsDouble")
-	public final void testDoubleSmallerEquals(
-			final ProbabilisticContinuousDouble left,
-			final NormalDistributionMixture mixtures, final Double right,
-			final double result) {
+	public final void testDoubleSmallerEquals(final ProbabilisticContinuousDouble left, final NormalDistributionMixture mixtures, final Double right, final double result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousSmallerEqualsOperator();
-		((AbstractProbabilisticFunction<NormalDistributionMixture>) function)
-				.getDistributions().add(mixtures);
-		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left,
-				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
-				new Constant<Double>(right, SDFDatatype.DOUBLE));
-		Assert.assertEquals(function.getValue().getScale(), result, 10E-9);
+		((AbstractProbabilisticFunction<NormalDistributionMixture>) function).getDistributions().add(mixtures);
+		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+		Assert.assertEquals(function.getValue().getScale(), result, TestConstants.EPSILON);
 	}
 
 	/**
@@ -133,17 +85,11 @@ public class TestDouble {
 	 *            The expected result
 	 */
 	@Test(dataProvider = "continuousEqualsDouble")
-	public final void testDoubleEquals(
-			final ProbabilisticContinuousDouble left,
-			final NormalDistributionMixture mixtures, final Double right,
-			final double result) {
+	public final void testDoubleEquals(final ProbabilisticContinuousDouble left, final NormalDistributionMixture mixtures, final Double right, final double result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousEqualsOperator();
-		((AbstractProbabilisticFunction<NormalDistributionMixture>) function)
-				.getDistributions().add(mixtures);
-		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left,
-				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
-				new Constant<Double>(right, SDFDatatype.DOUBLE));
-		Assert.assertEquals(function.getValue().getScale(), result, 10E-9);
+		((AbstractProbabilisticFunction<NormalDistributionMixture>) function).getDistributions().add(mixtures);
+		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+		Assert.assertEquals(function.getValue().getScale(), result, TestConstants.EPSILON);
 	}
 
 	/**
@@ -181,7 +127,7 @@ public class TestDouble {
 	// // .add(mixtures);
 	// function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 	// new Constant<Double>(0.35, SDFDatatype.DOUBLE));
-	// Assert.assertEquals(function.getValue(), Math.min(0.25, 0.35), 10E-9);
+	// Assert.assertEquals(function.getValue(), Math.min(0.25, 0.35), TestConstants.EPSILON);
 	// }
 	//
 	// @Test
@@ -191,7 +137,7 @@ public class TestDouble {
 	// // .add(mixtures);
 	// function.setArguments(new Constant<Double>(0.25, SDFDatatype.DOUBLE),
 	// new Constant<Double>(0.35, SDFDatatype.DOUBLE));
-	// Assert.assertEquals(function.getValue(), Math.max(0.25, 0.35), 10E-9);
+	// Assert.assertEquals(function.getValue(), Math.max(0.25, 0.35), TestConstants.EPSILON);
 	// }
 
 	/**
@@ -207,17 +153,11 @@ public class TestDouble {
 	 *            The expected result
 	 */
 	@Test(dataProvider = "continuousGreaterEqualsDouble")
-	public final void testDoubleGreaterEquals(
-			final ProbabilisticContinuousDouble left,
-			final NormalDistributionMixture mixtures, final Double right,
-			final double result) {
+	public final void testDoubleGreaterEquals(final ProbabilisticContinuousDouble left, final NormalDistributionMixture mixtures, final Double right, final double result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousGreaterEqualsOperator();
-		((AbstractProbabilisticFunction<NormalDistributionMixture>) function)
-				.getDistributions().add(mixtures);
-		function.setArguments(new Constant<NormalDistributionMixture>(mixtures,
-				SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
-				new Constant<Double>(right, SDFDatatype.DOUBLE));
-		Assert.assertEquals(function.getValue().getScale(), result, 10E-9);
+		((AbstractProbabilisticFunction<NormalDistributionMixture>) function).getDistributions().add(mixtures);
+		function.setArguments(new Constant<NormalDistributionMixture>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+		Assert.assertEquals(function.getValue().getScale(), result, TestConstants.EPSILON);
 	}
 
 	// @Test(dataProvider = "continuousGreaterThanDouble")
@@ -231,7 +171,7 @@ public class TestDouble {
 	// function.setArguments(new Constant<ProbabilisticContinuousDouble>(left,
 	// SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE),
 	// new Constant<Double>(right, SDFDatatype.DOUBLE));
-	// Assert.assertEquals(function.getValue(), result, 10E-9);
+	// Assert.assertEquals(function.getValue(), result, TestConstants.EPSILON);
 	// }
 
 	// @Test(dataProvider = "continuousPlusDouble")
@@ -297,51 +237,56 @@ public class TestDouble {
 	// SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
 	// Assert.assertEquals(function.getValue(), result);
 	// }
-
+/**
+ * Data provider for "<" tests.
+ * @return Data for the "<" tests
+ */
 	@DataProvider(name = "continuousSmallerThanDouble")
 	public final Object[][] provideContinuousSmallerThanDoubleValues() {
 		return new Object[][] {};
 	}
 
+	/**
+	 * Data provider for "<=" tests.
+	 * 
+	 * @return Data for the "<=" tests
+	 */
 	@DataProvider(name = "continuousSmallerEqualsDouble")
 	public final Object[][] provideContinuousSmallerEqualsDoubleValues() {
-		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		return new Object[][] {
-				{ new ProbabilisticContinuousDouble(0), univariateMixtures,
-						3.0, 0.9973020261614356 },
-				{ new ProbabilisticContinuousDouble(0), multivariateMixtures,
-						3.0, 0.9973020261614356 } };
+		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
+		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
+		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 0.9973020261614356 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 0.9973020261614356 } };
 	}
 
+	/**
+	 * Data provider for "==" tests.
+	 * 
+	 * @return Data for the "==" tests
+	 */
 	@DataProvider(name = "continuousEqualsDouble")
 	public final Object[][] provideContinuousEqualsDoubleValues() {
-		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		return new Object[][] {
-				{ new ProbabilisticContinuousDouble(0), univariateMixtures,
-						3.0, 0.0 },
-				{ new ProbabilisticContinuousDouble(0), multivariateMixtures,
-						3.0, 0.0 } };
+		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
+		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
+		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 0.0 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 0.0 } };
 	}
 
+	/**
+	 * Data provider for ">=" tests.
+	 * 
+	 * @return Data for the ">=" tests
+	 */
 	@DataProvider(name = "continuousGreaterEqualsDouble")
 	public final Object[][] provideContinuousGreaterEqualsDoubleValues() {
-		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(
-				new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		return new Object[][] {
-				{ new ProbabilisticContinuousDouble(0), univariateMixtures,
-						3.0, 1.8222246957988279E-6 },
-				{ new ProbabilisticContinuousDouble(0), multivariateMixtures,
-						3.0, 1.8222246957988279E-6 } };
+		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
+		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
+		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 1.8222246957988279E-6 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 1.8222246957988279E-6 } };
 	}
 
+	/**
+	 * Data provider for ">" tests.
+	 * 
+	 * @return Data for the ">" tests
+	 */
 	@DataProvider(name = "continuousGreaterThanDouble")
 	public final Object[][] provideContinuousGreaterThanDoubleValues() {
 		return new Object[][] {};

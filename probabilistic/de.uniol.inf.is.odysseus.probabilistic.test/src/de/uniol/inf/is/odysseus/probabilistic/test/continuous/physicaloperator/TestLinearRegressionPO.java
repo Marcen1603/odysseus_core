@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.test.continuous.physicaloperator;
 
 import java.util.ArrayList;
@@ -14,11 +29,21 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 @SuppressWarnings("unused")
 public class TestLinearRegressionPO {
-
+	/**
+	 * Tests the linear regression PO.
+	 * 
+	 * 
+	 * FIXME needs rework
+	 */
 	@Test
-	public void testLinearRegression() {
+	public final void testLinearRegression() {
 		final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
 		attr.add(new SDFAttribute("", "a", SDFDatatype.DOUBLE));
 		attr.add(new SDFAttribute("", "b", SDFDatatype.DOUBLE));
@@ -33,38 +58,31 @@ public class TestLinearRegressionPO {
 		final Object[] attributes5 = new Object[] { 1.0, 5.0, 9.0, 15.0 };
 		final Object[] attributes6 = new Object[] { 1.0, 6.0, 10.0, 16.0 };
 
-		final ProbabilisticTuple<ITimeInterval> tuple1 = new ProbabilisticTuple<>(
-				attributes1, true);
+		final ProbabilisticTuple<ITimeInterval> tuple1 = new ProbabilisticTuple<>(attributes1, true);
 		tuple1.setMetadata(new TimeIntervalProbabilistic());
 		tuple1.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		final ProbabilisticTuple<ITimeInterval> tuple2 = new ProbabilisticTuple<>(
-				attributes2, true);
+		final ProbabilisticTuple<ITimeInterval> tuple2 = new ProbabilisticTuple<>(attributes2, true);
 		tuple2.setMetadata(new TimeIntervalProbabilistic());
 		tuple2.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		final ProbabilisticTuple<ITimeInterval> tuple3 = new ProbabilisticTuple<>(
-				attributes3, true);
+		final ProbabilisticTuple<ITimeInterval> tuple3 = new ProbabilisticTuple<>(attributes3, true);
 		tuple3.setMetadata(new TimeIntervalProbabilistic());
 		tuple3.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		final ProbabilisticTuple<ITimeInterval> tuple4 = new ProbabilisticTuple<>(
-				attributes4, true);
+		final ProbabilisticTuple<ITimeInterval> tuple4 = new ProbabilisticTuple<>(attributes4, true);
 		tuple4.setMetadata(new TimeIntervalProbabilistic());
 		tuple4.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		final ProbabilisticTuple<ITimeInterval> tuple5 = new ProbabilisticTuple<>(
-				attributes5, true);
+		final ProbabilisticTuple<ITimeInterval> tuple5 = new ProbabilisticTuple<>(attributes5, true);
 		tuple5.setMetadata(new TimeIntervalProbabilistic());
 		tuple5.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		final ProbabilisticTuple<ITimeInterval> tuple6 = new ProbabilisticTuple<>(
-				attributes6, true);
+		final ProbabilisticTuple<ITimeInterval> tuple6 = new ProbabilisticTuple<>(attributes6, true);
 		tuple6.setMetadata(new TimeIntervalProbabilistic());
 		tuple6.getMetadata().setStart(PointInTime.currentPointInTime());
 
-		final LinearRegressionPO<ITimeInterval> linearRegression = new LinearRegressionPO<ITimeInterval>(
-				new int[] { 0, 3 }, new int[] { 1, 2 });
+		final LinearRegressionPO<ITimeInterval> linearRegression = new LinearRegressionPO<ITimeInterval>(new int[] { 0, 3 }, new int[] { 1, 2 });
 		// linearRegression.process_next(tuple1, 0);
 		// linearRegression.process_next(tuple2, 0);
 		// linearRegression.process_next(tuple3, 0);

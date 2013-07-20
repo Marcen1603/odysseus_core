@@ -39,10 +39,10 @@ import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class RuleProvider implements ITransformRuleProvider {
-/*
- * 
- * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider#getRules()
- */
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider#getRules()
+	 */
 	@Override
 	public final List<IRule<?, ?>> getRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();

@@ -13,4 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.test.continuous.physicaloperator;
+package de.uniol.inf.is.odysseus.probabilistic.test;
+
+/**
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+public final class TestConstants {
+	/** Acceptable epsilon for test functions. */
+	public static final double EPSILON = 10E-9;
+
+	/**
+	 * Private constructor.
+	 */
+	private TestConstants() {
+	}
+}

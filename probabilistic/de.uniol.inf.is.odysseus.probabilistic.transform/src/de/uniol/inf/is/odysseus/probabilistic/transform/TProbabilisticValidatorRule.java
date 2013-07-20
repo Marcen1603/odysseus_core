@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
 	/** The Logger. */
-	private static Logger logger = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
 
 	/*
 	 * 
@@ -51,7 +51,7 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
 	@Override
 	public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
 		if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
-			TProbabilisticValidatorRule.logger.error(this + " WARN: No Probabilistic merge function set for " + operator);
+			TProbabilisticValidatorRule.LOG.error(this + " WARN: No Probabilistic merge function set for " + operator);
 		}
 	}
 
