@@ -90,7 +90,7 @@ public class ContextEnrichPO<M extends ITimeInterval> extends AbstractPipe<Tuple
 			transfer(newElement);
 		}
 		if(values.size()==0 && outer){
-			Tuple<M> nullTuple = new Tuple<M>(this.restrictList.length, false);
+			Tuple<M> nullTuple = new Tuple<M>(this.restrictList.length, object.requiresDeepClone());
 			nullTuple.setMetadata((M) object.getMetadata());
 			Tuple<M> newElement = dataMerge.merge(object, nullTuple, metadataMerge, Order.LeftRight);		
 			transfer(newElement);
