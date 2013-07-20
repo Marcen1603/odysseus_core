@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticDoubleToByteFunction extends AbstractProbabilisticFunction<ProbabilisticByte> {
@@ -37,18 +37,30 @@ public class ProbabilisticDoubleToByteFunction extends AbstractProbabilisticFunc
 	 */
 	private static final long serialVersionUID = 2574577913106674914L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+	 */
 	@Override
-	public int getArity() {
+	public final int getArity() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+	 */
 	@Override
-	public String getSymbol() {
+	public final String getSymbol() {
 		return "doubleToByte";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
 	@Override
-	public ProbabilisticByte getValue() {
+	public final ProbabilisticByte getValue() {
 		final Map<Byte, Double> values = new HashMap<Byte, Double>();
 		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
 			values.put(((Number) value.getKey()).byteValue(), value.getValue());
@@ -56,22 +68,33 @@ public class ProbabilisticDoubleToByteFunction extends AbstractProbabilisticFunc
 		return new ProbabilisticByte(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+	 */
 	@Override
-	public SDFDatatype getReturnType() {
+	public final SDFDatatype getReturnType() {
 		return SDFProbabilisticDatatype.PROBABILISTIC_BYTE;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+	 */
 	@Override
-	public SDFDatatype[] getAcceptedTypes(final int argPos) {
+	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
 			throw new IllegalArgumentException("doubleToByte has only 1 argument.");
 		}
-		return ProbabilisticDoubleToByteFunction.accTypes;
+		return ProbabilisticDoubleToByteFunction.ACC_TYPES;
 	}
 
 }

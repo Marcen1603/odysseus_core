@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,22 +35,34 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticDoubleHandler extends AbstractDataHandler<ProbabilisticDouble> {
-	static protected List<String> types = new ArrayList<String>();
+	/** Supported data types. */
+	private static final List<String> TYPES = new ArrayList<String>();
 	static {
-		ProbabilisticDoubleHandler.types.add("ProbabilisticDouble");
+		ProbabilisticDoubleHandler.TYPES.add("ProbabilisticDouble");
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticDouble> getInstance(final SDFSchema schema) {
+	public final IDataHandler<ProbabilisticDouble> getInstance(final SDFSchema schema) {
 		return new ProbabilisticDoubleHandler();
 	}
 
+	/**
+	 * Default constructor.
+	 */
 	public ProbabilisticDoubleHandler() {
 		super();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
+	 */
 	@Override
-	public ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
+	public final ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Double, Double> values = new HashMap<Double, Double>();
 		for (int i = 0; i < length; i++) {
@@ -60,8 +73,12 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 		return new ProbabilisticDouble(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
+	 */
 	@Override
-	public ProbabilisticDouble readData(final String string) {
+	public final ProbabilisticDouble readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Double, Double> values = new HashMap<Double, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -71,8 +88,12 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 		return new ProbabilisticDouble(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
+	 */
 	@Override
-	public ProbabilisticDouble readData(final ByteBuffer buffer) {
+	public final ProbabilisticDouble readData(final ByteBuffer buffer) {
 		final int length = buffer.getInt();
 		final Map<Double, Double> values = new HashMap<Double, Double>();
 		for (int i = 0; i < length; i++) {
@@ -83,8 +104,12 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 		return new ProbabilisticDouble(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
-	public void writeData(final ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final ProbabilisticDouble values = (ProbabilisticDouble) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<Double, Double> value : values.getValues().entrySet()) {
@@ -93,13 +118,21 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
+	 */
 	@Override
-	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticDoubleHandler.types;
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticDoubleHandler.TYPES);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
+	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
 	}
 }

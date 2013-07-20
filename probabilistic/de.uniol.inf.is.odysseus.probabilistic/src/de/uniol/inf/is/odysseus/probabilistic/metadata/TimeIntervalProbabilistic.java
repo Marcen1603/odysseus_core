@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class TimeIntervalProbabilistic extends TimeInterval implements ITimeIntervalProbabilistic {
@@ -32,52 +32,91 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * 
 	 */
 	private static final long serialVersionUID = -9030157268224460919L;
+	/** The classes. */
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class };
+	public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class };
+	/** The tuple probability. */
 	private final IProbabilistic probabilistic;
 
+	/**
+	 * Default constructor.
+	 */
 	public TimeIntervalProbabilistic() {
 		super();
 		this.probabilistic = new Probabilistic();
 	}
 
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param intervalProbabilistic
+	 *            The object to copy from
+	 */
 	public TimeIntervalProbabilistic(final TimeIntervalProbabilistic intervalProbabilistic) {
 		super(intervalProbabilistic);
 		this.probabilistic = intervalProbabilistic.probabilistic.clone();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#clone()
+	 */
 	@Override
-	public TimeIntervalProbabilistic clone() {
+	public final TimeIntervalProbabilistic clone() {
 		return new TimeIntervalProbabilistic(this);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#toString()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "( i= " + super.toString() + " | " + " p=" + this.probabilistic + ")";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#csvToString(char, java.lang.Character, java.text.NumberFormat, java.text.NumberFormat, boolean)
+	 */
 	@Override
-	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
+	public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.probabilistic.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#getCSVHeader(char)
+	 */
 	@Override
-	public String getCSVHeader(final char delimiter) {
+	public final String getCSVHeader(final char delimiter) {
 		return super.getCSVHeader(delimiter) + delimiter + this.probabilistic.getCSVHeader(delimiter);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#getExistence()
+	 */
 	@Override
-	public double getExistence() {
+	public final double getExistence() {
 		return this.probabilistic.getExistence();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#setExistence(double)
+	 */
 	@Override
-	public void setExistence(final double existence) {
+	public final void setExistence(final double existence) {
 		this.probabilistic.setExistence(existence);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#getClasses()
+	 */
 	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return TimeIntervalProbabilistic.classes;
+	public final Class<? extends IMetaAttribute>[] getClasses() {
+		return TimeIntervalProbabilistic.CLASSES;
 	}
 }

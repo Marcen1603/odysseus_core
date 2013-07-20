@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<T> {
 	/** Logger. */
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteSelectPO.class);
-
+	/** Positions of probabilistic attributes. */
 	private final int[] probabilisticAttributePos;
 
 	/**
@@ -115,7 +115,10 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 		// Transfer the tuple iff the joint probability is positive (maybe set quality filter later to reduce the number of tuples)
 		if (jointProbability > 0.0) {
 			((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
+			// KTHXBYE
 			this.transfer(outputVal);
+		} else if (LOG.isTraceEnabled()) {
+			LOG.trace("Drop tuple: " + outputVal.toString());
 		}
 	}
 

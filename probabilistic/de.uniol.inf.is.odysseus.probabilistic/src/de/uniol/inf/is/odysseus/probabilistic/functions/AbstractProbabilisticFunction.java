@@ -17,33 +17,44 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
+ */
 public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<T> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1726038091049996390L;
+	/** The distributions. */
 	private final List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
 
 	/**
+	 * Gets the normal distribution mixtures at the given position.
 	 * 
-	 * @param distributionIndex
-	 * @return
+	 * @param pos
+	 *            The position of the mixtures
+	 * @return The normal distribution mixtures at the given position
 	 */
-	public NormalDistributionMixture getDistributions(final int distributionIndex) {
-		return this.distributions.get(distributionIndex);
+	public final NormalDistributionMixture getDistributions(final int pos) {
+		return this.distributions.get(pos);
 	}
 
 	/**
+	 * Gets all normal distribution mixtures.
 	 * 
-	 * @return
+	 * @return All normal distribution mixtures
 	 */
-	public List<NormalDistributionMixture> getDistributions() {
-		return this.distributions;
+	public final List<NormalDistributionMixture> getDistributions() {
+		return Collections.unmodifiableList(this.distributions);
 	}
 }

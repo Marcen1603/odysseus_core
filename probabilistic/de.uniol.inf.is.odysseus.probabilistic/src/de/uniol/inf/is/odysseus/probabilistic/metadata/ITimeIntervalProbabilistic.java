@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
 /**
  * 
- * Combination of time interval and probabilisitic meta data.
+ * Combination of time interval and probabilistic meta data.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
@@ -31,7 +31,6 @@ public interface ITimeIntervalProbabilistic extends ITimeInterval, IProbabilisti
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.metadata.ITimeInterval#clone()
 	 */
-	@Override
-	public ITimeIntervalProbabilistic clone();
+	@Override ITimeIntervalProbabilistic clone();
 
 }

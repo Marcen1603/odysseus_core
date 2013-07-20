@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,35 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction;
 
 /**
- * Merge function for probabilistic data streams
+ * Merge function for probabilistic data streams.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
-public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeFunction<ITimeIntervalProbabilistic> {
-
+public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeFunction<ITimeIntervalProbabilistic>, Cloneable {
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction#mergeInto(java.lang.Object, java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public void mergeInto(final ITimeIntervalProbabilistic result, final ITimeIntervalProbabilistic inLeft, final ITimeIntervalProbabilistic inRight) {
+	public final void mergeInto(final ITimeIntervalProbabilistic result, final ITimeIntervalProbabilistic inLeft, final ITimeIntervalProbabilistic inRight) {
 		result.setExistence(inLeft.getExistence() * inRight.getExistence());
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
-	public ProbabilisticMetadataMergeFunction clone() {
+	public final ProbabilisticMetadataMergeFunction clone() {
 		return new ProbabilisticMetadataMergeFunction();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction#getMetadataType()
+	 */
 	@Override
-	public Class<? extends IMetaAttribute> getMetadataType() {
+	public final Class<? extends IMetaAttribute> getMetadataType() {
 		return ITimeIntervalProbabilistic.class;
 	}
 

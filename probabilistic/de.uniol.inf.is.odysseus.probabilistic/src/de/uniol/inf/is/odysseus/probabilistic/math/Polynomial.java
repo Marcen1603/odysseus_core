@@ -21,30 +21,63 @@ import java.util.Arrays;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Polynomial {
+	/** The polynomial coefficients. */
 	private final double[] coefficients;
+	/** The degree of the polynomial. */
 	private int degree;
 
+	/**
+	 * Creates a new polynomial with the given coefficients.
+	 * 
+	 * @param coefficient
+	 *            The polynomial coefficients
+	 * @param degree
+	 *            The degree of the polynomial
+	 */
 	public Polynomial(final double coefficient, final int degree) {
 		this.coefficients = new double[degree + 1];
 		this.coefficients[degree] = coefficient;
 		this.degree = this.degree();
 	}
 
-	public int degree() {
-		int degree = 0;
+	/**
+	 * Gets the degree of the polynomial.
+	 * 
+	 * @return The degree of the polynomial
+	 */
+	public final int degree() {
+		int polynomialDegree = 0;
 		for (int i = 0; i < this.coefficients.length; i++) {
 			if (this.coefficients[i] != 0.0) {
-				degree = i;
+				polynomialDegree = i;
 			}
 		}
-		return degree;
+		return polynomialDegree;
 	}
 
-	public double coefficient(final int degree) {
-		return this.coefficients[degree];
+	/**
+	 * Gets the coefficient of the given degree.
+	 * 
+	 * @param coefficientDegree
+	 *            The degree of the coefficient
+	 * @return The coefficient of the given degree
+	 */
+	public final double coefficient(final int coefficientDegree) {
+		if (coefficientDegree < this.coefficients.length) {
+			return this.coefficients[coefficientDegree];
+		} else {
+			return 0.0;
+		}
 	}
 
-	public Polynomial add(final Polynomial other) {
+	/**
+	 * Adds the given polynomial to this polynomial and returns the new polynomial.
+	 * 
+	 * @param other
+	 *            The other polynomial
+	 * @return The result of the operation
+	 */
+	public final Polynomial add(final Polynomial other) {
 		final Polynomial result = new Polynomial(0.0, Math.max(this.degree, other.degree));
 		for (int i = 0; i <= this.degree; i++) {
 			result.coefficients[i] += this.coefficients[i];
@@ -56,7 +89,14 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial substract(final Polynomial other) {
+	/**
+	 * Subtracts the given polynomial from this polynomial and returns the new polynomial.
+	 * 
+	 * @param other
+	 *            The other polynomial
+	 * @return The result of the operation
+	 */
+	public final Polynomial substract(final Polynomial other) {
 		final Polynomial result = new Polynomial(0.0, Math.max(this.degree, other.degree));
 		for (int i = 0; i <= this.degree; i++) {
 			result.coefficients[i] += this.coefficients[i];
@@ -68,7 +108,14 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial multiply(final Polynomial other) {
+	/**
+	 * Multiplies the given polynomial with this polynomial and returns the new polynomial.
+	 * 
+	 * @param other
+	 *            The other polynomial
+	 * @return The result of the operation
+	 */
+	public final Polynomial multiply(final Polynomial other) {
 		final Polynomial result = new Polynomial(0.0, this.degree + other.degree);
 		for (int i = 0; i <= this.degree; i++) {
 			for (int j = 0; j <= other.degree; j++) {
@@ -79,7 +126,14 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial compose(final Polynomial other) {
+	/**
+	 * Compose the given polynomial with this polynomial and returns the new polynomial.
+	 * 
+	 * @param other
+	 *            The other polynomial
+	 * @return The result of the operation
+	 */
+	public final Polynomial compose(final Polynomial other) {
 		Polynomial result = new Polynomial(0.0, 0);
 		for (int i = this.degree; i >= 0; i--) {
 			final Polynomial term = new Polynomial(this.coefficients[i], 0);
@@ -88,8 +142,12 @@ public class Polynomial {
 		return result;
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + Arrays.hashCode(this.coefficients);
@@ -97,8 +155,12 @@ public class Polynomial {
 		return result;
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(final Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -120,7 +182,14 @@ public class Polynomial {
 		return true;
 	}
 
-	public double evaluate(final double x) {
+	/**
+	 * Evaluates this polynomial with the given value.
+	 * 
+	 * @param x
+	 *            The value
+	 * @return The result of the operation
+	 */
+	public final double evaluate(final double x) {
 		double result = 0.0;
 		for (int i = this.degree; i >= 0; i--) {
 			result += this.coefficients[i] * Math.pow(x, i);
@@ -128,7 +197,12 @@ public class Polynomial {
 		return result;
 	}
 
-	public Polynomial differentiate() {
+	/**
+	 * Differentiate this polynomial and return the new polynomial.
+	 * 
+	 * @return The differentiated polynomial
+	 */
+	public final Polynomial differentiate() {
 		if (this.degree == 0) {
 			return new Polynomial(0, 0);
 		}
@@ -140,7 +214,12 @@ public class Polynomial {
 		return deriv;
 	}
 
-	public Polynomial integrate() {
+	/**
+	 * Integrate this polynomial and return the new polynomial.
+	 * 
+	 * @return The integrated polynomial
+	 */
+	public final Polynomial integrate() {
 		final Polynomial integral = new Polynomial(0.0, this.degree + 1);
 		integral.degree = this.degree + 1;
 		for (int i = 0; i <= this.degree; i++) {
@@ -149,8 +228,12 @@ public class Polynomial {
 		return integral;
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuilder sb = new StringBuilder();
 		if (this.degree == 0) {
 			return sb.append(this.coefficients[0]).toString();

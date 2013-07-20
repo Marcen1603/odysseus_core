@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 /**
  * Standard query build configuration for probabilistic data streams supporting Rewrite, Query Sharing and Reconstruction.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
-
+	/**
+	 * Default constructor.
+	 */
 	public StandardProbabilisticQueryBuildConfiguration() {
 		final Set<String> dataTypes = new HashSet<String>();
 		dataTypes.add("probabilistic");
@@ -48,17 +50,31 @@ public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryB
 		this.settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 
+	/**
+	 * Creates a new {@link StandardProbabilisticQueryBuildConfiguration} with the given settings.
+	 * 
+	 * @param settings
+	 *            The query build settings
+	 */
 	public StandardProbabilisticQueryBuildConfiguration(final List<IQueryBuildSetting<?>> settings) {
 		this.settings.addAll(settings);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration#getName()
+	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return "StandardProbabilistic";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration#clone()
+	 */
 	@Override
-	public IQueryBuildConfiguration clone() {
+	public final IQueryBuildConfiguration clone() {
 		return new StandardProbabilisticQueryBuildConfiguration(this.settings);
 	}
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.functions;
+package de.uniol.inf.is.odysseus.probabilistic.common;
 
 import java.util.Map.Entry;
 
@@ -28,24 +28,45 @@ import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public final class ProbabilisticContinuousSelectUtils {
-
+public final class ProbabilisticContinuousUtils {
+	/**
+	 * Calculates the cumulative probability of the given normal distribution mixture.
+	 * 
+	 * @param mixtures
+	 *            The normal distribution mixture
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability of the given normal distribution mixture.
+	 */
 	public static double cumulativeProbability(final NormalDistributionMixture mixtures, final RealVector lowerBound, final RealVector upperBound) {
 
 		double probability = 0.0;
 
 		final int dimension = mixtures.getDimension();
 		if (dimension == 1) {
-			probability = ProbabilisticContinuousSelectUtils.univariateCumulativeProbability(mixtures, lowerBound.getEntry(0), upperBound.getEntry(0));
+			probability = ProbabilisticContinuousUtils.univariateCumulativeProbability(mixtures, lowerBound.getEntry(0), upperBound.getEntry(0));
 		} else {
-			probability = ProbabilisticContinuousSelectUtils.multivariateCumulativeProbability(mixtures, lowerBound, upperBound);
+			probability = ProbabilisticContinuousUtils.multivariateCumulativeProbability(mixtures, lowerBound, upperBound);
 		}
 		return probability;
 	}
 
+	/**
+	 * Calculates the cumulative probability of the given univariate normal distribution mixture.
+	 * 
+	 * @param distribution
+	 *            The normal distribution mixture
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability of the given normal distribution mixture.
+	 */
 	private static double univariateCumulativeProbability(final NormalDistributionMixture distribution, final double lowerBound, final double upperBound) {
 		double probability = 0.0;
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
@@ -57,6 +78,17 @@ public final class ProbabilisticContinuousSelectUtils {
 		return probability;
 	}
 
+	/**
+	 * Calculates the cumulative probability of the given multivariate normal distribution mixture.
+	 * 
+	 * @param distribution
+	 *            The normal distribution mixture
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability of the given normal distribution mixture.
+	 */
 	private static double multivariateCumulativeProbability(final NormalDistributionMixture distribution, final RealVector lowerBound, final RealVector upperBound) {
 		double probability = 0.0;
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
@@ -70,6 +102,9 @@ public final class ProbabilisticContinuousSelectUtils {
 		return probability;
 	}
 
-	private ProbabilisticContinuousSelectUtils() {
+	/**
+	 * Private constructor.
+	 */
+	private ProbabilisticContinuousUtils() {
 	}
 }

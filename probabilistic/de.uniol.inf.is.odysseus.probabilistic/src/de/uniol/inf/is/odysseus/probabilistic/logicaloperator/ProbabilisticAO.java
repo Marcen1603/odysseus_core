@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -25,7 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "Probabilistic")
 public class ProbabilisticAO extends UnaryLogicalOp {
@@ -34,7 +34,8 @@ public class ProbabilisticAO extends UnaryLogicalOp {
 	 * 
 	 */
 	private static final long serialVersionUID = 5230887041196691992L;
-	private List<SDFAttribute> attributes;
+	/** The attribute holding the existence probability. */
+	private SDFAttribute attribute;
 
 	/**
 	 * Constructs a new Probabilistic logical operator.
@@ -51,27 +52,27 @@ public class ProbabilisticAO extends UnaryLogicalOp {
 	 */
 	public ProbabilisticAO(final ProbabilisticAO updateProbabilisticMetadataAO) {
 		super(updateProbabilisticMetadataAO);
-		this.attributes = updateProbabilisticMetadataAO.attributes;
+		this.attribute = updateProbabilisticMetadataAO.attribute;
 	}
 
 	/**
-	 * Sets the list of attributes.
+	 * Sets the attribute.
 	 * 
-	 * @param attributes
-	 *            The attributes
+	 * @param attribute
+	 *            The attribute
 	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
-	public final void setProbabilities(final List<SDFAttribute> attributes) {
-		this.attributes = attributes;
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true)
+	public final void setAttribute(final SDFAttribute attribute) {
+		this.attribute = attribute;
 	}
 
 	/**
-	 * Gets the list of attributes.
+	 * Gets the attribute.
 	 * 
-	 * @return The list of attributes
+	 * @return The attribute
 	 */
-	public final List<SDFAttribute> getAttributes() {
-		return this.attributes;
+	public final SDFAttribute getAttribute() {
+		return this.attribute;
 	}
 
 	/*

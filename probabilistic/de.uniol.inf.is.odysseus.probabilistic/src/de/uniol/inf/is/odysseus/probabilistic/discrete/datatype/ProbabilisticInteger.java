@@ -19,7 +19,8 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 import java.util.Map;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Data type representing a probabilistic discrete Integer value.
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 
@@ -27,19 +28,43 @@ public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 	 * 
 	 */
 	private static final long serialVersionUID = 5126430661442462253L;
-
+	/**
+	 * Creates a new {@link ProbabilisticInteger} with the given value and probability.
+	 * 
+	 * @param value
+	 *            The value
+	 * @param probability
+	 *            The associated probability
+	 */
 	public ProbabilisticInteger(final Integer value, final Double probability) {
 		super(value, probability);
 	}
-
+	/**
+	 * Creates a new {@link ProbabilisticInteger} with the given values.
+	 * 
+	 * @param values
+	 *            The values
+	 */
 	public ProbabilisticInteger(final Map<Integer, Double> values) {
 		super(values);
 	}
-
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param other
+	 *            The object to copy from
+	 */
 	public ProbabilisticInteger(final ProbabilisticInteger other) {
 		super(other);
 	}
-
+	/**
+	 * Creates a new {@link ProbabilisticInteger} with the given values and probabilities.
+	 * 
+	 * @param values
+	 *            The values
+	 * @param probabilities
+	 *            The associated probabilities
+	 */
 	public ProbabilisticInteger(final Integer[] values, final Double[] probabilities) {
 		super(values, probabilities);
 	}

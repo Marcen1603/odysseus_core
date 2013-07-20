@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<ProbabilisticDouble> {
@@ -38,37 +38,63 @@ public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<Pro
 	 * 
 	 */
 	private static final long serialVersionUID = -1757085950523543990L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
+	/**
+	 * Accepted data types.
+	 */
+	private static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
 			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG };
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+	 */
 	@Override
-	public int getArity() {
+	public final int getArity() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+	 */
 	@Override
-	public SDFDatatype[] getAcceptedTypes(final int argPos) {
+	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return ProbabilisticSQRTFunction.accTypes;
+		return ProbabilisticSQRTFunction.ACC_TYPES;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+	 */
 	@Override
-	public String getSymbol() {
+	public final String getSymbol() {
 		return "sqrt";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
 	@Override
-	public ProbabilisticDouble getValue() {
+	public final ProbabilisticDouble getValue() {
 		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
 		return this.getValueInternal(a);
 	}
 
-	protected ProbabilisticDouble getValueInternal(final AbstractProbabilisticValue<?> a) {
+	/**
+	 * Compute the square root of the given probabilistic value.
+	 * 
+	 * @param a
+	 *            The probabilistic value
+	 * @return The probabilistic square root
+	 */
+	protected final ProbabilisticDouble getValueInternal(final AbstractProbabilisticValue<?> a) {
 		final Map<Double, Double> values = new HashMap<Double, Double>(a.getValues().size());
 		for (final Entry<?, Double> aEntry : a.getValues().entrySet()) {
 			final double value = FastMath.sqrt(((Number) aEntry.getKey()).doubleValue());
@@ -81,8 +107,12 @@ public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<Pro
 		return new ProbabilisticDouble(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+	 */
 	@Override
-	public SDFDatatype getReturnType() {
+	public final SDFDatatype getReturnType() {
 		return SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE;
 	}
 

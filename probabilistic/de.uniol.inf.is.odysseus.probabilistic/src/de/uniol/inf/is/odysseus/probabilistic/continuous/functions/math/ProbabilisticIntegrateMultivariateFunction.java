@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import java.util.Map.Entry;
@@ -42,13 +41,25 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
      * 
      */
 	private static final long serialVersionUID = 144107943090837242L;
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, 
+		{ SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+	 */
 	@Override
-	public String getSymbol() {
+	public final String getSymbol() {
 		return "int";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
 	@Override
 	public Double getValue() {
 		final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
@@ -57,20 +68,43 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 		return this.getValueInternal(continuousDouble, lowerBound, upperBound);
 	}
 
-	protected double getValueInternal(final ProbabilisticContinuousDouble function, final RealVector lowerBound, final RealVector upperBound) {
+	/**
+	 * Integrates the given distribution from the lower to the upper bound.
+	 * 
+	 * @param function
+	 *            The distribution
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability in the given bound
+	 */
+	protected final double getValueInternal(final ProbabilisticContinuousDouble function, final RealVector lowerBound, final RealVector upperBound) {
 		return this.cumulativeProbability(function, lowerBound, upperBound);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+	 */
 	@Override
-	public SDFDatatype getReturnType() {
+	public final SDFDatatype getReturnType() {
 		return SDFDatatype.DOUBLE;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+	 */
 	@Override
-	public int getArity() {
+	public final int getArity() {
 		return 3;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+	 */
 	@Override
 	public SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
@@ -79,13 +113,22 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution and the lower and upper support.");
 		}
-		return ProbabilisticIntegrateMultivariateFunction.accTypes[argPos];
+		return ProbabilisticIntegrateMultivariateFunction.ACC_TYPES[argPos];
 	}
 
+	/**
+	 * Calculates the cumulative probability of the given distribution between the lower and the upper bound.
+	 * 
+	 * @param distribution
+	 *            The distribution
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability
+	 */
 	private double cumulativeProbability(final ProbabilisticContinuousDouble distribution, final RealVector lowerBound, final RealVector upperBound) {
-
 		double probability = 0.0;
-
 		final NormalDistributionMixture mixtures = this.getDistributions(distribution.getDistribution());
 		final int dimension = mixtures.getDimension();
 		if (dimension == 1) {
@@ -96,6 +139,17 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 		return probability;
 	}
 
+	/**
+	 * Calculates the cumulative probability of the given univariate distribution between the lower and the upper bound.
+	 * 
+	 * @param distribution
+	 *            The univariate distribution
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability
+	 */
 	private double univariateCumulativeProbability(final NormalDistributionMixture distribution, final double lowerBound, final double upperBound) {
 		double probability = 0.0;
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
@@ -107,6 +161,17 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 		return probability;
 	}
 
+	/**
+	 * Calculates the cumulative probability of the given multivariate distribution between the lower and the upper bound.
+	 * 
+	 * @param distribution
+	 *            The multivariate distribution
+	 * @param lowerBound
+	 *            The lower bound
+	 * @param upperBound
+	 *            The upper bound
+	 * @return The cumulative probability
+	 */
 	private double multivariateCumulativeProbability(final NormalDistributionMixture distribution, final RealVector lowerBound, final RealVector upperBound) {
 		double probability = 0.0;
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {

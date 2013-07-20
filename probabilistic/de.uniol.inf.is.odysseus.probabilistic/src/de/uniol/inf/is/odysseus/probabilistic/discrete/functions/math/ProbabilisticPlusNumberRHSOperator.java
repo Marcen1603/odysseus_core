@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticPlusNumberRHSOperator extends ProbabilisticPlusOperator {
@@ -32,32 +32,43 @@ public class ProbabilisticPlusNumberRHSOperator extends ProbabilisticPlusOperato
 	 * 
 	 */
 	private static final long serialVersionUID = 7963474021672657756L;
-
+/*
+ * 
+ * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#getValue()
+ */
 	@Override
-	public ProbabilisticDouble getValue() {
+	public final ProbabilisticDouble getValue() {
 		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
 		final ProbabilisticDouble b = new ProbabilisticDouble(this.getNumericalInputValue(1), 1.0);
 		return this.getValueInternal(a, b);
 	}
-
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
 			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG },
 			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
-
+/*
+ * 
+ * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#isCommutative()
+ */
 	@Override
-	public boolean isCommutative() {
+	public final boolean isCommutative() {
 		return false;
 	}
-
+/*
+ * 
+ * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#getAcceptedTypes(int)
+ */
 	@Override
-	public SDFDatatype[] getAcceptedTypes(final int argPos) {
+	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return ProbabilisticPlusNumberRHSOperator.accTypes[argPos];
+		return ProbabilisticPlusNumberRHSOperator.ACC_TYPES[argPos];
 	}
 
 }

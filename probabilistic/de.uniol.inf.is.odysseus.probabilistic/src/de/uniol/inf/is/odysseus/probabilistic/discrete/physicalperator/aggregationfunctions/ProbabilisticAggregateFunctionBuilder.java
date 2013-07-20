@@ -28,12 +28,19 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunctionBuilder {
-	private final static String SUM = "SUM";
-	private final static String COUNT = "COUNT";
-	private final static String AVG = "AVG";
-	private final static String MIN = "MIN";
-	private final static String MAX = "MAX";
-	private final static String STDDEV = "STDDEV";
+	/** The SUM aggregate. */
+	private static final String SUM = "SUM";
+	/** The COUNT aggregate. */
+	private static final String COUNT = "COUNT";
+	/** The AVG aggregate. */
+	private static final String AVG = "AVG";
+	/** The MIN aggregate. */
+	private static final String MIN = "MIN";
+	/** The MAX aggregate. */
+	private static final String MAX = "MAX";
+	/** The STDDEV aggregate. */
+	private static final String STDDEV = "STDDEV";
+	/** The available aggregate functions. */
 	private static Collection<String> names = new LinkedList<String>();
 	{
 		ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.SUM);
@@ -41,32 +48,44 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
 		ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.AVG);
 	};
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder#getDatamodel()
+	 */
 	@Override
-	public String getDatamodel() {
+	public final String getDatamodel() {
 		return SchemaUtils.DATATYPE;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder#getFunctionNames()
+	 */
 	@Override
-	public Collection<String> getFunctionNames() {
+	public final Collection<String> getFunctionNames() {
 		return ProbabilisticAggregateFunctionBuilder.names;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder#createAggFunction(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction, int[], boolean, java.lang.String)
+	 */
 	@Override
-	public IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final int[] pos, final boolean partialAggregateInput, final String datatype) {
+	public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final int[] pos, final boolean partialAggregateInput, final String datatype) {
 		IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
-			aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput);
+			aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.SUM)) {
-			aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput);
+			aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COUNT)) {
-			aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput);
-		} else if (key.getName().equalsIgnoreCase("MIN")) {
+			aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput, datatype);
+		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.MIN)) {
 			aggFunc = ProbabilisticMin.getInstance(pos[0], partialAggregateInput, datatype);
 			throw new IllegalArgumentException("MIN Aggregatefunction not implemented");
-		} else if (key.getName().equalsIgnoreCase("MAX")) {
+		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.MAX)) {
 			aggFunc = ProbabilisticMax.getInstance(pos[0], partialAggregateInput, datatype);
 			throw new IllegalArgumentException("MAX Aggregatefunction not implemented");
-		} else if (key.getName().equalsIgnoreCase("STDDEV")) {
+		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.STDDEV)) {
 			aggFunc = ProbabilisticStdDev.getInstance(pos[0], partialAggregateInput, datatype);
 			throw new IllegalArgumentException("STDDEV Aggregatefunction not implemented");
 		} else {

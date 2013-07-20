@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,22 +37,34 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticFlo
  * 
  */
 public class ProbabilisticFloatHandler extends AbstractDataHandler<ProbabilisticFloat> {
-	static protected List<String> types = new ArrayList<String>();
+	/** Supported data types. */
+	private static final List<String> TYPES = new ArrayList<String>();
 	static {
-		ProbabilisticFloatHandler.types.add("ProbabilisticFloat");
+		ProbabilisticFloatHandler.TYPES.add("ProbabilisticFloat");
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticFloat> getInstance(final SDFSchema schema) {
+	public final IDataHandler<ProbabilisticFloat> getInstance(final SDFSchema schema) {
 		return new ProbabilisticFloatHandler();
 	}
 
+	/**
+	 * Default constructor.
+	 */
 	public ProbabilisticFloatHandler() {
 		super();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
+	 */
 	@Override
-	public ProbabilisticFloat readData(final ObjectInputStream inputStream) throws IOException {
+	public final ProbabilisticFloat readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Float, Double> values = new HashMap<Float, Double>();
 		for (int i = 0; i < length; i++) {
@@ -62,8 +75,12 @@ public class ProbabilisticFloatHandler extends AbstractDataHandler<Probabilistic
 		return new ProbabilisticFloat(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
+	 */
 	@Override
-	public ProbabilisticFloat readData(final String string) {
+	public final ProbabilisticFloat readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Float, Double> values = new HashMap<Float, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -73,8 +90,12 @@ public class ProbabilisticFloatHandler extends AbstractDataHandler<Probabilistic
 		return new ProbabilisticFloat(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
+	 */
 	@Override
-	public ProbabilisticFloat readData(final ByteBuffer buffer) {
+	public final ProbabilisticFloat readData(final ByteBuffer buffer) {
 		final int length = buffer.getInt();
 		final Map<Float, Double> values = new HashMap<Float, Double>();
 		for (int i = 0; i < length; i++) {
@@ -85,8 +106,12 @@ public class ProbabilisticFloatHandler extends AbstractDataHandler<Probabilistic
 		return new ProbabilisticFloat(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
-	public void writeData(final ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final ProbabilisticFloat values = (ProbabilisticFloat) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<Float, Double> value : values.getValues().entrySet()) {
@@ -95,13 +120,21 @@ public class ProbabilisticFloatHandler extends AbstractDataHandler<Probabilistic
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
+	 */
 	@Override
-	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticFloatHandler.types;
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticFloatHandler.TYPES);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
+	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		return (((ProbabilisticFloat) attribute).getValues().size() * (Float.SIZE + Double.SIZE)) / 8;
 	}
 

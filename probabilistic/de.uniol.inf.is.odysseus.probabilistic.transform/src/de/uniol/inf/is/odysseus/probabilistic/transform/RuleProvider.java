@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEquiJoinAORule;
-import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEquiJoinAOSetDMRule;
-import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TContinuousEquiJoinAOSetSARule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TEMAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.continuous.TLinearRegressionMergeAORule;
@@ -97,10 +95,6 @@ public class RuleProvider implements ITransformRuleProvider {
 		// Equi Join
 		// Join AO -> PO Rule
 		rules.add(new TContinuousEquiJoinAORule());
-		// Set Join PO Sweep Areas Rule
-		rules.add(new TContinuousEquiJoinAOSetSARule());
-		// Set Join PO Data Merge Rule
-		rules.add(new TContinuousEquiJoinAOSetDMRule());
 		return rules;
 	}
 }

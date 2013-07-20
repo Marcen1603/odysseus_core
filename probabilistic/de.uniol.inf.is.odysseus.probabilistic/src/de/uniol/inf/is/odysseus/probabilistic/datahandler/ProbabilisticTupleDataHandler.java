@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.datahandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,54 +33,92 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticContinuousDoubleHandler;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticContinuousHandler;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler.ProbabilisticDistributionHandler;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticTupleDataHandler extends AbstractDataHandler<ProbabilisticTuple<?>> {
-	static protected List<String> types = new ArrayList<String>();
+	/**
+	 * Supported data types.
+	 */
+	protected static final List<String> TYPES = new ArrayList<String>();
 	static {
-		ProbabilisticTupleDataHandler.types.add(SDFProbabilisticDatatype.PROBABILISTIC_TUPLE.getURI());
+		ProbabilisticTupleDataHandler.TYPES.add(SDFProbabilisticDatatype.PROBABILISTIC_TUPLE.getURI());
 	}
 
+	/** The data handlers. */
 	private IDataHandler<?>[] dataHandlers = null;
+	/** The distribution handler. */
 	private final ProbabilisticDistributionHandler probabilisticDistributionHandler = new ProbabilisticDistributionHandler();
+	/** Maximum number of distributions in one probabilistic tuple. */
 	private int maxDistributions;
+	/** Flag indicating whether deep clone is required. */
 	private boolean requiresDeepClone = false;
+	/** Flag indicating whether null values are supported. */
 	private final boolean nullMode;
 
-	// Default Constructor for declarative Service needed
+	/**
+	 * Default Constructor for declarative Service needed.
+	 */
 	public ProbabilisticTupleDataHandler() {
 		this.nullMode = false;
 	}
 
+	/**
+	 * Creates a new {@link ProbabilisticTuple} data handler.
+	 * 
+	 * @param nullMode
+	 *            Flag indicating whether null values should be supported
+	 */
 	protected ProbabilisticTupleDataHandler(final boolean nullMode) {
 		this.nullMode = nullMode;
 	}
 
+	/**
+	 * Creates a new {@link ProbabilisticTuple} data handler with the given schema.
+	 * 
+	 * @param schema
+	 *            The schema
+	 * @param nullMode
+	 *            Flag indicating whether null values should be supported
+	 */
 	protected ProbabilisticTupleDataHandler(final SDFSchema schema, final boolean nullMode) {
 		this.nullMode = nullMode;
 		this.createDataHandler(schema);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticTuple<?>> getInstance(final SDFSchema schema) {
+	public final IDataHandler<ProbabilisticTuple<?>> getInstance(final SDFSchema schema) {
 		return new ProbabilisticTupleDataHandler(schema, false);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(java.util.List)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticTuple<?>> getInstance(final List<String> schema) {
+	public final IDataHandler<ProbabilisticTuple<?>> getInstance(final List<String> schema) {
 		final ProbabilisticTupleDataHandler handler = new ProbabilisticTupleDataHandler(false);
 		handler.init(schema);
 		return handler;
 	}
 
-	public void init(final SDFSchema schema) {
+	/**
+	 * Initialize the data handler.
+	 * 
+	 * @param schema
+	 *            The schema
+	 */
+	public final void init(final SDFSchema schema) {
 		if (this.dataHandlers == null) {
 			this.createDataHandler(schema);
 		} else {
@@ -87,7 +126,13 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 	}
 
-	public void init(final List<String> schema) {
+	/**
+	 * Initialize the data handlers.
+	 * 
+	 * @param schema
+	 *            The schema
+	 */
+	public final void init(final List<String> schema) {
 		if (this.dataHandlers == null) {
 			this.createDataHandler(schema);
 		} else {
@@ -95,8 +140,12 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
+	 */
 	@Override
-	public ProbabilisticTuple<?> readData(final ByteBuffer buffer) {
+	public final ProbabilisticTuple<?> readData(final ByteBuffer buffer) {
 		ProbabilisticTuple<?> r = null;
 		synchronized (buffer) {
 			final Object[] attributes = new Object[this.dataHandlers.length];
@@ -137,8 +186,12 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		return r;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
+	 */
 	@Override
-	public ProbabilisticTuple<?> readData(final ObjectInputStream inputStream) throws IOException {
+	public final ProbabilisticTuple<?> readData(final ObjectInputStream inputStream) throws IOException {
 		ProbabilisticTuple<?> r = null;
 		final Object[] attributes = new Object[this.dataHandlers.length];
 		for (int i = 0; i < this.dataHandlers.length; i++) {
@@ -157,13 +210,21 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		return r;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
+	 */
 	@Override
-	public ProbabilisticTuple<?> readData(final String string) {
-		throw new RuntimeException("Sorry. Currently not implemented");
+	public final ProbabilisticTuple<?> readData(final String string) {
+		return readData(new String[] { string });
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#readData(java.lang.String[])
+	 */
 	@Override
-	public ProbabilisticTuple<?> readData(final String[] input) {
+	public final ProbabilisticTuple<?> readData(final String[] input) {
 		ProbabilisticTuple<?> r = null;
 		final Object[] attributes = new Object[this.dataHandlers.length];
 		for (int i = 0; i < attributes.length; i++) {
@@ -180,8 +241,12 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		return r;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#readData(java.util.List)
+	 */
 	@Override
-	public ProbabilisticTuple<?> readData(final List<String> input) {
+	public final ProbabilisticTuple<?> readData(final List<String> input) {
 		ProbabilisticTuple<?> r = null;
 		final Object[] attributes = new Object[this.dataHandlers.length];
 		for (int i = 0; i < attributes.length; i++) {
@@ -198,14 +263,18 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		return r;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
-	public void writeData(ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
 
 		final int size = this.memSize(r);
 
 		if (size > buffer.capacity()) {
-			buffer = ByteBuffer.allocate(size * 2);
+			throw new BufferOverflowException();
 		}
 
 		synchronized (buffer) {
@@ -219,8 +288,12 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
+	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		final ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) attribute;
 		int size = 0;
 		for (int i = 0; i < this.dataHandlers.length; i++) {
@@ -232,11 +305,21 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		return size;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
+	 */
 	@Override
-	public List<String> getSupportedDataTypes() {
-		return Collections.unmodifiableList(ProbabilisticTupleDataHandler.types);
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticTupleDataHandler.TYPES);
 	}
 
+	/**
+	 * Creates a new probabilistic tuple data handler.
+	 * 
+	 * @param schema
+	 *            The schema
+	 */
 	private void createDataHandler(final SDFSchema schema) {
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		this.maxDistributions = 0;
@@ -274,6 +357,12 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 	}
 
+	/**
+	 * Creates new probabilistic tuple data handlers.
+	 * 
+	 * @param schema
+	 *            The schema
+	 */
 	private void createDataHandler(final List<String> schema) {
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		this.requiresDeepClone = true;
@@ -286,7 +375,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype " + attribute);
 			}
-			if (handler.getClass() == ProbabilisticContinuousDoubleHandler.class) {
+			if (handler.getClass() == ProbabilisticContinuousHandler.class) {
 				this.maxDistributions++;
 			}
 			this.dataHandlers[i++] = handler;

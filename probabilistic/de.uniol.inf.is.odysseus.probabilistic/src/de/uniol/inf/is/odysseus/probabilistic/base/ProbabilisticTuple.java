@@ -219,7 +219,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	}
 
 	/**
-	 * Creates a new instance from the current tuple if the createNew param is true or uses the current instance and appends the given attribute object and distribution
+	 * Creates a new instance from the current tuple if the createNew param is true or uses the current instance and appends the given attribute object and distribution.
 	 * 
 	 * @param object
 	 *            the object to append
@@ -229,7 +229,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            indicates if create a copy
 	 * @return the extended tuple
 	 */
-	public ProbabilisticTuple<T> append(final Object object, final NormalDistributionMixture distribution, final boolean createNew) {
+	public final ProbabilisticTuple<T> append(final Object object, final NormalDistributionMixture distribution, final boolean createNew) {
 		final Object[] newAttrs = Arrays.copyOf(this.attributes, this.attributes.length + 1);
 		newAttrs[this.attributes.length] = object;
 		final NormalDistributionMixture[] newDistrs = Arrays.copyOf(this.distributions, this.distributions.length + 1);

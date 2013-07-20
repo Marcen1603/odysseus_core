@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,22 +37,34 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticInt
  * 
  */
 public class ProbabilisticIntegerHandler extends AbstractDataHandler<ProbabilisticInteger> {
-	static protected List<String> types = new ArrayList<String>();
+	/** Supported data types. */
+	private static final List<String> TYPES = new ArrayList<String>();
 	static {
-		ProbabilisticIntegerHandler.types.add("ProbabilisticInteger");
+		ProbabilisticIntegerHandler.TYPES.add("ProbabilisticInteger");
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticInteger> getInstance(final SDFSchema schema) {
+	public final IDataHandler<ProbabilisticInteger> getInstance(final SDFSchema schema) {
 		return new ProbabilisticIntegerHandler();
 	}
 
+	/**
+	 * Default constructor.
+	 */
 	public ProbabilisticIntegerHandler() {
 		super();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
+	 */
 	@Override
-	public ProbabilisticInteger readData(final ObjectInputStream inputStream) throws IOException {
+	public final ProbabilisticInteger readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
@@ -62,8 +75,12 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 		return new ProbabilisticInteger(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
+	 */
 	@Override
-	public ProbabilisticInteger readData(final String string) {
+	public final ProbabilisticInteger readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -73,8 +90,12 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 		return new ProbabilisticInteger(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
+	 */
 	@Override
-	public ProbabilisticInteger readData(final ByteBuffer buffer) {
+	public final ProbabilisticInteger readData(final ByteBuffer buffer) {
 		final int length = buffer.getInt();
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
@@ -85,8 +106,12 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 		return new ProbabilisticInteger(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
-	public void writeData(final ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final ProbabilisticInteger values = (ProbabilisticInteger) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<Integer, Double> value : values.getValues().entrySet()) {
@@ -95,13 +120,21 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
+	 */
 	@Override
-	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticIntegerHandler.types;
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticIntegerHandler.TYPES);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
+	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		return (((ProbabilisticInteger) attribute).getValues().size() * (Integer.SIZE + Double.SIZE)) / 8;
 	}
 

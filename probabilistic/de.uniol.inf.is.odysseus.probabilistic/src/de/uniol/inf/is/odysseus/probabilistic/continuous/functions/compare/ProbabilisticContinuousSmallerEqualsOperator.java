@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
 
 import java.util.Arrays;
@@ -23,15 +22,16 @@ import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.probabilistic.common.ProbabilisticContinuousUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
-import de.uniol.inf.is.odysseus.probabilistic.functions.ProbabilisticContinuousSelectUtils;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
+ * Smaller-Equals operator for continuous probabilistic values.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
@@ -41,18 +41,30 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 	 */
 	private static final long serialVersionUID = -9122605635777338549L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
+	 */
 	@Override
-	public int getPrecedence() {
+	public final int getPrecedence() {
 		return 8;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+	 */
 	@Override
 	public String getSymbol() {
 		return "<=";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
 	@Override
-	public NormalDistributionMixture getValue() {
+	public final NormalDistributionMixture getValue() {
 		final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
 
 		final Double b = this.getNumericalInputValue(1);
@@ -64,7 +76,7 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 		final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
 		final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
-		final double value = ProbabilisticContinuousSelectUtils.cumulativeProbability(a, lowerBound, upperBound);
+		final double value = ProbabilisticContinuousUtils.cumulativeProbability(a, lowerBound, upperBound);
 		a.setScale(a.getScale() / value);
 		final Interval[] support = new Interval[a.getDimension()];
 		for (int i = 0; i < a.getDimension(); i++) {
@@ -75,49 +87,79 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 		return a;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+	 */
 	@Override
-	public SDFDatatype getReturnType() {
+	public final SDFDatatype getReturnType() {
 		return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isCommutative()
+	 */
 	@Override
-	public boolean isCommutative() {
+	public final boolean isCommutative() {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isAssociative()
+	 */
 	@Override
-	public boolean isAssociative() {
+	public final boolean isAssociative() {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isLeftDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+	 */
 	@Override
-	public boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+	public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isRightDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+	 */
 	@Override
-	public boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+	public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getAssociativity()
+	 */
 	@Override
-	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+	public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
-
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
 			{ SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT,
 					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.FLOAT, SDFDatatype.DOUBLE, SDFDatatype.LONG } };
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+	 */
 	@Override
-	public SDFDatatype[] getAcceptedTypes(final int argPos) {
+	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return ProbabilisticContinuousSmallerEqualsOperator.accTypes[argPos];
+		return ProbabilisticContinuousSmallerEqualsOperator.ACC_TYPES[argPos];
 	}
 
 }

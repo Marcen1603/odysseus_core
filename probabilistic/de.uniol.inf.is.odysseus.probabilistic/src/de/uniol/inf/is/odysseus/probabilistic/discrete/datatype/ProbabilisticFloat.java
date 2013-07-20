@@ -19,7 +19,8 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 import java.util.Map;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Data type representing a probabilistic discrete Float value.
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 
@@ -27,19 +28,43 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	 * 
 	 */
 	private static final long serialVersionUID = -9174297465866495711L;
-
+	/**
+	 * Creates a new {@link ProbabilisticFloat} with the given value and probability.
+	 * 
+	 * @param value
+	 *            The value
+	 * @param probability
+	 *            The associated probability
+	 */
 	public ProbabilisticFloat(final Float value, final Double probability) {
 		super(value, probability);
 	}
-
+	/**
+	 * Creates a new {@link ProbabilisticFloat} with the given values.
+	 * 
+	 * @param values
+	 *            The values
+	 */
 	public ProbabilisticFloat(final Map<Float, Double> values) {
 		super(values);
 	}
-
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param other
+	 *            The object to copy from
+	 */
 	public ProbabilisticFloat(final ProbabilisticFloat other) {
 		super(other);
 	}
-
+	/**
+	 * Creates a new {@link ProbabilisticFloat} with the given values and probabilities.
+	 * 
+	 * @param values
+	 *            The values
+	 * @param probabilities
+	 *            The associated probabilities
+	 */
 	public ProbabilisticFloat(final Float[] values, final Double[] probabilities) {
 		super(values, probabilities);
 	}

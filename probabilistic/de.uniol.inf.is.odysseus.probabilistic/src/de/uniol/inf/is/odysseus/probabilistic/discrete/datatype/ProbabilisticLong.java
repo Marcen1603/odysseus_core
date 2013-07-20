@@ -19,7 +19,8 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 import java.util.Map;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Data type representing a probabilistic discrete Long value.
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 
@@ -27,19 +28,43 @@ public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 	 * 
 	 */
 	private static final long serialVersionUID = -8340232282600212118L;
-
+	/**
+	 * Creates a new {@link ProbabilisticLong} with the given value and probability.
+	 * 
+	 * @param value
+	 *            The value
+	 * @param probability
+	 *            The associated probability
+	 */
 	public ProbabilisticLong(final Long value, final Double probability) {
 		super(value, probability);
 	}
-
+	/**
+	 * Creates a new {@link ProbabilisticLong} with the given values.
+	 * 
+	 * @param values
+	 *            The values
+	 */
 	public ProbabilisticLong(final Map<Long, Double> values) {
 		super(values);
 	}
-
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param other
+	 *            The object to copy from
+	 */
 	public ProbabilisticLong(final ProbabilisticLong other) {
 		super(other);
 	}
-
+	/**
+	 * Creates a new {@link ProbabilisticLong} with the given values and probabilities.
+	 * 
+	 * @param values
+	 *            The values
+	 * @param probabilities
+	 *            The associated probabilities
+	 */
 	public ProbabilisticLong(final Long[] values, final Double[] probabilities) {
 		super(values, probabilities);
 	}

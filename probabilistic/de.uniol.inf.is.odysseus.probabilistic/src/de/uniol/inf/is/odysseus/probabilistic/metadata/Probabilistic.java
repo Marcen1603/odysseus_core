@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,48 @@
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.probabilistic.math.PBox;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
 public class Probabilistic implements IProbabilistic {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -147594856639774242L;
+	/** The classes. */
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IProbabilistic.class };
-	@SuppressWarnings("unused")
-	private final Map<Integer, PBox> pBoxes = new HashMap<Integer, PBox>();
-
-	/** Tuple existence probability */
+	public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { IProbabilistic.class };
+	/** Tuple existence probability. */
 	private double existence;
 
+	/**
+	 * Default constructor.
+	 */
 	public Probabilistic() {
 		this.existence = 1.0;
 	}
 
+	/**
+	 * Creates a new {@link Probabilistic} with the given existence value.
+	 * 
+	 * @param existence
+	 *            The existence value
+	 */
 	public Probabilistic(final double existence) {
 		this.existence = existence;
 	}
 
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param probability
+	 *            The object to copy from
+	 */
 	public Probabilistic(final Probabilistic probability) {
 		this.existence = probability.existence;
 
@@ -57,7 +69,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see de.uniol.inf.is.odysseus.core.ICSVToString#csvToString(char, java.lang.Character, java.text.NumberFormat, java.text.NumberFormat, boolean)
 	 */
 	@Override
-	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
+	public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		if (floatingFormatter != null) {
 			return floatingFormatter.format(this.existence);
 		} else {
@@ -71,7 +83,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see de.uniol.inf.is.odysseus.core.ICSVToString#getCSVHeader(char)
 	 */
 	@Override
-	public String getCSVHeader(final char delimiter) {
+	public final String getCSVHeader(final char delimiter) {
 		return "probability";
 	}
 
@@ -81,7 +93,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public IProbabilistic clone() {
+	public final IProbabilistic clone() {
 		return new Probabilistic(this);
 	}
 
@@ -91,7 +103,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#getExistence ()
 	 */
 	@Override
-	public double getExistence() {
+	public final double getExistence() {
 		return this.existence;
 	}
 
@@ -101,7 +113,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#setExistence (double)
 	 */
 	@Override
-	public void setExistence(final double existence) {
+	public final void setExistence(final double existence) {
 		this.existence = existence;
 	}
 
@@ -111,7 +123,7 @@ public class Probabilistic implements IProbabilistic {
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "TEP: " + this.existence;
 	}
 
@@ -121,8 +133,8 @@ public class Probabilistic implements IProbabilistic {
 	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#getClasses()
 	 */
 	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return Probabilistic.classes;
+	public final Class<? extends IMetaAttribute>[] getClasses() {
+		return Probabilistic.CLASSES;
 	}
 
 }

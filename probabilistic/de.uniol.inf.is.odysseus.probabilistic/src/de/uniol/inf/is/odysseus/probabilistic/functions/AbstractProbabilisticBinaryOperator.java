@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  * @param <T>
  */
@@ -32,28 +32,48 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 	 */
 	private static final long serialVersionUID = -2604513567977149416L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+	 */
 	@Override
-	final public int getArity() {
+	public final int getArity() {
 		return 2;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isBinary()
+	 */
 	@Override
-	final public boolean isBinary() {
+	public final boolean isBinary() {
 		return true;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isUnary()
+	 */
 	@Override
-	final public boolean isUnary() {
+	public final boolean isUnary() {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+	 */
 	@Override
-	public boolean isDistributiveWith(final IOperator<T> operator) {
+	public final boolean isDistributiveWith(final IOperator<T> operator) {
 		return this.isLeftDistributiveWith(operator) && this.isRightDistributiveWith(operator);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction#toString()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuffer buffer = new StringBuffer("" + this.getArgument(0));
 		buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
 		return buffer.toString();

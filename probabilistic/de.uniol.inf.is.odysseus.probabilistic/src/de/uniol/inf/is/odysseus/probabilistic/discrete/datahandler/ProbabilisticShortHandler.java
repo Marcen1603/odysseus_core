@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,27 +32,40 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticShort;
 
 /**
+ * Data handler for probabilistic short values.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
 public class ProbabilisticShortHandler extends AbstractDataHandler<ProbabilisticShort> {
-	static protected List<String> types = new ArrayList<String>();
+	/** Supported data types. */
+	private static final List<String> TYPES = new ArrayList<String>();
 	static {
-		ProbabilisticShortHandler.types.add("ProbabilisticShort");
+		ProbabilisticShortHandler.TYPES.add("ProbabilisticShort");
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticShort> getInstance(final SDFSchema schema) {
+	public final IDataHandler<ProbabilisticShort> getInstance(final SDFSchema schema) {
 		return new ProbabilisticShortHandler();
 	}
 
+	/**
+	 * Default constructor.
+	 */
 	public ProbabilisticShortHandler() {
 		super();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
+	 */
 	@Override
-	public ProbabilisticShort readData(final ObjectInputStream inputStream) throws IOException {
+	public final ProbabilisticShort readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {
@@ -62,8 +76,12 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 		return new ProbabilisticShort(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
+	 */
 	@Override
-	public ProbabilisticShort readData(final String string) {
+	public final ProbabilisticShort readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -73,8 +91,12 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 		return new ProbabilisticShort(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
+	 */
 	@Override
-	public ProbabilisticShort readData(final ByteBuffer buffer) {
+	public final ProbabilisticShort readData(final ByteBuffer buffer) {
 		final int length = buffer.getInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {
@@ -85,8 +107,12 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 		return new ProbabilisticShort(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
-	public void writeData(final ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final ProbabilisticShort values = (ProbabilisticShort) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<Short, Double> value : values.getValues().entrySet()) {
@@ -95,13 +121,21 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
+	 */
 	@Override
-	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticShortHandler.types;
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticShortHandler.TYPES);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
+	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		return (((ProbabilisticShort) attribute).getValues().size() * (Short.SIZE + Double.SIZE)) / 8;
 	}
 

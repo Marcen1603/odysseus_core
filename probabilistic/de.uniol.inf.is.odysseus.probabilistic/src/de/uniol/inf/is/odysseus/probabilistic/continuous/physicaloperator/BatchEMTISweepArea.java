@@ -9,8 +9,7 @@ import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.random.RandomData;
-import org.apache.commons.math3.random.RandomDataImpl;
+import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	/** Constant value for numeric stability. */
 	private static final double NUMERIC_STABILITY_FACTOR = 10E-5;
 	/** Random data generator for initialization. */
-	private final RandomData randomDataGenerator = new RandomDataImpl(new Well19937c());
+	private final RandomDataGenerator randomDataGenerator = new RandomDataGenerator(new Well19937c());
 	/** The number of Gaussian mixtures. */
 	private final int mixtures;
 	/** The dimension of the Gaussian Mixture Model. */

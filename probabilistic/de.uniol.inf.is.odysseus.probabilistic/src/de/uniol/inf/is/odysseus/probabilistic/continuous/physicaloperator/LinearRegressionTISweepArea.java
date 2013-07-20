@@ -172,29 +172,29 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	 * 
 	 * \f$r = B^{T} (I - A(A^{T} A)^{-1} A^{T}) B/(n - k)\f$
 	 * 
-	 * @param dependentAttributePos
+	 * @param dependentAttributePositions
 	 *            Position array of all dependent attributes
-	 * @param explanatoryAttributePos
+	 * @param explanatoryAttributePositions
 	 *            Position array of all explanatory attributes
 	 */
-	private synchronized void updateRegression(final int[] dependentAttributePos, final int[] explanatoryAttributePos) {
+	private synchronized void updateRegression(final int[] dependentAttributePositions, final int[] explanatoryAttributePositions) {
 		if (this.isEstimable()) {
 			final Iterator<ProbabilisticTuple<? extends ITimeInterval>> iter = this.iterator();
 
-			final int attributes = dependentAttributePos.length + explanatoryAttributePos.length;
+			final int attributes = dependentAttributePositions.length + explanatoryAttributePositions.length;
 			ProbabilisticTuple<? extends ITimeInterval> element = null;
-			final double[][] dependentAttributesData = new double[dependentAttributePos.length][this.size()];
-			final double[][] explanatoryAttributesData = new double[explanatoryAttributePos.length][this.size()];
+			final double[][] dependentAttributesData = new double[dependentAttributePositions.length][this.size()];
+			final double[][] explanatoryAttributesData = new double[explanatoryAttributePositions.length][this.size()];
 
 			int dimension = 0;
 			while (iter.hasNext()) {
 				element = iter.next();
 				for (int i = 0; i < element.getAttributes().length; i++) {
-					for (int j = 0; j < dependentAttributePos.length; j++) {
-						dependentAttributesData[j][dimension] = element.getAttribute(dependentAttributePos[j]);
+					for (int j = 0; j < dependentAttributePositions.length; j++) {
+						dependentAttributesData[j][dimension] = element.getAttribute(dependentAttributePositions[j]);
 					}
-					for (int j = 0; j < explanatoryAttributePos.length; j++) {
-						explanatoryAttributesData[j][dimension] = element.getAttribute(explanatoryAttributePos[j]);
+					for (int j = 0; j < explanatoryAttributePositions.length; j++) {
+						explanatoryAttributesData[j][dimension] = element.getAttribute(explanatoryAttributePositions[j]);
 					}
 				}
 				dimension++;

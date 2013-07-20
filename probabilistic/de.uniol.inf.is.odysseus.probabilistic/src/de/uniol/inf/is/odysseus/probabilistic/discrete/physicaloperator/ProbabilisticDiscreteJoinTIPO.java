@@ -27,19 +27,23 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 
 /**
- * Join operator for discrete probabilistic values
+ * Join operator for discrete probabilistic values.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  * @param <K>
  * @param <T>
  */
 public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
-	@SuppressWarnings("unused")
-	private static Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteJoinTIPO.class);
+	/** The logger. */
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteJoinTIPO.class);
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 */
 	@Override
-	protected void process_next(final T object, final int port) {
+	protected final void process_next(final T object, final int port) {
 		this.transferFunction.newElement(object, port);
 
 		if (this.isDone()) {
@@ -73,6 +77,7 @@ public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic,
 		while (qualifies.hasNext()) {
 			final T next = qualifies.next();
 			// We already merge the two tuples in the sweep area to not expand the worlds again
+			// KTHXBYE
 			this.transferFunction.transfer(next);
 		}
 	}

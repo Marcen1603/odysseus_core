@@ -18,6 +18,12 @@ package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
+ */
 public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProbabilisticFunction<T> implements IOperator<T> {
 
 	/**
@@ -25,18 +31,30 @@ public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProb
 	 */
 	private static final long serialVersionUID = -5406076763880872083L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isBinary()
+	 */
 	@Override
-	public boolean isBinary() {
+	public final boolean isBinary() {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isUnary()
+	 */
 	@Override
-	public boolean isUnary() {
+	public final boolean isUnary() {
 		return true;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+	 */
 	@Override
-	public int getArity() {
+	public final int getArity() {
 		return 1;
 	}
 }

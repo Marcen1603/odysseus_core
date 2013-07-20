@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.continuous.datahandler;
 
 import java.io.IOException;
@@ -38,14 +37,16 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribu
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
- * Distribution handler to read and write continuous probabilistic distributions as Gaussian mixtures
+ * Distribution handler to read and write continuous probabilistic distributions as Gaussian mixtures.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticDistributionHandler extends AbstractDataHandler<NormalDistributionMixture> {
-	private final Logger LOG = LoggerFactory.getLogger(ProbabilisticDistributionHandler.class);
-	static protected List<String> types = new ArrayList<String>();
+	/** The logger. */
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDistributionHandler.class);
+	/** The supported data types. */
+	private static final List<String> TYPES = new ArrayList<String>();
 
 	/*
 	 * (non-Javadoc)
@@ -53,7 +54,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java. nio.ByteBuffer)
 	 */
 	@Override
-	public NormalDistributionMixture readData(final ByteBuffer buffer) {
+	public final NormalDistributionMixture readData(final ByteBuffer buffer) {
 		NormalDistributionMixture distributionMixture = null;
 		final int size = buffer.getInt();
 		if (size > 0) {
@@ -73,7 +74,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 					final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
 					mixtures.put(distribution, weight);
 				} catch (final Exception e) {
-					this.LOG.warn(e.getMessage(), e);
+					ProbabilisticDistributionHandler.LOG.warn(e.getMessage(), e);
 				}
 
 			}
@@ -96,7 +97,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java. io.ObjectInputStream)
 	 */
 	@Override
-	public NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
+	public final NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
 		final int size = inputStream.readInt();
 		final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>(size);
 		final int dimension = inputStream.readInt();
@@ -133,7 +134,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java. lang.String)
 	 */
 	@Override
-	public NormalDistributionMixture readData(final String string) {
+	public final NormalDistributionMixture readData(final String string) {
 		final String[] covarianceMatrix = string.split(":");
 		final double[] entries = new double[covarianceMatrix.length];
 		for (int i = 0; i < covarianceMatrix.length; i++) {
@@ -149,7 +150,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java .nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
-	public void writeData(final ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final NormalDistributionMixture value = (NormalDistributionMixture) data;
 		buffer.putInt(value.getMixtures().size());
 		buffer.putInt(value.getDimension());
@@ -180,7 +181,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang .Object)
 	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		final NormalDistributionMixture value = (NormalDistributionMixture) attribute;
 		final int numberOfMixtures = value.getMixtures().size();
 		final int dimension = value.getDimension();
@@ -202,7 +203,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance (de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
 	 */
 	@Override
-	protected IDataHandler<NormalDistributionMixture> getInstance(final SDFSchema schema) {
+	protected final IDataHandler<NormalDistributionMixture> getInstance(final SDFSchema schema) {
 		return new ProbabilisticDistributionHandler();
 	}
 
@@ -212,8 +213,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler# getSupportedDataTypes()
 	 */
 	@Override
-	public List<String> getSupportedDataTypes() {
-		return Collections.unmodifiableList(ProbabilisticDistributionHandler.types);
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticDistributionHandler.TYPES);
 	}
 
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator;
 
 import java.util.Iterator;
@@ -18,17 +33,30 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilisti
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ * @param <K>
+ * @param <T>
  */
 public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabilistic, T extends Tuple<K>> extends JoinTISweepArea<T> implements Cloneable {
+	/** The positions of the probabilistic attributes in the left stream. */
 	private final int[] leftProbabilisticAttributePos;
+	/** The positions of the probabilistic attributes in the right stream. */
 	private final int[] rightProbabilisticAttributePos;
-	protected IDataMergeFunction<? super T, K> dataMerge;
-	protected IMetadataMergeFunction<K> metadataMerge;
+	/** The data merge function. */
+	private IDataMergeFunction<? super T, K> dataMerge;
+	/** The meta data merge function. */
+	private IMetadataMergeFunction<K> metadataMerge;
 
 	/**
+	 * Creates a new sweep area for probabilistic values.
 	 * 
 	 * @param leftProbabilisticAttributePos
+	 *            The positions of the probabilistic attributes in the left stream
 	 * @param rightProbabilisticAttributePos
+	 *            The positions of the probabilistic attributes in the right stream
+	 * @param dataMerge
+	 *            The data merge function
+	 * @param metadataMerge
+	 *            The meta data merge function
 	 */
 	public ProbabilisticDiscreteJoinTISweepArea(final int[] leftProbabilisticAttributePos, final int[] rightProbabilisticAttributePos, final IDataMergeFunction<? super T, K> dataMerge, final IMetadataMergeFunction<K> metadataMerge) {
 		super();
@@ -39,30 +67,32 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	}
 
 	/**
+	 * Copy constructor.
 	 * 
 	 * @param area
+	 *            The object to copy from
 	 */
-	public ProbabilisticDiscreteJoinTISweepArea(final ProbabilisticDiscreteJoinTISweepArea area) {
+	public ProbabilisticDiscreteJoinTISweepArea(@SuppressWarnings("rawtypes") final ProbabilisticDiscreteJoinTISweepArea area) {
 		super();
 		this.leftProbabilisticAttributePos = area.leftProbabilisticAttributePos.clone();
 		this.rightProbabilisticAttributePos = area.rightProbabilisticAttributePos.clone();
 	}
 
-	/**
+	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea#query(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
-	public Iterator<T> query(final T element, final Order order) {
+	public final Iterator<T> query(final T element, final Order order) {
 		return new ProbabilisticDiscreteQueryIterator(element, order);
 	}
 
-	/**
+	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea#queryCopy(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
-	public Iterator<T> queryCopy(final T element, final Order order) {
+	public final Iterator<T> queryCopy(final T element, final Order order) {
 		final LinkedList<T> result = new LinkedList<T>();
 		synchronized (this.getElements()) {
 			T world;
@@ -85,6 +115,8 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 					}
 				}
 				break;
+			default:
+				break;
 			}
 		}
 		return result.iterator();
@@ -96,18 +128,22 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * 
 	 */
 	private class ProbabilisticDiscreteQueryIterator implements Iterator<T> {
+		/** The element iterator. */
 		private final Iterator<T> iter;
-
-		T currentElement;
-
+		/** The current element. */
+		private T currentElement;
+		/** The order. */
 		private final Order order;
-
+		/** The element. */
 		private final T element;
 
 		/**
+		 * Creates a new query iterator.
 		 * 
 		 * @param element
+		 *            The element
 		 * @param order
+		 *            The order
 		 */
 		public ProbabilisticDiscreteQueryIterator(final T element, final Order order) {
 			this.iter = ProbabilisticDiscreteJoinTISweepArea.this.getElements().iterator();
@@ -115,7 +151,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 			this.element = element;
 		}
 
-		/**
+		/*
 		 * 
 		 * @see java.util.Iterator#hasNext()
 		 */
@@ -148,12 +184,14 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 					}
 				}
 				break;
+			default:
+				break;
 			}
 			this.currentElement = null;
 			return false;
 		}
 
-		/**
+		/*
 		 * 
 		 * @see java.util.Iterator#next()
 		 */
@@ -183,57 +221,64 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	}
 
 	/**
+	 * Evaluates each world with the given predicate.
 	 * 
 	 * @param predicate
+	 *            The predicate to evaluate
 	 * @param right
+	 *            The right element
 	 * @param left
-	 * @param rightProbabilisticAttributePos
-	 * @param leftProbabilisticAttributePos
+	 *            The left element
+	 * @param rightProbabilisticAttributePositions
+	 *            The positions of probabilistic values in the right
+	 * @param leftProbabilisticAttributePositions
+	 *            The positions of probabilistic values in the left
 	 * @param order
-	 * @return
+	 *            The order to evaluate
+	 * @return The result element
 	 */
 	@SuppressWarnings("unchecked")
-	private T evaluateWorld(final IPredicate<? super T> predicate, final T left, final T right, final int[] leftProbabilisticAttributePos, final int[] rightProbabilisticAttributePos, final Order order) {
+	private T evaluateWorld(final IPredicate<? super T> predicate, final T left, final T right, final int[] leftProbabilisticAttributePositions, final int[] rightProbabilisticAttributePositions, final Order order) {
 		final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, Order.LeftRight);
-		final double[] outSum = new double[leftProbabilisticAttributePos.length + rightProbabilisticAttributePos.length];
-		for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePos) {
+		final double[] outSum = new double[leftProbabilisticAttributePositions.length + rightProbabilisticAttributePositions.length];
+		for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePositions) {
 			((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePo)).getValues().clear();
 		}
-		for (final int leftProbabilisticAttributePo : leftProbabilisticAttributePos) {
+		for (final int leftProbabilisticAttributePo : leftProbabilisticAttributePositions) {
 			((AbstractProbabilisticValue<?>) outputVal.getAttribute(leftProbabilisticAttributePo)).getValues().clear();
 		}
 
 		// Dummy tuple to hold the different worlds during evaluation
 		final T leftSelectObject = (T) left.clone();
-		final Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePos);
+		final Object[][] leftWorlds = ProbabilisticDiscreteUtils.getWorlds(left, leftProbabilisticAttributePositions);
 
 		final T rightSelectObject = (T) right.clone();
-		final Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePos);
+		final Object[][] rightWorlds = ProbabilisticDiscreteUtils.getWorlds(right, rightProbabilisticAttributePositions);
 
 		// Evaluate each world and store the possible ones in the output tuple
 		for (int lw = 0; lw < leftWorlds.length; lw++) {
 			for (int rw = 0; rw < rightWorlds.length; rw++) {
-				for (int i = 0; i < leftProbabilisticAttributePos.length; i++) {
-					leftSelectObject.setAttribute(leftProbabilisticAttributePos[i], leftWorlds[lw][i]);
+				for (int i = 0; i < leftProbabilisticAttributePositions.length; i++) {
+					leftSelectObject.setAttribute(leftProbabilisticAttributePositions[i], leftWorlds[lw][i]);
 				}
-				for (int i = 0; i < rightProbabilisticAttributePos.length; i++) {
-					rightSelectObject.setAttribute(rightProbabilisticAttributePos[i], rightWorlds[rw][i]);
+				for (int i = 0; i < rightProbabilisticAttributePositions.length; i++) {
+					rightSelectObject.setAttribute(rightProbabilisticAttributePositions[i], rightWorlds[rw][i]);
 				}
 
 				if (predicate.evaluate(leftSelectObject, rightSelectObject)) {
-					for (int i = 0; i < rightProbabilisticAttributePos.length; i++) {
-						final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) right.getAttribute(rightProbabilisticAttributePos[i]);
-						final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePos[i]);
+					for (int i = 0; i < rightProbabilisticAttributePositions.length; i++) {
+						final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) right.getAttribute(rightProbabilisticAttributePositions[i]);
+						final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePositions[i]);
 						final double probability = inAttribute.getValues().get(rightWorlds[rw][i]);
 						if (!outAttribute.getValues().containsKey(rightWorlds[rw][i])) {
 							outAttribute.getValues().put((Double) rightWorlds[rw][i], probability);
-							outSum[leftProbabilisticAttributePos.length + i] += probability;
+							outSum[leftProbabilisticAttributePositions.length + i] += probability;
 						}
 					}
 
-					for (int i = 0; i < leftProbabilisticAttributePos.length; i++) {
-						final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) left.getAttribute(leftProbabilisticAttributePos[i]);
-						final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(leftProbabilisticAttributePos[i]);
+					for (int i = 0; i < leftProbabilisticAttributePositions.length; i++) {
+						final AbstractProbabilisticValue<?> inAttribute = (AbstractProbabilisticValue<?>) left.getAttribute(leftProbabilisticAttributePositions[i]);
+						final AbstractProbabilisticValue<Double> outAttribute = (AbstractProbabilisticValue<Double>) outputVal.getAttribute(leftProbabilisticAttributePositions[i]);
 						final double probability = inAttribute.getValues().get(leftWorlds[lw][i]);
 						if (!outAttribute.getValues().containsKey(leftWorlds[lw][i])) {
 							outAttribute.getValues().put((Double) leftWorlds[lw][i], probability);

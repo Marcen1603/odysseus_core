@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticDivisionNumberLHSOperator extends ProbabilisticDivisionOperator {
@@ -33,30 +33,45 @@ public class ProbabilisticDivisionNumberLHSOperator extends ProbabilisticDivisio
 	 */
 	private static final long serialVersionUID = -7306731435009999772L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionOperator#getValue()
+	 */
 	@Override
-	public ProbabilisticDouble getValue() {
+	public final ProbabilisticDouble getValue() {
 		final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
 		final AbstractProbabilisticValue<?> b = this.getInputValue(1);
 		return this.getValueInternal(a, b);
 	}
 
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
 			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionOperator#isCommutative()
+	 */
 	@Override
-	public boolean isCommutative() {
+	public final boolean isCommutative() {
 		return false;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionOperator#getAcceptedTypes(int)
+	 */
 	@Override
-	public SDFDatatype[] getAcceptedTypes(final int argPos) {
+	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > (this.getArity() - 1)) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
-		return ProbabilisticDivisionNumberLHSOperator.accTypes[argPos];
+		return ProbabilisticDivisionNumberLHSOperator.ACC_TYPES[argPos];
 	}
 
 }

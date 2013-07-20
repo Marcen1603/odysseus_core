@@ -22,15 +22,17 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 	/** The attribute positions. */
 	private final int[] attributes;
 	/** The number of samples. */
-	private int samples;
+	private final int samples;
 
 	/**
 	 * Creates a new Sample operator.
 	 * 
 	 * @param attributes
 	 *            The attribute positions
+	 * @param samples
+	 *            The number of samples to generate
 	 */
-	public SamplePO(final int[] attributes, int samples) {
+	public SamplePO(final int[] attributes, final int samples) {
 		this.attributes = attributes;
 		this.samples = samples;
 	}
@@ -88,6 +90,15 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 		return new SamplePO<T>(this);
 	}
 
+	/**
+	 * Samples from the given dimension from the given distribution mixture.
+	 * 
+	 * @param mixture
+	 *            The distribution mixture
+	 * @param dimension
+	 *            The dimension to sample from
+	 * @return The sample
+	 */
 	private Double sample(final NormalDistributionMixture mixture, final int dimension) {
 		double sample = 1.0;
 		// FIXME Is sampling on each mixture correct?

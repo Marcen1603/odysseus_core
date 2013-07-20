@@ -19,7 +19,9 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 import java.util.Map;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Data type representing a probabilistic discrete String value.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticString extends AbstractProbabilisticValue<String> {
 
@@ -28,18 +30,46 @@ public class ProbabilisticString extends AbstractProbabilisticValue<String> {
 	 */
 	private static final long serialVersionUID = 2145484449655555135L;
 
+	/**
+	 * Creates a new {@link ProbabilisticString} with the given value and probability.
+	 * 
+	 * @param value
+	 *            The value
+	 * @param probability
+	 *            The associated probability
+	 */
 	public ProbabilisticString(final String value, final Double probability) {
 		super(value, probability);
 	}
 
+	/**
+	 * Creates a new {@link ProbabilisticString} with the given values.
+	 * 
+	 * @param values
+	 *            The values
+	 */
 	public ProbabilisticString(final Map<String, Double> values) {
 		super(values);
 	}
 
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param other
+	 *            The object to copy from
+	 */
 	public ProbabilisticString(final ProbabilisticString other) {
 		super(other);
 	}
 
+	/**
+	 * Creates a new {@link ProbabilisticString} with the given values and probabilities.
+	 * 
+	 * @param values
+	 *            The values
+	 * @param probabilities
+	 *            The associated probabilities
+	 */
 	public ProbabilisticString(final String[] values, final Double[] probabilities) {
 		super(values, probabilities);
 	}

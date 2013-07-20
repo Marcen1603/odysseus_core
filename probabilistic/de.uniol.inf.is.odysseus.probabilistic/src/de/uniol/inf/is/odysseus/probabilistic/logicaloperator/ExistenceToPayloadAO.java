@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
 import java.util.ArrayList;
@@ -16,34 +31,50 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  */
 @LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1)
 public class ExistenceToPayloadAO extends AbstractLogicalOperator {
-
+	/**
+	 * Default constructor.
+	 */
 	public ExistenceToPayloadAO() {
 	}
 
-	public ExistenceToPayloadAO(ExistenceToPayloadAO existenceToPayloadAO) {
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param existenceToPayloadAO
+	 *            The object to copy from
+	 */
+	public ExistenceToPayloadAO(final ExistenceToPayloadAO existenceToPayloadAO) {
 		super(existenceToPayloadAO);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#getOutputSchemaIntern(int)
+	 */
 	@Override
-	public SDFSchema getOutputSchemaIntern(int pos) {
-		SDFAttribute existence = new SDFAttribute(null, "meta_existence", SDFDatatype.DOUBLE);
+	public final SDFSchema getOutputSchemaIntern(final int pos) {
+		final SDFAttribute existence = new SDFAttribute(null, "meta_existence", SDFDatatype.DOUBLE);
 
-		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
+		final List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		String name = "";
 
-		if (getInputSchema(0) != null) {
-			outputAttributes.addAll(getInputSchema(0).getAttributes());
-			name = getInputSchema(0).getURI();
+		if (this.getInputSchema(0) != null) {
+			outputAttributes.addAll(this.getInputSchema(0).getAttributes());
+			name = this.getInputSchema(0).getURI();
 		}
 		outputAttributes.add(existence);
 
-		setOutputSchema(new SDFSchema(name, outputAttributes));
+		this.setOutputSchema(new SDFSchema(name, outputAttributes));
 
-		return getOutputSchema();
+		return this.getOutputSchema();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
+	 */
 	@Override
-	public AbstractLogicalOperator clone() {
+	public final AbstractLogicalOperator clone() {
 		return new ExistenceToPayloadAO(this);
 	}
 }

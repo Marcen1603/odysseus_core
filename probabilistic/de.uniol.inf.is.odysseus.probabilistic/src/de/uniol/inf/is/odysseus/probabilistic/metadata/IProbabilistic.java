@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * Probabilistic meta data for probabilistic realtional tuple.
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
+ *
  */
 public interface IProbabilistic extends IMetaAttribute, IClone {
 	/**
@@ -44,7 +44,6 @@ public interface IProbabilistic extends IMetaAttribute, IClone {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#clone()
 	 */
-	@Override
-	public IProbabilistic clone();
+	@Override IProbabilistic clone();
 
 }

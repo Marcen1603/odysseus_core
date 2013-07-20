@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ProbabilisticAO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticFactory;
@@ -45,9 +44,7 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
 	 */
 	@Override
 	public final void execute(final ProbabilisticAO operator, final TransformationConfiguration config) {
-		// FIXME Why do I do that?? (CK)
-		// Maybe I wanted to transfer the mean and covariance as vector/matrix in the payload? (CK)
-		final int[] pos = SchemaUtils.getAttributePos(operator.getInputSchema(), operator.getAttributes());
+		final int pos = operator.getInputSchema().indexOf(operator.getAttribute());
 		final ProbabilisticFactory mUpdater = new ProbabilisticFactory(pos);
 		final MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<IProbabilistic, Tuple<? extends IProbabilistic>>(mUpdater);
 		this.defaultExecute(operator, po, config, true, true);

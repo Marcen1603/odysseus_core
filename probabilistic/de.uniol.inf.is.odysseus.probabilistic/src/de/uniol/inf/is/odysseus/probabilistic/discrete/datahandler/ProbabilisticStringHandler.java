@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,30 +37,46 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticString;
 
 /**
+ * Data handler for probabilistic string values.
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
 public class ProbabilisticStringHandler extends AbstractDataHandler<ProbabilisticString> {
-	static protected List<String> types = new ArrayList<String>();
+	/** Supported data types. */
+	private static final List<String> TYPES = new ArrayList<String>();
 	static {
-		ProbabilisticStringHandler.types.add("ProbabilisticString");
+		ProbabilisticStringHandler.TYPES.add("ProbabilisticString");
 	}
-	private static Charset charset = Charset.forName("UTF-8");
-	private static CharsetEncoder encoder = ProbabilisticStringHandler.charset.newEncoder();
-	private static CharsetDecoder decoder = ProbabilisticStringHandler.charset.newDecoder();
+	/** The default charset. */
+	private static final Charset CHARSET = Charset.forName("UTF-8");
+	/** The charset encoder for writing. */
+	private static final CharsetEncoder ENCODER = ProbabilisticStringHandler.CHARSET.newEncoder();
+	/** The charset decoder for reading. */
+	private static final CharsetDecoder DECODER = ProbabilisticStringHandler.CHARSET.newDecoder();
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+	 */
 	@Override
-	public IDataHandler<ProbabilisticString> getInstance(final SDFSchema schema) {
+	public final IDataHandler<ProbabilisticString> getInstance(final SDFSchema schema) {
 		return new ProbabilisticStringHandler();
 	}
 
+	/**
+	 * Default constructor.
+	 */
 	public ProbabilisticStringHandler() {
 		super();
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
+	 */
 	@Override
-	public ProbabilisticString readData(final ObjectInputStream inputStream) throws IOException {
+	public final ProbabilisticString readData(final ObjectInputStream inputStream) throws IOException {
 		final int length = inputStream.readInt();
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (int i = 0; i < length; i++) {
@@ -74,8 +91,12 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 		return new ProbabilisticString(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
+	 */
 	@Override
-	public ProbabilisticString readData(final String string) {
+	public final ProbabilisticString readData(final String string) {
 		final String[] discreteValues = string.split(";");
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -85,8 +106,12 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 		return new ProbabilisticString(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
+	 */
 	@Override
-	public ProbabilisticString readData(final ByteBuffer buffer) {
+	public final ProbabilisticString readData(final ByteBuffer buffer) {
 		final int length = buffer.getInt();
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (int i = 0; i < length; i++) {
@@ -94,7 +119,7 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 				final int stringLength = buffer.getInt();
 				final int limit = buffer.limit();
 				buffer.limit(buffer.position() + stringLength);
-				final String value = ProbabilisticStringHandler.decoder.decode(buffer).toString();
+				final String value = ProbabilisticStringHandler.DECODER.decode(buffer).toString();
 				buffer.limit(limit);
 				final Double probability = buffer.getDouble();
 				values.put(value, probability);
@@ -105,13 +130,17 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 		return new ProbabilisticString(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
+	 */
 	@Override
-	public void writeData(final ByteBuffer buffer, final Object data) {
+	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final ProbabilisticString values = (ProbabilisticString) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<String, Double> value : values.getValues().entrySet()) {
 			try {
-				final ByteBuffer encodedValue = ProbabilisticStringHandler.encoder.encode(CharBuffer.wrap(value.getKey()));
+				final ByteBuffer encodedValue = ProbabilisticStringHandler.ENCODER.encode(CharBuffer.wrap(value.getKey()));
 				buffer.putInt(encodedValue.remaining());
 				buffer.put(encodedValue);
 				buffer.putDouble(value.getValue());
@@ -121,18 +150,26 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 		}
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
+	 */
 	@Override
-	final public List<String> getSupportedDataTypes() {
-		return ProbabilisticStringHandler.types;
+	public final List<String> getSupportedDataTypes() {
+		return Collections.unmodifiableList(ProbabilisticStringHandler.TYPES);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
+	 */
 	@Override
-	public int memSize(final Object attribute) {
+	public final int memSize(final Object attribute) {
 		int size = 0;
 		final ProbabilisticString values = (ProbabilisticString) attribute;
 		for (final Entry<String, Double> value : values.getValues().entrySet()) {
 			try {
-				final ByteBuffer encodedValue = ProbabilisticStringHandler.encoder.encode(CharBuffer.wrap(value.getKey()));
+				final ByteBuffer encodedValue = ProbabilisticStringHandler.ENCODER.encode(CharBuffer.wrap(value.getKey()));
 				size += encodedValue.remaining();
 			} catch (final CharacterCodingException e) {
 				e.printStackTrace();

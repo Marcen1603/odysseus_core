@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
 
 /**
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * Smaller operator for continuous probabilistic values.
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticContinuousSmallerOperatorVector extends ProbabilisticContinuousSmallerEqualsOperatorVector {
@@ -28,8 +27,12 @@ public class ProbabilisticContinuousSmallerOperatorVector extends ProbabilisticC
      */
 	private static final long serialVersionUID = 6744058190515174151L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperatorVector#getSymbol()
+	 */
 	@Override
-	public String getSymbol() {
+	public final String getSymbol() {
 		return "<";
 	}
 

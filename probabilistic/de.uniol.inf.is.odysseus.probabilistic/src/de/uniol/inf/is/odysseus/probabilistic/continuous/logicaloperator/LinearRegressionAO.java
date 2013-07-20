@@ -43,13 +43,24 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 * 
 	 */
 	private static final long serialVersionUID = 6621664432018792263L;
+	/** The dependent attributes. */
 	private List<SDFAttribute> dependentAttributes;
+	/** The explanatory attributes. */
 	private List<SDFAttribute> explanatoryAttributes;
 
+	/**
+	 * Default constructor.
+	 */
 	public LinearRegressionAO() {
 		super();
 	}
 
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param linearRegressionAO
+	 *            The object to copy from
+	 */
 	public LinearRegressionAO(final LinearRegressionAO linearRegressionAO) {
 		super(linearRegressionAO);
 		this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
@@ -57,11 +68,22 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 
 	}
 
+	/**
+	 * Sets the value of the dependentAttributes property.
+	 * 
+	 * @param dependentAttributes
+	 *            The dependent attributes
+	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
 	public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
 		this.dependentAttributes = dependentAttributes;
 	}
 
+	/**
+	 * Gets the value of the dependentAttributes property.
+	 * 
+	 * @return the dependent attributes
+	 */
 	@GetParameter(name = "DEPENDENT")
 	public final List<SDFAttribute> getDependentAttributes() {
 		if (this.dependentAttributes == null) {
@@ -70,11 +92,22 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 		return this.dependentAttributes;
 	}
 
+	/**
+	 * Sets the value of the explanatoryAttributes property.
+	 * 
+	 * @param explanatoryAttributes
+	 *            The explanatory attributes
+	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
 	public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
 		this.explanatoryAttributes = explanatoryAttributes;
 	}
 
+	/**
+	 * Gets the value of the explanatoryAttributes property.
+	 * 
+	 * @return the explanatory attributes
+	 */
 	@GetParameter(name = "EXPLANATORY")
 	public final List<SDFAttribute> getExplanatoryAttributes() {
 		if (this.explanatoryAttributes == null) {
@@ -83,19 +116,35 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 		return this.explanatoryAttributes;
 	}
 
+	/**
+	 * 
+	 * @return The attribute positions of all dependent attributes
+	 */
 	public final int[] determineDependentList() {
 		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getDependentAttributes());
 	}
 
+	/**
+	 * 
+	 * @return The attribute positions of all explanatory attributes
+	 */
 	public final int[] determineExplanatoryList() {
 		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getExplanatoryAttributes());
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
+	 */
 	@Override
 	public final AbstractLogicalOperator clone() {
 		return new LinearRegressionAO(this);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#initialize()
+	 */
 	@Override
 	public final void initialize() {
 		final Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();

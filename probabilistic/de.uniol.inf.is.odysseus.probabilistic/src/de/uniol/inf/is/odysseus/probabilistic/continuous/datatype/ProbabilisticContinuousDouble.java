@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.uniol.inf.is.odysseus.probabilistic.continuous.datatype;
 
 import java.io.Serializable;
@@ -21,29 +20,60 @@ import java.io.Serializable;
 import de.uniol.inf.is.odysseus.core.IClone;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 537104992550497486L;
+	/** The index of the associated distribution. */
 	private int distribution;
 
+	/**
+	 * Default constructor.
+	 * 
+	 * @param distribution
+	 *            The index of the associated distribution
+	 */
 	public ProbabilisticContinuousDouble(final int distribution) {
 		this.distribution = distribution;
 	}
 
-	public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble probabilisticContinuousDouble) {
-		this.distribution = probabilisticContinuousDouble.distribution;
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param copy The object to clone from
+	 */
+	public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble copy) {
+		this.distribution = copy.distribution;
 	}
 
-	public int getDistribution() {
+	/**
+	 * Gets the value of the distribution property.
+	 * 
+	 * @return the distribution
+	 */
+	public final int getDistribution() {
 		return this.distribution;
 	}
 
+	/**
+	 * Sets the value of the distribution property.
+	 * 
+	 * @param distribution
+	 *            the distribution to set
+	 */
+	public final void setDistribution(final int distribution) {
+		this.distribution = distribution;
+	}
+
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		sb.append(this.distribution);
@@ -51,25 +81,33 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 		return sb.toString();
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
-	public ProbabilisticContinuousDouble clone() {
+	public final ProbabilisticContinuousDouble clone() {
 		return new ProbabilisticContinuousDouble(this);
 	}
 
-	public void setDistribution(final int distribution) {
-		this.distribution = distribution;
-	}
-
+	/*
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = (prime * result) + this.distribution;
 		return result;
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
-	public boolean equals(final Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}

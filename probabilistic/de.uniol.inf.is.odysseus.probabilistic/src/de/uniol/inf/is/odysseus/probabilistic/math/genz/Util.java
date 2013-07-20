@@ -19,13 +19,13 @@ package de.uniol.inf.is.odysseus.probabilistic.math.genz;
 import java.util.ArrayList;
 
 import org.apache.commons.math3.special.Erf;
+import org.apache.commons.math3.util.FastMath;
 
-import umontreal.iro.lecuyer.util.Num;
 
 public class Util {
 
 	public static double sqrt(final double d) {
-		return Math.sqrt(d);
+		return FastMath.sqrt(d);
 	}
 
 	public static double max(final double[] ds) {
@@ -62,8 +62,8 @@ public class Util {
 		return max;
 	}
 
-	public static double log(final int i) {
-		return Math.log(i);
+	public static double log(final double i) {
+		return FastMath.log(i);
 	}
 
 	public static double phi(final double z) {
@@ -71,7 +71,7 @@ public class Util {
 	}
 
 	public static double sign(final double ai) {
-		return Math.signum(ai);
+		return FastMath.signum(ai);
 	}
 
 	public static double phinv(final double p) {
@@ -83,7 +83,9 @@ public class Util {
 		// % function z = phinv(p), z = -sqrt(2)*erfcinv( 2*p ); % use if no norminv
 		// %
 		//
-		return -Util.sqrt(2) * Num.erfcInv(2 * p);
+
+	
+		return -Util.sqrt(2) * Erf.erfcInv(2 * p);
 	}
 
 	public static double exp(final double v) {
@@ -91,7 +93,7 @@ public class Util {
 		// of X. exp operates element-wise on arrays. For
 		// complex x + i * y, exp returns the complex
 		// exponential ez = ex(cos y + i sin y). Use expm for matrix exponentials.
-		return Math.exp(v);
+		return FastMath.exp(v);
 		// return 0;
 	}
 
@@ -100,7 +102,7 @@ public class Util {
 		final int numPrimes = Util.countPrimesUpperBound(limit);
 		final ArrayList<Integer> primes = new ArrayList<Integer>(numPrimes);
 		final boolean[] isComposite = new boolean[limit]; // all false
-		final int sqrtLimit = (int) Math.sqrt(limit); // floor
+		final int sqrtLimit = (int) FastMath.sqrt(limit); // floor
 		for (int i = 2; i <= sqrtLimit; i++) {
 			if (!isComposite[i]) {
 				primes.add(i);
@@ -133,7 +135,7 @@ public class Util {
 		if (((n % 2) == 0) || ((n % 3) == 0)) {
 			return false;
 		}
-		final long sqrtN = (long) Math.sqrt(n) + 1;
+		final long sqrtN = (long) FastMath.sqrt(n) + 1;
 		for (long i = 6L; i <= sqrtN; i += 6) {
 			if (((n % (i - 1)) == 0) || ((n % (i + 1)) == 0)) {
 				return false;
@@ -143,6 +145,6 @@ public class Util {
 	}
 
 	private static int countPrimesUpperBound(final int max) {
-		return max > 1 ? (int) ((1.25506 * max) / Math.log(max)) : 0;
+		return max > 1 ? (int) ((1.25506 * max) / FastMath.log(max)) : 0;
 	}
 }

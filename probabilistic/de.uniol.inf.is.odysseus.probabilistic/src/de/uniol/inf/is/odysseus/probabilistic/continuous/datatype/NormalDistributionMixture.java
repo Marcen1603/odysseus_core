@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,31 +28,62 @@ import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  */
 public class NormalDistributionMixture implements Serializable, Cloneable, IClone {
 	/**
      * 
      */
 	private static final long serialVersionUID = 8771213908605100590L;
+	/** The attribute positions. */
 	private int[] attributes;
+	/** The scale. */
 	private double scale;
+	/** The support for each dimension. */
 	private Interval[] support;
+	/** The weighted mixtures. */
 	// FIXME Replace by List<Pair<>> ?
+	// FIXME Possible Bug, mixtures not serializable
 	private final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>();
 
-	public NormalDistributionMixture(final double mean, final double[][] covariances) {
-		this(new double[] { mean }, covariances);
+	/**
+	 * 
+	 * @param mean
+	 *            The mean
+	 * @param covariance
+	 *            The covariance matrix
+	 */
+	public NormalDistributionMixture(final double mean, final double[][] covariance) {
+		this(new double[] { mean }, covariance);
 	}
 
-	public NormalDistributionMixture(final double mean, final double[] covariances) {
-		this(new double[] { mean }, CovarianceMatrixUtils.toMatrix(covariances).getData());
+	/**
+	 * 
+	 * @param mean
+	 *            The mean
+	 * @param covariance
+	 *            The triangle covariance matrix
+	 */
+	public NormalDistributionMixture(final double mean, final double[] covariance) {
+		this(new double[] { mean }, CovarianceMatrixUtils.toMatrix(covariance).getData());
 	}
 
-	public NormalDistributionMixture(final double[] means, final double[] covariances) {
-		this(means, CovarianceMatrixUtils.toMatrix(covariances).getData());
+	/**
+	 * 
+	 * @param means
+	 *            The means
+	 * @param covariance
+	 *            The triangle covariance matrix
+	 */
+	public NormalDistributionMixture(final double[] means, final double[] covariance) {
+		this(means, CovarianceMatrixUtils.toMatrix(covariance).getData());
 	}
 
+	/**
+	 * 
+	 * @param dimension
+	 *            The dimension
+	 */
 	public NormalDistributionMixture(final int dimension) {
 		this.attributes = new int[dimension];
 		this.scale = 1.0;
@@ -62,6 +93,13 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 	}
 
+	/**
+	 * 
+	 * @param means
+	 *            The means
+	 * @param covariances
+	 *            The covariances
+	 */
 	public NormalDistributionMixture(final double[] means, final double[][] covariances) {
 		final int dimension = means.length;
 		this.attributes = new int[dimension];
@@ -73,6 +111,11 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 	}
 
+	/**
+	 * 
+	 * @param mixtures
+	 *            The mixtures
+	 */
 	public NormalDistributionMixture(final Map<MultivariateNormalDistribution, Double> mixtures) {
 		int dimension = 0;
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : mixtures.entrySet()) {
@@ -87,6 +130,12 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 	}
 
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param normalDistributionMixture
+	 *            The clone
+	 */
 	public NormalDistributionMixture(final NormalDistributionMixture normalDistributionMixture) {
 		this.attributes = normalDistributionMixture.attributes.clone();
 		this.scale = normalDistributionMixture.scale;
@@ -100,56 +149,133 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 	}
 
-	public int getDimension() {
+	/**
+	 * Gets the dimension of this distribution mixture.
+	 * 
+	 * @return The dimension
+	 */
+	public final int getDimension() {
 		return this.attributes.length;
 	}
 
-	public double getScale() {
+	/**
+	 * Gets the value of the scale property.
+	 * 
+	 * @return the scale
+	 */
+	public final double getScale() {
 		return this.scale;
 	}
 
-	public void setScale(final double scale) {
+	/**
+	 * Sets the value of the scale property.
+	 * 
+	 * @param scale
+	 *            the scale to set
+	 */
+	public final void setScale(final double scale) {
 		this.scale = scale;
 	}
 
-	public Interval getSupport(final int dimension) {
+	/**
+	 * Gets the value of the support property in the given dimension.
+	 * 
+	 * @param dimension
+	 *            the dimension
+	 * @return the support
+	 */
+	public final Interval getSupport(final int dimension) {
 		return this.support[dimension];
 	}
 
-	public Interval[] getSupport() {
+	/**
+	 * Sets the value of the support in the given dimension.
+	 * 
+	 * @param dimension
+	 *            the dimension
+	 * @param dimensionSupport
+	 *            the support to set
+	 */
+	public final void setSupport(final int dimension, final Interval dimensionSupport) {
+		this.support[dimension] = this.support[dimension].intersection(dimensionSupport);
+	}
+
+	/**
+	 * Gets the value of the support property.
+	 * 
+	 * @return the support
+	 */
+	public final Interval[] getSupport() {
 		return this.support;
 	}
 
-	public void setSupport(final int dimension, final Interval support) {
-		this.support[dimension] = this.support[dimension].intersection(support);
-	}
-
-	public void setSupport(final Interval[] support) {
+	/**
+	 * Sets the value of the support property.
+	 * 
+	 * @param support
+	 *            the support to set
+	 */
+	public final void setSupport(final Interval[] support) {
 		this.support = support;
 	}
 
-	public Map<MultivariateNormalDistribution, Double> getMixtures() {
+	/**
+	 * Gets the value of the mixtures property.
+	 * 
+	 * @return the mixtures
+	 */
+	public final Map<MultivariateNormalDistribution, Double> getMixtures() {
 		return this.mixtures;
 	}
 
-	public int getAttribute(final int dimension) {
+	/**
+	 * Gets the value of the attributes property in the given dimension.
+	 * 
+	 * @param dimension
+	 *            the dimension
+	 * @return the attributes
+	 */
+	public final int getAttribute(final int dimension) {
 		return this.attributes[dimension];
 	}
 
-	public int[] getAttributes() {
+	/**
+	 * Gets the value of the attributes property.
+	 * 
+	 * @return the attributes
+	 */
+	public final int[] getAttributes() {
 		return this.attributes;
 	}
 
-	public void setAttributes(final int[] attributes) {
+	/**
+	 * Sets the value of the attributes property.
+	 * 
+	 * @param attributes
+	 *            the attributes to set
+	 */
+	public final void setAttributes(final int[] attributes) {
 		this.attributes = attributes;
 	}
 
-	public void setAttribute(final int dimension, final int attribute) {
+	/**
+	 * Sets the value of the attributes in the given dimension.
+	 * 
+	 * @param dimension
+	 *            the dimension
+	 * @param attribute
+	 *            the attribute to set
+	 */
+	public final void setAttribute(final int dimension, final int attribute) {
 		this.attributes[dimension] = attribute;
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : this.mixtures.entrySet()) {
@@ -190,8 +316,12 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		return sb.toString();
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
-	public NormalDistributionMixture clone() {
+	public final NormalDistributionMixture clone() {
 		return new NormalDistributionMixture(this);
 	}
 

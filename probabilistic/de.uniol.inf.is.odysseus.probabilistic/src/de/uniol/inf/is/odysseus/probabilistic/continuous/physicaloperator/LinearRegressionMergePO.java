@@ -45,18 +45,28 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
 public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** Logger. */
 	private static final Logger LOG = LoggerFactory.getLogger(LinearRegressionMergePO.class);
-	private final int[] explanatoryAttributePos;
+	/** The dependent attribute positions. */
 	private final int[] dependentAttributePos;
-	private final int regressionCoefficientsPos;
+	/** The explanatory attributes positions. */
+	private final int[] explanatoryAttributePos;
+	/** The residual position. */
 	private final int residualPos;
+	/** The regression coefficients position. */
+	private final int regressionCoefficientsPos;
 
 	/**
+	 * Default constructor.
 	 * 
 	 * @param inputSchema
+	 *            The input schema
 	 * @param dependentList
+	 *            The list of dependent attribute positions
 	 * @param explanatoryList
+	 *            The list of explanatory attribute positions
 	 * @param regressionCoefficientsPos
+	 *            The position of the regression coefficient matrix
 	 * @param residualPos
+	 *            The position of the residual
 	 */
 	public LinearRegressionMergePO(final SDFSchema inputSchema, final int[] dependentList, final int[] explanatoryList, final int regressionCoefficientsPos, final int residualPos) {
 		super();
@@ -67,8 +77,10 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 	}
 
 	/**
+	 * Clone constructor.
 	 * 
 	 * @param linearRegressionMergePO
+	 *            The copy
 	 */
 	public LinearRegressionMergePO(final LinearRegressionMergePO<T> linearRegressionMergePO) {
 		super(linearRegressionMergePO);
@@ -78,22 +90,22 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		this.residualPos = linearRegressionMergePO.residualPos;
 	}
 
-	/**
+	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
 	 */
 	@Override
-	public OutputMode getOutputMode() {
+	public final OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	/**
+	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(final ProbabilisticTuple<T> object, final int port) {
+	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		final int currentMixturePos = ((ProbabilisticContinuousDouble) object.getAttribute(this.dependentAttributePos[0])).getDistribution();
 		final NormalDistributionMixture currentMixture = object.getDistribution(currentMixturePos);
 
@@ -104,7 +116,7 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		final Map<MultivariateNormalDistribution, Double> newMixtureComponents = new HashMap<MultivariateNormalDistribution, Double>();
 		for (final Entry<MultivariateNormalDistribution, Double> mixture : currentMixture.getMixtures().entrySet()) {
 
-			RealMatrix mean = MatrixUtils.createColumnRealMatrix(mixture.getKey().getMeans());
+			final RealMatrix mean = MatrixUtils.createColumnRealMatrix(mixture.getKey().getMeans());
 			final RealMatrix regressionCoefficientsMatrix = MatrixUtils.createRealMatrix(mean.getRowDimension(), mean.getColumnDimension());
 			regressionCoefficientsMatrix.setSubMatrix(regressionCoefficients.getData(), mean.getRowDimension() - regressionCoefficients.getRowDimension(), regressionCoefficients.getColumnDimension() - 1);
 			final RealMatrix covarianceMatrix = mixture.getKey().getCovariances();
@@ -127,12 +139,12 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 			newCovarianceMatrix.setSubMatrix(regressionCoefficientsMatrix.transpose().multiply(covarianceMatrix).multiply(regressionCoefficientsMatrix).add(residual).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
 			try {
 				newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				final double[] diagonal = new double[newCovarianceMatrix.getColumnDimension()];
 				Arrays.fill(diagonal, 10E-5);
 				newCovarianceMatrix = newCovarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
 				newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
-				//LOG.error(e.getMessage(), e);
+				LOG.warn(e.getMessage(), e);
 			}
 		}
 
@@ -157,15 +169,16 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		}
 		object.setDistributions(distributions.toArray(new NormalDistributionMixture[distributions.size()]));
 		object.setMetadata((T) object.getMetadata().clone());
+		// KTHXBYE
 		this.transfer(object);
 	}
 
-	/**
+	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
 	 */
 	@Override
-	public AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
+	public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
 		return new LinearRegressionMergePO<T>(this);
 	}
 }

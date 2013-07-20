@@ -17,7 +17,9 @@
 package de.uniol.inf.is.odysseus.probabilistic.math;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
 public class IntervalArithmeticException extends Exception {
 
@@ -26,6 +28,11 @@ public class IntervalArithmeticException extends Exception {
 	 */
 	private static final long serialVersionUID = 4246720169428347776L;
 
+	/**
+	 * 
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+	 */
 	public IntervalArithmeticException(final String message) {
 		super(message);
 	}

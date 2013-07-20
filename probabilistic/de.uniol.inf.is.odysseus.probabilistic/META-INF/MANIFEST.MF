@@ -43,6 +43,5 @@ Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.math,
  de.uniol.inf.is.odysseus.probabilistic.metadata,
  de.uniol.inf.is.odysseus.probabilistic.physicaloperator,
- de.uniol.inf.is.odysseus.probabilistic.physicaloperator.aggregate.functions,
  de.uniol.inf.is.odysseus.probabilistic.sdf.schema
 

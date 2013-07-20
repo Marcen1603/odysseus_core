@@ -25,9 +25,12 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Polynomial;
 /**
  * AVG Aggregation on probabilistic data stream according to T.S.Jayram et al. "Estimating statistical aggregates on probabilistic data streams"
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
  */
 public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
+	/** The logger. */
 	private static final Logger LOG = LoggerFactory.getLogger(AvgPartialAggregate.class);
 
 	/** Upper probability bound. */
@@ -57,6 +60,8 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	private final int k1;
 	/** Alpha. */
 	private double alpha;
+	/** The result data type. */
+	private final String datatype;
 
 	/**
 	 * Default constructor with approximation error (\f$ \epsilon \f$) and upper probability bound (\f$ \theta \f$).
@@ -65,8 +70,10 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 *            Approximation error
 	 * @param theta
 	 *            Upper probability bound
+	 * @param datatype
+	 *            The result datatype
 	 */
-	public AvgPartialAggregate(final double epsilon, final double theta) {
+	public AvgPartialAggregate(final double epsilon, final double theta, final String datatype) {
 		if (epsilon >= 0.5) {
 			throw new IllegalArgumentException("Invalid Argument: Epsilon (" + epsilon + ") not in [0,1/2)");
 		}
@@ -87,6 +94,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		this.aSmall = new double[this.k1];
 
 		this.storeIndex = 0;
+		this.datatype = datatype;
 	}
 
 	/**
@@ -94,9 +102,11 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * 
 	 * @param epsilon
 	 *            Approximation error
+	 * @param datatype
+	 *            The result datatype
 	 */
-	public AvgPartialAggregate(final double epsilon) {
-		this(epsilon, 1.0 / Math.E);
+	public AvgPartialAggregate(final double epsilon, final String datatype) {
+		this(epsilon, 1.0 / Math.E, datatype);
 	}
 
 	/**
@@ -117,7 +127,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		this.pBig = avgPartialAggregate.pBig.clone();
 		this.aSmall = avgPartialAggregate.aSmall.clone();
 		this.aBig = avgPartialAggregate.aBig.clone();
-
+		this.datatype = avgPartialAggregate.datatype;
 	}
 
 	/**
@@ -128,7 +138,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @param probability
 	 *            The probability of the value
 	 */
-	public void update(final double value, final double probability) {
+	public final void update(final double value, final double probability) {
 		this.alpha *= (1.0 - probability);
 		for (int k = 0; k < this.k0; k++) {
 			this.pBig[k] += Math.pow(probability, k + 1);
@@ -157,19 +167,21 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * 
 	 * @return The average.
 	 */
-	public double getAvg() {
+	public final double getAvg() {
 		return this.reconstruct();
 	}
 
 	/**
-	 * Reconstruct the stream average. Currently this function also checks the Corollary 2.4 and the Claim 2.11 for k0 and k1.
+	 * Reconstruct the stream average.
+	 * 
+	 * Currently this function also checks the Corollary 2.4 and the Claim 2.11 for k0 and k1 if trace is enable.
 	 * 
 	 * @return The reconstructed average
 	 */
 	private double reconstruct() {
 		final double rho = 1.0 / (1.0 - this.alpha);
 
-		if (AvgPartialAggregate.LOG.isDebugEnabled()) {
+		if (AvgPartialAggregate.LOG.isTraceEnabled()) {
 			assert this.checkCorollary24();
 			assert this.checkClaim211(this.k0);
 			assert this.checkClaim211(this.k1);
@@ -184,7 +196,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
-	 * Checks whether the given stream is a long stream. More formarly a stream is a long stream iff:
+	 * Checks whether the given stream is a long stream. More formally a stream is a long stream iff:
 	 * 
 	 * \f$ |stream| >= ((4.0 / \epsilon) * \log(2.0/ \epsilon)) \f$
 	 * 
@@ -200,6 +212,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * Evaluate AVG on long streams using the upper bound of SUM and COUNT.
 	 * 
 	 * @param rho
+	 *            The value of \f$ \rho \f$
 	 * @return The average
 	 */
 	private double evaluateLongStreamAvg(final double rho) {
@@ -210,30 +223,31 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * Evaluate AVG on short streams.
 	 * 
 	 * @param rho
+	 *            The value of \f$ \rho \f$
 	 * @return The average
 	 */
 	private double evaluateShortStreamAvg(final double rho) {
-		Polynomial Q;
+		Polynomial q;
 		final double z0 = this.getZ0();
 
 		final double smallestEvenInteger = this.getSmallestEvenInteger();
 
 		if (this.pBig[0] >= ((3.0 / this.theta) * Math.log(2.0 / this.epsilon))) {
-			if (AvgPartialAggregate.LOG.isDebugEnabled()) {
+			if (AvgPartialAggregate.LOG.isTraceEnabled()) {
 				assert this.checkProof27(this.pBig, this.aBig, z0);
 				assert this.checkClaim28(this.pBig, this.aBig, z0) : z0;
 				assert this.checkLemma210(this.pBig, smallestEvenInteger, z0);
 			}
-			Q = this.getQBig(rho, smallestEvenInteger, z0);
+			q = this.getQBig(rho, smallestEvenInteger, z0);
 		} else {
-			if (AvgPartialAggregate.LOG.isDebugEnabled()) {
+			if (AvgPartialAggregate.LOG.isTraceEnabled()) {
 				assert this.checkProof27(this.pSmall, this.aSmall, z0);
 				assert this.checkClaim28(this.pSmall, this.aSmall, z0) : z0;
 				assert this.checkLemma210(this.pSmall, smallestEvenInteger, z0);
 			}
-			Q = this.getQSmall(rho, smallestEvenInteger, z0);
+			q = this.getQSmall(rho, smallestEvenInteger, z0);
 		}
-		final Polynomial integral = Q.integrate();
+		final Polynomial integral = q.integrate();
 
 		return integral.evaluate(z0);
 	}
@@ -252,7 +266,9 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
-	 * @return z0
+	 * Gets the value of \f$ z_{0} \f$.
+	 * 
+	 * @return The value of \f$ z_{0} \f$
 	 */
 	private double getZ0() {
 		if (this.pBig[0] >= 1.0) {
@@ -263,11 +279,15 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
+	 * Get the value of \f$ q_{big} \f$.
 	 * 
 	 * @param rho
+	 *            The value of \f$ \rho \f$
 	 * @param l
+	 *            The value of \f$ l \f$
 	 * @param z0
-	 * @return
+	 *            The value of \f$ z_{0} \f$
+	 * @return The value of \f$ q_{big} \f$
 	 */
 	private Polynomial getQBig(final double rho, final double l, final double z0) {
 		final Polynomial polynomial = new Polynomial(rho / (1.0 - this.epsilon), 0);
@@ -280,11 +300,15 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
+	 * Get the value of \f$ q_{small} \f$.
 	 * 
 	 * @param rho
+	 *            The value of \f$ \rho \f$
 	 * @param l
+	 *            The value of \f$ l \f$
 	 * @param z0
-	 * @return
+	 *            The value of \f$ z_{0} \f$
+	 * @return The value of \f$ q_{small} \f$
 	 */
 	private Polynomial getQSmall(final double rho, final double l, final double z0) {
 		final Polynomial polynomial = new Polynomial(rho / (1.0 - this.epsilon), 0);
@@ -327,17 +351,20 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
+	 * Gets the value of \f$ \~{g} \f$.
 	 * 
-	 * @param P
+	 * @param p
+	 *            The value of \f$ P \f$
 	 * @param l
-	 * @return
+	 *            The value of \f$ l \f$
+	 * @return The value of \f$ \~{g} \f$
 	 */
-	private Polynomial gTilde(final double[] P, final double l) {
+	private Polynomial gTilde(final double[] p, final double l) {
 		Polynomial gTilde = null;
 		for (int i = 1; i <= this.k0; i++) {
 			Polynomial sum = new Polynomial(0.0, 0);
 			for (int j = 0; j <= l; j++) {
-				sum = sum.add(new Polynomial(Math.pow(-P[i - 1], j) / (this.factorial(j) * Math.pow(i, j)), i * j));
+				sum = sum.add(new Polynomial(Math.pow(-p[i - 1], j) / (ArithmeticUtils.factorialDouble(j) * Math.pow(i, j)), i * j));
 			}
 			if (gTilde == null) {
 				gTilde = sum;
@@ -349,100 +376,103 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
+	 * Gets the value of \f$ \~{h} \f$.
 	 * 
-	 * @param A
-	 * @return
+	 * @param a
+	 *            The value of \f$ A \f$
+	 * @return The value of \f$ \~{h} \f$
 	 */
-	private Polynomial hTilde(final double[] A) {
+	private Polynomial hTilde(final double[] a) {
 		Polynomial hTilde = new Polynomial(0.0, 0);
 		for (int i = 0; i < this.k1; i++) {
-			hTilde = hTilde.add(new Polynomial(A[i], i));
+			hTilde = hTilde.add(new Polynomial(a[i], i));
 		}
 
 		return hTilde;
 	}
 
 	/**
-	 * 
-	 * @param n
-	 * @return
-	 */
-	private double factorial(final int n) {
-		return ArithmeticUtils.factorialDouble(n);
-	}
-
-	/**
+	 * Checks claim 2.11.
 	 * 
 	 * @param k
-	 * @return
+	 *            The value of \f$ k \f$
+	 * @return <code>true</code> if claim passed
 	 */
 	private boolean checkClaim211(final double k) {
-		AvgPartialAggregate.LOG.debug("Check Claim 2.11");
+		AvgPartialAggregate.LOG.trace("Check Claim 2.11");
 		boolean result = true;
 		double product = 1;
 		for (int i = 1; i <= k; i++) {
 			product *= (1 + ((1 / (i * Math.pow(2, i))) * this.epsilon));
 		}
 		result = (product <= (1 + ((k / (k + 1)) * this.epsilon)));
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
+	 * Checks claim 2.8.
 	 * 
-	 * @param P
-	 * @param A
+	 * @param p
+	 *            The value of \f$ P \f$
+	 * @param a
+	 *            The value of \f$ A \f$
 	 * @param z0
-	 * @return
+	 *            The value of \f$ z_{0} \f$
+	 * @return <code>true</code> if claim passed
 	 */
-	private boolean checkClaim28(final double[] P, final double[] A, final double z0) {
-		AvgPartialAggregate.LOG.debug("Check Claim 2.8");
+	private boolean checkClaim28(final double[] p, final double[] a, final double z0) {
+		AvgPartialAggregate.LOG.trace("Check Claim 2.8");
 		boolean result = true;
 		for (int i = 1; i <= this.k0; i++) {
 			for (double z = 0; z <= z0; z += 0.01) {
-				result &= (P[i - 1] * Math.pow(z, i)) <= ((P[0] * z) * Math.pow(this.theta, (i - 1)));
+				result &= (p[i - 1] * Math.pow(z, i)) <= ((p[0] * z) * Math.pow(this.theta, (i - 1)));
 				if (!result) {
-					AvgPartialAggregate.LOG.error("Error at (i=" + i + ",z=" + z + "): " + (P[i - 1] * Math.pow(z, i)) + " <= " + ((P[0] * z) * Math.pow(this.theta, (i - 1))));
+					AvgPartialAggregate.LOG.error("Error at (i=" + i + ",z=" + z + "): " + (p[i - 1] * Math.pow(z, i)) + " <= " + ((p[0] * z) * Math.pow(this.theta, (i - 1))));
 					return result;
 				}
 			}
 		}
 		for (int i = 1; i < this.k1; i++) {
 			for (int z = 0; z <= z0; z++) {
-				result &= (A[i] * Math.pow(z, i)) <= (A[0] * Math.pow(this.theta, i));
+				result &= (a[i] * Math.pow(z, i)) <= (a[0] * Math.pow(this.theta, i));
 				if (!result) {
-					AvgPartialAggregate.LOG.error("Error at (i=" + i + ",z=" + z + "): " + (A[i] * Math.pow(z, i)) + " <= " + (A[0] * Math.pow(this.theta, i)));
+					AvgPartialAggregate.LOG.error("Error at (i=" + i + ",z=" + z + "): " + (a[i] * Math.pow(z, i)) + " <= " + (a[0] * Math.pow(this.theta, i)));
 					return result;
 				}
 			}
 		}
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
+	 * Checks corollary 2.4.
 	 * 
-	 * @return
+	 * @return <code>true</code> if corollary passed
 	 */
 	private boolean checkCorollary24() {
-		AvgPartialAggregate.LOG.debug("Check Corollary 2.4");
+		AvgPartialAggregate.LOG.trace("Check Corollary 2.4");
 		boolean result = true;
 		if (this.pBig[0] >= ((4 / this.epsilon) * Math.log(2 / this.epsilon))) {
 			result = (((2 * Math.log(this.pBig[0])) / this.pBig[0]) <= ((2 * (Math.log(2) + Math.log(2 / this.epsilon) + Math.log(Math.log(2 / this.epsilon)))) / ((4 / this.epsilon) * Math.log(2 / this.epsilon))))
 					&& (((2 * (Math.log(2) + Math.log(2 / this.epsilon) + Math.log(Math.log(2 / this.epsilon)))) / ((4 / this.epsilon) * Math.log(2 / this.epsilon))) < this.epsilon);
 		}
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
+	 * Checks theorem 2.3.
 	 * 
 	 * @param rho
+	 *            The value of \f$ \rho \f$
 	 * @param mean
-	 * @return
+	 *            The value of \f$ \mu \f$
+	 * @return <code>true</code> if theorem passed
 	 */
 	private boolean checkTheorem23(final double rho, final double mean) {
-		AvgPartialAggregate.LOG.debug("Check Theorem 2.3");
+		AvgPartialAggregate.LOG.trace("Check Theorem 2.3");
 		boolean result = true;
 		if (this.pBig[0] >= Math.E) {
 			result = ((((rho * this.aBig[0]) / this.pBig[0]) * (1 - ((2 * Math.log(this.pBig[0])) / this.pBig[0]))) <= mean) && (mean <= (((rho * this.aBig[0]) / this.pBig[0]) * (1 + (1 / (this.pBig[0] - 1)))));
@@ -456,32 +486,38 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 				result &= (lhs <= mean);
 			}
 		}
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
+	 * Checks lemma 2.7.
 	 * 
 	 * @param value
+	 *            The value
 	 * @param mean
-	 * @return
+	 *            The value of \f$ \mu \f$
+	 * @return <code>true</code> if lemma passed
 	 */
 	private boolean checkLemma27(final double value, final double mean) {
-		AvgPartialAggregate.LOG.debug("Check Lemma 2.7");
+		AvgPartialAggregate.LOG.trace("Check Lemma 2.7");
 		boolean result = true;
 		result = ((value >= mean) && (value <= ((1 + (5 * this.epsilon)) * mean)));
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
+	 * Checks lemma 2.9.
 	 * 
 	 * @param gTilde
+	 *            The value of \f$ \~{g} \f$
 	 * @param z0
-	 * @return
+	 *            The value of \f$ z_{0} \f$
+	 * @return <code>true</code> if lemma passed
 	 */
 	private boolean checkLemma29(final Polynomial gTilde, final double z0) {
-		AvgPartialAggregate.LOG.debug("Check Lemma 2.9");
+		AvgPartialAggregate.LOG.trace("Check Lemma 2.9");
 		boolean result = true;
 
 		final Polynomial lhs = this.gI();
@@ -494,33 +530,37 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 			return result;
 		}
 
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
+	 * Checks lemma 2.10.
 	 * 
-	 * @param P
+	 * @param p
+	 *            The value of \f$ P \f$
 	 * @param l
+	 *            The value of \f$ l \f$
 	 * @param z0
-	 * @return
+	 *            The value of \f$ z_{0} \f$
+	 * @return <code>true</code> if lemma passed
 	 */
-	private boolean checkLemma210(final double P[], final double l, final double z0) {
-		AvgPartialAggregate.LOG.debug("Check Lemma 2.10");
+	private boolean checkLemma210(final double[] p, final double l, final double z0) {
+		AvgPartialAggregate.LOG.trace("Check Lemma 2.10");
 		boolean result = true;
 		assert (this.epsilon < 0.5) : this.epsilon;
-		if (P[0] >= 1.0) {
-			assert (l > (5.0 * Math.log((2.0 * P[0]) / this.epsilon))) : l + " > " + (5.0 * Math.log((2.0 * P[0]) / this.epsilon));
+		if (p[0] >= 1.0) {
+			assert (l > (5.0 * Math.log((2.0 * p[0]) / this.epsilon))) : l + " > " + (5.0 * Math.log((2.0 * p[0]) / this.epsilon));
 		} else {
 			assert (l > Math.max(Math.log(2.0 / this.epsilon), 7.0)) : l + " > " + Math.max(Math.log(2.0 / this.epsilon), 7.0);
 		}
 		assert (this.k0 >= ((2.0 * Math.log(2.0 / this.epsilon)) / Math.log(1.0 / this.theta))) : "k0=" + this.k0 + " should be " + ((2.0 * Math.log(2.0 / this.epsilon)) / Math.log(1.0 / this.theta));
 		assert (this.k1 >= (Math.log(2.0 / this.epsilon) / Math.log(1.0 / this.theta))) : "k1=" + this.k1 + " shoudl be " + (Math.log(2.0 / this.epsilon) / Math.log(1.0 / this.theta));
 		final double z = z0;
-		final double lhs = this.gTilde(P, l).evaluate(z);
+		final double lhs = this.gTilde(p, l).evaluate(z);
 		double rhs = 1.0;
 		for (int i = 1; i <= this.k0; i++) {
-			rhs *= Math.exp((-P[i - 1] * Math.pow(z, i)) / i);
+			rhs *= Math.exp((-p[i - 1] * Math.pow(z, i)) / i);
 		}
 		double rhs2 = 1.0;
 		for (int i = 1; i <= this.k0; i++) {
@@ -530,7 +570,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 		result &= (rhs <= lhs) || (Math.abs(rhs - lhs) <= 0.00001);
 		if (!result) {
-			AvgPartialAggregate.LOG.error("Error at (l=" + l + ",z=" + z + "): gTildek0(z) (" + rhs + ") <= product(sum(1/j! (-Pi z^i)^j/i^j)) (" + P[0] + "(" + z0 + ")=" + lhs + ")");
+			AvgPartialAggregate.LOG.error("Error at (l=" + l + ",z=" + z + "): gTildek0(z) (" + rhs + ") <= product(sum(1/j! (-Pi z^i)^j/i^j)) (" + p[0] + "(" + z0 + ")=" + lhs + ")");
 			return result;
 		}
 
@@ -545,7 +585,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 			AvgPartialAggregate.LOG.error("Error at (z=" + z + "): " + lhs + " <= " + rhs2);
 			return result;
 		}
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
@@ -555,7 +595,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuffer ret = new StringBuffer("AvgPartialAggregate (").append(this.hashCode()).append(")");
 		return ret.toString();
 	}
@@ -566,13 +606,14 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public AvgPartialAggregate<T> clone() {
+	public final AvgPartialAggregate<T> clone() {
 		return new AvgPartialAggregate<T>(this);
 	}
 
 	/**
+	 * Gets the polynomial \f$ g_{I} \f$.
 	 * 
-	 * @return
+	 * @return The polynomial \f$ g_{I} \f$
 	 */
 	private Polynomial gI() {
 		Polynomial gI = new Polynomial(1, 0);
@@ -583,14 +624,18 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	}
 
 	/**
+	 * Checks proof 2.7.
 	 * 
-	 * @param P
-	 * @param A
+	 * @param p
+	 *            The value of \f$ P \f$
+	 * @param a
+	 *            The value of \f$ A \f$
 	 * @param z0
-	 * @return
+	 *            The value of \f$ z_{0} \f$
+	 * @return <code>true</code> if proof passed
 	 */
-	private boolean checkProof27(final double[] P, final double[] A, final double z0) {
-		AvgPartialAggregate.LOG.debug("Check Proof 2.7");
+	private boolean checkProof27(final double[] p, final double[] a, final double z0) {
+		AvgPartialAggregate.LOG.trace("Check Proof 2.7");
 		boolean result = true;
 		double product = 1.0;
 		double lhs = 1.0;
@@ -612,11 +657,11 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 			sum += this.valueStore[i] * this.probabilityStore[i];
 		}
 
-		final double rhs = sum * Math.exp(-P[0] * z0);
+		final double rhs = sum * Math.exp(-p[0] * z0);
 
-		result &= (Math.abs(rhs - (A[0] * Math.exp(-P[0] * z0))) < 0.000001);
+		result &= (Math.abs(rhs - (a[0] * Math.exp(-p[0] * z0))) < 0.000001);
 		if (!result) {
-			AvgPartialAggregate.LOG.error("Error at: " + rhs + " == " + (P[0] * Math.exp(-P[0] * z0)) + " -> " + (Math.abs(rhs - (P[0] * Math.exp(-P[0] * z0)))));
+			AvgPartialAggregate.LOG.error("Error at: " + rhs + " == " + (p[0] * Math.exp(-p[0] * z0)) + " -> " + (Math.abs(rhs - (p[0] * Math.exp(-p[0] * z0)))));
 			return result;
 		}
 		result &= lhs <= rhs;
@@ -625,14 +670,15 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 			return result;
 		}
 
-		AvgPartialAggregate.LOG.debug("Check pass " + result);
+		AvgPartialAggregate.LOG.trace("Check pass " + result);
 		return result;
 	}
 
 	/**
-	 * Only for testing purpose
+	 * Only for testing purpose.
 	 * 
 	 * @param args
+	 *            Default args
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void main(final String[] args) {
@@ -640,7 +686,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		final double result = 1.45;
 		double avg;
 
-		final AvgPartialAggregate aggFunc = new AvgPartialAggregate(epsilon);
+		final AvgPartialAggregate aggFunc = new AvgPartialAggregate(epsilon, "Double");
 		aggFunc.update(1.0, 1.0);
 		aggFunc.update(10.0, 0.1);
 

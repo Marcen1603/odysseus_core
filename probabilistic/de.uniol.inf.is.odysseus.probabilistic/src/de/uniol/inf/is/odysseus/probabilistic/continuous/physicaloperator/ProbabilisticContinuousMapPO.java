@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
 /**
  * Implementation of a probabilistic Map operator.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * @param <T>
  */
 public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
@@ -51,12 +52,17 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	private SDFProbabilisticExpression[] expressions;
 	/** The input schema used for semantic equal operations during runtime. */
 	private final SDFSchema inputSchema;
-	final private LinkedList<ProbabilisticTuple<T>> lastObjects = new LinkedList<>();
+	/** Internal cache for the last objects. */
+	private final LinkedList<ProbabilisticTuple<T>> lastObjects = new LinkedList<>();
+	/** Size of the history. */
 	private int maxHistoryElements = 0;
-	final private boolean statebased;
-	final private boolean allowNull;
+	/** Flag indicating whether this Map is stateful. */
+	private final boolean statebased;
+	/** Flag indicating if this Map allows Null values. */
+	private final boolean allowNull;
 	/** The number of output distributions. */
 	private int distributions;
+	/** Positions of needed attributes. */
 	private int[] neededAttributePos;
 
 	/**
@@ -67,7 +73,9 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 * @param expressions
 	 *            The probabilistic expression.
 	 * @param statebased
+	 *            Flag indicating whether this Map is stateful
 	 * @param allowNullInOutput
+	 *            Flag indicating if this Map allows Null values
 	 */
 	public ProbabilisticContinuousMapPO(final SDFSchema inputSchema, final SDFProbabilisticExpression[] expressions, final boolean statebased, final boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
@@ -84,7 +92,9 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 * @param expressions
 	 *            The expression.
 	 * @param statebased
+	 *            Flag indicating whether this Map is stateful
 	 * @param allowNullInOutput
+	 *            Flag indicating if this Map allows Null values
 	 */
 	public ProbabilisticContinuousMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions, final boolean statebased, final boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
@@ -215,11 +225,11 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 				final Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					ProbabilisticTuple<T> obj = null;
-					if (lastObjectSize > this.variables[i][j].objectPosToUse) {
-						obj = this.lastObjects.get(this.variables[i][j].objectPosToUse);
+					if (lastObjectSize > this.variables[i][j].getObjectPosToUse()) {
+						obj = this.lastObjects.get(this.variables[i][j].getObjectPosToUse());
 					}
 					if (obj != null) {
-						Object attribute = obj.getAttribute(this.variables[i][j].pos);
+						Object attribute = obj.getAttribute(this.variables[i][j].getPos());
 						if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
 							attribute = restrictedObject.getDistribution(((ProbabilisticContinuousDouble) attribute).getDistribution());
 						}
@@ -259,6 +269,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 			}
 		}
 		if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
+			// KTHXBYE
 			this.transfer(outputVal);
 		}
 	}
@@ -280,7 +291,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
-	public boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
+	public final boolean process_isSemanticallyEqual(final IPhysicalOperator ipo) {
 		if (!(ipo instanceof ProbabilisticContinuousMapPO)) {
 			return false;
 		}
@@ -305,20 +316,13 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 		return false;
 	}
 
-	public boolean isStatebased() {
+	/**
+	 * Gets the value of the statebased property.
+	 * 
+	 * @return <code>true</code> if this Map operator is a stateful Map operator
+	 */
+	public final boolean isStatebased() {
 		return this.statebased;
-	}
-
-}
-
-class VarHelper {
-	int pos;
-	int objectPosToUse;
-
-	public VarHelper(final int pos, final int objectPosToUse) {
-		super();
-		this.pos = pos;
-		this.objectPosToUse = objectPosToUse;
 	}
 
 }

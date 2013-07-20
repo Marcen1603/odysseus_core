@@ -18,25 +18,16 @@ package de.uniol.inf.is.odysseus.probabilistic.math.genz;
 
 import java.text.DecimalFormat;
 
+import org.apache.commons.math3.util.FastMath;
+
+/**
+ * Based on the Matlab function for the numerical computation of multivariate normal distribution values by Alan Genz: http://www.sci.wsu.edu/math/faculty/genz/homepage
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * @author Alexander Funk
+ * 
+ */
 public class QSIMVN {
-
-	private static final double pi = Math.PI;
-
-	public static void main(final String[] args) {
-		// System.out.println(Util.generatePrimes(8));
-		// >> r = [4 3 2 1;3 5 -1 1;2 -1 4 2;1 1 2 5];
-		// % >> a = -inf*[1 1 1 1 ]'; b = [ 1 2 3 4 ]';
-		// % >> [ p e ] = qsimvn( 5000, r, a, b ); disp([ p e ])
-
-		final Matrix R = new Matrix(new double[][] { { 4, 3, 2, 1 }, { 3, 5, -1, 1 }, { 2, -1, 4, 2 }, { 1, 1, 2, 5 } });
-
-		final Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY } });
-
-		final Matrix b = new Matrix(new double[][] { { 1 }, { 2 }, { 3 }, { 4 } });
-
-		final QSIMVNResult ret = QSIMVN.cumulativeProbability(5000, R, a, b);
-		System.out.println("p = " + ret.p + "   e = " + new DecimalFormat("#.###############").format(ret.e));
-	}
 
 	public static QSIMVNResult cumulativeProbability(final int m, final Matrix r, final Matrix a, final Matrix b) {
 		// [n, n] = size(r);
@@ -49,28 +40,28 @@ public class QSIMVN {
 		final double ai = r2.as.get(1);
 		final double bi = r2.bs.get(1);
 		final double cn = 37.5;
-		double c = 0;
-		double d = 0;
-		if (Math.abs(ai) < (cn * ct)) {
+		double c = 0.0;
+		double d = 0.0;
+		if (FastMath.abs(ai) < (cn * ct)) {
 			c = Util.phi(ai / ct);
 		} else {
-			c = (1 + Util.sign(ai)) / 2;
+			c = (1.0 + Util.sign(ai)) / 2.0;
 		}
-		if (Math.abs(bi) < (cn * ct)) {
+		if (FastMath.abs(bi) < (cn * ct)) {
 			d = Util.phi(bi / ct);
 		} else {
-			d = (1 + Util.sign(bi)) / 2;
+			d = (1.0 + Util.sign(bi)) / 2.0;
 		}
 		final double ci = c;
 		final double dci = d - ci;
-		double p = 0;
-		double e = 0;
-		final double ns = 12;
+		double p = 0.0;
+		double e = 0.0;
+		final double ns = 12.0;
 
-		final double nv = Util.max(new double[] { m / ns, 1 }); // double nv = max( [
+		final double nv = Util.max(new double[] { m / ns, 1.0 }); // double nv = max( [
 		// m/ns 1 ] );
 		// %q = 2.^( [1:n-1]'/n) ; % Niederreiter point set generators
-		final Matrix ps = Matrix.primes((int) ((5 * n * Util.log(n + 1)) / 4)).sqrt();
+		final Matrix ps = Matrix.primes((int) ((5.0 * n * Util.log(n + 1.0)) / 4.0)).sqrt();
 		final Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //% Richtmyer
 															// generators
 
@@ -78,36 +69,36 @@ public class QSIMVN {
 		// % Randomization loop for ns samples
 		// %
 		for (int i = 1; i <= ns; i++) { // for i = 1 : ns
-			double vi = 0;
+			double vi = 0.0;
 			final Matrix xr = Matrix.rand(n - 1);
 			for (int j = 1; j <= nv; j++) {
 				// Loop for nv quasirandom points
-				final Matrix x = q.matlabMultiply(j).add(xr).mod(1).matlabMultiply(2).substract(1).abs(); // % periodizing transformation
+				final Matrix x = q.matlabMultiply(j).add(xr).mod(1).matlabMultiply(2.0).substract(1.0).abs(); // % periodizing transformation
 				final double vp = QSIMVN.mvndns(n, r2.ch, ci, dci, x, r2.as, r2.bs);
 				vi = vi + ((vp - vi) / j);
 			}
 			d = (vi - p) / i;
 			p = p + d;
-			if (Math.abs(d) > 0) {
+			if (FastMath.abs(d) > 0.0) {
 				final double a1 = (e / d);
-				final double b2 = (2 * (i - 2)) / i;
-				final double v1 = Math.pow(a1, b2);
-				double v2 = Math.sqrt(1 + v1);
+				final double b2 = (2.0 * (i - 2.0)) / i;
+				final double v1 = FastMath.pow(a1, b2);
+				double v2 = FastMath.sqrt(1.0 + v1);
 				if (Double.isNaN(v2)) {
 					// sometimes wants to compute sqrt of negative number
-					v2 = 0;
+					v2 = 0.0;
 				}
-				final double val = Math.abs(d) * v2;
+				final double val = FastMath.abs(d) * v2;
 				e = val;
 			} else {
-				if (i > 1) {
-					final double val = Math.sqrt((i - 2) / i);
+				if (i > 1.0) {
+					final double val = FastMath.sqrt((i - 2.0) / i);
 					e = e * val;
 				}
 			}
 		}
 
-		e = e * 3; // % error estimate is 3 x standard error with ns samples.
+		e = e * 3.0; // % error estimate is 3 x standard error with ns samples.
 
 		return new QSIMVNResult(p, e);
 	}
@@ -142,15 +133,15 @@ public class QSIMVN {
 			final double ct = ch.get(i, i);
 			final double ai = a.get(i) - s;
 			final double bi = b.get(i) - s;
-			if (Math.abs(ai) < (cn * ct)) {
+			if (FastMath.abs(ai) < (cn * ct)) {
 				c = Util.phi(ai / ct);
 			} else {
-				c = (1 + Util.sign(ai)) / 2;
+				c = (1.0 + Util.sign(ai)) / 2.0;
 			}
-			if (Math.abs(bi) < (cn * ct)) {
+			if (FastMath.abs(bi) < (cn * ct)) {
 				d = Util.phi(bi / ct);
 			} else {
-				d = (1 + Util.sign(bi)) / 2;
+				d = (1.0 + Util.sign(bi)) / 2.0;
 			}
 			dc = d - c;
 			p = p * dc;
@@ -176,7 +167,7 @@ public class QSIMVN {
 		final Matrix bp = b;
 		final Matrix d = c.diag().max(0).sqrt();
 		for (int i = 1; i <= n; i++) {
-			if (d.get(i) > 0) {
+			if (d.get(i) > 0.0) {
 
 				c.divideColumn(i, d.get(i));
 				c.divideRow(i, d.get(i));
@@ -186,29 +177,29 @@ public class QSIMVN {
 			}
 		}
 		final Matrix y = Matrix.zeros(n, 1);
-		final double sqtp = Util.sqrt(2 * QSIMVN.pi);
+		final double sqtp = Util.sqrt(2.0 * FastMath.PI);
 		for (int k = 1; k <= n; k++) {
 			int im = k;
-			double ckk = 0;
-			double dem = 1;
-			double s = 0;
+			double ckk = 0.0;
+			double dem = 1.0;
+			double s = 0.0;
 
 			double cii;
 			double ai;
 			double bi;
 			double de;
-			double am = 0;
-			double bm = 0;
+			double am = 0.0;
+			double bm = 0.0;
 			double tv;
 			Matrix t;
 
 			for (int i = k; i <= n; i++) {
 				// if (c.get(i,i) > eps(1)){
-				cii = Math.sqrt(Util.max(new double[] { c.get(i, i), 0 }));
+				cii = FastMath.sqrt(Util.max(new double[] { c.get(i, i), 0.0 }));
 				if (i > 1) {
 					if (k <= 1) {
 						// added at java convcersion
-						s = 0;
+						s = 0.0;
 					} else {
 						s = c.getSubRow(i, 1, k - 1).matlabMultiply(y.getSubVector(1, k - 1));
 
@@ -250,28 +241,50 @@ public class QSIMVN {
 			}
 			if (ckk > (ep * k)) {
 				c.setElement(k, k, ckk);
-				c.setSubRow(k, k + 1, n, 0);
+				c.setSubRow(k, k + 1, n, 0.0);
 				for (int i = k + 1; i <= n; i++) {
 					c.setElement(i, k, c.get(i, k) / ckk);
 					c.setSubRow(i, k + 1, c.getSubRow(i, k + 1, i).substract(c.getSubColumn(k, k + 1, i).trans().matlabMultiply(c.get(i, k))));
 				}
-				if (Math.abs(dem) > ep) {
-					y.set(k, (Util.exp(Math.pow(-am, 2) / 2) - Util.exp(Math.pow(-bm, 2) / 2)) / (sqtp * dem));
+				if (FastMath.abs(dem) > ep) {
+					y.set(k, (Util.exp(FastMath.pow(-am, 2.0) / 2.0) - Util.exp(FastMath.pow(-bm, 2.0) / 2.0)) / (sqtp * dem));
 				} else {
-					if (am < -10) {
+					if (am < -10.0) {
 						y.set(k, bm);
-					} else if (bm > 10) {
+					} else if (bm > 10.0) {
 						y.set(k, am);
 					} else {
-						y.set(k, (am + bm) / 2);
+						y.set(k, (am + bm) / 2.0);
 					}
 				}
 			} else {
-				c.setSubCol(k, k, n, 0);
-				y.set(k, 0);
+				c.setSubCol(k, k, n, 0.0);
+				y.set(k, 0.0);
 			}
 		}
 		return new ChlrdrResult(c, ap, bp);
+	}
+
+	/**
+	 * Test code.
+	 * 
+	 * @param args
+	 *            Default args
+	 */
+	public static void main(final String[] args) {
+		// System.out.println(Util.generatePrimes(8));
+		// >> r = [4 3 2 1;3 5 -1 1;2 -1 4 2;1 1 2 5];
+		// % >> a = -inf*[1 1 1 1 ]'; b = [ 1 2 3 4 ]';
+		// % >> [ p e ] = qsimvn( 5000, r, a, b ); disp([ p e ])
+
+		final Matrix R = new Matrix(new double[][] { { 4.0, 3.0, 2.0, 1.0 }, { 3.0, 5.0, -1.0, 1.0 }, { 2.0, -1.0, 4.0, 2.0 }, { 1.0, 1.0, 2.0, 5.0 } });
+
+		final Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY } });
+
+		final Matrix b = new Matrix(new double[][] { { 1.0 }, { 2.0 }, { 3.0 }, { 4.0 } });
+
+		final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, R, a, b);
+		System.out.println("p = " + ret.p + "   e = " + new DecimalFormat("#.###############").format(ret.e));
 	}
 }
 

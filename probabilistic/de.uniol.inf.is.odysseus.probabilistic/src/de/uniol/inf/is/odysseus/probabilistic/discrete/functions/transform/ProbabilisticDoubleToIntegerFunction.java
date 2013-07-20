@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class ProbabilisticDoubleToIntegerFunction extends AbstractProbabilisticFunction<ProbabilisticInteger> {
@@ -37,18 +37,30 @@ public class ProbabilisticDoubleToIntegerFunction extends AbstractProbabilisticF
 	 */
 	private static final long serialVersionUID = 1987170812000344574L;
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+	 */
 	@Override
-	public int getArity() {
+	public final int getArity() {
 		return 1;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+	 */
 	@Override
-	public String getSymbol() {
+	public final String getSymbol() {
 		return "doubleToInteger";
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
 	@Override
-	public ProbabilisticInteger getValue() {
+	public final ProbabilisticInteger getValue() {
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
 			values.put(((Number) value.getKey()).intValue(), value.getValue());
@@ -56,22 +68,33 @@ public class ProbabilisticDoubleToIntegerFunction extends AbstractProbabilisticF
 		return new ProbabilisticInteger(values);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+	 */
 	@Override
-	public SDFDatatype getReturnType() {
+	public final SDFDatatype getReturnType() {
 		return SDFProbabilisticDatatype.PROBABILISTIC_INTEGER;
 	}
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+	 */
 	@Override
-	public SDFDatatype[] getAcceptedTypes(final int argPos) {
+	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
 		if (argPos > 0) {
 			throw new IllegalArgumentException("doubleToInteger has only 1 argument.");
 		}
-		return ProbabilisticDoubleToIntegerFunction.accTypes;
+		return ProbabilisticDoubleToIntegerFunction.ACC_TYPES;
 	}
 
 }

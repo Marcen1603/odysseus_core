@@ -170,7 +170,7 @@ public final class SchemaUtils {
 	 * @return <code>true</code> if this attribute is a discrete or continous {@link SDFProbabilisticDatatype probabilistic attribute}
 	 */
 	public static boolean isProbabilisticAttribute(final SDFAttribute attribute) {
-		return isDiscreteProbabilisticAttribute(attribute) || isContinuousProbabilisticAttribute(attribute);
+		return SchemaUtils.isDiscreteProbabilisticAttribute(attribute) || SchemaUtils.isContinuousProbabilisticAttribute(attribute);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public final class SchemaUtils {
 		final Collection<SDFAttribute> attributes = SchemaUtils.getContinuousProbabilisticAttributes(schema);
 		final int[] pos = new int[attributes.size()];
 		int i = 0;
-		for (SDFAttribute attribute : attributes) {
+		for (final SDFAttribute attribute : attributes) {
 			pos[i++] = schema.indexOf(attribute);
 		}
 		return pos;
@@ -201,7 +201,7 @@ public final class SchemaUtils {
 		final Collection<SDFAttribute> attributes = SchemaUtils.getDiscreteProbabilisticAttributes(schema);
 		final int[] pos = new int[attributes.size()];
 		int i = 0;
-		for (SDFAttribute attribute : attributes) {
+		for (final SDFAttribute attribute : attributes) {
 			pos[i++] = schema.indexOf(attribute);
 		}
 		return pos;

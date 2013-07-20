@@ -97,8 +97,9 @@ public class LinearRegressionPO<T extends ITimeInterval> extends AbstractPipe<Pr
 				outputVal.setAttribute(pos, new ProbabilisticContinuousDouble(distributions.length));
 			}
 			outputVal.setAttribute(object.getAttributes().length, regressionCoefficients.getData());
-			outputVal.setAttribute(object.getAttributes().length+1, residual.getData());
+			outputVal.setAttribute(object.getAttributes().length + 1, residual.getData());
 			outputVal.setMetadata((T) object.getMetadata().clone());
+			// KTHXBYE
 			this.transfer(outputVal);
 		}
 	}

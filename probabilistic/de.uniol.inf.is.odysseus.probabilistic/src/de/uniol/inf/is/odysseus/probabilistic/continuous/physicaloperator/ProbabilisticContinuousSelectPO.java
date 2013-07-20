@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.NoHeartbeatGenerati
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
@@ -47,7 +48,6 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  */
 public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** Logger. */
-	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticContinuousSelectPO.class);
 	/** Attribute positions list required for variable bindings. */
 	private VarHelper[][] variables; // Expression.Index
@@ -57,11 +57,14 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	private final IPredicate<?> predicate;
 	/** The heartbeat generation strategy. */
 	private IHeartbeatGenerationStrategy<ProbabilisticTuple<T>> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<ProbabilisticTuple<T>>();
+	/** The input schema. */
 	private final SDFSchema inputSchema;
 
 	/**
 	 * Default constructor.
 	 * 
+	 * @param inputSchema
+	 *            The input schema
 	 * @param iPredicate
 	 *            The predicate
 	 */
@@ -94,8 +97,16 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 		return OutputMode.MODIFIED_INPUT;
 	}
 
-	private void init(final SDFSchema schema, final IPredicate<?> predicate) {
-		final List<SDFExpression> expressionsList = PredicateUtils.getExpressions(predicate);
+	/**
+	 * Initialize the required structures for the Select PO.
+	 * 
+	 * @param schema
+	 *            The schema
+	 * @param selectPredicate
+	 *            The predicate
+	 */
+	private void init(final SDFSchema schema, final IPredicate<?> selectPredicate) {
+		final List<SDFExpression> expressionsList = PredicateUtils.getExpressions(selectPredicate);
 		this.expressions = new SDFProbabilisticExpression[expressionsList.size()];
 		for (int i = 0; i < expressionsList.size(); i++) {
 			this.expressions[i] = new SDFProbabilisticExpression(expressionsList.get(i));
@@ -139,7 +150,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 				int d = 0;
 				final Object[] values = new Object[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
-					Object attribute = outputVal.getAttribute(this.variables[i][j].pos);
+					Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
 					if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
 						d = ((ProbabilisticContinuousDouble) attribute).getDistribution();
 						attribute = outputVal.getDistribution(d);
@@ -170,7 +181,10 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 
 		// Transfer the tuple iff the joint probability is positive (maybe set quality filter later to reduce the number of tuples)
 		if (jointProbability > 0.0) {
+			// KTHXBYE
 			this.transfer(outputVal);
+		} else if (LOG.isTraceEnabled()) {
+			LOG.trace("Drop tuple: " + outputVal.toString());
 		}
 	}
 
@@ -185,6 +199,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 	}
 
 	/**
+	 * Gets the value of the predicate property.
 	 * 
 	 * @return The predicate
 	 */

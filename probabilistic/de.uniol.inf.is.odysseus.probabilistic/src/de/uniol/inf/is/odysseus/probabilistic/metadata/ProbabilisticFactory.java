@@ -1,5 +1,5 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
+/**
+ * Copyright 2013 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,32 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
 public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
-	// FIXME Why do I need the matrix in the attributes? (CK)
-	int[] covarianceMatrixPositions;
+	/** The position of the attribute holding the existence probability. */
+	private int existenceProbabilityPos;
 
-	public ProbabilisticFactory(final int pos) {
-		this.covarianceMatrixPositions = new int[] { pos };
+	/**
+	 * Creates a new {@link ProbabilisticFactory}.
+	 * 
+	 * @param existenceProbabilityPos
+	 *            The position of the attribute
+	 */
+	public ProbabilisticFactory(final int existenceProbabilityPos) {
+		this.existenceProbabilityPos = existenceProbabilityPos;
 	}
 
-	public ProbabilisticFactory(final int[] pos) {
-		this.covarianceMatrixPositions = pos;
-	}
-
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater#updateMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+	 */
 	@Override
-	public void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
+	public final void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
 		final IProbabilistic metadata = inElem.getMetadata();
-		metadata.setExistence(1.0);
+		metadata.setExistence(((Number) inElem.getAttribute(existenceProbabilityPos)).doubleValue());
 	}
 
 }
