@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  *         FIXME Implement probabilistic StdDev aggregation function
  */
@@ -30,35 +30,69 @@ public class ProbabilisticStdDev extends AbstractAggregateFunction<Probabilistic
 	 * 
 	 */
 	private static final long serialVersionUID = -45894921488698597L;
-	// private static Map<Integer, ProbabilisticStdDev> instances = new HashMap<Integer, ProbabilisticStdDev>();
+	/** The attribute position. */
 	@SuppressWarnings("unused")
 	private final int pos;
-	final private String datatype;
+	/** The result data type. */
+	private final String datatype;
 
+	/**
+	 * Gets an instance of {@link ProbabilisticStdDev}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 * @return An instance of {@link ProbabilisticStdDev}
+	 */
 	public static ProbabilisticStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
 		return new ProbabilisticStdDev(pos, partialAggregateInput, datatype);
 	}
 
+	/**
+	 * Creates a new instance of {@link ProbabilisticStdDev}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 */
 	protected ProbabilisticStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
 		super("STDDEV", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer#init(java.lang.Object)
+	 */
 	@Override
-	public IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
 		return new ElementPartialAggregate<ProbabilisticTuple<?>>(in, this.datatype);
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate, java.lang.Object, boolean)
+	 */
 	@Override
-	public IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
 		final ElementPartialAggregate<ProbabilisticTuple<?>> pa = null;
 
 		return pa;
 	}
 
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate)
+	 */
 	@Override
-	public ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+	public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
 		final ElementPartialAggregate<ProbabilisticTuple<?>> pa = (ElementPartialAggregate<ProbabilisticTuple<?>>) p;
 		return pa.getElem();
 	}

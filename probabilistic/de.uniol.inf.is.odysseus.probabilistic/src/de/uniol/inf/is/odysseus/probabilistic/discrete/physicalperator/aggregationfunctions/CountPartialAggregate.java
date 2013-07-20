@@ -18,39 +18,87 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
  */
 public class CountPartialAggregate<T> implements IPartialAggregate<T> {
-	double count = 0;
+	/** The value of the aggregate. */
+	private double count = 0;
+	/** The result data type. */
+	private final String datatype;
 
-	public CountPartialAggregate() {
+	/**
+	 * Default constructor.
+	 * 
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public CountPartialAggregate(final String datatype) {
 		this.count = 0.0;
+		this.datatype = datatype;
 	}
 
-	public CountPartialAggregate(final double count) {
+	/**
+	 * Creates a new partial aggregate with the given value.
+	 * 
+	 * @param count
+	 *            The value of count
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public CountPartialAggregate(final double count, final String datatype) {
 		this.count = count;
+		this.datatype = datatype;
 	}
 
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param countPartialAggregate
+	 *            The object to copy from
+	 */
 	public CountPartialAggregate(final CountPartialAggregate<T> countPartialAggregate) {
 		this.count = countPartialAggregate.count;
+		this.datatype = countPartialAggregate.datatype;
 	}
 
-	public double getCount() {
+	/**
+	 * Gets the value of the count property.
+	 * 
+	 * @return The count value
+	 */
+	public final double getCount() {
 		return this.count;
 	}
 
-	public void add(final double probability) {
+	/**
+	 * Add the given value to the aggregate.
+	 * 
+	 * @param probability
+	 *            The value to add
+	 */
+	public final void add(final double probability) {
 		this.count += probability;
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		final StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(this.hashCode()).append(")").append(this.count);
 		return ret.toString();
 	}
 
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
-	public CountPartialAggregate<T> clone() {
+	public final CountPartialAggregate<T> clone() {
 		return new CountPartialAggregate<T>(this);
 	}
 
