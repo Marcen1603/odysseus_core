@@ -34,8 +34,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerCon
 
 public class PropertyTitleDialog extends TitleAreaDialog {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TitleAreaDialog.class);	
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TitleAreaDialog.class);
+
 	private LinkedList<ILayer> layerOrder;
 	private Collection<LayerUpdater> connections;
 
@@ -59,7 +60,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		this.layerConfiguration = layerConfiguration;
 	}
 
-	public PropertyTitleDialog(Shell parentShell, LinkedList<ILayer> layerOrder, Collection<LayerUpdater> connections) {
+	public PropertyTitleDialog(Shell parentShell,
+			LinkedList<ILayer> layerOrder, Collection<LayerUpdater> connections) {
 		super(parentShell);
 		this.layerOrder = layerOrder;
 		this.connections = connections;
@@ -76,7 +78,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 	private Composite getBasicConfiguration(final Composite parent) {
 		Composite layerConfiguration = new Composite(parent, SWT.NONE);
 		layerConfiguration.setLayout(DialogUtils.getGroupLayout());
-		layerConfiguration.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		layerConfiguration.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, false, false));
 
 		Label layerNameLabel = new Label(layerConfiguration, SWT.NONE);
 		layerNameLabel.setText("Name:");
@@ -89,9 +92,11 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Label layerTypelabel = new Label(layerConfiguration, SWT.FLAT);
 		layerTypelabel.setText("Type:");
 
-		final Composite radioTypeSelection = new Composite(layerConfiguration, SWT.NONE);
+		final Composite radioTypeSelection = new Composite(layerConfiguration,
+				SWT.NONE);
 		radioTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(3));
-		radioTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		radioTypeSelection.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, false, false));
 
 		Listener listener = new Listener() {
 			@Override
@@ -119,7 +124,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				if (((Button) e.widget).getText().endsWith("Thematic")) {
 					if (!(layerType.equals("ThematicLayer"))) {
 						configContainer.getChildren()[0].dispose();
-						getThematicConfiguration(configContainer);	
+						getThematicConfiguration(configContainer);
 						configContainer.layout(true);
 						configContainer.redraw();
 						main.layout(true);
@@ -144,10 +149,11 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		radioTypeButtonVector.setText("Vector");
 		radioTypeButtonVector.addListener(SWT.Selection, listener);
 
-		Button radioTypeButtonThematic = new Button(radioTypeSelection, SWT.RADIO);
+		Button radioTypeButtonThematic = new Button(radioTypeSelection,
+				SWT.RADIO);
 		radioTypeButtonThematic.setText("Thematic");
 		radioTypeButtonThematic.addListener(SWT.Selection, listener);
-		
+
 		Label layerPlaceLabel = new Label(layerConfiguration, SWT.FLAT);
 		layerPlaceLabel.setText("Placement (after):");
 
@@ -157,7 +163,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		for (ILayer layer : layerOrder) {
 			layerPlace.add(layer.getName());
 		}
-		if(!layerOrder.isEmpty())
+		if (!layerOrder.isEmpty())
 			layerPlace.setText(layerOrder.getFirst().getName());
 
 		layerPlace.addSelectionListener(new SelectionAdapter() {
@@ -176,16 +182,19 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		final RasterLayerConfiguration layerConfiguration = (RasterLayerConfiguration) this.layerConfiguration;
 		Composite rasterLayer = new Composite(parent, SWT.NONE);
 		rasterLayer.setLayout(DialogUtils.getGroupLayout());
-		rasterLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
+		rasterLayer.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, true, true));
 		rasterLayer.setVisible(true);
 
 		Label serverTypeLabel = new Label(rasterLayer, SWT.NONE);
 		serverTypeLabel.setText("(Server) Type:");
 		serverTypeLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 
-		final Composite serverTypeSelection = new Composite(rasterLayer, SWT.NONE);
+		final Composite serverTypeSelection = new Composite(rasterLayer,
+				SWT.NONE);
 		serverTypeSelection.setLayout(DialogUtils.getRadioSelectionLayout(3));
-		serverTypeSelection.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		serverTypeSelection.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, false, false));
 
 		Listener serverTypeListner = new Listener() {
 			@Override
@@ -218,10 +227,11 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverTypeButtonWMS.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//					WMServiceTest wmsTest = new WMServiceTest();
-//					String info = wmsTest.getInfo();
-//					LOG.debug(info);
-//					MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(), "WMS Info", info);
+				// WMServiceTest wmsTest = new WMServiceTest();
+				// String info = wmsTest.getInfo();
+				// LOG.debug(info);
+				// MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+				// "WMS Info", info);
 			};
 		});
 
@@ -233,7 +243,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		Button serverTypeButtonUD = new Button(serverTypeSelection, SWT.RADIO);
 		serverTypeButtonUD.setText("User Defined");
 		serverTypeButtonUD.addListener(SWT.Selection, serverTypeListner);
-		
+
 		Label serverLabel = new Label(rasterLayer, SWT.FLAT);
 		serverLabel.setLayoutData(DialogUtils.getLabelDataLayout());
 		serverLabel.setText("Adresse:");
@@ -243,7 +253,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		server.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				OdysseusMapPlugIn.getProperties().getTileServer(server.getSelectionIndex(), layerConfiguration);
+				OdysseusMapPlugIn.getProperties().getTileServer(
+						server.getSelectionIndex(), layerConfiguration);
 				layerConfiguration.setUrl(server.getText());
 				isValidInput();
 			};
@@ -253,9 +264,10 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		for (String string : defaults) {
 			server.add(string);
 		}
-		server.select(0);//.setText("http://oatile2.mqcdn.com/tiles/1.0.0/sat/");
+		server.select(0);// .setText("http://oatile2.mqcdn.com/tiles/1.0.0/sat/");
 		layerConfiguration.setUrl(server.getText());
-		OdysseusMapPlugIn.getProperties().getTileServer(server.getSelectionIndex(), layerConfiguration);
+		OdysseusMapPlugIn.getProperties().getTileServer(
+				server.getSelectionIndex(), layerConfiguration);
 
 		Label protocolTypeLabel = new Label(rasterLayer, SWT.NONE);
 		protocolTypeLabel.setText("Protocol Type:");
@@ -274,9 +286,9 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		serverType.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//					WMServiceTest wmsTest = new WMServiceTest();
-//					String info = wmsTest.getInfo();
-//					LOG.debug(info);
+				// WMServiceTest wmsTest = new WMServiceTest();
+				// String info = wmsTest.getInfo();
+				// LOG.debug(info);
 			};
 		});
 		return rasterLayer;
@@ -288,7 +300,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		final VectorLayerConfiguration layerConfiguration = (VectorLayerConfiguration) this.layerConfiguration;
 		final Composite vectorLayer = new Composite(parent, SWT.NONE);
 		vectorLayer.setLayout(DialogUtils.getGroupLayout());
-		vectorLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+		vectorLayer.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, true, false));
 		vectorLayer.setVisible(true);
 
 		if (connections.isEmpty()) {
@@ -307,7 +320,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		streamSelect.setLayoutData(DialogUtils.getTextDataLayout());
 
 		for (int i = 0; i < connections.toArray().length; i++) {
-			streamSelect.add(((LayerUpdater) connections.toArray()[i]).getQuery().getLogicalQuery().getQueryText(), i);
+			streamSelect.add(((LayerUpdater) connections.toArray()[i])
+					.getQuery().getLogicalQuery().getQueryText(), i);
 		}
 		streamSelect.select(0);
 		Label attributesLabel = new Label(vectorLayer, SWT.NONE);
@@ -323,23 +337,29 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				attributeSelect.removeAll();
 				layerConfiguration.setQuery(streamSelect.getText());
 				LOG.debug("Set Query: " + layerConfiguration.getQuery());
-				SDFSchema schema = ((LayerUpdater) connections.toArray()[streamSelect.getSelectionIndex()]).getConnection().getSubscriptions().get(0).getSchema();
+				SDFSchema schema = ((LayerUpdater) connections.toArray()[streamSelect
+						.getSelectionIndex()]).getConnection()
+						.getSubscriptions().get(0).getSchema();
 
 				for (int i = 0; i < schema.size(); i++) {
-					attributeSelect.add(schema.getAttribute(i).getAttributeName(), i);
+					attributeSelect.add(schema.getAttribute(i)
+							.getAttributeName(), i);
 				}
 
 				AttributeResolver resolver = new AttributeResolver();
 				resolver.addAttributes(schema);
 
-				attributeSelect.setText(schema.getAttribute(0).getAttributeName());
+				attributeSelect.setText(schema.getAttribute(0)
+						.getAttributeName());
 				layerConfiguration.setAttribute(attributeSelect.getText());
-				
+
 				attributeSelect.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						layerConfiguration.setAttribute(attributeSelect.getText());
-						LOG.debug("Set Attribute: " + layerConfiguration.getAttribute());
+						layerConfiguration.setAttribute(attributeSelect
+								.getText());
+						LOG.debug("Set Attribute: "
+								+ layerConfiguration.getAttribute());
 					};
 				});
 
@@ -347,21 +367,19 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		});
 		return vectorLayer;
 	}
-	
+
+	/**
+	 * Creates the content to select the thematic map and the stream for it
+	 * 
+	 * @param parent
+	 * @return
+	 */
 	private Composite getThematicConfiguration(Composite parent) {
-//		if (!(layerConfiguration instanceof HeatmapLayerConfiguration))
-//			this.layerConfiguration = new HeatmapLayerConfiguration("");
-//		final HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) this.layerConfiguration;
-//		
-//		// Set a few standard-properties (covers whole world, has SRID 4326)
-//		heatmapLayerConfiguration.setCoverageGeographic(-180.0,  180.0, -85.0511, 85.0511);
-//		heatmapLayerConfiguration.setCoverageProjected(-180.0,  180.0, -85.0511, 85.0511);
-//		heatmapLayerConfiguration.setSrid(4326);
-//		this.layerConfiguration = heatmapLayerConfiguration;
-		
+
 		Composite thematicLayer = new Composite(parent, SWT.NONE);
 		thematicLayer.setLayout(DialogUtils.getGroupLayout());
-		thematicLayer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, true));
+		thematicLayer.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, true, true));
 		thematicLayer.setVisible(true);
 
 		if (connections.isEmpty()) {
@@ -371,7 +389,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 			setErrorMessage("Please connect a stream to the map.");
 			return thematicLayer;
 		}
-		
+
 		// Choose between the thematic maps
 		Label mapTypeLabel = new Label(thematicLayer, SWT.NONE);
 		mapTypeLabel.setText("Thematic map type:");
@@ -382,7 +400,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		mapTypeSelect.add("Heatmap");
 		mapTypeSelect.add("Tracemap");
 		mapTypeSelect.select(0);
-		
+
 		// Choose the stream for the thematic map
 		Label streamLabel = new Label(thematicLayer, SWT.NONE);
 		streamLabel.setText("Stream:");
@@ -393,21 +411,22 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		// Add all available streams
 		for (int i = 0; i < connections.toArray().length; i++) {
-			streamSelect.add(((LayerUpdater) connections.toArray()[i]).getQuery().getLogicalQuery().getQueryText(), i);
+			streamSelect.add(((LayerUpdater) connections.toArray()[i])
+					.getQuery().getLogicalQuery().getQueryText(), i);
 		}
 		streamSelect.select(0);
-		
-		// Add a listeter -> created right layerConfiguration
-		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(layerConfiguration, mapTypeSelect, streamSelect, this);
+
+		// Add a listener -> created right layerConfiguration
+		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(
+				layerConfiguration, mapTypeSelect, streamSelect, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
 		streamSelect.addSelectionListener(thematicSelectionListener);
-		
+
 		// Initialize selection
 		thematicSelectionListener.widgetSelected(null);
-		
+
 		return thematicLayer;
 	}
-
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -424,7 +443,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		// configContainer.setBackground(new Color(parent.getDisplay(), new
 		// RGB(200, 200, 200)));
 		configContainer.setLayout(DialogUtils.getGroupLayout());
-		configContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
+		configContainer.setLayoutData(new GridData(GridData.FILL,
+				GridData.BEGINNING, false, false));
 
 		getRasterConfiguration(configContainer);
 
@@ -463,7 +483,8 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		});
 	}
 
-	protected Button createOkButton(Composite parent, int id, String label, boolean defaultButton) {
+	protected Button createOkButton(Composite parent, int id, String label,
+			boolean defaultButton) {
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button button = new Button(parent, SWT.PUSH);

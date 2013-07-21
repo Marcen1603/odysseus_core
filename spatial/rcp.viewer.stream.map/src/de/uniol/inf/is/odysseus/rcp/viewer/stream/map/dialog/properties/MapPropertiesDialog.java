@@ -184,6 +184,11 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		container.layout();
 	}
 	
+	/**
+	 * Creates the menu for tracemaps with all the settings that can be made
+	 * @param tracemap
+	 * @param container
+	 */
 	public void createTraceLayerMenu(TraceLayer tracemap, Composite container) {
 		// Remove everything except the Tree on the left
 		removeContent(container);
@@ -403,6 +408,11 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		container.layout();
 	}
 	
+	/**
+	 * Creates the menu for heatmaps with all the settings that can be made
+	 * @param heatmap
+	 * @param container
+	 */
 	public void createHeatmapMenu(Heatmap heatmap, Composite container) {
 		// Create a new configuration, that is used, if the user clicks
 		// ok

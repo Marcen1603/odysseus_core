@@ -52,8 +52,8 @@ public class TimeSliderComposite extends Composite implements
 	private Button fixedTimeButton;
 	private Button optionsButton;
 
-	private int savedMaxSlider; // Inaktive -> aktive (save what will be right
-								// maximum value if slider is aktive again)
+	private int savedMaxSlider; // Inactive -> active (save what will be right
+								// maximum value if slider is active again)
 	private long previousUpperValue;
 	private int sliderFactor; // If timeRange is higher than max-integer
 
@@ -307,7 +307,7 @@ public class TimeSliderComposite extends Composite implements
 						okButton.addSelectionListener(timeListener);
 						// This would make it "live" - but the moment you tip
 						// "1 second"
-						// nearly all old data (but the one seconds) is lost :(
+						// nearly all old data (but the one seconds) is lost :(	
 						// hours.addSelectionListener(timeListener);
 						// minutes.addSelectionListener(timeListener);
 						// seconds.addSelectionListener(timeListener);

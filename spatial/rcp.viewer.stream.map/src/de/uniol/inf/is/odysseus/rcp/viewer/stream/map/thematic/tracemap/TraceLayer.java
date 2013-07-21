@@ -48,9 +48,10 @@ public class TraceLayer extends RasterLayer {
 		timeHashMap = new HashMap<Integer, PointInTime[]>();
 		zoomEnv = new Envelope();
 	}
-	
+
 	@Override
-	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
+	public void init(ScreenManager screenManager, SDFSchema schema,
+			SDFAttribute attribute) {
 		this.screenManager = screenManager;
 		this.srid = screenManager.getSRID();
 	}
@@ -69,6 +70,11 @@ public class TraceLayer extends RasterLayer {
 		}
 	}
 
+	/**
+	 * Creates a list of lineStrings, which are the traces that should be drawn
+	 * 
+	 * @return
+	 */
 	private HashMap<Integer, LineString> getLines() {
 		searchEnv = new Envelope();
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
@@ -97,15 +103,19 @@ public class TraceLayer extends RasterLayer {
 			PointInTime startTime = timeInterval.getStart();
 
 			// Build the zoomEnvironment for "zoom to layer"
-			int[] transCoordArray = screenManager.getTransformation().transformCoord(point.getCoordinate(), screenManager.getSRID());
-			Coordinate transCoord = new Coordinate(transCoordArray[0], transCoordArray[1]);
+			int[] transCoordArray = screenManager.getTransformation()
+					.transformCoord(point.getCoordinate(),
+							screenManager.getSRID());
+			Coordinate transCoord = new Coordinate(transCoordArray[0],
+					transCoordArray[1]);
 			zoomEnv.expandToInclude(transCoord);
-			
+
 			// Create new LineElement
 			TraceElement lineElement = new TraceElement(point.getCoordinate(),
 					startTime);
 
-			int id = (int) tuple.getAttribute(config.getValueAttributePosition());
+			int id = (int) tuple.getAttribute(config
+					.getValueAttributePosition());
 
 			// If this is the first coordinate for this key,
 			// create a new ArrayList
@@ -156,7 +166,7 @@ public class TraceLayer extends RasterLayer {
 			if (coordsForLineString.length > 1) {
 				// Lines are not allowed to have just 1 coordinate
 				LineString line = factory.createLineString(coordsForLineString);
-				line.setSRID(4326); // ???
+				line.setSRID(config.getSrid());
 				lines.put(key, line);
 			}
 		}
@@ -164,6 +174,13 @@ public class TraceLayer extends RasterLayer {
 		return lines;
 	}
 
+	/**
+	 * Draws the line with transparency (older parts are more transparent)
+	 * 
+	 * @param line
+	 * @param gc
+	 * @param color
+	 */
 	private void drawLineString(LineString line, GC gc, Color color) {
 		ScreenTransformation transformation = screenManager.getTransformation();
 		Coordinate[] coords = line.getCoordinates();
@@ -204,10 +221,12 @@ public class TraceLayer extends RasterLayer {
 					// Circle around should be red (red border)
 					gc.setForeground(new Color(Display.getDefault(), 255, 0, 0));
 					// Background (for circle around)
-					gc.drawOval(coordinate2[0] - 2 - (circleWidth / 2), coordinate2[1] - 2 - (circleWidth / 2),
+					gc.drawOval(coordinate2[0] - 2 - (circleWidth / 2),
+							coordinate2[1] - 2 - (circleWidth / 2),
 							circleWidth + 4, circleWidth + 4);
 					gc.setForeground(color);
-					gc.drawOval(coordinate2[0] - (circleWidth / 2), coordinate2[1] - (circleWidth / 2), circleWidth,
+					gc.drawOval(coordinate2[0] - (circleWidth / 2),
+							coordinate2[1] - (circleWidth / 2), circleWidth,
 							circleWidth); // Foreground (Point)
 				}
 			}
@@ -235,47 +254,57 @@ public class TraceLayer extends RasterLayer {
 		gc.setAlpha(255);
 		gc.setLineWidth(originalLineWidth);
 	}
-	
 
 	/**
 	 * Creates a random color
+	 * 
 	 * @param n
 	 * @return
 	 */
 	private Color getColorForNumber(double n) {
-		if(colorOffset <= 0) {
+		if (colorOffset <= 0) {
 			colorOffset = Math.random();
 		}
-		
+
 		double goldenRatio = 0.618033988749895;
 		double h = (colorOffset + (goldenRatio * n)) % 1;
 		return hsvToRgb(h, 0.99, 0.95);
 	}
-	
-	
+
 	private Color hsvToRgb(double hue, double saturation, double value) {
 
-	    int h = (int)(hue * 6);
-	    double f = hue * 6 - h;
-	    double p = value * (1 - saturation);
-	    double q = value * (1 - f * saturation);
-	    double t = value * (1 - (1 - f) * saturation);
+		int h = (int) (hue * 6);
+		double f = hue * 6 - h;
+		double p = value * (1 - saturation);
+		double q = value * (1 - f * saturation);
+		double t = value * (1 - (1 - f) * saturation);
 
-	    switch (h) {
-	      case 0: return rgbToColor(value, t, p);
-	      case 1: return rgbToColor(q, value, p);
-	      case 2: return rgbToColor(p, value, t);
-	      case 3: return rgbToColor(p, q, value);
-	      case 4: return rgbToColor(t, p, value);
-	      case 5: return rgbToColor(value, p, q);
-	      default: throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
-	    }
+		switch (h) {
+		case 0:
+			return rgbToColor(value, t, p);
+		case 1:
+			return rgbToColor(q, value, p);
+		case 2:
+			return rgbToColor(p, value, t);
+		case 3:
+			return rgbToColor(p, q, value);
+		case 4:
+			return rgbToColor(t, p, value);
+		case 5:
+			return rgbToColor(value, p, q);
+		default:
+			// Error, but in this (normally not possible) case we just take the
+			// last option
+			return rgbToColor(value, p, q);
+		}
 	}
 
 	private Color rgbToColor(double r, double g, double b) {
-		Color color = new Color(Display.getDefault(), (int)(r * 256), (int)(g * 256), (int)(b * 256));
-	    return color;
+		Color color = new Color(Display.getDefault(), (int) (r * 256),
+				(int) (g * 256), (int) (b * 256));
+		return color;
 	}
+
 	/**
 	 * 
 	 * @return length in km
@@ -349,36 +378,41 @@ public class TraceLayer extends RasterLayer {
 			// hours
 			long time1 = timeHashMap.get(key)[0].getMainPoint();
 			long time2 = timeHashMap.get(key)[1].getMainPoint();
-			double durationInHours = (double) (time1 - time2) / (double) msToHours;
+			double durationInHours = (double) (time1 - time2)
+					/ (double) msToHours;
 			double speed = distance / durationInHours;
 			speeds.put(key, speed);
 		}
 
 		return speeds;
 	}
-	
+
 	/**
 	 * For "zoomToLayer"
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(4326, this.srid);
+		CoordinateTransform ct = screenManager.getTransformation()
+				.getCoordinateTransform(4326, this.srid);
 		Envelope geoEnv = config.getCoverage();
-		// Doesn't work - don't know why, I guess the transformation has a problem with 4326
-//		if (zoomArea != null) {
-//			geoEnv = zoomArea;
-//		}
-		if(geoEnv == null) {
-			geoEnv = new Envelope(180, -180, 85, -85);	// Cover whole world
+		// Doesn't work - don't know why, I guess the transformation has a
+		// problem with 4326
+		// if (zoomArea != null) {
+		// geoEnv = zoomArea;
+		// }
+		if (geoEnv == null) {
+			geoEnv = new Envelope(180, -180, 85, -85); // Cover whole world
 		}
-		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(), geoEnv.getMaxY());
-		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(), geoEnv.getMinY());
+		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(),
+				geoEnv.getMaxY());
+		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(),
+				geoEnv.getMinY());
 		ProjCoordinate dst1 = new ProjCoordinate();
 		ProjCoordinate dst2 = new ProjCoordinate();
 		ct.transform(src1, dst1);
 		ct.transform(src2, dst2);
 		Envelope coverage = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
-		
+
 		return coverage;
 	}
 

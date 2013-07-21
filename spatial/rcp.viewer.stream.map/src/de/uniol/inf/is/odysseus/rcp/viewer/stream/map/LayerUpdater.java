@@ -155,7 +155,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 			PointInTime deleteTime = null;
 			if (oldestElements.hasNext()) {
-				// We need just one (there no while)
+				// We need just one (therefore no while)
 				// This should be one of the last elements
 				// if more than one start with the same oldest timestamp
 				Tuple<? extends ITimeInterval> elem = oldestElements.next();

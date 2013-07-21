@@ -256,6 +256,12 @@ public class MapEditorModel extends ModelObject {
 		return gsonbuilder.create();
 	}
 
+	/**
+	 * Saves the map as JSON in the file. All parts of the LayerConfigurations
+	 * have to be serializable
+	 * 
+	 * @param file
+	 */
 	public void save(IFile file) {
 		StringBuilder configuration = new StringBuilder();
 
@@ -451,7 +457,7 @@ public class MapEditorModel extends ModelObject {
 		if (screenManager != null) {
 			layer.init(screenManager, null, null);
 		}
-		
+
 		// Add to the selected connection (LayerUpdater)
 		for (LayerUpdater connection : connections.values()) {
 			if (connection.getQuery().getLogicalQuery().getQueryText()

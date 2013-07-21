@@ -44,10 +44,11 @@ public class ThematicSelectionListener extends SelectionAdapter{
 			// User has selected the Linemap
 			if (!(this.config instanceof TracemapLayerConfiguration))
 				this.config = new TracemapLayerConfiguration("");
-			final TracemapLayerConfiguration linemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
+			final TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
 
-			linemapLayerConfiguration.setQuery(streamSelectionBox.getText());
-			this.config = linemapLayerConfiguration;
+			tracemapLayerConfiguration.setSrid(4326);
+			tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
+			this.config = tracemapLayerConfiguration;
 			
 			propertyDialog.setLayerConfiguration(config);
 		}
