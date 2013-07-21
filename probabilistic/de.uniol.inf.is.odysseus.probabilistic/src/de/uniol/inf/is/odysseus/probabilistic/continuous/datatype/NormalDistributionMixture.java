@@ -16,12 +16,13 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.datatype;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
@@ -42,9 +43,10 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	/** The support for each dimension. */
 	private Interval[] support;
 	/** The weighted mixtures. */
-	// FIXME Replace by List<Pair<>> ?
 	// FIXME Possible Bug, mixtures not serializable
-	private final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>();
+	private MixtureMultivariateNormalDistribution mixtures;
+
+	// private final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>();
 
 	/**
 	 * 
@@ -97,13 +99,14 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 * 
 	 * @param means
 	 *            The means
-	 * @param covariances
-	 *            The covariances
+	 * @param covariance
+	 *            The covariance
 	 */
-	public NormalDistributionMixture(final double[] means, final double[][] covariances) {
+	public NormalDistributionMixture(final double[] means, final double[][] covariance) {
 		final int dimension = means.length;
 		this.attributes = new int[dimension];
-		this.mixtures.put(new MultivariateNormalDistribution(means, covariances), 1.0);
+		// this.mixtures.put(new MultivariateNormalDistribution(means, covariance), 1.0);
+		this.mixtures = new MixtureMultivariateNormalDistribution(new double[] { 1.0 }, new double[][] { means }, new double[][][] { covariance });
 		this.scale = 1.0;
 		this.support = new Interval[dimension];
 		for (int i = 0; i < this.support.length; i++) {
@@ -116,12 +119,13 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 * @param mixtures
 	 *            The mixtures
 	 */
-	public NormalDistributionMixture(final Map<MultivariateNormalDistribution, Double> mixtures) {
+	public NormalDistributionMixture(final List<Pair<Double, MultivariateNormalDistribution>> mixtures) {
 		int dimension = 0;
-		for (final Entry<MultivariateNormalDistribution, Double> mixture : mixtures.entrySet()) {
-			dimension = mixture.getKey().getMeans().length;
-			this.mixtures.put(mixture.getKey(), mixture.getValue());
+		for (final Pair<Double, MultivariateNormalDistribution> entry : mixtures) {
+			dimension = entry.getValue().getMeans().length;
+			// this.mixtures.put(mixture.getKey(), mixture.getValue());
 		}
+		this.mixtures = new MixtureMultivariateNormalDistribution(mixtures);
 		this.attributes = new int[dimension];
 		this.scale = 1.0;
 		this.support = new Interval[dimension];
@@ -139,10 +143,13 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	public NormalDistributionMixture(final NormalDistributionMixture normalDistributionMixture) {
 		this.attributes = normalDistributionMixture.attributes.clone();
 		this.scale = normalDistributionMixture.scale;
-		for (final MultivariateNormalDistribution distr : normalDistributionMixture.mixtures.keySet()) {
-			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(distr.getMeans().clone(), distr.getCovariances().copy().getData());
-			this.mixtures.put(distribution, normalDistributionMixture.mixtures.get(distr));
+		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+		for (final Pair<Double, MultivariateNormalDistribution> entry : normalDistributionMixture.mixtures.getComponents()) {
+			final MultivariateNormalDistribution mixture = entry.getValue();
+			MultivariateNormalDistribution component = new MultivariateNormalDistribution(mixture.getMeans().clone(), mixture.getCovariances().copy().getData());
+			mvns.add(new Pair<Double, MultivariateNormalDistribution>(entry.getKey(), component));
 		}
+		this.mixtures = new MixtureMultivariateNormalDistribution(mvns);
 		this.support = new Interval[normalDistributionMixture.support.length];
 		for (int i = 0; i < normalDistributionMixture.support.length; i++) {
 			this.support[i] = normalDistributionMixture.support[i].clone();
@@ -224,8 +231,18 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 * 
 	 * @return the mixtures
 	 */
-	public final Map<MultivariateNormalDistribution, Double> getMixtures() {
+	public final MixtureMultivariateNormalDistribution getMixtures() {
 		return this.mixtures;
+	}
+
+	/**
+	 * Sets the value of the mixtures property.
+	 * 
+	 * @param mixtures
+	 *            The normal distribution mixtures
+	 */
+	public void setMixtures(MixtureMultivariateNormalDistribution mixtures) {
+		this.mixtures = mixtures;
 	}
 
 	/**
@@ -278,11 +295,11 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	public final String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("(");
-		for (final Entry<MultivariateNormalDistribution, Double> mixture : this.mixtures.entrySet()) {
+		for (final Pair<Double, MultivariateNormalDistribution> mixture : this.mixtures.getComponents()) {
 			if (sb.length() > 1) {
 				sb.append(";");
 			}
-			final MultivariateNormalDistribution distribution = mixture.getKey();
+			final MultivariateNormalDistribution distribution = mixture.getValue();
 			sb.append("𝒩({");
 			for (int i = 0; i < distribution.getMeans().length; i++) {
 				if (i > 0) {
@@ -306,7 +323,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 				sb.append("}");
 			}
 			sb.append("}");
-			sb.append(":").append(mixture.getValue()).append(")");
+			sb.append(":").append(mixture.getKey()).append(")");
 		}
 		sb.append("),[");
 		for (final Interval sup : this.support) {

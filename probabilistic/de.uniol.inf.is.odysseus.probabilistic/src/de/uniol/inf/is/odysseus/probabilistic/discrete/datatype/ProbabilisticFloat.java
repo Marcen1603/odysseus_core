@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * Data type representing a probabilistic discrete Float value.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
@@ -28,6 +29,7 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	 * 
 	 */
 	private static final long serialVersionUID = -9174297465866495711L;
+
 	/**
 	 * Creates a new {@link ProbabilisticFloat} with the given value and probability.
 	 * 
@@ -39,6 +41,7 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	public ProbabilisticFloat(final Float value, final Double probability) {
 		super(value, probability);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticFloat} with the given values.
 	 * 
@@ -48,6 +51,7 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	public ProbabilisticFloat(final Map<Float, Double> values) {
 		super(values);
 	}
+
 	/**
 	 * Copy constructor.
 	 * 
@@ -57,6 +61,7 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	public ProbabilisticFloat(final ProbabilisticFloat other) {
 		super(other);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticFloat} with the given values and probabilities.
 	 * 
@@ -67,5 +72,13 @@ public class ProbabilisticFloat extends AbstractProbabilisticValue<Float> {
 	 */
 	public ProbabilisticFloat(final Float[] values, final Double[] probabilities) {
 		super(values, probabilities);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticFloat clone() {
+		return new ProbabilisticFloat(this);
 	}
 }

@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * Data type representing a probabilistic discrete Integer value.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
@@ -28,6 +29,7 @@ public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 	 * 
 	 */
 	private static final long serialVersionUID = 5126430661442462253L;
+
 	/**
 	 * Creates a new {@link ProbabilisticInteger} with the given value and probability.
 	 * 
@@ -39,6 +41,7 @@ public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 	public ProbabilisticInteger(final Integer value, final Double probability) {
 		super(value, probability);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticInteger} with the given values.
 	 * 
@@ -48,6 +51,7 @@ public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 	public ProbabilisticInteger(final Map<Integer, Double> values) {
 		super(values);
 	}
+
 	/**
 	 * Copy constructor.
 	 * 
@@ -57,6 +61,7 @@ public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 	public ProbabilisticInteger(final ProbabilisticInteger other) {
 		super(other);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticInteger} with the given values and probabilities.
 	 * 
@@ -67,5 +72,13 @@ public class ProbabilisticInteger extends AbstractProbabilisticValue<Integer> {
 	 */
 	public ProbabilisticInteger(final Integer[] values, final Double[] probabilities) {
 		super(values, probabilities);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticInteger clone() {
+		return new ProbabilisticInteger(this);
 	}
 }

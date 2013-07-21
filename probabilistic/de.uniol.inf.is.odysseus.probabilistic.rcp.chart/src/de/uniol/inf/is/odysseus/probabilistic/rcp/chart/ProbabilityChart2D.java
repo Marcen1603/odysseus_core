@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -527,12 +528,15 @@ public class ProbabilityChart2D extends
 			d++;
 		}
 		dimension = d;
-		for (final Entry<MultivariateNormalDistribution, Double> e : mixture
-				.getMixtures().entrySet()) {
-			final double means = e.getKey().getMeans()[dimension];
-			final double sigma = e.getKey().getCovariances()
-					.getEntry(dimension, dimension);
-			functions.put(new NormalDistribution(means, sigma), e.getValue());
+		for (final Pair<Double, MultivariateNormalDistribution> entry : mixture
+				.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry
+					.getValue();
+			final Double weight = entry.getKey();
+			final double means = normalDistribution.getMeans()[dimension];
+			final double sigma = normalDistribution.getCovariances().getEntry(
+					dimension, dimension);
+			functions.put(new NormalDistribution(means, sigma), weight);
 		}
 		final Interval[] interval = mixture.getSupport();
 		final double scale = mixture.getScale();

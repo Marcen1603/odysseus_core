@@ -15,12 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
@@ -80,17 +81,17 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
 	 * @return The distribution of a+b
 	 */
 	protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
-		final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>();
-		for (final Map.Entry<MultivariateNormalDistribution, Double> aEntry : a.getMixtures().entrySet()) {
-			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getKey().getMeans());
-			final RealMatrix aCovarianceMatrix = aEntry.getKey().getCovariances();
+		final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+		for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
+			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
+			final RealMatrix aCovarianceMatrix = aEntry.getValue().getCovariances();
 
-			for (final Map.Entry<MultivariateNormalDistribution, Double> bEntry : b.getMixtures().entrySet()) {
-				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getKey().getMeans());
-				final RealMatrix bCovarianceMatrix = bEntry.getKey().getCovariances();
+			for (final Pair<Double, MultivariateNormalDistribution> bEntry : b.getMixtures().getComponents()) {
+				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMeans());
+				final RealMatrix bCovarianceMatrix = bEntry.getValue().getCovariances();
 
 				final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(aMean.add(bMean).getColumn(0), aCovarianceMatrix.add(bCovarianceMatrix).getData());
-				mixtures.put(distribution, aEntry.getValue() * bEntry.getValue());
+				mixtures.add(new Pair<Double, MultivariateNormalDistribution>(aEntry.getKey() * bEntry.getKey(), distribution));
 			}
 		}
 

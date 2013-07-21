@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.util.Pair;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -485,12 +486,15 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 			d++;
 		}
 		dimension = d;
-		for (final Entry<MultivariateNormalDistribution, Double> e : mixture
-				.getMixtures().entrySet()) {
-			final double means = e.getKey().getMeans()[dimension];
-			final double sigma = e.getKey().getCovariances()
-					.getEntry(dimension, dimension);
-			functions.put(new NormalDistribution(means, sigma), e.getValue());
+		for (final Pair<Double, MultivariateNormalDistribution> entry : mixture
+				.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry
+					.getValue();
+			final Double weight = entry.getKey();
+			final double means = normalDistribution.getMeans()[dimension];
+			final double sigma = normalDistribution.getCovariances().getEntry(
+					dimension, dimension);
+			functions.put(new NormalDistribution(means, sigma), weight);
 		}
 		final Interval[] interval = mixture.getSupport();
 		final double scale = mixture.getScale();

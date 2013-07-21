@@ -68,7 +68,7 @@ public class TestDouble {
 	public final void testDoubleSmallerEquals(final ProbabilisticContinuousDouble left, final NormalDistributionMixture mixtures, final Double right, final double result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousSmallerEqualsOperator();
 		((AbstractProbabilisticFunction<NormalDistributionMixture>) function).getDistributions().add(mixtures);
-		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+		function.setArguments(new Constant<NormalDistributionMixture>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue().getScale(), result, TestConstants.EPSILON);
 	}
 
@@ -88,7 +88,7 @@ public class TestDouble {
 	public final void testDoubleEquals(final ProbabilisticContinuousDouble left, final NormalDistributionMixture mixtures, final Double right, final double result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousEqualsOperator();
 		((AbstractProbabilisticFunction<NormalDistributionMixture>) function).getDistributions().add(mixtures);
-		function.setArguments(new Constant<ProbabilisticContinuousDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
+		function.setArguments(new Constant<NormalDistributionMixture>(mixtures, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(right, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue().getScale(), result, TestConstants.EPSILON);
 	}
 
@@ -255,7 +255,7 @@ public class TestDouble {
 	public final Object[][] provideContinuousSmallerEqualsDoubleValues() {
 		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 0.9973020261614356 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 0.9973020261614356 } };
+		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 1.0 / 0.9973020261614356 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 1.0 / 0.9973020261614356 } };
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class TestDouble {
 	public final Object[][] provideContinuousEqualsDoubleValues() {
 		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 0.0 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 0.0 } };
+		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, Double.POSITIVE_INFINITY }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, Double.POSITIVE_INFINITY } };
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class TestDouble {
 	public final Object[][] provideContinuousGreaterEqualsDoubleValues() {
 		final NormalDistributionMixture univariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
 		final NormalDistributionMixture multivariateMixtures = new NormalDistributionMixture(new double[] { 1.0, 2.0 }, new double[] { 1.0, 0.0, 1.0 });
-		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 1.8222246957988279E-6 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 1.8222246957988279E-6 } };
+		return new Object[][] { { new ProbabilisticContinuousDouble(0), univariateMixtures, 3.0, 1.0 / 1.8222246957988279E-6 }, { new ProbabilisticContinuousDouble(0), multivariateMixtures, 3.0, 1.0 / 1.8222246957988279E-6 } };
 	}
 
 	/**

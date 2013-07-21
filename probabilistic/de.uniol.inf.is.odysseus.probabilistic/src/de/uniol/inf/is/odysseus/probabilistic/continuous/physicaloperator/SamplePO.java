@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
-import java.util.Map;
-
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-
 import com.google.common.primitives.Ints;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -100,11 +96,7 @@ public class SamplePO<T extends ITimeInterval> extends AbstractPipe<Probabilisti
 	 * @return The sample
 	 */
 	private Double sample(final NormalDistributionMixture mixture, final int dimension) {
-		double sample = 1.0;
-		// FIXME Is sampling on each mixture correct?
-		for (final Map.Entry<MultivariateNormalDistribution, Double> entry : mixture.getMixtures().entrySet()) {
-			sample += (entry.getKey().sample()[dimension] * entry.getValue());
-		}
+		double sample = mixture.getMixtures().sample()[dimension];
 		if (!mixture.getSupport(dimension).contains(sample)) {
 			sample = 0.0;
 		}

@@ -73,4 +73,12 @@ public class ProbabilisticString extends AbstractProbabilisticValue<String> {
 	public ProbabilisticString(final String[] values, final Double[] probabilities) {
 		super(values, probabilities);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticString clone() {
+		return new ProbabilisticString(this);
+	}
 }

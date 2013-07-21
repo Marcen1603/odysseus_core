@@ -105,6 +105,7 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 	 * @return The expression used for testing
 	 */
 	private static SDFExpression[] getTestExpression() {
+		MEP.getInstance().addFunctionProvider(new ProbabilisticFunctionProvider());
 		final DirectAttributeResolver resolver = new DirectAttributeResolver(TestMapPO.getSchema());
 		final MEP mep = MEP.getInstance();
 		mep.addFunctionProvider(new ProbabilisticFunctionProvider());

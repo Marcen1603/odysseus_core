@@ -16,16 +16,15 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,13 +112,15 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 		final RealMatrix residual = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.residualPos));
 		final RealMatrix regressionCoefficients = MatrixUtils.createRealMatrix((double[][]) object.getAttribute(this.regressionCoefficientsPos));
 
-		final Map<MultivariateNormalDistribution, Double> newMixtureComponents = new HashMap<MultivariateNormalDistribution, Double>();
-		for (final Entry<MultivariateNormalDistribution, Double> mixture : currentMixture.getMixtures().entrySet()) {
+		final List<Pair<Double, MultivariateNormalDistribution>> newMixtureComponents = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+		for (final Pair<Double, MultivariateNormalDistribution> entry : currentMixture.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry.getValue();
+			final Double weight = entry.getKey();
 
-			final RealMatrix mean = MatrixUtils.createColumnRealMatrix(mixture.getKey().getMeans());
+			final RealMatrix mean = MatrixUtils.createColumnRealMatrix(normalDistribution.getMeans());
 			final RealMatrix regressionCoefficientsMatrix = MatrixUtils.createRealMatrix(mean.getRowDimension(), mean.getColumnDimension());
 			regressionCoefficientsMatrix.setSubMatrix(regressionCoefficients.getData(), mean.getRowDimension() - regressionCoefficients.getRowDimension(), regressionCoefficients.getColumnDimension() - 1);
-			final RealMatrix covarianceMatrix = mixture.getKey().getCovariances();
+			final RealMatrix covarianceMatrix = normalDistribution.getCovariances();
 
 			// Create the new \mu = (\mu, \mu \beta)
 			final double[] newMean = new double[mean.getRowDimension() + regressionCoefficients.getRowDimension()];
@@ -138,12 +139,12 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 			newCovarianceMatrix.setSubMatrix(regressionCoefficientsMatrix.transpose().multiply(covarianceMatrix).getData(), covarianceMatrix.getRowDimension(), 0);
 			newCovarianceMatrix.setSubMatrix(regressionCoefficientsMatrix.transpose().multiply(covarianceMatrix).multiply(regressionCoefficientsMatrix).add(residual).getData(), covarianceMatrix.getRowDimension(), covarianceMatrix.getColumnDimension());
 			try {
-				newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
+				newMixtureComponents.add(new Pair<Double, MultivariateNormalDistribution>(weight, new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
 			} catch (final Exception e) {
 				final double[] diagonal = new double[newCovarianceMatrix.getColumnDimension()];
 				Arrays.fill(diagonal, 10E-5);
 				newCovarianceMatrix = newCovarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
-				newMixtureComponents.put(new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData()), mixture.getValue());
+				newMixtureComponents.add(new Pair<Double, MultivariateNormalDistribution>(weight, new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
 				LOG.warn(e.getMessage(), e);
 			}
 		}

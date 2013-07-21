@@ -18,11 +18,12 @@ package de.uniol.inf.is.odysseus.probabilistic.base;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -354,15 +355,15 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 				newDistributions[newLayerIndex] = this.distributions[oldLayerIndex].clone();
 				// First, update the covariance matrix and the mean in all mixtures
 				final NormalDistributionMixture distribution = newDistributions[newLayerIndex];
-				// FIXME Cleanup!
-				distribution.getMixtures().clear();
-				for (final Map.Entry<MultivariateNormalDistribution, Double> entry : this.distributions[oldLayerIndex].getMixtures().entrySet()) {
-					final MultivariateNormalDistribution mixture = entry.getKey();
+				final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+				for (final Pair<Double, MultivariateNormalDistribution> entry : this.distributions[oldLayerIndex].getMixtures().getComponents()) {
+					final MultivariateNormalDistribution mixture = entry.getValue();
 					final double[] means = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose()).getColumn(0);
 					final RealMatrix covariances = restrictMatrix[oldLayerIndex].multiply(mixture.getCovariances()).multiply(restrictMatrix[oldLayerIndex].transpose());
-					newDistributions[newLayerIndex].getMixtures().put(new MultivariateNormalDistribution(means, covariances.getData()), entry.getValue());
+					MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
+					mvns.add(new Pair<Double, MultivariateNormalDistribution>(entry.getKey(), component));
 				}
-
+				newDistributions[newLayerIndex].setMixtures(new MixtureMultivariateNormalDistribution(mvns));
 				// Second, update the support vector and the attribute link from the payload
 				final int[] oldDistributionAttributes = distribution.getAttributes();
 				final int[] newDistributionAttributes = new int[newDimension];

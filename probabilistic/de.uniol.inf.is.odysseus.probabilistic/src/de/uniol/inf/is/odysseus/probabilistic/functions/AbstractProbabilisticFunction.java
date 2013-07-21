@@ -17,7 +17,6 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
@@ -55,6 +54,6 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 * @return All normal distribution mixtures
 	 */
 	public final List<NormalDistributionMixture> getDistributions() {
-		return Collections.unmodifiableList(this.distributions);
+		return this.distributions;
 	}
 }

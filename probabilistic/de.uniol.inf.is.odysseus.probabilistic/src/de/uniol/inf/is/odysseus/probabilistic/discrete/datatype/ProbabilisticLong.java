@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * Data type representing a probabilistic discrete Long value.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
@@ -28,6 +29,7 @@ public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 	 * 
 	 */
 	private static final long serialVersionUID = -8340232282600212118L;
+
 	/**
 	 * Creates a new {@link ProbabilisticLong} with the given value and probability.
 	 * 
@@ -39,6 +41,7 @@ public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 	public ProbabilisticLong(final Long value, final Double probability) {
 		super(value, probability);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticLong} with the given values.
 	 * 
@@ -48,6 +51,7 @@ public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 	public ProbabilisticLong(final Map<Long, Double> values) {
 		super(values);
 	}
+
 	/**
 	 * Copy constructor.
 	 * 
@@ -57,6 +61,7 @@ public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 	public ProbabilisticLong(final ProbabilisticLong other) {
 		super(other);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticLong} with the given values and probabilities.
 	 * 
@@ -67,5 +72,13 @@ public class ProbabilisticLong extends AbstractProbabilisticValue<Long> {
 	 */
 	public ProbabilisticLong(final Long[] values, final Double[] probabilities) {
 		super(values, probabilities);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticLong clone() {
+		return new ProbabilisticLong(this);
 	}
 }

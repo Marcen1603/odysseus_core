@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
  * 
  * @param <V>
  */
-public class AbstractProbabilisticValue<V> implements Serializable, IClone {
+public abstract class AbstractProbabilisticValue<V> implements Serializable, IClone {
 
 	/**
 	 * 
@@ -107,9 +107,7 @@ public class AbstractProbabilisticValue<V> implements Serializable, IClone {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	public final AbstractProbabilisticValue<V> clone() {
-		return new AbstractProbabilisticValue<V>(this);
-	}
+	public abstract AbstractProbabilisticValue<V> clone();
 
 	/*
 	 * 

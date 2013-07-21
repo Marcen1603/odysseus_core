@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * Data type representing a probabilistic discrete Double value.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticDouble extends AbstractProbabilisticValue<Double> {
@@ -40,6 +41,7 @@ public class ProbabilisticDouble extends AbstractProbabilisticValue<Double> {
 	public ProbabilisticDouble(final Double value, final Double probability) {
 		super(value, probability);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticDouble} with the given values.
 	 * 
@@ -70,5 +72,13 @@ public class ProbabilisticDouble extends AbstractProbabilisticValue<Double> {
 	 */
 	public ProbabilisticDouble(final Double[] values, final Double[] probabilities) {
 		super(values, probabilities);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticDouble clone() {
+		return new ProbabilisticDouble(this);
 	}
 }

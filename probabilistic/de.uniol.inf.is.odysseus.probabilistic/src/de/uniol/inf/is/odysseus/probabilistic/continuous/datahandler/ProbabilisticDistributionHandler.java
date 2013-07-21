@@ -20,12 +20,10 @@ import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +56,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 		NormalDistributionMixture distributionMixture = null;
 		final int size = buffer.getInt();
 		if (size > 0) {
-			final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>(size);
+			final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 			final int dimension = buffer.getInt();
 			for (int m = 0; m < size; m++) {
 				final double weight = buffer.getDouble();
@@ -72,7 +70,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 				}
 				try {
 					final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-					mixtures.put(distribution, weight);
+					mixtures.add(new Pair<Double, MultivariateNormalDistribution>(weight, distribution));
 				} catch (final Exception e) {
 					ProbabilisticDistributionHandler.LOG.warn(e.getMessage(), e);
 				}
@@ -99,7 +97,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	@Override
 	public final NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
 		final int size = inputStream.readInt();
-		final Map<MultivariateNormalDistribution, Double> mixtures = new HashMap<MultivariateNormalDistribution, Double>(size);
+		final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final int dimension = inputStream.readInt();
 		for (int m = 0; m < size; m++) {
 			final double weight = inputStream.readDouble();
@@ -113,7 +111,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 			}
 
 			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-			mixtures.put(distribution, weight);
+			mixtures.add(new Pair<Double, MultivariateNormalDistribution>(weight, distribution));
 		}
 		final double scale = inputStream.readDouble();
 		final Interval[] support = new Interval[dimension];
@@ -152,16 +150,16 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	@Override
 	public final void writeData(final ByteBuffer buffer, final Object data) {
 		final NormalDistributionMixture value = (NormalDistributionMixture) data;
-		buffer.putInt(value.getMixtures().size());
+		buffer.putInt(value.getMixtures().getComponents().size());
 		buffer.putInt(value.getDimension());
 
-		for (final Entry<MultivariateNormalDistribution, Double> mixture : value.getMixtures().entrySet()) {
-			buffer.putDouble(mixture.getValue());
-			final double[] mean = mixture.getKey().getMeans();
+		for (final Pair<Double, MultivariateNormalDistribution> entry : value.getMixtures().getComponents()) {
+			buffer.putDouble(entry.getKey());
+			final double[] mean = entry.getValue().getMeans();
 			for (final double element : mean) {
 				buffer.putDouble(element);
 			}
-			final double[] entries = CovarianceMatrixUtils.fromMatrix(mixture.getKey().getCovariances());
+			final double[] entries = CovarianceMatrixUtils.fromMatrix(entry.getValue().getCovariances());
 			for (final double entrie : entries) {
 				buffer.putDouble(entrie);
 			}
@@ -183,7 +181,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	@Override
 	public final int memSize(final Object attribute) {
 		final NormalDistributionMixture value = (NormalDistributionMixture) attribute;
-		final int numberOfMixtures = value.getMixtures().size();
+		final int numberOfMixtures = value.getMixtures().getComponents().size();
 		final int dimension = value.getDimension();
 		final int covarianceMatrixSize = (int) (-0.5 + Math.sqrt(0.25 + (dimension * 2)));
 		// Number of mixtures: 1

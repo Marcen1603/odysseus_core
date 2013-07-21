@@ -15,12 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
-import java.util.Map.Entry;
-
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
@@ -44,8 +43,7 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 	/**
 	 * Accepted data types.
 	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, 
-		{ SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
 
 	/*
 	 * 
@@ -152,9 +150,9 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 	 */
 	private double univariateCumulativeProbability(final NormalDistributionMixture distribution, final double lowerBound, final double upperBound) {
 		double probability = 0.0;
-		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
-			final MultivariateNormalDistribution normalDistribution = mixture.getKey();
-			final Double weight = mixture.getValue();
+		for (final Pair<Double, MultivariateNormalDistribution> entry : distribution.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry.getValue();
+			final Double weight = entry.getKey();
 			final NormalDistribution tmpDistribution = new NormalDistribution(normalDistribution.getMeans()[0], normalDistribution.getCovariances().getEntry(0, 0));
 			probability += tmpDistribution.probability(lowerBound, upperBound) * weight;
 		}
@@ -174,9 +172,9 @@ public class ProbabilisticIntegrateMultivariateFunction extends AbstractProbabil
 	 */
 	private double multivariateCumulativeProbability(final NormalDistributionMixture distribution, final RealVector lowerBound, final RealVector upperBound) {
 		double probability = 0.0;
-		for (final Entry<MultivariateNormalDistribution, Double> mixture : distribution.getMixtures().entrySet()) {
-			final MultivariateNormalDistribution normalDistribution = mixture.getKey();
-			final Double weight = mixture.getValue();
+		for (final Pair<Double, MultivariateNormalDistribution> entry : distribution.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry.getValue();
+			final Double weight = entry.getKey();
 			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
 			final Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
 			final Matrix upper = new Matrix(new double[][] { upperBound.toArray() });

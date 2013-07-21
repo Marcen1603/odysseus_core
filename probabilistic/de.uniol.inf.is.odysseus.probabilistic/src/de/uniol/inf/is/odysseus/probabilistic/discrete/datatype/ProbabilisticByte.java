@@ -73,4 +73,12 @@ public class ProbabilisticByte extends AbstractProbabilisticValue<Byte> {
 	public ProbabilisticByte(final Byte[] values, final Double[] probabilities) {
 		super(values, probabilities);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticByte clone() {
+		return new ProbabilisticByte(this);
+	}
 }

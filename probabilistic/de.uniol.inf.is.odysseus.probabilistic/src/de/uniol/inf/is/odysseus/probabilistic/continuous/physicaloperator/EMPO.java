@@ -16,10 +16,11 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -97,11 +98,11 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 		}
 
 		// Construct the multivariate distribution
-		final Map<MultivariateNormalDistribution, Double> components = new HashMap<MultivariateNormalDistribution, Double>();
+		final List<Pair<Double, MultivariateNormalDistribution>> components = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
 		for (int i = 0; i < emArea.getMixtures(); i++) {
 			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(emArea.getMean(i).getColumn(0), emArea.getCovarianceMatrix(i).getData());
-			components.put(distribution, emArea.getWeight(i));
+			components.add(new Pair<Double, MultivariateNormalDistribution>(emArea.getWeight(i), distribution));
 		}
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(components);
 		mixture.setAttributes(this.attributes);

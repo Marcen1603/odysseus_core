@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -45,12 +46,13 @@ public class ProbabilisticMapper implements net.ericaro.surfaceplotter.Mapper {
 	 */
 	public final void setup(final NormalDistributionMixture mixture) {
 		this.mixtures.clear();
-		for (final Entry<MultivariateNormalDistribution, Double> e : mixture
-				.getMixtures().entrySet()) {
-			final double[] means = e.getKey().getMeans();
-			final RealMatrix m = e.getKey().getCovariances();
-			this.mixtures.put(new NormalDistributionFunctionND(means, m),
-					e.getValue());
+		for (final Pair<Double, MultivariateNormalDistribution> entry : mixture.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry.getValue();
+			final Double weight = entry.getKey();
+			final double[] means = normalDistribution.getMeans();
+			final RealMatrix sigma = normalDistribution.getCovariances();
+			this.mixtures.put(new NormalDistributionFunctionND(means, sigma),
+					weight);
 		}
 
 		this.scale = mixture.getScale();

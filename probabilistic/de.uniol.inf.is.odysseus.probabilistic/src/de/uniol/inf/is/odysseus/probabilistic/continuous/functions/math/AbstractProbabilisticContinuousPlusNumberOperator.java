@@ -15,9 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
@@ -67,14 +70,18 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
 	 */
 	protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final Double b) {
 		final NormalDistributionMixture result = a.clone();
-		result.getMixtures().clear();
-		for (final Map.Entry<MultivariateNormalDistribution, Double> entry : a.getMixtures().entrySet()) {
-			final double[] means = entry.getKey().getMeans();
+		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+		for (final Pair<Double, MultivariateNormalDistribution> entry : a.getMixtures().getComponents()) {
+			final MultivariateNormalDistribution normalDistribution = entry.getValue();
+			final Double weight = entry.getKey();
+			final double[] means = normalDistribution.getMeans();
 			for (int i = 0; i < means.length; i++) {
 				means[i] += b;
 			}
-			result.getMixtures().put(new MultivariateNormalDistribution(means, entry.getKey().getCovariances().getData().clone()), entry.getValue());
+			MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, normalDistribution.getCovariances().getData());
+			mvns.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
 		}
+		result.setMixtures(new MixtureMultivariateNormalDistribution(mvns));
 		final Interval[] support = new Interval[result.getSupport().length];
 		for (int i = 0; i < result.getSupport().length; i++) {
 			support[i] = result.getSupport(i).add(b);

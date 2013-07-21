@@ -20,6 +20,7 @@ import java.util.Map;
 
 /**
  * Data type representing a probabilistic discrete Short value.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class ProbabilisticShort extends AbstractProbabilisticValue<Short> {
@@ -28,6 +29,7 @@ public class ProbabilisticShort extends AbstractProbabilisticValue<Short> {
 	 * 
 	 */
 	private static final long serialVersionUID = -969773405115701795L;
+
 	/**
 	 * Creates a new {@link ProbabilisticShort} with the given value and probability.
 	 * 
@@ -39,6 +41,7 @@ public class ProbabilisticShort extends AbstractProbabilisticValue<Short> {
 	public ProbabilisticShort(final Short value, final Double probability) {
 		super(value, probability);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticShort} with the given values.
 	 * 
@@ -48,6 +51,7 @@ public class ProbabilisticShort extends AbstractProbabilisticValue<Short> {
 	public ProbabilisticShort(final Map<Short, Double> values) {
 		super(values);
 	}
+
 	/**
 	 * Copy constructor.
 	 * 
@@ -57,6 +61,7 @@ public class ProbabilisticShort extends AbstractProbabilisticValue<Short> {
 	public ProbabilisticShort(final ProbabilisticShort other) {
 		super(other);
 	}
+
 	/**
 	 * Creates a new {@link ProbabilisticShort} with the given values and probabilities.
 	 * 
@@ -67,5 +72,13 @@ public class ProbabilisticShort extends AbstractProbabilisticValue<Short> {
 	 */
 	public ProbabilisticShort(final Short[] values, final Double[] probabilities) {
 		super(values, probabilities);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final ProbabilisticShort clone() {
+		return new ProbabilisticShort(this);
 	}
 }

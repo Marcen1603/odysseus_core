@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.probabilistic.ProbabilisticFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
@@ -158,6 +159,7 @@ public class TestJoinPO extends ProbabilisticDiscreteJoinTIPO<ITimeIntervalProba
 	 * @return The predicate used for testing
 	 */
 	private static RelationalPredicate getTestPredicate() {
+		MEP.getInstance().addFunctionProvider(new ProbabilisticFunctionProvider());
 		final SDFSchema schema = SDFSchema.union(TestJoinPO.getSchema1(), TestJoinPO.getSchema2());
 		final DirectAttributeResolver resolver = new DirectAttributeResolver(schema);
 		final SDFExpression expression = new SDFExpression("", "a < 3.0 && b > 4.0 && g < 9.0", resolver, MEP.getInstance());
