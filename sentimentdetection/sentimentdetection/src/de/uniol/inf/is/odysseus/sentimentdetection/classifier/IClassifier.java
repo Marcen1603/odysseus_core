@@ -18,4 +18,5 @@ public interface IClassifier<T extends IMetaAttribute> {
 	
 	void trainClassifier(Map<String, Integer> trainingset);
 	
+	
 }

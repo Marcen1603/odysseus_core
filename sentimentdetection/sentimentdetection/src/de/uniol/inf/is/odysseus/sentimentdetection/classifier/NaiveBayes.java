@@ -18,7 +18,8 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	private Map<String, Integer> negativewords = new HashMap<String, Integer>();
 	
 	static Logger logger = LoggerFactory.getLogger(NaiveBayes.class);
-	
+
+
 	public NaiveBayes(){
 		
 	}
@@ -140,12 +141,19 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 		if (decisionpos > decisionneg) {
 			decision = 1;
+		
 		} else {
 			decision = -1;
+		
 		}
 
 		return decision;
 
 	}
+
+
+
+
+
 
 }

@@ -241,4 +241,6 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		return removeDuplicateWithOrder(words);
 	}
 
+	
+
 }

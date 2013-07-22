@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.IClassifier;
+import de.uniol.inf.is.odysseus.sentimentdetection.util.Metrics;
 
 @SuppressWarnings({ "rawtypes" })
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
@@ -28,6 +29,17 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private boolean isTrained = false;
 	private int evaluateClassifier = 0;
 
+	
+	private int posCtr = 0;
+	private int totalPosCtr = 0;
+	private int totalExistPosCtr = 0;
+	
+	
+	private int negCtr = 0;
+	private int totalNegCtr = 0;
+	private int totalExistNegCtr = 0;
+	
+	
 	private IClassifier<T> algo;
 
 	private List<Tuple> buffer = new ArrayList<>();
@@ -153,11 +165,30 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				String truedecision = outputTuple.getAttribute(object.size() - 1)
 						.toString();
 				
+				
+				if(Integer.parseInt(truedecision.trim()) == 1){
+					totalExistPosCtr++;
+				}else{
+					totalExistNegCtr++;
+				}
+				
+				
+				if(decision == 1){
+					totalPosCtr++;
+				}else{
+					totalNegCtr++;
+				}
+				
 				if (Integer.parseInt(truedecision.trim()) != decision) {
 					wrongdecision++;
 					System.out.println("ERROR:-------------------------");
 				}else{
 					System.out.println("CORRECT:-----------------------");
+					if(Integer.parseInt(truedecision.trim()) == 1){
+						posCtr++;
+					}else{
+						negCtr++;
+					}
 				}
 				
 				System.out.println("record: " + object.getAttribute(0).toString());
@@ -188,6 +219,21 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	@Override
 	protected void process_close() {
+		
+		if(evaluateClassifier == 1){
+			System.out.println("pos recall: " + Metrics.recall(posCtr, totalExistPosCtr));
+			System.out.println("pos precision: " + Metrics.precision(posCtr, totalPosCtr));
+			System.out.println("pos f-score: "+ Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr), Metrics.precision(posCtr, totalPosCtr)));
+			
+			
+			System.out.println();
+			System.out.println();
+			
+			System.out.println("neg recall: " + Metrics.recall(negCtr, totalExistNegCtr));
+			System.out.println("neg precision: " + Metrics.precision(negCtr, totalNegCtr));
+			System.out.println("neg f-score: "+ Metrics.f_score(Metrics.recall(negCtr, totalExistNegCtr), Metrics.precision(negCtr, totalNegCtr)));
+		}
+		
 		super.process_close();
 		this.buffer.clear();
 		this.isTrained = false;
