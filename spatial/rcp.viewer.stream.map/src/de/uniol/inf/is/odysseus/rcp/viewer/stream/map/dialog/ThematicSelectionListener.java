@@ -48,6 +48,15 @@ public class ThematicSelectionListener extends SelectionAdapter {
 					-85.0511, 85.0511);
 			heatmapLayerConfiguration.setCoverageProjected(-180.0, 180.0,
 					-85.0511, 85.0511);
+			
+			heatmapLayerConfiguration.setQuery(streamSelectionBox.getText());
+			heatmapLayerConfiguration
+					.setGeometricAttributePosition(geometrieSelect
+							.getSelectionIndex());
+			heatmapLayerConfiguration
+					.setValueAttributePosition(visualizationSelect
+							.getSelectionIndex());
+			
 			heatmapLayerConfiguration.setSrid(4326);
 			heatmapLayerConfiguration
 					.setGeometricAttributePosition(geometrieSelect
@@ -65,6 +74,15 @@ public class ThematicSelectionListener extends SelectionAdapter {
 			final TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) this.config;
 
 			tracemapLayerConfiguration.setSrid(4326);
+			
+			tracemapLayerConfiguration.setQuery(streamSelectionBox.getText());
+			tracemapLayerConfiguration
+					.setGeometricAttributePosition(geometrieSelect
+							.getSelectionIndex());
+			tracemapLayerConfiguration
+					.setValueAttributePosition(visualizationSelect
+							.getSelectionIndex());
+			
 			tracemapLayerConfiguration
 					.setGeometricAttributePosition(geometrieSelect
 							.getSelectionIndex());

@@ -29,6 +29,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	
 	public TracemapLayerConfiguration(String name) {
 		super(name);
+		super.setSrid(4326);
 		setQuery("");
 		colors = new HashMap<Integer, RGB>();
 		numOfLineElements = 10;
@@ -42,6 +43,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	public TracemapLayerConfiguration(TracemapLayerConfiguration toCopy) {
 		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
 		super(toCopy.getName());
+		super.setSrid(toCopy.getSrid());
 		setQuery(toCopy.getQuery());
 		setColors(toCopy.getColors());
 		setNumOfLineElements(toCopy.getNumOfLineElements());

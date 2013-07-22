@@ -643,6 +643,25 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			}
 		});
 
+		// Hide tiles without information
+		Label hideLabel = new Label(settingsContainer, SWT.NONE);
+		hideLabel.setText("Hide tiles without information: ");
+		Button hideButton = new Button(settingsContainer, SWT.CHECK);
+		hideButton.setEnabled(true);
+		hideButton.setSelection(newConfig.isHideWithoutInformation());
+		hideButton.addSelectionListener(new ButtonListener(newConfig,
+				this, hideButton) {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
+				heatmapLayerConfiguration.setHideWithoutInformation((correspondingButton
+						.getSelection()));
+				mapPropertiesDialog
+						.setLayerConfiguration(heatmapLayerConfiguration);
+			}
+		});
+
 		// Position of layer
 		Label autoPositionLabel = new Label(settingsContainer, SWT.NONE);
 		autoPositionLabel.setText("Automatic positioning: ");

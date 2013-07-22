@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.osgeo.proj4j.CoordinateTransform;
 import org.osgeo.proj4j.ProjCoordinate;
@@ -37,6 +38,8 @@ public class Heatmap extends RasterLayer {
 	private int totalNumberOfElement;
 	private double totalValue;
 	private LayerUpdater layerUpdater;
+	Color[][] colors;
+	boolean[][] hasInformation;
 
 	public Heatmap(HeatmapLayerConfiguration configuration) {
 		super(configuration);
@@ -77,11 +80,13 @@ public class Heatmap extends RasterLayer {
 		gc.setAlpha(config.getAlpha());
 		if (!interpolation)
 			gc.setInterpolation(SWT.NONE);
+		
 		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height,
 				(int) heatMapArea.getMinX(), (int) heatMapArea.getMinY(),
 				(int) heatMapArea.getWidth(), (int) heatMapArea.getHeight());
 		gc.setInterpolation(SWT.DEFAULT);
 		gc.setAlpha(255);
+
 	}
 
 	/**
@@ -97,36 +102,55 @@ public class Heatmap extends RasterLayer {
 	private Image createImage(int numberX, int numberY, Color minColor,
 			Color maxColor) {
 		Image image = new Image(Display.getDefault(), numberX, numberY);
+		
 		GC gc = new GC(image);
-		gc.setForeground(new org.eclipse.swt.graphics.Color(Display
-				.getDefault(), 0, 0, 0));
-		gc.setBackground(new org.eclipse.swt.graphics.Color(Display
-				.getDefault(), 255, 0, 0));
-		Color[][] colors = createColorArray(numberX, numberY, minColor,
-				maxColor);
+		createColorArray(numberX, numberY, minColor, maxColor);
 
 		for (int i = 0; i < colors.length; i++) {
 			for (int j = 0; j < colors[i].length; j++) {
 				gc.setBackground(colors[i][j]);
 				gc.fillRectangle(i, j, 1, 1);
+				gc.setAlpha(255);
 			}
 		}
-
-		return image;
+		
+		ImageData imageData = image.getImageData();
+		if(config.isHideWithoutInformation()) {
+			for (int i = 0; i < hasInformation.length; i++) {
+				for (int j = 0; j < hasInformation[i].length; j++) {
+					if (hasInformation[i][j]) {
+						// User wants to hide tiles without information - so
+						// make all others visible
+						imageData.setAlpha(i, j, 255);
+					}
+				}
+			}
+		}
+		
+		
+		Image imageWithAlpha = new Image(Display.getDefault(),imageData);
+		return imageWithAlpha;
 	}
 
 	/**
-	 * Creates the color-array, for each tile one color. With this colors the 
-	 * image can be creates. 
+	 * Creates the color-array, for each tile one color. With this colors the
+	 * image can be creates. Also creates an array, which says which tile has
+	 * information (and which tiles do not have a single data-tuple)
+	 * 
 	 * @param x
 	 * @param y
 	 * @param minColor
 	 * @param maxColor
-	 * @return
 	 */
-	private Color[][] createColorArray(int x, int y, Color minColor,
-			Color maxColor) {
-		Color[][] colors = new Color[x][y];
+	private void createColorArray(int x, int y, Color minColor, Color maxColor) {
+		colors = new Color[x][y];
+		hasInformation = new boolean[x][y];
+		// At the beginning, no tile has information
+		for (int i = 0; i < hasInformation.length; i++) {
+			for (int j = 0; j < hasInformation[i].length; j++) {
+				hasInformation[i][j] = false;
+			}
+		}
 
 		// Fill with standard-grey
 		for (int i = 0; i < colors.length; i++) {
@@ -212,10 +236,12 @@ public class Heatmap extends RasterLayer {
 
 			double value = 0;
 			try {
-				value = (int) tuple.getAttribute(config.getValueAttributePosition());
+				value = (int) tuple.getAttribute(config
+						.getValueAttributePosition());
 			} catch (ClassCastException e) {
 				// Ok, not an int, then it's a double
-				value = (double) tuple.getAttribute(config.getValueAttributePosition());
+				value = (double) tuple.getAttribute(config
+						.getValueAttributePosition());
 			}
 
 			// Calculate, where this belongs in the heatmap
@@ -242,6 +268,9 @@ public class Heatmap extends RasterLayer {
 				// and to the total value
 				tempTotalValue += value;
 
+				// save, that this tile has information
+				hasInformation[posX][posY] = true;
+
 				// Get the maximum and minimum sum
 				if (valueSum[posX][posY] > maxSum) {
 					maxSum = valueSum[posX][posY];
@@ -265,8 +294,6 @@ public class Heatmap extends RasterLayer {
 						maxSum, minColor, maxColor);
 			}
 		}
-
-		return colors;
 	}
 
 	/**
@@ -338,7 +365,7 @@ public class Heatmap extends RasterLayer {
 	public LayerUpdater getLayerUpdater() {
 		return this.layerUpdater;
 	}
-	
+
 	/**
 	 * Returns the minimal value of all tiles
 	 * 
@@ -403,20 +430,24 @@ public class Heatmap extends RasterLayer {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(4326, this.srid);
+		CoordinateTransform ct = screenManager.getTransformation()
+				.getCoordinateTransform(4326, this.srid);
 		Envelope geoEnv = config.getCoverage();
-		// Doesn't work - don't know why, I guess the transformation has a problem with 4326
-//		if (zoomArea != null) {
-//			geoEnv = zoomArea;
-//		}
-		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(), geoEnv.getMaxY());
-		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(), geoEnv.getMinY());
+		// Doesn't work - don't know why, I guess the transformation has a
+		// problem with 4326
+		// if (zoomArea != null) {
+		// geoEnv = zoomArea;
+		// }
+		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(),
+				geoEnv.getMaxY());
+		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(),
+				geoEnv.getMinY());
 		ProjCoordinate dst1 = new ProjCoordinate();
 		ProjCoordinate dst2 = new ProjCoordinate();
 		ct.transform(src1, dst1);
 		ct.transform(src2, dst2);
 		Envelope coverage = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
-		
+
 		return coverage;
 	}
 

@@ -22,6 +22,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	private int alpha;
 	private boolean interpolation;
 	private boolean autoPosition;
+	private boolean hideWithoutInformation;
 	private int numTilesWidth;
 	private int numTilesHeight;
 	private double latSW; // Latitude Southwest
@@ -32,7 +33,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	public HeatmapLayerConfiguration(HeatmapLayerConfiguration toCopy) {
 		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
 		super(toCopy.getName());
-		super.setSrid(4326); //???
+		super.setSrid(toCopy.getSrid()); 
 		setQuery(toCopy.getQuery());
 		setGeometricAttributePosition(toCopy.getGeometricAttributePosition()); //Here should be a point
 		setValueAttributePosition(toCopy.getValueAttributePosition());
@@ -40,6 +41,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setMaxColor(toCopy.getMaxColor());
 		setAlpha(toCopy.getAlpha());
 		setInterpolation(toCopy.isInterpolation());
+		setHideWithoutInformation(toCopy.isHideWithoutInformation());
 		setNumTilesHeight(toCopy.getNumTilesHeight());
 		setNumTilesWidth(toCopy.getNumTilesWidth());
 		setAutoPosition(toCopy.isAutoPosition());
@@ -52,14 +54,15 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	public HeatmapLayerConfiguration(RasterLayerConfiguration toCopy) {
 		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
 		super(toCopy.getName());
-		super.setSrid(4326); //???
+		super.setSrid(toCopy.getSrid());
 		setQuery("");
 		setGeometricAttributePosition(0); //Here should be a point
 		setValueAttributePosition(1); // Here should be the value
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
 		setAlpha(50);
-		setInterpolation(false);
+		setInterpolation(true);
+		setHideWithoutInformation(true);
 		setNumTilesHeight(10);
 		setNumTilesWidth(10);
 		setAutoPosition(true);
@@ -79,7 +82,8 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setMinColor(new Color(Display.getDefault(),0,255,0));
 		setMaxColor(new Color(Display.getDefault(),255,0,0));
 		setAlpha(150);
-		setInterpolation(false);
+		setInterpolation(true);
+		setHideWithoutInformation(true);
 		setNumTilesHeight(10);
 		setNumTilesWidth(10);
 		setAutoPosition(true);
@@ -242,6 +246,14 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 
 	public void setValueAttributePosition(int valueAttributePosition) {
 		this.valueAttributePosition = valueAttributePosition;
+	}
+
+	public boolean isHideWithoutInformation() {
+		return hideWithoutInformation;
+	}
+
+	public void setHideWithoutInformation(boolean hideWithoutInformation) {
+		this.hideWithoutInformation = hideWithoutInformation;
 	}
 
 }
