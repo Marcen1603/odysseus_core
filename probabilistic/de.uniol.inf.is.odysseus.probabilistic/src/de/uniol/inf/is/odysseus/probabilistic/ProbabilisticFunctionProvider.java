@@ -39,7 +39,6 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.Probabil
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMinusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberRHSOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusOperator;
@@ -153,7 +152,6 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticContinuousPlusOperator());
 			functions.add(new ProbabilisticContinuousPlusNumberRHSOperator());
 			functions.add(new ProbabilisticContinuousPlusNumberLHSOperator());
-			functions.add(new ProbabilisticContinuousMultiplicationOperator());
 			functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
 			functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
 			functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());

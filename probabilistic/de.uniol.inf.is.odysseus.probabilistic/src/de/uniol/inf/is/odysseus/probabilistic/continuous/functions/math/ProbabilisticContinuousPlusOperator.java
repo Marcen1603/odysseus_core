@@ -74,6 +74,14 @@ public class ProbabilisticContinuousPlusOperator extends AbstractProbabilisticBi
 	/**
 	 * Adds the given distribution to the other distribution.
 	 * 
+	 * The result is another normal distribution mixture with:
+	 * 
+	 * \f$ \mu = \mu_{1} + \mu_{2} \f$
+	 * 
+	 * and
+	 * 
+	 * \f$ \sigma = \sigma_{1} + \sigma_{2} \f$
+	 * 
 	 * @param a
 	 *            The distribution
 	 * @param b

@@ -51,6 +51,8 @@ public class TestDouble {
 		final IFunction<ProbabilisticDouble> function = new ProbabilisticPlusOperator();
 		function.setArguments(new Constant<ProbabilisticDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<ProbabilisticDouble>(right, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
+		Assert.assertNotEquals(function.getValue(), left);
+		Assert.assertNotEquals(function.getValue(), right);
 	}
 
 	/**
@@ -68,6 +70,8 @@ public class TestDouble {
 		final IFunction<ProbabilisticDouble> function = new ProbabilisticMinusOperator();
 		function.setArguments(new Constant<ProbabilisticDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<ProbabilisticDouble>(right, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
+		Assert.assertNotEquals(function.getValue(), left);
+		Assert.assertNotEquals(function.getValue(), right);
 	}
 
 	/**
@@ -85,6 +89,8 @@ public class TestDouble {
 		final IFunction<ProbabilisticDouble> function = new ProbabilisticMultiplicationOperator();
 		function.setArguments(new Constant<ProbabilisticDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<ProbabilisticDouble>(right, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
+		Assert.assertNotEquals(function.getValue(), left);
+		Assert.assertNotEquals(function.getValue(), right);
 	}
 
 	/**
@@ -102,6 +108,8 @@ public class TestDouble {
 		final IFunction<ProbabilisticDouble> function = new ProbabilisticDivisionOperator();
 		function.setArguments(new Constant<ProbabilisticDouble>(left, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), new Constant<ProbabilisticDouble>(right, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
+		Assert.assertNotEquals(function.getValue(), left);
+		Assert.assertNotEquals(function.getValue(), right);
 	}
 
 	/**

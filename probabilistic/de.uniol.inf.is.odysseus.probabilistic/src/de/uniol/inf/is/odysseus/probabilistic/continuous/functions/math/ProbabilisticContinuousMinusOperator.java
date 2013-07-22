@@ -74,6 +74,14 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 	/**
 	 * Subtracts the given distribution from the other distribution.
 	 * 
+	 * The result is another normal distribution mixture with:
+	 * 
+	 * \f$ \mu = \mu_{1} - \mu_{2} \f$
+	 * 
+	 * and
+	 * 
+	 * \f$ \sigma = \sigma_{1} + \sigma_{2} \f$
+	 * 
 	 * @param a
 	 *            The distribution
 	 * @param b
@@ -89,7 +97,7 @@ public class ProbabilisticContinuousMinusOperator extends AbstractProbabilisticB
 				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMeans());
 				final RealMatrix bCovarianceMatrix = bEntry.getValue().getCovariances();
 
-				final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(aMean.subtract(bMean).getColumn(0), aCovarianceMatrix.subtract(bCovarianceMatrix).getData());
+				final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(aMean.subtract(bMean).getColumn(0), aCovarianceMatrix.add(bCovarianceMatrix).getData());
 				mixtures.add(new Pair<Double, MultivariateNormalDistribution>(aEntry.getKey() * bEntry.getKey(), distribution));
 			}
 		}

@@ -79,7 +79,7 @@ public abstract class AbstractProbabilisticContinuousDivisionNumberOperator exte
 			for (int i = 0; i < means.length; i++) {
 				means[i] /= b;
 			}
-			final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(1.0 / b);
+			final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(1.0 / (b * b));
 			MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
 			mvns.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
 		}

@@ -79,7 +79,7 @@ public abstract class AbstractProbabilisticContinuousMultiplicationNumberOperato
 			for (int i = 0; i < means.length; i++) {
 				means[i] *= b;
 			}
-			final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(b);
+			final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(b * b);
 			MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
 			mvns.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
 		}

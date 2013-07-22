@@ -163,7 +163,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 	 * @return The result of the operation
 	 */
 	public final Interval mul(final double value) {
-		return new Interval(this.inf * value, this.sup * value);
+		return new Interval(Math.min(this.sup * value, this.inf * value), Math.max(this.sup * value, this.inf * value));
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 	 * @return The result of the operation
 	 */
 	public final Interval div(final double value) {
-		return new Interval(this.inf / value, this.sup / value);
+		return new Interval(Math.min(this.inf / value, this.sup / value), Math.max(this.inf / value, this.sup / value));
 	}
 
 	/**
