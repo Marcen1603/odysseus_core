@@ -416,14 +416,37 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		}
 		streamSelect.select(0);
 
+		Label geometrieLabel = new Label(thematicLayer, SWT.NONE);
+		geometrieLabel.setText("Geometry Attribute:");
+		geometrieLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo geometrieSelect = new CCombo(thematicLayer, SWT.BORDER);
+		geometrieSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
+		Label visualizationLabel = new Label(thematicLayer, SWT.NONE);
+		visualizationLabel.setText("Value Attribute:");
+		visualizationLabel.setLayoutData(DialogUtils.getLabelDataLayout());
+
+		final CCombo visualizationSelect = new CCombo(thematicLayer, SWT.BORDER);
+		visualizationSelect.setLayoutData(DialogUtils.getTextDataLayout());
+
 		// Add a listener -> created right layerConfiguration
 		ThematicSelectionListener thematicSelectionListener = new ThematicSelectionListener(
-				layerConfiguration, mapTypeSelect, streamSelect, this);
+				layerConfiguration, mapTypeSelect, streamSelect,
+				geometrieSelect, visualizationSelect, connections, this);
+
+		StreamSelectionListener streamSelectionListener = new StreamSelectionListener(
+				layerConfiguration, mapTypeSelect, streamSelect, geometrieSelect,
+				visualizationSelect, connections, this);
 		mapTypeSelect.addSelectionListener(thematicSelectionListener);
-		streamSelect.addSelectionListener(thematicSelectionListener);
+		streamSelect.addSelectionListener(streamSelectionListener);
+
+		geometrieSelect.addSelectionListener(thematicSelectionListener);
+		visualizationSelect.addSelectionListener(thematicSelectionListener);
 
 		// Initialize selection
 		thematicSelectionListener.widgetSelected(null);
+		streamSelectionListener.widgetSelected(null);
 
 		return thematicLayer;
 	}

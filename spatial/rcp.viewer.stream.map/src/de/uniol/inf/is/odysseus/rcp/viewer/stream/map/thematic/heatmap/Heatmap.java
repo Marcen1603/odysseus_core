@@ -335,6 +335,10 @@ public class Heatmap extends RasterLayer {
 		this.layerUpdater = layerUpdater;
 	}
 
+	public LayerUpdater getLayerUpdater() {
+		return this.layerUpdater;
+	}
+	
 	/**
 	 * Returns the minimal value of all tiles
 	 * 

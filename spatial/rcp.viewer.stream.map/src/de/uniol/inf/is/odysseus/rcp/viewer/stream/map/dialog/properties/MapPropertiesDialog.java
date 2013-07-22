@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,8 +39,11 @@ import org.eclipse.swt.widgets.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.StreamMapEditorPart;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.AttributeListener;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.dialog.DialogUtils;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.MapEditorModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
@@ -183,9 +187,10 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		}
 		container.layout();
 	}
-	
+
 	/**
 	 * Creates the menu for tracemaps with all the settings that can be made
+	 * 
 	 * @param tracemap
 	 * @param container
 	 */
@@ -216,39 +221,38 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Position of geometry-Attribute
 		Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
-		geoAttrLabel.setText("Position Geo-Attribute: ");
+		geoAttrLabel.setText("Geometry Attribute: ");
 
-		Spinner geoAttrInput = new Spinner(settingsContainer, SWT.NONE);
-		geoAttrInput.setValues(newConfig.getGeometricAttributePosition(), 0,
-				255, 0, 1, 1);
-		geoAttrInput.addSelectionListener(new SpinnerListener(newConfig,
-				geoAttrInput, this) {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
-				tracemapLayerConfig.setGeometricAttributePosition((spinner
-						.getSelection()));
-				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfig);
-			}
-		});
+		CCombo geoAttrInput = new CCombo(settingsContainer, SWT.BORDER);
+		geoAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+
+		// Fill this combobox
+		geoAttrInput.removeAll();
+		SDFSchema schema = tracemap.getLayerUpdater().getConnection()
+				.getSubscriptions().get(0).getSchema();
+
+		for (int i = 0; i < schema.size(); i++) {
+			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+		}
+		geoAttrInput.select(newConfig.getGeometricAttributePosition());
 
 		// Position of value-Attribute
 		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
 		valueAttrLabel.setText("Position Value-Attribute: ");
 
-		Spinner valueAttrInput = new Spinner(settingsContainer, SWT.NONE);
-		valueAttrInput.setValues(newConfig.getValueAttributePosition(), 0,
-				255, 0, 1, 1);
-		valueAttrInput.addSelectionListener(new SpinnerListener(newConfig,
-				valueAttrInput, this) {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
-				tracemapLayerConfig.setValueAttributePosition((spinner
-						.getSelection()));
-				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfig);
-			}
-		});
+		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
+		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+
+		for (int i = 0; i < schema.size(); i++) {
+			valueAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+		}
+
+		valueAttrInput.select(newConfig.getValueAttributePosition());
+
+		geoAttrInput.addSelectionListener(new AttributeListener(newConfig,
+				geoAttrInput, valueAttrInput, this));
+		valueAttrInput.addSelectionListener(new AttributeListener(newConfig,
+				geoAttrInput, valueAttrInput, this));
 
 		// Mark end of line
 		Label markEndIfLineLabel = new Label(settingsContainer, SWT.NONE);
@@ -265,7 +269,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) layerConfiguration;
 				tracemapLayerConfiguration.setMarkEndpoint((correspondingButton
 						.getSelection()));
-				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfiguration);
+				mapPropertiesDialog
+						.setLayerConfiguration(tracemapLayerConfiguration);
 			}
 		});
 
@@ -299,7 +304,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) layerConfiguration;
 				tracemapLayerConfiguration
 						.setAutoTransparency(correspondingButton.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfiguration);
+				mapPropertiesDialog
+						.setLayerConfiguration(tracemapLayerConfiguration);
 			}
 		});
 
@@ -407,9 +413,10 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		// Redraw the container
 		container.layout();
 	}
-	
+
 	/**
 	 * Creates the menu for heatmaps with all the settings that can be made
+	 * 
 	 * @param heatmap
 	 * @param container
 	 */
@@ -444,39 +451,38 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Position of geometry-Attribute
 		Label geoAttrLabel = new Label(settingsContainer, SWT.NONE);
-		geoAttrLabel.setText("Position Geo-Attribute: ");
+		geoAttrLabel.setText("Geometry Attribute: ");
 
-		Spinner geoAttrInput = new Spinner(settingsContainer, SWT.NONE);
-		geoAttrInput.setValues(newConfig.getGeometricAttributePosition(), 0,
-				255, 0, 1, 1);
-		geoAttrInput.addSelectionListener(new SpinnerListener(newConfig,
-				geoAttrInput, this) {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
-				heatmapLayerConfig.setGeometricAttributePosition((spinner
-						.getSelection()));
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
-			}
-		});
+		CCombo geoAttrInput = new CCombo(settingsContainer, SWT.BORDER);
+		geoAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+
+		// Fill this combobox
+		geoAttrInput.removeAll();
+		SDFSchema schema = heatmap.getLayerUpdater().getConnection()
+				.getSubscriptions().get(0).getSchema();
+
+		for (int i = 0; i < schema.size(); i++) {
+			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+		}
+		geoAttrInput.select(newConfig.getGeometricAttributePosition());
 
 		// Position of value-Attribute
 		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
 		valueAttrLabel.setText("Position Value-Attribute: ");
 
-		Spinner valueAttrInput = new Spinner(settingsContainer, SWT.NONE);
-		valueAttrInput.setValues(newConfig.getValueAttributePosition(), 0,
-				255, 0, 1, 1);
-		valueAttrInput.addSelectionListener(new SpinnerListener(newConfig,
-				valueAttrInput, this) {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
-				heatmapLayerConfig.setValueAttributePosition((spinner
-						.getSelection()));
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
-			}
-		});
+		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
+		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
+
+		for (int i = 0; i < schema.size(); i++) {
+			valueAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
+		}
+
+		valueAttrInput.select(newConfig.getValueAttributePosition());
+
+		geoAttrInput.addSelectionListener(new AttributeListener(newConfig,
+				geoAttrInput, valueAttrInput, this));
+		valueAttrInput.addSelectionListener(new AttributeListener(newConfig,
+				geoAttrInput, valueAttrInput, this));
 
 		// Colors
 		Label colorMinLabel = new Label(settingsContainer, SWT.NONE);
@@ -519,7 +525,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 						newColor.green, newColor.blue);
 				correspondingLabel.setBackground(color);
 				heatmapLayerConfiguration.setMinColor(color);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				mapPropertiesDialog
+						.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -563,7 +570,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 						newColor.green, newColor.blue);
 				correspondingLabel.setBackground(color);
 				heatmapLayerConfiguration.setMaxColor(color);
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				mapPropertiesDialog
+						.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -630,7 +638,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setInterpolation(correspondingButton
 						.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				mapPropertiesDialog
+						.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -648,7 +657,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
 				heatmapLayerConfiguration.setAutoPosition(correspondingButton
 						.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfiguration);
+				mapPropertiesDialog
+						.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 
@@ -810,7 +820,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		// Redraw the container
 		container.layout();
 	}
-	
+
 	/**
 	 * Removes everything from the container except the Tree (on the left)
 	 * 
@@ -825,7 +835,6 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		}
 	}
 
-	
 	@SuppressWarnings("resource")
 	public static String convertStreamToString(InputStream is) {
 		Scanner s = new Scanner(is).useDelimiter("\\A");

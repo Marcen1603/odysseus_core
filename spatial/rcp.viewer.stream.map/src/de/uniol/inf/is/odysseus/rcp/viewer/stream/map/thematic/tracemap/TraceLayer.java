@@ -420,6 +420,10 @@ public class TraceLayer extends RasterLayer {
 	public void setLayerUpdater(LayerUpdater layerUpdater) {
 		this.layerUpdater = layerUpdater;
 	}
+	
+	public LayerUpdater getLayerUpdater() {
+		return this.layerUpdater;
+	}
 
 	/**
 	 * Sets the configuration for this layer
