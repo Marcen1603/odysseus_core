@@ -213,9 +213,19 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
 			valid = false;
 		}
+		if(multiTupleOutput && !parsingMethod.equals(PARSING_XML_XPATH)) {
+			addError(new IllegalParameterException (
+				"MultiTupleOutput currently only works with the XPATH-Parser. You have to declare the parameter 'paringMethod' with 'XPATH'"));
+			valid = false;
+		}
+		if (arguments == null) {
+			addError(new IllegalParameterException(
+					"Missing Parameter 'arguments'. You have to declare min 1 Datafield you wand to submit to the webservice."));
+			valid = false;
+		}
 		if (receivedData == null) {
 			addError(new IllegalParameterException(
-					"You have to declare min 1 Datafield of the webservice for the Outputschema."));
+					"Missing Parameter 'datafields'. You have to declare min 1 Datafield of the webservice for the Outputschema."));
 			valid = false;
 		}
 		if (!(parsingMethod.equals(PARSING_XML_EXPERIMENTAL) || parsingMethod.equals(PARSING_XML_XPATH) || parsingMethod.equals(PARSING_JSON_EXPERIMENTAL) || parsingMethod.equals(PARSING_JSON_PARSER))) {
