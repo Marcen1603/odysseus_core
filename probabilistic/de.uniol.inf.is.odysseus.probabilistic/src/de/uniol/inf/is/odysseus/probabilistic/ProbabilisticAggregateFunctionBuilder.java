@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -23,6 +23,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteAvg;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteCount;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticMax;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticMin;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticStdDev;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteSum;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -74,11 +80,11 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
 	public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final int[] pos, final boolean partialAggregateInput, final String datatype) {
 		IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
-			aggFunc = ProbabilisticAvg.getInstance(pos[0], partialAggregateInput, datatype);
+			aggFunc = ProbabilisticDiscreteAvg.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.SUM)) {
-			aggFunc = ProbabilisticSum.getInstance(pos[0], partialAggregateInput, datatype);
+			aggFunc = ProbabilisticDiscreteSum.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COUNT)) {
-			aggFunc = ProbabilisticCount.getInstance(pos[0], partialAggregateInput, datatype);
+			aggFunc = ProbabilisticDiscreteCount.getInstance(pos[0], partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.MIN)) {
 			aggFunc = ProbabilisticMin.getInstance(pos[0], partialAggregateInput, datatype);
 			throw new IllegalArgumentException("MIN Aggregatefunction not implemented");

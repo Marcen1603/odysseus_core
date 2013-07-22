@@ -25,44 +25,44 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6272207178324419258L;
+	private static final long serialVersionUID = 8734164350164631514L;
 	/** The attribute position. */
 	private final int pos;
 	/** The result data type. */
 	private final String datatype;
 
 	/**
-	 * Gets an instance of {@link ProbabilisticSum}.
+	 * Gets an instance of {@link ProbabilisticDiscreteCount}.
 	 * 
 	 * @param pos
 	 *            The attribute position
 	 * @param partialAggregateInput
 	 *            The partial aggregate input
 	 * @param datatype
-	 *            The result datatype
-	 * @return An instance of {@link ProbabilisticSum}
+	 *            The result data type
+	 * @return An instance of {@link ProbabilisticDiscreteCount}
 	 */
-	public static ProbabilisticSum getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-		return new ProbabilisticSum(pos, partialAggregateInput, datatype);
+	public static ProbabilisticDiscreteCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticDiscreteCount(pos, partialAggregateInput, datatype);
 	}
 
 	/**
-	 * Creates a new instance of {@link ProbabilisticSum}.
+	 * Creates a new instance of {@link ProbabilisticDiscreteCount}.
 	 * 
 	 * @param pos
 	 *            The attribute position
 	 * @param partialAggregateInput
 	 *            The partial aggregate input
 	 * @param datatype
-	 *            The result datatype
+	 *            The result data type
 	 */
-	protected ProbabilisticSum(final int pos, final boolean partialAggregateInput, final String datatype) {
-		super("SUM", partialAggregateInput);
+	protected ProbabilisticDiscreteCount(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("COUNT", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
 	}
@@ -73,10 +73,9 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
 	 */
 	@Override
 	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-		final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(datatype);
-
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(datatype);
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
-			pa.add(value.getKey(), value.getValue());
+			pa.add(value.getValue());
 		}
 		return pa;
 	}
@@ -87,15 +86,15 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
 	 */
 	@Override
 	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-		SumPartialAggregate<ProbabilisticTuple<?>> pa = null;
+		CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
 		if (createNew) {
-			pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), datatype);
+			pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), datatype);
 		} else {
-			pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
+			pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
 		}
 
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
-			pa.add(value.getKey(), value.getValue());
+			pa.add(value.getValue());
 		}
 
 		return pa;
@@ -108,9 +107,9 @@ public class ProbabilisticSum extends AbstractAggregateFunction<ProbabilisticTup
 	@SuppressWarnings("rawtypes")
 	@Override
 	public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-		final SumPartialAggregate<ProbabilisticTuple<?>> pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
 		final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, false);
-		r.setAttribute(0, new Double(pa.getSum()));
+		r.setAttribute(0, new Double(pa.getCount()));
 		return r;
 	}
 
