@@ -116,7 +116,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	/**
 	 * Removes the oldest elements if puffer is bigger than the configured size
 	 */
-	private void checkForPufferSize() {
+	public void checkForPufferSize() {
 		// Prevent an overflow in the puffer
 
 		// Maybe the user don't want to cut the time: he defines '0' and we
@@ -148,7 +148,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 		// Maybe in the time the user-defined were too many tuples
 		// then delete the oldest tuples, so we prevent an overflow
-		if (puffer.size() > maxNumerOfElements) {
+		while (puffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
 					.peekElementsContaing(puffer.getMinTs(), false);

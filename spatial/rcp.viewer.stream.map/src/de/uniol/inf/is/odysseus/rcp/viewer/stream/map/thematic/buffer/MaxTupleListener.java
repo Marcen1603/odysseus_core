@@ -19,5 +19,6 @@ public class MaxTupleListener extends SelectionAdapter{
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		connection.setMaxPufferSize(spinner.getSelection());
+		connection.checkForPufferSize();
 	}
 }
