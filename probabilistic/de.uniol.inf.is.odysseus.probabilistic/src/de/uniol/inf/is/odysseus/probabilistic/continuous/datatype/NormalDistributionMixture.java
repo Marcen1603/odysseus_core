@@ -242,7 +242,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 * @param mixtures
 	 *            The normal distribution mixtures
 	 */
-	public void setMixtures(final MixtureMultivariateNormalDistribution mixtures) {
+	public final void setMixtures(final MixtureMultivariateNormalDistribution mixtures) {
 		this.mixtures = mixtures;
 	}
 
@@ -288,6 +288,14 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		this.attributes[dimension] = attribute;
 	}
 
+	/**
+	 * Writes the object to the given output stream.
+	 * 
+	 * @param out
+	 *            The object output stream
+	 * @throws IOException
+	 *             Exception during write
+	 */
 	private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
 		out.writeInt(this.mixtures.getComponents().size());
 		out.writeInt(this.mixtures.getDimension());
@@ -314,7 +322,15 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 	}
 
-	private void readObject(final java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+	/**
+	 * Reads the object from the given input stream.
+	 * 
+	 * @param in
+	 *            The object input stream
+	 * @throws IOException
+	 *             Exception during read
+	 */
+	private void readObject(final java.io.ObjectInputStream in) throws IOException {
 		final int size = in.readInt();
 		final List<Pair<Double, MultivariateNormalDistribution>> components = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final int dimension = in.readInt();
@@ -401,11 +417,18 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		return new NormalDistributionMixture(this);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.mixtures == null) ? 0 : this.mixtures.hashCode());
+		result *= prime;
+		if (this.mixtures != null) {
+			result += this.mixtures.hashCode();
+		}
 		long temp;
 		temp = Double.doubleToLongBits(this.scale);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -413,22 +436,32 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		return result;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public final boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		NormalDistributionMixture other = (NormalDistributionMixture) obj;
-		if (Double.doubleToLongBits(this.scale) != Double.doubleToLongBits(other.scale))
+		if (Double.doubleToLongBits(this.scale) != Double.doubleToLongBits(other.scale)) {
 			return false;
-		if (!Arrays.equals(this.support, other.support))
+		}
+		if (!Arrays.equals(this.support, other.support)) {
 			return false;
+		}
 		if (this.mixtures == null) {
-			if (other.mixtures != null)
+			if (other.mixtures != null) {
 				return false;
+			}
 		} else {
 			boolean foundCompoenent = false;
 			for (final Pair<Double, MultivariateNormalDistribution> thisMixture : this.mixtures.getComponents()) {

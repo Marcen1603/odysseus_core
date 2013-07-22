@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.util.FastMath;
 
-
 public class Util {
 
 	public static double sqrt(final double d) {
@@ -84,7 +83,6 @@ public class Util {
 		// %
 		//
 
-	
 		return -Util.sqrt(2) * Erf.erfcInv(2 * p);
 	}
 
@@ -144,7 +142,15 @@ public class Util {
 		return true;
 	}
 
+	/**
+	 * 
+	 * @param max
+	 * @return
+	 */
 	private static int countPrimesUpperBound(final int max) {
-		return max > 1 ? (int) ((1.25506 * max) / FastMath.log(max)) : 0;
+		if (max > 1) {
+			return (int) ((1.25506 * max) / FastMath.log(max));
+		}
+		return 0;
 	}
 }

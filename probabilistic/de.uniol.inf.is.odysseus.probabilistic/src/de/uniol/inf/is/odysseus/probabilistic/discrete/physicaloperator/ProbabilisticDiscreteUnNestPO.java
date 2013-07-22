@@ -60,7 +60,7 @@ public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ProbabilisticDiscreteUnNestPO<T> clone() {
+	public final ProbabilisticDiscreteUnNestPO<T> clone() {
 		return new ProbabilisticDiscreteUnNestPO<T>(this);
 	}
 
@@ -69,7 +69,7 @@ public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public OutputMode getOutputMode() {
+	public final OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
@@ -78,7 +78,7 @@ public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic>
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void process_next(final ProbabilisticTuple<T> tuple, final int port) {
+	protected final void process_next(final ProbabilisticTuple<T> tuple, final int port) {
 		try {
 			final AbstractProbabilisticValue<?> probabilisticValue = (AbstractProbabilisticValue<?>) tuple.getAttribute(this.probabilisticAttributePos);
 			for (Map.Entry<?, Double> entry : probabilisticValue.getValues().entrySet()) {

@@ -406,7 +406,11 @@ public class Matrix {
 
 		for (int i = 1; i <= this.getRowDimension(); i++) {
 			for (int j = 1; j <= this.getColumnDimension(); j++) {
-				res[i - 1][j - 1] = this.get(i, j) > value ? this.get(i, j) : value;
+				if (this.get(i, j) > value) {
+					res[i - 1][j - 1] = this.get(i, j);
+				} else {
+					res[i - 1][j - 1] = value;
+				}
 			}
 		}
 
