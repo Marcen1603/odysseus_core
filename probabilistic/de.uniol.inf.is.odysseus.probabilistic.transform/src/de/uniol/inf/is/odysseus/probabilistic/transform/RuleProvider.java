@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisitic
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteMapAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisiticDiscreteSelectAORule;
 import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisticDiscreteJoinAOSetSARule;
+import de.uniol.inf.is.odysseus.probabilistic.transform.discrete.TProbabilisticDiscreteUnNestAORule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.IRule;
 import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
@@ -70,6 +71,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		// Select AO -> PO Rule
 		rules.add(new TProbabilisiticDiscreteSelectAORule());
 
+		// UnNest AO -> PO Rule
+		rules.add(new TProbabilisticDiscreteUnNestAORule());
 		return rules;
 	}
 
