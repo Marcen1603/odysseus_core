@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.distribution;
 
+import java.util.Collection;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
@@ -11,20 +13,24 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public interface IDataFragmentation {
 	
 	/**
-	 * Inserts an {@link ILogicalOperator}, which distributes the stream objects to several partitions, into a logical plan.
-	 * @param logicalPlan The logical plan, into which the {@link ILogicalOperator} shall be inserted.
+	 * Inserts (incl. subscriptions) an {@link ILogicalOperator}, which distributes the stream objects to several partitions, 
+	 * into a collection of {@link ILogicalOperator}s.
+	 * @param operators The collection of {@link ILogicalOperator}s, into which the {@link ILogicalOperator} shall be inserted.
 	 * @param parameters The set of all used settings.
-	 * @return The altered logical plan.
+	 * @return The altered collection of {@link ILogicalOperator}s.
 	 */
-	public ILogicalOperator insertOperatorForDistribution(ILogicalOperator logicalPlan, int degreeOfParallelism, QueryBuildConfiguration parameters);
+	public Collection<ILogicalOperator> insertOperatorForDistribution(Collection<ILogicalOperator> operators, int degreeOfParallelism, 
+			QueryBuildConfiguration parameters);
 	
 	/**
-	 * Inserts an {@link ILogicalOperator}, which combines the results of several partitions, into a logical plan.
-	 * @param logicalPlan The logical plan, into which the {@link ILogicalOperator} shall be inserted.
+	 * Inserts an {@link ILogicalOperator}, which combines the results of several partitions, 
+	 * into a collection of {@link ILogicalOperator}s.
+	 * @param operators The collection of {@link ILogicalOperator}s, into which the {@link ILogicalOperator} shall be inserted.
 	 * @param parameters The set of all used settings.
-	 * @return The altered logical plan.
+	 * @return The altered collection of {@link ILogicalOperator}s.
 	 */
-	public ILogicalOperator insertOperatorForJunction(ILogicalOperator logicalPlan, QueryBuildConfiguration parameters);
+	public Collection<ILogicalOperator> insertOperatorForJunction(Collection<ILogicalOperator> logicalPlan, 
+			QueryBuildConfiguration parameters);
 	
 	/**
 	 * Returns the unique name of the fragmentation strategy.
