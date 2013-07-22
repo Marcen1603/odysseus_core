@@ -55,6 +55,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -91,6 +92,8 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	private final List<IDashboardListener> listeners = Lists.newArrayList();
 	private final List<ISelectionChangedListener> selectionChangedListeners = Lists.newArrayList();
+
+	private ControlPointManager controlPointManager;
 
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
@@ -147,13 +150,14 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 		dropTarget.addDropListener(new DropTargetAdapter() {
 			@Override
 			public void drop(DropTargetEvent event) {
-				if(!isLocked()) {
+				if (!isLocked()) {
 					processDropEvent(event);
 				}
 			}
 		});
 
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		controlPointManager = new ControlPointManager(this);
 
 		parent.layout();
 	}
@@ -165,12 +169,12 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			dropTarget.dispose();
 		}
 	}
-	
+
 	public boolean isLocked() {
 		return isLocked;
 	}
-	
-	public void setLock( boolean lock ) {
+
+	public void setLock(boolean lock) {
 		isLocked = lock;
 	}
 
@@ -263,11 +267,19 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	public void mouseDoubleClick(MouseEvent e) {
 		// do nothing
 	}
-	
+
 	@Override
 	public void mouseDown(MouseEvent e) {
 		if (!isLocked() && e.button == SELECT_MOUSE_BUTTON_ID) {
-			setSelection(controlsMap.get(e.widget));
+
+			Optional<ControlPoint> optControlPoint = controlPointManager.getControlPoint(e.x, e.y);
+			if( optControlPoint.isPresent() ) {
+				// prohibit selection change
+				return;
+			}
+
+			DashboardPartPlacement place = controlsMap.get(e.widget);
+			setSelection(place);
 		}
 	}
 
@@ -280,9 +292,9 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	public void paintControl(PaintEvent e) {
 		renderSelectionBorder();
 	}
-	
+
 	public void update() {
-		for( DashboardPartPlacement partPlace : dashboardParts) {
+		for (DashboardPartPlacement partPlace : dashboardParts) {
 			update(partPlace);
 		}
 		fireChangedEvent();
@@ -364,6 +376,10 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 				}
 			}
 		}
+	}
+
+	public Optional<DashboardPartPlacement> getSelectedDashboardPartPlacement() {
+		return Optional.fromNullable(getSelectedDashboardPart());
 	}
 
 	private void addListeners(Control base) {
@@ -469,13 +485,15 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			final DashboardPartPlacement selectedDashboardPart = getSelectedDashboardPart();
 			final int x = selectedDashboardPart.getX();
 			final int y = selectedDashboardPart.getY();
-			final int w = selectedDashboardPart.getWidth();
-			final int h = selectedDashboardPart.getHeight();
+			final int width = selectedDashboardPart.getWidth();
+			final int height = selectedDashboardPart.getHeight();
 
 			final GC gc = new GC(dashboardComposite);
 			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 			gc.setLineWidth(3);
-			gc.drawRectangle(x - SELECTION_BORDER_MARGIN_PIXELS, y - SELECTION_BORDER_MARGIN_PIXELS, w + SELECTION_BORDER_MARGIN_PIXELS * 2, h + SELECTION_BORDER_MARGIN_PIXELS * 2);
+			gc.drawRectangle(x - SELECTION_BORDER_MARGIN_PIXELS, y - SELECTION_BORDER_MARGIN_PIXELS, width + SELECTION_BORDER_MARGIN_PIXELS * 2, height + SELECTION_BORDER_MARGIN_PIXELS * 2);
+
+			controlPointManager.render(gc);
 		}
 	}
 
@@ -488,11 +506,11 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	}
 
 	private void updateSelection() {
-		update( getSelectedDashboardPart() );
+		update(getSelectedDashboardPart());
 		fireChangedEvent();
 	}
-	
-	private void update( DashboardPartPlacement placement ) {
+
+	private void update(DashboardPartPlacement placement) {
 		final Composite comp = containers.get(placement);
 		final FormData fd = (FormData) comp.getLayoutData();
 		updateFormData(fd, placement);
