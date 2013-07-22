@@ -38,8 +38,9 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
     private final boolean   isMultiValue;
 
     /**
-     * @param schema
-     * @param attribute
+     * @param inputSchema The input schema
+     * @param nestedAttributePos The position of the nested attribute
+     * @param isMultiValue Flag indicating whether the attribute is a multi-value (a list) or a tuple
      */
     public RelationalUnNestPO(final SDFSchema inputSchema, final int nestedAttributePos, final boolean isMultiValue) {
         this.inputSchema = inputSchema;
@@ -89,7 +90,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
         if (this.isMultiValue) {
             final int depth = ((List<?>) tuple.getAttribute(this.nestedAttributePos)).size();
             for (int d = 0; d < depth; d++) {
-                final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), false);
+                final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), tuple.requiresDeepClone());
                 outputTuple.setMetadata((T) tuple.getMetadata().clone());
                 for (int i = 0; i < this.inputSchema.size(); i++) {
                     if (i == this.nestedAttributePos) {
@@ -105,7 +106,7 @@ public class RelationalUnNestPO<T extends IMetaAttribute> extends AbstractPipe<T
 
         }
         else {
-            final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), false);
+            final Tuple<T> outputTuple = new Tuple<T>(this.getOutputSchema().size(), tuple.requiresDeepClone());
             outputTuple.setMetadata((T) tuple.getMetadata().clone());
             int pos = 0;
             for (int i = 0; i < this.inputSchema.size(); i++) {
