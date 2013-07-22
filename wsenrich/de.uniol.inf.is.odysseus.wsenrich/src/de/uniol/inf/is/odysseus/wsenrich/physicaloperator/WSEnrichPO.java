@@ -36,8 +36,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final List<SDFAttribute> receivedData;
 	private final String charset;
 	private final String parsingMethod;
-	private final boolean filterNullTuples;
+	private final boolean outerJoin;
 	private final boolean keyValueOutput;
+	private final boolean multiTupleOutput;
 	private final int[] parameterPositions;
 	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
 	private final IMetadataMergeFunction<T> metaMergeFunction;
@@ -51,8 +52,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
 					List<Option> arguments, String operation, List<SDFAttribute> receivedData,
-					String charset, String parsingMethod, boolean filterNullTuples, boolean keyValueOutput,
-					IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+					String charset, String parsingMethod, boolean outerJoin, boolean keyValueOutput,
+					boolean multiTupleOutput, IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
 					IMetadataMergeFunction<T> metaMergeFunction,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
 					HttpEntityToStringConverter converter, IKeyFinder keyFinder, 
@@ -68,8 +69,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.receivedData = receivedData;
 		this.charset = charset;
 		this.parsingMethod = parsingMethod;
-		this.filterNullTuples = filterNullTuples;
+		this.outerJoin = outerJoin;
 		this.keyValueOutput = keyValueOutput;
+		this.multiTupleOutput = multiTupleOutput;
 		this.parameterPositions = new int[arguments.size()];
 		this.dataMergeFunction = dataMergeFunction;
 		this.metaMergeFunction = metaMergeFunction;
@@ -94,8 +96,9 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.receivedData = wsEnrichPO.receivedData;
 		this.charset = wsEnrichPO.charset;
 		this.parsingMethod = wsEnrichPO.parsingMethod;
-		this.filterNullTuples = wsEnrichPO.filterNullTuples;
+		this.outerJoin = wsEnrichPO.outerJoin;
 		this.keyValueOutput = wsEnrichPO.keyValueOutput;
+		this.multiTupleOutput = wsEnrichPO.multiTupleOutput;
 		this.parameterPositions = Arrays.copyOf(
 				wsEnrichPO.parameterPositions,
 				wsEnrichPO.parameterPositions.length);
@@ -136,7 +139,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		requestBuilder.setArguments(queryParameters);
 		requestBuilder.setPostData(postData);
 		requestBuilder.buildUri();
-	//	String postData = requestBuilder.getPostData();
+		//String postData = requestBuilder.getPostData();
 		String uri = requestBuilder.getUri();
 		
 		//Connect to the Url
@@ -151,26 +154,26 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		connection.closeConnection();
 		
 		//Set the Message for the Key (Element) Finder an find the defined Elements and paste
-		//them to the tuple
-		keyFinder.setMessage(converter.getOutput(), charset);
+		//them to the tuple(s)
+		keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
 		
-		Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
-		
-		for(int i = 0; i < receivedData.size(); i++) {
-			keyFinder.setSearch(receivedData.get(i).getAttributeName());
-			Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput);
-			if((value == null || value.equals("")) && filterNullTuples) {
-				return;
-			} else if((value == null || value.equals("")) && !filterNullTuples) {
-				wsTuple.setAttribute(i, "null");
-			} else {
-				wsTuple.setAttribute(i, value);
+		for(int i = 0; i < keyFinder.getTupleCount(); i++) {
+			Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
+			for(int j = 0; j < receivedData.size(); j++) {
+				keyFinder.setSearch(receivedData.get(j).getAttributeName());
+				Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
+				if((value == null || value.equals("")) && !outerJoin) {
+					return;
+				} else if((value == null || value.equals("")) && outerJoin) {
+					wsTuple.setAttribute(j, "null");
+				} else {
+					wsTuple.setAttribute(j, value);
+				}
+			}
+			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+			transfer(outputTuple);
 			}
 		}
-		Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
-	
-		transfer(outputTuple);
-	}
 	
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {

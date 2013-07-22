@@ -71,7 +71,7 @@ public class XmlKeyFinderExperimental implements IKeyFinder {
 	}
 	
 	@Override
-	public void setMessage(String message, String charset) {
+	public void setMessage(String message, String charset, boolean multiTupleOutput) {
 		this.message = new StringBuffer(message);
 	}
 	
@@ -100,7 +100,7 @@ public class XmlKeyFinderExperimental implements IKeyFinder {
 	}
 	
 	@Override
-	public Object getValueOf(String search, boolean keyValue) {
+	public Object getValueOf(String search, boolean keyValue, int tupleCount) {
 		StringBuffer temp = new StringBuffer();
 		cutStartofMessage();
 		cutEndofMessage();
@@ -133,5 +133,10 @@ public class XmlKeyFinderExperimental implements IKeyFinder {
 	@Override
 	public IKeyFinder createInstance() {
 		return new XmlKeyFinderExperimental();
+	}
+
+	@Override
+	public int getTupleCount() {
+		return 1;
 	}
 }

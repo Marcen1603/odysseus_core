@@ -129,16 +129,21 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	private String getOrPost;
 	
 	/**
-	 * If true, tuples with a null-response will be filtered (they
+	 * If false, tuples with a null-response will be filtered (they
 	 * will not appear in the output 
-	 * False, tuples with a null-response will appear in the output
+	 * True, tuples with a null-response will appear in the output
 	 */
-	private boolean filterNullTuples = true;
+	private boolean outerJoin = false;
 	
 	/**
 	 * If true, received Data from a Webservice are returned as keyValuePairs
 	 */
 	private boolean keyValueOutput = false;
+	
+	/**
+	 * Enables multi tuple output
+	 */
+	private boolean multiTupleOutput = false;
 	
 	/**
 	 * the location of the wsdl-file
@@ -170,8 +175,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.charset = wsEnrichAO.charset;
 		this.parsingMethod = wsEnrichAO.parsingMethod;
 		this.getOrPost = wsEnrichAO.setGetOrPost();
-		this.filterNullTuples = wsEnrichAO.filterNullTuples;
+		this.outerJoin = wsEnrichAO.outerJoin;
 		this.keyValueOutput = wsEnrichAO.keyValueOutput;
+		this.multiTupleOutput = wsEnrichAO.multiTupleOutput;
 		this.wsdlLocation = wsEnrichAO.wsdlLocation;
 
 	}
@@ -403,16 +409,16 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	 * If false, Tuples with a null-response will appear in the output stream with "null"
 	 * @param filterNullTuples
 	 */
-	@Parameter(type = BooleanParameter.class, optional = true, name = "filterNullTuples")
-	public void setFilterNullTuples(boolean filterNullTuples) {
-		this.filterNullTuples = filterNullTuples;
+	@Parameter(type = BooleanParameter.class, optional = true, name = "outerJoin")
+	public void setOuterJoin(boolean outerJoin) {
+		this.outerJoin = outerJoin;
 	}
 	
 	/**
 	 * @return Null Tuples will be filtered or not
 	 */
-	public boolean getFilterNullTuples() {
-		return this.filterNullTuples;
+	public boolean getOuterJoin() {
+		return this.outerJoin;
 	}
 	
 	@Parameter(type = BooleanParameter.class, optional = true, name = "keyValueOutput")
@@ -439,6 +445,17 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.wsdlLocation = wsdlLocation;
 	}
 	
+	/**
+	 * @return mulit tuple output
+	 */
+	public boolean getMultiTupleOutput() {
+		return this.multiTupleOutput;
+	}
+	
+	@Parameter(type = BooleanParameter.class, optional = true, name = "multiTupleOutput")
+	public void setMultiTupleOutput(boolean multiTupleOutput) {
+		this.multiTupleOutput = multiTupleOutput;
+	}
 		
 
 }

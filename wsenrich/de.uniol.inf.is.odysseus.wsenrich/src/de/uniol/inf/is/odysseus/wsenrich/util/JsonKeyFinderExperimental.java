@@ -47,12 +47,12 @@ public class JsonKeyFinderExperimental implements IKeyFinder {
 	}
 
 	@Override
-	public void setMessage(String Message, String charset) {
+	public void setMessage(String Message, String charset, boolean multiTupleOutput) {
 		this.message = new StringBuffer(Message);
 	}
 
 	@Override
-	public Object getValueOf(String search, boolean keyValue) {
+	public Object getValueOf(String search, boolean keyValue, int tupleCount) {
 		
 		StringBuffer temp = new StringBuffer();
 		if(!this.search.equals(search)) {
@@ -110,5 +110,10 @@ public class JsonKeyFinderExperimental implements IKeyFinder {
 			 return replaceJsonData(temp, htmlCode, replacement);	
 		} else 
 			return temp;
+	}
+
+	@Override
+	public int getTupleCount() {
+		return 1;
 	}
 }

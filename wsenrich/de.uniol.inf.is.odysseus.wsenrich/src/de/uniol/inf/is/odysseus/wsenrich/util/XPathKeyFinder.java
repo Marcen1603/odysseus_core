@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,7 +15,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -33,7 +33,7 @@ public class XPathKeyFinder implements IKeyFinder {
 	/**
 	 * The xml-document
 	 */
-	private Document xmlDocument;
+	private ArrayList<Document> xmlDocuments;
 	
 	/**
 	 * The searched path
@@ -45,8 +45,15 @@ public class XPathKeyFinder implements IKeyFinder {
 	 */
 	private Object value;
 	
+	/**
+	 * Needed for multi tuple output
+	 */
+	private XmlPreMtoParser xmlFragments;
+	
 	public XPathKeyFinder() {
 		//Needed for IKeyFinderRegistry
+		this.xmlDocuments = new ArrayList<Document>();
+		this.xmlFragments = new XmlPreMtoParser();
 	}
 	
 	@Override
@@ -65,24 +72,31 @@ public class XPathKeyFinder implements IKeyFinder {
 	}
 
 	@Override
-	public void setMessage(String Message, String charset) {
-		this.message = Message;	
+	public void setMessage(String Message, String charset, boolean mulitTupleOutput) {
+		this.message = Message;
+		this.xmlDocuments.clear();
 		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 		builderFactory.setNamespaceAware(false);
 		try {
 			DocumentBuilder builder = builderFactory.newDocumentBuilder();
-			this.xmlDocument = builder.parse(new InputSource(new StringReader(this.message)));
+			Document xmlDoc = builder.parse(new InputSource(new StringReader(this.message)));
+			if(mulitTupleOutput) {
+				this.xmlFragments.setMessage(xmlDoc);
+				this.xmlDocuments = this.xmlFragments.getXmlFragments();
+			} else {
+				this.xmlDocuments.add(xmlDoc);
+			}	
 		} catch (IOException | SAXException | ParserConfigurationException e) {
 			logger.error("Generaly Error while parsing XML-Document. Cause: {}", e.getMessage());
 		}
 	}
 
 	@Override
-	public Object getValueOf(String search, boolean keyValue) {
+	public Object getValueOf(String search, boolean keyValue, int tupleCount) {
 		if(search.endsWith("]")) {
-			this.value = getValueOfSingleObject(search, keyValue);
+			this.value = getValueOfSingleObject(search, keyValue, tupleCount);
 		} else {
-			this.value = getValueOfMultipleObject(search, keyValue); 
+			this.value = getValueOfMultipleObject(search, keyValue, tupleCount); 
 		}
 		return this.value;	
 	}
@@ -95,12 +109,12 @@ public class XPathKeyFinder implements IKeyFinder {
 	 * of the Elementes will be returned as value, value, ...
 	 * @return The Values of the given search
 	 */
-	private StringBuffer getValueOfSingleObject(String search, boolean keyValue) {
+	private StringBuffer getValueOfSingleObject(String search, boolean keyValue, int tupleCount) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		StringBuffer temp = new StringBuffer();
 		try {
 			NodeList nodeList;
-			Node node = (Node) xPath.compile(search).evaluate(xmlDocument, XPathConstants.NODE);
+			Node node = (Node) xPath.compile(search).evaluate(xmlDocuments.get(tupleCount), XPathConstants.NODE);
 			if(node != null) {
 				nodeList = node.getChildNodes();
 				for(int i = 0; null!=nodeList && i < nodeList.getLength(); i++) {
@@ -135,11 +149,11 @@ public class XPathKeyFinder implements IKeyFinder {
 	 * of the Elementes will be returned as value, value, ...
 	 * @return The Values of the given search
 	 */
-	private StringBuffer getValueOfMultipleObject(String search, boolean keyValue) {
+	private StringBuffer getValueOfMultipleObject(String search, boolean keyValue, int tupleCount) {
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		StringBuffer temp = new StringBuffer();
 		try {
-			 NodeList nodeList = (NodeList) xPath.compile(search).evaluate(xmlDocument, javax.xml.xpath.XPathConstants.NODESET);
+			 NodeList nodeList = (NodeList) xPath.compile(search).evaluate(xmlDocuments.get(tupleCount), XPathConstants.NODESET);
 			 for(int i = 0; i < nodeList.getLength(); i++) {
 				 	if(keyValue) {
 					temp.append(nodeList.item(i).getNodeName() + " : " + nodeList.item(i).getFirstChild().getNodeValue() + " ");
@@ -168,5 +182,10 @@ public class XPathKeyFinder implements IKeyFinder {
 	@Override
 	public IKeyFinder createInstance() {
 		return new XPathKeyFinder();
+	}
+	
+	@Override
+	public int getTupleCount() {
+		return this.xmlDocuments.size();
 	}
 }

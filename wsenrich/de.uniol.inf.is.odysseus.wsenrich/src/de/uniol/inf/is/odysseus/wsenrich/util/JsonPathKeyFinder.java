@@ -47,12 +47,12 @@ public class JsonPathKeyFinder implements IKeyFinder {
 	}
 
 	@Override
-	public void setMessage(String message, String charset) {
+	public void setMessage(String message, String charset, boolean multiTupleOutput) {
 		this.message = message;
 	}
 
 	@Override
-	public Object getValueOf(String search, boolean keyValue) {
+	public Object getValueOf(String search, boolean keyValue, int tupleCount) {
 		if(!this.search.equals(search)) {
 			this.search = search;
 		}
@@ -106,5 +106,10 @@ public class JsonPathKeyFinder implements IKeyFinder {
 			 return replaceJsonData(temp, temp.indexOf(htmlCode, beginOfSearch+1), htmlCode, replacement);	
 		} else 
 			return temp;
+	}
+
+	@Override
+	public int getTupleCount() {
+		return 1;
 	}
 }
