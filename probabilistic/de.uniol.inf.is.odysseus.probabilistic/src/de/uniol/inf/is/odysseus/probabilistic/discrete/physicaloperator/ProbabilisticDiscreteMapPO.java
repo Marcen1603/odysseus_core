@@ -210,7 +210,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends Abstra
 			}
 		}
 		if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
-			double jointProbability = 1.0;
+			double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
 			for (final int pos : this.probabilisticAttributePos) {
 				final AbstractProbabilisticValue<?> value = outputVal.getAttribute(pos);
 				double sum = 0.0;
