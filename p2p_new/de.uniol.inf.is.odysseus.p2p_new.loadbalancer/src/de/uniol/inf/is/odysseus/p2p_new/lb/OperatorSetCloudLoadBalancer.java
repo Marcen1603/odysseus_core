@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
 /**
@@ -69,7 +68,7 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 				// operator marks the beginning of a new querypart
 				if(!opsForCurrentPart.isEmpty()) {
 					
-					parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
+					parts.add(new QueryPart(opsForCurrentPart));
 					opsForCurrentPart.clear();
 					
 				}
@@ -80,7 +79,7 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 				
 				// operator marks the end of a new querypart
 				opsForCurrentPart.add(operator);
-				parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
+				parts.add(new QueryPart(opsForCurrentPart));
 				opsForCurrentPart.clear();
 				
 			} else opsForCurrentPart.add(operator);
@@ -90,7 +89,7 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 		// the end of the last querypart
 		if(!opsForCurrentPart.isEmpty()) {
 			
-			parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(opsForCurrentPart)));
+			parts.add(new QueryPart(opsForCurrentPart));
 			opsForCurrentPart.clear();
 			
 		}

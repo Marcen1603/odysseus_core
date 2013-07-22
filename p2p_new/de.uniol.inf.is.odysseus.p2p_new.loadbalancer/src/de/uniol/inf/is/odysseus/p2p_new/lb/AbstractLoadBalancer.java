@@ -20,10 +20,17 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
@@ -102,6 +109,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		return "local";
 		
 	}
+	
+	/**
+	 * Returns the identifier of the source manager peer.
+	 */
+	protected static String getSourceDestinationName() {
+		
+		return "source manager";
+		
+	}
 
 	/**
 	 * Returns the name of this distributor. It can be used as a parameter in a keyword to use this distributor.
@@ -127,6 +143,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 		}
 		
+		// Check, if a fragmentation strategy is defined
+		Optional<IDataFragmentation> fragmentationStrategy = Optional.fromNullable(null);
+		Optional<PeerID> sourceManagerPeerID = Optional.fromNullable(null);
+		if(cfg.get(ParameterDoDataFragmentation.class).getValue()) {
+			
+			fragmentationStrategy = Optional.fromNullable(this.getFragmentationStrategy((IServerExecutor) sender, cfg));
+			if(fragmentationStrategy.isPresent())
+				LOG.debug("Data fragmentation strategy {} used", fragmentationStrategy.get().getName());
+			
+		}
+		
 		// Get all available peers
 		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
 		if(remotePeerIDs.isEmpty()) {
@@ -137,8 +164,31 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		} 		
 		DistributionHelper.logPeerStatus(remotePeerIDs);
 		
-		// Read out the wanted degree of parallelism from the given distribution type parameter		
-		int degreeOfParallelism = this.getDegreeOfParallelismn(this.determineWantedDegreeOfParallelism(cfg), remotePeerIDs.size());
+		// Read out the wanted degree of parallelism from the given distribution type parameter
+		int wantedDegreeOfParallelism = this.determineWantedDegreeOfParallelism(cfg);
+		int maxDegree = remotePeerIDs.size();
+		int degreeOfParallelism;
+		if(fragmentationStrategy.isPresent()) {
+			
+			if(wantedDegreeOfParallelism < 2) {
+				
+				LOG.error("Wanted degree of parallelism must be at least 2 to use data fragmentation. Turned off data fragmentation.");
+				fragmentationStrategy = null;
+				
+			}  else if(remotePeerIDs.size() < 3) {
+				
+				LOG.error("There must be at least 3 remote peers to use data fragmentation. Turned off data fragmentation.");
+				fragmentationStrategy = null;
+				
+			} else  {
+				
+				sourceManagerPeerID = Optional.fromNullable(remotePeerIDs.iterator().next());
+				maxDegree--;
+				
+			}
+			
+		}		
+		degreeOfParallelism = this.getDegreeOfParallelismn(wantedDegreeOfParallelism, maxDegree);
 		
 		// All queryparts over all queries
 		// Outer map keys: the origin queries
@@ -150,6 +200,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 			queryPartsMap.put(originQuery, new HashMap<ILogicalQuery, List<QueryPart>>());
 			QueryPart localPart = null;
+			Optional<QueryPart> sourcePart = null;
 			
 			// Make copies of the query
 			List<ILogicalQuery> queryCopies = Lists.newArrayList();	
@@ -162,6 +213,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				List<ILogicalOperator> operators = Lists.newArrayList();
 				RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 				RestructHelper.removeTopAOs(operators);
+				
+				if(fragmentationStrategy.isPresent()) {
+					
+					// Create the part for the source manager
+					if(!sourcePart.isPresent())
+						sourcePart = Optional.fromNullable(this.createSourcePart(operators));
+					
+					// Subscribe copy to source part
+					this.subscribeCopyToSourcePart(operators, sourcePart.get());
+				
+				}
 				
 				// Create the local part
 				if(localPart == null)
@@ -177,15 +239,22 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			}
 			
-			// Initialize all operators of the local part and add it ONCE
-			this.initLocalPart(localPart);
+			// Initialize all operators of the source and the local part and add it ONCE
+			if(fragmentationStrategy.isPresent() && sourcePart.isPresent()) {
+			
+				this.initPart(sourcePart.get());
+				queryPartsMap.get(originQuery).values().iterator().next().add(sourcePart.get());
+				
+			}
+			this.initPart(localPart);
 			queryPartsMap.get(originQuery).values().iterator().next().add(localPart);
 			
 		}
 		
 		// Assign query parts to peers
 		final Map<QueryPart, PeerID> queryPartDistributionMap = 
-				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), this.arrangeQueryParts(queryPartsMap));
+				this.assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), sourceManagerPeerID, 
+						this.arrangeQueryParts(queryPartsMap));
 		int connectionNo =  connectionCounter++;
 		DistributionHelper.generatePeerConnections(queryPartDistributionMap, getAccessName() + connectionNo + "_", 
 				getSenderName() + connectionNo + "_");
@@ -199,7 +268,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			List<QueryPart> allQueryParts = Lists.newArrayList();
 			for(List<QueryPart> queryPartsOfCopy : queryPartsMap.get(originQuery).values())
 				allQueryParts.addAll(queryPartsOfCopy);
-			localQueries.add(this.shareParts(allQueryParts, queryPartDistributionMap, cfg, originQuery.toString()));
+			localQueries.add(this.shareParts(allQueryParts, queryPartDistributionMap, cfg, originQuery.toString(), 
+					fragmentationStrategy, degreeOfParallelism));
 			
 		}
 		
@@ -309,11 +379,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * <code>remotePeerIDs</code> must not be null and not empty.
 	 * @param localPeerID The ID of the local peer. <br />
 	 * <code>localPeerID</code> must not be null.
+	 * @param sourceManagerPeerID The ID of the peer for the sources or <code>null</code>.
 	 * @param queryParts The list of all {@link QueryPart}s. <br />
 	 * <code>queryParts</code> must not be null.
 	 * @return The mapping of the {@link QueryPart}s and the IDs of the the peers, where each {@link QueryPart} shall be stored.
 	 */
-	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, PeerID localPeerID, Collection<QueryPart> queryParts) { 
+	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, PeerID localPeerID, Optional<PeerID> sourceManagerPeerID, 
+			Collection<QueryPart> queryParts) { 
 		
 		Preconditions.checkNotNull(remotePeerIDs, "remotePeerIDs must be not null!");
 		Preconditions.checkArgument(remotePeerIDs.size() > 0, "remotePeerIDs must be not empty!");
@@ -335,13 +407,25 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				distributed.put(part, localPeerID);
 				peerName = P2PDictionaryService.get().getRemotePeerName(localPeerID);
 				
+			} else if(part.getDestinationName().isPresent() && sourceManagerPeerID.isPresent() &&
+					part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName())) {
+				
+				// Source part
+				distributed.put(part, sourceManagerPeerID.get());
+				peerName = P2PDictionaryService.get().getRemotePeerName(sourceManagerPeerID.get());
+			
 			} else {
 				
 				// Round-Robin
-				peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
+				do {
+				
+					peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
+					peerCounter = (++peerCounter) % remotePeerIDs.size();
+					
+				} while(peerID.equals(sourceManagerPeerID));
+				
 				peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
-				distributed.put(part, peerID);
-				peerCounter = (++peerCounter) % remotePeerIDs.size();					
+				distributed.put(part, peerID);					
 				
 			}			
 				
@@ -441,6 +525,92 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
+	 * Creates a new {@link QueryPart}, which contains all accesses to sources and makes the subscriptions for a single {@link ILogicalQuery}, 
+	 * which {@link ILogicalOperator}s are <code>operators</code>.
+	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
+	 * @param degreeOfParallelism The degree of parallelism. <br />
+	 * <code>degreeOfParallelism</code> must greater than zero.
+	 * @return The returned collection will contain every {@link StreamAO} except those which are only 
+	 * subscribed by {@link WindowAO}s and it will contain every {@link WindowAO} which is subscribed to 
+	 * a {@link StreamAO}.
+	 */
+	protected QueryPart createSourcePart(Collection<ILogicalOperator> operators) {
+		
+		Preconditions.checkNotNull(operators, "operators must be not null!");
+		
+		final List<ILogicalOperator> sourceOperators = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : operators) {
+			
+			if(operator instanceof StreamAO || operator instanceof WindowAO)
+				sourceOperators.add(operator);
+			
+		}
+		
+		operators.removeAll(sourceOperators);
+		QueryPart sourcePart = new QueryPart(sourceOperators, AbstractLoadBalancer.getSourceDestinationName());
+		LOG.debug("Created source part {}", sourcePart);
+		return sourcePart;
+	
+	}
+	
+	/**
+	 * Makes the subscriptions for a single {@link ILogicalQuery}, which {@link ILogicalOperator}s are <code>operators</code>, to an existing source part.
+	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
+	 * @param degreeOfParallelism The degree of parallelism. <br />
+	 * <code>degreeOfParallelism</code> must greater than zero.
+	 * @param sourcePart The source part to which the {@link ILogicalQuery} shall be subscribed.
+	 */
+	protected void subscribeCopyToSourcePart(Collection<ILogicalOperator> operators, QueryPart sourcePart) {
+		
+		Preconditions.checkNotNull(operators, "operators must be not null!");
+		Preconditions.checkNotNull(sourcePart, "sourcePart must be not null!");
+		
+		final List<ILogicalOperator> sourceOperators = Lists.newArrayList();
+		
+		// Iterator for the operators of the local Part
+		Iterator<ILogicalOperator> sourceIter = sourcePart.getOperators().iterator();
+		
+		for(ILogicalOperator operator : operators) {
+			
+			if(operator instanceof StreamAO) {
+				
+				sourceOperators.add(operator);
+				
+				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+					
+					ILogicalOperator target = subToSink.getTarget();
+					
+					if(!(target instanceof WindowAO)) {
+						
+						operator.unsubscribeSink(subToSink);
+						target.subscribeToSource(sourceIter.next(), subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
+						
+					}
+					
+				}
+				
+			} else if(operator instanceof WindowAO) {
+				
+				sourceOperators.add(operator);
+				
+				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+					
+					ILogicalOperator target = subToSink.getTarget();
+					operator.unsubscribeSink(subToSink);
+					target.subscribeToSource(sourceIter.next(), subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
+					
+				}
+				
+			}
+			
+		}
+		
+		operators.removeAll(sourceOperators);
+		
+	}
+	
+	/**
 	 * Makes the subscriptions for a single {@link ILogicalQuery}, which {@link ILogicalOperator}s are <code>operators</code>, to an existing local part.
 	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
 	 * @param degreeOfParallelism The degree of parallelism. <br />
@@ -496,14 +666,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * Calls {@link ILogicalOperator#initialize()} for all {@link ILogicalOperator}s within the local part.
-	 * @param localPart The local Part.
+	 * Calls {@link ILogicalOperator#initialize()} for all {@link ILogicalOperator}s within the {@link QueryPart}.
+	 * @param part The {@link QueryPart}.
 	 */
-	protected void initLocalPart(QueryPart localPart) {
+	protected void initPart(QueryPart part) {
 		
-		Preconditions.checkNotNull(localPart, "localPart must be not null!");
+		Preconditions.checkNotNull(part, "part must be not null!");
 		
-		for(ILogicalOperator operator : localPart.getOperators())
+		for(ILogicalOperator operator : part.getOperators())
 			operator.initialize();
 		
 	}
@@ -562,7 +732,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @return The new {@link ILogicalQuery} created from all {@link QueryPart}s, which shall be executed locally.
 	 */
 	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration cfg, 
-			String queryName) {
+			String queryName, Optional<IDataFragmentation> fragmentationStrategy, int degreeOfParallelism) {
 		
 		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
 		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
@@ -573,8 +743,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// Get all queryParts of this query mapped with the executing peer
 		final Map<QueryPart, PeerID> queryPartPeerMap = Maps.newHashMap();
-		for(QueryPart part : queryParts)
-			queryPartPeerMap.put(part, queryPartDistributionMap.get(part));
+		for(QueryPart part : queryParts) {
+			
+			QueryPart preparedPart = null;
+			if(fragmentationStrategy.isPresent())
+				preparedPart = DistributionHelper.replaceStreamAOs(this.insertOperatorsForFragmentation(
+						part, fragmentationStrategy.get(), degreeOfParallelism, cfg));
+			else preparedPart = DistributionHelper.replaceStreamAOs(part);
+			
+			queryPartPeerMap.put(preparedPart, queryPartDistributionMap.get(part));
+			
+		}
 		
 		// publish the queryparts and transform the parts which shall be executed locally into a query
 		ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.shareParts(queryPartPeerMap, sharedQueryID, cfg), queryName);
@@ -600,6 +779,70 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkArgument(maxDegree > 0, "maxDegree must be greater than zero!");
 		
 		return Math.min(wantedDegree, maxDegree);
+		
+	}
+	
+	/**
+	 * Reads out the fragmentation stratgey from the {@link QueryBuildConfiguration}.
+	 * @param executor The {@link IServerExecutor}.
+	 * @param parameters The transfer configuration. <br />
+	 * <code>transCfg</code> must not be null.
+	 * @return The wanted fragmentation strategy.
+	 */
+	protected IDataFragmentation getFragmentationStrategy(IServerExecutor executor, QueryBuildConfiguration parameters) {
+		
+		// Preconditions
+		Preconditions.checkNotNull(executor, "executor must not be null!");
+		Preconditions.checkNotNull(parameters, "parameters must not be null!");
+		
+		if(!parameters.contains(ParameterFragmentationType.class))
+			throw new QueryParseException("Could not fragment sources. No fragmentation strategy specified.");
+		
+		String[] strParameters = parameters.get(ParameterFragmentationType.class).getValue().split(" ");
+		String strategyName = strParameters[0];
+		
+		if(ParameterFragmentationType.UNDEFINED.equals(strategyName))
+			throw new QueryParseException("Could not fragment sources. No fragmentation strategy specified.");
+			
+		Optional<IDataFragmentation> optStrategy = executor.getDataFragmentation(strategyName);
+		if(!optStrategy.isPresent())
+			throw new QueryParseException("Could not fragment sources. Fragmentation strategy '" + strategyName + "' was not found.");
+		else return optStrategy.get();
+		
+	}
+	
+	/**
+	 * Inserts all {@link ILogicalOperator}s needed for a data fragmentation into a {@link QueryPart}.
+	 * @param part The {@link QueryPart}.
+	 * @param fragmentationStrategy The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
+	 * @param degreeOfParallelism The degree of parallelism.
+	 * @param parameters The transfer configuration.
+	 * @return <code>part</code> enhanced with an {@link ILogicalOperator} for data junction, 
+	 * if <code>part</code> is the local one; <br />
+	 * <code>part</code> enhanced with an {@link ILogicalOperator} for data distribution, 
+	 * if <code>part</code> is the one with the sources manager one; <br />
+	 * <code>part</code>, else.
+	 * @see IDataFragmentation#insertOperatorForDistribution(Collection, int, QueryBuildConfiguration)
+	 * @see IDataFragmentation#insertOperatorForJunction(Collection, QueryBuildConfiguration)
+	 */
+	protected QueryPart insertOperatorsForFragmentation(QueryPart part, IDataFragmentation fragmentationStrategy, int degreeOfParallelism, 
+			QueryBuildConfiguration parameters) {
+		
+		// Preconditions
+		Preconditions.checkNotNull(part, "part must not be null!");
+		Preconditions.checkNotNull(fragmentationStrategy, "fragmentationStrategy must not be null!");
+		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be greater than one!");
+		Preconditions.checkNotNull(parameters, "parameters must not be null!");
+		
+		if(!part.getDestinationName().isPresent())
+			return part;
+		else if(part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName()))
+			return new QueryPart(fragmentationStrategy.insertOperatorForJunction(part.getOperators(), parameters), 
+					part.getDestinationName().get());
+		else if(part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
+			return new QueryPart(fragmentationStrategy.insertOperatorForDistribution(part.getOperators(), degreeOfParallelism, parameters), 
+					part.getDestinationName().get());
+		else return part;
 		
 	}
 

@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 
 /**
@@ -43,7 +42,7 @@ public class OperatorCloudLoadBalancer extends AbstractLoadBalancer {
 		List<QueryPart> parts = Lists.newArrayList();
 		for(ILogicalOperator operator : operators) {
 			
-			parts.add(DistributionHelper.replaceStreamAOs(new QueryPart(Lists.newArrayList(operator))));
+			parts.add(new QueryPart(Lists.newArrayList(operator)));
 			
 		}
 		
