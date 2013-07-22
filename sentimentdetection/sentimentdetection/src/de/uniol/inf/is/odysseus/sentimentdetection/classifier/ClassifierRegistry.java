@@ -74,5 +74,14 @@ public class ClassifierRegistry<T extends Tuple<?>> {
 		}
 
 	}
+	
+	public static void unregisterDomain(String domain){
+		IClassifier<?> classifier = classifierDomains.get(domain
+				.toLowerCase());
+		if(classifier != null){
+			classifierDomains.remove(domain.toLowerCase());
+		}
+		
+	}
 
 }

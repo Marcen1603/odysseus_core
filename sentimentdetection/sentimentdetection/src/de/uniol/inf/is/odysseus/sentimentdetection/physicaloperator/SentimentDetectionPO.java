@@ -191,6 +191,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		super.process_close();
 		this.buffer.clear();
 		this.isTrained = false;
+	
+		if(algo != null){
+			ClassifierRegistry.unregisterDomain(domain);
+		}
+		
 	}
 
 }
