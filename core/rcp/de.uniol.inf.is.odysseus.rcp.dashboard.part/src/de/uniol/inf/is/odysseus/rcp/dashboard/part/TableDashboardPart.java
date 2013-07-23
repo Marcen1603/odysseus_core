@@ -132,6 +132,8 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(data);
+		
+		parent.layout();
 	}
 
 	@Override
