@@ -81,13 +81,13 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	/** The data set to draw. */
 	private final XYSeriesCollection dataset = new XYSeriesCollection();
 	/** Upper Bound for X-Axis. */
-	private double xMax;
+	private double xMax = 100.0;
 	/** Upper Bound for y-Axis. */
-	private double yMax;
+	private double yMax = 1.0;
 	/** Lower Bound for X-Axis. */
-	private double xMin;
+	private double xMin = -100.0;
 	/** Lower Bound for y-Axis. */
-	private double yMin;
+	private double yMin = 0.0;
 	/** Number of samples. */
 	private int samples = 1000;
 	/** The chart. */
@@ -334,6 +334,9 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 */
 	public final void setXMax(final double x) {
 		this.xMax = x;
+		if (this.xMin > x) {
+			this.xMin = x;
+		}
 	}
 
 	/**
@@ -353,6 +356,9 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 */
 	public final void setYMax(final double y) {
 		this.yMax = y;
+		if (this.yMin > y) {
+			this.yMin = y;
+		}
 	}
 
 	/**
@@ -372,6 +378,9 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 */
 	public final void setXMin(final double x) {
 		this.xMin = x;
+		if (this.xMax < x) {
+			this.xMax = x;
+		}
 	}
 
 	/**
@@ -391,6 +400,9 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 */
 	public final void setYMin(final double y) {
 		this.yMin = y;
+		if (this.yMax < y) {
+			this.yMax = y;
+		}
 	}
 
 	/**

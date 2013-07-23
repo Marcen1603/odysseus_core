@@ -14,20 +14,16 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.function.Function2D;
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYDataItem;
@@ -62,13 +58,13 @@ public class ProbabilityChart2D extends
 	/** The data set to draw. */
 	private final XYSeriesCollection dataset = new XYSeriesCollection();
 	/** Upper Bound for X-Axis. */
-	private double xMax;
+	private double xMax = 10.0;
 	/** Upper Bound for y-Axis. */
-	private double yMax;
+	private double yMax = 1.0;
 	/** Lower Bound for X-Axis. */
-	private double xMin;
+	private double xMin = -10.0;
 	/** Lower Bound for y-Axis. */
-	private double yMin;
+	private double yMin = 0.0;
 	/** Number of samples. */
 	private int samples = 1000;
 	/** Auto adjust the drawing area. */
@@ -178,6 +174,9 @@ public class ProbabilityChart2D extends
 	@ChartSetting(name = "Upper Bound for X-Axis", type = Type.SET)
 	public final void setXMax(final double x) {
 		this.xMax = x;
+		if (this.xMin > x) {
+			this.xMin = x;
+		}
 	}
 
 	/**
@@ -199,6 +198,9 @@ public class ProbabilityChart2D extends
 	@ChartSetting(name = "Upper Bound for Y-Axis", type = Type.SET)
 	public final void setYMax(final double y) {
 		this.yMax = y;
+		if (this.yMin > y) {
+			this.yMin = y;
+		}
 	}
 
 	/**
@@ -220,6 +222,9 @@ public class ProbabilityChart2D extends
 	@ChartSetting(name = "Lower Bound for X-Axis", type = Type.SET)
 	public final void setXMin(final double x) {
 		this.xMin = x;
+		if (this.xMax < x) {
+			this.xMax = x;
+		}
 	}
 
 	/**
@@ -241,6 +246,9 @@ public class ProbabilityChart2D extends
 	@ChartSetting(name = "Lower Bound for Y-Axis", type = Type.SET)
 	public final void setYMin(final double y) {
 		this.yMin = y;
+		if (this.yMax < y) {
+			this.yMax = y;
+		}
 	}
 
 	/**
@@ -330,7 +338,6 @@ public class ProbabilityChart2D extends
 				AbstractJFreeChart.DEFAULT_BACKGROUND);
 		chart.getLegend().setBackgroundPaint(
 				AbstractJFreeChart.DEFAULT_BACKGROUND_GRID);
-		chart.getXYPlot().setRenderer(new XYSplineRenderer());
 		return chart;
 	}
 
@@ -393,10 +400,6 @@ public class ProbabilityChart2D extends
 						final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) attribute
 								.getSDFDatatype();
 						final int index = attribute.getIndex();
-						boolean isContinuous = false;
-						if (type.isContinuous()) {
-							isContinuous = true;
-						}
 						XYSeries currentserie;
 						if (!ProbabilityChart2D.this.containsSeriesWithKey(key)) {
 							currentserie = new XYSeries(key);
@@ -411,10 +414,10 @@ public class ProbabilityChart2D extends
 
 						final Object x = tuple.get(serie);
 						currentserie.clear();
-						if (isContinuous) {
+						if (type.isContinuous()) {
 							ProbabilityChart2D.this.updateSerie(currentserie,
 									(NormalDistributionMixture) x, index);
-						} else {
+						} else if (type.isDiscrete()) {
 							ProbabilityChart2D.this.updateSerie(currentserie,
 									(AbstractProbabilisticValue<?>) x);
 						}
@@ -429,8 +432,9 @@ public class ProbabilityChart2D extends
 						} else {
 							currentserie.setNotify(false);
 						}
+						serie++;
 					}
-					serie++;
+
 				}
 			}
 		});
@@ -447,15 +451,10 @@ public class ProbabilityChart2D extends
 	private void adjust(final double valueX, final double valueY) {
 		// for X
 		if (Double.isNaN(this.xMax)) {
-			this.xMax = valueX;
+			this.setXMax(valueX);
 		}
 		if (Double.isNaN(this.xMin)) {
-			this.xMin = valueX;
-		}
-		if (valueX > this.xMax) {
-			this.xMax = valueX;
-		} else if (valueX < this.xMin) {
-			this.xMin = valueX;
+			this.setXMin(valueX);
 		}
 
 		if (this.autoadjust) {
@@ -518,7 +517,6 @@ public class ProbabilityChart2D extends
 			return; // no dimension
 		}
 
-		final Map<NormalDistribution, Double> functions = new HashMap<>();
 		final int dimension;
 		int d = 0;
 		while (d < mixture.getDimension()) {
@@ -528,16 +526,9 @@ public class ProbabilityChart2D extends
 			d++;
 		}
 		dimension = d;
-		for (final Pair<Double, MultivariateNormalDistribution> entry : mixture
-				.getMixtures().getComponents()) {
-			final MultivariateNormalDistribution normalDistribution = entry
-					.getValue();
-			final Double weight = entry.getKey();
-			final double means = normalDistribution.getMeans()[dimension];
-			final double sigma = normalDistribution.getCovariances().getEntry(
-					dimension, dimension);
-			functions.put(new NormalDistribution(means, sigma), weight);
-		}
+
+		final MixtureMultivariateNormalDistribution distribution = mixture
+				.getMixtures();
 		final Interval[] interval = mixture.getSupport();
 		final double scale = mixture.getScale();
 
@@ -548,13 +539,10 @@ public class ProbabilityChart2D extends
 				if (!interval[dimension].contains(x)) {
 					return 0.0;
 				}
-
-				double sum = 0;
-				for (final Entry<NormalDistribution, Double> func : functions
-						.entrySet()) {
-					sum += func.getKey().density(x) * func.getValue();
-				}
-				return sum * scale;
+				final double[] values = new double[mixture.getDimension()];
+				values[dimension] = x;
+				final double density = distribution.density(values);
+				return density * scale;
 			}
 		};
 		@SuppressWarnings("unchecked")

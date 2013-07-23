@@ -69,7 +69,7 @@ public class ProbabilisticViewableSDFAttribute extends ViewableSDFAttribute {
 	}
 
 	/**
-	 * Gets the value of the index proiperty.
+	 * Gets the value of the index property.
 	 * 
 	 * @return The value of the index property
 	 */
