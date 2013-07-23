@@ -1,10 +1,15 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 
 public class MoveControlPoint extends DraggingControlPointBehaviour {
+
+	private static final Cursor CURSOR = new Cursor(Display.getDefault(), SWT.CURSOR_SIZEALL);
 
 	public enum Position {
 		TOP,
@@ -32,6 +37,11 @@ public class MoveControlPoint extends DraggingControlPointBehaviour {
 		default:
 			throw new IllegalArgumentException("Position " + position + " not known");
 		}
+	}
+	
+	@Override
+	public Cursor getCursor() {
+		return CURSOR;
 	}
 
 	@Override

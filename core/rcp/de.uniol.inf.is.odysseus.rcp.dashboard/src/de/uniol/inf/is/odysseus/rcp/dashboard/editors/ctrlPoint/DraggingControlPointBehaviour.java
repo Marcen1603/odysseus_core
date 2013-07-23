@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Display;
 
 public abstract class DraggingControlPointBehaviour implements IControlPointBehaviour {
 	
-	private static final Cursor RESIZE_CURSOR = new Cursor(Display.getDefault(), SWT.CURSOR_SIZEALL);
+	private static final Cursor CURSOR = new Cursor(Display.getDefault(), SWT.CURSOR_CROSS);
 
 	private boolean isDragging;
 
@@ -24,7 +24,7 @@ public abstract class DraggingControlPointBehaviour implements IControlPointBeha
 	
 	@Override
 	public Cursor getCursor() {
-		return RESIZE_CURSOR;
+		return CURSOR;
 	}
 
 	@Override
