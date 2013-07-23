@@ -35,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -53,6 +54,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	private IPhysicalOperator operator;
 
+	private Composite parent;
 	private TableViewer tableViewer;
 
 	private String[] attributes;
@@ -64,21 +66,41 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-
+		this.parent = parent;
+		
 		final String attributeList = getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
 			return;
 		}
+		
+		attributes = determineAttributes(attributeList);
+		maxData = determineMaxData(getConfiguration());
+	}
 
-		attributes = attributeList.trim().split(",");
-		for (int i = 0; i < attributes.length; i++) {
-			attributes[i] = attributes[i].trim();
+	@Override
+	public void onLoad(Map<String, String> saved) {
+
+	}
+
+	@Override
+	public Map<String, String> onSave() {
+		return null;
+	}
+
+	@Override
+	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+		super.onStart(physicalRoots);
+
+		if (physicalRoots.size() > 1) {
+			throw new Exception("Table DashboardPart only supports one query!");
 		}
 
-		maxData = determineMaxData(getConfiguration());
-
-		final int colCount = attributes.length;
+		operator = physicalRoots.get(0);
+		positions = determinePositions(operator.getOutputSchema(), attributes);
+		refreshAttributesList( operator.getOutputSchema() ); // if attributes was = "*"
+		
+		final int colCount = positions.length;
 
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -110,29 +132,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(data);
-
-	}
-
-	@Override
-	public void onLoad(Map<String, String> saved) {
-
-	}
-
-	@Override
-	public Map<String, String> onSave() {
-		return null;
-	}
-
-	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
-		super.onStart(physicalRoots);
-
-		if (physicalRoots.size() > 1) {
-			throw new Exception("Table DashboardPart only supports one query!");
-		}
-
-		operator = physicalRoots.get(0);
-		positions = determinePositions(operator.getOutputSchema(), attributes);
 	}
 
 	@Override
@@ -175,6 +174,15 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
+	private void refreshAttributesList(SDFSchema outputSchema) {
+		if( attributes.length == 0 ) {
+			attributes = new String[outputSchema.size()];
+			for( int i = 0; i< attributes.length; i++ ) {
+				attributes[i] = outputSchema.getAttribute(i).getAttributeName();
+			}
+		}
+	}
+
 	private static int determineMaxData(Configuration config) {
 		int maxData = 10;
 		try {
@@ -191,19 +199,46 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		return maxData;
 	}
 
-	private static int[] determinePositions(SDFSchema outputSchema, String[] attributes2) {
-		final int[] positions = new int[attributes2.length];
+	private static String[] determineAttributes(final String attributeList) {
+		if (attributeList.trim().equalsIgnoreCase("*")) {
+			return new String[0];
+		}
+		
+		String[] attributes = attributeList.trim().split(",");
+		for (int i = 0; i < attributes.length; i++) {
+			attributes[i] = attributes[i].trim();
+		}
+		return attributes;
+	}
 
-		for (int i = 0; i < attributes2.length; i++) {
-			for (int j = 0; j < outputSchema.size(); j++) {
-				if (outputSchema.get(j).getAttributeName().equals(attributes2[i])) {
-					positions[i] = j;
-					break;
+	private static int[] determinePositions(SDFSchema outputSchema, String[] attributes2) {
+		int[] positions = null;
+		if( attributes2.length > 0 ) {
+			positions = new int[attributes2.length];
+			for (int i = 0; i < attributes2.length; i++) {
+				Optional<Integer> optPosition = getPosition(outputSchema, attributes2[i]);
+				if( optPosition.isPresent() ) {
+					positions[i] = optPosition.get();
+				} else {
+					throw new RuntimeException("Could not position of " + attributes2[i]);
 				}
+			}	
+		} else {
+			positions = new int[outputSchema.size()];
+			for( int i = 0; i < positions.length; i++ ) {
+				positions[i] = i;
 			}
 		}
-
 		return positions;
+	}
+
+	private static Optional<Integer> getPosition(SDFSchema outputSchema, String attribute ) {
+		for (int j = 0; j < outputSchema.size(); j++) {
+			if (outputSchema.get(j).getAttributeName().equals(attribute)) {
+				return Optional.of(j);
+			}
+		}
+		return Optional.absent();
 	}
 
 }

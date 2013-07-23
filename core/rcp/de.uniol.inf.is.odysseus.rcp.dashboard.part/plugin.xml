@@ -10,7 +10,7 @@
             description="Tabular overview of recieved tuples of one query"
             name="Table">
          <setting
-               description="Comma-separated list of attribute-names shown in the table. Must be not empty."
+               description="Comma-separated list of attribute-names shown in the table. Star (*) to select all attributes in result stream. Must be not empty."
                isEditable="true"
                isOptional="false"
                name="Attributes"
@@ -27,6 +27,7 @@
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.LineChartDashboardPart"
+            description="Graphical line to show changes of numerical values"
             name="Lines">
          <setting
                defaultValue="Line chart"
@@ -77,6 +78,7 @@
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.TextDashboardPart"
+            description="Simple toString() of received data stream elements"
             name="Text">
          <setting
                defaultValue="false"
