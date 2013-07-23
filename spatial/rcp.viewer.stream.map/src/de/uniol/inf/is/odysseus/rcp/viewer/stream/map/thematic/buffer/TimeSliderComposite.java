@@ -247,7 +247,7 @@ public class TimeSliderComposite extends Composite implements
 				// How can I add this later?
 				Button okButton = new Button(s, SWT.NONE);
 				okButton.setText("Save");
-				
+
 				// Add 4 empty labels, cause how to fill it either?
 				Label lab1 = new Label(s, SWT.NONE);
 				Label lab2 = new Label(s, SWT.NONE);
@@ -257,7 +257,7 @@ public class TimeSliderComposite extends Composite implements
 				lab2.setText("");
 				lab3.setText("");
 				lab4.setText("");
-				
+
 				ArrayList<LayerUpdater> connections = manager.getConnections();
 				if (connections != null) {
 					for (LayerUpdater conn : connections) {
@@ -302,17 +302,17 @@ public class TimeSliderComposite extends Composite implements
 						sec.setText("s");
 
 						MaxTimeListener timeListener = new MaxTimeListener(
-								conn, hours, minutes, seconds);				
-						
+								conn, hours, minutes, seconds);
+
 						okButton.addSelectionListener(timeListener);
 						// This would make it "live" - but the moment you tip
 						// "1 second"
-						// nearly all old data (but the one seconds) is lost :(	
+						// nearly all old data (but the one seconds) is lost :(
 						// hours.addSelectionListener(timeListener);
 						// minutes.addSelectionListener(timeListener);
 						// seconds.addSelectionListener(timeListener);
-					}	
-					
+					}
+
 				}
 
 				// Open shell
@@ -350,8 +350,9 @@ public class TimeSliderComposite extends Composite implements
 				manager.setIntervalEnd(PointInTime.getInfinityTime());
 
 			} else {
-				PointInTime newEnd = new PointInTime(
-						manager.getMaxIntervalStart().getMainPoint() + ((long) rangeSlider.getUpperValue() * sliderFactor));
+				PointInTime newEnd = new PointInTime(manager
+						.getMaxIntervalStart().getMainPoint()
+						+ ((long) rangeSlider.getUpperValue() * sliderFactor));
 				manager.setIntervalEnd(newEnd);
 			}
 
@@ -404,7 +405,10 @@ public class TimeSliderComposite extends Composite implements
 							// And set the value of the manager to this new
 							// value
 							PointInTime newStart = new PointInTime(
-									manager.getMaxIntervalStart().getMainPoint() + ((long) rangeSlider.getLowerValue() * sliderFactor));
+									manager.getMaxIntervalStart()
+											.getMainPoint()
+											+ ((long) rangeSlider
+													.getLowerValue() * sliderFactor));
 							manager.setIntervalStart(newStart);
 						} else {
 							// the lower value was changed (left slider) -> set
@@ -420,7 +424,10 @@ public class TimeSliderComposite extends Composite implements
 										.getInfinityTime());
 							}
 							PointInTime newEnd = new PointInTime(
-									manager.getMaxIntervalStart().getMainPoint() + ((long) rangeSlider.getUpperValue() * sliderFactor));
+									manager.getMaxIntervalStart()
+											.getMainPoint()
+											+ ((long) rangeSlider
+													.getUpperValue() * sliderFactor));
 							manager.setIntervalEnd(newEnd);
 						}
 
@@ -488,10 +495,14 @@ public class TimeSliderComposite extends Composite implements
 					// Start + selection -> better if end is infinity
 					endTimestamp.setText(Long.toString(manager
 							.getIntervalStart().getMainPoint()
+							- (long) rangeSlider.getLowerValue()
+							* sliderFactor
 							+ (long) rangeSlider.getUpperValue() * sliderFactor));
 					endTime.setText(new SimpleDateFormat(
 							"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
 							manager.getIntervalStart().getMainPoint()
+									- (long) rangeSlider.getLowerValue()
+									* sliderFactor
 									+ (long) rangeSlider.getUpperValue()
 									* sliderFactor)));
 
