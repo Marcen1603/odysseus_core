@@ -18,7 +18,7 @@ public class RRFragmentation extends AbstractDataFragmentation {
 	/**
 	 * @see #getName()
 	 */
-	public static final String NAME = "Round-Robin";
+	public static final String NAME = "round-robin";
 
 	@Override
 	public Class<? extends ILogicalOperator> getOperatorForDistributionClass() {
