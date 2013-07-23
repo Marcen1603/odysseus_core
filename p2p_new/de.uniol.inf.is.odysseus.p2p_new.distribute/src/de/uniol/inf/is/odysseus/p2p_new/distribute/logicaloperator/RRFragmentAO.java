@@ -70,6 +70,7 @@ public class RRFragmentAO extends UnaryLogicalOp {
 	public void setNumberOfFragments(long numFragments) {
 		
 		this.numFragments = numFragments;
+		this.addParameterInfo("FRAGMENTS", numFragments);
 		
 	}
 	

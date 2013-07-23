@@ -36,21 +36,23 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be at least 2!");
 		Preconditions.checkNotNull(parameters, "parameters must be not null!");
 		
+		Collection<ILogicalOperator> enhancedOperators = Lists.newArrayList(operators);
+		
 		// Inner collection: All subscriptions with the same output port
 		// Pair: operator for source access (StreamAO or WindowAO) and those subscriptions, where an operator for fragmentation 
 		// shall be inserted (one operator for the whole collection of subscriptions)
 		// Outer collection: All pairs of operators and subscriptions, where an operator for fragmentation shall be inserted
-		Collection<IPair<ILogicalOperator, Collection<LogicalSubscription>>> sourceAccesses = this.findSourceAccesses(operators);
+		Collection<IPair<ILogicalOperator, Collection<LogicalSubscription>>> sourceAccesses = this.findSourceAccesses(enhancedOperators);
 		
 		for(IPair<ILogicalOperator, Collection<LogicalSubscription>> pair : sourceAccesses) {
 			
 			ILogicalOperator opForDistribution = this.createOperatorForDistribution(degreeOfParallelism, parameters);
-			operators.add(opForDistribution);
+			enhancedOperators.add(opForDistribution);
 			this.subscribeOperatorForDistribution(pair.getE1(), opForDistribution, pair.getE2());
 			
 		}
 		
-		return operators;
+		return enhancedOperators;
 		
 	}
 	

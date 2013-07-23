@@ -201,7 +201,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 			queryPartsMap.put(originQuery, new HashMap<ILogicalQuery, List<QueryPart>>());
 			QueryPart localPart = null;
-			Optional<QueryPart> sourcePart = null;
+			Optional<QueryPart> sourcePart = Optional.fromNullable(null);
 			
 			// Make copies of the query
 			List<ILogicalQuery> queryCopies = Lists.newArrayList();	
@@ -423,7 +423,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
 					peerCounter = (++peerCounter) % remotePeerIDs.size();
 					
-				} while(peerID.equals(sourceManagerPeerID));
+				} while(peerID.equals(sourceManagerPeerID.get()));
 				
 				peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
 				distributed.put(part, peerID);					
