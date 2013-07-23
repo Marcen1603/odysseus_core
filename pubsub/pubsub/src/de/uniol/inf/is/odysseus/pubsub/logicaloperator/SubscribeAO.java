@@ -114,6 +114,22 @@ public class SubscribeAO extends UnaryLogicalOp{
 		}
 	}
 	
+	@Override
+	public SDFSchema getInputSchema(int pos) {
+		return getInputSchema();
+	}
+	
+	@Override
+	public SDFSchema getInputSchema() {
+		if (source != null){
+			return new SDFSchema(source, sdfAttributes);
+		}else if (getInputSchema() != null) {
+			return new SDFSchema(getInputSchema().getURI(), sdfAttributes);
+		} else {
+			return new SDFSchema("", sdfAttributes);
+		}
+	}
+	
 	public String getDomain(){
 		return domain;
 	}

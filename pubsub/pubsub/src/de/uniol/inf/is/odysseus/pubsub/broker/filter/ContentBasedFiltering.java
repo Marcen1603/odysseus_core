@@ -29,15 +29,64 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends AbstractF
 
 	private Collection<BrokerSubscription<T>> subscriptions = new ArrayList<BrokerSubscription<T>>();
 	
+	private List<PredicateResult<T>> predicateResults = new ArrayList<PredicateResult<T>>();
+	
 	/**
-	 * initialization in content based filtering not needed until now
+	 * Initialize content based filtering
+	 * all predicates are compressed, so each predicate needs to be evaluated one time
 	 */
 	@Override
 	public void reinitializeFilter(Collection<BrokerSubscription<T>> subscriptions,
 			Collection<BrokerAdvertisements> advertisements) {
 		this.subscriptions.clear();
+		this.predicateResults.clear();
+		
 		this.subscriptions = subscriptions;
+		
+		// compress all subscriber predicates 
+		for (BrokerSubscription<T> brokerSubscription : subscriptions) {
+			for (IPredicate<? super T> predicate : brokerSubscription.getPredicates()) {
+				if (!isPredicateAlreadyAdded(predicate)){
+					// Predicate is not already added to result list
+					predicateResults.add(new PredicateResult<T>(predicate));
+				}
+			}
+		}
 		setReinitializationMode(false);
+	}
+	
+	/**
+	 * Checks if a predicate already exists in resultTable
+	 * @param predicate
+	 * @return true if predicate exists, else false
+	 */
+	private boolean isPredicateAlreadyAdded(IPredicate<? super T> predicate){
+		for (PredicateResult<T> predicateResult : predicateResults) {
+			if (predicateResult.isPredicateEqual(predicate)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * returns the result value of the given predicate (no evaluation needed)
+	 * if predicate does not exists in result table -> evaluate it and reinitialize 
+	 * result table on next filtering
+	 * @param predicate
+	 * @param object
+	 * @return
+	 */
+	private boolean getResultForPredicate(IPredicate<? super T> predicate, T object){
+		for (PredicateResult<T> predicateResult : predicateResults) {
+			if (predicateResult.isPredicateEqual(predicate)){
+				return predicateResult.getResult();
+			}
+		}
+		
+		// Result not available, may initialization failed -> reinitialize on next filtering
+		setReinitializationMode(true);
+		return predicate.evaluate(object);
 	}
 
 	/**
@@ -46,17 +95,23 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends AbstractF
 	@Override
 	public List<String> filter(T object, String publisherUid) {
 		ArrayList<String> result = new ArrayList<String>();
+
+		// evaluate all predicates first, but only one time
+		for (PredicateResult<T> predicateResult : predicateResults) {
+			predicateResult.evaluate(object);
+		}
 		
+		// iterate all subscriptions
 		for (BrokerSubscription<T> subscription : subscriptions) {
-			// foreach subscription
+			
 			boolean allpredicatesValid = true;
 			if (!subscription.hasPredicates()){
-				// add if no predicates are available (so object matches)
+				// add if no predicates are available (--> object matches)
 				result.add(subscription.getSubscriber().getIdentifier());
 			} else {
 				// check if all predicates of this subscriber matches
-				for (IPredicate<? super T> pred : subscription.getPredicates()) {
-					if (!pred.evaluate(object)){
+				for (IPredicate<? super T> predicate : subscription.getPredicates()) {
+					if (!getResultForPredicate(predicate, object)){
 						allpredicatesValid = false;
 					}
 				}	
