@@ -32,7 +32,7 @@ public class Heatmap extends RasterLayer {
 	private ScreenManager screenManager;
 	private HeatmapLayerConfiguration config;
 	private Envelope heatMapArea;
-	private Envelope zoomArea;
+	private Envelope zoomEnv;
 	private double minValue;
 	private double maxValue;
 	private int totalNumberOfElement;
@@ -46,14 +46,13 @@ public class Heatmap extends RasterLayer {
 		this.config = configuration;
 		minValue = 0;
 		maxValue = 0;
-		zoomArea = new Envelope();
+		zoomEnv = new Envelope();
 	}
 
 	@Override
 	public void init(ScreenManager screenManager, SDFSchema schema,
 			SDFAttribute attribute) {
 		this.screenManager = screenManager;
-		this.srid = screenManager.getSRID();
 	}
 
 	@Override
@@ -183,7 +182,7 @@ public class Heatmap extends RasterLayer {
 		if (config.isAutoPosition()) {
 			// If the user wants the layer to be auto-positioned
 			heatMapArea = new Envelope();
-			zoomArea = new Envelope();
+			zoomEnv = new Envelope();
 			for (Object dataSet : data) {
 
 				// Get the data from the Tuple (Where it is and value)
@@ -202,12 +201,12 @@ public class Heatmap extends RasterLayer {
 
 				// If this point is not in the heatMapArea -> expand heatMapArea
 				heatMapArea.expandToInclude(tempEnv);
-				zoomArea.expandToInclude(point.getCoordinate());
+				zoomEnv.expandToInclude(point.getCoordinate());
 			}
 		} else {
 			// Position is set by the user
 			// Transform the given area to the screen
-			zoomArea = new Envelope(new Coordinate(config.getLngSW(),
+			zoomEnv = new Envelope(new Coordinate(config.getLngSW(),
 					config.getLatSW()), new Coordinate(config.getLngNE(),
 					config.getLatNE()));
 			int[] southWest = transformation.transformCoord(new Coordinate(
@@ -431,22 +430,21 @@ public class Heatmap extends RasterLayer {
 	@Override
 	public Envelope getEnvelope() {
 		CoordinateTransform ct = screenManager.getTransformation()
-				.getCoordinateTransform(4326, this.srid);
+				.getCoordinateTransform(config.getSrid(), screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
-		// Doesn't work - don't know why, I guess the transformation has a
-		// problem with 4326
-		// if (zoomArea != null) {
-		// geoEnv = zoomArea;
-		// }
-		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(),
+		
+		 if (zoomEnv != null) {
+		 geoEnv = zoomEnv;
+		 }
+		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),
 				geoEnv.getMaxY());
-		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(),
+		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(),
 				geoEnv.getMinY());
-		ProjCoordinate dst1 = new ProjCoordinate();
-		ProjCoordinate dst2 = new ProjCoordinate();
-		ct.transform(src1, dst1);
-		ct.transform(src2, dst2);
-		Envelope coverage = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
+		ProjCoordinate destMax = new ProjCoordinate();
+		ProjCoordinate destMin = new ProjCoordinate();
+		ct.transform(srcMax, destMax);
+		ct.transform(srcMin, destMin);
+		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
 
 		return coverage;
 	}

@@ -47,8 +47,10 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 
 public class ScreenManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ScreenManager.class);
-	private static final Color WHITE = Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(ScreenManager.class);
+	private static final Color WHITE = Display.getCurrent().getSystemColor(
+			SWT.COLOR_WHITE);
 
 	private StreamMapEditorPart editor;
 	private ScreenTransformation transformation;
@@ -57,13 +59,14 @@ public class ScreenManager {
 
 	private ITimeInterval interval;
 	private ITimeInterval maxInterval;
-	
+
 	private ArrayList<LayerUpdater> connections;
-	
+
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	private MapMouseListener mouseListener;
 
-	public ScreenManager(ScreenTransformation transformation, StreamMapEditorPart editor) {
+	public ScreenManager(ScreenTransformation transformation,
+			StreamMapEditorPart editor) {
 		this.interval = new TimeInterval();
 		this.interval.setStart(PointInTime.getZeroTime());
 		this.maxInterval = new TimeInterval();
@@ -71,8 +74,9 @@ public class ScreenManager {
 		this.transformation.setScreenManager(this);
 		this.editor = editor;
 		setSRID(editor.getMapEditorModel().getSRID());
-		ProjCoordinate p = new ProjCoordinate(0,0);
-		if (this.crs != null) this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
+		ProjCoordinate p = new ProjCoordinate(0, 0);
+		if (this.crs != null)
+			this.crs.getProjection().project(new ProjCoordinate(0, 0), p);
 		setCenterUV((int) (p.x / scale), (int) (p.y / scale));
 		connections = new ArrayList<LayerUpdater>();
 	}
@@ -91,7 +95,7 @@ public class ScreenManager {
 	public void setSRID(int srid) {
 		if (this.srid != srid) {
 			this.srid = srid;
-			if (srid != 0){
+			if (srid != 0) {
 				CRSFactory csFactory = new CRSFactory();
 				this.crs = csFactory.createFromName("EPSG:" + this.srid);
 				this.crs.getProjection().initialize();
@@ -118,10 +122,11 @@ public class ScreenManager {
 			centerEPSG.x = -centerUV.x * scale;
 			centerEPSG.y = (centerUV.y) * scale;
 		}
-//		ProjCoordinate p = new ProjCoordinate(centerEPSG.x, centerEPSG.y);
-//		ProjCoordinate d = new ProjCoordinate();
-//		this.crs.getProjection().inverseProject(p, d);
-//		System.out.println(centerUV + " " + centerEPSG + " " + d + " " + scale);
+		// ProjCoordinate p = new ProjCoordinate(centerEPSG.x, centerEPSG.y);
+		// ProjCoordinate d = new ProjCoordinate();
+		// this.crs.getProjection().inverseProject(p, d);
+		// System.out.println(centerUV + " " + centerEPSG + " " + d + " " +
+		// scale);
 		this.pcs.firePropertyChange("centerUV", oldCenterUV, centerUV);
 	}
 
@@ -254,28 +259,29 @@ public class ScreenManager {
 	private double zoomincrement = 1.5;
 	private boolean renderComplete;
 
-	public void zoomToExtend(ILayer layer){
+	public void zoomToExtend(ILayer layer) {
 		Envelope env = layer.getEnvelope();
 		Point screenSize = canvas.getSize();
-		double scaleX = (env.getMaxX() - env.getMinX()) / ( screenSize.x);
-		double scaleY = (env.getMaxY() - env.getMinY()) / ( screenSize.y);
+		double scaleX = (env.getMaxX() - env.getMinX()) / (screenSize.x);
+		double scaleY = (env.getMaxY() - env.getMinY()) / (screenSize.y);
 		double oldScale = scale;
 		scale = 1;
 		double scaleInt = 1;
-		for (scaleInt = (Math.max(scaleX, scaleY)); scaleInt > 10; scaleInt /= 10){
-			scale *=10;
+		for (scaleInt = (Math.max(scaleX, scaleY)); scaleInt > 10; scaleInt /= 10) {
+			scale *= 10;
 		}
 		scale *= Math.ceil(scaleInt);
-		if(scale > 0) {
+		if (scale > 0) {
 			// This should always be the case, if there is an environment
-			setCenterUV((int) Math.floor((env.centre().x / scale)), (int) Math.floor((env.centre().y / scale)));
+			setCenterUV((int) Math.floor((env.centre().x / scale * (-1))),
+					(int) Math.floor((env.centre().y / scale)));
 		} else {
 			scale = 1;
 		}
 		pcs.firePropertyChange("scale", oldScale, scale);
 		redraw();
 	}
-	
+
 	/**
 	 * 
 	 * @return The selected interval
@@ -283,13 +289,13 @@ public class ScreenManager {
 	public ITimeInterval getInterval() {
 		return interval;
 	}
-	
+
 	public void setInterval(ITimeInterval interval) {
 		ITimeInterval oldInterval = this.interval;
 		this.interval = interval;
 		this.pcs.firePropertyChange("interval", oldInterval, this.interval);
 	}
-	
+
 	public PointInTime getIntervalStart() {
 		return this.interval.getStart();
 	}
@@ -298,7 +304,8 @@ public class ScreenManager {
 		PointInTime oldIntervalStart = this.interval.getStart();
 		this.interval.setStart(intervalStart);
 		System.out.println(this.interval);
-		this.pcs.firePropertyChange("intervalStart", oldIntervalStart, this.interval.getStart());
+		this.pcs.firePropertyChange("intervalStart", oldIntervalStart,
+				this.interval.getStart());
 	}
 
 	public PointInTime getIntervalEnd() {
@@ -309,17 +316,19 @@ public class ScreenManager {
 		PointInTime oldIntervalEnd = this.interval.getEnd();
 		this.interval.setEnd(intervalEnd);
 		System.out.println(this.interval);
-		this.pcs.firePropertyChange("intervalEnd", oldIntervalEnd, this.interval.getEnd());
+		this.pcs.firePropertyChange("intervalEnd", oldIntervalEnd,
+				this.interval.getEnd());
 	}
 
 	public ITimeInterval getMaxInterval() {
 		return maxInterval;
 	}
-	
+
 	public void setMaxInterval(ITimeInterval maxInterval) {
 		ITimeInterval oldMaxInterval = this.maxInterval;
 		this.maxInterval = maxInterval;
-		this.pcs.firePropertyChange("maxInterval", oldMaxInterval, this.maxInterval);
+		this.pcs.firePropertyChange("maxInterval", oldMaxInterval,
+				this.maxInterval);
 	}
 
 	public PointInTime getMaxIntervalStart() {
@@ -330,14 +339,16 @@ public class ScreenManager {
 		PointInTime oldMaxIntervalStart = this.maxInterval.getStart();
 		ITimeInterval oldInterval = this.maxInterval.clone();
 		this.maxInterval.setStart(maxIntervalStart);
-		if(this.interval.getStart().before(maxIntervalStart)) {
+		if (this.interval.getStart().before(maxIntervalStart)) {
 			// If the puffer deleted something, we have to update the interval
 			this.interval.setStart(maxIntervalStart);
 		}
-		this.pcs.firePropertyChange("maxIntervalStart", oldMaxIntervalStart, this.maxInterval.getStart());
-		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
+		this.pcs.firePropertyChange("maxIntervalStart", oldMaxIntervalStart,
+				this.maxInterval.getStart());
+		this.pcs.firePropertyChange("maxInterval", oldInterval,
+				this.maxInterval);
 	}
-	
+
 	public PointInTime getMaxIntervalEnd() {
 		return this.maxInterval.getEnd();
 	}
@@ -346,17 +357,19 @@ public class ScreenManager {
 		ITimeInterval oldInterval = this.maxInterval.clone();
 		if (maxIntervalEnd.before(this.maxInterval.getStart()))
 			this.setMaxIntervalStart(maxIntervalEnd);
-		if(this.interval.getStart().getMainPoint() == 0) {
+		if (this.interval.getStart().getMainPoint() == 0) {
 			// No time was set
 			this.interval.setStart(getMaxIntervalStart());
 			this.interval.setEnd(getMaxIntervalEnd());
 		}
 		PointInTime oldMaxIntervalEnd = this.maxInterval.getEnd();
 		this.maxInterval.setEnd(maxIntervalEnd.plus(1));
-		this.pcs.firePropertyChange("maxIntervalEnd", oldMaxIntervalEnd, this.maxInterval.getEnd());
-		this.pcs.firePropertyChange("maxInterval", oldInterval, this.maxInterval);
+		this.pcs.firePropertyChange("maxIntervalEnd", oldMaxIntervalEnd,
+				this.maxInterval.getEnd());
+		this.pcs.firePropertyChange("maxInterval", oldInterval,
+				this.maxInterval);
 	}
-	
+
 	public void zoomOut(Point pivot) {
 
 		double oldScale = this.scale;
@@ -386,7 +399,8 @@ public class ScreenManager {
 		Coordinate c1 = (Coordinate) c.clone();
 		c1.x *= zoomincrement;
 		c1.y *= zoomincrement;
-		Coordinate p = new Coordinate((pivot.x - widthHalf), (pivot.y - heightHalf));
+		Coordinate p = new Coordinate((pivot.x - widthHalf),
+				(pivot.y - heightHalf));
 		double dx = Math.max(p.x, c.x) - Math.min(p.x, c.x);
 		double dy = Math.max(p.y, c.y) - Math.min(p.y, c.y);
 		Coordinate nc = new Coordinate();
@@ -404,7 +418,6 @@ public class ScreenManager {
 		redraw();
 	}
 
-
 	public void panNorth(int steps) {
 		setCenterUV(getCenterUV().x, getCenterUV().y - steps);
 	}
@@ -421,7 +434,6 @@ public class ScreenManager {
 		setCenterUV(getCenterUV().x + steps, getCenterUV().y);
 	}
 
-
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(listener);
 	}
@@ -430,16 +442,19 @@ public class ScreenManager {
 		pcs.removePropertyChangeListener(listener);
 	}
 
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	public void addPropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
 		pcs.addPropertyChangeListener(propertyName, listener);
 	}
 
-	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	public void removePropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(propertyName, listener);
 	}
 
 	int milliseconds = 20;
 	Renderer renderer = null;
+
 	public void redraw() {
 		if (renderer == null) {
 			renderer = new Renderer();
@@ -473,26 +488,28 @@ public class ScreenManager {
 		}
 
 	}
-	
+
 	/**
-	 * Adds a connection (as a layerUpdater)
-	 * e.g. important for the timeslider
+	 * Adds a connection (as a layerUpdater) e.g. important for the timeslider
+	 * 
 	 * @param connection
 	 */
 	public void addConnection(LayerUpdater connection) {
 		connections.add(connection);
 	}
-	
+
 	/**
 	 * Returns a list of all connections (as layerUpdaters)
+	 * 
 	 * @return
 	 */
 	public ArrayList<LayerUpdater> getConnections() {
 		return connections;
 	}
-	
+
 	/**
 	 * Removes a connection (LayerUpdater) from the list
+	 * 
 	 * @param connection
 	 */
 	public void removeConnection(LayerUpdater connection) {

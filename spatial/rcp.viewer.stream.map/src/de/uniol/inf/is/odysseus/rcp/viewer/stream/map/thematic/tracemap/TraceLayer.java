@@ -76,6 +76,7 @@ public class TraceLayer extends RasterLayer {
 	 * @return
 	 */
 	private HashMap<Integer, LineString> getLines() {
+		zoomEnv = new Envelope();
 		searchEnv = new Envelope();
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
 													// Germany
@@ -103,12 +104,7 @@ public class TraceLayer extends RasterLayer {
 			PointInTime startTime = timeInterval.getStart();
 
 			// Build the zoomEnvironment for "zoom to layer"
-			int[] transCoordArray = screenManager.getTransformation()
-					.transformCoord(point.getCoordinate(),
-							screenManager.getSRID());
-			Coordinate transCoord = new Coordinate(transCoordArray[0],
-					transCoordArray[1]);
-			zoomEnv.expandToInclude(transCoord);
+			zoomEnv.expandToInclude(point.getCoordinate());
 
 			// Create new LineElement
 			TraceElement lineElement = new TraceElement(point.getCoordinate(),
@@ -393,25 +389,23 @@ public class TraceLayer extends RasterLayer {
 	@Override
 	public Envelope getEnvelope() {
 		CoordinateTransform ct = screenManager.getTransformation()
-				.getCoordinateTransform(4326, this.srid);
+				.getCoordinateTransform(config.getSrid(),
+						screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
-		// Doesn't work - don't know why, I guess the transformation has a
-		// problem with 4326
-		// if (zoomArea != null) {
-		// geoEnv = zoomArea;
-		// }
-		if (geoEnv == null) {
-			geoEnv = new Envelope(180, -180, 85, -85); // Cover whole world
+
+		if (zoomEnv != null) {
+			geoEnv = zoomEnv;
 		}
-		ProjCoordinate src1 = new ProjCoordinate(geoEnv.getMaxX(),
+		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),
 				geoEnv.getMaxY());
-		ProjCoordinate src2 = new ProjCoordinate(geoEnv.getMinX(),
+		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(),
 				geoEnv.getMinY());
-		ProjCoordinate dst1 = new ProjCoordinate();
-		ProjCoordinate dst2 = new ProjCoordinate();
-		ct.transform(src1, dst1);
-		ct.transform(src2, dst2);
-		Envelope coverage = new Envelope(dst1.x, dst2.x, dst1.y, dst2.y);
+		ProjCoordinate destMax = new ProjCoordinate();
+		ProjCoordinate destMin = new ProjCoordinate();
+		ct.transform(srcMax, destMax);
+		ct.transform(srcMin, destMin);
+		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y,
+				destMax.y);
 
 		return coverage;
 	}
@@ -420,7 +414,7 @@ public class TraceLayer extends RasterLayer {
 	public void setLayerUpdater(LayerUpdater layerUpdater) {
 		this.layerUpdater = layerUpdater;
 	}
-	
+
 	public LayerUpdater getLayerUpdater() {
 		return this.layerUpdater;
 	}
