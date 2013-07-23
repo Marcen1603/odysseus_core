@@ -66,7 +66,6 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	private Dashboard dashboard;
 	private FileEditorInput input;
 	private boolean dirty;
-	private Composite parent;
 		
 	private DashboardOutlineContentPage outlinePage;
 
@@ -74,7 +73,6 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		this.parent = parent;
 		parent.setLayout(new GridLayout());
 		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 
@@ -331,7 +329,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 					Collection<DashboardPartPlacement> placements = dashboard.getDashboardPartPlacements();
 					if( !placements.isEmpty() ) {
 						IDashboardLayouter gridLayouter = new GridDashboardLayouter();
-						gridLayouter.layout(dashboard.getDashboardPartPlacements(), parent.getSize().x, parent.getSize().y);
+						gridLayouter.layout(dashboard.getDashboardPartPlacements(), dashboard.getControl().getSize().x, dashboard.getControl().getSize().y);
 						dashboard.update();
 					}
 				}
