@@ -94,6 +94,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	private final List<IDashboardListener> listeners = Lists.newArrayList();
 	private final List<ISelectionChangedListener> selectionChangedListeners = Lists.newArrayList();
+	private boolean isSelectionChange;
 
 	private ControlPointManager controlPointManager;
 
@@ -329,6 +330,10 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if( isSelectionChange ) {
+			return;
+		}
+		
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			final IStructuredSelection structSelection = (IStructuredSelection) selection;
 			final Object selectedObject = structSelection.getFirstElement();
@@ -338,10 +343,15 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 					selectedDashboardPart = structSelection;
 					dashboardComposite.redraw();
 					
-					for (final ISelectionChangedListener listener : selectionChangedListeners) {
-						if (listener != null) {
-							listener.selectionChanged(new SelectionChangedEvent(this, selection));
+					try {
+						isSelectionChange = true;
+						for (final ISelectionChangedListener listener : selectionChangedListeners) {
+							if (listener != null) {
+								listener.selectionChanged(new SelectionChangedEvent(this, selection));
+							}
 						}
+					} finally {
+						isSelectionChange = false;
 					}
 					return;
 				}

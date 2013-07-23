@@ -54,7 +54,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	private IPhysicalOperator operator;
 
-	private Composite parent;
 	private TableViewer tableViewer;
 
 	private String[] attributes;
@@ -63,11 +62,13 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	private final List<Tuple<?>> data = Lists.newArrayList();
 	private int maxData = 10;
 	private boolean refreshing = false;
+
+	private TableColumnLayout tableColumnLayout;
+
+	private Composite tableComposite;
 	
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		this.parent = parent;
-		
 		final String attributeList = getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
@@ -76,6 +77,19 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		
 		attributes = determineAttributes(attributeList);
 		maxData = determineMaxData(getConfiguration());
+		
+		tableComposite = new Composite(parent, SWT.NONE);
+		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
+
+		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		final Table table = tableViewer.getTable();
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		
+		parent.layout();
 	}
 
 	@Override
@@ -101,18 +115,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		refreshAttributesList( operator.getOutputSchema() ); // if attributes was = "*"
 		
 		final int colCount = positions.length;
-
-		final Composite tableComposite = new Composite(parent, SWT.NONE);
-		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		final TableColumnLayout tableColumnLayout = new TableColumnLayout();
-		tableComposite.setLayout(tableColumnLayout);
-
-		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
-		final Table table = tableViewer.getTable();
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
-
 		for (int i = 0; i < colCount; i++) {
 
 			final int finalI = i;
@@ -132,8 +134,10 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(data);
+		tableViewer.refresh();
+		tableViewer.getTable().redraw();
 		
-		parent.layout();
+		tableComposite.layout();
 	}
 
 	@Override
