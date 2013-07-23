@@ -337,6 +337,12 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 				if (dashboardParts.contains(placement)) {
 					selectedDashboardPart = structSelection;
 					dashboardComposite.redraw();
+					
+					for (final ISelectionChangedListener listener : selectionChangedListeners) {
+						if (listener != null) {
+							listener.selectionChanged(new SelectionChangedEvent(this, selection));
+						}
+					}
 					return;
 				}
 			}
