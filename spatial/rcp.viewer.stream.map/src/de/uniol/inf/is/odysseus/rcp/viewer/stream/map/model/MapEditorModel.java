@@ -443,6 +443,9 @@ public class MapEditorModel extends ModelObject {
 			}
 		}
 
+		// We don't want to set it active manually, too much clicks ...
+		layer.setActive(true);
+
 		return layer;
 	}
 
@@ -465,6 +468,9 @@ public class MapEditorModel extends ModelObject {
 				connection.add(layer);
 			}
 		}
+
+		// We don't want to set it active manually, too much clicks ...
+		layer.setActive(true);
 
 		return layer;
 	}

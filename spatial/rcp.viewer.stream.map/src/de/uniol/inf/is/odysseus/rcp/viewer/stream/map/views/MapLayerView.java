@@ -387,7 +387,6 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 				mgr.add(new Action("Map properties") {
 					@Override
 					public void run() {
-						@SuppressWarnings("unused")
 						ITreeSelection i = (ITreeSelection) treeViewer
 								.getSelection();
 						if (hasMapEditor()) {
@@ -400,12 +399,15 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 									shell, model.getLayers(), map, model
 											.getConnectionCollection(), editor);
 							dialog.create();
+							dialog.selectLayer((ILayer) i.getFirstElement());
 							dialog.open();
+							
 							if (dialog.getReturnCode() == MessageDialog.OK) {
 								editor.setLayerChanged();
-								MessageDialog.openInformation(shell,
-										"Information",
-										"Map Properties Changed.");
+								// It's confusing if this is shown always ...
+//								MessageDialog.openInformation(shell,
+//										"Information",
+//										"Map Properties Changed.");
 							} else {
 							}
 						}

@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -649,14 +650,15 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Button hideButton = new Button(settingsContainer, SWT.CHECK);
 		hideButton.setEnabled(true);
 		hideButton.setSelection(newConfig.isHideWithoutInformation());
-		hideButton.addSelectionListener(new ButtonListener(newConfig,
-				this, hideButton) {
+		hideButton.addSelectionListener(new ButtonListener(newConfig, this,
+				hideButton) {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
-				heatmapLayerConfiguration.setHideWithoutInformation((correspondingButton
-						.getSelection()));
+				heatmapLayerConfiguration
+						.setHideWithoutInformation((correspondingButton
+								.getSelection()));
 				mapPropertiesDialog
 						.setLayerConfiguration(heatmapLayerConfiguration);
 			}
@@ -961,5 +963,19 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 	@Override
 	protected Point getInitialSize() {
 		return new Point(748, 522);
+	}
+
+	/**
+	 * Selects the right element in the tree
+	 * 
+	 * @param selectedLayer Layer for which the config should be openend
+	 */
+	public void selectLayer(ILayer selectedLayer) {
+		Object[] path = new Object[2];
+		path[0] = treeViewer.getTree().getItems()[0];
+		path[1] = selectedLayer;
+		org.eclipse.jface.viewers.TreePath newPath = new org.eclipse.jface.viewers.TreePath(path);
+		TreeSelection newSelection = new TreeSelection(newPath);
+		treeViewer.setSelection(newSelection);
 	}
 }
