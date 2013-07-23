@@ -81,5 +81,4 @@ public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic,
 			this.transferFunction.transfer(next);
 		}
 	}
-
 }

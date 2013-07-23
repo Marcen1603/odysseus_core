@@ -20,6 +20,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.interval.transform.join.JoinTransformationHelper;
@@ -56,12 +57,9 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public final void execute(final JoinAO operator, final TransformationConfiguration config) {
-
-		final IPredicate<?> pred = operator.getPredicate();
-
 		final ProbabilisticDiscreteJoinTIPO joinPO = new ProbabilisticDiscreteJoinTIPO();
+		final IPredicate<?> pred = operator.getPredicate();
 		joinPO.setJoinPredicate(pred.clone());
-
 		// if in both input paths there is no window, we
 		// use a persistent sweep area
 		// check the paths
@@ -84,7 +82,6 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 		joinPO.setCreationFunction(new DefaultProbabilisticTIDummyDataCreation());
 
 		this.defaultExecute(operator, joinPO, config, true, true);
-
 	}
 
 	/*
@@ -96,9 +93,11 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 		final IPredicate<?> predicate = operator.getPredicate();
 		if (predicate != null) {
 			if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
-				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-				if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
-					return true;
+				if (operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)) {
+					final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+					if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
+						return true;
+					}
 				}
 			}
 		}
