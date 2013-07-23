@@ -84,7 +84,9 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 			@Override
 			public void run() {
 				try {
-					getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession()));
+					if( !getTreeViewer().getTree().isDisposed() ) {
+						getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession()));
+					}
 				} catch (Exception e) {
 					LOG.error("Exception during setting input for treeViewer in sinkView", e);
 				}

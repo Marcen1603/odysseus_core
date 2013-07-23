@@ -108,7 +108,9 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 				public void run() {
 					try {
 						isRefreshing = false;
-						getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+						if( !getTreeViewer().getTree().isDisposed() ) {
+							getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+						}
 					} catch (Exception e) {
 						LOG.error("Exception during setting input for treeViewer in sourcesView", e);
 					}
