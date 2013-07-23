@@ -1,12 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
@@ -14,19 +15,16 @@ import org.eclipse.swt.widgets.Display;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 
-public class ControlPointManager implements ISelectionChangedListener, MouseListener, MouseMoveListener {
+public class ControlPointManager implements ISelectionChangedListener, MouseMoveListener {
 
 	private final Dashboard dashboard;
 	private final Cursor arrowCursor;
-
-	private ControlPoint topLeftPoint;
-	private ControlPoint topRightPoint;
-	private ControlPoint bottomLeftPoint;
-	private ControlPoint bottomRightPoint;
+	private final List<ControlPoint> points = Lists.newArrayList();
 
 	public ControlPointManager(Dashboard dashboard) {
 		Preconditions.checkNotNull(dashboard, "Dashboard must not be null");
@@ -36,7 +34,6 @@ public class ControlPointManager implements ISelectionChangedListener, MouseList
 
 		dashboard.addSelectionChangedListener(this);
 		dashboard.getControl().addMouseMoveListener(this);
-		dashboard.getControl().addMouseListener(this);
 	}
 
 	@Override
@@ -56,37 +53,17 @@ public class ControlPointManager implements ISelectionChangedListener, MouseList
 	}
 
 	public void render(GC gc) {
-		renderControlPoint(gc, topLeftPoint);
-		renderControlPoint(gc, topRightPoint);
-		renderControlPoint(gc, bottomLeftPoint);
-		renderControlPoint(gc, bottomRightPoint);
+		for( ControlPoint point : points ) {
+			renderControlPoint(gc, point);
+		}
 	}
 
 	public void dispose() {
 		disposeControlPoints();
 		disposeCursor(arrowCursor);
 
-		dashboard.getControl().removeMouseListener(this);
 		dashboard.getControl().removeMouseMoveListener(this);
 		dashboard.removeSelectionChangedListener(this);
-	}
-
-	// MouseListener
-	@Override
-	public void mouseDoubleClick(MouseEvent e) {
-
-	}
-
-	// MouseListener
-	@Override
-	public void mouseDown(MouseEvent e) {
-
-	}
-
-	// MouseListener
-	@Override
-	public void mouseUp(MouseEvent e) {
-
 	}
 
 	// MouseMoveListener
@@ -98,34 +75,32 @@ public class ControlPointManager implements ISelectionChangedListener, MouseList
 	}
 
 	public Optional<ControlPoint> getControlPoint(int x, int y) {
-		if (topLeftPoint != null && topLeftPoint.isInside(x, y)) {
-			return Optional.of(topLeftPoint);
+		for( ControlPoint point : points ) {
+			if( point.isInside(x, y)) {
+				return Optional.of(point);
+			}
 		}
-		if (topRightPoint != null && topRightPoint.isInside(x, y)) {
-			return Optional.of(topRightPoint);
-		}
-		if (bottomLeftPoint != null && bottomLeftPoint.isInside(x, y)) {
-			return Optional.of(bottomLeftPoint);
-		}
-		if (bottomRightPoint != null && bottomRightPoint.isInside(x, y)) {
-			return Optional.of(bottomRightPoint);
-		}
-		
+				
 		return Optional.absent();
 	}
 
 	private void createControlPoints(Dashboard dashboard, DashboardPartPlacement dashboardPartPlacement) {
-		topLeftPoint = new ControlPoint(dashboard, dashboardPartPlacement, new TopLeftControlPoint());
-		bottomLeftPoint = new ControlPoint(dashboard, dashboardPartPlacement, new BottomLeftControlPoint());
-		bottomRightPoint = new ControlPoint(dashboard, dashboardPartPlacement, new BottomRightControlPoint());
-		topRightPoint = new ControlPoint(dashboard, dashboardPartPlacement, new TopRightControlPoint());
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopLeftControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomLeftControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomRightControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopRightControlPoint()));
+		
+		points.add( new ControlPoint(dashboard, dashboardPartPlacement, new MoveControlPoint(MoveControlPoint.Position.TOP)));
+		points.add( new ControlPoint(dashboard, dashboardPartPlacement, new MoveControlPoint(MoveControlPoint.Position.BOTTOM)));
+		points.add( new ControlPoint(dashboard, dashboardPartPlacement, new MoveControlPoint(MoveControlPoint.Position.LEFT)));
+		points.add( new ControlPoint(dashboard, dashboardPartPlacement, new MoveControlPoint(MoveControlPoint.Position.RIGHT)));
 	}
 
 	private void disposeControlPoints() {
-		disposeControlPoint(topLeftPoint);
-		disposeControlPoint(topRightPoint);
-		disposeControlPoint(bottomLeftPoint);
-		disposeControlPoint(bottomRightPoint);
+		for( ControlPoint point : points ) {
+			disposeControlPoint(point);
+		}
+		points.clear();
 	}
 	
 	private static void disposeControlPoint( ControlPoint point ) {
