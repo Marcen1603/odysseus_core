@@ -23,14 +23,19 @@ public interface IDataFragmentation {
 			QueryBuildConfiguration parameters);
 	
 	/**
-	 * Inserts an {@link ILogicalOperator}, which combines the results of several partitions, 
-	 * into a collection of {@link ILogicalOperator}s.
-	 * @param operators The collection of {@link ILogicalOperator}s, into which the {@link ILogicalOperator} shall be inserted.
-	 * @param parameters The set of all used settings.
-	 * @return The altered collection of {@link ILogicalOperator}s.
+	 * Returns the class of the inserted {@link ILogicalOperator}s for data distribution.
 	 */
-	public Collection<ILogicalOperator> insertOperatorForJunction(Collection<ILogicalOperator> logicalPlan, 
-			QueryBuildConfiguration parameters);
+	public Class<? extends ILogicalOperator> getOperatorForDistributionClass();
+	
+	/**
+	 * Returns an {@link ILogicalOperator} for data junction.
+	 */
+	public ILogicalOperator createOperatorForJunction();
+	
+	/**
+	 * Returns the class of the inserted {@link ILogicalOperator}s for data junction.
+	 */
+	public Class<? extends ILogicalOperator> getOperatorForJunctionClass();
 	
 	/**
 	 * Returns the unique name of the fragmentation strategy.
