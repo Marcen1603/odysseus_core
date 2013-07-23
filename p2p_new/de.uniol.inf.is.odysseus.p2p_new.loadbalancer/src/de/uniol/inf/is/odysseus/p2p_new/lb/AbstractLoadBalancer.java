@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.ReplicationMergeAO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
 /**
@@ -144,15 +145,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		// Check, if a fragmentation strategy is defined
-		Optional<IDataFragmentation> fragmentationStrategy = Optional.fromNullable(null);
+		IDataFragmentation fragmentationStrategy = null;
 		Optional<PeerID> sourceManagerPeerID = Optional.fromNullable(null);
 		if(cfg.get(ParameterDoDataFragmentation.class).getValue()) {
 			
-			fragmentationStrategy = Optional.fromNullable(this.getFragmentationStrategy((IServerExecutor) sender, cfg));
-			if(fragmentationStrategy.isPresent())
-				LOG.debug("Data fragmentation strategy {} used", fragmentationStrategy.get().getName());
+			fragmentationStrategy = this.getFragmentationStrategy((IServerExecutor) sender, cfg);
+			if(fragmentationStrategy != null)
+				LOG.debug("Data fragmentation strategy {} used", fragmentationStrategy.getName());
 			
-		}
+		} else fragmentationStrategy = new Replication();
 		
 		// Get all available peers
 		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
@@ -168,7 +169,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		int wantedDegreeOfParallelism = this.determineWantedDegreeOfParallelism(cfg);
 		int maxDegree = remotePeerIDs.size();
 		int degreeOfParallelism;
-		if(fragmentationStrategy.isPresent()) {
+		if(!fragmentationStrategy.getName().equals(Replication.NAME)) {
 			
 			if(wantedDegreeOfParallelism < 2) {
 				
@@ -214,7 +215,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 				RestructHelper.removeTopAOs(operators);
 				
-				if(fragmentationStrategy.isPresent()) {
+				if(!fragmentationStrategy.getName().equals(Replication.NAME)) {
 					
 					// Create the part for the source manager
 					if(!sourcePart.isPresent())
@@ -227,10 +228,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 				// Create the local part
 				if(localPart == null)
-					localPart = this.createLocalPart(operators, degreeOfParallelism);
+					localPart = this.createLocalPart(operators, degreeOfParallelism, fragmentationStrategy);
 
 				// Subscribe copy to local part
-				this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart);
+				this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, fragmentationStrategy);
 				
 				// Create the queryparts of this query
 				List<QueryPart> parts = this.determineQueryParts(operators, localPart);
@@ -240,7 +241,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			}
 			
 			// Initialize all operators of the source and the local part and add it ONCE
-			if(fragmentationStrategy.isPresent() && sourcePart.isPresent()) {
+			if(!fragmentationStrategy.getName().equals(Replication.NAME) && sourcePart.isPresent()) {
 			
 				this.initPart(sourcePart.get());
 				queryPartsMap.get(originQuery).values().iterator().next().add(sourcePart.get());
@@ -445,6 +446,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
 	 * @param degreeOfParallelism The degree of parallelism. <br />
 	 * <code>degreeOfParallelism</code> must greater than zero.
+	 * @param fragmentationStrategy  The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
 	 * @return The returned collection will contain for each sink: <br />
 	 * the sink, if <code>degreeOfParallelism</code> is <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink. <br />
 	 * a {@link RenameAO} with no operation subscribed to the sink, if <code>degreeOfParallelism</code> is <code>1</code> and 
@@ -454,10 +456,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * a {@link ReplicationMergeAO} subscribed to all sources of the sink and subscribed as a source to the sink, 
 	 * if <code>degreeOfParallelism</code> is greater than <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink.
 	 */
-	protected QueryPart createLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism) {
+	protected QueryPart createLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism, 
+			IDataFragmentation fragmentationStrategy) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
+		Preconditions.checkNotNull(fragmentationStrategy, "fragmentationStrategy must be not null!");
 		
 		final List<ILogicalOperator> localOperators = Lists.newArrayList();
 		
@@ -486,7 +490,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} else if(!operator.needsLocalResources() && degreeOfParallelism > 1) {
 				
 				// Don't map operator to local part; merging needed before
-				final ReplicationMergeAO mergeAO = new ReplicationMergeAO();
+				final ILogicalOperator mergeAO = fragmentationStrategy.createOperatorForJunction();
 				localOperators.add(mergeAO);
 				mergeAO.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
 				LOG.debug("Subscribed {} to {}", operator, mergeAO);
@@ -494,7 +498,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} else {	// operator.needsLocalResources() && degreeOfParallelism > 1
 				
 				// Map operator to local part; Merging needed before
-				final ReplicationMergeAO mergeAO = new ReplicationMergeAO();
+				final ILogicalOperator mergeAO = fragmentationStrategy.createOperatorForJunction();
 				localOperators.add(mergeAO);
 				localOperators.add(operator);
 				
@@ -616,12 +620,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param degreeOfParallelism The degree of parallelism. <br />
 	 * <code>degreeOfParallelism</code> must greater than zero.
 	 * @param localPart The local part to which the {@link ILogicalQuery} shall be subscribed.
+	 * @param fragmentationStrategy The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
 	 */
-	protected void subscribeCopyToLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism, QueryPart localPart) {
+	protected void subscribeCopyToLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism, QueryPart localPart, 
+			IDataFragmentation fragmentationStrategy) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
 		Preconditions.checkNotNull(localPart, "localPart must be not null!");
+		Preconditions.checkNotNull(fragmentationStrategy, "fragmentationStrategy must be not null!");
 		
 		final List<ILogicalOperator> localOperators = Lists.newArrayList();
 		
@@ -638,7 +645,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} else if(!operator.needsLocalResources() && degreeOfParallelism > 1) {
 				
 				// Subscribe operator to existing merger
-				ILogicalOperator mergeAO = localIter.next();
+				ILogicalOperator mergeAO = null;
+				do mergeAO = localIter.next();
+				while(mergeAO.getClass() != fragmentationStrategy.getOperatorForJunctionClass() && localIter.hasNext());
+				
 				mergeAO.subscribeToSource(operator, mergeAO.getNumberOfInputs(), 0, operator.getOutputSchema());
 				LOG.debug("Subscribed {} to {}", operator, mergeAO);
 				
@@ -646,7 +656,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 				// Subscribe sources of operator to existing merger
 				localOperators.add(operator);
-				ILogicalOperator mergeAO = localIter.next();
+				ILogicalOperator mergeAO = null;
+				do mergeAO = localIter.next();
+				while(mergeAO.getClass() != fragmentationStrategy.getOperatorForJunctionClass() && localIter.hasNext());
+				
 				for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 					
 					operator.unsubscribeFromSource(subToSource);
@@ -729,14 +742,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param cfg The transfer configuration. <br />
 	 * <code>transCfg</code> must not be null.
 	 * @param queryName The name of the {@link ILogicalQuery}.
+	 * @param fragmentationStrategy The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
+	 * @param degreeOfParallelism The degree of parallelism.
 	 * @return The new {@link ILogicalQuery} created from all {@link QueryPart}s, which shall be executed locally.
 	 */
 	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration cfg, 
-			String queryName, Optional<IDataFragmentation> fragmentationStrategy, int degreeOfParallelism) {
+			String queryName, IDataFragmentation fragmentationStrategy, int degreeOfParallelism) {
 		
 		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
 		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
 		Preconditions.checkNotNull(cfg, "transCfg must be not null!");
+		Preconditions.checkNotNull(fragmentationStrategy, "fragmentationStrategy must be not null!");
 		
 		// Generate an ID for the shared query
 		final ID sharedQueryID = DistributionHelper.generateSharedQueryID();
@@ -745,12 +761,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final Map<QueryPart, PeerID> queryPartPeerMap = Maps.newHashMap();
 		for(QueryPart part : queryParts) {
 			
-			QueryPart preparedPart = null;
-			if(fragmentationStrategy.isPresent())
-				preparedPart = DistributionHelper.replaceStreamAOs(this.insertOperatorsForFragmentation(
-						part, fragmentationStrategy.get(), degreeOfParallelism, cfg));
-			else preparedPart = DistributionHelper.replaceStreamAOs(part);
-			
+			QueryPart preparedPart = DistributionHelper.replaceStreamAOs(this.insertOperatorsForFragmentation(
+						part, fragmentationStrategy, degreeOfParallelism, cfg));			
 			queryPartPeerMap.put(preparedPart, queryPartDistributionMap.get(part));
 			
 		}
@@ -834,12 +846,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be greater than one!");
 		Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
-		if(!part.getDestinationName().isPresent())
-			return part;
-		else if(part.getDestinationName().get().equals(AbstractLoadBalancer.getLocalDestinationName()))
-			return new QueryPart(fragmentationStrategy.insertOperatorForJunction(part.getOperators(), parameters), 
-					part.getDestinationName().get());
-		else if(part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
+		if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
 			return new QueryPart(fragmentationStrategy.insertOperatorForDistribution(part.getOperators(), degreeOfParallelism, parameters), 
 					part.getDestinationName().get());
 		else return part;
