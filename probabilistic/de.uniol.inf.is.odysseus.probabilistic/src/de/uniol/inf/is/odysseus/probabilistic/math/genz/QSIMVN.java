@@ -277,13 +277,13 @@ public class QSIMVN {
 		// % >> a = -inf*[1 1 1 1 ]'; b = [ 1 2 3 4 ]';
 		// % >> [ p e ] = qsimvn( 5000, r, a, b ); disp([ p e ])
 
-		final Matrix R = new Matrix(new double[][] { { 4.0, 3.0, 2.0, 1.0 }, { 3.0, 5.0, -1.0, 1.0 }, { 2.0, -1.0, 4.0, 2.0 }, { 1.0, 1.0, 2.0, 5.0 } });
+		final Matrix r = new Matrix(new double[][] { { 4.0, 3.0, 2.0, 1.0 }, { 3.0, 5.0, -1.0, 1.0 }, { 2.0, -1.0, 4.0, 2.0 }, { 1.0, 1.0, 2.0, 5.0 } });
 
 		final Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY } });
 
 		final Matrix b = new Matrix(new double[][] { { 1.0 }, { 2.0 }, { 3.0 }, { 4.0 } });
 
-		final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, R, a, b);
+		final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, r, a, b);
 		System.out.println("p = " + ret.p + "   e = " + new DecimalFormat("#.###############").format(ret.e));
 	}
 }

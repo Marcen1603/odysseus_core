@@ -54,7 +54,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			this.init();
 		}
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(10000);
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}

@@ -26,8 +26,10 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabil
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 
 /**
- * @author Christian Kuka <christian@kuka.cc>
  * 
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ * @param <T>
  */
 public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** The logger. */
