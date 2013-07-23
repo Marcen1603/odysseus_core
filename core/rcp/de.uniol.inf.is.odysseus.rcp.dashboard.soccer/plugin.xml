@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.SoccerOverviewDashboardPart"
+            description="Overview of a soccer game"
+            name="Soccer Overview">
+      </dashboardPart>
+   </extension>
+
+</plugin>
