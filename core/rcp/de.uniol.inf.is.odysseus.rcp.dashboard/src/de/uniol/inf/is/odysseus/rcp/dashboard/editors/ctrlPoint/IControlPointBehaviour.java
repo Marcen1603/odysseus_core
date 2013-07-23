@@ -4,7 +4,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Cursor;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ControlPoint;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 
 public interface IControlPointBehaviour extends MouseMoveListener, MouseListener {

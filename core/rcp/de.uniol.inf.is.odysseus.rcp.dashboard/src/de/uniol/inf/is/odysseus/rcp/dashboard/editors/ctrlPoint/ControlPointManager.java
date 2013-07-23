@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
+package de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -15,10 +15,8 @@ import org.eclipse.swt.widgets.Display;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.BottomLeftControlPoint;
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.BottomRightControlPoint;
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.TopLeftControlPoint;
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.TopRightControlPoint;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 
 public class ControlPointManager implements ISelectionChangedListener, MouseListener, MouseMoveListener {
 

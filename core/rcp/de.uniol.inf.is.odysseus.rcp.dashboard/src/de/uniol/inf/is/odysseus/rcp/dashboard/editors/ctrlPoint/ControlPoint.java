@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
+package de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -9,7 +9,9 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.IControlPointBehaviour;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.IDashboardListener;
 
 public final class ControlPoint implements MouseMoveListener, MouseListener, IDashboardListener {
 

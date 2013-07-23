@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint;
 
 import org.eclipse.swt.events.MouseEvent;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ControlPoint;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 
 public class BottomLeftControlPoint extends DraggingControlPointBehaviour {

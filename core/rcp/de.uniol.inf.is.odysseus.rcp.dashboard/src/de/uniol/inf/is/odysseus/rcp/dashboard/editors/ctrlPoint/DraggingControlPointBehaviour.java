@@ -5,7 +5,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Display;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ControlPoint;
 
 public abstract class DraggingControlPointBehaviour implements IControlPointBehaviour {
 	
