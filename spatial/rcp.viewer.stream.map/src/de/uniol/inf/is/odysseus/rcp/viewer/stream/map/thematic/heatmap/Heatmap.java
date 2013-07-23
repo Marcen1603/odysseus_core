@@ -433,7 +433,7 @@ public class Heatmap extends RasterLayer {
 				.getCoordinateTransform(config.getSrid(), screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
 		
-		 if (zoomEnv != null) {
+		 if (zoomEnv != null && zoomEnv.getMaxX() != -1 && zoomEnv.getMaxY() != -1) {
 		 geoEnv = zoomEnv;
 		 }
 		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),

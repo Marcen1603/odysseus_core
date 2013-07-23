@@ -7,7 +7,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Configuration for the tracemap with a bit more than a rasterLayerConfiguration
+ * Configuration for the tracemap with a bit more than a
+ * rasterLayerConfiguration
  * 
  * Makes it possible to add a linemap via the "New Layer"-dialog.
  * 
@@ -19,14 +20,15 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	private static final long serialVersionUID = -7982545440178333614L;
 
 	private String query;
-	private HashMap<Integer, RGB> colors; // Save RGB and not color, cause Color is not serializable
+	private HashMap<Integer, RGB> colors; // Save RGB and not color, cause Color
+											// is not serializable
 	private int numOfLineElements;
 	private boolean autoTransparency;
 	private boolean markEndpoint;
 	private int lineWidth;
 	private int geometricAttributePosition;
 	private int valueAttributePosition;
-	
+
 	public TracemapLayerConfiguration(String name) {
 		super(name);
 		super.setSrid(4326);
@@ -38,10 +40,11 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 		geometricAttributePosition = 0;
 		valueAttributePosition = 1;
 		markEndpoint = false;
+		super.setCoverageGeographic(-180, 180, -85, 85);
 	}
-	
+
 	public TracemapLayerConfiguration(TracemapLayerConfiguration toCopy) {
-		// TODO: Maybe better a full copy, but what is the envelope (coverageGeographic)
+		// (coverageGeographic)
 		super(toCopy.getName());
 		super.setSrid(toCopy.getSrid());
 		setQuery(toCopy.getQuery());
@@ -52,12 +55,15 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 		setGeometricAttributePosition(toCopy.getGeometricAttributePosition());
 		setValueAttributePosition(toCopy.getValueAttributePosition());
 		setMarkEndpoint(toCopy.isMarkEndpoint());
+		super.setCoverageGeographic(toCopy.getCoverage().getMinX(), toCopy
+				.getCoverage().getMaxX(), toCopy.getCoverage().getMinY(),
+				toCopy.getCoverage().getMaxY());
 	}
 
 	public void setQuery(String query) {
 		this.query = query;
 	}
-	
+
 	public String getQuery() {
 		return query;
 	}
@@ -65,7 +71,7 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	public HashMap<Integer, Color> getColors() {
 		// RGB to Color, cause we need Color, but Color it not serializable
 		HashMap<Integer, Color> returnColors = new HashMap<Integer, Color>();
-		for(Integer key : colors.keySet()) {
+		for (Integer key : colors.keySet()) {
 			RGB tempRGB = colors.get(key);
 			returnColors.put(key, new Color(Display.getDefault(), tempRGB));
 		}
@@ -74,39 +80,44 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 
 	/**
 	 * Set all colors for all lines
+	 * 
 	 * @param colors
 	 */
 	public void setColors(HashMap<Integer, Color> newColors) {
-		
+
 		HashMap<Integer, RGB> newColorMap = new HashMap<Integer, RGB>();
-		for(Integer key : newColors.keySet()) {
+		for (Integer key : newColors.keySet()) {
 			Color tempColor = newColors.get(key);
-			RGB tempRGB = new RGB(tempColor.getRed(), tempColor.getGreen(), tempColor.getBlue());
+			RGB tempRGB = new RGB(tempColor.getRed(), tempColor.getGreen(),
+					tempColor.getBlue());
 			newColorMap.put(key, tempRGB);
 		}
-		
+
 		this.colors = newColorMap;
 	}
-	
+
 	/**
 	 * Get the color for the line with the id "id"
+	 * 
 	 * @param id
 	 * @return
 	 */
 	public Color getColorForId(int id) {
 		RGB tempRGB = colors.get(id);
-		if(tempRGB != null)
+		if (tempRGB != null)
 			return new Color(Display.getDefault(), tempRGB);
 		return null;
 	}
-	
+
 	/**
 	 * Set the color for the line with the id "id"
+	 * 
 	 * @param id
 	 * @param color
 	 */
 	public void setColorForId(int id, Color color) {
-		colors.put(id, new RGB(color.getRed(), color.getGreen(), color.getBlue()));
+		colors.put(id,
+				new RGB(color.getRed(), color.getGreen(), color.getBlue()));
 	}
 
 	public int getNumOfLineElements() {
@@ -118,9 +129,10 @@ public class TracemapLayerConfiguration extends RasterLayerConfiguration {
 	}
 
 	/**
-	 * If autoTransparency is on, the number of elements to show will
-	 * be ignored and all line-elements will be visible, with
-	 * auto transparency (smooth transparency to the older elements)
+	 * If autoTransparency is on, the number of elements to show will be ignored
+	 * and all line-elements will be visible, with auto transparency (smooth
+	 * transparency to the older elements)
+	 * 
 	 * @return
 	 */
 	public boolean isAutoTransparency() {

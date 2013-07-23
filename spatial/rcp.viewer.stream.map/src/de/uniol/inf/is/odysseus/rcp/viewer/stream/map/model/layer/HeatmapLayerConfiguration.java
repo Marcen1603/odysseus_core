@@ -49,6 +49,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setLngNE(toCopy.getLngNE());
 		setLatSW(toCopy.getLatSW());
 		setLngSW(toCopy.getLngSW());
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}
 	
 	public HeatmapLayerConfiguration(RasterLayerConfiguration toCopy) {
@@ -71,6 +72,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setLngNE(14);
 		setLatSW(47);
 		setLngSW(7);
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}
 	
 	public HeatmapLayerConfiguration(String name) {
@@ -92,6 +94,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 		setLngNE(14);
 		setLatSW(47);
 		setLngSW(7);
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}	
 
 	public String getQuery() {
@@ -190,6 +193,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setLatSW(double latSW) {
 		this.latSW = latSW;
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}
 
 	/**
@@ -206,6 +210,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setLngSW(double lngSW) {
 		this.lngSW = lngSW;
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}
 
 	/**
@@ -222,6 +227,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setLatNE(double latNE) {
 		this.latNE = latNE;
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}
 
 	/**
@@ -238,6 +244,7 @@ public class HeatmapLayerConfiguration extends RasterLayerConfiguration {
 	 */
 	public void setLngNE(double lngNE) {
 		this.lngNE = lngNE;
+		super.setCoverageGeographic(getLngSW(), getLngNE(), getLatSW(), getLatNE());
 	}
 
 	public int getValueAttributePosition() {
