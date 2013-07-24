@@ -50,6 +50,12 @@
                label="Add Dashboard Part(s)"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ShowDashboardPartAsView"
+               icon="icons/gear_shrink.png"
+               label="Show Dashboard Part as View"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -58,6 +64,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.AddDashboardPartCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart"
             name="Add Dashboard Part">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ShowAsViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ShowDashboardPartAsView"
+            name="Show DashboardPart as View">
       </command>
    </extension>
    <extension
@@ -84,6 +95,17 @@
             wizardId="de.uniol.inf.is.odysseus.rcp.dashboard.NewDashboardWizard">
          <enablement></enablement>
       </commonWizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.views.DashboardPartView"
+            icon="icons/gear_shrink.png"
+            id="de.uniol.inf.is.odysseus.rcp.views.DashboardPartView"
+            name="Dashboard Part View"
+            restorable="true">
+      </view>
    </extension>
 
 </plugin>
