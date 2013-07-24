@@ -16,11 +16,13 @@
 
 package de.uniol.inf.is.odysseus.pubsub.broker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
+import de.uniol.inf.is.odysseus.pubsub.broker.filter.WeightedPredicate;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 /**
@@ -29,11 +31,13 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
  * @author ChrisToenjesDeye
  * 
  */
-public class BrokerSubscription<T extends IStreamObject<?>> {
+public class BrokerSubscription<T extends IStreamObject<?>> implements Comparable<BrokerSubscription<T>>{
 
 	private SubscribePO<T> subscriber;
 	private List<Topic> topics;
 	private List<IPredicate<? super T>> predicates;
+	
+	private List<WeightedPredicate<T>> weightedPredicates = new ArrayList<WeightedPredicate<T>>();
 
 	public BrokerSubscription(SubscribePO<T> subscriber,
 			List<IPredicate<? super T>> predicates, List<Topic> topics) {
@@ -84,6 +88,44 @@ public class BrokerSubscription<T extends IStreamObject<?>> {
 
 	public void setPredicates(List<IPredicate<? super T>> predicates) {
 		this.predicates = predicates;
+	}
+
+	public List<WeightedPredicate<T>> getWeightedPredicates() {
+		return weightedPredicates;
+	}
+
+	public void setWeightedPredicates(List<WeightedPredicate<T>> weightedPredicates) {
+		this.weightedPredicates = weightedPredicates;
+	}
+	
+	public int getNumberOfPredicates(){
+		return weightedPredicates.size();
+	}
+	
+	public Integer getHighestPredicateWeight(){
+		Integer highestWeight = 0;
+		for (WeightedPredicate<T> weightedPredicate : weightedPredicates) {
+			if (weightedPredicate.getWeight() > highestWeight){
+				highestWeight = weightedPredicate.getWeight();
+			}
+		}
+		return highestWeight;
+	}
+
+	@Override
+	public int compareTo(BrokerSubscription<T> other) {
+		if (weightedPredicates.isEmpty()){
+			return -1;			
+		} else {
+			// get highest predicate weight of this subscription
+			Integer highestWeight = this.getHighestPredicateWeight();
+			
+			// get highest predicate weight of other subscription
+			Integer highestWeightOther = other.getHighestPredicateWeight();
+			
+			return highestWeight.compareTo(highestWeightOther);
+		}
+		
 	}
 
 }

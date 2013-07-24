@@ -207,6 +207,7 @@ public class BrokerTopologyRegistry {
 			if (!topology.hasAgents()){
 				// Remove Topology with given name
 				brokerTopologies.remove(domain.toLowerCase());
+				logger.info("Domain: '"+ domain +"' has no agents and will be removed.");
 				if (pendingSubscribers.containsKey(domain)){
 					pendingSubscribers.remove(domain);
 				}
