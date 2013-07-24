@@ -216,6 +216,7 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 
 	private void renderTimeProgress(GC gc) {
 		gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+		gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 		gc.setFont(timeFont);
 		long millis = (Long.parseLong(currentTuples.get(SENSOR_ID_TO_RECOGNIZE_TIME_PROGRESS).getAttribute(tsIndex).toString()) - 10748401988186756L) / 1000000000;
 		String time = String.format("%d min %d sec %d ms", TimeUnit.MILLISECONDS.toMinutes(millis),
