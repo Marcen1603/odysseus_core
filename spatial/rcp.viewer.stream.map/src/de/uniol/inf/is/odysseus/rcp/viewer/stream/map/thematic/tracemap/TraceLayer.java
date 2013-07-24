@@ -86,9 +86,15 @@ public class TraceLayer extends RasterLayer {
 		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE,
 				Integer.MIN_VALUE)); // Bottom right
 
-		// Envelope world = screenManager.getViewportWorldCoord();
-		List<?> data = layerUpdater.query(searchEnv,
-				config.getGeometricAttributePosition());
+		List<?> data = new ArrayList<Object>();
+		try {
+			data = layerUpdater.query(searchEnv,
+					config.getGeometricAttributePosition());
+		} catch (ClassCastException e) {
+			// Do nothing. The setting, which past of the query was the
+			// geometric attribute was wrong
+		}
+
 		GeometryFactory factory = new GeometryFactory();
 
 		// List with all lists (for every id one list) of the coordinates
@@ -110,23 +116,28 @@ public class TraceLayer extends RasterLayer {
 			TraceElement lineElement = new TraceElement(point.getCoordinate(),
 					startTime);
 
-			int id = (int) tuple.getAttribute(config
-					.getValueAttributePosition());
+			try {
+				int id = (int) tuple.getAttribute(config
+						.getValueAttributePosition());
 
-			// If this is the first coordinate for this key,
-			// create a new ArrayList
-			if (lineList.get(id) == null) {
-				lineList.put(new Integer(id), new ArrayList<TraceElement>());
+				// If this is the first coordinate for this key,
+				// create a new ArrayList
+				if (lineList.get(id) == null) {
+					lineList.put(new Integer(id), new ArrayList<TraceElement>());
+				}
+
+				// Add a new color for this line
+				// (Random)
+				if (config.getColorForId(id) == null) {
+					config.setColorForId(id, getColorForNumber(id));
+				}
+
+				// Put the coordinate into the right ArrayList
+				lineList.get(id).add(lineElement);
+			} catch (ClassCastException e) {
+				// User set wrong attribute - just don't draw anything
 			}
 
-			// Add a new color for this line
-			// (Random)
-			if (config.getColorForId(id) == null) {
-				config.setColorForId(id, getColorForNumber(id));
-			}
-
-			// Put the coordinate into the right ArrayList
-			lineList.get(id).add(lineElement);
 		}
 
 		// The lists should be full, now we need to sort them, so
@@ -393,7 +404,8 @@ public class TraceLayer extends RasterLayer {
 						screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
 
-		if (zoomEnv != null && zoomEnv.getMaxX() != -1 && zoomEnv.getMaxY() != -1) {
+		if (zoomEnv != null && zoomEnv.getMaxX() != -1
+				&& zoomEnv.getMaxY() != -1) {
 			geoEnv = zoomEnv;
 		}
 		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),

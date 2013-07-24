@@ -239,7 +239,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Position of value-Attribute
 		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
-		valueAttrLabel.setText("Position Value-Attribute: ");
+		valueAttrLabel.setText("Value-Attribute: ");
 
 		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
 		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
@@ -257,7 +257,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Mark end of line
 		Label markEndIfLineLabel = new Label(settingsContainer, SWT.NONE);
-		markEndIfLineLabel.setText("Mark end of line: ");
+		markEndIfLineLabel.setText("Mark end of traces: ");
 
 		Button markEndIfLineButton = new Button(settingsContainer, SWT.CHECK);
 		markEndIfLineButton.setEnabled(true);
@@ -277,7 +277,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Width of lines
 		Label lineWidthLabel = new Label(settingsContainer, SWT.NONE);
-		lineWidthLabel.setText("Width of lines: ");
+		lineWidthLabel.setText("Width of traces: ");
 
 		Spinner lineWidthInput = new Spinner(settingsContainer, SWT.NONE);
 		lineWidthInput.setValues(newConfig.getLineWidth(), 0, 255, 0, 1, 1);
@@ -297,6 +297,28 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Button autoTransparencyButton = new Button(settingsContainer, SWT.CHECK);
 		autoTransparencyButton.setEnabled(true);
 		autoTransparencyButton.setSelection(newConfig.isAutoTransparency());
+		
+
+		// Number of elements to show
+		Label numElements = new Label(settingsContainer, SWT.NONE);
+		numElements
+				.setText("Number of elements to show (if no auto-transparency): ");
+
+		final Spinner numElementsInput = new Spinner(settingsContainer, SWT.NONE);
+		numElementsInput.setValues(newConfig.getNumOfLineElements(), 1,
+				Integer.MAX_VALUE, 0, 1, 1);
+		numElementsInput.setEnabled(!autoTransparencyButton.getSelection());
+		numElementsInput.addSelectionListener(new SpinnerListener(newConfig,
+				numElementsInput, this) {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
+				tracemapLayerConfig.setNumOfLineElements(spinner.getSelection());
+				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfig);
+			}
+		});
+		
+		// Listener for automatic transparency
 		autoTransparencyButton.addSelectionListener(new ButtonListener(
 				newConfig, this, autoTransparencyButton) {
 
@@ -305,26 +327,9 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				TracemapLayerConfiguration tracemapLayerConfiguration = (TracemapLayerConfiguration) layerConfiguration;
 				tracemapLayerConfiguration
 						.setAutoTransparency(correspondingButton.getSelection());
+				numElementsInput.setEnabled(!correspondingButton.getSelection());
 				mapPropertiesDialog
 						.setLayerConfiguration(tracemapLayerConfiguration);
-			}
-		});
-
-		// Number of elements to show
-		Label numElements = new Label(settingsContainer, SWT.NONE);
-		numElements
-				.setText("Number of elements to show (if no auto-transparency): ");
-
-		Spinner numElementsInput = new Spinner(settingsContainer, SWT.NONE);
-		numElementsInput.setValues(newConfig.getNumOfLineElements(), 1,
-				Integer.MAX_VALUE, 0, 1, 1);
-		numElementsInput.addSelectionListener(new SpinnerListener(newConfig,
-				numElementsInput, this) {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TracemapLayerConfiguration tracemapLayerConfig = (TracemapLayerConfiguration) layerConfig;
-				tracemapLayerConfig.setNumOfLineElements(spinner.getSelection());
-				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfig);
 			}
 		});
 
@@ -469,7 +474,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Position of value-Attribute
 		Label valueAttrLabel = new Label(settingsContainer, SWT.NONE);
-		valueAttrLabel.setText("Position Value-Attribute: ");
+		valueAttrLabel.setText("Value-Attribute: ");
 
 		CCombo valueAttrInput = new CCombo(settingsContainer, SWT.NONE);
 		valueAttrInput.setLayoutData(DialogUtils.getTextDataLayout());
@@ -670,27 +675,17 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Button autoPositionButton = new Button(settingsContainer, SWT.CHECK);
 		autoPositionButton.setEnabled(true);
 		autoPositionButton.setSelection(newConfig.isAutoPosition());
-		autoPositionButton.addSelectionListener(new ButtonListener(newConfig,
-				this, autoPositionButton) {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
-				heatmapLayerConfiguration.setAutoPosition(correspondingButton
-						.getSelection());
-				mapPropertiesDialog
-						.setLayerConfiguration(heatmapLayerConfiguration);
-			}
-		});
+		
 
 		// SouthWest
 		// Latitude
 		Label manPosSWLatLabel = new Label(settingsContainer, SWT.NONE);
 		manPosSWLatLabel.setText("Southwest Latitude: ");
 
-		Spinner manPosSWLatInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner manPosSWLatInput = new Spinner(settingsContainer, SWT.NONE);
 		manPosSWLatInput.setValues((int) newConfig.getLatSW() * 1000, -90000,
 				90000, 3, 1000, 1000);
+		manPosSWLatInput.setEnabled(!autoPositionButton.getSelection());
 		manPosSWLatInput.addSelectionListener(new SpinnerListener(newConfig,
 				manPosSWLatInput, this) {
 			@Override
@@ -707,9 +702,10 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Label manPosSWLngLabel = new Label(settingsContainer, SWT.NONE);
 		manPosSWLngLabel.setText("Southwest Longitude: ");
 
-		Spinner manPosSWLngInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner manPosSWLngInput = new Spinner(settingsContainer, SWT.NONE);
 		manPosSWLngInput.setValues((int) newConfig.getLngSW() * 1000, -180000,
 				180000, 3, 1000, 1000);
+		manPosSWLngInput.setEnabled(!autoPositionButton.getSelection());
 		manPosSWLngInput.addSelectionListener(new SpinnerListener(newConfig,
 				manPosSWLngInput, this) {
 			@Override
@@ -726,10 +722,11 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		// Latitude
 		Label manPosNELatLabel = new Label(settingsContainer, SWT.NONE);
 		manPosNELatLabel.setText("Northeast Latitude: ");
-
-		Spinner manPosNELatInput = new Spinner(settingsContainer, SWT.NONE);
+		
+		final Spinner manPosNELatInput = new Spinner(settingsContainer, SWT.NONE);
 		manPosNELatInput.setValues((int) newConfig.getLatNE() * 1000, -90000,
 				90000, 3, 1000, 1000);
+		manPosNELatInput.setEnabled(!autoPositionButton.getSelection());
 		manPosNELatInput.addSelectionListener(new SpinnerListener(newConfig,
 				manPosNELatInput, this) {
 			@Override
@@ -746,9 +743,10 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Label manPosNELngLabel = new Label(settingsContainer, SWT.NONE);
 		manPosNELngLabel.setText("Northeast Longitude: ");
 
-		Spinner manPosNELngInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner manPosNELngInput = new Spinner(settingsContainer, SWT.NONE);
 		manPosNELngInput.setValues((int) newConfig.getLngNE() * 1000, -180000,
 				180000, 3, 1000, 1000);
+		manPosNELngInput.setEnabled(!autoPositionButton.getSelection());
 		manPosNELngInput.addSelectionListener(new SpinnerListener(newConfig,
 				manPosNELngInput, this) {
 			@Override
@@ -758,6 +756,23 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				HeatmapLayerConfiguration heatmapLayerConfig = (HeatmapLayerConfiguration) layerConfig;
 				heatmapLayerConfig.setLngNE(value);
 				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
+			}
+		});
+		
+		autoPositionButton.addSelectionListener(new ButtonListener(newConfig,
+				this, autoPositionButton) {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				HeatmapLayerConfiguration heatmapLayerConfiguration = (HeatmapLayerConfiguration) layerConfiguration;
+				heatmapLayerConfiguration.setAutoPosition(correspondingButton
+						.getSelection());
+				manPosNELatInput.setEnabled(!correspondingButton.getSelection());
+				manPosNELngInput.setEnabled(!correspondingButton.getSelection());
+				manPosSWLatInput.setEnabled(!correspondingButton.getSelection());
+				manPosSWLngInput.setEnabled(!correspondingButton.getSelection());
+				mapPropertiesDialog
+						.setLayerConfiguration(heatmapLayerConfiguration);
 			}
 		});
 

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -79,7 +80,7 @@ public class Heatmap extends RasterLayer {
 		gc.setAlpha(config.getAlpha());
 		if (!interpolation)
 			gc.setInterpolation(SWT.NONE);
-		
+
 		gc.drawImage(img, 0, 0, img.getBounds().width, img.getBounds().height,
 				(int) heatMapArea.getMinX(), (int) heatMapArea.getMinY(),
 				(int) heatMapArea.getWidth(), (int) heatMapArea.getHeight());
@@ -101,7 +102,7 @@ public class Heatmap extends RasterLayer {
 	private Image createImage(int numberX, int numberY, Color minColor,
 			Color maxColor) {
 		Image image = new Image(Display.getDefault(), numberX, numberY);
-		
+
 		GC gc = new GC(image);
 		createColorArray(numberX, numberY, minColor, maxColor);
 
@@ -112,9 +113,9 @@ public class Heatmap extends RasterLayer {
 				gc.setAlpha(255);
 			}
 		}
-		
+
 		ImageData imageData = image.getImageData();
-		if(config.isHideWithoutInformation()) {
+		if (config.isHideWithoutInformation()) {
 			for (int i = 0; i < hasInformation.length; i++) {
 				for (int j = 0; j < hasInformation[i].length; j++) {
 					if (hasInformation[i][j]) {
@@ -125,9 +126,8 @@ public class Heatmap extends RasterLayer {
 				}
 			}
 		}
-		
-		
-		Image imageWithAlpha = new Image(Display.getDefault(),imageData);
+
+		Image imageWithAlpha = new Image(Display.getDefault(), imageData);
 		return imageWithAlpha;
 	}
 
@@ -168,8 +168,16 @@ public class Heatmap extends RasterLayer {
 				Integer.MAX_VALUE)); // Top left
 		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE,
 				Integer.MIN_VALUE)); // Bottom right
-		List<?> data = layerUpdater.query(searchEnv,
-				config.getGeometricAttributePosition());
+		
+		List<?> data = new ArrayList<Object>();
+		try {
+			data = layerUpdater.query(searchEnv,
+					config.getGeometricAttributePosition());
+		} catch (ClassCastException e) {
+			// Do nothing. The setting, which past of the query was the
+			// geometric attribute was wrong
+		}
+		
 		int[][] valueSum = new int[x][y];
 		int maxSum = 0;
 		int minSum = 0;
@@ -234,13 +242,11 @@ public class Heatmap extends RasterLayer {
 			Point point = geoColl.getCentroid();
 
 			double value = 0;
-			try {
+			if(tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
 				value = (int) tuple.getAttribute(config
 						.getValueAttributePosition());
-			} catch (ClassCastException e) {
-				// Ok, not an int, then it's a double
-				value = (double) tuple.getAttribute(config
-						.getValueAttributePosition());
+			} else if(tuple.getAttribute(config.getValueAttributePosition()) instanceof Double) {
+				value = (double) tuple.getAttribute(config.getValueAttributePosition());
 			}
 
 			// Calculate, where this belongs in the heatmap
@@ -430,12 +436,14 @@ public class Heatmap extends RasterLayer {
 	@Override
 	public Envelope getEnvelope() {
 		CoordinateTransform ct = screenManager.getTransformation()
-				.getCoordinateTransform(config.getSrid(), screenManager.getSRID());
+				.getCoordinateTransform(config.getSrid(),
+						screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
-		
-		 if (zoomEnv != null && zoomEnv.getMaxX() != -1 && zoomEnv.getMaxY() != -1) {
-		 geoEnv = zoomEnv;
-		 }
+
+		if (zoomEnv != null && zoomEnv.getMaxX() != -1
+				&& zoomEnv.getMaxY() != -1) {
+			geoEnv = zoomEnv;
+		}
 		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),
 				geoEnv.getMaxY());
 		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(),
@@ -444,7 +452,8 @@ public class Heatmap extends RasterLayer {
 		ProjCoordinate destMin = new ProjCoordinate();
 		ct.transform(srcMax, destMax);
 		ct.transform(srcMin, destMin);
-		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
+		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y,
+				destMax.y);
 
 		return coverage;
 	}
