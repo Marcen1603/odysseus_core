@@ -233,7 +233,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 						// parts[1] is replacement name
 						// parts[2] is replacement value (optional!)
 						if (parts.length >= 3) {
-							replacements.put(parts[1].trim(), parts[2].trim());
+							replacements.put(parts[1].trim().toUpperCase(), parts[2].trim());
 						}
 						continue;
 					}
@@ -249,7 +249,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					// If we find an UNDEFINE, we remove the replacement
 					if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
 						String[] parts = line.trim().split(" |\t", 3);
-						replacements.remove(parts[1]);
+						replacements.remove(parts[1].toUpperCase());
 					}
 				}
 				// dropping procedures was already done
@@ -543,7 +543,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				// parts[1] is replacement name
 				// parts[2] is replacement value (optional!)
 				if (parts.length >= 3) {
-					repl.put(parts[1].trim(), parts[2].trim());
+					repl.put(parts[1].trim().toUpperCase(), parts[2].trim());
 				}
 			}
 			final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
@@ -584,7 +584,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 			if (posEnd != -1 && posStart < posEnd) {
 				String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
-				keys.add(key);
+				keys.add(key.toUpperCase());
 			}
 			int searchAt = posStart + REPLACEMENT_START_KEY.length();
 			posStart = line.indexOf(REPLACEMENT_START_KEY, searchAt);
