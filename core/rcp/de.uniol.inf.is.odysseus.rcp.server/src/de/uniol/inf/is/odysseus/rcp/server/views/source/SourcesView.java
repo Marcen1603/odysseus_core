@@ -15,12 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.rcp.server.views.source;
 
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -40,13 +44,20 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
 
+	private Composite parent;
 	private TreeViewer viewer;
+	private StackLayout stackLayout;
+	private Label label;
+	
 	volatile boolean isRefreshing;
 	private boolean refreshEnabled = true;
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new FillLayout());
+		this.parent = parent;
+		
+		stackLayout = new StackLayout();
+		parent.setLayout(stackLayout);
 
 		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
 		getTreeViewer().setContentProvider(new OperatorViewContentProvider());
@@ -64,6 +75,12 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
+		
+		label = new Label(parent, SWT.NONE);
+		label.setText("No sources available");
+		
+		stackLayout.topControl = label;
+		parent.layout();
 	}
 
 	@Override
@@ -109,7 +126,15 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 					try {
 						isRefreshing = false;
 						if( !getTreeViewer().getTree().isDisposed() ) {
-							getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+							Set<Entry<String, ILogicalOperator>> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+							getTreeViewer().setInput(streamsAndViews);
+							
+							if( !streamsAndViews.isEmpty() ) {
+								stackLayout.topControl = getTreeViewer().getTree();
+							} else {
+								stackLayout.topControl = label;
+							}
+							parent.layout();
 						}
 					} catch (Exception e) {
 						LOG.error("Exception during setting input for treeViewer in sourcesView", e);

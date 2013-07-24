@@ -30,11 +30,15 @@
 
 package de.uniol.inf.is.odysseus.rcp.server.views.sink;
 
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -59,6 +63,10 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 
 	private static final Logger LOG = LoggerFactory.getLogger(SinkView.class);
 	private TreeViewer viewer;
+	private StackLayout stackLayout;
+	private Composite parent;
+	private Label label;
+
 	volatile boolean isRefreshing = false;
 
 	@Override
@@ -84,8 +92,16 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 			@Override
 			public void run() {
 				try {
-					if( !getTreeViewer().getTree().isDisposed() ) {
-						getTreeViewer().setInput(OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession()));
+					if (!getTreeViewer().getTree().isDisposed()) {
+						Set<Entry<String, ILogicalOperator>> sinks = OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession());
+						getTreeViewer().setInput(sinks);
+						
+						if( !sinks.isEmpty() ) {
+							stackLayout.topControl = getTreeViewer().getTree();
+						} else {
+							stackLayout.topControl = label;
+						}
+						parent.layout();
 					}
 				} catch (Exception e) {
 					LOG.error("Exception during setting input for treeViewer in sinkView", e);
@@ -128,7 +144,10 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new FillLayout());
+		this.parent = parent;
+		
+		stackLayout = new StackLayout();
+		parent.setLayout(stackLayout);
 
 		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
 		getTreeViewer().setContentProvider(new OperatorViewContentProvider());
@@ -147,6 +166,12 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		// Set the MenuManager
 		getTreeViewer().getControl().setMenu(contextMenu);
 		getSite().registerContextMenu(menuManager, getTreeViewer());
+
+		label = new Label(parent, SWT.NONE);
+		label.setText("No sinks available");
+
+		stackLayout.topControl = label;
+		parent.layout();
 
 	}
 
