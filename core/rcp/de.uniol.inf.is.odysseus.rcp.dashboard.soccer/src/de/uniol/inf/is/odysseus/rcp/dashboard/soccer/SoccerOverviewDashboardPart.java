@@ -111,9 +111,11 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	public void dispose() {
 		canvasUpdater.stopRunning();
 		
-		soccerCanvas.removePaintListener(this);
-		soccerCanvas.dispose();
-
+		if( !soccerCanvas.isDisposed() ) {
+			soccerCanvas.removePaintListener(this);
+			soccerCanvas.dispose();
+		}
+		
 		disposeResources();
 	}
 
