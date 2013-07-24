@@ -41,6 +41,7 @@ public class Heatmap extends RasterLayer {
 	private LayerUpdater layerUpdater;
 	Color[][] colors;
 	boolean[][] hasInformation;
+	double[][] valueSum; // in which tile is which value
 
 	public Heatmap(HeatmapLayerConfiguration configuration) {
 		super(configuration);
@@ -48,6 +49,7 @@ public class Heatmap extends RasterLayer {
 		minValue = 0;
 		maxValue = 0;
 		zoomEnv = new Envelope();
+		valueSum = new double[0][0];
 	}
 
 	@Override
@@ -168,7 +170,7 @@ public class Heatmap extends RasterLayer {
 				Integer.MAX_VALUE)); // Top left
 		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE,
 				Integer.MIN_VALUE)); // Bottom right
-		
+
 		List<?> data = new ArrayList<Object>();
 		try {
 			data = layerUpdater.query(searchEnv,
@@ -177,10 +179,10 @@ public class Heatmap extends RasterLayer {
 			// Do nothing. The setting, which past of the query was the
 			// geometric attribute was wrong
 		}
-		
-		int[][] valueSum = new int[x][y];
-		int maxSum = 0;
-		int minSum = 0;
+
+		valueSum = new double[x][y];
+		double maxSum = 0;
+		double minSum = 0;
 
 		// Create heatMapArea with the given tuples
 		// (We could let this out and give an area by the user, but
@@ -232,7 +234,7 @@ public class Heatmap extends RasterLayer {
 		}
 
 		totalNumberOfElement = data.size();
-		int tempTotalValue = 0;
+		double tempTotalValue = 0;
 		for (Object dataSet : data) {
 
 			// Get the data from the Tuple (Where it is and value)
@@ -242,11 +244,12 @@ public class Heatmap extends RasterLayer {
 			Point point = geoColl.getCentroid();
 
 			double value = 0;
-			if(tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
+			if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Integer) {
 				value = (int) tuple.getAttribute(config
 						.getValueAttributePosition());
-			} else if(tuple.getAttribute(config.getValueAttributePosition()) instanceof Double) {
-				value = (double) tuple.getAttribute(config.getValueAttributePosition());
+			} else if (tuple.getAttribute(config.getValueAttributePosition()) instanceof Double) {
+				value = (double) tuple.getAttribute(config
+						.getValueAttributePosition());
 			}
 
 			// Calculate, where this belongs in the heatmap
@@ -426,8 +429,22 @@ public class Heatmap extends RasterLayer {
 		return totalValue / getNumberOfTiles();
 	}
 
+	/**
+	 * Returns the total number of tiles
+	 * 
+	 * @return
+	 */
 	public double getNumberOfTiles() {
 		return config.getNumTilesHeight() * config.getNumTilesWidth();
+	}
+
+	/**
+	 * Returns an array with all sums for the tiles
+	 * 
+	 * @return
+	 */
+	public double[][] getVauesForTiles() {
+		return this.valueSum;
 	}
 
 	/**

@@ -35,6 +35,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.slf4j.Logger;
@@ -297,14 +300,14 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Button autoTransparencyButton = new Button(settingsContainer, SWT.CHECK);
 		autoTransparencyButton.setEnabled(true);
 		autoTransparencyButton.setSelection(newConfig.isAutoTransparency());
-		
 
 		// Number of elements to show
 		Label numElements = new Label(settingsContainer, SWT.NONE);
 		numElements
 				.setText("Number of elements to show (if no auto-transparency): ");
 
-		final Spinner numElementsInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner numElementsInput = new Spinner(settingsContainer,
+				SWT.NONE);
 		numElementsInput.setValues(newConfig.getNumOfLineElements(), 1,
 				Integer.MAX_VALUE, 0, 1, 1);
 		numElementsInput.setEnabled(!autoTransparencyButton.getSelection());
@@ -317,7 +320,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				mapPropertiesDialog.setLayerConfiguration(tracemapLayerConfig);
 			}
 		});
-		
+
 		// Listener for automatic transparency
 		autoTransparencyButton.addSelectionListener(new ButtonListener(
 				newConfig, this, autoTransparencyButton) {
@@ -437,7 +440,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// New container for scrolling
 		ScrolledComposite scrollContainer = new ScrolledComposite(container,
-				SWT.V_SCROLL | SWT.BORDER);
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		scrollContainer.setLayout(new GridLayout(1, false));
 		scrollContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true, 1, 1));
@@ -450,7 +453,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Show the settings for the heatmap
 		Group settingsContainer = new Group(heatmapContainer, SWT.NONE);
-		settingsContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+		settingsContainer.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true,
 				true, 1, 1));
 		settingsContainer.setText("Heatmap settings");
 		settingsContainer.setLayout(new GridLayout(2, false));
@@ -675,14 +678,14 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Button autoPositionButton = new Button(settingsContainer, SWT.CHECK);
 		autoPositionButton.setEnabled(true);
 		autoPositionButton.setSelection(newConfig.isAutoPosition());
-		
 
 		// SouthWest
 		// Latitude
 		Label manPosSWLatLabel = new Label(settingsContainer, SWT.NONE);
 		manPosSWLatLabel.setText("Southwest Latitude: ");
 
-		final Spinner manPosSWLatInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner manPosSWLatInput = new Spinner(settingsContainer,
+				SWT.NONE);
 		manPosSWLatInput.setValues((int) newConfig.getLatSW() * 1000, -90000,
 				90000, 3, 1000, 1000);
 		manPosSWLatInput.setEnabled(!autoPositionButton.getSelection());
@@ -702,7 +705,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Label manPosSWLngLabel = new Label(settingsContainer, SWT.NONE);
 		manPosSWLngLabel.setText("Southwest Longitude: ");
 
-		final Spinner manPosSWLngInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner manPosSWLngInput = new Spinner(settingsContainer,
+				SWT.NONE);
 		manPosSWLngInput.setValues((int) newConfig.getLngSW() * 1000, -180000,
 				180000, 3, 1000, 1000);
 		manPosSWLngInput.setEnabled(!autoPositionButton.getSelection());
@@ -722,8 +726,9 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		// Latitude
 		Label manPosNELatLabel = new Label(settingsContainer, SWT.NONE);
 		manPosNELatLabel.setText("Northeast Latitude: ");
-		
-		final Spinner manPosNELatInput = new Spinner(settingsContainer, SWT.NONE);
+
+		final Spinner manPosNELatInput = new Spinner(settingsContainer,
+				SWT.NONE);
 		manPosNELatInput.setValues((int) newConfig.getLatNE() * 1000, -90000,
 				90000, 3, 1000, 1000);
 		manPosNELatInput.setEnabled(!autoPositionButton.getSelection());
@@ -743,7 +748,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		Label manPosNELngLabel = new Label(settingsContainer, SWT.NONE);
 		manPosNELngLabel.setText("Northeast Longitude: ");
 
-		final Spinner manPosNELngInput = new Spinner(settingsContainer, SWT.NONE);
+		final Spinner manPosNELngInput = new Spinner(settingsContainer,
+				SWT.NONE);
 		manPosNELngInput.setValues((int) newConfig.getLngNE() * 1000, -180000,
 				180000, 3, 1000, 1000);
 		manPosNELngInput.setEnabled(!autoPositionButton.getSelection());
@@ -758,7 +764,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 				mapPropertiesDialog.setLayerConfiguration(heatmapLayerConfig);
 			}
 		});
-		
+
 		autoPositionButton.addSelectionListener(new ButtonListener(newConfig,
 				this, autoPositionButton) {
 
@@ -818,6 +824,16 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 		avgTileValueLabel.setText("Average sum of a tile: "
 				+ String.valueOf(heatmap.getAverageValueOfTile()));
 
+		// Sums of all tiles
+		final Label sumTilesValuesLabel = new Label(statisticsContainer,
+				SWT.NONE);
+		sumTilesValuesLabel.setText("Values of single tiles:");
+
+		final Table valueTable = new Table(statisticsContainer, SWT.BORDER);
+		updateTableValues(valueTable, heatmap);
+
+		valueTable.setHeaderVisible(true);
+
 		// Update-Button
 		Button updateButton = new Button(statisticsContainer, SWT.PUSH);
 		updateButton.setText("Update statistics");
@@ -846,6 +862,8 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 				avgTileValueLabel.setText("Average sum of a tile: "
 						+ String.valueOf(heatmap.getAverageValueOfTile()));
+
+				updateTableValues(valueTable, heatmap);
 			}
 		});
 
@@ -869,6 +887,44 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 			if (!child.getClass().equals(Tree.class))
 				child.dispose();
 		}
+	}
+
+	/**
+	 * Updates the value-sum-table: Fills it with new values
+	 * 
+	 * @param t
+	 * @param values
+	 */
+	private void updateTableValues(Table t, Heatmap heatmap) {
+
+		// Remove old content, user should not see what we're doing
+		t.setRedraw(false);
+
+		t.removeAll();
+
+		// Remove the old columns
+		while (t.getColumnCount() > 0) {
+			t.getColumns()[0].dispose();
+		}
+
+		double[][] values = heatmap.getVauesForTiles();
+
+		// Build the columns
+		for (int i = 0; i < values.length; i++) {
+			TableColumn tc = new TableColumn(t, SWT.CENTER);
+			tc.setText(Integer.toString(i));
+			tc.setWidth(40);
+		}
+
+		for (int i = 0; i < values[0].length; i++) {
+			String[] columnContents = new String[values.length];
+			for (int j = 0; j < values.length; j++) {
+				columnContents[j] = Double.toString(values[j][i]);
+			}
+			TableItem item = new TableItem(t, SWT.NONE);
+			item.setText(columnContents);
+		}
+		t.setRedraw(true);
 	}
 
 	@SuppressWarnings("resource")
@@ -983,13 +1039,15 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 	/**
 	 * Selects the right element in the tree
 	 * 
-	 * @param selectedLayer Layer for which the config should be openend
+	 * @param selectedLayer
+	 *            Layer for which the config should be openend
 	 */
 	public void selectLayer(ILayer selectedLayer) {
 		Object[] path = new Object[2];
 		path[0] = treeViewer.getTree().getItems()[0];
 		path[1] = selectedLayer;
-		org.eclipse.jface.viewers.TreePath newPath = new org.eclipse.jface.viewers.TreePath(path);
+		org.eclipse.jface.viewers.TreePath newPath = new org.eclipse.jface.viewers.TreePath(
+				path);
 		TreeSelection newSelection = new TreeSelection(newPath);
 		treeViewer.setSelection(newSelection);
 	}

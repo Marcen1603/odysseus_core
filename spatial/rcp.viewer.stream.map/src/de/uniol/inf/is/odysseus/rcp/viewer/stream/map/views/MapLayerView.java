@@ -148,7 +148,8 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 					if (dialog.getReturnCode() == MessageDialog.OK) {
 						editor.addLayer(dialog.getLayerConfiguration());
 					} else {
-						MessageDialog.openInformation(shell, "Information", "No layer added to the map.");
+						// I guess user knows that this happend if he clicked "cancel"
+//						MessageDialog.openInformation(shell, "Information", "No layer added to the map.");
 					}
 
 				}
