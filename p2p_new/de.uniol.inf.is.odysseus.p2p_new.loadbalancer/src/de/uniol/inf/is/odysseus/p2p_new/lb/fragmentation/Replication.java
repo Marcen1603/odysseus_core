@@ -17,7 +17,7 @@ public class Replication implements IDataFragmentation {
 	/**
 	 * @see #getName()
 	 */
-	public static final String NAME = "Replication";
+	public static final String NAME = "replication";
 	
 	@Override
 	public String getName() {

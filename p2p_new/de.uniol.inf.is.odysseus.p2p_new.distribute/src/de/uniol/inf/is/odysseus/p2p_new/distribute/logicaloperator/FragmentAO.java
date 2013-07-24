@@ -7,16 +7,17 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
- * A {@link RRFragmentAO} can be used to fragment incoming streams by round-robin. <br />
- * The {@link RRFragmentAO} does not have one parameter for the number of fragments and it must have exact one input.
+ * A {@link FragmentAO} can be used to fragment incoming streams. <br />
+ * The {@link FragmentAO} has only one parameter for the number of fragments and it must have exact one input.
  * It can be used in PQL: <br />
- * <code>output = RR_FRAGMENT(input)</code> 
+ * <code>output = FRAGMENT([FRAGMENTS=n], input)</code>
  * @author Michael Brand
  */
-@LogicalOperator(name = "RR_FRAGMENT", minInputPorts = 1, maxInputPorts = 1)
-public class RRFragmentAO extends UnaryLogicalOp {
+@LogicalOperator(name = "FRAGMENT", minInputPorts = 1, maxInputPorts = 1)
+public class FragmentAO extends UnaryLogicalOp {
 	
 	/**
 	 * The number of fragments.
@@ -24,32 +25,41 @@ public class RRFragmentAO extends UnaryLogicalOp {
 	private long numFragments;
 	
 	/**
-	 * Constructs a new {@link RRFragmentAO}.
+	 * The type of fragmentation.
+	 * XXX Till the TransformationConfiguration on other peers contains the QueryBuildConfiguration of the origin peer.
+	 */
+	private String type;
+	
+	/**
+	 * Constructs a new {@link FragmentAO}.
 	 * @see UnaryLogicalOp#UnaryLogicalOp()
 	 */
-	public RRFragmentAO() {
+	public FragmentAO() {
 		
 		super();
 		this.numFragments = 0;
+		this.type = "roundrobin";
+		this.addParameterInfo("TYPE", "\'" + type + "\'");
 		
 	}
 
 	/**
-	 * Constructs a new {@link RRFragmentAO} as a copy of an existing one.
-	 * @param fragmentAO The {@link RRFragmentAO} to be copied.
+	 * Constructs a new {@link FragmentAO} as a copy of an existing one.
+	 * @param fragmentAO The {@link FragmentAO} to be copied.
 	 * @see UnaryLogicalOp#UnaryLogicalOp(AbstractLogicalOperator)
 	 */
-	public RRFragmentAO(RRFragmentAO fragmentAO) {
+	public FragmentAO(FragmentAO fragmentAO) {
 		
 		super(fragmentAO);
 		this.numFragments = fragmentAO.numFragments;
+		this.type = fragmentAO.type;
 		
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
 		
-		return new RRFragmentAO(this);
+		return new FragmentAO(this);
 		
 	}
 	
@@ -71,6 +81,27 @@ public class RRFragmentAO extends UnaryLogicalOp {
 		
 		this.numFragments = numFragments;
 		this.addParameterInfo("FRAGMENTS", numFragments);
+		
+	}
+	
+	/**
+	 * Returns the type of fragmentation.
+	 */
+	@GetParameter(name = "TYPE")
+	public String getType() {
+
+		return this.type;
+		
+	}
+
+	/**
+	 * Sets the type of fragmentation.
+	 */
+	@Parameter(type = StringParameter.class, name = "TYPE", optional = true)
+	public void setType(String type) {
+		
+		this.type = type;
+		this.addParameterInfo("TYPE",  "\'" + type + "\'");
 		
 	}
 	

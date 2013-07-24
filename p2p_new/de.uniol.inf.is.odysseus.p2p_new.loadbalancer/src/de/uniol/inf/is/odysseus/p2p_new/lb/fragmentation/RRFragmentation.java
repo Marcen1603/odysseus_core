@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.RRFragmentAO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.FragmentAO;
 
 /**
  * The class for a round-robin data fragmentation strategy. <br />
@@ -18,12 +18,12 @@ public class RRFragmentation extends AbstractDataFragmentation {
 	/**
 	 * @see #getName()
 	 */
-	public static final String NAME = "round-robin";
+	public static final String NAME = "roundrobin";
 
 	@Override
 	public Class<? extends ILogicalOperator> getOperatorForDistributionClass() {
 		
-		return RRFragmentAO.class;
+		return FragmentAO.class;
 		
 	}
 
@@ -52,7 +52,8 @@ public class RRFragmentation extends AbstractDataFragmentation {
 	protected ILogicalOperator createOperatorForDistribution(
 			int degreeOfParallelism, QueryBuildConfiguration parameters) {
 		
-		RRFragmentAO fragmentAO = new RRFragmentAO();
+		FragmentAO fragmentAO = new FragmentAO();
+		fragmentAO.setType(RRFragmentation.NAME);
 		fragmentAO.setNumberOfFragments(degreeOfParallelism);
 		return fragmentAO;
 		
