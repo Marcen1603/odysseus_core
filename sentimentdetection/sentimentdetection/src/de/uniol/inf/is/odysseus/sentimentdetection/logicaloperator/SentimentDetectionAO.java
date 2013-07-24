@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -32,6 +33,15 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private String attributeTestSetTrueDecision;
 	
 	
+	//Attribute positions
+	private int attributeTrainSetTextPos = -1;
+	private int attributeTrainSetTrueDecisionPos = -1;
+	
+	private int attributeTestSetTextPos = -1 ;
+	private int attributeTestSetTrueDecisionPos = -1;
+	
+	
+	
 	public SentimentDetectionAO(){
 		super();
 	}
@@ -49,6 +59,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         
         this.attributeTestSetText = sentimentDetectionAO.attributeTestSetText;
         this.attributeTestSetTrueDecision = sentimentDetectionAO.attributeTestSetTrueDecision;
+        
+        this.attributeTestSetTextPos = sentimentDetectionAO.attributeTrainSetTextPos;
+        this.attributeTestSetTrueDecisionPos = sentimentDetectionAO.attributeTestSetTrueDecisionPos;
+        
+        this.attributeTrainSetTextPos = sentimentDetectionAO.attributeTrainSetTextPos;
+        this.attributeTrainSetTrueDecisionPos = sentimentDetectionAO.attributeTrainSetTrueDecisionPos;
     }
 	
 
@@ -154,5 +170,84 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return evaluateClassifier;
 	}
 	
+	
+	public int getAttributeTrainSetTextPos(){
+		return attributeTrainSetTextPos;
+	}
+	
+	public int getAttributeTrainSetTrueDecisionPos(){
+		return attributeTrainSetTrueDecisionPos;
+	}
+	
+	
+	public int getAttributeTestSetTextPos(){
+		return attributeTestSetTextPos;
+	}
+	
+	public int getAttributeTestSetTrueDecisionPos(){
+		return attributeTestSetTrueDecisionPos;
+	}
+	
+	@Override
+	public boolean isValid(){
+		
+		if(getAttributePos(this.getInputSchema(0),attributeTrainSetText) != -1){
+			this.attributeTrainSetTextPos = getAttributePos(this.getInputSchema(0),attributeTrainSetText);
+		}else{
+			addError(new IllegalParameterException(
+					"Attribute: "+ attributeTrainSetText +" could not found in the TrainingSet!"));
+			return false;
+		}
+		
+		if(getAttributePos(this.getInputSchema(0),attributeTrainSetTrueDecision) != -1){
+			this.attributeTrainSetTrueDecisionPos = getAttributePos(this.getInputSchema(0),attributeTrainSetTrueDecision);
+		}else{
+			addError(new IllegalParameterException(
+					"Attribute: "+ attributeTrainSetTrueDecision +" could not found in the TrainingSet!"));
+			return false;
+		}
+		
+		
+		if(getAttributePos(this.getInputSchema(1),attributeTestSetText) != -1){
+			this.attributeTestSetTextPos = getAttributePos(this.getInputSchema(1),attributeTestSetText);
+		}else{
+			addError(new IllegalParameterException(
+					"Attribute: "+ attributeTestSetText +" could not found in the TestSet!"));
+			return false;
+		}
+		
+		
+		if(evaluateClassifier == 1){
+			if(attributeTestSetTrueDecision == null){
+				addError(new IllegalParameterException(
+						"For debugging, the attribute attribueTestSetTrueDecision must be specified!"));
+				return false;
+			}
+			
+			if(getAttributePos(this.getInputSchema(1),attributeTestSetTrueDecision) != -1){
+				this.attributeTestSetTrueDecisionPos = getAttributePos(this.getInputSchema(1),attributeTestSetTrueDecision);
+			}else{
+				addError(new IllegalParameterException(
+						"Attribute: "+ attributeTestSetTrueDecision +" could not found in the TestSet!"));
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
+	public int getAttributePos(SDFSchema schema, String attribute){
+		int pos = -1;
+		int i = 0;
+		for (SDFAttribute a : schema) {
+			//System.out.println(a.getAttributeName());
+			if(a.getAttributeName().equals(attribute)){
+				pos = i;
+			}
+			i++;
+		}
+		
+		return pos;
+	}
 
 }

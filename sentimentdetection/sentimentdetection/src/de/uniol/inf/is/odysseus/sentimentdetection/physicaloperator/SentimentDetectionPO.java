@@ -8,8 +8,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
@@ -53,9 +51,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int attributeTrainSetTrueDecisionPos = -1;
 	
 	private int attributeTestSetTextPos = -1 ;
-
-
-	private String attributeTestSetTrueDecision;
+	private int attributeTestSetTrueDecisionPos = -1;
 
 
 	public SentimentDetectionPO() {
@@ -66,12 +62,10 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int minimumSize, 
 			String domain, 
 			int evaluateClassifier, 
-			SDFSchema inputSchemaTrainSet,
-			String attributeTrainSetText, 
-			String attributeTrainSetTrueDecision,
-			String attributeTestSetText,
-			String attributeTestSetTrueDecision,
-			SDFSchema inputSchemaTestSet) {
+			int attributeTrainSetTextPos,
+			int attributeTrainSetTrueDecisionPos,
+			int attributeTestSetTextPos,
+			int attributeTestSetTrueDecisionPos) {
 		
 		super();
 		
@@ -81,11 +75,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.domain = domain;
 		this.evaluateClassifier = evaluateClassifier;
 		
-		this.attributeTrainSetTextPos = getAttributePos(inputSchemaTrainSet,attributeTrainSetText);
-		this.attributeTrainSetTrueDecisionPos = getAttributePos(inputSchemaTrainSet,attributeTrainSetTrueDecision);
+		this.attributeTrainSetTextPos = attributeTrainSetTextPos;
+		this.attributeTrainSetTrueDecisionPos = attributeTrainSetTrueDecisionPos;
 		
-		this.attributeTestSetTrueDecision = attributeTestSetTrueDecision;
-		this.attributeTestSetTextPos = getAttributePos(inputSchemaTestSet, attributeTestSetText);
+		this.attributeTestSetTextPos = attributeTestSetTextPos;
+		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -185,13 +179,15 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			// set the decision Attribute
 			outputTuple.setAttribute(object.size(), decision);
 		
+	
+		
 			outputTuple.setMetadata(object.getMetadata());
 			outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 
 			
 			if(evaluateClassifier == 1){
 				// calculate error
-				String truedecision = outputTuple.getAttribute(getAttributePos(this.getOutputSchema(), attributeTestSetTrueDecision)).toString();
+				String truedecision = outputTuple.getAttribute(attributeTestSetTrueDecisionPos).toString();
 				
 				
 				if(Integer.parseInt(truedecision.trim()) == 1){
@@ -246,19 +242,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	}
 	
 	
-	public int getAttributePos(SDFSchema schema, String attribute){
-		int pos = -1;
-		int i = 0;
-		for (SDFAttribute a : schema) {
-			//System.out.println(a.getAttributeName());
-			if(a.getAttributeName().equals(attribute)){
-				pos = i;
-			}
-			i++;
-		}
-		
-		return pos;
-	}
 
 	@Override
 	protected void process_close() {

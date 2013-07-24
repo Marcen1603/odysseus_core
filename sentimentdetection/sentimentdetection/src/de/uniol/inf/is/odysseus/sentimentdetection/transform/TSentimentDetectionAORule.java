@@ -26,12 +26,10 @@ public class TSentimentDetectionAORule extends
 						sentimentDetectionAO.getMinimumSize(),
 						sentimentDetectionAO.getDomain(), 
 						sentimentDetectionAO.getEvaluateClassifier(),
-						sentimentDetectionAO.getInputSchema(0),
-						sentimentDetectionAO.getAttributeTrainSetText(),
-						sentimentDetectionAO.getAttributeTrainSetTrueDecision(),
-						sentimentDetectionAO.getAttributeTestSetText(),
-						sentimentDetectionAO.getAttributeTestSetTrueDecision(),
-						sentimentDetectionAO.getInputSchema(1)),
+						sentimentDetectionAO.getAttributeTrainSetTextPos(),
+						sentimentDetectionAO.getAttributeTrainSetTrueDecisionPos(),
+						sentimentDetectionAO.getAttributeTestSetTextPos(),
+						sentimentDetectionAO.getAttributeTestSetTrueDecisionPos()),
 						config, true, true);
 	}
 
