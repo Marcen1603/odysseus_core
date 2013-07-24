@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.transform;
 
-
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.sentimentdetection.logicaloperator.SentimentDetectionAO;
@@ -8,7 +7,7 @@ import de.uniol.inf.is.odysseus.sentimentdetection.physicaloperator.SentimentDet
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-@SuppressWarnings({"rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class TSentimentDetectionAORule extends
 		AbstractTransformationRule<SentimentDetectionAO> {
 
@@ -20,7 +19,20 @@ public class TSentimentDetectionAORule extends
 	@Override
 	public void execute(SentimentDetectionAO sentimentDetectionAO,
 			TransformationConfiguration config) {
-		defaultExecute(sentimentDetectionAO, new SentimentDetectionPO(sentimentDetectionAO.getOutputPorts(),sentimentDetectionAO.getClassifier(),sentimentDetectionAO.getMinimumSize(),sentimentDetectionAO.getDomain(),sentimentDetectionAO.getEvaluateClassifier()), config, true, true);
+		defaultExecute(
+				sentimentDetectionAO,
+				new SentimentDetectionPO(sentimentDetectionAO.getOutputPorts(),
+						sentimentDetectionAO.getClassifier(),
+						sentimentDetectionAO.getMinimumSize(),
+						sentimentDetectionAO.getDomain(), 
+						sentimentDetectionAO.getEvaluateClassifier(),
+						sentimentDetectionAO.getInputSchema(0),
+						sentimentDetectionAO.getAttributeTrainSetText(),
+						sentimentDetectionAO.getAttributeTrainSetTrueDecision(),
+						sentimentDetectionAO.getAttributeTestSetText(),
+						sentimentDetectionAO.getAttributeTestSetTrueDecision(),
+						sentimentDetectionAO.getInputSchema(1)),
+						config, true, true);
 	}
 
 	@Override

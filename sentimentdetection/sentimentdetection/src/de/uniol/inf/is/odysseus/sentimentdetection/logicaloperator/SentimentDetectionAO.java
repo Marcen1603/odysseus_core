@@ -25,6 +25,13 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private String domain;
 	private int evaluateClassifier = 0;
 	
+	private String attributeTrainSetText;
+	private String attributeTrainSetTrueDecision;
+	
+	private String attributeTestSetText;
+	private String attributeTestSetTrueDecision;
+	
+	
 	public SentimentDetectionAO(){
 		super();
 	}
@@ -36,6 +43,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.minimumSize = sentimentDetectionAO.minimumSize;
         this.domain = sentimentDetectionAO.domain;
         this.evaluateClassifier = sentimentDetectionAO.evaluateClassifier;
+ 
+        this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;
+        this.attributeTrainSetTrueDecision = sentimentDetectionAO.attributeTrainSetTrueDecision;
+        
+        this.attributeTestSetText = sentimentDetectionAO.attributeTestSetText;
+        this.attributeTestSetTrueDecision = sentimentDetectionAO.attributeTestSetTrueDecision;
     }
 	
 
@@ -60,7 +73,6 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 		return getOutputSchema();
 	}
-	
 	
 	@Parameter(name = "domain", type=StringParameter.class, doc="")
 	public void setDomain(String domain) {
@@ -87,6 +99,41 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.evaluateClassifier = evaluateClassifier;
 	}
 
+	@Parameter(name="attributeTrainSetText", type=StringParameter.class, doc="")
+	public void setAttributeTrainSetText(String attributeTrainSetText){
+		this.attributeTrainSetText = attributeTrainSetText;
+	}
+	
+	@Parameter(name="attributeTrainSetTrueDecision", type=StringParameter.class, doc="")
+	public void setAttributeTrainSetTrueDecision(String attributeTrainSetTrueDecision){
+		this.attributeTrainSetTrueDecision = attributeTrainSetTrueDecision;
+	}
+	
+	@Parameter(name="attributeTestSetTrueDecision", type=StringParameter.class, optional= true ,doc="")
+	public void setAttributeTestSetTrueDecision(String attributeTestSetTrueDecision){
+		this.attributeTestSetTrueDecision = attributeTestSetTrueDecision;
+	}
+	
+	@Parameter(name="attributeTestSetText", type=StringParameter.class, doc="")
+	public void setAttributeTestSetText(String attributeTestSetText){
+		this.attributeTestSetText = attributeTestSetText;
+	}
+	
+	public String getAttributeTestSetTrueDecision(){
+		return attributeTestSetTrueDecision;
+	}
+	
+	public String getAttributeTestSetText(){
+		return attributeTestSetText;
+	}
+
+	public String getAttributeTrainSetTrueDecision(){
+		return attributeTrainSetTrueDecision;
+	}
+	
+	public String getAttributeTrainSetText(){
+		return attributeTrainSetText;
+	}
 	public int getOutputPorts(){
 		return outputports;
 	}
