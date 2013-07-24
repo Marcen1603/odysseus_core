@@ -99,6 +99,9 @@ public interface IStreamObject<M extends IMetaAttribute> extends
      * 
      */
     IStreamObject<M> merge(IStreamObject<M> left, IStreamObject<M> right, IMetadataMergeFunction<M> metamerge, Order order);
+    
+    @Override
+    public int hashCode();
 
 
 }
