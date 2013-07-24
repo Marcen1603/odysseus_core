@@ -8,17 +8,17 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.FragmentAO;
 
 /**
- * The class for a round-robin data fragmentation strategy. <br />
+ * The class for a hash data fragmentation strategy. <br />
  * {@link #insertOperatorForDistribution(Collection, int, QueryBuildConfiguration)} will insert {@link FragmentAO}s and
  * {@link #createOperatorForJunction() will create an {@link UnionAO}.
  * @author Michael Brand
  */
-public class RRFragmentation extends AbstractDataFragmentation {
+public class HashFragmentation extends AbstractDataFragmentation {
 	
 	/**
 	 * @see #getName()
 	 */
-	public static final String NAME = "roundrobin";
+	public static final String NAME = "hash";
 
 	@Override
 	public Class<? extends ILogicalOperator> getOperatorForDistributionClass() {
@@ -44,7 +44,7 @@ public class RRFragmentation extends AbstractDataFragmentation {
 	@Override
 	public String getName() {
 		
-		return RRFragmentation.NAME;
+		return HashFragmentation.NAME;
 		
 	}
 
@@ -53,7 +53,7 @@ public class RRFragmentation extends AbstractDataFragmentation {
 			int degreeOfParallelism, QueryBuildConfiguration parameters) {
 		
 		FragmentAO fragmentAO = new FragmentAO();
-		fragmentAO.setType(RRFragmentation.NAME);
+		fragmentAO.setType(HashFragmentation.NAME);
 		fragmentAO.setNumberOfFragments(degreeOfParallelism);
 		return fragmentAO;
 		

@@ -17,6 +17,6 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.p2p_new.logicaloperator,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.lb.LoadBalancerPlugIn
-Service-Component: OSGI-INF/p2pDictionaryService.xml,OSGI-INF/queryCloudLoadBalancer.xml,OSGI-INF/operatorCloudLoadBalancer.xml,OSGI-INF/operatorSetCloudLoadBalancer.xml,OSGI-INF/replication.xml,
- OSGI-INF/rrFragmentation.xml
+Service-Component: OSGI-INF/p2pDictionaryService.xml,OSGI-INF/queryCloudLoadBalancer.xml,OSGI-INF/operatorCloudLoadBalancer.xml,OSGI-INF/operatorSetCloudLoadBalancer.xml,OSGI-INF/replication.xml,OSGI-INF/rrFragmentation.xml,
+ OSGI-INF/hashFragmentation.xml
 Bundle-ActivationPolicy: lazy
