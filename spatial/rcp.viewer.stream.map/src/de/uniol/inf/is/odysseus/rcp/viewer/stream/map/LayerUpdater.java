@@ -91,6 +91,8 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			// wrong csv-data)
 			this.streamMapEditor.getScreenManager()
 					.setMaxIntervalEnd(timestamp);
+		} else if(timestamp.beforeOrEquals(streamMapEditor.getScreenManager().getMaxIntervalStart())) {
+			this.streamMapEditor.getScreenManager().setMaxIntervalStart(timestamp);
 		}
 
 		puffer.insert(tuple);

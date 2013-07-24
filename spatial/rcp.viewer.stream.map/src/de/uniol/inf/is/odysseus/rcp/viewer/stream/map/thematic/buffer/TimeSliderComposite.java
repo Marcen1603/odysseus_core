@@ -104,23 +104,6 @@ public class TimeSliderComposite extends Composite implements
 				fixedTimeButton.setEnabled(activeButton.getSelection());
 				isActive = activeButton.getSelection();
 
-				// Set the begin-labels
-				beginTimestamp.setText(Long.toString(manager.getIntervalStart()
-						.getMainPoint()));
-				beginTime.setText(new SimpleDateFormat(
-						"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
-						manager.getIntervalStart().getMainPoint())));
-
-				// Start + selection -> better if end is infinity
-				endTimestamp.setText(Long.toString(manager.getIntervalStart()
-						.getMainPoint()
-						+ rangeSlider.getUpperValue()
-						* sliderFactor));
-				endTime.setText(new SimpleDateFormat(
-						"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
-						manager.getIntervalStart().getMainPoint()
-								+ rangeSlider.getUpperValue() * sliderFactor)));
-
 				if (!activeButton.getSelection()) {
 					// If it's set to inactive -> set the maximum interval
 					manager.setIntervalStart(manager.getMaxIntervalStart()
@@ -170,6 +153,9 @@ public class TimeSliderComposite extends Composite implements
 
 					// And update the selection
 					updateInterval();
+					
+					// And update the labels
+					updateLabels();
 				}
 			}
 		});
@@ -484,32 +470,7 @@ public class TimeSliderComposite extends Composite implements
 						}
 					}
 
-					// Set the begin-labels
-					beginTimestamp.setText(Long.toString(manager
-							.getIntervalStart().getMainPoint()));
-					beginTime.setText(new SimpleDateFormat(
-							"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
-							manager.getIntervalStart().getMainPoint())));
-
-					// Set the end-labels
-					// Start + selection -> better if end is infinity
-					endTimestamp.setText(Long.toString(manager
-							.getIntervalStart().getMainPoint()
-							- (long) rangeSlider.getLowerValue()
-							* sliderFactor
-							+ (long) rangeSlider.getUpperValue() * sliderFactor));
-					endTime.setText(new SimpleDateFormat(
-							"dd/MM/yyyy - HH:mm:ss.SSS").format(new Timestamp(
-							manager.getIntervalStart().getMainPoint()
-									- (long) rangeSlider.getLowerValue()
-									* sliderFactor
-									+ (long) rangeSlider.getUpperValue()
-									* sliderFactor)));
-
-					// Set the time-range-label
-					long timeInMs = ((long) rangeSlider.getUpperValue() - (long) rangeSlider
-							.getLowerValue()) * (long) sliderFactor;
-					timeRangeLabel.setText(msToTimeString(timeInMs));
+					updateLabels();
 
 					// Save the values to compare, which one was dragged
 					previousUpperValue = rangeSlider.getUpperValue();
@@ -533,6 +494,37 @@ public class TimeSliderComposite extends Composite implements
 				}
 			}
 		});
+	}
+
+	/**
+	 * Fills the labels with the right content (timelabels)
+	 */
+	private void updateLabels() {
+		// Set the begin-labels
+		beginTimestamp.setText(Long.toString(manager.getIntervalStart()
+				.getMainPoint()));
+		beginTime
+				.setText(new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss.SSS")
+						.format(new Timestamp(manager.getIntervalStart()
+								.getMainPoint())));
+
+		// Set the end-labels
+		// Start + selection -> better if end is infinity
+		endTimestamp.setText(Long.toString(manager.getIntervalStart()
+				.getMainPoint()
+				- (long) rangeSlider.getLowerValue()
+				* sliderFactor
+				+ (long) rangeSlider.getUpperValue()
+				* sliderFactor));
+		endTime.setText(new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss.SSS")
+				.format(new Timestamp(manager.getIntervalStart().getMainPoint()
+						- (long) rangeSlider.getLowerValue() * sliderFactor
+						+ (long) rangeSlider.getUpperValue() * sliderFactor)));
+
+		// Set the time-range-label
+		long timeInMs = ((long) rangeSlider.getUpperValue() - (long) rangeSlider
+				.getLowerValue()) * (long) sliderFactor;
+		timeRangeLabel.setText(msToTimeString(timeInMs));
 	}
 
 	/**
