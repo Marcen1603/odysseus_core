@@ -61,8 +61,9 @@ public abstract class AbstractPredicate<T> implements IPredicate<T>, Serializabl
 		return false;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
-	public List<IPredicate<T>> conjunctiveSplit() {
+	public List<IPredicate> conjunctiveSplit() {
 		throw new IllegalArgumentException("Sorry. Not implemented for "+this.getClass());
 	}
 	

@@ -77,5 +77,6 @@ public interface IPredicate<T> extends IClone, Serializable {
 	 * 
 	 * @return List of all AND connected parts
 	 */
-	public List<IPredicate<T>> conjunctiveSplit();
+	@SuppressWarnings("rawtypes")
+	public List<IPredicate> conjunctiveSplit();
 }

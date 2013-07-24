@@ -514,6 +514,12 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 		return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction() instanceof NotOperator;
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List<IPredicate> conjunctiveSplit() {
+		return splitPredicate();
+	}
+	
 	/**
 	 * Returns List of conjunctive predicates
 	 * 
