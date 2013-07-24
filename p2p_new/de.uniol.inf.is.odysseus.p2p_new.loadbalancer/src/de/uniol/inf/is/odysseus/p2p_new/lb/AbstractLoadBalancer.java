@@ -215,12 +215,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 				}
 				
-				// Create the local part
-				if(localPart == null)
+				if(localPart == null) {
+					
+					// Create the local part
 					localPart = this.createLocalPart(operators, degreeOfParallelism, fragmentationStrategy);
+					
+				} else {
 
-				// Subscribe copy to local part
-				this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, fragmentationStrategy);
+					// Subscribe copy to local part
+					this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, fragmentationStrategy);
+					
+				}
 				
 				// Create the queryparts of this query
 				List<QueryPart> parts = this.determineQueryParts(operators, localPart);
@@ -234,7 +239,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 				for(QueryPart sourcePart : sourceParts) {
 					
-					this.initPart(sourcePart);
+					// Note: There are no operators which have to be initialized
 					queryPartsMap.get(originQuery).values().iterator().next().add(sourcePart);
 					
 				}
@@ -650,10 +655,18 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					
 				}
 				
-				for(LogicalSubscription sub : subsToRemove)
+				for(LogicalSubscription sub : subsToRemove) {
+					
 					operator.unsubscribeFromSource(sub);
-				for(LogicalSubscription sub : subsToAdd)
+					LOG.debug("Unsubscribed {} from {}", sub.getTarget(), operator);
+					
+				}
+				for(LogicalSubscription sub : subsToAdd) {
+					
 					operator.subscribeToSource(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					LOG.debug("Subscribed {} to {}", sub.getTarget(), operator);
+					
+				}
 				
 			}
 			
@@ -878,10 +891,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param fragmentationStrategy The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
 	 * @param degreeOfParallelism The degree of parallelism.
 	 * @param parameters The transfer configuration.
-	 * @return <code>part</code> enhanced with an {@link ILogicalOperator} for data junction, 
-	 * if <code>part</code> is the local one; <br />
-	 * <code>part</code> enhanced with an {@link ILogicalOperator} for data distribution, 
-	 * if <code>part</code> is the one with the sources manager one; <br />
+	 * @return <code>part</code> enhanced with an {@link ILogicalOperator} for data distribution, 
+	 * if <code>part</code> is one belonging to the source manager; <br />
 	 * <code>part</code>, else.
 	 * @see IDataFragmentation#insertOperatorForDistribution(Collection, int, QueryBuildConfiguration)
 	 * @see IDataFragmentation#insertOperatorForJunction(Collection, QueryBuildConfiguration)
