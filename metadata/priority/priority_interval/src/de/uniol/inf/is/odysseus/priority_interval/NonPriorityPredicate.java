@@ -61,4 +61,8 @@ public class NonPriorityPredicate<T extends IStreamObject<? extends IPriority>> 
 		return null;
 	}
 
+	@Override
+	public List<IPredicate<T>> conjunctiveSplit() {
+		throw new IllegalArgumentException("Sorry. Not implemented for "+this.getClass());
+	}
 }

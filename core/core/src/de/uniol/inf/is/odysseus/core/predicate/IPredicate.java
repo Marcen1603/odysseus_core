@@ -72,4 +72,10 @@ public interface IPredicate<T> extends IClone, Serializable {
 	@Override
 	public IPredicate<T> clone();
 
+	/**
+	 * Return all conjunctive parts of this query
+	 * 
+	 * @return List of all AND connected parts
+	 */
+	public List<IPredicate<T>> conjunctiveSplit();
 }
