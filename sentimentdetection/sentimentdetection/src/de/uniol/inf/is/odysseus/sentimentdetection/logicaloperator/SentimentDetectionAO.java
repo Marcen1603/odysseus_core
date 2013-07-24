@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
 
 
 
@@ -191,6 +192,14 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	@Override
 	public boolean isValid(){
 		
+		List<String> validClassifier = ClassifierRegistry.getValidClassifier();
+		
+		if(!validClassifier.contains(classifier.toLowerCase())){
+				addError(new IllegalParameterException(
+				"The classifier "+ classifier.toLowerCase()+" could not found."));	
+				return false;
+		}
+		
 		if(getAttributePos(this.getInputSchema(0),attributeTrainSetText) != -1){
 			this.attributeTrainSetTextPos = getAttributePos(this.getInputSchema(0),attributeTrainSetText);
 		}else{
@@ -232,6 +241,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 				return false;
 			}
 		}
+		
+		
 
 		return true;
 	}

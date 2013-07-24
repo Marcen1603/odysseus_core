@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -82,6 +84,10 @@ public class ClassifierRegistry<T extends Tuple<?>> {
 			classifierDomains.remove(domain.toLowerCase());
 		}
 		
+	}
+	
+	public static List<String> getValidClassifier(){
+		return new ArrayList<String>(classifierAlgoTypes.keySet());
 	}
 
 }
