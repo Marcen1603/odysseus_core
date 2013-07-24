@@ -16,8 +16,12 @@
 
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import com.google.common.collect.Lists;
 
 public class DashboardOutlineContentProvider implements ITreeContentProvider {
 
@@ -63,6 +67,16 @@ public class DashboardOutlineContentProvider implements ITreeContentProvider {
 	}
 
 	private static Object[] createList(DashboardPartPlacement placement) {
-		return new Object[] { "File = " + placement.getFilename(), "X = " + placement.getX(), "Y = " + placement.getY(), "W = " + placement.getWidth(), "H = " + placement.getHeight() };
+		List<Object> objects = Lists.newArrayList();
+		objects.add("File = " + placement.getFilename());
+		objects.add("X = " + placement.getX());
+		objects.add("Y = " + placement.getY());
+		objects.add("W = " + placement.getWidth());
+		objects.add("H = " + placement.getHeight());
+		for(String settingName : placement.getDashboardPart().getConfiguration().getNames() ) {
+			Object object = placement.getDashboardPart().getConfiguration().get(settingName);
+			objects.add(settingName + " = " + ( object == null ? "null" : object.toString()) );
+		}
+		return objects.toArray();
 	}
 }
