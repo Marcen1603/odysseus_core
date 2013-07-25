@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
 
 
@@ -23,7 +24,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 
 	private String classifier;
 	private int minimumSize = 0;
-	private int outputports = 1;
+	private boolean splitDecision = false;
 	private String domain;
 	private int evaluateClassifier = 0;
 	
@@ -49,7 +50,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
         super(sentimentDetectionAO);
-        this.outputports = sentimentDetectionAO.outputports;
+        this.splitDecision = sentimentDetectionAO.splitDecision;
         this.classifier = sentimentDetectionAO.classifier;
         this.minimumSize = sentimentDetectionAO.minimumSize;
         this.domain = sentimentDetectionAO.domain;
@@ -96,14 +97,14 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.domain   = domain;
 	}
 	
-	@Parameter(name = "minimumSize", type=IntegerParameter.class, doc="")
+	@Parameter(name = "trainSetMinSize", type=IntegerParameter.class, doc="")
 	public void setMinimumSize(int minimumSize) {
 		this.minimumSize   = minimumSize;
 	}
 
-	@Parameter(name="outputports", type=IntegerParameter.class, optional = true, doc="")
-	public void setOutputType(int outputports){
-		this.outputports = outputports;
+	@Parameter(name="splitDecision", type=BooleanParameter.class, optional = true, doc="")
+	public void setOutputType(boolean splitDecision){
+		this.splitDecision = splitDecision;
 	}
 	
 	@Parameter(name="classifier", type=StringParameter.class, doc="")
@@ -111,27 +112,27 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.classifier = classifier;
 	}
 	
-	@Parameter(name="evaluateClassifier", type=IntegerParameter.class, optional = true)
+	@Parameter(name="debugClassifier", type=IntegerParameter.class, optional = true)
 	public void setEvaluateClassifier(int evaluateClassifier){
 		this.evaluateClassifier = evaluateClassifier;
 	}
 
-	@Parameter(name="attributeTrainSetText", type=StringParameter.class, doc="")
+	@Parameter(name="trainSetText", type=StringParameter.class, doc="")
 	public void setAttributeTrainSetText(String attributeTrainSetText){
 		this.attributeTrainSetText = attributeTrainSetText;
 	}
 	
-	@Parameter(name="attributeTrainSetTrueDecision", type=StringParameter.class, doc="")
+	@Parameter(name="trainSetTrueDecision", type=StringParameter.class, doc="")
 	public void setAttributeTrainSetTrueDecision(String attributeTrainSetTrueDecision){
 		this.attributeTrainSetTrueDecision = attributeTrainSetTrueDecision;
 	}
 	
-	@Parameter(name="attributeTestSetTrueDecision", type=StringParameter.class, optional= true ,doc="")
+	@Parameter(name="testSetTrueDecision", type=StringParameter.class, optional= true ,doc="")
 	public void setAttributeTestSetTrueDecision(String attributeTestSetTrueDecision){
 		this.attributeTestSetTrueDecision = attributeTestSetTrueDecision;
 	}
 	
-	@Parameter(name="attributeTestSetText", type=StringParameter.class, doc="")
+	@Parameter(name="testSetText", type=StringParameter.class, doc="")
 	public void setAttributeTestSetText(String attributeTestSetText){
 		this.attributeTestSetText = attributeTestSetText;
 	}
@@ -151,8 +152,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	public String getAttributeTrainSetText(){
 		return attributeTrainSetText;
 	}
-	public int getOutputPorts(){
-		return outputports;
+	public boolean getOutputPorts(){
+		return splitDecision;
 	}
 	
 	public String getClassifier(){
@@ -229,7 +230,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		if(evaluateClassifier == 1){
 			if(attributeTestSetTrueDecision == null){
 				addError(new IllegalParameterException(
-						"For debugging, the attribute attribueTestSetTrueDecision must be specified!"));
+						"For debugging, the parameter testSetTrueDecision must be specified!"));
 				return false;
 			}
 			

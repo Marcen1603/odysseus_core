@@ -22,7 +22,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	private int wrongdecision = 0;
 
-	private int outputports;
+	private boolean splitDecision;
 	private String classifier;
 	private int minimumSize;
 	private String domain;
@@ -58,7 +58,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		super();
 	}
 
-	public SentimentDetectionPO(int outputports, String classifier,
+	public SentimentDetectionPO(boolean splitDecision, String classifier,
 			int minimumSize, 
 			String domain, 
 			int evaluateClassifier, 
@@ -69,7 +69,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		
 		super();
 		
-		this.outputports = outputports;
+		this.splitDecision = splitDecision;
 		this.classifier = classifier;
 		this.minimumSize = minimumSize;
 		this.domain = domain;
@@ -84,7 +84,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
 		super(senti);
-		this.outputports = senti.outputports;
+		this.splitDecision = senti.splitDecision;
 		this.classifier = senti.classifier;
 		this.minimumSize = senti.minimumSize;
 		this.domain = senti.domain;
@@ -231,7 +231,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int getOutPutPort(int decision) {
 		int outputPort = 0;
 
-		if (outputports == 2) {
+		if (splitDecision) {
 			if (decision == 1) {
 				outputPort = 0;
 			} else {
