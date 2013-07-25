@@ -18,35 +18,37 @@ import de.uniol.inf.is.odysseus.sentimentdetection.util.Metrics;
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	private static int ctr = 0;
-
-	private int wrongdecision = 0;
-
+	//operator parameter
 	private boolean splitDecision;
 	private String classifier;
 	private int trainSetMinSize;
 	private String domain;
-	private boolean isTrained = false;
 	private boolean debugClassifier = false;
 
-	
+	//variable for debug
 	private int posCtr = 0;
 	private int totalPosCtr = 0;
 	private int totalExistPosCtr = 0;
-	
 	
 	private int negCtr = 0;
 	private int totalNegCtr = 0;
 	private int totalExistNegCtr = 0;
 	
+	private int wrongdecision = 0;
 	
+	//help variable
+	private static int ctr = 0;
+	private boolean isTrained = false;
+	
+	//currend classifier
 	private IClassifier<T> algo;
-
+	
+	//buffer 
 	private List<Tuple> buffer = new ArrayList<>();
 	private Map<String, Integer> trainingset = new HashMap<String, Integer>();
 	
 	
-	//Attribute positions
+	//attribute positions
 	private int attributeTrainSetTextPos = -1;
 	private int attributeTrainSetTrueDecisionPos = -1;
 	
