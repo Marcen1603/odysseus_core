@@ -214,7 +214,16 @@
                label="Remove"
                style="push">
          </command>
-       </menuContribution>         
+       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.viewer.view.outline">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RenameOperatorCommand"
+               label="Rename..."
+               style="push">
+         </command>
+      </menuContribution>         
    </extension>
    <extension
          point="org.eclipse.ui.commands">
