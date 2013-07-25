@@ -6,8 +6,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.PlatformUI;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.GraphViewEditor;
 
@@ -15,8 +14,7 @@ public class RefreshGraphEditor extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindow(event);
-		IWorkbenchPage page = window.getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		
 		IEditorPart activeEditor = page.getActiveEditor();
 		if(activeEditor instanceof GraphViewEditor) {

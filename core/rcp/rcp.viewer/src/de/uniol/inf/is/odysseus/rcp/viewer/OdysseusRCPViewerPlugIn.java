@@ -33,6 +33,8 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	public static final String SHOW_STREAM_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.ShowStreamCommand";
 	public static final String CALL_GRAPH_EDITOR_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.CallGraphEditorCommand";
 	public static final String CALL_ACTIVE_GRAPH_EDITOR_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.CallActiveGraphEditor";
+	public static final String REFRESH_GRAPH_EDITOR_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphEditor";
+	public static final String REFRESH_GRAPH_EDITOR_OUTLINE_COMMAND_ID = "de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphOutline";
 
 	public static final String STREAM_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.editors.StreamEditor";
 	public static final String GRAPH_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.editors.GraphEditor";
