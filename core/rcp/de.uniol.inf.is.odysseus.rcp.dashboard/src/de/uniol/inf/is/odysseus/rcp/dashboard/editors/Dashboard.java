@@ -36,6 +36,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -69,7 +70,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.ControlPointMana
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
-public final class Dashboard implements PaintListener, MouseListener, KeyListener, ISelectionListener, ISelectionProvider {
+public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, KeyListener, ISelectionListener, ISelectionProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Dashboard.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
@@ -86,7 +87,8 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 	private ToolBar toolBar;
 	private DropTarget dropTarget;
 	private boolean isLocked = false;
-
+	private PartDragger partDragger = new PartDragger();
+	
 	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
 	private IStructuredSelection selectedDashboardPart;
 	private final Map<Control, DashboardPartPlacement> controlsMap = Maps.newHashMap();
@@ -282,13 +284,26 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 			}
 
 			DashboardPartPlacement place = controlsMap.get(e.widget);
+			
+			if( place != null && getSelectedDashboardPart() != place ) {
+				partDragger.beginDrag(place, e.x, e.y);
+			}
+			
 			setSelection(place);
 		}
 	}
 
 	@Override
 	public void mouseUp(MouseEvent e) {
-		// do nothing
+		partDragger.endDrag();
+	}
+
+	@Override
+	public void mouseMove(MouseEvent e) {
+		if( partDragger.isDragging() ) {
+			partDragger.drag(e.x, e.y);
+			update();
+		}
 	}
 
 	@Override
@@ -402,6 +417,7 @@ public final class Dashboard implements PaintListener, MouseListener, KeyListene
 
 	private void addListeners(Control base) {
 		base.addMouseListener(this);
+		base.addMouseMoveListener(this);
 		base.addKeyListener(this);
 		if (base instanceof Composite) {
 			for (final Control ctrl : ((Composite) base).getChildren()) {
