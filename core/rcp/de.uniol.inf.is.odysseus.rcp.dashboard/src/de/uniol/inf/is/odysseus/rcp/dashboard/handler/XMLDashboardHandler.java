@@ -70,6 +70,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	private static final String HEIGHT_ATTRIBUTE_NAME = "h";
 	private static final String FILE_ATTRIBUTE_NAME = "file";
 	private static final String LOCK_ATTRIBUTE_NAME = "lock";
+	private static final String BG_IMAGE_ATTRIBUTE_NAME = "backgroundImage";
 
 	@Override
 	public Dashboard load(List<String> lines, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException {
@@ -83,7 +84,14 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			final Document doc = getDocument(lines);
 			final Node rootNode = getRootNode(doc);
 			dashboard.setLock( Boolean.valueOf(getAttribute(rootNode, LOCK_ATTRIBUTE_NAME, "false")));
-
+			
+			String imageFilename = getAttribute(rootNode, BG_IMAGE_ATTRIBUTE_NAME, null);
+			if( imageFilename != null ) {
+				final IPath imageFilePath = new Path(imageFilename);
+				final IFile imageFile = ResourcesPlugin.getWorkspace().getRoot().getFile(imageFilePath);
+				dashboard.setBackgroundImageFilename(imageFile);
+			}
+			
 			final NodeList dashboardNodes = rootNode.getChildNodes();
 			for (int i = 0; i < dashboardNodes.getLength(); i++) {
 				final Node dashboardNode = dashboardNodes.item(i);
@@ -133,6 +141,10 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			final Document doc = createNewDocument();
 			final Element rootElement = createRootElement(doc);
 			rootElement.setAttribute(LOCK_ATTRIBUTE_NAME, Boolean.toString(board.isLocked()));
+			IFile backgroundImageFilename = board.getBackgroundImageFilename();
+			if( backgroundImageFilename != null ) {
+				rootElement.setAttribute(BG_IMAGE_ATTRIBUTE_NAME, backgroundImageFilename.getFullPath().toString());
+			}
 			
 			for (final DashboardPartPlacement partPlacement : board.getDashboardPartPlacements()) {
 				createDashboardPartElement(doc, rootElement, partPlacement);

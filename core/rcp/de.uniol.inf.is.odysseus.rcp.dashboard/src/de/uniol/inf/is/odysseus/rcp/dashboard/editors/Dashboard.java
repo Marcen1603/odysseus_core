@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -40,6 +42,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -79,6 +82,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	// 1 = LMB, 2 = MMB, 3 = RMB
 	private static final int SELECT_MOUSE_BUTTON_ID = 1;
+	
 	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;
 	private static final int MOVE_SELECTION_STEP_SIZE_PIXELS = 10;
 	private static final int RESIZE_SELECTION_STEP_SIZE_PIXELS = 10;
@@ -99,6 +103,9 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private boolean isSelectionChange;
 
 	private ControlPointManager controlPointManager;
+	private IFile backgroundImageFile;
+	private IFile loadedBackgroundImageFile;
+	private Image backgroundImage;
 
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
@@ -112,6 +119,14 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 
 		fireAddedEvent(partPlace.getDashboardPart());
+	}
+	
+	public void setBackgroundImageFilename( IFile imageFile ) {
+		backgroundImageFile = imageFile;
+	}
+	
+	public IFile getBackgroundImageFilename() {
+		return backgroundImageFile;
 	}
 
 	public void addListener(IDashboardListener listener) {
@@ -164,6 +179,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		controlPointManager = new ControlPointManager(this);
 
+		updateBackgroundImage();
 		parent.layout();
 	}
 
@@ -172,6 +188,9 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 		if (dropTarget != null) {
 			dropTarget.dispose();
+		}
+		if( backgroundImage != null ) {
+			backgroundImage.dispose();
 		}
 	}
 
@@ -312,10 +331,30 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	public void update() {
+		updateBackgroundImage();
+		
 		for (DashboardPartPlacement partPlace : dashboardParts) {
 			update(partPlace);
 		}
 		fireChangedEvent();
+	}
+
+	private void updateBackgroundImage() {
+		if (!Objects.equals(loadedBackgroundImageFile, backgroundImageFile)) {
+			if (backgroundImage != null) {
+				backgroundImage.dispose();
+			}
+
+			try {
+				Image image = new Image(Display.getCurrent(), backgroundImageFile.getContents());
+				backgroundImage = image;
+				loadedBackgroundImageFile = backgroundImageFile;
+				
+				dashboardComposite.setBackgroundImage(image);
+			} catch (CoreException e) {
+				LOG.error("Could not load image {}", backgroundImageFile.getFullPath().toString());
+			}
+		}
 	}
 
 	public void remove(DashboardPartPlacement partPlace) {
@@ -596,4 +635,5 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
 		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
 	}
+
 }

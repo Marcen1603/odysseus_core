@@ -44,6 +44,9 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.dashboard.separator1">
+         </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.AddDashboardPart"
                icon="icons/gear_ok.png"
@@ -56,6 +59,14 @@
                label="Show Dashboard Part as View"
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ConfigureDashboard"
+               label="Configure Dashboard..."
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.dashboard.separator2">
+         </separator>
       </menuContribution>
    </extension>
    <extension
@@ -69,6 +80,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ShowAsViewCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.ShowDashboardPartAsView"
             name="Show DashboardPart as View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureDashboardCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureDashboard"
+            name="Configure Dashboard">
       </command>
    </extension>
    <extension
