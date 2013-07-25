@@ -37,6 +37,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.CenterNode"
             name="Center Node">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.viewer.commands.RefreshGraphEditor"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphEditor"
+            name="Refresh Graph Editor">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">
@@ -167,8 +172,14 @@
             locationURI="popup:de.uniol.inf.is.odysseus.rcp.editors.GraphEditor?after=additions">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ResetGraph"
-               icon="icons/refresh.gif"
+               icon="icons/reset.gif"
                label="Reset"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshGraphEditor"
+               icon="icons/refresh.gif"
+               label="Refresh"
                style="push">
          </command>
       </menuContribution>
