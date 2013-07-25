@@ -75,7 +75,7 @@ public class DashboardPartView extends ViewPart {
 	
 	@Override
 	public void dispose() {
-		if( dashboardPartController.isStarted() ) {
+		if( dashboardPartController != null && dashboardPartController.isStarted() ) {
 			dashboardPartController.stop();
 		}
 		
