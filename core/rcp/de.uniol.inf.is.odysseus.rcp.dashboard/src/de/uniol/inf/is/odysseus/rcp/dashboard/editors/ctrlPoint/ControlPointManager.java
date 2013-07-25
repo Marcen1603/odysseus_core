@@ -89,6 +89,10 @@ public class ControlPointManager implements ISelectionChangedListener, MouseMove
 		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomLeftControlPoint()));
 		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomRightControlPoint()));
 		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopRightControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new LeftControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new RightControlPoint()));
 	}
 
 	private void disposeControlPoints() {
