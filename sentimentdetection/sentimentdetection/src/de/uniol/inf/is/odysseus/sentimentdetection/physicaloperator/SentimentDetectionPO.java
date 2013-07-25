@@ -24,10 +24,10 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	private boolean splitDecision;
 	private String classifier;
-	private int minimumSize;
+	private int trainSetMinSize;
 	private String domain;
 	private boolean isTrained = false;
-	private int evaluateClassifier = 0;
+	private boolean debugClassifier = false;
 
 	
 	private int posCtr = 0;
@@ -59,9 +59,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	}
 
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
-			int minimumSize, 
+			int trainSetMinSize, 
 			String domain, 
-			int evaluateClassifier, 
+			boolean debugClassifier, 
 			int attributeTrainSetTextPos,
 			int attributeTrainSetTrueDecisionPos,
 			int attributeTestSetTextPos,
@@ -71,9 +71,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		
 		this.splitDecision = splitDecision;
 		this.classifier = classifier;
-		this.minimumSize = minimumSize;
+		this.trainSetMinSize = trainSetMinSize;
 		this.domain = domain;
-		this.evaluateClassifier = evaluateClassifier;
+		this.debugClassifier = debugClassifier;
 		
 		this.attributeTrainSetTextPos = attributeTrainSetTextPos;
 		this.attributeTrainSetTrueDecisionPos = attributeTrainSetTrueDecisionPos;
@@ -86,9 +86,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		super(senti);
 		this.splitDecision = senti.splitDecision;
 		this.classifier = senti.classifier;
-		this.minimumSize = senti.minimumSize;
+		this.trainSetMinSize = senti.trainSetMinSize;
 		this.domain = senti.domain;
-		this.evaluateClassifier = senti.evaluateClassifier;
+		this.debugClassifier = senti.debugClassifier;
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			trainingset.put(object.getAttribute(attributeTrainSetTextPos).toString(),
 					Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
 
-			if (trainingset.size() >= minimumSize) {
+			if (trainingset.size() >= trainSetMinSize) {
 				algo.trainClassifier(trainingset);
 				isTrained = true;
 				// synchronized for java.util.ConcurrentModificationException problems				
@@ -185,7 +185,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 
 			
-			if(evaluateClassifier == 1){
+			if(debugClassifier){
 				// calculate error
 				String truedecision = outputTuple.getAttribute(attributeTestSetTrueDecisionPos).toString();
 				
@@ -246,7 +246,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	@Override
 	protected void process_close() {
 		
-		if(evaluateClassifier == 1){
+		if(debugClassifier){
 			System.out.println("pos recall: " + Metrics.recall(posCtr, totalExistPosCtr));
 			System.out.println("pos precision: " + Metrics.precision(posCtr, totalPosCtr));
 			System.out.println("pos f-score: "+ Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr), Metrics.precision(posCtr, totalPosCtr)));

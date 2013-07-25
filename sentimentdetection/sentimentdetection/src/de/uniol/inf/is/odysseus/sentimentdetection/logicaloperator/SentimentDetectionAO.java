@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry
 public class SentimentDetectionAO extends BinaryLogicalOp{
 
 	private String classifier;
-	private int minimumSize = 0;
+	private int trainSetMinSize = 0;
 	private boolean splitDecision = false;
 	private String domain;
-	private int evaluateClassifier = 0;
+	private boolean debugClassifier = false;
 	
 	private String attributeTrainSetText;
 	private String attributeTrainSetTrueDecision;
@@ -52,9 +52,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         super(sentimentDetectionAO);
         this.splitDecision = sentimentDetectionAO.splitDecision;
         this.classifier = sentimentDetectionAO.classifier;
-        this.minimumSize = sentimentDetectionAO.minimumSize;
+        this.trainSetMinSize = sentimentDetectionAO.trainSetMinSize;
         this.domain = sentimentDetectionAO.domain;
-        this.evaluateClassifier = sentimentDetectionAO.evaluateClassifier;
+        this.debugClassifier = sentimentDetectionAO.debugClassifier;
  
         this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;
         this.attributeTrainSetTrueDecision = sentimentDetectionAO.attributeTrainSetTrueDecision;
@@ -99,7 +99,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	@Parameter(name = "trainSetMinSize", type=IntegerParameter.class, doc="")
 	public void setMinimumSize(int minimumSize) {
-		this.minimumSize   = minimumSize;
+		this.trainSetMinSize   = minimumSize;
 	}
 
 	@Parameter(name="splitDecision", type=BooleanParameter.class, optional = true, doc="")
@@ -112,9 +112,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.classifier = classifier;
 	}
 	
-	@Parameter(name="debugClassifier", type=IntegerParameter.class, optional = true)
-	public void setEvaluateClassifier(int evaluateClassifier){
-		this.evaluateClassifier = evaluateClassifier;
+	@Parameter(name="debugClassifier", type=BooleanParameter.class, optional = true)
+	public void setEvaluateClassifier(boolean debugClassifier){
+		this.debugClassifier = debugClassifier;
 	}
 
 	@Parameter(name="trainSetText", type=StringParameter.class, doc="")
@@ -161,15 +161,15 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	}
 	
 	public int getMinimumSize(){
-		return minimumSize;
+		return trainSetMinSize;
 	}
 	
 	public String getDomain(){
 		return domain;
 	}
 	
-	public int getEvaluateClassifier(){
-		return evaluateClassifier;
+	public boolean getEvaluateClassifier(){
+		return debugClassifier;
 	}
 	
 	
@@ -227,7 +227,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		}
 		
 		
-		if(evaluateClassifier == 1){
+		if(debugClassifier){
 			if(attributeTestSetTrueDecision == null){
 				addError(new IllegalParameterException(
 						"For debugging, the parameter testSetTrueDecision must be specified!"));
