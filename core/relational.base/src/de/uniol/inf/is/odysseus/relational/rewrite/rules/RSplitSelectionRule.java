@@ -44,7 +44,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 		if (ComplexPredicateHelper.isAndPredicate(sel.getPredicate())) {
 			preds = ComplexPredicateHelper.splitPredicate(sel.getPredicate());
 		} else { // RelationalPredicate with and
-			preds = ((RelationalPredicate)sel.getPredicate()).splitPredicate();
+			preds = ((RelationalPredicate)sel.getPredicate()).splitPredicate(false);
 		}
 		for (int i = 0; i < preds.size() - 1; i++) {
 			// Neuen SelectAO erstellen

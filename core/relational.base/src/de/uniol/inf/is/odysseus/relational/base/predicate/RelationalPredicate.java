@@ -260,7 +260,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			// Z.B. ist a in b enthalten, falls a= M && N und b = M oder b=N ist
 			// (Zus���tzliche Versch���rfung bestehender Pr���dikate)
 			if (!rp2.isAndPredicate()) {
-				List<IPredicate> spred = splitPredicate();
+				List<IPredicate> spred = splitPredicate(false);
 
 				for (IPredicate<?> p : spred) {
 					if (p.isContainedIn(o)) {
@@ -516,8 +516,8 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List<IPredicate> conjunctiveSplit() {
-		return splitPredicate();
+	public List<IPredicate> conjunctiveSplit(boolean init) {
+		return splitPredicate(init);
 	}
 	
 	/**
@@ -526,7 +526,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<IPredicate> splitPredicate() {
+	public List<IPredicate> splitPredicate(boolean init) {
 		if (isAndPredicate()) {
 			List<IPredicate> result = new LinkedList<IPredicate>();
 			Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();

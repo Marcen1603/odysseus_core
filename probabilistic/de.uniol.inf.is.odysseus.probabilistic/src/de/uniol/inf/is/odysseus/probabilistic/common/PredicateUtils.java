@@ -103,7 +103,7 @@ public final class PredicateUtils {
 			if (predicate instanceof AndPredicate) {
 				return ComplexPredicateHelper.splitPredicate(predicate);
 			} else if (predicate instanceof RelationalPredicate) {
-				return ((RelationalPredicate) predicate).splitPredicate();
+				return ((RelationalPredicate) predicate).splitPredicate(false);
 			}
 		}
 		final ArrayList<IPredicate> predicates = new ArrayList<IPredicate>();

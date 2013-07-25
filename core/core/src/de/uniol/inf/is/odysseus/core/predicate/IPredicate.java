@@ -75,8 +75,10 @@ public interface IPredicate<T> extends IClone, Serializable {
 	/**
 	 * Return all conjunctive parts of this query
 	 * 
+	 * @param init: Initialize predicates after split
+	 * 
 	 * @return List of all AND connected parts
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<IPredicate> conjunctiveSplit();
+	public List<IPredicate> conjunctiveSplit(boolean init);
 }

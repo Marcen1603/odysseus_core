@@ -58,7 +58,7 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 				try {
 					splittedPredicates
 					.addAll((Collection<? extends IPredicate<? super T>>) predicate
-							.conjunctiveSplit());
+							.conjunctiveSplit(true));
 				} catch (RuntimeException e) {
 					// Split can only be called on conjunctive predicates
 					// so if its not splitable, add the whole predicate 

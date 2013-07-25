@@ -312,7 +312,7 @@ public class PredicateHelper {
 		Set<IRelationalPredicate> rPredicates = new HashSet<IRelationalPredicate>();
 		// only conjunctive predicates can be split
 		if (predicate.isAndPredicate()) {
-			List<IPredicate> predicates = predicate.splitPredicate();
+			List<IPredicate> predicates = predicate.splitPredicate(false);
 			for (IPredicate p : predicates) {
 				rPredicates.add(cleanPredicate((RelationalPredicate) p));
 			}
