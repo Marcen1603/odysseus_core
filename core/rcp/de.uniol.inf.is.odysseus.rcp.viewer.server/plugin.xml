@@ -114,6 +114,15 @@
             </or>
          </enabledWhen>
       </handler>
+      <handler
+            class="de.uniol.inf.is.odysseus.rcp.viewer.server.commands.RenameOperatorCommand"
+            commandId="de.uniol.inf.is.odysseus.rcp.commands.RenameOperatorCommand">
+         <enabledWhen>
+            <reference
+                  definitionId="isNodeView">
+            </reference>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -162,6 +171,11 @@
                   style="push">
             </command>
          </menu>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RenameOperatorCommand"
+               label="Rename..."
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -223,6 +237,10 @@
       <command
             id="de.uniol.inf.is.odysseus.rcp.commands.FlushOperatorBreakCommand"
             name="Flush OperatorBreak">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.rcp.commands.RenameOperatorCommand"
+            name="Rename physical Operator">
       </command>
    </extension>
 </plugin>

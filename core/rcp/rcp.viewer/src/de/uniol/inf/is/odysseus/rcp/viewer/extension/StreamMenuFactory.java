@@ -35,8 +35,7 @@ public class StreamMenuFactory extends ExtensionContributionFactory {
 	private final List<StreamExtensionDefinition> definitions;
 
 	public StreamMenuFactory() {
-		StreamEditorRegistry registry = StreamEditorRegistry.getInstance();
-		definitions = registry.getStreamExtensionDefinitions();
+		definitions = StreamEditorRegistry.getInstance().getStreamExtensionDefinitions();
 	}
 
 	@SuppressWarnings("unchecked")
