@@ -1,12 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.windows;
 
-import java.util.List;
-
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
@@ -16,17 +11,16 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
@@ -34,24 +28,28 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 public class DashboardConfigWindow extends TitleAreaDialog {
 
 	private static final String TITLE = "Dashboard settings";
-
 	private static final String DEFAULT_MESSAGE = "Change settings of this dashboard";
 
 	private Text imageText;
-	
-	private IFile selectedImageFilename;
-	
+	private IFile selectedImageFile;
+	private boolean isDashboardLocked;
+
 	public DashboardConfigWindow(Shell parentShell, Dashboard dashboard) {
 		super(parentShell);
 
 		Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
-		this.selectedImageFilename = dashboard.getBackgroundImageFilename();
+		selectedImageFile = dashboard.getBackgroundImageFilename();
+		isDashboardLocked = dashboard.isLocked();
 	}
 
-	public IFile getBackgroundImageFilename() {
-		return selectedImageFilename;
+	public IFile getBackgroundImageFile() {
+		return selectedImageFile;
 	}
 	
+	public boolean isDasboardLocked() {
+		return isDashboardLocked;
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
@@ -62,87 +60,25 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Composite tableComposite = new Composite(parent, SWT.NONE);
-		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		tableComposite.setLayout(new GridLayout(3, false));
-
-		Label imageLabel = new Label(tableComposite, SWT.NONE);
-		imageLabel.setText("Background Image");
-
-		imageText = new Text(tableComposite, SWT.SINGLE | SWT.BORDER);
-		if( selectedImageFilename != null ) {
-			imageText.setText(selectedImageFilename.getFullPath().toString());
-		}
-		GridData imageTextLayoutData = new GridData();
-		imageTextLayoutData.grabExcessHorizontalSpace = true;
-		imageTextLayoutData.minimumWidth = 200;
-		imageText.setLayoutData(imageTextLayoutData);
-
-		Button selectImageButton = new Button(tableComposite, SWT.PUSH);
-		selectImageButton.setImage(DashboardPlugIn.getImageManager().get("selectImage"));
-		selectImageButton.addSelectionListener(new SelectionAdapter() {
+		Composite tableComposite = createTopComposite(parent);
+		
+		createLabel(tableComposite, "Background Image");
+		createImageText(tableComposite);
+		createSelectImageButton(tableComposite);
+		
+		createLabel(tableComposite, "Locked");
+		final Combo comboDropDown = createComboDropDown(tableComposite, isDashboardLocked);
+		comboDropDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				IFile selectedFile = selectImageFile(getShell());
-				if( selectedFile != null ) {
-					imageText.setText(selectedFile.getFullPath().toString());
-					selectedImageFilename = selectedFile;
-				} else {
-					selectedImageFilename = null;
-					imageText.setText("");
-				}
+				isDashboardLocked = comboDropDown.getSelectionIndex() == 0;
 			}
 		});
 
 		tableComposite.pack();
-
 		return super.createDialogArea(parent);
 	}
-
-	private static IFile selectImageFile(Shell shell) {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(), new BaseWorkbenchContentProvider() {
-			@Override
-			public Object[] getChildren(Object element) {
-				if (element instanceof IContainer) {
-					try {
-						IResource[] members = ((IContainer) element).members();
-
-						List<IResource> result = Lists.newArrayList();
-						for (int i = 0; i < members.length; i++) {
-							IResource member = members[i];
-							if (member instanceof IContainer) {
-								result.add(member);
-							} else if (member instanceof IFile) {
-								IFile f = (IFile) member;
-								String extension = f.getFileExtension();
-								if ("png".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension)) {
-									result.add(member);
-								}
-							}
-						}
-
-						return result.toArray();
-					} catch (CoreException e) {
-						return new Object[0];
-					}
-				} 
-				return super.getChildren(element);
-			}
-		});
-		dialog.setTitle("Tree Selection");
-		dialog.setMessage("Select the elements from the tree:");
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		if( dialog.open() == Window.OK ) {
-			Object[] selectedResources = dialog.getResult();
-			if( selectedResources != null ) {
-				Object firstResource = selectedResources[0];
-				if( firstResource instanceof IFile ) {
-					return (IFile)firstResource;
-				}
-			}
-		}
-		return null;
-	}
+	
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -166,4 +102,76 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		});
 	}
 
+	private void createSelectImageButton(Composite tableComposite) {
+		Button selectImageButton = new Button(tableComposite, SWT.PUSH);
+		selectImageButton.setImage(DashboardPlugIn.getImageManager().get("selectImage"));
+		selectImageButton.setToolTipText("Select image from workspace");
+		selectImageButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				selectImageFile();
+			}
+		});
+	}
+
+	private void createImageText(Composite tableComposite) {
+		imageText = new Text(tableComposite, SWT.SINGLE | SWT.BORDER);
+		if (selectedImageFile != null) {
+			imageText.setText(selectedImageFile.getFullPath().toString());
+		}
+		imageText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	}
+
+	private void selectImageFile() {
+		IFile selectedFile = selectImageFileWithDialog(getShell());
+		if (selectedFile != null) {
+			imageText.setText(selectedFile.getFullPath().toString());
+			selectedImageFile = selectedFile;
+		} else {
+			selectedImageFile = null;
+			imageText.setText("");
+		}
+	}
+	
+	private static Combo createComboDropDown(Composite tableComposite, boolean isLocked) {
+		Combo comboDropDown = new Combo(tableComposite, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		comboDropDown.add("true");
+		comboDropDown.add("false");
+		comboDropDown.select(isLocked ? 0 : 1);
+		comboDropDown.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return comboDropDown;
+	}
+
+	private static Composite createTopComposite(Composite parent) {
+		Composite tableComposite = new Composite(parent, SWT.NONE);
+		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tableComposite.setLayout(new GridLayout(3, false));
+		return tableComposite;
+	}
+
+	private static void createLabel(Composite tableComposite, String text) {
+		Label imageLabel = new Label(tableComposite, SWT.NONE);
+		imageLabel.setText(text);
+	}
+
+	private static IFile selectImageFileWithDialog(Shell shell) {
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(), new ImageContentProvider());
+		dialog.setTitle("Tree Selection");
+		dialog.setMessage("Select the elements from the tree:");
+		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		if (dialog.open() == Window.OK) {
+			return getFirstSelectedImageFile(dialog.getResult());
+		}
+		return null;
+	}
+
+	private static IFile getFirstSelectedImageFile(Object[] selectedResources) {
+		if (selectedResources != null) {
+			Object firstResource = selectedResources[0];
+			if (firstResource instanceof IFile) {
+				return (IFile) firstResource;
+			}
+		}
+		return null;
+	}
 }

@@ -50,8 +50,7 @@ public class ConfigureDashboardCommand extends AbstractHandler implements IHandl
 			
 			DashboardConfigWindow cfgWindow = new DashboardConfigWindow(null, dashboard);
 			if( cfgWindow.open() == Window.OK ) {
-				IFile selectedImageFilename = cfgWindow.getBackgroundImageFilename();
-				dashboard.setBackgroundImageFilename(selectedImageFilename);
+				applySettingsToDashboard(dashboard, cfgWindow);
 				
 				trySaveDashboard(dashboard, dashboardFile);
 			} 
@@ -60,7 +59,6 @@ public class ConfigureDashboardCommand extends AbstractHandler implements IHandl
 		return null;
 	}
 
-
 	@Override
 	public boolean isEnabled() {
 		final ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
@@ -68,6 +66,12 @@ public class ConfigureDashboardCommand extends AbstractHandler implements IHandl
 		dashboardFiles = getDashboardFiles(selectedObjects);
 
 		return dashboardFiles.size() == 1;
+	}
+
+	private static void applySettingsToDashboard(Dashboard dashboard, DashboardConfigWindow cfgWindow) {
+		IFile selectedImageFilename = cfgWindow.getBackgroundImageFile();
+		dashboard.setBackgroundImageFilename(selectedImageFilename);
+		dashboard.setLock(cfgWindow.isDasboardLocked());
 	}
 	
 	@SuppressWarnings("unchecked")
