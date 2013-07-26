@@ -103,7 +103,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 			return new OperatorCost<T>(null, 0, 0);
 		}
 
-		final Map<SDFAttribute, IHistogram> baseHistograms = isUseHistograms() ? getBaseHistograms(operators) : Maps.<SDFAttribute, IHistogram> newHashMap();
+		final Map<SDFAttribute, IHistogram> baseHistograms = isUseHistograms() ? getBaseHistograms(operators) : createEmptyHistogramMap();
 
 		if (operators.get(0) instanceof IPhysicalOperator) {
 			return (ICost<T>) estimatePhysical((List<IPhysicalOperator>) operators, onUpdate, baseHistograms);
@@ -137,6 +137,10 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 
 	public void setUseHistograms(boolean useHistograms) {
 		this.useHistograms = useHistograms;
+	}
+
+	private static HashMap<SDFAttribute, IHistogram> createEmptyHistogramMap() {
+		return Maps.<SDFAttribute, IHistogram> newHashMap();
 	}
 
 	private static boolean determineIsRunning(Object operator) {
