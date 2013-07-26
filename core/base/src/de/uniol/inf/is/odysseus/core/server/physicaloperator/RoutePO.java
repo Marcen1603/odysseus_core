@@ -30,14 +30,17 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 public class RoutePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
 	private List<IPredicate<? super T>> predicates;
+	final boolean overlappingPredicates;
 
-	public RoutePO(List<IPredicate<? super T>> predicates)  {
+	public RoutePO(List<IPredicate<? super T>> predicates, boolean overlappingPredicates)  {
 		super();
+		this.overlappingPredicates = overlappingPredicates;
 		initPredicates(predicates);
 	}
 
 	public RoutePO(RoutePO<T> splitPO) {
 		super();
+		this.overlappingPredicates = splitPO.overlappingPredicates;
 		initPredicates(splitPO.predicates);
 	}
 	

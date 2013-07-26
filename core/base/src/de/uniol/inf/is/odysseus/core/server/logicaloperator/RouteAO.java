@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
 @LogicalOperator(name="ROUTE", minInputPorts=1, maxInputPorts=1)
@@ -28,12 +29,15 @@ public class RouteAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8015847502104587689L;
 	
+	private boolean overlappingPredicates = false;
+	
 	public RouteAO(){
 		super();
 	}
 	
 	public RouteAO(RouteAO routeAO){
 		super(routeAO);
+		this.overlappingPredicates = routeAO.overlappingPredicates;
 	}
 	
 	@Override
@@ -48,9 +52,21 @@ public class RouteAO extends UnaryLogicalOp {
 		super.setPredicates(predicates);
 	}
 	
+	@Parameter(name="overlappingPredicates", type=BooleanParameter.class, optional=true, doc="Evaluate all (true) or only until first true predicate (false), i.e. deliver to all ports where predicate is true or only to first")
+	public void setOverlappingPredicates(boolean overlappingPredicates) {
+		this.overlappingPredicates = overlappingPredicates;
+	}
+	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new RouteAO(this);
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isOverlappingPredicates() {
+		return false;
 	}
 	
 }
