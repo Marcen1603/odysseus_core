@@ -113,7 +113,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		getSite().setSelectionProvider(this);
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		
-		// Contextmen� registrieren
+		// Contextmenü registrieren
 		MenuManager menuManager = new MenuManager();
 		Menu contextMenu = menuManager.createContextMenu(renderManager.getCanvas());
 		// Set the MenuManager
