@@ -29,7 +29,7 @@ public class DashboardConfigurer {
 	}
 	
 	public void startConfigure(IFile fileToSaveDashboard) {
-		DashboardConfigWindow cfgWindow = new DashboardConfigWindow(null, dashboard);
+		DashboardConfigWindow cfgWindow = new DashboardConfigWindow(null, dashboard, fileToSaveDashboard.getName());
 		if( cfgWindow.open() == Window.OK ) {
 			applySettingsToDashboard(dashboard, cfgWindow);
 			trySaveDashboard(dashboard, fileToSaveDashboard);

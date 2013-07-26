@@ -21,24 +21,32 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 
 public class DashboardConfigWindow extends TitleAreaDialog {
 
-	private static final String TITLE = "Dashboard settings";
-	private static final String DEFAULT_MESSAGE = "Change settings of this dashboard";
+	private static final String WINDOW_TITLE = "Configure Dashboard";
+	private static final String DISPLAY_TITLE = "Dashboard settings";
+	private static final String DEFAULT_MESSAGE = "Change settings of";
 
+	private final String dashboardName; 
+	
 	private Text imageText;
 	private IFile selectedImageFile;
 	private boolean isDashboardLocked;
 	private boolean isBackgroundImageStretched;
 
-	public DashboardConfigWindow(Shell parentShell, Dashboard dashboard) {
+	public DashboardConfigWindow(Shell parentShell, Dashboard dashboard, String dashboardName) {
 		super(parentShell);
 
 		Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardName), "Name of dashboard to show must not be null or empty!");
+		
+		this.dashboardName = dashboardName;
+		
 		importDashboardSettings(dashboard);
 	}
 
@@ -57,8 +65,9 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	@Override
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
-		setTitle(TITLE);
-		setMessage(DEFAULT_MESSAGE);
+		setTitle(DISPLAY_TITLE + ": " + dashboardName);
+		getShell().setText(WINDOW_TITLE);
+		setMessage(DEFAULT_MESSAGE + " " + dashboardName);
 		return contents;
 	}
 
