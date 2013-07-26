@@ -33,21 +33,25 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	private Text imageText;
 	private IFile selectedImageFile;
 	private boolean isDashboardLocked;
+	private boolean isBackgroundImageStretched;
 
 	public DashboardConfigWindow(Shell parentShell, Dashboard dashboard) {
 		super(parentShell);
 
 		Preconditions.checkNotNull(dashboard, "Dashboard to configure must not be null!");
-		selectedImageFile = dashboard.getBackgroundImageFilename();
-		isDashboardLocked = dashboard.isLocked();
+		importDashboardSettings(dashboard);
 	}
 
 	public IFile getBackgroundImageFile() {
 		return selectedImageFile;
 	}
-	
+
 	public boolean isDasboardLocked() {
 		return isDashboardLocked;
+	}
+	
+	public boolean isBackgroundImageStretched() {
+		return isBackgroundImageStretched;
 	}
 
 	@Override
@@ -62,23 +66,14 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite tableComposite = createTopComposite(parent);
 		
-		createLabel(tableComposite, "Background Image");
-		createImageText(tableComposite);
-		createImageButtons(tableComposite);
+		createImageSettingContent(tableComposite);
+		createImageStretchSettingContent(tableComposite);
+		createLockSettingContent(tableComposite);
 		
-		createLabel(tableComposite, "Locked");
-		final Combo comboDropDown = createComboDropDown(tableComposite, isDashboardLocked);
-		comboDropDown.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				isDashboardLocked = comboDropDown.getSelectionIndex() == 0;
-			}
-		});
-
 		tableComposite.pack();
-		return super.createDialogArea(parent);
+		return tableComposite;
 	}
-	
+
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -102,6 +97,41 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		});
 	}
 
+	private void createLockSettingContent(Composite tableComposite) {
+		createLabel(tableComposite, "Locked");
+		final Combo comboLocked = createBooleanComboDropDown(tableComposite, isDashboardLocked);
+		comboLocked.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				isDashboardLocked = comboLocked.getSelectionIndex() == 0;
+			}
+		});
+	}
+
+	private void createImageStretchSettingContent(Composite tableComposite) {
+		createLabel(tableComposite, "Streched");
+		final Combo comboStretched = createBooleanComboDropDown(tableComposite, isBackgroundImageStretched );
+		comboStretched.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				isBackgroundImageStretched = comboStretched.getSelectionIndex() == 0;
+			}
+		});
+		createDummyComposite(tableComposite);
+	}
+
+	private void createImageSettingContent(Composite tableComposite) {
+		createLabel(tableComposite, "Background Image");
+		createImageText(tableComposite);
+		createImageButtons(tableComposite);
+	}
+
+	private void importDashboardSettings(Dashboard dashboard) {
+		selectedImageFile = dashboard.getBackgroundImageFilename();
+		isDashboardLocked = dashboard.isLocked();
+		isBackgroundImageStretched = dashboard.isBackgroundImageStretched();
+	}
+
 	private void createImageButtons(Composite tableComposite) {
 		Composite imageButtonsComposite = new Composite(tableComposite, SWT.NONE);
 		imageButtonsComposite.setLayout(new GridLayout(2, true));
@@ -111,7 +141,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	}
 
 	private void createImageResetButton(Composite imageButtonsComposite) {
-		Button clearImageButton = new Button(imageButtonsComposite, SWT.PUSH );
+		Button clearImageButton = new Button(imageButtonsComposite, SWT.PUSH);
 		clearImageButton.setImage(DashboardPlugIn.getImageManager().get("resetImage"));
 		clearImageButton.setToolTipText("Clear image selection");
 		clearImageButton.addSelectionListener(new SelectionAdapter() {
@@ -121,7 +151,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 			}
 		});
 	}
-	
+
 	private void resetImageSelection() {
 		imageText.setText("");
 		selectedImageFile = null;
@@ -144,7 +174,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		if (selectedFile != null) {
 			imageText.setText(selectedFile.getFullPath().toString());
 			selectedImageFile = selectedFile;
-		} 
+		}
 	}
 
 	private void createImageText(Composite tableComposite) {
@@ -154,12 +184,16 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		}
 		imageText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
-	
-	private static Combo createComboDropDown(Composite tableComposite, boolean isLocked) {
+
+	private static void createDummyComposite(Composite tableComposite) {
+		new Composite(tableComposite, SWT.NONE);
+	}
+
+	private static Combo createBooleanComboDropDown(Composite tableComposite, boolean isSetToTrue) {
 		Combo comboDropDown = new Combo(tableComposite, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		comboDropDown.add("true");
 		comboDropDown.add("false");
-		comboDropDown.select(isLocked ? 0 : 1);
+		comboDropDown.select(isSetToTrue ? 0 : 1);
 		comboDropDown.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return comboDropDown;
 	}

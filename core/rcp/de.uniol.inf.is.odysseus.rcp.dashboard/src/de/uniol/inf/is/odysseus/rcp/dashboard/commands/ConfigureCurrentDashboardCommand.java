@@ -5,6 +5,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.cfg.DashboardConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.EditorUtil;
 

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.cfg.DashboardConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;

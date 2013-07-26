@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.rcp.dashboard.commands;
+package de.uniol.inf.is.odysseus.rcp.dashboard.cfg;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.windows.DashboardConfigWindow;
 
-class DashboardConfigurer {
+public class DashboardConfigurer {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardConfigurer.class);
 	private static final IDashboardHandler DASHBOARD_LOADER = new XMLDashboardHandler();
@@ -40,6 +40,7 @@ class DashboardConfigurer {
 		IFile selectedImageFilename = cfgWindow.getBackgroundImageFile();
 		dashboard.setBackgroundImageFilename(selectedImageFilename);
 		dashboard.setLock(cfgWindow.isDasboardLocked());
+		dashboard.setBackgroundImageStretched(cfgWindow.isBackgroundImageStretched());
 	}
 
 	private static void trySaveDashboard(Dashboard dashboard, IFile dashboardFile) {

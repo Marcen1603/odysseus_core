@@ -75,6 +75,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.ControlPoint;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.ControlPointManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
+import de.uniol.inf.is.odysseus.rcp.dashboard.util.ImageUtil;
 
 public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, KeyListener, ISelectionListener, ISelectionProvider {
 
@@ -93,7 +94,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private Composite dashboardComposite;
 	private ToolBar toolBar;
 	private DropTarget dropTarget;
-	private boolean isLocked = false;
 	private PartDragger partDragger = new PartDragger();
 	
 	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
@@ -105,11 +105,15 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private final List<ISelectionChangedListener> selectionChangedListeners = Lists.newArrayList();
 	private boolean isSelectionChange;
 
-	// TODO: seperate settings into anther class
 	private ControlPointManager controlPointManager;
+	
+	// TODO: seperate settings into anther class
 	private IFile backgroundImageFile;
 	private IFile loadedBackgroundImageFile;
 	private Image backgroundImage;
+	private boolean isLocked = false;
+	private boolean isBackgroundImageStretched = false;
+	private boolean isLoadedBackgroundImageStretched = false;
 
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
@@ -131,6 +135,14 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	
 	public IFile getBackgroundImageFilename() {
 		return backgroundImageFile;
+	}
+	
+	public boolean isBackgroundImageStretched() {
+		return isBackgroundImageStretched;
+	}
+	
+	public void setBackgroundImageStretched( boolean isStretch ) {
+		isBackgroundImageStretched = isStretch;
 	}
 
 	public void addListener(IDashboardListener listener) {
@@ -346,11 +358,12 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		for (DashboardPartPlacement partPlace : dashboardParts) {
 			update(partPlace);
 		}
+		
 		fireChangedEvent();
 	}
 
 	private void updateBackgroundImage() {
-		if (!Objects.equals(loadedBackgroundImageFile, backgroundImageFile)) {
+		if (!Objects.equals(loadedBackgroundImageFile, backgroundImageFile) || isBackgroundImageStretched != isLoadedBackgroundImageStretched ) {
 			if (backgroundImage != null) {
 				backgroundImage.dispose();
 			}
@@ -358,6 +371,14 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			try {
 				if( backgroundImageFile != null ) {
 					Image image = new Image(Display.getCurrent(), backgroundImageFile.getContents());
+					
+					if( isBackgroundImageStretched ) {
+						Image stretchedImage = ImageUtil.resizeImage(image, dashboardComposite.getSize().x, dashboardComposite.getSize().y);
+						image.dispose();
+						image = stretchedImage;
+					} 
+					isLoadedBackgroundImageStretched = isBackgroundImageStretched;
+					
 					backgroundImage = image;
 					loadedBackgroundImageFile = backgroundImageFile;
 					

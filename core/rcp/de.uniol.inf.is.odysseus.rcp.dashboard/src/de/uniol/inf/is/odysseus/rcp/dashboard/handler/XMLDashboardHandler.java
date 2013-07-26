@@ -71,6 +71,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	private static final String FILE_ATTRIBUTE_NAME = "file";
 	private static final String LOCK_ATTRIBUTE_NAME = "lock";
 	private static final String BG_IMAGE_ATTRIBUTE_NAME = "backgroundImage";
+	private static final String BG_IMAGE_STRETCHED_ATTRIBUTE_NAME = "stretched";
 
 	@Override
 	public Dashboard load(List<String> lines, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException {
@@ -85,12 +86,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			final Node rootNode = getRootNode(doc);
 			dashboard.setLock( Boolean.valueOf(getAttribute(rootNode, LOCK_ATTRIBUTE_NAME, "false")));
 			
-			String imageFilename = getAttribute(rootNode, BG_IMAGE_ATTRIBUTE_NAME, null);
-			if( imageFilename != null ) {
-				final IPath imageFilePath = new Path(imageFilename);
-				final IFile imageFile = ResourcesPlugin.getWorkspace().getRoot().getFile(imageFilePath);
-				dashboard.setBackgroundImageFilename(imageFile);
-			}
+			insertBackgroundImageData(dashboard, rootNode);
 			
 			final NodeList dashboardNodes = rootNode.getChildNodes();
 			for (int i = 0; i < dashboardNodes.getLength(); i++) {
@@ -145,6 +141,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			if( backgroundImageFilename != null ) {
 				rootElement.setAttribute(BG_IMAGE_ATTRIBUTE_NAME, backgroundImageFilename.getFullPath().toString());
 			}
+			rootElement.setAttribute(BG_IMAGE_STRETCHED_ATTRIBUTE_NAME, String.valueOf(board.isBackgroundImageStretched()));
 			
 			for (final DashboardPartPlacement partPlacement : board.getDashboardPartPlacements()) {
 				createDashboardPartElement(doc, rootElement, partPlacement);
@@ -158,6 +155,17 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		}
 	}
 
+	private static void insertBackgroundImageData(final Dashboard dashboard, final Node rootNode) {
+		String imageFilename = getAttribute(rootNode, BG_IMAGE_ATTRIBUTE_NAME, null);
+		if (imageFilename != null) {
+			final IPath imageFilePath = new Path(imageFilename);
+			final IFile imageFile = ResourcesPlugin.getWorkspace().getRoot().getFile(imageFilePath);
+			dashboard.setBackgroundImageFilename(imageFile);
+		}
+		boolean stretchedImage = Boolean.valueOf(getAttribute(rootNode, BG_IMAGE_STRETCHED_ATTRIBUTE_NAME, "false"));
+		dashboard.setBackgroundImageStretched(stretchedImage);
+	}
+	
 	private static void createDashboardPartElement(Document doc, Element rootElement, DashboardPartPlacement placement) {
 		final Element element = doc.createElement(DASHBOARD_PART_XML_ELEMENT);
 		element.setAttribute(X_ATTRIBUTE_NAME, String.valueOf(placement.getX()));
