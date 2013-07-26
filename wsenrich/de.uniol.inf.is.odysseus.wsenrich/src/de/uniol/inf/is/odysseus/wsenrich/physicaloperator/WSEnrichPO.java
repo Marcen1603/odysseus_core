@@ -1,16 +1,18 @@
 package de.uniol.inf.is.odysseus.wsenrich.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.cache.IReadOnlyCache;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -26,7 +28,6 @@ import de.uniol.inf.is.odysseus.wsenrich.util.ISoapMessageCreator;
 
 public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	
 	private final String serviceMethod;
 	private final String method;
 	private final String url;
@@ -48,6 +49,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final IKeyFinder keyFinder;
 	private final ISoapMessageCreator soapMessageCreator;
 	private final IMessageManipulator soapMessageManipulator;
+	private final IReadOnlyCache cacheManager;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
@@ -57,7 +59,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 					IMetadataMergeFunction<T> metaMergeFunction,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
 					HttpEntityToStringConverter converter, IKeyFinder keyFinder, 
-					ISoapMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator) {
+					ISoapMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator,
+					IReadOnlyCache cacheManager) {
 						
 		super();
 		this.serviceMethod = serviceMethod;
@@ -81,7 +84,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.keyFinder = keyFinder;
 		this.soapMessageCreator = soapMessageCreator;
 		this.soapMessageManipulator = soapMessageManipulator;
-						
+		this.cacheManager = cacheManager;				
 	}
 	
 	public WSEnrichPO(WSEnrichPO<T> wsEnrichPO) {
@@ -110,7 +113,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.keyFinder = wsEnrichPO.keyFinder;
 		this.soapMessageCreator = wsEnrichPO.soapMessageCreator;
 		this.soapMessageManipulator = wsEnrichPO.soapMessageManipulator;
-		
+		this.cacheManager = wsEnrichPO.cacheManager;	
 	}
 	
 		
@@ -122,62 +125,15 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	protected void process_next(Tuple<T> inputTuple, int port) {
-		
-		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
-		
-		String postData = "";
-		
-		if(soapMessageCreator != null && soapMessageManipulator != null) {
-			soapMessageManipulator.setMessage(soapMessageCreator.getSoapMessage());
-			soapMessageManipulator.setArguments(queryParameters);
-			postData = soapMessageManipulator.buildMessage();
+		if(cacheManager == null) {
+			process_next_without_cache(inputTuple, port);
+		} else {
+			process_next_with_cache(inputTuple, port);
 		}
-		
-		//Build the Url and arguments
-		requestBuilder.setUrlPrefix(url);
-		requestBuilder.setUrlSuffix(urlsuffix);
-		requestBuilder.setArguments(queryParameters);
-		requestBuilder.setPostData(postData);
-		requestBuilder.buildUri();
-		//String postData = requestBuilder.getPostData();
-		String uri = requestBuilder.getUri();
-		
-		//Connect to the Url
-		connection.setUri(uri);
-		connection.setArguments(requestBuilder.getPostData());
-		connection.connect(charset, method);
-		HttpEntity entity = connection.retrieveBody();
-		
-		//Convert the Http Entity into a String, finally close the Http Connection
-		converter.setInput(entity);
-		converter.convert();
-		connection.closeConnection();
-		
-		//Set the Message for the Key (Element) Finder an find the defined Elements and paste
-		//them to the tuple(s)
-		keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
-		
-		for(int i = 0; i < keyFinder.getTupleCount(); i++) {
-			Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
-			for(int j = 0; j < receivedData.size(); j++) {
-				keyFinder.setSearch(receivedData.get(j).getAttributeName());
-				Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
-				if((value == null || value.equals("")) && !outerJoin) {
-					return;
-				} else if((value == null || value.equals("")) && outerJoin) {
-					wsTuple.setAttribute(j, "null");
-				} else {
-					wsTuple.setAttribute(j, value);
-				}
-			}
-			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
-			transfer(outputTuple);
-			}
-		}
+	}
 	
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
-		
 		if(soapMessageCreator != null) {
 			soapMessageCreator.buildSoapMessage();
 		}
@@ -187,8 +143,11 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	
 	@Override
 	protected synchronized void process_close() {	
-		//actually nothing to do
-		
+		System.out.println("Cache hits: " + cacheManager.getCacheHits());
+		System.out.println("Cache miss: " + cacheManager.getCacheMiss());
+		System.out.println("Cache inserts: " + cacheManager.getCacheInsert());
+		System.out.println("Cache removes: " + cacheManager.getCacheRemoves());
+		cacheManager.close();
 	}
 
 	@Override
@@ -286,7 +245,129 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			return false;
 		}
 		return true;
-		
 	}
+	
+	/**
+	 * Retrieves data from the specified webservice and puts the tuples into the cache
+	 * @param inputTuple the input tuple
+	 * @param port the port
+	 */
+	private void process_next_with_cache(Tuple<T> inputTuple, int port) {
+		//get Tuples from the Cache with the HashCode of the inputTuple as the referencing key
+		ArrayList<IStreamObject<?>> cachedTuples = cacheManager.get(inputTuple.hashCode());
+		if(cachedTuples == null) {
+			List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
+			String postData = "";
+			if(soapMessageCreator != null && soapMessageManipulator != null) {
+				soapMessageManipulator.setMessage(soapMessageCreator.getSoapMessage());
+				soapMessageManipulator.setArguments(queryParameters);
+				postData = soapMessageManipulator.buildMessage();
+			}
+			//Build the Url and arguments
+			requestBuilder.setUrlPrefix(url);
+			requestBuilder.setUrlSuffix(urlsuffix);
+			requestBuilder.setArguments(queryParameters);
+			requestBuilder.setPostData(postData);
+			requestBuilder.buildUri();
+			//String postData = requestBuilder.getPostData();
+			String uri = requestBuilder.getUri();
+			//Connect to the Url
+			connection.setUri(uri);
+			connection.setArguments(requestBuilder.getPostData());
+			connection.connect(charset, method);
+			HttpEntity entity = connection.retrieveBody();
+			//Convert the Http Entity into a String, finally close the Http Connection
+			converter.setInput(entity);
+			converter.convert();
+			connection.closeConnection();
+			//Set the Message for the Key (Element) Finder an find the defined Elements and paste
+			//them to the tuple(s)
+			keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
+			//Create a ArrayList for the Tuples of the webservice data for the cache
+			ArrayList<IStreamObject<?>> tuplesToCache = new ArrayList<IStreamObject<?>>(keyFinder.getTupleCount());
+			
+			for(int i = 0; i < keyFinder.getTupleCount(); i++) {
+				Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
+				 
+				for(int j = 0; j < receivedData.size(); j++) {
+					keyFinder.setSearch(receivedData.get(j).getAttributeName());
+					Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
+					if((value == null || value.equals("")) && !outerJoin) {
+						return;
+					} else if((value == null || value.equals("")) && outerJoin) {
+						wsTuple.setAttribute(j, "null");
+					} else {
+						wsTuple.setAttribute(j, value);
+					}
+				}
+				tuplesToCache.add(wsTuple);
+				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+				transfer(outputTuple);
+			}
+		cacheManager.put(inputTuple.hashCode(), tuplesToCache);
+		} else { //This means, there are tuples in the cache with the specified key
+			for(int i = 0; i < cachedTuples.size(); i++) {
+				@SuppressWarnings("unchecked")
+				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>) cachedTuples.get(i), metaMergeFunction, Order.LeftRight);
+				transfer(outputTuple);
+			}
+		}
+	}
+	
+	/**
+	 * retrieves data from the specified weberservice an put them to the output stream, no cache!!
+	 * @param inputTuple the input tuple
+	 * @param port the port
+	 */
+	private void process_next_without_cache(Tuple<T> inputTuple, int port) {
 
+		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
+		String postData = "";
+		if(soapMessageCreator != null && soapMessageManipulator != null) {
+			soapMessageManipulator.setMessage(soapMessageCreator.getSoapMessage());
+			soapMessageManipulator.setArguments(queryParameters);
+			postData = soapMessageManipulator.buildMessage();
+		}
+		
+		//Build the Url and arguments
+		requestBuilder.setUrlPrefix(url);
+		requestBuilder.setUrlSuffix(urlsuffix);
+		requestBuilder.setArguments(queryParameters);
+		requestBuilder.setPostData(postData);
+		requestBuilder.buildUri();
+		//String postData = requestBuilder.getPostData();
+		String uri = requestBuilder.getUri();
+		
+		//Connect to the Url
+		connection.setUri(uri);
+		connection.setArguments(requestBuilder.getPostData());
+		connection.connect(charset, method);
+		HttpEntity entity = connection.retrieveBody();
+		
+		//Convert the Http Entity into a String, finally close the Http Connection
+		converter.setInput(entity);
+		converter.convert();
+		connection.closeConnection();
+		
+		//Set the Message for the Key (Element) Finder an find the defined Elements and paste
+		//them to the tuple(s)
+		keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
+		
+		for(int i = 0; i < keyFinder.getTupleCount(); i++) {
+			Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
+			for(int j = 0; j < receivedData.size(); j++) {
+				keyFinder.setSearch(receivedData.get(j).getAttributeName());
+				Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
+				if((value == null || value.equals("")) && !outerJoin) {
+					return;
+				} else if((value == null || value.equals("")) && outerJoin) {
+					wsTuple.setAttribute(j, "null");
+				} else {
+					wsTuple.setAttribute(j, value);
+				}
+			}
+			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+			transfer(outputTuple);
+		}
+	}
 }

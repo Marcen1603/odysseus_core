@@ -214,5 +214,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		} else if (!variables.equals(other.variables))
 			return false;
 		return true;
+		
+		
 	}
 }

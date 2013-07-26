@@ -23,7 +23,13 @@ import de.uniol.inf.is.odysseus.wsenrich.util.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.MessageManipulatorRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.SoapMessageCreatorRegistry;
-
+import de.uniol.inf.is.odysseus.cache.CacheEntry;
+import de.uniol.inf.is.odysseus.cache.ICacheStore;
+import de.uniol.inf.is.odysseus.cache.IReadOnlyCache;
+import de.uniol.inf.is.odysseus.cache.MainMemoryStore;
+import de.uniol.inf.is.odysseus.cache.ReadOnlyCache;
+import de.uniol.inf.is.odysseus.cache.removalstrategy.IRemovalStrategy;
+import de.uniol.inf.is.odysseus.cache.removalstrategy.RemovalStrategyRegistry;
 
 public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 
@@ -49,12 +55,20 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			soapMessageCreator = null;
 			soapMessageManipulator = null;
 		}
-		
+
 		IConnectionForWebservices connection = ConnectionForWebservicesRegistry.getInstance(logical.getGetOrPost());
 		IRequestBuilder requestBuilder = RequestBuilderRegistry.getInstance(logical.getMethod());
 		HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
 		IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getParsingMethod());
-			
+		
+		IReadOnlyCache cacheManager;
+		//Create a cache if its activated by the user
+		if(logical.getCache()) {
+			cacheManager = createCache(logical);
+		} else {
+			cacheManager = null;
+		}
+		
 		WSEnrichPO<ITimeInterval> physical = new WSEnrichPO<ITimeInterval>(
 			logical.getServiceMethod(),
 			logical.getMethod(),
@@ -75,7 +89,8 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			converter,
 			keyFinder,
 			soapMessageCreator,
-			soapMessageManipulator);
+			soapMessageManipulator, 
+			cacheManager);
 		
 		//defaultExecute(logical, physical, transformConfig, true, true);
 		physical.setOutputSchema(logical.getOutputSchema());
@@ -97,6 +112,20 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
+	}
+	
+	/**
+	 * Constructor for the ReadOnly Cache with a MainMemoryCacheStore. 
+	 * Caching Records are not modified, only read, Caching Records are
+	 * hold in the Main Memory. If no cache Entry is found, null will be 
+	 * returned. Then, the operator has to get the data from the source
+	 * @param logical
+	 * @return the cache
+	 */
+	private IReadOnlyCache createCache(WSEnrichAO logical) {
+		ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<>(logical.getCacheSize() + 1, 1.0f);
+		IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
+		return new ReadOnlyCache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());	
 	}
 
 }

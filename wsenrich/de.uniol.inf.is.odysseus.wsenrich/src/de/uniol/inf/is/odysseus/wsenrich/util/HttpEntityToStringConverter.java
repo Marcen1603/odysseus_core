@@ -133,6 +133,8 @@ public class HttpEntityToStringConverter {
 	
 	/**
 	 * Recursive Method to replace wrong Characters
+	 * Works ONLY if each Character in the parameters htmlCode an replacement
+	 * are different!!!
 	 * @param temp the message
 	 * @param htmlCode the html code to be replaced
 	 * @param replacement the character which replace the htmlCode

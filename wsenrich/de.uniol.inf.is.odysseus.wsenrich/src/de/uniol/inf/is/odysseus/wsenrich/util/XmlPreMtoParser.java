@@ -20,10 +20,10 @@ public class XmlPreMtoParser {
 	
 	protected void setMessage(Document xmlDocument) {
 		this.xmlDocument = xmlDocument;
-		splitDocuments();
+		splitDocument();
 	}
 	
-	private void splitDocuments() {
+	private void splitDocument() {
 		this.splittetXmlDocuments.clear();
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		try {
