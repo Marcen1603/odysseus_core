@@ -326,36 +326,32 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		
 		final ToolItem layoutButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("layout"));
 		layoutButton.setToolTipText("Layout");
-		layoutButton.setEnabled(!dashboard.isLocked());
+		layoutButton.setEnabled(!dashboard.getSettings().isLocked());
 		layoutButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( !dashboard.isLocked() ) {
-					Collection<DashboardPartPlacement> placements = dashboard.getDashboardPartPlacements();
-					if( !placements.isEmpty() ) {
-						IDashboardLayouter gridLayouter = new GridDashboardLayouter();
-						gridLayouter.layout(dashboard.getDashboardPartPlacements(), dashboard.getControl().getSize().x, dashboard.getControl().getSize().y);
-						dashboard.update();
-					}
+				Collection<DashboardPartPlacement> placements = dashboard.getDashboardPartPlacements();
+				if (!placements.isEmpty()) {
+					IDashboardLayouter gridLayouter = new GridDashboardLayouter();
+					gridLayouter.layout(dashboard.getDashboardPartPlacements(), dashboard.getControl().getSize().x, dashboard.getControl().getSize().y);
+					dashboard.update();
 				}
 			}
 		});
 
 		final ToolItem removeButton = createToolBarButton(toolBar, DashboardPlugIn.getImageManager().get("removeAll"));
 		removeButton.setToolTipText("Remove all part(s)");
-		removeButton.setEnabled(!dashboard.isLocked());
+		removeButton.setEnabled(!dashboard.getSettings().isLocked());
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( !dashboard.isLocked() ) {
-					if (dashboard.hasSelection()) {
-						final IStructuredSelection structSelection = (IStructuredSelection)dashboard.getSelection();
-						final DashboardPartPlacement selectedPlacement = (DashboardPartPlacement) structSelection.getFirstElement();
-						dashboard.remove(selectedPlacement);
-					} else {
-						for (DashboardPartPlacement placement : dashboard.getDashboardPartPlacements()) {
-							dashboard.remove(placement);
-						}
+				if (dashboard.hasSelection()) {
+					final IStructuredSelection structSelection = (IStructuredSelection) dashboard.getSelection();
+					final DashboardPartPlacement selectedPlacement = (DashboardPartPlacement) structSelection.getFirstElement();
+					dashboard.remove(selectedPlacement);
+				} else {
+					for (DashboardPartPlacement placement : dashboard.getDashboardPartPlacements()) {
+						dashboard.remove(placement);
 					}
 				}
 			}

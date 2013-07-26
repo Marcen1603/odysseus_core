@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardSettings;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class XMLDashboardHandler implements IDashboardHandler {
@@ -84,9 +85,11 @@ public class XMLDashboardHandler implements IDashboardHandler {
 
 			final Document doc = getDocument(lines);
 			final Node rootNode = getRootNode(doc);
-			dashboard.setLock( Boolean.valueOf(getAttribute(rootNode, LOCK_ATTRIBUTE_NAME, "false")));
 			
-			insertBackgroundImageData(dashboard, rootNode);
+			final boolean isLocked = ( Boolean.valueOf(getAttribute(rootNode, LOCK_ATTRIBUTE_NAME, "false")));
+			final IFile imageFile = determineImageFile(rootNode);
+			boolean stretchedImage = Boolean.valueOf(getAttribute(rootNode, BG_IMAGE_STRETCHED_ATTRIBUTE_NAME, "false"));
+			dashboard.setSettings(new DashboardSettings(imageFile, isLocked, stretchedImage));
 			
 			final NodeList dashboardNodes = rootNode.getChildNodes();
 			for (int i = 0; i < dashboardNodes.getLength(); i++) {
@@ -136,12 +139,12 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		try {
 			final Document doc = createNewDocument();
 			final Element rootElement = createRootElement(doc);
-			rootElement.setAttribute(LOCK_ATTRIBUTE_NAME, Boolean.toString(board.isLocked()));
-			IFile backgroundImageFilename = board.getBackgroundImageFilename();
+			rootElement.setAttribute(LOCK_ATTRIBUTE_NAME, Boolean.toString(board.getSettings().isLocked()));
+			IFile backgroundImageFilename = board.getSettings().getBackgroundImageFile();
 			if( backgroundImageFilename != null ) {
 				rootElement.setAttribute(BG_IMAGE_ATTRIBUTE_NAME, backgroundImageFilename.getFullPath().toString());
 			}
-			rootElement.setAttribute(BG_IMAGE_STRETCHED_ATTRIBUTE_NAME, String.valueOf(board.isBackgroundImageStretched()));
+			rootElement.setAttribute(BG_IMAGE_STRETCHED_ATTRIBUTE_NAME, String.valueOf(board.getSettings().isBackgroundImageStretched()));
 			
 			for (final DashboardPartPlacement partPlacement : board.getDashboardPartPlacements()) {
 				createDashboardPartElement(doc, rootElement, partPlacement);
@@ -155,15 +158,13 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		}
 	}
 
-	private static void insertBackgroundImageData(final Dashboard dashboard, final Node rootNode) {
+	private static IFile determineImageFile(final Node rootNode) {
 		String imageFilename = getAttribute(rootNode, BG_IMAGE_ATTRIBUTE_NAME, null);
 		if (imageFilename != null) {
 			final IPath imageFilePath = new Path(imageFilename);
-			final IFile imageFile = ResourcesPlugin.getWorkspace().getRoot().getFile(imageFilePath);
-			dashboard.setBackgroundImageFilename(imageFile);
+			return ResourcesPlugin.getWorkspace().getRoot().getFile(imageFilePath);
 		}
-		boolean stretchedImage = Boolean.valueOf(getAttribute(rootNode, BG_IMAGE_STRETCHED_ATTRIBUTE_NAME, "false"));
-		dashboard.setBackgroundImageStretched(stretchedImage);
+		return null;
 	}
 	
 	private static void createDashboardPartElement(Document doc, Element rootElement, DashboardPartPlacement placement) {

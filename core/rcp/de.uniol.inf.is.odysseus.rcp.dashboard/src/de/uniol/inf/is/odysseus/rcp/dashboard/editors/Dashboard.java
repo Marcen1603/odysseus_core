@@ -107,12 +107,9 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	private ControlPointManager controlPointManager;
 	
-	// TODO: seperate settings into anther class
-	private IFile backgroundImageFile;
+	private DashboardSettings settings = DashboardSettings.getDefault();
+	
 	private IFile loadedBackgroundImageFile;
-	private Image backgroundImage;
-	private boolean isLocked = false;
-	private boolean isBackgroundImageStretched = false;
 	private boolean isLoadedBackgroundImageStretched = false;
 
 	public void add(DashboardPartPlacement partPlace) {
@@ -129,22 +126,16 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		fireAddedEvent(partPlace.getDashboardPart());
 	}
 	
-	public void setBackgroundImageFilename( IFile imageFile ) {
-		backgroundImageFile = imageFile;
-	}
-	
-	public IFile getBackgroundImageFilename() {
-		return backgroundImageFile;
-	}
-	
-	public boolean isBackgroundImageStretched() {
-		return isBackgroundImageStretched;
-	}
-	
-	public void setBackgroundImageStretched( boolean isStretch ) {
-		isBackgroundImageStretched = isStretch;
+	public void setSettings( DashboardSettings settings ) {
+		Preconditions.checkNotNull(settings, "Settings to set must not be null!");
+		
+		this.settings = settings;
 	}
 
+	public DashboardSettings getSettings() {
+		return settings;
+	}
+	
 	public void addListener(IDashboardListener listener) {
 		Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
 
@@ -191,7 +182,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		dropTarget.addDropListener(new DropTargetAdapter() {
 			@Override
 			public void drop(DropTargetEvent event) {
-				if (!isLocked()) {
+				if (settings.isLocked()) {
 					processDropEvent(event);
 				}
 			}
@@ -211,17 +202,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		if (dropTarget != null) {
 			dropTarget.dispose();
 		}
-		if( backgroundImage != null ) {
-			backgroundImage.dispose();
-		}
-	}
-
-	public boolean isLocked() {
-		return isLocked;
-	}
-
-	public void setLock(boolean lock) {
-		isLocked = lock;
+		disposeBackgroundImage();
 	}
 
 	public Control getControl() {
@@ -234,19 +215,19 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	@Override
 	public ISelection getSelection() {
-		if (isLocked() || selectedDashboardPart == null) {
+		if (settings.isLocked() || selectedDashboardPart == null) {
 			return StructuredSelection.EMPTY;
 		}
 		return selectedDashboardPart;
 	}
 
 	public boolean hasSelection() {
-		return !isLocked() && selectedDashboardPart != null;
+		return !settings.isLocked() && selectedDashboardPart != null;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (!isLocked() && hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
+		if (!settings.isLocked() && hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
 			DashboardPartPlacement selectedDashboardPart = getSelectedDashboardPart();
 
 			if (e.keyCode == SWT.DEL) {
@@ -316,7 +297,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		if (!isLocked() && e.button == SELECT_MOUSE_BUTTON_ID) {
+		if (!settings.isLocked() && e.button == SELECT_MOUSE_BUTTON_ID) {
 
 			Optional<ControlPoint> optControlPoint = controlPointManager.getControlPoint(e.x, e.y);
 			if( optControlPoint.isPresent() ) {
@@ -363,36 +344,33 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void updateBackgroundImage() {
-		if (!Objects.equals(loadedBackgroundImageFile, backgroundImageFile) || isBackgroundImageStretched != isLoadedBackgroundImageStretched ) {
-			if (backgroundImage != null) {
-				backgroundImage.dispose();
-			}
+		if (!Objects.equals(loadedBackgroundImageFile, settings.getBackgroundImageFile()) || settings.isBackgroundImageStretched() != isLoadedBackgroundImageStretched ) {
+			disposeBackgroundImage();
 
 			try {
-				if( backgroundImageFile != null ) {
-					Image image = new Image(Display.getCurrent(), backgroundImageFile.getContents());
+				if( settings.getBackgroundImageFile() != null ) {
+					Image image = new Image(Display.getCurrent(), settings.getBackgroundImageFile().getContents());
 					
-					if( isBackgroundImageStretched ) {
+					if( settings.isBackgroundImageStretched() ) {
 						Image stretchedImage = ImageUtil.resizeImage(image, dashboardComposite.getSize().x, dashboardComposite.getSize().y);
 						image.dispose();
 						image = stretchedImage;
 					} 
-					isLoadedBackgroundImageStretched = isBackgroundImageStretched;
-					
-					backgroundImage = image;
-					loadedBackgroundImageFile = backgroundImageFile;
+					isLoadedBackgroundImageStretched = settings.isBackgroundImageStretched();
 					
 					dashboardComposite.setBackgroundImage(image);
+					loadedBackgroundImageFile = settings.getBackgroundImageFile();
 				} else {
 					dashboardComposite.setBackgroundImage(null);
 					loadedBackgroundImageFile = null;
 				}
 				
 			} catch (CoreException e) {
-				LOG.error("Could not load image {}", backgroundImageFile.getFullPath().toString());
+				LOG.error("Could not load background image", e);
 			}
 		}
 	}
+
 
 	public void remove(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Dashboardpart to remove (as placement) must not be null!");
@@ -491,6 +469,12 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		return Optional.fromNullable(getSelectedDashboardPart());
 	}
 
+	private void disposeBackgroundImage() {
+		if (dashboardComposite.getBackgroundImage() != null) {
+			dashboardComposite.getBackgroundImage().dispose();
+		}
+	}
+	
 	private void addListeners() {
 		dashboardComposite.addMouseListener(this);
 		dashboardComposite.addKeyListener(this);

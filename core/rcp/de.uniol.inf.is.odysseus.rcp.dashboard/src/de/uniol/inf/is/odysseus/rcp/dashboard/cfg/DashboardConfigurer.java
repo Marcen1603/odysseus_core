@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardSettings;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.windows.DashboardConfigWindow;
@@ -38,9 +39,13 @@ public class DashboardConfigurer {
 
 	private static void applySettingsToDashboard(Dashboard dashboard, DashboardConfigWindow cfgWindow) {
 		IFile selectedImageFilename = cfgWindow.getBackgroundImageFile();
-		dashboard.setBackgroundImageFilename(selectedImageFilename);
-		dashboard.setLock(cfgWindow.isDasboardLocked());
-		dashboard.setBackgroundImageStretched(cfgWindow.isBackgroundImageStretched());
+		
+		DashboardSettings newSettings = new DashboardSettings(
+				selectedImageFilename, 
+				cfgWindow.isDasboardLocked(), 
+				cfgWindow.isBackgroundImageStretched());
+		
+		dashboard.setSettings(newSettings);
 	}
 
 	private static void trySaveDashboard(Dashboard dashboard, IFile dashboardFile) {

@@ -25,6 +25,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardSettings;
 
 public class DashboardConfigWindow extends TitleAreaDialog {
 
@@ -47,7 +48,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		
 		this.dashboardName = dashboardName;
 		
-		importDashboardSettings(dashboard);
+		importDashboardSettings(dashboard.getSettings());
 	}
 
 	public IFile getBackgroundImageFile() {
@@ -135,10 +136,10 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		createImageButtons(tableComposite);
 	}
 
-	private void importDashboardSettings(Dashboard dashboard) {
-		selectedImageFile = dashboard.getBackgroundImageFilename();
-		isDashboardLocked = dashboard.isLocked();
-		isBackgroundImageStretched = dashboard.isBackgroundImageStretched();
+	private void importDashboardSettings(DashboardSettings dashboardSettings) {
+		selectedImageFile = dashboardSettings.getBackgroundImageFile();
+		isDashboardLocked = dashboardSettings.isLocked();
+		isBackgroundImageStretched = dashboardSettings.isBackgroundImageStretched();
 	}
 
 	private void createImageButtons(Composite tableComposite) {
