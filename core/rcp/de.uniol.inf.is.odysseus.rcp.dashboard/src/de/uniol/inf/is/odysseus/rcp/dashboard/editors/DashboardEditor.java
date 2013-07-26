@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -78,9 +79,9 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 		initToolBar(toolBar);
 
-		dashboard.createPartControl(parent, toolBar);
+		dashboard.createPartControl(parent, toolBar, getSite());
 		getSite().setSelectionProvider(dashboard);
-
+		
 		try {
 			startDashboard();
 		} catch (final Exception ex) {
@@ -169,6 +170,10 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	public boolean hasDashboard() {
 		return dashboard != null;
+	}
+	
+	public IFile getDashboardFile() {
+		return input.getFile();
 	}
 
 	@Override

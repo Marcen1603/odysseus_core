@@ -64,7 +64,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		
 		createLabel(tableComposite, "Background Image");
 		createImageText(tableComposite);
-		createSelectImageButton(tableComposite);
+		createImageButtons(tableComposite);
 		
 		createLabel(tableComposite, "Locked");
 		final Combo comboDropDown = createComboDropDown(tableComposite, isDashboardLocked);
@@ -102,8 +102,33 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		});
 	}
 
-	private void createSelectImageButton(Composite tableComposite) {
-		Button selectImageButton = new Button(tableComposite, SWT.PUSH);
+	private void createImageButtons(Composite tableComposite) {
+		Composite imageButtonsComposite = new Composite(tableComposite, SWT.NONE);
+		imageButtonsComposite.setLayout(new GridLayout(2, true));
+
+		createImageSelectButton(imageButtonsComposite);
+		createImageResetButton(imageButtonsComposite);
+	}
+
+	private void createImageResetButton(Composite imageButtonsComposite) {
+		Button clearImageButton = new Button(imageButtonsComposite, SWT.PUSH );
+		clearImageButton.setImage(DashboardPlugIn.getImageManager().get("resetImage"));
+		clearImageButton.setToolTipText("Clear image selection");
+		clearImageButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				resetImageSelection();
+			}
+		});
+	}
+	
+	private void resetImageSelection() {
+		imageText.setText("");
+		selectedImageFile = null;
+	}
+
+	private void createImageSelectButton(Composite imageButtonsComposite) {
+		Button selectImageButton = new Button(imageButtonsComposite, SWT.PUSH);
 		selectImageButton.setImage(DashboardPlugIn.getImageManager().get("selectImage"));
 		selectImageButton.setToolTipText("Select image from workspace");
 		selectImageButton.addSelectionListener(new SelectionAdapter() {
@@ -114,23 +139,20 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 		});
 	}
 
-	private void createImageText(Composite tableComposite) {
-		imageText = new Text(tableComposite, SWT.SINGLE | SWT.BORDER);
-		if (selectedImageFile != null) {
-			imageText.setText(selectedImageFile.getFullPath().toString());
-		}
-		imageText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	}
-
 	private void selectImageFile() {
 		IFile selectedFile = selectImageFileWithDialog(getShell());
 		if (selectedFile != null) {
 			imageText.setText(selectedFile.getFullPath().toString());
 			selectedImageFile = selectedFile;
-		} else {
-			selectedImageFile = null;
-			imageText.setText("");
+		} 
+	}
+
+	private void createImageText(Composite tableComposite) {
+		imageText = new Text(tableComposite, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		if (selectedImageFile != null) {
+			imageText.setText(selectedImageFile.getFullPath().toString());
 		}
+		imageText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
 	private static Combo createComboDropDown(Composite tableComposite, boolean isLocked) {
@@ -155,7 +177,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	}
 
 	private static IFile selectImageFileWithDialog(Shell shell) {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(), new ImageContentProvider());
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(), new ImageFileContentProvider());
 		dialog.setTitle("Tree Selection");
 		dialog.setMessage("Select the elements from the tree:");
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());

@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -52,9 +53,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +105,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private final List<ISelectionChangedListener> selectionChangedListeners = Lists.newArrayList();
 	private boolean isSelectionChange;
 
+	// TODO: seperate settings into anther class
 	private ControlPointManager controlPointManager;
 	private IFile backgroundImageFile;
 	private IFile loadedBackgroundImageFile;
@@ -144,22 +148,27 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 	}
 
-	public void createPartControl(Composite parent, ToolBar toolBar) {
+	public void createPartControl(Composite parent, ToolBar toolBar, IWorkbenchPartSite site) {
 		this.toolBar = toolBar;
-
-		dashboardComposite = new Composite(parent, SWT.BORDER);
-		dashboardComposite.setLayout(new FormLayout());
-		dashboardComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		dashboardComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-
-		dashboardComposite.addMouseListener(this);
-		dashboardComposite.addKeyListener(this);
-		dashboardComposite.addPaintListener(this);
+		dashboardComposite = createTopComposite(parent);
+		controlPointManager = new ControlPointManager(this);
+		
+		addListeners();
 
 		for (final DashboardPartPlacement dashboardPartPlace : dashboardParts) {
 			insertDashboardPart(dashboardPartPlace);
 		}
 
+		createDropTarget();
+		createContextMenu(site);
+
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
+
+		updateBackgroundImage();
+		parent.layout();
+	}
+
+	private void createDropTarget() {
 		if (dropTarget != null) {
 			dropTarget.dispose();
 			dropTarget = null;
@@ -175,12 +184,13 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 				}
 			}
 		});
+	}
 
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
-		controlPointManager = new ControlPointManager(this);
-
-		updateBackgroundImage();
-		parent.layout();
+	private void createContextMenu(IWorkbenchPartSite site) {
+		MenuManager menuManager = new MenuManager();
+		Menu contextMenu = menuManager.createContextMenu(dashboardComposite);
+		dashboardComposite.setMenu(contextMenu);
+		site.registerContextMenu(menuManager, this);
 	}
 
 	public void dispose() {
@@ -346,11 +356,17 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			}
 
 			try {
-				Image image = new Image(Display.getCurrent(), backgroundImageFile.getContents());
-				backgroundImage = image;
-				loadedBackgroundImageFile = backgroundImageFile;
+				if( backgroundImageFile != null ) {
+					Image image = new Image(Display.getCurrent(), backgroundImageFile.getContents());
+					backgroundImage = image;
+					loadedBackgroundImageFile = backgroundImageFile;
+					
+					dashboardComposite.setBackgroundImage(image);
+				} else {
+					dashboardComposite.setBackgroundImage(null);
+					loadedBackgroundImageFile = null;
+				}
 				
-				dashboardComposite.setBackgroundImage(image);
 			} catch (CoreException e) {
 				LOG.error("Could not load image {}", backgroundImageFile.getFullPath().toString());
 			}
@@ -361,7 +377,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		Preconditions.checkNotNull(partPlace, "Dashboardpart to remove (as placement) must not be null!");
 
 		final Composite compToRemove = containers.get(partPlace);
-		removeListeners(compToRemove);
+		removeListenersRecursive(compToRemove);
 
 		partPlace.getDashboardPart().dispose();
 		compToRemove.dispose();
@@ -454,13 +470,30 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		return Optional.fromNullable(getSelectedDashboardPart());
 	}
 
-	private void addListeners(Control base) {
+	private void addListeners() {
+		dashboardComposite.addMouseListener(this);
+		dashboardComposite.addKeyListener(this);
+		dashboardComposite.addPaintListener(this);
+	}
+	
+	private void addListenersRecursive(Control base) {
 		base.addMouseListener(this);
 		base.addMouseMoveListener(this);
 		base.addKeyListener(this);
 		if (base instanceof Composite) {
 			for (final Control ctrl : ((Composite) base).getChildren()) {
-				addListeners(ctrl);
+				addListenersRecursive(ctrl);
+			}
+		}
+	}
+
+	private void removeListenersRecursive(Control base) {
+		base.removeMouseListener(this);
+		base.removeMouseMoveListener(this);
+		base.removeKeyListener(this);
+		if (base instanceof Composite) {
+			for (final Control ctrl : ((Composite) base).getChildren()) {
+				addListenersRecursive(ctrl);
 			}
 		}
 	}
@@ -516,7 +549,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 		addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);
 
-		addListeners(outerContainer);
+		addListenersRecursive(outerContainer);
 	}
 
 	private void processDropEvent(DropTargetEvent event) {
@@ -540,16 +573,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			}
 		} catch (final Throwable ex) {
 			LOG.error("Could not load dashboard part", ex);
-		}
-	}
-
-	private void removeListeners(Control base) {
-		base.removeMouseListener(this);
-		base.removeKeyListener(this);
-		if (base instanceof Composite) {
-			for (final Control ctrl : ((Composite) base).getChildren()) {
-				addListeners(ctrl);
-			}
 		}
 	}
 
@@ -589,6 +612,14 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		updateFormData(fd, placement);
 		dashboardComposite.layout();
 		dashboardComposite.redraw();
+	}
+	
+	private static Composite createTopComposite(Composite parent) {
+		Composite topComposite = new Composite(parent, SWT.BORDER);
+		topComposite.setLayout(new FormLayout());
+		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		topComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		return topComposite;
 	}
 
 	private static void addControlsToMap(Control innerContainer, DashboardPartPlacement placement, Map<Control, DashboardPartPlacement> controlsMap) {

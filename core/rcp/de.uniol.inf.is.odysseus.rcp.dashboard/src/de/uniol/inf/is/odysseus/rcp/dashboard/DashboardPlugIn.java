@@ -110,6 +110,10 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		extensionResolver = new DashboardPartExtensionPointResolver();
 		Platform.getExtensionRegistry().addListener(extensionResolver, DashboardPlugIn.EXTENSION_POINT_ID);
 
+		loadImages(context);
+	}
+
+	private static void loadImages(BundleContext context) {
 		imageManager = new ImageManager(context.getBundle());
 		imageManager.register("dashboardPart", "icons/gear.png");
 		imageManager.register("start", "icons/gear_run.png");
@@ -122,6 +126,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		imageManager.register("resume", "icons/gear_replace.png");
 		imageManager.register("layout", "icons/layout.gif");
 		imageManager.register("selectImage", "icons/selectImage.gif");
+		imageManager.register("resetImage", "icons/deleteEdit.gif");
 	}
 
 	private static void stopImpl() {

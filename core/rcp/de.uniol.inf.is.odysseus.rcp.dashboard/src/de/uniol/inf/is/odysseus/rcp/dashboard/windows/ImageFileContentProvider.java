@@ -12,7 +12,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-class ImageContentProvider extends BaseWorkbenchContentProvider {
+class ImageFileContentProvider extends BaseWorkbenchContentProvider {
 	
 	private static final List<String> ACCEPTED_FILE_EXTENSIONS = new ImmutableList.Builder<String>()
 		.add("png")

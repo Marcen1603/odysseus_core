@@ -68,6 +68,15 @@
                name="de.uniol.inf.is.odysseus.rcp.dashboard.separator2">
          </separator>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.dashboard.DashboardEditor">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboard"
+               label="Configure..."
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -85,6 +94,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureDashboardCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureDashboard"
             name="Configure Dashboard">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureCurrentDashboardCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboard"
+            name="Configure current Dashboard">
       </command>
    </extension>
    <extension
