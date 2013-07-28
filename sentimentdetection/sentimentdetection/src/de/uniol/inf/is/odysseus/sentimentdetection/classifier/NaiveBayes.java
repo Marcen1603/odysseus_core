@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,11 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
 
 public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> {
 	
 	private final String algo_type = "NaiveBayes";
 	private String domain;
+	private int ngram;
 	
 	private Map<String, Integer> positivewords = new HashMap<String, Integer>();
 	private Map<String, Integer> negativewords = new HashMap<String, Integer>();
@@ -44,6 +45,10 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 		this.domain = domain;
 	}
 	
+	public void setNgram(int ngram){
+		this.ngram = ngram;
+	}
+	
 	public String getDomain(){
 		return domain;
 	}
@@ -70,7 +75,8 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 			if (e.getValue() == 1) {
 				// positive
-				for (String singleword : e.getKey().split(" ")) {
+				//	for (String singleword : e.getKey().split(" ")) {
+				for (String singleword : NGramm.ngrams(e.getKey(), ngram)) { 
 					if (!positivewords.containsKey(singleword.toLowerCase())) {
 						  positivewords.put(singleword.toLowerCase(), 1);
 					} else {
@@ -82,7 +88,8 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 				}
 			} else {
 				// negative
-				for (String singleword : e.getKey().split(" ")) {
+				//for (String singleword : e.getKey().split(" ")) {
+				for (String singleword : NGramm.ngrams(e.getKey(), ngram)) {
 					if (!negativewords.containsKey(singleword.toLowerCase())) {
 							negativewords.put(singleword.toLowerCase(), 1);
 					} else {
@@ -111,8 +118,8 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 		double decisionneg = 0.0;
 
 		//split the record in single words
-		for (String singleword : text.split(" ")) {
-
+		//for (String singleword : text.split(" ")) {
+		for (String singleword : NGramm.ngrams(text, ngram)) {
 			double a = 1.0;
 			double b = 1.0;
 

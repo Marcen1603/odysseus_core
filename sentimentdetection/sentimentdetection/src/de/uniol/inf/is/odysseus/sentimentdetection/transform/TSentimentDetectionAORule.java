@@ -29,7 +29,8 @@ public class TSentimentDetectionAORule extends
 						sentimentDetectionAO.getAttributeTrainSetTextPos(),
 						sentimentDetectionAO.getAttributeTrainSetTrueDecisionPos(),
 						sentimentDetectionAO.getAttributeTestSetTextPos(),
-						sentimentDetectionAO.getAttributeTestSetTrueDecisionPos()),
+						sentimentDetectionAO.getAttributeTestSetTrueDecisionPos(),
+						sentimentDetectionAO.getNgram()),
 						config, true, true);
 	}
 

@@ -27,6 +27,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private boolean splitDecision = false;
 	private String domain;
 	private boolean debugClassifier = false;
+	private int ngram = 1;
 	
 	private String attributeTrainSetText;
 	private String attributeTrainSetTrueDecision;
@@ -55,6 +56,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.trainSetMinSize = sentimentDetectionAO.trainSetMinSize;
         this.domain = sentimentDetectionAO.domain;
         this.debugClassifier = sentimentDetectionAO.debugClassifier;
+        this.ngram = sentimentDetectionAO.ngram;
  
         this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;
         this.attributeTrainSetTrueDecision = sentimentDetectionAO.attributeTrainSetTrueDecision;
@@ -135,6 +137,15 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	@Parameter(name="testSetText", type=StringParameter.class, doc="")
 	public void setAttributeTestSetText(String attributeTestSetText){
 		this.attributeTestSetText = attributeTestSetText;
+	}
+	
+	@Parameter(name = "ngram", type=IntegerParameter.class, optional= true, doc="")
+	public void setNgram(int ngram) {
+		this.ngram   = ngram;
+	}
+	
+	public int getNgram(){
+		return ngram;
 	}
 	
 	public String getAttributeTestSetTrueDecision(){

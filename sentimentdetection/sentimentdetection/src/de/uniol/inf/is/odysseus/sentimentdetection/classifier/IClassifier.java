@@ -13,6 +13,7 @@ public interface IClassifier<T extends IMetaAttribute> {
 	String getDomain();
 	
 	void setDomain(String domain);
+	void setNgram(int ngram);
 	
 	int startDetect(String text);
 	

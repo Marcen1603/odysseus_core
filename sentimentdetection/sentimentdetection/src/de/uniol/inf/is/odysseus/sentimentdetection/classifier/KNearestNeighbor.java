@@ -23,6 +23,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	
 	private final String algo_type = "KNearestNeighbor";
 	private String domain;
+	private int ngram = 1;
 
 	private Map<String, Integer> freq = new HashMap<String, Integer>();
 	private Map<List<String>, Integer> trainfeatures = new HashMap<List<String>, Integer>();
@@ -64,6 +65,10 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		this.domain = domain;
 	}
 	
+	
+	public void setNgram(int ngram){
+		this.ngram = ngram;
+	}
 
 	@Override
 	public int startDetect(String text) {
@@ -90,6 +95,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 			List<String> commonwords = new ArrayList<String>();
 
 			Iterator<String> iterator = e.getKey().iterator();
+			
 			while (iterator.hasNext()) {
 				String singleword = iterator.next();
 				if (testwords.contains(singleword)) {
@@ -129,48 +135,8 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 
 
 
-	private void createStopWords() {
-
-		stopwords.add("i");
-		stopwords.add("a");
-		stopwords.add("about");
-		stopwords.add("an");
-		stopwords.add("are");
-		stopwords.add("as");
-		stopwords.add("at");
-		stopwords.add("be");
-		stopwords.add("by");
-		stopwords.add("com");
-		stopwords.add("de");
-		stopwords.add("en");
-		stopwords.add("for");
-		stopwords.add("rom");
-		stopwords.add("how");
-		stopwords.add("in");
-		stopwords.add("is");
-		stopwords.add("it");
-		stopwords.add("la");
-		stopwords.add("of");
-		stopwords.add("on");
-		stopwords.add("or");
-		stopwords.add("that");
-		stopwords.add("the");
-		stopwords.add("this");
-		stopwords.add("to");
-		stopwords.add("was");
-		stopwords.add("what");
-		stopwords.add("when");
-		stopwords.add("where");
-		stopwords.add("who");
-		stopwords.add("will");
-		stopwords.add("with");
-		stopwords.add("und");
-		stopwords.add("the");
-		stopwords.add("and");
-		stopwords.add("but");
-		stopwords.add("its");
-		stopwords.add("it's");
-
+	private void setStopWords() {
+		this.stopwords = StopWords.getStopWords();
 	}
 
 	@Override
@@ -180,7 +146,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		trainfeatures.clear();
 		stopwords.clear();
 
-		createStopWords();
+		setStopWords();
 
 		ntr = trainingset.size();
 
@@ -227,7 +193,7 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		List<String> words = new ArrayList<String>();
 
 		// split text in singlewords
-		for (String singleword : text.split(" ")) {
+		for (String singleword : NGramm.ngrams(text, ngram)) {
 			//only add words length > 2
 			if (singleword.trim().length() > 2) {
 				// only add none stopwords

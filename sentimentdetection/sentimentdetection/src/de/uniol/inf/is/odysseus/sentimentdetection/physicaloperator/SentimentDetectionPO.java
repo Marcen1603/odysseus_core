@@ -24,6 +24,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int trainSetMinSize;
 	private String domain;
 	private boolean debugClassifier = false;
+	private int ngram;
 
 	//variable for debug
 	private int posCtr = 0;
@@ -67,7 +68,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTrainSetTextPos,
 			int attributeTrainSetTrueDecisionPos,
 			int attributeTestSetTextPos,
-			int attributeTestSetTrueDecisionPos) {
+			int attributeTestSetTrueDecisionPos,
+			int ngram) {
 		
 		super();
 		
@@ -76,6 +78,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.trainSetMinSize = trainSetMinSize;
 		this.domain = domain;
 		this.debugClassifier = debugClassifier;
+		this.ngram = ngram;
 		
 		this.attributeTrainSetTextPos = attributeTrainSetTextPos;
 		this.attributeTrainSetTrueDecisionPos = attributeTrainSetTrueDecisionPos;
@@ -91,6 +94,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.trainSetMinSize = senti.trainSetMinSize;
 		this.domain = senti.domain;
 		this.debugClassifier = senti.debugClassifier;
+		this.ngram = senti.ngram;
 	}
 
 	@Override
@@ -102,7 +106,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	@Override
 	protected void process_open() throws OpenFailedException {
 		algo = (IClassifier<T>) ClassifierRegistry
-				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);
+				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);	
+		algo.setNgram(ngram);
 	}
 
 	@Override
