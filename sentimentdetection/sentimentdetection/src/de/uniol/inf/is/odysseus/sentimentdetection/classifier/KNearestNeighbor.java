@@ -49,15 +49,18 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 	
 	@Override
-	public void trainClassifier(Map<String, Integer> trainingset) {
+	public void trainClassifier(Map<String, Integer> trainingset, boolean isTrained) {
 
+	if(!isTrained){	
 		freq.clear();
 		trainfeatures.clear();
 		stopwords.clear();
-
-		setStopWords();
-
 		ntr = trainingset.size();
+		setStopWords();
+	}else{
+		ntr += trainingset.size();
+	}
+	
 
 		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
 
@@ -181,7 +184,6 @@ public class KNearestNeighbor extends AbstractClassifier {
 		// remove duplicates words
 		return removeDuplicateWithOrder(words);
 	}
-	
 	
 
 	private void setStopWords() {

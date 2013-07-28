@@ -24,6 +24,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int trainSetMinSize;
 	private String domain;
 	private boolean debugClassifier = false;
+	private int maxBufferSize;
+	
+	//klassificator parameter
 	private int ngram;
 
 	//variable for debug
@@ -69,7 +72,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTrainSetTrueDecisionPos,
 			int attributeTestSetTextPos,
 			int attributeTestSetTrueDecisionPos,
-			int ngram) {
+			int ngram,
+			int maxBufferSize) {
 		super();
 		
 		this.splitDecision = splitDecision;
@@ -85,6 +89,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
 		
 		this.ngram = ngram;
+		
+		this.maxBufferSize = maxBufferSize;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -95,6 +101,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.domain = senti.domain;
 		this.debugClassifier = senti.debugClassifier;
 		this.ngram = senti.ngram;
+		this.maxBufferSize = senti.maxBufferSize;
 	}
 	
 	@Override
@@ -123,8 +130,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			trainingset.put(object.getAttribute(attributeTrainSetTextPos).toString(),
 					Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
 
-			if (trainingset.size() >= trainSetMinSize) {
-				algo.trainClassifier(trainingset);
+			if (trainingset.size() >= trainSetMinSize || isTrained) {
+				algo.trainClassifier(trainingset, isTrained);
 				isTrained = true;
 				// synchronized for java.util.ConcurrentModificationException problems				
 				synchronized (this.buffer) {
@@ -156,6 +163,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			} else {
 				// synchronized for java.util.ConcurrentModificationException problems		
 				synchronized (this.buffer) {
+					if(buffer.size()>= maxBufferSize){
+						buffer.remove(0);	
+					}
 					buffer.add(object);
 				}
 			}

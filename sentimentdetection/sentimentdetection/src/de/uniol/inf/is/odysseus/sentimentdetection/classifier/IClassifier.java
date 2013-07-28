@@ -11,7 +11,7 @@ public interface IClassifier {
 	
 	void setNgram(int ngram);
 	
-	void trainClassifier(Map<String, Integer> trainingset);
+	void trainClassifier(Map<String, Integer> trainingset, boolean isTrained);
 	
 	int startDetect(String text);
 	

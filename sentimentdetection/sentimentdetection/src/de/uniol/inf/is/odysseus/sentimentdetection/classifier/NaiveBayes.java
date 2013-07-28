@@ -38,14 +38,16 @@ public class NaiveBayes extends AbstractClassifier {
 	}
 	
 	@Override
-	public void trainClassifier(Map<String, Integer> trainingset) {
+	public void trainClassifier(Map<String, Integer> trainingset, boolean isTrained) {
 		
 	logger.debug("trainingsset size: " +  trainingset.size());
 	logger.debug("domain: " + domain);
 
 	//clear positivewords/negativewords
-	positivewords.clear();
-	negativewords.clear();
+	if(!isTrained){
+		positivewords.clear();
+		negativewords.clear();
+	}	
 
 		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
 

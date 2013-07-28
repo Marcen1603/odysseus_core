@@ -27,6 +27,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private boolean splitDecision = false;
 	private String domain;
 	private boolean debugClassifier = false;
+	private int maxBufferSize = 60000;
+	
+	
 	private int ngram = 1;
 	
 	private String attributeTrainSetText;
@@ -57,6 +60,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.domain = sentimentDetectionAO.domain;
         this.debugClassifier = sentimentDetectionAO.debugClassifier;
         this.ngram = sentimentDetectionAO.ngram;
+        this.maxBufferSize = sentimentDetectionAO.maxBufferSize;
  
         this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;
         this.attributeTrainSetTrueDecision = sentimentDetectionAO.attributeTrainSetTrueDecision;
@@ -142,6 +146,15 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	@Parameter(name = "ngram", type=IntegerParameter.class, optional= true, doc="")
 	public void setNgram(int ngram) {
 		this.ngram   = ngram;
+	}
+	
+	@Parameter(name = "maxBufferSize", type=IntegerParameter.class, optional= true, doc="")
+	public void setMaxBufferSize(int maxBufferSize) {
+		this.maxBufferSize   = maxBufferSize;
+	}
+
+	public int getMaxBufferSize(){
+		return maxBufferSize;
 	}
 	
 	public int getNgram(){
