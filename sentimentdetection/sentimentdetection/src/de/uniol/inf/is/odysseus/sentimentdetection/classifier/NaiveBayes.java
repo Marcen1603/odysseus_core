@@ -20,7 +20,6 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	
 	static Logger logger = LoggerFactory.getLogger(NaiveBayes.class);
 
-
 	public NaiveBayes(){
 		
 	}
@@ -34,36 +33,14 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 		setDomain(domain);
 	}
 	
-
-	@Override
-	public String getType() {
-		return algo_type;
-	}
-	
-	
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-	
-	public void setNgram(int ngram){
-		this.ngram = ngram;
-	}
-	
-	public String getDomain(){
-		return domain;
-	}
-	
-
 	@Override
 	public IClassifier<?> getInstance(String domain) {
 		return new NaiveBayes<T>(domain);
 	}
 	
-	
 	@Override
 	public void trainClassifier(Map<String, Integer> trainingset) {
-
-
+		
 	logger.debug("trainingsset size: " +  trainingset.size());
 	logger.debug("domain: " + domain);
 
@@ -102,7 +79,7 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 			}
 		}
 
-		logger.debug("classifier successfully initialized!");
+		logger.debug(algo_type.toLowerCase() +" classifier successfully initialized!");
 		logger.debug("positivewords size: "+ positivewords.size());
 		logger.debug("negativewords size" + negativewords.size());
 	}
@@ -158,9 +135,24 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 
 	}
 
+	@Override
+	public String getType() {
+		return algo_type;
+	}
 
-
-
-
+	@Override
+	public void setNgram(int ngram){
+		this.ngram = ngram;
+	}
+	
+	public String getDomain(){
+		return domain;
+	}
+	
+	@Override
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	
 
 }

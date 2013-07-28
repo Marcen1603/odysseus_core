@@ -48,26 +48,34 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	public IClassifier<?> getInstance(String domain) {
 		return new KNearestNeighbor<T>(domain);
 	}
+	
+	@Override
+	public void trainClassifier(Map<String, Integer> trainingset) {
 
-	@Override
-	public String getType() {
-		return algo_type;
-	}
-	
-	
-	@Override
-	public String getDomain() {
-		return domain;
-	}
+		freq.clear();
+		trainfeatures.clear();
+		stopwords.clear();
 
-	@Override
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-	
-	
-	public void setNgram(int ngram){
-		this.ngram = ngram;
+		setStopWords();
+
+		ntr = trainingset.size();
+
+		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
+
+			List<String> words = getWords(e.getKey());
+
+			for (String word : words) {
+				if (!freq.containsKey(word)) {
+					freq.put(word, 1);
+				} else {
+					int ctr = freq.get(word) + 1;
+					freq.put(word, ctr);
+				}
+			}
+
+			trainfeatures.put(words, e.getValue());
+		}
+
 	}
 
 	@Override
@@ -135,38 +143,6 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 
 
 
-	private void setStopWords() {
-		this.stopwords = StopWords.getStopWords();
-	}
-
-	@Override
-	public void trainClassifier(Map<String, Integer> trainingset) {
-
-		freq.clear();
-		trainfeatures.clear();
-		stopwords.clear();
-
-		setStopWords();
-
-		ntr = trainingset.size();
-
-		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
-
-			List<String> words = getWords(e.getKey());
-
-			for (String word : words) {
-				if (!freq.containsKey(word)) {
-					freq.put(word, 1);
-				} else {
-					int ctr = freq.get(word) + 1;
-					freq.put(word, ctr);
-				}
-			}
-
-			trainfeatures.put(words, e.getValue());
-		}
-
-	}
 
 
 	/*
@@ -205,6 +181,33 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 		}
 		// remove duplicates words
 		return removeDuplicateWithOrder(words);
+	}
+	
+	
+
+	private void setStopWords() {
+		this.stopwords = StopWords.getStopWords();
+	}
+	
+	
+	@Override
+	public String getType() {
+		return algo_type;
+	}
+	
+	@Override
+	public String getDomain() {
+		return domain;
+	}
+
+	@Override
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	
+	@Override
+	public void setNgram(int ngram){
+		this.ngram = ngram;
 	}
 
 	

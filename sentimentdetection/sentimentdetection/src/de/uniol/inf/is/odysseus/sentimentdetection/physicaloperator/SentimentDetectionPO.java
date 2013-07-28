@@ -70,7 +70,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTestSetTextPos,
 			int attributeTestSetTrueDecisionPos,
 			int ngram) {
-		
 		super();
 		
 		this.splitDecision = splitDecision;
@@ -78,13 +77,14 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.trainSetMinSize = trainSetMinSize;
 		this.domain = domain;
 		this.debugClassifier = debugClassifier;
-		this.ngram = ngram;
 		
 		this.attributeTrainSetTextPos = attributeTrainSetTextPos;
 		this.attributeTrainSetTrueDecisionPos = attributeTrainSetTrueDecisionPos;
 		
 		this.attributeTestSetTextPos = attributeTestSetTextPos;
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
+		
+		this.ngram = ngram;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -96,6 +96,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.debugClassifier = senti.debugClassifier;
 		this.ngram = senti.ngram;
 	}
+	
+	@Override
+	public SentimentDetectionPO<T> clone() {
+		return new SentimentDetectionPO<T>(this);
+	}
+	
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -158,10 +164,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 	}
 
-	@Override
-	public SentimentDetectionPO<T> clone() {
-		return new SentimentDetectionPO<T>(this);
-	}
+
 
 	@SuppressWarnings("unchecked")
 	private void processSentimentDetection(Tuple object) {

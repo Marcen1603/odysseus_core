@@ -8,16 +8,16 @@ public interface IClassifier<T extends IMetaAttribute> {
 
 	IClassifier<?> getInstance(String domain);
 	
-	String getType();
-	
-	String getDomain();
-	
 	void setDomain(String domain);
-	void setNgram(int ngram);
 	
-	int startDetect(String text);
+	void setNgram(int ngram);
 	
 	void trainClassifier(Map<String, Integer> trainingset);
 	
+	int startDetect(String text);
 	
+	String getType();
+	
+	String getDomain();
+		
 }
