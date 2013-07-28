@@ -42,7 +42,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private boolean isTrained = false;
 	
 	//currend classifier
-	private IClassifier<T> algo;
+	private IClassifier algo;
 	
 	//buffer 
 	private List<Tuple> buffer = new ArrayList<>();
@@ -108,10 +108,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
-		algo = (IClassifier<T>) ClassifierRegistry
+		algo = (IClassifier) ClassifierRegistry
 				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);	
 		algo.setNgram(ngram);
 	}

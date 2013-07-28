@@ -8,17 +8,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+
 
 public class ClassifierRegistry{
 
 	static Logger logger = LoggerFactory.getLogger(ClassifierRegistry.class);
 
-	static Map<String, IClassifier<?>> classifierAlgoTypes = new HashMap<String, IClassifier<?>>();
+	static Map<String, IClassifier> classifierAlgoTypes = new HashMap<String, IClassifier>();
 
-	static Map<String, IClassifier<?>> classifierDomains = new HashMap<String, IClassifier<?>>();
+	static Map<String, IClassifier> classifierDomains = new HashMap<String, IClassifier>();
 
-	public static <T extends IMetaAttribute> IClassifier<?> getClassifierByTypeAndDomain(
+	public static IClassifier getClassifierByTypeAndDomain(
 			String classifierType, String domain) {
 
 		if (!classifierAlgoTypes.containsKey(classifierType.toLowerCase())) {
@@ -28,7 +28,7 @@ public class ClassifierRegistry{
 		}
 
 		if (classifierDomains.containsKey(domain.toLowerCase())) {
-			IClassifier<?> classifier = classifierDomains.get(domain
+			IClassifier classifier = classifierDomains.get(domain
 					.toLowerCase());
 
 			// Classifier with domain and classifierType exist
@@ -45,9 +45,9 @@ public class ClassifierRegistry{
 		} else {
 			// Classifier with domain and classifierType does not exist, create new
 			// instance
-			IClassifier<?> classifier = classifierAlgoTypes.get(classifierType
+			IClassifier classifier = classifierAlgoTypes.get(classifierType
 					.toLowerCase());
-			IClassifier<?> newClassifier = classifier.getInstance(domain.toLowerCase());
+			IClassifier newClassifier = classifier.getInstance(domain.toLowerCase());
 			classifierDomains.put(domain.toLowerCase(), newClassifier);
 
 			return newClassifier;
@@ -55,7 +55,7 @@ public class ClassifierRegistry{
 	}
 	
 	public static void unregisterDomain(String domain){
-		IClassifier<?> classifier = classifierDomains.get(domain
+		IClassifier classifier = classifierDomains.get(domain
 				.toLowerCase());
 		if(classifier != null){
 			classifierDomains.remove(domain.toLowerCase());
@@ -68,7 +68,7 @@ public class ClassifierRegistry{
 	}
 	
 	
-	public static void registerClassifierAlgo(IClassifier<?> classifierAlgo) {
+	public static void registerClassifierAlgo(IClassifier classifierAlgo) {
 
 		if (!classifierAlgoTypes.containsKey(classifierAlgo.getType()
 				.toLowerCase())) {
@@ -81,7 +81,7 @@ public class ClassifierRegistry{
 
 	}
 
-	public static void unregisterClassifierAlgo(IClassifier<?> classifierAlgo) {
+	public static void unregisterClassifierAlgo(IClassifier classifierAlgo) {
 		if (classifierAlgoTypes.containsKey(classifierAlgo.getType()
 				.toLowerCase())) {
 			classifierAlgoTypes.remove(classifierAlgo.getType().toLowerCase());

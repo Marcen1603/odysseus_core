@@ -12,12 +12,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+
 import de.uniol.inf.is.odysseus.sentimentdetection.util.*;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
 
-public class KNearestNeighbor<T extends IMetaAttribute> extends
-		AbstractClassifier<T> {
+public class KNearestNeighbor extends AbstractClassifier {
 
 	static Logger logger = LoggerFactory.getLogger(KNearestNeighbor.class);
 	
@@ -40,13 +39,13 @@ public class KNearestNeighbor<T extends IMetaAttribute> extends
 	}
 
 	public KNearestNeighbor(String domain) {
-		new KNearestNeighbor<T>(algo_type.toLowerCase(), domain);
+		new KNearestNeighbor(algo_type.toLowerCase(), domain);
 		setDomain(domain);
 	}
 
 	@Override
-	public IClassifier<?> getInstance(String domain) {
-		return new KNearestNeighbor<T>(domain);
+	public IClassifier getInstance(String domain) {
+		return new KNearestNeighbor(domain);
 	}
 	
 	@Override

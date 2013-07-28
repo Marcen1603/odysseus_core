@@ -6,10 +6,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
 
-public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> {
+public class NaiveBayes extends AbstractClassifier {
 	
 	private final String algo_type = "NaiveBayes";
 	private String domain;
@@ -29,13 +28,13 @@ public class NaiveBayes<T extends IMetaAttribute> extends AbstractClassifier<T> 
 	}
 	
 	public NaiveBayes(String domain) {
-		new NaiveBayes<T>(algo_type.toLowerCase(), domain);
+		new NaiveBayes(algo_type.toLowerCase(), domain);
 		setDomain(domain);
 	}
 	
 	@Override
-	public IClassifier<?> getInstance(String domain) {
-		return new NaiveBayes<T>(domain);
+	public IClassifier getInstance(String domain) {
+		return new NaiveBayes(domain);
 	}
 	
 	@Override
