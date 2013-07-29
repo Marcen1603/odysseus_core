@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.test.editors;
 
 import static org.testng.Assert.assertEquals;
 
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
@@ -35,11 +34,6 @@ public class DashboardPartPlacementTest {
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructorEmptyFilenameArg() {
 		new DashboardPartPlacement(new TestDashboardPart(), "", 100, 100, 100, 100);
-	}
-
-	@Test(dataProvider = "constructorInvalidPlacementDataDataProvider", expectedExceptions = IllegalArgumentException.class)
-	public void testConstructorInvalidPlacementData(int x, int y, int w, int h) {
-		new DashboardPartPlacement(new TestDashboardPart(), "File", x, y, w, h);
 	}
 
 	@Test(expectedExceptions = NullPointerException.class)
@@ -74,10 +68,5 @@ public class DashboardPartPlacementTest {
 
 		place.setWidth(499);
 		assertEquals(place.getWidth(), 499);
-	}
-
-	@DataProvider
-	private static Object[][] constructorInvalidPlacementDataDataProvider() {
-		return new Object[][] { { -1, 1, 1, 1 }, { 1, -1, 1, 1 }, { 1, 1, -1, 1 }, { 1, 1, 1, -1 }, };
 	}
 }
