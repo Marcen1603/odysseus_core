@@ -17,7 +17,7 @@ public class DashboardPartPlacementContainer {
 	
 	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
 	private final Map<Control, DashboardPartPlacement> controlsMap = Maps.newHashMap();
-	private final Map<DashboardPartPlacement, Composite> containers = Maps.newHashMap();
+	private final Map<DashboardPartPlacement, DashboardPartControl> containers = Maps.newHashMap();
 	
 	public boolean contains( DashboardPartPlacement placement ) {
 		return dashboardParts.contains(placement);
@@ -29,9 +29,9 @@ public class DashboardPartPlacementContainer {
 		dashboardParts.add(placementToAdd);
 	}
 	
-	public void addContainer( DashboardPartPlacement placement, Composite container ) {
+	public void addContainer( DashboardPartPlacement placement, DashboardPartControl container ) {
 		containers.put(placement, container);
-		addControls(placement, container );
+		addControls(placement, container.getComposite() );
 	}
 	
 	private void addControls(DashboardPartPlacement placement, Control base ) {
@@ -48,7 +48,7 @@ public class DashboardPartPlacementContainer {
 	public void remove( DashboardPartPlacement placement ) {
 		Preconditions.checkNotNull(placement, "Dashboardpart to remove (as placement) must not be null!");
 
-		removeControls(placement, containers.get(placement));
+		removeControls(placement, containers.get(placement).getComposite());
 		
 		dashboardParts.remove(placement);
 		containers.remove(placement);
@@ -69,7 +69,7 @@ public class DashboardPartPlacementContainer {
 		return Optional.fromNullable(controlsMap.get(control));
 	}
 	
-	public Optional<Composite> getComposite( DashboardPartPlacement placement ) {
+	public Optional<DashboardPartControl> getComposite( DashboardPartPlacement placement ) {
 		return Optional.fromNullable(containers.get(placement));
 	}
 	

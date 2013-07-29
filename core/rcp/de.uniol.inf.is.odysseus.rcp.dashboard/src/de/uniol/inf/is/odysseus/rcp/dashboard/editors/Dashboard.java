@@ -27,10 +27,6 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -114,13 +110,10 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {
-		final Composite outerContainer = createDashboardPartOuterContainer(dashboardControl, dashboardPartPlace);
-		final Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
-		dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
+		DashboardPartControl dashboardPartControl = new DashboardPartControl(dashboardControl.getComposite(), toolBar, dashboardPartPlace);
+		addListenersRecursive(dashboardPartControl.getComposite());
 
-		partContainer.addContainer(dashboardPartPlace, outerContainer);
-
-		addListenersRecursive(outerContainer);
+		partContainer.addContainer(dashboardPartPlace, dashboardPartControl);
 	}
 
 	private void createContextMenu(IWorkbenchPartSite site) {
@@ -130,42 +123,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		site.registerContextMenu(menuManager, selector);
 	}
 
-	private static Composite createDashboardPartOuterContainer(DashboardControl dashboardComposite, DashboardPartPlacement dashboardPartPlace) {
-		final Composite container = new Composite(dashboardComposite.getComposite(), SWT.NONE);
-		final GridLayout layout = new GridLayout();
-		layout.marginBottom = 0;
-		layout.marginHeight = 0;
-		layout.marginLeft = 0;
-		layout.marginRight = 0;
-		layout.marginTop = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-
-		final FormData fd = new FormData();
-		updateFormData(fd, dashboardPartPlace);
-		container.setLayoutData(fd);
-		return container;
-	}
-
-	private static Composite getDashboardPartInnerContainer(Composite container) {
-		final Composite containerDummy = new Composite(container, SWT.NONE);
-		containerDummy.setLayout(new GridLayout());
-		containerDummy.setLayoutData(new GridData(GridData.FILL_BOTH));
-		containerDummy.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		return containerDummy;
-	}
-
-	private static void updateFormData(FormData fd, DashboardPartPlacement dashboardPartPlace) {
-		fd.height = dashboardPartPlace.getHeight();
-		fd.width = dashboardPartPlace.getWidth();
-		fd.top = new FormAttachment(0, dashboardPartPlace.getY());
-		fd.left = new FormAttachment(0, dashboardPartPlace.getX());
-		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
-		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
-	}
-
 	public void dispose() {
-		keyHandler.dispose();
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		dropTarget.dispose();
 		dashboardControl.dispose();
@@ -188,14 +146,14 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	public void remove(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for dashboard part must not be null!");
 
-		Optional<Composite> optComposite = partContainer.getComposite(partPlace);
+		Optional<DashboardPartControl> optDashboardPartControl = partContainer.getComposite(partPlace);
 
-		if (optComposite.isPresent()) {
-			Composite composite = optComposite.get();
+		if (optDashboardPartControl.isPresent()) {
+			DashboardPartControl dashboardPartControl = optDashboardPartControl.get();
+			removeListenersRecursive(dashboardPartControl.getComposite());
+			
 			partContainer.remove(partPlace);
-
-			removeListenersRecursive(composite);
-			composite.dispose();
+			dashboardPartControl.dispose();
 			partPlace.getDashboardPart().dispose();
 
 			if (selector.isSelected(partPlace)) {
@@ -390,13 +348,10 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void update(DashboardPartPlacement placement) {
-		Optional<Composite> optComp = partContainer.getComposite(placement);
-		if (optComp.isPresent()) {
-			Composite comp = optComp.get();
-
-			final FormData fd = (FormData) comp.getLayoutData();
-			updateFormData(fd, placement);
-			dashboardControl.update();
+		Optional<DashboardPartControl> optDashboardPartControl = partContainer.getComposite(placement);
+		if (optDashboardPartControl.isPresent()) {
+			DashboardPartControl dashboardPartControl = optDashboardPartControl.get();
+			dashboardPartControl.update();
 		} else {
 			throw new IllegalArgumentException("Dashboardpart placement has no composite");
 		}
