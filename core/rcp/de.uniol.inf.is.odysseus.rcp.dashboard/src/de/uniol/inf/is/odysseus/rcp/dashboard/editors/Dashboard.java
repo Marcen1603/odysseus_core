@@ -56,7 +56,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	private static final Logger LOG = LoggerFactory.getLogger(Dashboard.class);
 
-	private static final int SELECT_MOUSE_BUTTON_ID = 1; 
+	private static final int SELECT_MOUSE_BUTTON_ID = 1;
 	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;
 
 	private final PartDragger partDragger = new PartDragger();
@@ -71,63 +71,15 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private DashboardKeyHandler keyHandler;
 	private DashboardSettings settings = DashboardSettings.getDefault();
 
-	public void add(DashboardPartPlacement partPlace) {
-		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
-		Preconditions.checkArgument(!partContainer.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
-
-		partContainer.add(partPlace);
-
-		if (dashboardControl != null && toolBar != null) {
-			insertDashboardPart(partPlace);
-			dashboardControl.update();
-		}
-
-		fireAddedEvent(partPlace.getDashboardPart());
-	}
-
-	public void remove(DashboardPartPlacement partPlace) {
-		Preconditions.checkNotNull(partPlace, "Placement for dashboard part must not be null!");
-		
-		Optional<Composite> optComposite = partContainer.getComposite(partPlace);
-
-		if (optComposite.isPresent()) {
-			Composite composite = optComposite.get();
-			partContainer.remove(partPlace);
-
-			removeListenersRecursive(composite);
-			composite.dispose();
-			partPlace.getDashboardPart().dispose();
-			
-			if( selector.isSelected(partPlace)) {
-				selector.clearSelection();
-			}
-
-			fireRemovedEvent(partPlace.getDashboardPart());
-		} else {
-			throw new IllegalArgumentException("Composite for dashboard part not found");
-		}
-	}
-
-	public void setSettings(DashboardSettings settings) {
-		Preconditions.checkNotNull(settings, "Settings to set must not be null!");
-
-		this.settings = settings;
-		selector.setLock(settings.isLocked());
-	}
-
-	public DashboardSettings getSettings() {
-		return settings;
-	}
-
 	public void createPartControl(Composite parent, ToolBar toolBar, IWorkbenchPartSite site) {
 		this.toolBar = toolBar;
-		
+
 		dashboardControl = new DashboardControl(parent);
 		updateBackgroundImage();
-		
+
 		controlPointManager = new ControlPointManager(this);
 		keyHandler = new DashboardKeyHandler(this);
-		
+
 		dropTarget = new DashboardDropTarget(dashboardControl.getComposite()) {
 			@Override
 			protected boolean isDropAllowed() {
@@ -139,7 +91,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 				add(place);
 			}
 		};
-		
+
 		addListeners();
 
 		createPreAddedDashboardParts();
@@ -154,7 +106,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	public Control getControl() {
 		return dashboardControl.getComposite();
 	}
-	
+
 	private void createPreAddedDashboardParts() {
 		for (final DashboardPartPlacement dashboardPartPlace : partContainer.getDashboardPartPlacements()) {
 			insertDashboardPart(dashboardPartPlace);
@@ -219,10 +171,58 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		dashboardControl.dispose();
 	}
 
+	public void add(DashboardPartPlacement partPlace) {
+		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
+		Preconditions.checkArgument(!partContainer.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
+
+		partContainer.add(partPlace);
+
+		if (dashboardControl != null && toolBar != null) {
+			insertDashboardPart(partPlace);
+			dashboardControl.update();
+		}
+
+		fireAddedEvent(partPlace.getDashboardPart());
+	}
+
+	public void remove(DashboardPartPlacement partPlace) {
+		Preconditions.checkNotNull(partPlace, "Placement for dashboard part must not be null!");
+
+		Optional<Composite> optComposite = partContainer.getComposite(partPlace);
+
+		if (optComposite.isPresent()) {
+			Composite composite = optComposite.get();
+			partContainer.remove(partPlace);
+
+			removeListenersRecursive(composite);
+			composite.dispose();
+			partPlace.getDashboardPart().dispose();
+
+			if (selector.isSelected(partPlace)) {
+				selector.clearSelection();
+			}
+
+			fireRemovedEvent(partPlace.getDashboardPart());
+		} else {
+			throw new IllegalArgumentException("Composite for dashboard part not found");
+		}
+	}
+
 	public ImmutableList<DashboardPartPlacement> getDashboardPartPlacements() {
 		return partContainer.getDashboardPartPlacements();
 	}
-	
+
+	public void setSettings(DashboardSettings settings) {
+		Preconditions.checkNotNull(settings, "Settings to set must not be null!");
+
+		this.settings = settings;
+		selector.setLock(settings.isLocked());
+	}
+
+	public DashboardSettings getSettings() {
+		return settings;
+	}
+
 	private void addListenersRecursive(Control base) {
 		base.addMouseListener(this);
 		base.addMouseMoveListener(this);
@@ -294,7 +294,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	public void update() {
 		updateBackgroundImage();
 		updateDashboardParts();
-		
+
 		fireChangedEvent();
 	}
 
@@ -328,7 +328,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			dashboardListeners.add(listener);
 		}
 	}
-	
+
 	public void removeListener(IDashboardListener listener) {
 		synchronized (dashboardListeners) {
 			dashboardListeners.remove(listener);
