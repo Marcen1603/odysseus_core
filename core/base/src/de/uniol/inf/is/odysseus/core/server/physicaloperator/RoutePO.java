@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
