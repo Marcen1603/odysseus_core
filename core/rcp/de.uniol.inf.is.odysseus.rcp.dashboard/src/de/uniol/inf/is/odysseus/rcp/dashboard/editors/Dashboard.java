@@ -30,8 +30,6 @@ import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -71,7 +69,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.ImageUtil;
 
-public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, KeyListener, ISelectionListener {
+public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, ISelectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Dashboard.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
@@ -79,10 +77,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private static final int DEFAULT_PART_HEIGHT = 300;
 
 	private static final int SELECT_MOUSE_BUTTON_ID = 1; 
-
 	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;
-	private static final int MOVE_SELECTION_STEP_SIZE_PIXELS = 10;
-	private static final int RESIZE_SELECTION_STEP_SIZE_PIXELS = 10;
 
 	private Composite dashboardComposite;
 	private ToolBar toolBar;
@@ -143,20 +138,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		return settings;
 	}
 
-	public void addListener(IDashboardListener listener) {
-		Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
-
-		synchronized (dashboardListeners) {
-			dashboardListeners.add(listener);
-		}
-	}
-	
-	public void removeListener(IDashboardListener listener) {
-		synchronized (dashboardListeners) {
-			dashboardListeners.remove(listener);
-		}
-	}
-
 	public void createPartControl(Composite parent, ToolBar toolBar, IWorkbenchPartSite site) {
 		this.toolBar = toolBar;
 		dashboardComposite = createTopComposite(parent);
@@ -174,6 +155,10 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		parent.layout();
 	}
 
+	public Control getControl() {
+		return dashboardComposite;
+	}
+	
 	private void createPreAddedDashboardParts() {
 		for (final DashboardPartPlacement dashboardPartPlace : partContainer.getDashboardPartPlacements()) {
 			insertDashboardPart(dashboardPartPlace);
@@ -291,85 +276,28 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		disposeBackgroundImage();
 	}
 
-	public Control getControl() {
-		return dashboardComposite;
-	}
-
 	public ImmutableList<DashboardPartPlacement> getDashboardPartPlacements() {
 		return partContainer.getDashboardPartPlacements();
 	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (selector.hasSelection() && isCtrlPressed(e)) {
-			Optional<DashboardPartPlacement> optSelectedDashboardPart = selector.getSelectedDashboardPartPlacement();
-			DashboardPartPlacement selectedDashboardPart = optSelectedDashboardPart.get();
-
-			if (e.keyCode == SWT.DEL) {
-				remove(selectedDashboardPart);
-				selector.setSelection((DashboardPartPlacement) null);
-
-			} else if (isShiftPressed(e)) {
-
-				if (e.keyCode == SWT.ARROW_UP) {
-					selectedDashboardPart.setHeight(selectedDashboardPart.getHeight() - RESIZE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.ARROW_DOWN) {
-					selectedDashboardPart.setHeight(selectedDashboardPart.getHeight() + RESIZE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.ARROW_LEFT) {
-					selectedDashboardPart.setWidth(selectedDashboardPart.getWidth() - RESIZE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.ARROW_RIGHT) {
-					selectedDashboardPart.setWidth(selectedDashboardPart.getWidth() + RESIZE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.TAB) {
-					selectNextDashboardPartPlacement(selectedDashboardPart);
-				}
-			} else {
-				if (e.keyCode == SWT.ARROW_UP) {
-					selectedDashboardPart.setY(selectedDashboardPart.getY() - MOVE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.ARROW_DOWN) {
-					selectedDashboardPart.setY(selectedDashboardPart.getY() + MOVE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.ARROW_LEFT) {
-					selectedDashboardPart.setX(selectedDashboardPart.getX() - MOVE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.ARROW_RIGHT) {
-					selectedDashboardPart.setX(selectedDashboardPart.getX() + MOVE_SELECTION_STEP_SIZE_PIXELS);
-					updateSelection();
-
-				} else if (e.keyCode == SWT.TAB) {
-					selectNextDashboardPartPlacement(selectedDashboardPart);
-				}
+	
+	private void addListenersRecursive(Control base) {
+		base.addMouseListener(this);
+		base.addMouseMoveListener(this);
+		if (base instanceof Composite) {
+			for (final Control ctrl : ((Composite) base).getChildren()) {
+				addListenersRecursive(ctrl);
 			}
 		}
 	}
 
-	private static boolean isShiftPressed(KeyEvent e) {
-		return (e.stateMask & SWT.SHIFT) != 0;
-	}
-
-	private static boolean isCtrlPressed(KeyEvent e) {
-		return (e.stateMask & SWT.CTRL) != 0;
-	}
-
-	private void selectNextDashboardPartPlacement(DashboardPartPlacement selectedDashboardPart) {
-		selectedDashboardPart = partContainer.getNextPartAfter(selectedDashboardPart);
-		dashboardComposite.redraw();
-		fireChangedEvent();
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
+	private void removeListenersRecursive(Control base) {
+		base.removeMouseListener(this);
+		base.removeMouseMoveListener(this);
+		if (base instanceof Composite) {
+			for (final Control ctrl : ((Composite) base).getChildren()) {
+				addListenersRecursive(ctrl);
+			}
+		}
 	}
 
 	@Override
@@ -480,29 +408,20 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	private void addListeners() {
 		dashboardComposite.addMouseListener(this);
-		dashboardComposite.addKeyListener(this);
 		dashboardComposite.addPaintListener(this);
 	}
 
-	private void addListenersRecursive(Control base) {
-		base.addMouseListener(this);
-		base.addMouseMoveListener(this);
-		base.addKeyListener(this);
-		if (base instanceof Composite) {
-			for (final Control ctrl : ((Composite) base).getChildren()) {
-				addListenersRecursive(ctrl);
-			}
+	public void addListener(IDashboardListener listener) {
+		Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
+
+		synchronized (dashboardListeners) {
+			dashboardListeners.add(listener);
 		}
 	}
-
-	private void removeListenersRecursive(Control base) {
-		base.removeMouseListener(this);
-		base.removeMouseMoveListener(this);
-		base.removeKeyListener(this);
-		if (base instanceof Composite) {
-			for (final Control ctrl : ((Composite) base).getChildren()) {
-				addListenersRecursive(ctrl);
-			}
+	
+	public void removeListener(IDashboardListener listener) {
+		synchronized (dashboardListeners) {
+			dashboardListeners.remove(listener);
 		}
 	}
 
@@ -557,14 +476,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			gc.drawRectangle(x - SELECTION_BORDER_MARGIN_PIXELS, y - SELECTION_BORDER_MARGIN_PIXELS, width + SELECTION_BORDER_MARGIN_PIXELS * 2, height + SELECTION_BORDER_MARGIN_PIXELS * 2);
 
 			controlPointManager.render(gc);
-		}
-	}
-
-	private void updateSelection() {
-		Optional<DashboardPartPlacement> optSelectedDashboardPart = selector.getSelectedDashboardPartPlacement();
-		if (optSelectedDashboardPart.isPresent()) {
-			update(optSelectedDashboardPart.get());
-			fireChangedEvent();
 		}
 	}
 
