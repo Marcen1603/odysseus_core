@@ -87,8 +87,8 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private Composite dashboardComposite;
 	private ToolBar toolBar;
 	private DropTarget dropTarget;
-	private PartDragger partDragger = new PartDragger();
-
+	
+	private final PartDragger partDragger = new PartDragger();
 	private final DashboardPartSelector selector = new DashboardPartSelector();
 	private final DashboardPartPlacementContainer partContainer = new DashboardPartPlacementContainer();
 
@@ -115,6 +115,23 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		fireAddedEvent(partPlace.getDashboardPart());
 	}
 
+	public void remove(DashboardPartPlacement partPlace) {
+		Optional<Composite> optComposite = partContainer.getComposite(partPlace);
+
+		if (optComposite.isPresent()) {
+			Composite composite = optComposite.get();
+			partContainer.remove(partPlace);
+
+			removeListenersRecursive(composite);
+			composite.dispose();
+			partPlace.getDashboardPart().dispose();
+
+			fireRemovedEvent(partPlace.getDashboardPart());
+		} else {
+			throw new IllegalArgumentException("Composite for dashboard part not found");
+		}
+	}
+
 	public void setSettings(DashboardSettings settings) {
 		Preconditions.checkNotNull(settings, "Settings to set must not be null!");
 
@@ -131,6 +148,12 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 		synchronized (dashboardListeners) {
 			dashboardListeners.add(listener);
+		}
+	}
+	
+	public void removeListener(IDashboardListener listener) {
+		synchronized (dashboardListeners) {
+			dashboardListeners.remove(listener);
 		}
 	}
 
@@ -157,6 +180,16 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 	}
 
+	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {
+		final Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
+		final Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
+		dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
+
+		partContainer.addContainer(dashboardPartPlace, outerContainer);
+
+		addListenersRecursive(outerContainer);
+	}
+
 	private void createDropTarget() {
 		if (dropTarget != null) {
 			dropTarget.dispose();
@@ -175,11 +208,78 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		});
 	}
 
+	private void processDropEvent(DropTargetEvent event) {
+		try {
+			if (event.data instanceof IStructuredSelection) {
+				final IStructuredSelection selection = (IStructuredSelection) event.data;
+				if (selection.size() == 1) {
+					final Object selectedObject = selection.getFirstElement();
+					if (selectedObject instanceof IFile) {
+						final IFile selectedFile = (IFile) selectedObject;
+						if (selectedFile.getFileExtension().equals(DashboardPlugIn.DASHBOARD_PART_EXTENSION)) {
+							final Point position = dashboardComposite.toControl(event.x, event.y);
+							final IDashboardPart part = DASHBOARD_PART_HANDLER.load(FileUtil.read(selectedFile));
+							final DashboardPartPlacement place = new DashboardPartPlacement(part, selectedFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH,
+									DEFAULT_PART_HEIGHT);
+
+							add(place);
+						}
+					}
+				}
+			}
+		} catch (final Throwable ex) {
+			LOG.error("Could not load dashboard part", ex);
+		}
+	}
+
 	private void createContextMenu(IWorkbenchPartSite site) {
 		MenuManager menuManager = new MenuManager();
 		Menu contextMenu = menuManager.createContextMenu(dashboardComposite);
 		dashboardComposite.setMenu(contextMenu);
 		site.registerContextMenu(menuManager, selector);
+	}
+	
+
+	private static Composite createTopComposite(Composite parent) {
+		Composite topComposite = new Composite(parent, SWT.BORDER);
+		topComposite.setLayout(new FormLayout());
+		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		topComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		return topComposite;
+	}
+
+	private static Composite createDashboardPartOuterContainer(Composite dashboardComposite, DashboardPartPlacement dashboardPartPlace) {
+		final Composite container = new Composite(dashboardComposite, SWT.NONE);
+		final GridLayout layout = new GridLayout();
+		layout.marginBottom = 0;
+		layout.marginHeight = 0;
+		layout.marginLeft = 0;
+		layout.marginRight = 0;
+		layout.marginTop = 0;
+		layout.marginWidth = 0;
+		container.setLayout(layout);
+
+		final FormData fd = new FormData();
+		updateFormData(fd, dashboardPartPlace);
+		container.setLayoutData(fd);
+		return container;
+	}
+
+	private static Composite getDashboardPartInnerContainer(Composite container) {
+		final Composite containerDummy = new Composite(container, SWT.NONE);
+		containerDummy.setLayout(new GridLayout());
+		containerDummy.setLayoutData(new GridData(GridData.FILL_BOTH));
+		containerDummy.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		return containerDummy;
+	}
+
+	private static void updateFormData(FormData fd, DashboardPartPlacement dashboardPartPlace) {
+		fd.height = dashboardPartPlace.getHeight();
+		fd.width = dashboardPartPlace.getWidth();
+		fd.top = new FormAttachment(0, dashboardPartPlace.getY());
+		fd.left = new FormAttachment(0, dashboardPartPlace.getX());
+		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
+		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
 	}
 
 	public void dispose() {
@@ -209,7 +309,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 				remove(selectedDashboardPart);
 				selector.setSelection((DashboardPartPlacement) null);
 
-			} else if ((e.stateMask & SWT.SHIFT) != 0) {
+			} else if (isShiftPressed(e)) {
 
 				if (e.keyCode == SWT.ARROW_UP) {
 					selectedDashboardPart.setHeight(selectedDashboardPart.getHeight() - RESIZE_SELECTION_STEP_SIZE_PIXELS);
@@ -252,6 +352,10 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 				}
 			}
 		}
+	}
+
+	private static boolean isShiftPressed(KeyEvent e) {
+		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
 	private static boolean isCtrlPressed(KeyEvent e) {
@@ -316,16 +420,19 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	public void update() {
 		updateBackgroundImage();
-
-		for (DashboardPartPlacement partPlace : partContainer.getDashboardPartPlacements()) {
-			update(partPlace);
-		}
-
+		updateDashboardParts();
+		
 		fireChangedEvent();
 	}
 
+	private void updateDashboardParts() {
+		for (DashboardPartPlacement partPlace : partContainer.getDashboardPartPlacements()) {
+			update(partPlace);
+		}
+	}
+
 	private void updateBackgroundImage() {
-		if (!Objects.equals(loadedBackgroundImageFile, settings.getBackgroundImageFile()) || settings.isBackgroundImageStretched() != isLoadedBackgroundImageStretched) {
+		if (isImageSettingsChanged()) {
 			disposeBackgroundImage();
 
 			try {
@@ -352,27 +459,9 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 	}
 
-	public void remove(DashboardPartPlacement partPlace) {
-		Optional<Composite> optComposite = partContainer.getComposite(partPlace);
-
-		if (optComposite.isPresent()) {
-			Composite composite = optComposite.get();
-			partContainer.remove(partPlace);
-
-			removeListenersRecursive(composite);
-			composite.dispose();
-			partPlace.getDashboardPart().dispose();
-
-			fireRemovedEvent(partPlace.getDashboardPart());
-		} else {
-			throw new IllegalArgumentException("Composite for dashboard part not found");
-		}
-	}
-
-	public void removeListener(IDashboardListener listener) {
-		synchronized (dashboardListeners) {
-			dashboardListeners.remove(listener);
-		}
+	private boolean isImageSettingsChanged() {
+		return !Objects.equals(loadedBackgroundImageFile, settings.getBackgroundImageFile()) 
+				|| settings.isBackgroundImageStretched() != isLoadedBackgroundImageStretched;
 	}
 
 	public boolean setFocus() {
@@ -453,40 +542,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 	}
 
-	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {
-		final Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
-		final Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
-		dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
-
-		partContainer.addContainer(dashboardPartPlace, outerContainer);
-
-		addListenersRecursive(outerContainer);
-	}
-
-	private void processDropEvent(DropTargetEvent event) {
-		try {
-			if (event.data instanceof IStructuredSelection) {
-				final IStructuredSelection selection = (IStructuredSelection) event.data;
-				if (selection.size() == 1) {
-					final Object selectedObject = selection.getFirstElement();
-					if (selectedObject instanceof IFile) {
-						final IFile selectedFile = (IFile) selectedObject;
-						if (selectedFile.getFileExtension().equals(DashboardPlugIn.DASHBOARD_PART_EXTENSION)) {
-							final Point position = dashboardComposite.toControl(event.x, event.y);
-							final IDashboardPart part = DASHBOARD_PART_HANDLER.load(FileUtil.read(selectedFile));
-							final DashboardPartPlacement place = new DashboardPartPlacement(part, selectedFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH,
-									DEFAULT_PART_HEIGHT);
-
-							add(place);
-						}
-					}
-				}
-			}
-		} catch (final Throwable ex) {
-			LOG.error("Could not load dashboard part", ex);
-		}
-	}
-
 	private void renderSelectionBorder() {
 		Optional<DashboardPartPlacement> optSelectedDashboardPart = selector.getSelectedDashboardPartPlacement();
 		if (optSelectedDashboardPart.isPresent()) {
@@ -525,48 +580,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		} else {
 			throw new IllegalArgumentException("Dashboardpart placement has no composite");
 		}
-	}
-
-	private static Composite createTopComposite(Composite parent) {
-		Composite topComposite = new Composite(parent, SWT.BORDER);
-		topComposite.setLayout(new FormLayout());
-		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		topComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		return topComposite;
-	}
-
-	private static Composite createDashboardPartOuterContainer(Composite dashboardComposite, DashboardPartPlacement dashboardPartPlace) {
-		final Composite container = new Composite(dashboardComposite, SWT.NONE);
-		final GridLayout layout = new GridLayout();
-		layout.marginBottom = 0;
-		layout.marginHeight = 0;
-		layout.marginLeft = 0;
-		layout.marginRight = 0;
-		layout.marginTop = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-
-		final FormData fd = new FormData();
-		updateFormData(fd, dashboardPartPlace);
-		container.setLayoutData(fd);
-		return container;
-	}
-
-	private static Composite getDashboardPartInnerContainer(Composite container) {
-		final Composite containerDummy = new Composite(container, SWT.NONE);
-		containerDummy.setLayout(new GridLayout());
-		containerDummy.setLayoutData(new GridData(GridData.FILL_BOTH));
-		containerDummy.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-		return containerDummy;
-	}
-
-	private static void updateFormData(FormData fd, DashboardPartPlacement dashboardPartPlace) {
-		fd.height = dashboardPartPlace.getHeight();
-		fd.width = dashboardPartPlace.getWidth();
-		fd.top = new FormAttachment(0, dashboardPartPlace.getY());
-		fd.left = new FormAttachment(0, dashboardPartPlace.getX());
-		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
-		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
 	}
 
 	@Override
