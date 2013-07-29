@@ -138,7 +138,7 @@ public class DashboardPartEditor extends EditorPart implements IConfigurationLis
 
 	@Override
 	public void doSaveAs() {
-
+		// do nothing
 	}
 
 	public DashboardPartController getDashboardPartController() {

@@ -7,6 +7,7 @@ import org.eclipse.swt.events.KeyListener;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
+
 public class DashboardKeyHandler implements KeyListener {
 
 	private final Dashboard dashboard;

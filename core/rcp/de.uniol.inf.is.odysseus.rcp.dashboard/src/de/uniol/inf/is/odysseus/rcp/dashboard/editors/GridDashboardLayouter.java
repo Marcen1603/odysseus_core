@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.util.Collection;
 
+
 public class GridDashboardLayouter implements IDashboardLayouter {
 
 	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;

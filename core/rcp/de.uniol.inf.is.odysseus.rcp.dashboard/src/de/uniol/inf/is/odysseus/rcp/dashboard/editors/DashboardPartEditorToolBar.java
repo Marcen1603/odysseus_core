@@ -39,7 +39,6 @@ public class DashboardPartEditorToolBar {
 	private final DashboardPartEditor editor;
 
 	public DashboardPartEditorToolBar(Composite presentationTab, final DashboardPartEditor editor) {
-
 		Preconditions.checkNotNull(presentationTab, "PartController must not be null!");
 		this.editor = Preconditions.checkNotNull(editor, "PartController must not be null!");
 
@@ -47,7 +46,56 @@ public class DashboardPartEditorToolBar {
 
 		toolBar = new ToolBar(presentationTab, SWT.WRAP | SWT.RIGHT);
 
-		startItem = createToolItem(toolBar, "Start", DashboardPlugIn.getImageManager().get("start"));
+		startItem = createStartToolItem(partController);
+		stopItem = createStopToolItem(partController);
+		pauseItem = createPauseToolItem(partController);
+		resumeItem = createResumeToolItem(partController);
+	}
+
+	private ToolItem createResumeToolItem(final DashboardPartController partController) {
+		ToolItem resumeItem = createToolItem(toolBar, "Resume", DashboardPlugIn.getImageManager().get("resume"));
+		resumeItem.setEnabled(false);
+		resumeItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				partController.unpause();
+				setStatusToResumed();
+			}
+
+		});
+		return resumeItem;
+	}
+
+	private ToolItem createPauseToolItem(final DashboardPartController partController) {
+		ToolItem pauseItem = createToolItem(toolBar, "Pause", DashboardPlugIn.getImageManager().get("pause"));
+		pauseItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				partController.pause();
+				setStatusToPaused();
+			}
+
+		});
+		return pauseItem;
+	}
+
+	private ToolItem createStopToolItem(final DashboardPartController partController) {
+		ToolItem stopItem = createToolItem(toolBar, "Stop", DashboardPlugIn.getImageManager().get("stop"));
+		stopItem.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				partController.stop();
+				setStatusToStopped();
+			}
+		});
+		return stopItem;
+	}
+
+	private ToolItem createStartToolItem(final DashboardPartController partController) {
+		ToolItem startItem = createToolItem(toolBar, "Start", DashboardPlugIn.getImageManager().get("start"));
 		startItem.setEnabled(false);
 		startItem.addSelectionListener(new SelectionAdapter() {
 
@@ -62,39 +110,7 @@ public class DashboardPartEditorToolBar {
 				setStatusToStarted();
 			}
 		});
-		
-		stopItem = createToolItem(toolBar, "Stop", DashboardPlugIn.getImageManager().get("stop"));
-		stopItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				partController.stop();
-				setStatusToStopped();
-			}
-		});
-
-		pauseItem = createToolItem(toolBar, "Pause", DashboardPlugIn.getImageManager().get("pause"));
-		pauseItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				partController.pause();
-				setStatusToPaused();
-			}
-
-		});
-		
-		resumeItem = createToolItem(toolBar, "Resume", DashboardPlugIn.getImageManager().get("resume"));
-		resumeItem.setEnabled(false);
-		resumeItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				partController.unpause();
-				setStatusToResumed();
-			}
-
-		});
+		return startItem;
 	}
 
 	public ToolBar getToolBar() {

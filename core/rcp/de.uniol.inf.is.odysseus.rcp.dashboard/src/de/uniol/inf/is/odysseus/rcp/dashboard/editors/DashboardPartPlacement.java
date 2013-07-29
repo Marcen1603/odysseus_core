@@ -23,16 +23,15 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 public final class DashboardPartPlacement {
 
 	private final IDashboardPart part;
+	private final String filename;
 
 	private int x;
 	private int y;
 	private int w;
 	private int h;
 
-	private final String filename;
-
 	public DashboardPartPlacement(IDashboardPart part, String filename, int x, int y, int w, int h) {
-		this.part = Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
+		Preconditions.checkNotNull(part, "Dashboard Part for positioning must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(filename), "File of Dashboard Part must not be null!");
 
 		Preconditions.checkArgument(w >= 0, "Width must be positive instead of %s", w);
@@ -43,6 +42,7 @@ public final class DashboardPartPlacement {
 		this.w = w;
 		this.h = h;
 
+		this.part = part;
 		this.filename = filename;
 	}
 

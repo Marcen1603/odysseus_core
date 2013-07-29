@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import com.google.common.base.Preconditions;
 
+
 final class PartDragger {
 
 	private DashboardPartPlacement place;

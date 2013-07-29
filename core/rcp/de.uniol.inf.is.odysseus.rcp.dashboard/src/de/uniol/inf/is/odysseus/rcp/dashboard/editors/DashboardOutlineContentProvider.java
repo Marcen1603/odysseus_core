@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.Lists;
 
+
 public class DashboardOutlineContentProvider implements ITreeContentProvider {
 
 	@Override
@@ -36,11 +37,25 @@ public class DashboardOutlineContentProvider implements ITreeContentProvider {
 			return dashboard.getDashboardPartPlacements().toArray();
 		} else if (parentElement instanceof DashboardPartPlacement) {
 			final DashboardPartPlacement placement = (DashboardPartPlacement) parentElement;
-			return createList(placement);
+			return createSettingList(placement);
 		}
 		return null;
 	}
-
+	
+	private static Object[] createSettingList(DashboardPartPlacement placement) {
+		List<Object> objects = Lists.newArrayList();
+		objects.add("File = " + placement.getFilename());
+		objects.add("X = " + placement.getX());
+		objects.add("Y = " + placement.getY());
+		objects.add("W = " + placement.getWidth());
+		objects.add("H = " + placement.getHeight());
+		for(String settingName : placement.getDashboardPart().getConfiguration().getNames() ) {
+			Object object = placement.getDashboardPart().getConfiguration().get(settingName);
+			objects.add(settingName + " = " + ( object == null ? "null" : object.toString()) );
+		}
+		return objects.toArray();
+	}
+	
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
@@ -66,17 +81,5 @@ public class DashboardOutlineContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
-	private static Object[] createList(DashboardPartPlacement placement) {
-		List<Object> objects = Lists.newArrayList();
-		objects.add("File = " + placement.getFilename());
-		objects.add("X = " + placement.getX());
-		objects.add("Y = " + placement.getY());
-		objects.add("W = " + placement.getWidth());
-		objects.add("H = " + placement.getHeight());
-		for(String settingName : placement.getDashboardPart().getConfiguration().getNames() ) {
-			Object object = placement.getDashboardPart().getConfiguration().get(settingName);
-			objects.add(settingName + " = " + ( object == null ? "null" : object.toString()) );
-		}
-		return objects.toArray();
-	}
+
 }

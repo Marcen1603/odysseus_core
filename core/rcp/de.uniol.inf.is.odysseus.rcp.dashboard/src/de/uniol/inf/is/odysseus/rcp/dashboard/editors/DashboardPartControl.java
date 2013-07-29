@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.ToolBar;
 
 import com.google.common.base.Preconditions;
 
+
 public class DashboardPartControl {
 
 	private final Composite parent;
@@ -25,7 +26,33 @@ public class DashboardPartControl {
 		this.parent = parent;
 		dashboardPartPlacement = dashboardPartPlace;
 
-		outerComposite = new Composite(parent, SWT.NONE);
+		outerComposite = createOuterComposite(parent);
+		Composite innerComposite = createInnerComposite();
+
+		dashboardPartPlace.getDashboardPart().createPartControl(innerComposite, toolBar);
+	}
+
+	private Composite createOuterComposite(Composite parent) {
+		Composite outerComposite = new Composite(parent, SWT.NONE);
+		GridLayout layout = createGridLayout();
+		outerComposite.setLayout(layout);
+
+		FormData fd = new FormData();
+		updateFormData(fd, dashboardPartPlacement);
+		outerComposite.setLayoutData(fd);
+		
+		return outerComposite;
+	}
+
+	private Composite createInnerComposite() {
+		Composite innerComposite = new Composite(outerComposite, SWT.NONE);
+		innerComposite.setLayout(new GridLayout());
+		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		innerComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		return innerComposite;
+	}
+
+	private GridLayout createGridLayout() {
 		GridLayout layout = new GridLayout();
 		layout.marginBottom = 0;
 		layout.marginHeight = 0;
@@ -33,18 +60,7 @@ public class DashboardPartControl {
 		layout.marginRight = 0;
 		layout.marginTop = 0;
 		layout.marginWidth = 0;
-		outerComposite.setLayout(layout);
-
-		FormData fd = new FormData();
-		updateFormData(fd, dashboardPartPlacement);
-		outerComposite.setLayoutData(fd);
-		
-		Composite innerComposite = new Composite(outerComposite, SWT.NONE);
-		innerComposite.setLayout(new GridLayout());
-		innerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		innerComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-
-		dashboardPartPlace.getDashboardPart().createPartControl(innerComposite, toolBar);
+		return layout;
 	}
 	
 	public void dispose() {

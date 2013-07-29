@@ -13,6 +13,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+
 public class DashboardPartSelector implements ISelectionProvider {
 
 	private final List<ISelectionChangedListener> listeners = Lists.newArrayList();
@@ -56,18 +57,26 @@ public class DashboardPartSelector implements ISelectionProvider {
 	}
 
 	public void setSelection(ISelection selection, boolean fireListeners ) {
+		Optional<DashboardPartPlacement> optDashboardPart = getSelectedDashboardPartPlacement(selection);
+		if( optDashboardPart.isPresent() ) {
+			selectedDashboardPartPlacement = optDashboardPart.get();
+			this.selection = (IStructuredSelection)selection;
+
+			if( fireListeners ) {
+				fireListeners(selection);
+			}
+		}
+	}
+	
+	private Optional<DashboardPartPlacement> getSelectedDashboardPartPlacement(ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			final IStructuredSelection structSelection = (IStructuredSelection) selection;
 			final Object selectedObject = structSelection.getFirstElement();
 			if (selectedObject instanceof DashboardPartPlacement) {
-				selectedDashboardPartPlacement = (DashboardPartPlacement) selectedObject;
-				this.selection = structSelection;
-
-				if( fireListeners ) {
-					fireListeners(selection);
-				}
+				return Optional.of((DashboardPartPlacement) selectedObject);
 			}
 		}
+		return Optional.absent();
 	}
 	
 	@Override

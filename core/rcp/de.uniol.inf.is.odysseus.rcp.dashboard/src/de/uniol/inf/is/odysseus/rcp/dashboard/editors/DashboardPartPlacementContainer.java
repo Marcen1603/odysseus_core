@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+
 public class DashboardPartPlacementContainer {
 	
 	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();

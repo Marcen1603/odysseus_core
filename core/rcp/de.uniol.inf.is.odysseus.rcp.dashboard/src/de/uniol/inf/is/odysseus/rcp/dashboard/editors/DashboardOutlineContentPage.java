@@ -41,12 +41,16 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
+		createTreeViewer();
+
+		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+	}
+
+	private void createTreeViewer() {
 		final TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new DashboardOutlineContentProvider());
 		viewer.setLabelProvider(new DashboardOutlineLabelProvider());
 		viewer.setInput(dashboard);
-
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 	}
 
 	@Override
