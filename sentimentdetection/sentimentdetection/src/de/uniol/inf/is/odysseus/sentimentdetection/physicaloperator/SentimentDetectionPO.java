@@ -60,9 +60,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int attributeTestSetTrueDecisionPos = -1;
 
 
-	public SentimentDetectionPO() {
-		super();
-	}
+	
 
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
 			int trainSetMinSize, 

@@ -34,12 +34,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 	}
 
-	public KNearestNeighbor(String name, String domain) {
-		super();
-	}
-
 	public KNearestNeighbor(String domain) {
-		new KNearestNeighbor(algo_type.toLowerCase(), domain);
 		setDomain(domain);
 	}
 

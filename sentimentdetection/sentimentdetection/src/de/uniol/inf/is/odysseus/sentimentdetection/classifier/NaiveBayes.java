@@ -11,24 +11,18 @@ import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
 public class NaiveBayes extends AbstractClassifier {
 	
 	private final String algo_type = "NaiveBayes";
-	private String domain;
-	private int ngram;
-	
+
 	private Map<String, Integer> positivewords = new HashMap<String, Integer>();
 	private Map<String, Integer> negativewords = new HashMap<String, Integer>();
 	
 	static Logger logger = LoggerFactory.getLogger(NaiveBayes.class);
 
 	public NaiveBayes(){
-		
+		//OSGI
 	}
-	
-	public NaiveBayes(String name, String domain){
-		super();
-	}
+
 	
 	public NaiveBayes(String domain) {
-		new NaiveBayes(algo_type.toLowerCase(), domain);
 		setDomain(domain);
 	}
 	
@@ -141,19 +135,6 @@ public class NaiveBayes extends AbstractClassifier {
 		return algo_type;
 	}
 
-	@Override
-	public void setNgram(int ngram){
-		this.ngram = ngram;
-	}
-	
-	public String getDomain(){
-		return domain;
-	}
-	
-	@Override
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
 	
 
 }
