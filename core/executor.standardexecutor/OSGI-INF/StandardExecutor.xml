@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor"/>
    <service>
        <provide interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor"/>

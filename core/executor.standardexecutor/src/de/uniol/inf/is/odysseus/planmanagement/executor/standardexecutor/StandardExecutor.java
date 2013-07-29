@@ -106,6 +106,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardExecutor.class);
 	private static final long ADMISSION_REACTION_INTERVAL_MILLIS = 10000;
+	
+	private static StandardExecutor instance;
 
 	private ReloadLog reloadLog;
 
@@ -132,6 +134,16 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 			this.configuration.set(new ParameterBufferPlacementStrategy());
 		}
 		this.reloadLog = new ReloadLog();
+		
+		instance = this;
+	}
+	
+	public void deactivate() {
+		instance = null;
+	}
+	
+	public static StandardExecutor getInstance() {
+		return instance;
 	}
 
 	/*
@@ -454,10 +466,7 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				prio = params.getPriority();
 			}
 			ILogicalQuery query = new LogicalQuery(logicalPlan, prio);
-			ParameterQueryName queryName = params.get(ParameterQueryName.class);
-			if (queryName != null && queryName.getValue() != null && queryName.getValue().length() > 0) {
-				query.setName(queryName.getValue());
-			}
+			setQueryName(params, query);
 			query.setUser(user);
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
@@ -470,6 +479,15 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 		} catch (Exception e) {
 			LOG.error("Error adding Queries ", e);
 			throw new QueryAddException(e);
+		}
+	}
+
+	private void setQueryName(QueryBuildConfiguration params, ILogicalQuery query) {
+		if( params != null ) {
+			ParameterQueryName queryName = params.get(ParameterQueryName.class);
+			if (queryName != null && queryName.getValue() != null && queryName.getValue().length() > 0) {
+				query.setName(queryName.getValue());
+			}
 		}
 	}
 
@@ -712,6 +730,12 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 
 		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
 		validateUserRight(queryToStop, caller, ExecutorPermission.STOP_QUERY);
+		stopQuery(queryToStop);
+	}
+	
+	// for internal stopping
+	void stopQuery( int queryID ) {
+		IPhysicalQuery queryToStop = this.executionPlan.getQueryById(queryID);
 		stopQuery(queryToStop);
 	}
 
