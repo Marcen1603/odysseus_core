@@ -23,6 +23,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	private String consumerSecret;
 	private String accessToken;
 	private String accessTokenSecret;
+	private String[] searchKeys;
+	private double[][] locations;
 
 	public TwitterTransportHandler() {
 		super();
@@ -95,6 +98,12 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		if (options.containsKey("accesstokensecret")) {
 			setAccessTokenSecret(options.get("accesstokensecret"));
 		}
+		if (options.containsKey("searchkeys")){
+			setSearchKeys(options.get("searchkeys"));
+		}
+		if (options.containsKey("locations")){
+			setLocations(options.get("locations"));
+		}
 	}
 
 	@Override
@@ -133,7 +142,15 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	public void setAccessTokenSecret(String accessTokenSecret) {
 		this.accessTokenSecret = accessTokenSecret;
 	}
-
+	
+	public void setSearchKeys(String searchKeys){
+		this.searchKeys = searchKeys.split(",");
+	}
+	
+	public void setLocations(String locations){
+		this.locations = convertStringTo2DArray(locations); 
+	}
+	
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
 		final ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -144,7 +161,27 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 				.setOAuthAccessTokenSecret(this.accessTokenSecret);
 		twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 		twitterStream.addListener(this);
-		twitterStream.sample();
+		
+		/*
+		 * for twitter statuses/filter one predicate 
+		 * parameter (follow, locations, or track) 
+		 * must be specified 
+		 * https://dev.twitter.com/docs/api/1.1/post/statuses/filter
+		 */
+		if(searchKeys.length > 0 || locations.length > 0){
+			//set filter
+			FilterQuery fq = new FilterQuery();
+			if(searchKeys.length > 0){
+				fq.track(searchKeys);
+			}
+			if(locations.length > 0){
+				fq.locations(locations);
+			}
+			twitterStream.filter(fq);
+		}else{
+			twitterStream.sample();
+		}
+	
 	}
 
 	@Override
@@ -212,6 +249,20 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	public void onStallWarning(StallWarning arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private double[][] convertStringTo2DArray(String data){
+		@SuppressWarnings("resource")
+		Scanner sc = new Scanner(data).useDelimiter("[,|]");
+		String[] ctr = data.split(","); 
+		double[][] matrix = new double[ctr.length/2][2];
+		    for (int r = 0; r < ctr.length/2; r++) {
+		        for (int c = 0; c < 2; c++) {
+		            matrix[r][c] = Double.parseDouble(sc.next());
+		        }
+		 }
+		   
+		return matrix;    
 	}
 
 }
