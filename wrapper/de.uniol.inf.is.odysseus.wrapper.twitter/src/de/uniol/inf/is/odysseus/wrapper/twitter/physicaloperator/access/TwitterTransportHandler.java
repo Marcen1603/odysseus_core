@@ -27,15 +27,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import twitter4j.Status;
-import twitter4j.StatusDeletionNotice;
-import twitter4j.StatusListener;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
+
+
+import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -74,7 +70,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 			throw new IOException(e);
 		}
 	}
-
+	
+	
 	@Override
 	public ITransportHandler createInstance(
 			final IProtocolHandler<?> protocolHandler,
@@ -86,17 +83,17 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	}
 
 	private void init(final Map<String, String> options) {
-		if (options.containsKey("ConsumerKey")) {
-			setConsumerKey(options.get("ConsumerKey"));
+		if (options.containsKey("consumerkey")) {
+			setConsumerKey(options.get("consumerkey"));
 		}
-		if (options.containsKey("ConsumerSecret")) {
-			setConsumerSecret(options.get("ConsumerSecret"));
+		if (options.containsKey("consumersecret")) {
+			setConsumerSecret(options.get("consumersecret"));
 		}
-		if (options.containsKey("AccessToken")) {
-			setAccessToken(options.get("AccessToken"));
+		if (options.containsKey("accesstoken")) {
+			setAccessToken(options.get("accesstoken"));
 		}
-		if (options.containsKey("AccessTokenSecret")) {
-			setAccessTokenSecret(options.get("AccessTokenSecret"));
+		if (options.containsKey("accesstokensecret")) {
+			setAccessTokenSecret(options.get("accesstokensecret"));
 		}
 	}
 
@@ -162,7 +159,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		twitter = new TwitterFactory().getInstance();
 
 	}
-
+	
 	@Override
 	public void processInClose() throws IOException {
 		twitterStream.shutdown();
@@ -177,12 +174,21 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 
 	@Override
 	public void onStatus(final Status status) {
-		try {
-			this.fireProcess(encoder.encode(CharBuffer.wrap(status.getText())));
+		try {			
+			ByteBuffer charBuffer = encoder.encode(CharBuffer
+					.wrap(status.getText()));
+			ByteBuffer buffer = ByteBuffer.allocate(charBuffer
+					.capacity() + 4);
+			buffer.putInt(charBuffer.capacity());
+			buffer.put(charBuffer);
+		
+			this.fireProcess(buffer);
+		
 		} catch (CharacterCodingException e) {
 			LOG.error(e.getMessage(), e);
 		}
 	}
+	
 
 	@Override
 	public void onDeletionNotice(final StatusDeletionNotice statusDeletionNotice) {
@@ -200,6 +206,12 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	@Override
 	public void onException(final Exception e) {
 		LOG.error(e.getMessage(), e);
+	}
+
+	@Override
+	public void onStallWarning(StallWarning arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
