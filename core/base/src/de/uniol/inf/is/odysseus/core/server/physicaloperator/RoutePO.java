@@ -81,7 +81,7 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 					out = (T)object.clone();
 					out.setMetadata((IMetaAttribute)object.getMetadata().clone());
 				}
-				transfer(object, i);
+				transfer(out, i);
 				found = true;
 				if (!overlappingPredicates) {
 					return;
