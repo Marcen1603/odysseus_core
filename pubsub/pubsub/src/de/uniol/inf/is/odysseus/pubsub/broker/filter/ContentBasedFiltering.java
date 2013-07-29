@@ -55,15 +55,9 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 			// Step 1a: conjunctive split
 			for (IPredicate<? super T> predicate : brokerSubscription
 					.getPredicates()) {
-				try {
 					splittedPredicates
 					.addAll((Collection<? extends IPredicate<? super T>>) predicate
 							.conjunctiveSplit(true));
-				} catch (RuntimeException e) {
-					// Split can only be called on conjunctive predicates
-					// so if its not splitable, add the whole predicate 
-					splittedPredicates.add(predicate);
-				}
 			}
 
 			// Step 1b: Save predicates with weight
