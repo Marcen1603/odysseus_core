@@ -18,6 +18,16 @@ public class ParameterFragmentationType extends Setting<String> implements
 	public static final String UNDEFINED = "undefined";
 	
 	/**
+	 * The separator between different fragmentation strategies for different sources
+	 */
+	public static final String OUTER_SEP = ";";
+	
+	/**
+	 * The separator between fragmentation strategy, source name and other parameters for the fragmentation strategy
+	 */
+	public static final String INNER_SEP = " ";
+	
+	/**
 	 * Constructs a new parameter "DATAFRAGMENTATIONTYPE".
 	 * @param value The value for the parameter.
 	 */

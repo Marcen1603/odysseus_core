@@ -24,28 +24,18 @@ public class FragmentationTypePreParserKeyword extends AbstractPreParserKeyword 
 	 * The string representation of the keyword.
 	 */
 	public static final String KEYWORD = "DATAFRAGMENTATIONTYPE";
-	
-	/**
-	 * The separator between different fragmentation strategies for different sources
-	 */
-	public static final String OUTER_SEP = ";";
-	
-	/**
-	 * The separator between fragmentation strategy, source name and other parameters for the fragmentation strategy
-	 */
-	public static final String INNER_SEP = " ";
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
 			ISession caller) throws OdysseusScriptException {
 		
-		String[] strategies = parameter.split(FragmentationTypePreParserKeyword.OUTER_SEP);
+		String[] strategies = parameter.split(ParameterFragmentationType.OUTER_SEP);
 		if(strategies == null || strategies.length == 0)
 			throw new OdysseusScriptException("No data fragmentation strategy defined.");
 		
 		for(String strategy : strategies) {
 			
-			String[] parameters = strategy.split(INNER_SEP);
+			String[] parameters = strategy.split(ParameterFragmentationType.INNER_SEP);
 			if(parameters == null || parameters.length == 0)
 				throw new OdysseusScriptException("At least one data fragmentation strategy is not defined.");
 			
