@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator;
+package de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.FragmentAO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
 
 /**
  * A {@link RRFragmentPO} can be used to realize a {@link RRFragmentAO}. <br />

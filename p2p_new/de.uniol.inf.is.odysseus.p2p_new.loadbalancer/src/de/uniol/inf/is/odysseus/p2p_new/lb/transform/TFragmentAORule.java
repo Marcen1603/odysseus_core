@@ -1,9 +1,11 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.transform;
+package de.uniol.inf.is.odysseus.p2p_new.lb.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.FragmentAO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator.AbstractFragmentPO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.physicaloperator.RRFragmentPO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.HashFragmentation;
+import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator.AbstractFragmentPO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator.HashFragmentPO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator.RRFragmentPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -28,8 +30,14 @@ public class TFragmentAORule extends AbstractTransformationRule<FragmentAO> {
 	@Override
 	public void execute(FragmentAO fragmentAO, TransformationConfiguration config) { 
 		
-		/*default = round robin*/
-		defaultExecute(fragmentAO, new RRFragmentPO(fragmentAO), config, true, true);
+		if(fragmentAO.getType().equals(HashFragmentation.NAME))
+			defaultExecute(fragmentAO, new HashFragmentPO(fragmentAO), config, true, true);
+		else {
+		
+			// default = round robin
+			defaultExecute(fragmentAO, new RRFragmentPO(fragmentAO), config, true, true);
+			
+		}
 		 
 	}
 	 

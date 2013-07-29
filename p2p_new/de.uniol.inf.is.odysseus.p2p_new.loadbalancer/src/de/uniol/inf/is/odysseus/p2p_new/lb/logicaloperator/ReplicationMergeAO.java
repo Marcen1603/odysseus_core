@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator;
+package de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;

@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.ReplicationMergeAO;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
+import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.ReplicationMergeAO;
 import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
 
 /**

@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.FragmentAO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
 
 /**
  * The class for a round-robin data fragmentation strategy. <br />

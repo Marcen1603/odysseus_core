@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.transform;
+package de.uniol.inf.is.odysseus.p2p_new.lb.transform;
 
 import java.util.List;
 

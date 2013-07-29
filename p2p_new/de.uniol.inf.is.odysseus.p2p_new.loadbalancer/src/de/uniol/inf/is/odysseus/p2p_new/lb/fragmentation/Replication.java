@@ -5,7 +5,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.logicaloperator.ReplicationMergeAO;
+import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.ReplicationMergeAO;
 
 /**
  * The class for data replication which is therefore an exception of data fragmentation strategies. <br />
