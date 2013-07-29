@@ -3,15 +3,16 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -20,7 +21,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 
-public class ControlPointManager implements ISelectionChangedListener, MouseMoveListener {
+public class ControlPointManager implements MouseMoveListener, ISelectionListener {
 
 	private final Dashboard dashboard;
 	private final Cursor arrowCursor;
@@ -32,14 +33,12 @@ public class ControlPointManager implements ISelectionChangedListener, MouseMove
 
 		arrowCursor = new Cursor(Display.getDefault(), SWT.CURSOR_ARROW);
 
-		dashboard.addSelectionChangedListener(this);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		dashboard.getControl().addMouseMoveListener(this);
 	}
 
 	@Override
-	public void selectionChanged(SelectionChangedEvent event) {
-		ISelection selection = event.getSelection();
-
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		disposeControlPoints();
 
 		if (!selection.isEmpty()) {
@@ -50,6 +49,7 @@ public class ControlPointManager implements ISelectionChangedListener, MouseMove
 				createControlPoints(dashboard, dashboardPartPlacement);
 			}
 		}
+		
 	}
 
 	public void render(GC gc) {
@@ -63,7 +63,7 @@ public class ControlPointManager implements ISelectionChangedListener, MouseMove
 		disposeCursor(arrowCursor);
 
 		dashboard.getControl().removeMouseMoveListener(this);
-		dashboard.removeSelectionChangedListener(this);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 	}
 
 	// MouseMoveListener
@@ -131,4 +131,5 @@ public class ControlPointManager implements ISelectionChangedListener, MouseMove
 			cursor.dispose();
 		}
 	}
+
 }

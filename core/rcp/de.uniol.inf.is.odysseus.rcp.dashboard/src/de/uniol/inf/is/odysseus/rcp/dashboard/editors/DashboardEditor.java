@@ -80,7 +80,6 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		initToolBar(toolBar);
 
 		dashboard.createPartControl(parent, toolBar, getSite());
-		getSite().setSelectionProvider(dashboard);
 		
 		try {
 			startDashboard();
@@ -256,7 +255,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dashboard.hasSelection()) {
-					final DashboardPartController controller = getControllerFromSelection((IStructuredSelection) dashboard.getSelection());
+					final DashboardPartController controller = getControllerFromSelection(dashboard.getSelection());
 					if( controller.isPaused() ) {
 						controller.unpause();
 					} else if (!controller.isStarted()) {
@@ -280,7 +279,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dashboard.hasSelection()) {
-					final DashboardPartController controller = getControllerFromSelection((IStructuredSelection) dashboard.getSelection());
+					final DashboardPartController controller = getControllerFromSelection(dashboard.getSelection());
 					if( controller.isPaused() ) {
 						controller.unpause();
 					}
@@ -308,7 +307,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dashboard.hasSelection()) {
-					final DashboardPartController controller = getControllerFromSelection((IStructuredSelection) dashboard.getSelection());
+					final DashboardPartController controller = getControllerFromSelection(dashboard.getSelection());
 					if (controller.isStarted() && !controller.isPaused()) {
 						controller.pause();
 					}
@@ -346,7 +345,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (dashboard.hasSelection()) {
-					final IStructuredSelection structSelection = (IStructuredSelection) dashboard.getSelection();
+					final IStructuredSelection structSelection = dashboard.getSelection();
 					final DashboardPartPlacement selectedPlacement = (DashboardPartPlacement) structSelection.getFirstElement();
 					dashboard.remove(selectedPlacement);
 				} else {

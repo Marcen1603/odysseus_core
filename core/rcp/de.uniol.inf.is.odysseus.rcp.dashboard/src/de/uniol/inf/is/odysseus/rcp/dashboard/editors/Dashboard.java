@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.core.resources.IFile;
@@ -24,11 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -66,7 +61,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
@@ -77,16 +71,15 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.ImageUtil;
 
-public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, KeyListener, ISelectionListener, ISelectionProvider {
+public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, KeyListener, ISelectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Dashboard.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
 	private static final int DEFAULT_PART_WIDTH = 500;
 	private static final int DEFAULT_PART_HEIGHT = 300;
 
-	// 1 = LMB, 2 = MMB, 3 = RMB
-	private static final int SELECT_MOUSE_BUTTON_ID = 1;
-	
+	private static final int SELECT_MOUSE_BUTTON_ID = 1; 
+
 	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;
 	private static final int MOVE_SELECTION_STEP_SIZE_PIXELS = 10;
 	private static final int RESIZE_SELECTION_STEP_SIZE_PIXELS = 10;
@@ -95,28 +88,24 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private ToolBar toolBar;
 	private DropTarget dropTarget;
 	private PartDragger partDragger = new PartDragger();
-	
-	private final List<DashboardPartPlacement> dashboardParts = Lists.newArrayList();
-	private IStructuredSelection selectedDashboardPart;
-	private final Map<Control, DashboardPartPlacement> controlsMap = Maps.newHashMap();
-	private final Map<DashboardPartPlacement, Composite> containers = Maps.newHashMap();
 
-	private final List<IDashboardListener> listeners = Lists.newArrayList();
-	private final List<ISelectionChangedListener> selectionChangedListeners = Lists.newArrayList();
-	private boolean isSelectionChange;
+	private final DashboardPartSelector selector = new DashboardPartSelector();
+	private final DashboardPartPlacementContainer partContainer = new DashboardPartPlacementContainer();
+
+	private final List<IDashboardListener> dashboardListeners = Lists.newArrayList();
 
 	private ControlPointManager controlPointManager;
-	
+
 	private DashboardSettings settings = DashboardSettings.getDefault();
-	
+
 	private IFile loadedBackgroundImageFile;
 	private boolean isLoadedBackgroundImageStretched = false;
-
+	
 	public void add(DashboardPartPlacement partPlace) {
 		Preconditions.checkNotNull(partPlace, "Placement for Dashboard Part must not be null!");
-		Preconditions.checkArgument(!dashboardParts.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
+		Preconditions.checkArgument(!partContainer.contains(partPlace), "Dashboard part placement %s already added!", partPlace);
 
-		dashboardParts.add(partPlace);
+		partContainer.add(partPlace);
 
 		if (dashboardComposite != null && toolBar != null) {
 			insertDashboardPart(partPlace);
@@ -125,29 +114,23 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 		fireAddedEvent(partPlace.getDashboardPart());
 	}
-	
-	public void setSettings( DashboardSettings settings ) {
+
+	public void setSettings(DashboardSettings settings) {
 		Preconditions.checkNotNull(settings, "Settings to set must not be null!");
-		
+
 		this.settings = settings;
+		selector.setLock(settings.isLocked());
 	}
 
 	public DashboardSettings getSettings() {
 		return settings;
 	}
-	
+
 	public void addListener(IDashboardListener listener) {
 		Preconditions.checkNotNull(listener, "Dashboardlistener to add must not be null!");
 
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
-	}
-
-	@Override
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		if (!selectionChangedListeners.contains(listener)) {
-			selectionChangedListeners.add(listener);
+		synchronized (dashboardListeners) {
+			dashboardListeners.add(listener);
 		}
 	}
 
@@ -155,20 +138,23 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		this.toolBar = toolBar;
 		dashboardComposite = createTopComposite(parent);
 		controlPointManager = new ControlPointManager(this);
-		
 		addListeners();
 
-		for (final DashboardPartPlacement dashboardPartPlace : dashboardParts) {
-			insertDashboardPart(dashboardPartPlace);
-		}
-
+		createPreAddedDashboardParts();
 		createDropTarget();
 		createContextMenu(site);
 
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		site.setSelectionProvider(selector);
 
 		updateBackgroundImage();
 		parent.layout();
+	}
+
+	private void createPreAddedDashboardParts() {
+		for (final DashboardPartPlacement dashboardPartPlace : partContainer.getDashboardPartPlacements()) {
+			insertDashboardPart(dashboardPartPlace);
+		}
 	}
 
 	private void createDropTarget() {
@@ -193,7 +179,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		MenuManager menuManager = new MenuManager();
 		Menu contextMenu = menuManager.createContextMenu(dashboardComposite);
 		dashboardComposite.setMenu(contextMenu);
-		site.registerContextMenu(menuManager, this);
+		site.registerContextMenu(menuManager, selector);
 	}
 
 	public void dispose() {
@@ -210,29 +196,18 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	public ImmutableList<DashboardPartPlacement> getDashboardPartPlacements() {
-		return ImmutableList.copyOf(dashboardParts);
-	}
-
-	@Override
-	public ISelection getSelection() {
-		if (settings.isLocked() || selectedDashboardPart == null) {
-			return StructuredSelection.EMPTY;
-		}
-		return selectedDashboardPart;
-	}
-
-	public boolean hasSelection() {
-		return !settings.isLocked() && selectedDashboardPart != null;
+		return partContainer.getDashboardPartPlacements();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (!settings.isLocked() && hasSelection() && (e.stateMask & SWT.CTRL) != 0) {
-			DashboardPartPlacement selectedDashboardPart = getSelectedDashboardPart();
+		if (selector.hasSelection() && isCtrlPressed(e)) {
+			Optional<DashboardPartPlacement> optSelectedDashboardPart = selector.getSelectedDashboardPartPlacement();
+			DashboardPartPlacement selectedDashboardPart = optSelectedDashboardPart.get();
 
 			if (e.keyCode == SWT.DEL) {
 				remove(selectedDashboardPart);
-				setSelection((DashboardPartPlacement) null);
+				selector.setSelection((DashboardPartPlacement) null);
 
 			} else if ((e.stateMask & SWT.SHIFT) != 0) {
 
@@ -253,11 +228,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 					updateSelection();
 
 				} else if (e.keyCode == SWT.TAB) {
-					final int pos = dashboardParts.indexOf(selectedDashboardPart);
-					final int newPos = (pos + 1) % dashboardParts.size();
-					selectedDashboardPart = dashboardParts.get(newPos);
-					dashboardComposite.redraw();
-					fireChangedEvent();
+					selectNextDashboardPartPlacement(selectedDashboardPart);
 				}
 			} else {
 				if (e.keyCode == SWT.ARROW_UP) {
@@ -277,13 +248,20 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 					updateSelection();
 
 				} else if (e.keyCode == SWT.TAB) {
-					final int pos = dashboardParts.indexOf(selectedDashboardPart);
-					final int newPos = (pos + 1) % dashboardParts.size();
-					selectedDashboardPart = dashboardParts.get(newPos);
-					dashboardComposite.redraw();
+					selectNextDashboardPartPlacement(selectedDashboardPart);
 				}
 			}
 		}
+	}
+
+	private static boolean isCtrlPressed(KeyEvent e) {
+		return (e.stateMask & SWT.CTRL) != 0;
+	}
+
+	private void selectNextDashboardPartPlacement(DashboardPartPlacement selectedDashboardPart) {
+		selectedDashboardPart = partContainer.getNextPartAfter(selectedDashboardPart);
+		dashboardComposite.redraw();
+		fireChangedEvent();
 	}
 
 	@Override
@@ -300,18 +278,21 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		if (!settings.isLocked() && e.button == SELECT_MOUSE_BUTTON_ID) {
 
 			Optional<ControlPoint> optControlPoint = controlPointManager.getControlPoint(e.x, e.y);
-			if( optControlPoint.isPresent() ) {
+			if (optControlPoint.isPresent()) {
 				// prohibit selection change
 				return;
 			}
 
-			DashboardPartPlacement place = controlsMap.get(e.widget);
-			
-			if( place != null && getSelectedDashboardPart() != place ) {
-				partDragger.beginDrag(place, e.x, e.y);
+			Optional<DashboardPartPlacement> optPlace = partContainer.getByControl(e.widget);
+
+			if (optPlace.isPresent()) {
+				if (!selector.isSelected(optPlace.get())) {
+					partDragger.beginDrag(optPlace.get(), e.x, e.y);
+				}
+				selector.setSelection(optPlace.get());
+			} else {
+				selector.clearSelection();
 			}
-			
-			setSelection(place);
 		}
 	}
 
@@ -322,7 +303,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	@Override
 	public void mouseMove(MouseEvent e) {
-		if( partDragger.isDragging() ) {
+		if (partDragger.isDragging()) {
 			partDragger.drag(e.x, e.y);
 			update();
 		}
@@ -335,101 +316,62 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	public void update() {
 		updateBackgroundImage();
-		
-		for (DashboardPartPlacement partPlace : dashboardParts) {
+
+		for (DashboardPartPlacement partPlace : partContainer.getDashboardPartPlacements()) {
 			update(partPlace);
 		}
-		
+
 		fireChangedEvent();
 	}
 
 	private void updateBackgroundImage() {
-		if (!Objects.equals(loadedBackgroundImageFile, settings.getBackgroundImageFile()) || settings.isBackgroundImageStretched() != isLoadedBackgroundImageStretched ) {
+		if (!Objects.equals(loadedBackgroundImageFile, settings.getBackgroundImageFile()) || settings.isBackgroundImageStretched() != isLoadedBackgroundImageStretched) {
 			disposeBackgroundImage();
 
 			try {
-				if( settings.getBackgroundImageFile() != null ) {
+				if (settings.getBackgroundImageFile() != null) {
 					Image image = new Image(Display.getCurrent(), settings.getBackgroundImageFile().getContents());
-					
-					if( settings.isBackgroundImageStretched() ) {
+
+					if (settings.isBackgroundImageStretched()) {
 						Image stretchedImage = ImageUtil.resizeImage(image, dashboardComposite.getSize().x, dashboardComposite.getSize().y);
 						image.dispose();
 						image = stretchedImage;
-					} 
+					}
 					isLoadedBackgroundImageStretched = settings.isBackgroundImageStretched();
-					
+
 					dashboardComposite.setBackgroundImage(image);
 					loadedBackgroundImageFile = settings.getBackgroundImageFile();
 				} else {
 					dashboardComposite.setBackgroundImage(null);
 					loadedBackgroundImageFile = null;
 				}
-				
+
 			} catch (CoreException e) {
 				LOG.error("Could not load background image", e);
 			}
 		}
 	}
 
-
 	public void remove(DashboardPartPlacement partPlace) {
-		Preconditions.checkNotNull(partPlace, "Dashboardpart to remove (as placement) must not be null!");
+		Optional<Composite> optComposite = partContainer.getComposite(partPlace);
 
-		final Composite compToRemove = containers.get(partPlace);
-		removeListenersRecursive(compToRemove);
+		if (optComposite.isPresent()) {
+			Composite composite = optComposite.get();
+			partContainer.remove(partPlace);
 
-		partPlace.getDashboardPart().dispose();
-		compToRemove.dispose();
+			removeListenersRecursive(composite);
+			composite.dispose();
+			partPlace.getDashboardPart().dispose();
 
-		dashboardParts.remove(partPlace);
-
-		fireRemovedEvent(partPlace.getDashboardPart());
+			fireRemovedEvent(partPlace.getDashboardPart());
+		} else {
+			throw new IllegalArgumentException("Composite for dashboard part not found");
+		}
 	}
 
 	public void removeListener(IDashboardListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
-
-	@Override
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionChangedListeners.remove(listener);
-	}
-
-	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if( isSelectionChange ) {
-			return;
-		}
-		
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			final IStructuredSelection structSelection = (IStructuredSelection) selection;
-			final Object selectedObject = structSelection.getFirstElement();
-			if (selectedObject instanceof DashboardPartPlacement) {
-				final DashboardPartPlacement placement = (DashboardPartPlacement) selectedObject;
-				if (dashboardParts.contains(placement)) {
-					selectedDashboardPart = structSelection;
-					dashboardComposite.redraw();
-					
-					try {
-						isSelectionChange = true;
-						for (final ISelectionChangedListener listener : selectionChangedListeners) {
-							if (listener != null) {
-								listener.selectionChanged(new SelectionChangedEvent(this, selection));
-							}
-						}
-					} finally {
-						isSelectionChange = false;
-					}
-					return;
-				}
-			}
-		}
-
-		selectedDashboardPart = null;
-		if (!dashboardComposite.isDisposed()) {
-			dashboardComposite.redraw();
+		synchronized (dashboardListeners) {
+			dashboardListeners.remove(listener);
 		}
 	}
 
@@ -437,36 +379,8 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		return dashboardComposite.setFocus();
 	}
 
-	@Override
-	public void setSelection(ISelection selection) {
-		if (selection.isEmpty()) {
-			selectedDashboardPart = null;
-			dashboardComposite.redraw();
-
-			for (final ISelectionChangedListener listener : selectionChangedListeners) {
-				if (listener != null) {
-					listener.selectionChanged(new SelectionChangedEvent(this, selection));
-				}
-			}
-		}
-
-		if (selection instanceof IStructuredSelection) {
-			final Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj instanceof DashboardPartPlacement) {
-				selectedDashboardPart = (IStructuredSelection) selection;
-				dashboardComposite.redraw();
-
-				for (final ISelectionChangedListener listener : selectionChangedListeners) {
-					if (listener != null) {
-						listener.selectionChanged(new SelectionChangedEvent(this, selection));
-					}
-				}
-			}
-		}
-	}
-
 	public Optional<DashboardPartPlacement> getSelectedDashboardPartPlacement() {
-		return Optional.fromNullable(getSelectedDashboardPart());
+		return selector.getSelectedDashboardPartPlacement();
 	}
 
 	private void disposeBackgroundImage() {
@@ -474,13 +388,13 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			dashboardComposite.getBackgroundImage().dispose();
 		}
 	}
-	
+
 	private void addListeners() {
 		dashboardComposite.addMouseListener(this);
 		dashboardComposite.addKeyListener(this);
 		dashboardComposite.addPaintListener(this);
 	}
-	
+
 	private void addListenersRecursive(Control base) {
 		base.addMouseListener(this);
 		base.addMouseMoveListener(this);
@@ -504,8 +418,8 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void fireAddedEvent(IDashboardPart part) {
-		synchronized (listeners) {
-			for (final IDashboardListener listener : listeners) {
+		synchronized (dashboardListeners) {
+			for (final IDashboardListener listener : dashboardListeners) {
 				try {
 					listener.dashboardPartAdded(this, part);
 				} catch (final Throwable t) {
@@ -516,8 +430,8 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void fireChangedEvent() {
-		synchronized (listeners) {
-			for (final IDashboardListener listener : listeners) {
+		synchronized (dashboardListeners) {
+			for (final IDashboardListener listener : dashboardListeners) {
 				try {
 					listener.dashboardChanged(this);
 				} catch (final Throwable t) {
@@ -528,8 +442,8 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void fireRemovedEvent(IDashboardPart part) {
-		synchronized (listeners) {
-			for (final IDashboardListener listener : listeners) {
+		synchronized (dashboardListeners) {
+			for (final IDashboardListener listener : dashboardListeners) {
 				try {
 					listener.dashboardPartRemoved(this, part);
 				} catch (final Throwable t) {
@@ -539,20 +453,12 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 	}
 
-	private DashboardPartPlacement getSelectedDashboardPart() {
-		final ISelection selection = getSelection();
-		return selection.isEmpty() ? null : (DashboardPartPlacement) (((IStructuredSelection) selection).getFirstElement());
-	}
-
 	private void insertDashboardPart(DashboardPartPlacement dashboardPartPlace) {
 		final Composite outerContainer = createDashboardPartOuterContainer(dashboardComposite, dashboardPartPlace);
-		containers.put(dashboardPartPlace, outerContainer);
-
 		final Composite innerContainer = getDashboardPartInnerContainer(outerContainer);
-
 		dashboardPartPlace.getDashboardPart().createPartControl(innerContainer, toolBar);
 
-		addControlsToMap(outerContainer, dashboardPartPlace, controlsMap);
+		partContainer.addContainer(dashboardPartPlace, outerContainer);
 
 		addListenersRecursive(outerContainer);
 	}
@@ -582,8 +488,9 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	}
 
 	private void renderSelectionBorder() {
-		if (hasSelection()) {
-			final DashboardPartPlacement selectedDashboardPart = getSelectedDashboardPart();
+		Optional<DashboardPartPlacement> optSelectedDashboardPart = selector.getSelectedDashboardPartPlacement();
+		if (optSelectedDashboardPart.isPresent()) {
+			final DashboardPartPlacement selectedDashboardPart = optSelectedDashboardPart.get();
 			final int x = selectedDashboardPart.getX();
 			final int y = selectedDashboardPart.getY();
 			final int width = selectedDashboardPart.getWidth();
@@ -598,44 +505,34 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		}
 	}
 
-	private void setSelection(DashboardPartPlacement placement) {
-		if (placement == null) {
-			setSelection(StructuredSelection.EMPTY);
-		} else {
-			setSelection(new StructuredSelection(placement));
+	private void updateSelection() {
+		Optional<DashboardPartPlacement> optSelectedDashboardPart = selector.getSelectedDashboardPartPlacement();
+		if (optSelectedDashboardPart.isPresent()) {
+			update(optSelectedDashboardPart.get());
+			fireChangedEvent();
 		}
 	}
 
-	private void updateSelection() {
-		update(getSelectedDashboardPart());
-		fireChangedEvent();
+	private void update(DashboardPartPlacement placement) {
+		Optional<Composite> optComp = partContainer.getComposite(placement);
+		if (optComp.isPresent()) {
+			Composite comp = optComp.get();
+
+			final FormData fd = (FormData) comp.getLayoutData();
+			updateFormData(fd, placement);
+			dashboardComposite.layout();
+			dashboardComposite.redraw();
+		} else {
+			throw new IllegalArgumentException("Dashboardpart placement has no composite");
+		}
 	}
 
-	private void update(DashboardPartPlacement placement) {
-		final Composite comp = containers.get(placement);
-		final FormData fd = (FormData) comp.getLayoutData();
-		updateFormData(fd, placement);
-		dashboardComposite.layout();
-		dashboardComposite.redraw();
-	}
-	
 	private static Composite createTopComposite(Composite parent) {
 		Composite topComposite = new Composite(parent, SWT.BORDER);
 		topComposite.setLayout(new FormLayout());
 		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		topComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		return topComposite;
-	}
-
-	private static void addControlsToMap(Control innerContainer, DashboardPartPlacement placement, Map<Control, DashboardPartPlacement> controlsMap) {
-		controlsMap.put(innerContainer, placement);
-
-		if (innerContainer instanceof Composite) {
-			final Composite comp = (Composite) innerContainer;
-			for (final Control compControl : comp.getChildren()) {
-				addControlsToMap(compControl, placement, controlsMap);
-			}
-		}
 	}
 
 	private static Composite createDashboardPartOuterContainer(Composite dashboardComposite, DashboardPartPlacement dashboardPartPlace) {
@@ -670,6 +567,20 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		fd.left = new FormAttachment(0, dashboardPartPlace.getX());
 		fd.bottom = new FormAttachment(0, dashboardPartPlace.getY() + fd.height);
 		fd.right = new FormAttachment(0, dashboardPartPlace.getX() + fd.width);
+	}
+
+	@Override
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		selector.setSelection(selection, false);
+		dashboardComposite.redraw();
+	}
+
+	public boolean hasSelection() {
+		return selector.hasSelection();
+	}
+
+	public IStructuredSelection getSelection() {
+		return selector.getSelection();
 	}
 
 }
