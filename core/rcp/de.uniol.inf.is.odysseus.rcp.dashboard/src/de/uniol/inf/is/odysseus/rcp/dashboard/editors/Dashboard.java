@@ -90,7 +90,6 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private final List<IDashboardListener> dashboardListeners = Lists.newArrayList();
 
 	private ControlPointManager controlPointManager;
-
 	private DashboardSettings settings = DashboardSettings.getDefault();
 
 	private IFile loadedBackgroundImageFile;

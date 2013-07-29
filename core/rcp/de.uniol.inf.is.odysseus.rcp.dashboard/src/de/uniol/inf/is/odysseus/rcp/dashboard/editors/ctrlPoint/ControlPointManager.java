@@ -49,12 +49,53 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 				createControlPoints(dashboard, dashboardPartPlacement);
 			}
 		}
-		
+	}
+
+	private void disposeControlPoints() {
+		for( ControlPoint point : points ) {
+			disposeControlPoint(point);
+		}
+		points.clear();
+	}
+	
+	private static void disposeControlPoint( ControlPoint point ) {
+		if( point != null ) {
+			point.dispose();
+		}
+	}
+
+	private static Optional<DashboardPartPlacement> getSelectedDashboardPartPlacement(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structSelection = (IStructuredSelection) selection;
+			Object selectedObject = structSelection.getFirstElement();
+			if (selectedObject instanceof DashboardPartPlacement) {
+				DashboardPartPlacement placement = (DashboardPartPlacement) selectedObject;
+				return Optional.of(placement);
+			}
+		}
+		return Optional.absent();
+	}
+	
+	private void createControlPoints(Dashboard dashboard, DashboardPartPlacement dashboardPartPlacement) {
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopLeftControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomLeftControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomRightControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopRightControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new LeftControlPoint()));
+		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new RightControlPoint()));
 	}
 
 	public void render(GC gc) {
 		for( ControlPoint point : points ) {
 			renderControlPoint(gc, point);
+		}
+	}
+	
+	private static void renderControlPoint(GC gc, ControlPoint point) {
+		if (point != null) {
+			point.render(gc);
 		}
 	}
 
@@ -64,6 +105,12 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 
 		dashboard.getControl().removeMouseMoveListener(this);
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+	}
+
+	private static void disposeCursor(Cursor cursor) {
+		if (cursor != null && !cursor.isDisposed()) {
+			cursor.dispose();
+		}
 	}
 
 	// MouseMoveListener
@@ -83,53 +130,4 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 				
 		return Optional.absent();
 	}
-
-	private void createControlPoints(Dashboard dashboard, DashboardPartPlacement dashboardPartPlacement) {
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopLeftControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomLeftControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomRightControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopRightControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new TopControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new BottomControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new LeftControlPoint()));
-		points.add(new ControlPoint(dashboard, dashboardPartPlacement, new RightControlPoint()));
-	}
-
-	private void disposeControlPoints() {
-		for( ControlPoint point : points ) {
-			disposeControlPoint(point);
-		}
-		points.clear();
-	}
-	
-	private static void disposeControlPoint( ControlPoint point ) {
-		if( point != null ) {
-			point.dispose();
-		}
-	}
-
-	private static void renderControlPoint(GC gc, ControlPoint point) {
-		if (point != null) {
-			point.render(gc);
-		}
-	}
-
-	private static Optional<DashboardPartPlacement> getSelectedDashboardPartPlacement(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structSelection = (IStructuredSelection) selection;
-			Object selectedObject = structSelection.getFirstElement();
-			if (selectedObject instanceof DashboardPartPlacement) {
-				DashboardPartPlacement placement = (DashboardPartPlacement) selectedObject;
-				return Optional.of(placement);
-			}
-		}
-		return Optional.absent();
-	}
-
-	private static void disposeCursor(Cursor cursor) {
-		if (cursor != null && !cursor.isDisposed()) {
-			cursor.dispose();
-		}
-	}
-
 }
