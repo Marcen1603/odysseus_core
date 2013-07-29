@@ -9,7 +9,7 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,9 +30,9 @@ public abstract class DashboardDropTarget {
 	private static final int DEFAULT_PART_HEIGHT = 300;
 
 	private final DropTarget dropTarget;
-	private final Composite composite;
+	private final Control composite;
 	
-	public DashboardDropTarget(Composite composite) {
+	public DashboardDropTarget(Control composite) {
 		Preconditions.checkNotNull(composite, "Composite as drop target must not be null!");
 		
 		this.composite = composite;
