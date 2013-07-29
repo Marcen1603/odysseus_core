@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.IBrokerTopology;
 public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements Observer{
 
 	private List<IPredicate<? super T>> predicates;
-	private String brokerName;
+	private boolean newBrokerNeeded;
 	private String domain;
 	private List<String> topicStrings;
 	private List<Topic> topics;
@@ -48,10 +48,10 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	private IBrokerTopology<T> brokerTopology;
 
 	public SubscribePO(List<IPredicate<? super T>> predicates,
-			String brokername, List<String> topics,
+			boolean newBrokerNeeded, List<String> topics,
 			String domain) {
 		super();
-		this.brokerName = brokername;
+		this.newBrokerNeeded = newBrokerNeeded;
 		this.domain = domain;
 		this.topicStrings = topics;
 		this.topics = TopicHelper.convertStringsToTopics(topics);
@@ -61,7 +61,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 
 	public SubscribePO(SubscribePO<T> splitPO) {
 		super();
-		this.brokerName = splitPO.brokerName;
+		this.newBrokerNeeded = splitPO.newBrokerNeeded;
 		this.topicStrings = new ArrayList<String>(topicStrings);
 		this.topics = new ArrayList<Topic>(topics);
 		initPredicates(splitPO.predicates);
@@ -77,7 +77,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
 			if (!topics.isEmpty() || !predicates.isEmpty()) {
-				brokerTopology.subscribe(predicates, topics, brokerName, this);
+				brokerTopology.subscribe(predicates, topics, newBrokerNeeded, this);
 			}
 		} else {
 			// if topology not exists, put subscriber into pending list
@@ -92,7 +92,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		if (brokerTopology != null) {
 			BrokerTopologyRegistry.register(domain);
 			if (!topics.isEmpty() || !predicates.isEmpty()) {
-				brokerTopology.subscribe(predicates, topics, brokerName, this);
+				brokerTopology.subscribe(predicates, topics, newBrokerNeeded, this);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		// unsubscribe and unregister from topology
 		if (brokerTopology != null) {
 			if (!topics.isEmpty() || !predicates.isEmpty()) {
-				brokerTopology.unsubscribe(predicates, topics, brokerName, this);
+				brokerTopology.unsubscribe(predicates, topics, newBrokerNeeded, this);
 			}
 			BrokerTopologyRegistry.unregister(domain);
 		}

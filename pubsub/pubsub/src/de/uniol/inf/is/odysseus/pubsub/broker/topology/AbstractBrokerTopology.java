@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 		extends AbstractTopology<T> {
 	
-	abstract IBroker<T> getBrokerByName(String name);
+	abstract IBroker<T> getBrokerForSubscriber(boolean newBrokerNeeded, String subscriberUid);
 	
 	abstract List<IBroker<T>> getAllBrokers();
 
@@ -45,8 +45,8 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	 */
 	@Override
 	public void subscribe(List<IPredicate<? super T>> predicates,
-			List<Topic> topics, String brokerName, SubscribePO<T> subscriber) {
-		IBroker<T> broker = getBrokerByName(brokerName);
+			List<Topic> topics, boolean newBrokerNeeded, SubscribePO<T> subscriber) {
+		IBroker<T> broker = getBrokerForSubscriber(newBrokerNeeded, subscriber.getIdentifier());
 		broker.setSubscription(predicates, topics, subscriber);
 	}
 
@@ -59,8 +59,8 @@ public abstract class AbstractBrokerTopology<T extends IStreamObject<?>>
 	 */
 	@Override
 	public void unsubscribe(List<IPredicate<? super T>> predicates,
-			List<Topic> topics, String brokerName, SubscribePO<T> subscriber) {
-		IBroker<T> broker = getBrokerByName(brokerName);
+			List<Topic> topics, boolean newBrokerNeeded, SubscribePO<T> subscriber) {
+		IBroker<T> broker = getBrokerForSubscriber(newBrokerNeeded, subscriber.getIdentifier());
 		broker.removeSubscription(predicates, topics, subscriber);
 	}
 

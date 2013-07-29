@@ -43,7 +43,7 @@ public class TSubscribeAORule extends AbstractTransformationRule<SubscribeAO> {
 		defaultExecute(
 				subscribe,
 				new SubscribePO(subscribe.getPredicates(), subscribe
-						.getBrokerName(), subscribe.getTopics(), subscribe
+						.isNewBrokerNeeded(), subscribe.getTopics(), subscribe
 						.getDomain()), config, true, true);
 	}
 

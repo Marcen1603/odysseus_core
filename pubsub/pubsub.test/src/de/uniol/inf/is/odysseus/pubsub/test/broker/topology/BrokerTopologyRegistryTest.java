@@ -90,7 +90,7 @@ public class BrokerTopologyRegistryTest<T extends IStreamObject<?>> {
 		IBrokerTopology<?> topology = BrokerTopologyRegistry
 				.getTopologyByDomain("domain1");
 		Assert.assertNull(topology);
-		BrokerTopologyRegistry.putSubscriberIntoPendingList("domain1", new SubscribePO<T>(new ArrayList<IPredicate<? super T>>(), "Broker1", new ArrayList<String>(), "domain1"));
+		BrokerTopologyRegistry.putSubscriberIntoPendingList("domain1", new SubscribePO<T>(new ArrayList<IPredicate<? super T>>(), true, new ArrayList<String>(), "domain1"));
 		
 		topology = BrokerTopologyRegistry
 				.getTopologyByDomain("domain1");

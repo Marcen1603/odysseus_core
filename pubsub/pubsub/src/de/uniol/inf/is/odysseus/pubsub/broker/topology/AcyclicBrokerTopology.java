@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
 import de.uniol.inf.is.odysseus.pubsub.broker.routing.IRoutingBroker;
@@ -41,7 +43,9 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 
 	// Maps Publisher and Brokers
 	private Map<String, IRoutingBroker<T>> publishToBroker = new HashMap<String, IRoutingBroker<T>>();
-	
+
+	// Maps Subscribers and Brokers
+	private Map<String, IRoutingBroker<T>> subscriberToBroker = new HashMap<String, IRoutingBroker<T>>();
 
 	public AcyclicBrokerTopology() {
 		// needed for OSGi
@@ -74,8 +78,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	}
 
 	/**
-	 * advertise from broker network. Advertisement will be set on all
-	 * brokers
+	 * advertise from broker network. Advertisement will be set on all brokers
 	 */
 	@Override
 	public void advertise(List<Topic> topics, String publisherUid) {
@@ -94,8 +97,8 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	}
 
 	/**
-	 * returns best broker, currently its a random broker. If broker topology 
-	 * is distributed, return fastest broker (ping or something else)
+	 * returns best broker, currently its a random broker. If broker topology is
+	 * distributed, return fastest broker (ping or something else)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -117,11 +120,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 			} else {
 				// TODO If Broker Topology is distributed, don't select a random
 				// Broker, select fastest broker (ping or something else)
-				int randIndex = (int) ((brokers.keySet().size() - 1) * Math
-						.random());
-				String brokerName = new ArrayList<String>(brokers.keySet())
-						.get(randIndex);
-				IRoutingBroker<T> randBroker = brokers.get(brokerName);
+				IRoutingBroker<T> randBroker = getRandomBroker();
 				// Map Publisher with Broker, for better performance
 				publishToBroker.put(publisherUid, randBroker);
 				return randBroker;
@@ -131,38 +130,60 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	}
 
 	/**
-	 * Returns a broker with a given name. if broker does not exist, create new
-	 * one and add it to topology
+	 * Returns a broker. If newBrokerNeeded is set, a new Broker would be
+	 * created otherwise the broker with minimum load is returned
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public IRoutingBroker<T> getBrokerByName(String name) {
-		if (brokers.containsKey(name)) {
-			return brokers.get(name);
+	public IRoutingBroker<T> getBrokerForSubscriber(boolean newBrokerNeeded,
+			String subscriberUid) {
+		if (subscriberToBroker.containsKey(subscriberUid)) {
+			// return mapped broker
+			return subscriberToBroker.get(subscriberUid);
 		}
-		// Create new Broker
-		IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
-				.getRoutingBrokerInstance(getRoutingType(), getDomain(), name);
+		if (newBrokerNeeded) {
+			// Create new Broker
+			IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
+					.getRoutingBrokerInstance(getRoutingType(), getDomain(),
+							UUID.randomUUID().toString());
 
-		// Get All existing Advertisements from other broker if exists
-		if (!brokers.isEmpty()) {
+			// Get All existing Advertisements from other broker if exists
+			if (!brokers.isEmpty()) {
+				// TODO If Broker Topology is distributed, don't select a random
+				// Broker, select fastest broker (ping or something else)
+				IRoutingBroker<T> otherBroker = getRandomBroker();
+
+				newBroker.setAdvertisements(otherBroker.getAdvertisements());
+
+				// Connect Broker bidirectional
+				otherBroker.getConnectedBrokers().add(newBroker);
+				newBroker.getConnectedBrokers().add(otherBroker);
+			}
+
+			brokers.put(newBroker.getName(), newBroker);
+			subscriberToBroker.put(subscriberUid, newBroker);
+			return newBroker;
+		} else {
 			// TODO If Broker Topology is distributed, don't select a random
 			// Broker, select fastest broker (ping or something else)
-			int randIndex = (int) ((brokers.keySet().size() - 1) * Math
-					.random());
-			String brokerName = new ArrayList<String>(brokers.keySet())
-					.get(randIndex);
-			IRoutingBroker<T> otherBroker = brokers.get(brokerName);
-
-			newBroker.setAdvertisements(otherBroker.getAdvertisements());
-
-			// Connect Broker bidirectional
-			otherBroker.getConnectedBrokers().add(newBroker);
-			newBroker.getConnectedBrokers().add(otherBroker);
+			IRoutingBroker<T> randBroker = getRandomBroker();
+			// Map Publisher with Broker, for better performance
+			subscriberToBroker.put(subscriberUid, randBroker);
+			return randBroker;
 		}
 
-		brokers.put(newBroker.getName(), newBroker);
-		return newBroker;
+	}
+
+	/**
+	 * Returns a random broker
+	 * 
+	 * @return routing broker
+	 */
+	private IRoutingBroker<T> getRandomBroker() {
+		int randIndex = (int) ((brokers.keySet().size() - 1) * Math.random());
+		String brokerName = new ArrayList<String>(brokers.keySet())
+				.get(randIndex);
+		return brokers.get(brokerName);
 	}
 
 }

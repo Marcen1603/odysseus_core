@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
@@ -45,7 +46,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 
 	private List<SDFAttribute> sdfAttributes;
 	private String source;
-	private String brokername;
+	private boolean newBrokerNeeded = false;
 	private String domain;
 	private List<String> topics;
 	private List<String> predicateStrings;
@@ -59,7 +60,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 		super(subscribeAO);
 		this.sdfAttributes = subscribeAO.sdfAttributes;
 		this.source = subscribeAO.source;
-		this.brokername = subscribeAO.brokername;
+		this.newBrokerNeeded = subscribeAO.newBrokerNeeded;
 		this.domain = subscribeAO.domain;
 		this.topics = new ArrayList<String>(subscribeAO.topics);
 		this.predicateStrings = new ArrayList<String>(subscribeAO.predicateStrings);
@@ -109,9 +110,9 @@ public class SubscribeAO extends UnaryLogicalOp{
 	}
 	
 	
-	@Parameter(name="brokername", type=StringParameter.class)
-	public void setBrokerName(String brokerName){
-		this.brokername = brokerName;
+	@Parameter(name="newBroker", type=BooleanParameter.class, optional=true, doc="Specifies if a new broker should be created")
+	public void setNewBrokerNeeded(boolean newBrokerNeeded){
+		this.newBrokerNeeded = newBrokerNeeded;
 	}
 	
 	@Parameter(name="domain", type=StringParameter.class, doc="domain, on which you want to subscribe")
@@ -158,8 +159,8 @@ public class SubscribeAO extends UnaryLogicalOp{
 		return topics;
 	}
 	
-	public String getBrokerName(){
-		return brokername;
+	public boolean isNewBrokerNeeded(){
+		return newBrokerNeeded;
 	}
 	
 	public String getSource(){

@@ -305,4 +305,8 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		filters.get(Filtertype.hierarchical).setReinitializationMode(true);
 		filters.get(Filtertype.content).setReinitializationMode(true);
 	}
+	
+	public int getNumberOfSubscribers(){
+		return 0;
+	}
 }

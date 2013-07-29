@@ -61,7 +61,7 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	 * @param list
 	 * @param subscriber
 	 */
-	void subscribe(List<IPredicate<? super T>> list, List<Topic> topics , String brokerName, SubscribePO<T> subscriber);
+	void subscribe(List<IPredicate<? super T>> list, List<Topic> topics , boolean newBrokerNeeded, SubscribePO<T> subscriber);
 
 	/**
 	 * unsubscribes a Subscriber with given Filterpredicates on a given broker
@@ -70,7 +70,7 @@ public interface IBrokerTopology<T extends IStreamObject<?>> extends Observer{
 	 * @param predicates
 	 * @param subscriber
 	 */
-	void unsubscribe(List<IPredicate<? super T>> predicates, List<Topic> topics , String brokerName, SubscribePO<T> subscriber);
+	void unsubscribe(List<IPredicate<? super T>> predicates, List<Topic> topics , boolean newBrokerNeeded, SubscribePO<T> subscriber);
 
 	/**
 	 * advertise on brokers

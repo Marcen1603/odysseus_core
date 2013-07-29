@@ -96,4 +96,10 @@ public interface IBroker<T extends IStreamObject<?>>{
 	 * @param object
 	 */
 	void sendToSubscribers(T object, String publisherUid);
+	
+	/**
+	 * Returns the number of subscribers
+	 * @return
+	 */
+	int getNumberOfSubscribers();
 }

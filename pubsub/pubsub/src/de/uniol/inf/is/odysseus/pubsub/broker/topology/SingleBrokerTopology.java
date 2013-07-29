@@ -101,7 +101,7 @@ public class SingleBrokerTopology<T extends IStreamObject<?>> extends
 	 * Returns a broker with a given name Only one Broker exists, so ignore name
 	 */
 	@Override
-	public IBroker<T> getBrokerByName(String name) {
+	public IBroker<T> getBrokerForSubscriber(boolean newBrokerNeeded, String subscriberUid) {
 		// Single Broker architecture, ignore name
 		return singleBroker;
 	}

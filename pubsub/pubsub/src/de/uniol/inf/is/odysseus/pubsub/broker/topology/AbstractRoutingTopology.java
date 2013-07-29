@@ -36,7 +36,7 @@ public abstract class AbstractRoutingTopology<T extends IStreamObject<?>>
 	private String routingType;
 
 	
-	abstract IRoutingBroker<T> getBrokerByName(String name);
+	abstract IRoutingBroker<T> getBrokerForSubscriber(boolean newBrokerNeeded, String subscriberUid);
 
 	abstract IRoutingBroker<T> getBestBroker(String publisherUid);
 	
@@ -50,8 +50,8 @@ public abstract class AbstractRoutingTopology<T extends IStreamObject<?>>
 	 */
 	@Override
 	public void subscribe(List<IPredicate<? super T>> predicates,
-			List<Topic> topics, String brokerName, SubscribePO<T> subscriber) {
-		IRoutingBroker<T> broker = getBrokerByName(brokerName);
+			List<Topic> topics, boolean newBrokerNeeded, SubscribePO<T> subscriber) {
+		IRoutingBroker<T> broker = getBrokerForSubscriber(newBrokerNeeded, subscriber.getIdentifier());
 		broker.setSubscription(predicates, topics, subscriber);
 	}
 
@@ -64,8 +64,8 @@ public abstract class AbstractRoutingTopology<T extends IStreamObject<?>>
 	 */
 	@Override
 	public void unsubscribe(List<IPredicate<? super T>> predicates,
-			List<Topic> topics, String brokerName, SubscribePO<T> subscriber) {
-		IRoutingBroker<T> broker = getBrokerByName(brokerName);
+			List<Topic> topics, boolean newBrokerNeeded, SubscribePO<T> subscriber) {
+		IRoutingBroker<T> broker = getBrokerForSubscriber(newBrokerNeeded, subscriber.getIdentifier());
 		broker.removeSubscription(predicates, topics, subscriber);
 	}
 	

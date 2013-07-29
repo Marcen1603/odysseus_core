@@ -129,7 +129,7 @@ public class ChannelBasedFilteringTest<T extends IStreamObject<?>>{
 			List<String> publisherTopics, List<IPredicate<? super T>> predicates) {
 		Collection<BrokerSubscription<T>> subscriptions = new ArrayList<BrokerSubscription<T>>();
 		subscriber = new SubscribePO<T>(predicates,
-				"broker0815",  subscribertopics, "default");
+				true,  subscribertopics, "default");
 		subscriptions.add(new BrokerSubscription<T>(subscriber));
 
 		Collection<BrokerAdvertisements> advertisements = new ArrayList<BrokerAdvertisements>();

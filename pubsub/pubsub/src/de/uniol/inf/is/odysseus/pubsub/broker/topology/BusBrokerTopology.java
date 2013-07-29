@@ -17,7 +17,11 @@
 package de.uniol.inf.is.odysseus.pubsub.broker.topology;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.IBroker;
 import de.uniol.inf.is.odysseus.pubsub.broker.SimpleBroker;
@@ -27,15 +31,17 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
  * This class provides the functionality of a bus broker topology
  * 
  * @author ChrisToenjesDeye
- *
+ * 
  */
 public class BusBrokerTopology<T extends IStreamObject<?>> extends
 		AbstractBrokerTopology<T> {
 
 	private static final String MAIN_BROKER = "MainBroker";
 	private static final String TOPOLOGY_TYPE = "BusTopology";
-	
-	private List<IBroker<T>> brokerBus = new ArrayList<IBroker<T>>();;
+
+	private List<IBroker<T>> brokerBus = new ArrayList<IBroker<T>>();
+
+	private Map<String, String> subscriberBrokerMapping = new HashMap<String, String>();
 
 	public BusBrokerTopology() {
 		// needed for OSGi
@@ -55,7 +61,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 	public String getType() {
 		return TOPOLOGY_TYPE;
 	}
-	
+
 	/**
 	 * advertise on brokers
 	 * 
@@ -69,7 +75,7 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 			broker.setAdvertisement(topics, publisherUid);
 		}
 	}
-	
+
 	/**
 	 * unadvertise in brokers
 	 * 
@@ -97,23 +103,65 @@ public class BusBrokerTopology<T extends IStreamObject<?>> extends
 	}
 
 	/**
-	 * Returns a broker with a given name. If broker not exists create new one
-	 * and copy all advertisements from mainBroker
+	 * Returns a broker. If newBrokerNeeded is set, a new Broker would be
+	 * created otherwise the broker with minimum load is returned
 	 */
 	@Override
-	public IBroker<T> getBrokerByName(String name) {
+	public IBroker<T> getBrokerForSubscriber(boolean newBrokerNeeded,
+			String subscriberUid) {
+		if (subscriberBrokerMapping.containsKey(subscriberUid)) {
+			String brokername = subscriberBrokerMapping.get(subscriberUid);
+			return getBrokerByName(brokername);
+		}
+		if (newBrokerNeeded) {
+			// If Broker with given name does not exist, create new one (copy
+			// from
+			// existing) and return it
+			SimpleBroker<T> mainBroker = (SimpleBroker<T>) getBrokerByName(MAIN_BROKER);
+			IBroker<T> newBroker = new SimpleBroker<T>(UUID.randomUUID()
+					.toString(), mainBroker);
+			brokerBus.add(newBroker);
+			subscriberBrokerMapping.put(subscriberUid, newBroker.getName());
+			return newBroker;
+		} else {
+			IBroker<T> bestBroker = getBrokerWithMinimumLoad();
+			subscriberBrokerMapping.put(subscriberUid, bestBroker.getName());
+			return bestBroker;
+		}
+	}
+
+	/**
+	 * Returns the broker with the minimum number of Subscribers
+	 * 
+	 * @return broker
+	 */
+	private IBroker<T> getBrokerWithMinimumLoad() {
+		int minimumLoad = brokerBus.get(0).getNumberOfSubscribers();
+		IBroker<T> currentBroker = brokerBus.get(0);
+		for (IBroker<T> broker : brokerBus) {
+			if (broker.getNumberOfSubscribers() == 0) {
+				return broker;
+			}
+			if (broker.getNumberOfSubscribers() < minimumLoad) {
+				currentBroker = broker;
+			}
+		}
+		return currentBroker;
+	}
+
+	/**
+	 * Returns the broker with given name
+	 * 
+	 * @return broker
+	 */
+	private IBroker<T> getBrokerByName(String name) {
 		// Find Broker in existing Bus
 		for (IBroker<T> broker : brokerBus) {
 			if (broker.getName().toLowerCase().equals(name.toLowerCase())) {
 				return broker;
 			}
 		}
-		// If Broker with given name does not exist, create new one (copy from
-		// existing) and return it
-		SimpleBroker<T> mainBroker = (SimpleBroker<T>) getBrokerByName(MAIN_BROKER);
-		IBroker<T> newBroker = new SimpleBroker<T>(name, mainBroker);
-		brokerBus.add(newBroker);
-		return newBroker;
+		return null;
 	}
 
 	/**
