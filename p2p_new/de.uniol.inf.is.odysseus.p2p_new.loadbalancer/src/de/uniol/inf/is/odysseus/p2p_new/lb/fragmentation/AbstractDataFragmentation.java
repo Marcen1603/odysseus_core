@@ -27,12 +27,14 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 
 	@Override
 	public Collection<ILogicalOperator> insertOperatorForDistribution(
-			Collection<ILogicalOperator> operators, int degreeOfParallelism,
-			QueryBuildConfiguration parameters) {
+			Collection<ILogicalOperator> operators, String sourceName, 
+			int degreeOfParallelism, QueryBuildConfiguration parameters) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must contain at least one operator!");
+		Preconditions.checkNotNull(sourceName, "sourceName be not null!");
+		Preconditions.checkArgument(sourceName.length() > 0, "sourceName must be not empty!");
 		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be at least 2!");
 		Preconditions.checkNotNull(parameters, "parameters must be not null!");
 		
@@ -42,7 +44,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		// Pair: operator for source access (StreamAO or WindowAO) and those subscriptions, where an operator for fragmentation 
 		// shall be inserted (one operator for the whole collection of subscriptions)
 		// Outer collection: All pairs of operators and subscriptions, where an operator for fragmentation shall be inserted
-		Collection<IPair<ILogicalOperator, Collection<LogicalSubscription>>> sourceAccesses = this.findSourceAccesses(enhancedOperators);
+		Collection<IPair<ILogicalOperator, Collection<LogicalSubscription>>> sourceAccesses = this.findSourceAccesses(enhancedOperators, sourceName);
 		
 		for(IPair<ILogicalOperator, Collection<LogicalSubscription>> pair : sourceAccesses) {
 			
@@ -71,16 +73,20 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	/**
 	 * Finds all {@link StreamAO}s and {@link WindowAO}s and collects them and their outgoing {@link LogicalSubscription}s.
 	 * @param operators A collection of all {@link ILogicalOperator}s of the (partial) {@link ILogicalQuery}.
+	 * @param sourceName The name of the source which stream objects shall be distributed.
 	 * @return Inner collection: All subscriptions with the same output port. <br />
 	 * Pair: operator for source access (StreamAO or WindowAO) and those subscriptions, where an operator for fragmentation
 	 * shall be inserted (one operator for the whole collection of subscriptions). <br />
 	 * Outer collection: All pairs of operators and subscriptions, where an operator for fragmentation shall be inserted.
 	 */
-	protected Collection<IPair<ILogicalOperator, Collection<LogicalSubscription>>> findSourceAccesses(Collection<ILogicalOperator> operators) {
+	protected Collection<IPair<ILogicalOperator, Collection<LogicalSubscription>>> findSourceAccesses(
+			Collection<ILogicalOperator> operators, String sourceName) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must contain at least one operator!");
+		Preconditions.checkNotNull(sourceName, "sourceName be not null!");
+		Preconditions.checkArgument(sourceName.length() > 0, "sourceName must be not empty!");
 		
 		// Inner collection: All subscriptions with the same output port
 		// Pair: operator for source access (StreamAO or WindowAO) and those subscriptions, where an operator for fragmentation 
@@ -90,29 +96,50 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		
 		for(ILogicalOperator operator : operators) {
 			
-			if(!(operator instanceof WindowAO) && !(operator instanceof StreamAO))
-				continue;
+			boolean validSourceAccess = false;
 			
-			// Mapping of output port -> collection of outgoing subscriptions
-			Map<Integer, Collection<LogicalSubscription>> outputPortMapping = Maps.newHashMap();
-			
-			for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+			if(operator instanceof StreamAO && ((StreamAO) operator).getStreamname().equals(sourceName))
+				validSourceAccess = true;
+			else if(operator instanceof WindowAO) {
 				
-				ILogicalOperator sink = subToSink.getTarget();
-				
-				if(sink instanceof WindowAO)
-					continue;
-				
-				Integer outputPort = subToSink.getSourceOutPort();
-				if(!outputPortMapping.containsKey(outputPort))
-					outputPortMapping.put(outputPort, new ArrayList<LogicalSubscription>());
-				outputPortMapping.get(outputPort).add(subToSink);
+				for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+					
+					ILogicalOperator source = subToSource.getTarget();
+					
+					if(source instanceof StreamAO && ((StreamAO) source).getStreamname().equals(sourceName)) {
+						
+						validSourceAccess = true;
+						break;
+						
+					}
+					
+				}
 				
 			}
 			
-			for(Integer outputPort : outputPortMapping.keySet())
-				sourceAccesses.add(new Pair<ILogicalOperator, Collection<LogicalSubscription>>(operator, outputPortMapping.get(outputPort)));
-			
+			if(validSourceAccess) {
+				
+				// Mapping of output port -> collection of outgoing subscriptions
+				Map<Integer, Collection<LogicalSubscription>> outputPortMapping = Maps.newHashMap();
+				
+				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+					
+					ILogicalOperator sink = subToSink.getTarget();
+					
+					if(sink instanceof WindowAO)
+						continue;
+					
+					Integer outputPort = subToSink.getSourceOutPort();
+					if(!outputPortMapping.containsKey(outputPort))
+						outputPortMapping.put(outputPort, new ArrayList<LogicalSubscription>());
+					outputPortMapping.get(outputPort).add(subToSink);
+					
+				}
+				
+				for(Integer outputPort : outputPortMapping.keySet())
+					sourceAccesses.add(new Pair<ILogicalOperator, Collection<LogicalSubscription>>(operator, outputPortMapping.get(outputPort)));
+				
+			}
 		}
 		
 		return sourceAccesses;

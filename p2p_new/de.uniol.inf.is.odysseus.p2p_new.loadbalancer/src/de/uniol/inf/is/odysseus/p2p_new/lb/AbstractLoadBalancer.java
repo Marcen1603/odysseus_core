@@ -16,6 +16,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -25,8 +26,8 @@ import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributo
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
@@ -119,6 +120,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		return "source manager";
 		
 	}
+	
+	/**
+	 * Returns the identifier for not specified sources.
+	 */
+	protected static String getNameForNotSpecifiedSources() {
+		
+		return "NA";
+		
+	}
 
 	/**
 	 * Returns the name of this distributor. It can be used as a parameter in a keyword to use this distributor.
@@ -144,15 +154,16 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 		}
 		
-		// Check, if a fragmentation strategy is defined
-		IDataFragmentation fragmentationStrategy = null;
-		if(cfg.get(ParameterDoDataFragmentation.class).getValue()) {
+		// Check, if any fragmentation strategy is defined
+		Map<String, IDataFragmentation> sourceToFragStrat;
+		if(cfg.get(ParameterDoDataFragmentation.class).getValue())
+			sourceToFragStrat = this.getFragmentationStrategies((IServerExecutor) sender, cfg);
+		else {
 			
-			fragmentationStrategy = this.getFragmentationStrategy((IServerExecutor) sender, cfg);
-			if(fragmentationStrategy != null)
-				LOG.debug("Data fragmentation strategy {} used", fragmentationStrategy.getName());
+			sourceToFragStrat = Maps.newHashMap();
+			sourceToFragStrat.put(AbstractLoadBalancer.getNameForNotSpecifiedSources(), new Replication());
 			
-		} else fragmentationStrategy = new Replication();
+		}
 		
 		// Get all available peers
 		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
@@ -167,11 +178,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// Read out the wanted degree of parallelism from the given distribution type parameter
 		int wantedDegreeOfParallelism = this.determineWantedDegreeOfParallelism(cfg);
 		int maxDegree = remotePeerIDs.size();
-		int degreeOfParallelism = this.getDegreeOfParallelismn(wantedDegreeOfParallelism, maxDegree);;
-		if(!fragmentationStrategy.getName().equals(Replication.NAME) && degreeOfParallelism < 2) {
+		int degreeOfParallelism = this.getDegreeOfParallelismn(wantedDegreeOfParallelism, maxDegree);
+		if(sourceToFragStrat.size() > 1 && degreeOfParallelism < 2) {
 			
+			// size > 1 means fragmentation
 			LOG.error("Degree of parallelism must be at least 2 to use data fragmentation. Turned off data fragmentation.");
-			fragmentationStrategy = new Replication();
+			sourceToFragStrat.clear();
+			sourceToFragStrat.put(AbstractLoadBalancer.getNameForNotSpecifiedSources(), new Replication());
 			
 		}
 		
@@ -199,7 +212,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 				RestructHelper.removeTopAOs(operators);
 				
-				if(!fragmentationStrategy.getName().equals(Replication.NAME)) {
+				if(sourceToFragStrat.size() > 1) {
 					
 					if(sourceParts.isEmpty()) {
 						
@@ -218,12 +231,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				if(localPart == null) {
 					
 					// Create the local part
-					localPart = this.createLocalPart(operators, degreeOfParallelism, fragmentationStrategy);
+					localPart = this.createLocalPart(operators, degreeOfParallelism, 
+							sourceToFragStrat.get(AbstractLoadBalancer.getNameForNotSpecifiedSources()));
 					
 				} else {
 
 					// Subscribe copy to local part
-					this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, fragmentationStrategy);
+					this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, 
+							sourceToFragStrat.get(AbstractLoadBalancer.getNameForNotSpecifiedSources()));
 					
 				}
 				
@@ -235,7 +250,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			}
 			
 			// Initialize all operators of the source and the local part and add it ONCE
-			if(!fragmentationStrategy.getName().equals(Replication.NAME) && !sourceParts.isEmpty()) {
+			if(sourceToFragStrat.size() > 1 && !sourceParts.isEmpty()) {
 			
 				for(QueryPart sourcePart : sourceParts) {
 					
@@ -267,7 +282,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			for(List<QueryPart> queryPartsOfCopy : queryPartsMap.get(originQuery).values())
 				allQueryParts.addAll(queryPartsOfCopy);
 			localQueries.add(this.shareParts(allQueryParts, queryPartDistributionMap, cfg, originQuery.toString(), 
-					fragmentationStrategy, degreeOfParallelism));
+					sourceToFragStrat, degreeOfParallelism));
 			
 		}
 		
@@ -804,17 +819,18 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param cfg The transfer configuration. <br />
 	 * <code>transCfg</code> must not be null.
 	 * @param queryName The name of the {@link ILogicalQuery}.
-	 * @param fragmentationStrategy The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
+	 * @param sourceToFragStrat A mapping of source name and fragmentation strategy for that source.
 	 * @param degreeOfParallelism The degree of parallelism.
 	 * @return The new {@link ILogicalQuery} created from all {@link QueryPart}s, which shall be executed locally.
 	 */
 	protected ILogicalQuery shareParts(List<QueryPart> queryParts, Map<QueryPart, PeerID> queryPartDistributionMap, QueryBuildConfiguration cfg, 
-			String queryName, IDataFragmentation fragmentationStrategy, int degreeOfParallelism) {
+			String queryName, Map<String, IDataFragmentation> sourceToFragStrat, int degreeOfParallelism) {
 		
 		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
 		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
 		Preconditions.checkNotNull(cfg, "transCfg must be not null!");
-		Preconditions.checkNotNull(fragmentationStrategy, "fragmentationStrategy must be not null!");
+		Preconditions.checkNotNull(sourceToFragStrat, "sourceToFragStrat must not be null!");
+		Preconditions.checkArgument(sourceToFragStrat.size() > 0, "sourceToFragStrat must be not empty!");
 		
 		// Generate an ID for the shared query
 		final ID sharedQueryID = DistributionHelper.generateSharedQueryID();
@@ -824,7 +840,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		for(QueryPart part : queryParts) {
 			
 			QueryPart preparedPart = DistributionHelper.replaceStreamAOs(this.insertOperatorsForFragmentation(
-						part, fragmentationStrategy, degreeOfParallelism, cfg));			
+						part, sourceToFragStrat, degreeOfParallelism, cfg));			
 			queryPartPeerMap.put(preparedPart, queryPartDistributionMap.get(part));
 			
 		}
@@ -861,34 +877,95 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param executor The {@link IServerExecutor}.
 	 * @param parameters The transfer configuration. <br />
 	 * <code>transCfg</code> must not be null.
-	 * @return The wanted fragmentation strategy.
+	 * @return A mapping of source name and fragmentation strategy for that source.
 	 */
-	protected IDataFragmentation getFragmentationStrategy(IServerExecutor executor, QueryBuildConfiguration parameters) {
+	protected Map<String, IDataFragmentation> getFragmentationStrategies(IServerExecutor executor, QueryBuildConfiguration parameters) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(executor, "executor must not be null!");
 		Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
-		if(!parameters.contains(ParameterFragmentationType.class))
-			throw new QueryParseException("Could not fragment sources. No fragmentation strategy specified.");
+		Map<String, IDataFragmentation> sourceToFragStrat = Maps.newHashMap();
+		Class<? extends ILogicalOperator> classForDataJunction = null;
 		
-		String[] strParameters = parameters.get(ParameterFragmentationType.class).getValue().split(" ");
-		String strategyName = strParameters[0];
-		
-		if(ParameterFragmentationType.UNDEFINED.equals(strategyName))
-			throw new QueryParseException("Could not fragment sources. No fragmentation strategy specified.");
+		if(!parameters.contains(ParameterFragmentationType.class)) {
 			
-		Optional<IDataFragmentation> optStrategy = executor.getDataFragmentation(strategyName);
-		if(!optStrategy.isPresent())
-			throw new QueryParseException("Could not fragment sources. Fragmentation strategy '" + strategyName + "' was not found.");
-		else return optStrategy.get();
+			LOG.error("No fragmentation strategy defined. Using replication.");
+			sourceToFragStrat.put(AbstractLoadBalancer.getNameForNotSpecifiedSources(), new Replication());
+			return sourceToFragStrat;
+			
+		}
+		
+		String[] strFragStrats = parameters.get(ParameterFragmentationType.class).getValue().split(ParameterFragmentationType.OUTER_SEP);
+		for(String strFragStrat : strFragStrats) {
+			
+			String[] strParameters = strFragStrat.split(ParameterFragmentationType.INNER_SEP);
+			String strategyName = strParameters[0];
+			IDataFragmentation fragStrat;
+			String sourceName;
+			
+			if(ParameterFragmentationType.UNDEFINED.equals(strategyName)) {
+				
+				LOG.error("Fragmentation strategy '{}' was not found. Using replication.", strategyName);
+				fragStrat = new Replication();
+				
+			} else {
+				
+				Optional<IDataFragmentation> optFragStrat = executor.getDataFragmentation(strategyName);
+				if(!optFragStrat.isPresent()) {
+					
+					LOG.error("Fragmentation strategy '{}' was not found. Using replication.", strategyName);
+					fragStrat = new Replication();
+					
+				} else fragStrat = optFragStrat.get();
+				
+			}
+			
+			// Check if different strategies (e.g. horizontal and vertical) are mixed
+			if(classForDataJunction == null)
+				classForDataJunction = fragStrat.getOperatorForJunctionClass();
+			else if(classForDataJunction != fragStrat.getOperatorForJunctionClass())
+				throw new IllegalArgumentException("Illegal mixture of fragmentation strategies");
+			
+			if(strParameters.length < 2) {
+				
+				// No source name given
+				
+				if(sourceToFragStrat.containsKey(AbstractLoadBalancer.getNameForNotSpecifiedSources())) {
+					
+					LOG.error("No source specified for fragmentation strategy '{}'. Skipping strategy.", strategyName);
+					continue;
+					
+				} else {
+				
+					LOG.debug("No source specified for fragmentation strategy '{}'. " +
+							"Using '{}' for all not specified sources.", strategyName, strategyName);
+					sourceName = AbstractLoadBalancer.getNameForNotSpecifiedSources();
+					
+				}
+				
+			} else {
+				
+				// no validation of source name				
+				sourceName = strParameters[1];
+					
+			}
+			
+			sourceToFragStrat.put(sourceName, fragStrat);
+			
+		}
+		
+		if(!sourceToFragStrat.containsKey(AbstractLoadBalancer.getNameForNotSpecifiedSources()))
+			sourceToFragStrat.put(AbstractLoadBalancer.getNameForNotSpecifiedSources(), new Replication());
+		
+		return sourceToFragStrat;
 		
 	}
 	
 	/**
 	 * Inserts all {@link ILogicalOperator}s needed for a data fragmentation into a {@link QueryPart}.
 	 * @param part The {@link QueryPart}.
-	 * @param fragmentationStrategy The {@link IDataFragmentation} to determine the needed {@link ILogicalOperator}s.
+	 * @param @param sourceToFragStrat A mapping of source name and fragmentation strategy for that source.
 	 * @param degreeOfParallelism The degree of parallelism.
 	 * @param parameters The transfer configuration.
 	 * @return <code>part</code> enhanced with an {@link ILogicalOperator} for data distribution, 
@@ -897,19 +974,23 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @see IDataFragmentation#insertOperatorForDistribution(Collection, int, QueryBuildConfiguration)
 	 * @see IDataFragmentation#insertOperatorForJunction(Collection, QueryBuildConfiguration)
 	 */
-	protected QueryPart insertOperatorsForFragmentation(QueryPart part, IDataFragmentation fragmentationStrategy, int degreeOfParallelism, 
-			QueryBuildConfiguration parameters) {
+	protected QueryPart insertOperatorsForFragmentation(QueryPart part, Map<String, IDataFragmentation> sourceToFragStrat, 
+			int degreeOfParallelism, QueryBuildConfiguration parameters) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(part, "part must not be null!");
-		Preconditions.checkNotNull(fragmentationStrategy, "fragmentationStrategy must not be null!");
+		Preconditions.checkNotNull(sourceToFragStrat, "sourceToFragStrat must not be null!");
+		Preconditions.checkArgument(sourceToFragStrat.size() > 0, "sourceToFragStrat must be not empty!");
 		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be greater than one!");
 		Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
-		if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
-			return new QueryPart(fragmentationStrategy.insertOperatorForDistribution(part.getOperators(), degreeOfParallelism, parameters), 
-					part.getDestinationName().get());
-		else return part;
+		if(!part.getDestinationName().isPresent() || !part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
+			return part;
+		
+		Collection<ILogicalOperator> operators = part.getOperators();
+		for(String sourceName : sourceToFragStrat.keySet())
+			operators = sourceToFragStrat.get(sourceName).insertOperatorForDistribution(operators, sourceName, degreeOfParallelism, parameters);
+		return new QueryPart(operators);
 		
 	}
 

@@ -28,8 +28,8 @@ public class Replication implements IDataFragmentation {
 	
 	@Override
 	public Collection<ILogicalOperator> insertOperatorForDistribution(
-			Collection<ILogicalOperator> operators, int degreeOfParallelism,
-			QueryBuildConfiguration parameters) {
+			Collection<ILogicalOperator> operators, String sourceName, 
+			int degreeOfParallelism, QueryBuildConfiguration parameters) {
 		
 		return operators;
 		
