@@ -527,8 +527,8 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 	 */
 	@SuppressWarnings("rawtypes")
 	public List<IPredicate> splitPredicate(boolean init) {
+		List<IPredicate> result = new LinkedList<IPredicate>();
 		if (isAndPredicate()) {
-			List<IPredicate> result = new LinkedList<IPredicate>();
 			Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
 			expressionStack.push(expression.getMEPExpression());
 
@@ -547,8 +547,8 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			return result;
 
 		}
-		throw new RuntimeException("Split can only be called on conjunctive predicates");
-
+		result.add(this);
+		return result;
 	}
 
 	public static void main(String[] args) {
