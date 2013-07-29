@@ -41,7 +41,7 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		disposeControlPoints();
 
-		if (!selection.isEmpty()) {
+		if (!selection.isEmpty() && !dashboard.getControl().isDisposed()) {
 			Optional<DashboardPartPlacement> optSelected = getSelectedDashboardPartPlacement(selection);
 			if (optSelected.isPresent()) {
 				DashboardPartPlacement dashboardPartPlacement = optSelected.get();
@@ -100,11 +100,12 @@ public class ControlPointManager implements MouseMoveListener, ISelectionListene
 	}
 
 	public void dispose() {
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+
 		disposeControlPoints();
 		disposeCursor(arrowCursor);
 
 		dashboard.getControl().removeMouseMoveListener(this);
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 	}
 
 	private static void disposeCursor(Cursor cursor) {

@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,7 +49,9 @@ import org.xml.sax.SAXException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
@@ -105,12 +108,16 @@ public class XMLDashboardHandler implements IDashboardHandler {
 					final int y = tryToInteger(getAttribute(dashboardNode, Y_ATTRIBUTE_NAME, "0"), 0);
 					final int w = tryToInteger(getAttribute(dashboardNode, WIDTH_ATTRIBUTE_NAME, "100"), 100);
 					final int h = tryToInteger(getAttribute(dashboardNode, HEIGHT_ATTRIBUTE_NAME, "100"), 100);
+					
+					final Map<String, String> settingsMap = parseSettingsMap(dashboardNode);
 
 					final IPath queryFilePath = new Path(fileName);
 					final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 
 					final IDashboardPart dashboardPart = partHandler.load(FileUtil.read(dashboardPartFile));
 					final DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
+					applySettingsToDashboardPart(settingsMap, dashboardPart);			
+					
 					dashboard.add(plc);
 				}
 			}
@@ -132,6 +139,30 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		}
 	}
 
+	private void applySettingsToDashboardPart(final Map<String, String> settingsMap, final IDashboardPart dashboardPart) {
+		for (final String key : settingsMap.keySet()) {
+			final String value = settingsMap.get(key);
+			dashboardPart.getConfiguration().setAsString(key, XMLDashboardPartHandler.NULL_SETTING.equals(value) ? null : value);
+		}
+	}
+	
+	private static Map<String, String> parseSettingsMap(Node rootNode) {
+		final Map<String, String> settingsMap = Maps.newHashMap();
+
+		final NodeList settingNodes = rootNode.getChildNodes();
+		for (int i = 0; i < settingNodes.getLength(); i++) {
+			final Node settingNode = settingNodes.item(i);
+
+			if (settingNode.getNodeType() == Node.ELEMENT_NODE && settingNode.getNodeName().equals(XMLDashboardPartHandler.SETTING_XML_ELEMENT)) {
+				final String settingName = settingNode.getAttributes().getNamedItem(XMLDashboardPartHandler.SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
+				final String settingValue = settingNode.getAttributes().getNamedItem(XMLDashboardPartHandler.SETTING_VALUE_XML_ATTRIBUTE).getNodeValue();
+
+				settingsMap.put(settingName, settingValue);
+			}
+		}
+
+		return settingsMap;
+	}
 	@Override
 	public List<String> save(Dashboard board) throws DashboardHandlerException {
 		Preconditions.checkNotNull(board, "Dashboard to be saved must not be null!");
@@ -157,7 +188,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			throw new DashboardHandlerException("Could not save Dashboard!", ex);
 		}
 	}
-
+	
 	private static IFile determineImageFile(final Node rootNode) {
 		String imageFilename = getAttribute(rootNode, BG_IMAGE_ATTRIBUTE_NAME, null);
 		if (imageFilename != null) {
@@ -175,6 +206,20 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		element.setAttribute(HEIGHT_ATTRIBUTE_NAME, String.valueOf(placement.getHeight()));
 		element.setAttribute(FILE_ATTRIBUTE_NAME, placement.getFilename());
 		rootElement.appendChild(element);
+		
+		appendConfiguration(placement.getDashboardPart().getConfiguration(), doc, element);
+	}
+	
+	private static void appendConfiguration(Configuration config, Document doc, Element rootElement) {
+		for (final String name : config.getNames()) {
+
+			final Element settingElement = doc.createElement(XMLDashboardPartHandler.SETTING_XML_ELEMENT);
+			settingElement.setAttribute(XMLDashboardPartHandler.SETTING_NAME_XML_ATTRIBUTE, name);
+
+			final Object value = config.get(name);
+			settingElement.setAttribute(XMLDashboardPartHandler.SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : XMLDashboardPartHandler.NULL_SETTING);
+			rootElement.appendChild(settingElement);
+		}
 	}
 
 	private static Document createNewDocument() throws ParserConfigurationException {

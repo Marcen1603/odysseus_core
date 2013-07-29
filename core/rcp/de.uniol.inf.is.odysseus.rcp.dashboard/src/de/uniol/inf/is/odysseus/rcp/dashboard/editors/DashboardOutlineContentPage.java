@@ -16,12 +16,15 @@
 
 package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 import com.google.common.base.Preconditions;
@@ -30,6 +33,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 
 public class DashboardOutlineContentPage extends ContentOutlinePage implements IDashboardListener, ISelectionListener {
 
+	private static final String CONTEXT_MENU_ID = "de.uniol.inf.is.odysseus.rcp.dashboard.outline";
+	
 	private final Dashboard dashboard;
 
 	public DashboardOutlineContentPage(Dashboard dashboard) {
@@ -41,16 +46,28 @@ public class DashboardOutlineContentPage extends ContentOutlinePage implements I
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
-		createTreeViewer();
+		TreeViewer viewer = createTreeViewer();
+		createContextMenu(viewer);
 
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 	}
 
-	private void createTreeViewer() {
-		final TreeViewer viewer = getTreeViewer();
+	private void createContextMenu(TreeViewer viewer) {
+		final MenuManager manager = new MenuManager(CONTEXT_MENU_ID, CONTEXT_MENU_ID);
+		manager.setRemoveAllWhenShown(true);
+		final Menu menu = manager.createContextMenu(viewer.getControl());
+		viewer.getTree().setMenu(menu);
+		
+		final IPageSite site = getSite();
+		site.registerContextMenu(CONTEXT_MENU_ID, manager, viewer);
+	}
+
+	private TreeViewer createTreeViewer() {
+		TreeViewer viewer = getTreeViewer();
 		viewer.setContentProvider(new DashboardOutlineContentProvider());
 		viewer.setLabelProvider(new DashboardOutlineLabelProvider());
 		viewer.setInput(dashboard);
+		return viewer;
 	}
 
 	@Override
