@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.util;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -21,5 +22,9 @@ public final class EditorUtil {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart activeEditor = page.getActiveEditor();
 		return activeEditor;
+	}
+	
+	public static Shell determineCurrentShell() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 }
