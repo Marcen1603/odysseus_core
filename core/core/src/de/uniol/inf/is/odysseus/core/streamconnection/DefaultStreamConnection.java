@@ -76,7 +76,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	public final void connect() {
 		if (subscriptions != null) {
 			for (ISubscription<? extends ISource<In>> s : subscriptions) {
-				connect(s, this);
+				connect(s);
 			}
 			connected = true;
 		}
@@ -87,7 +87,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	public final void disconnect() {
 		if (subscriptions != null) {
 			for (ISubscription<? extends ISource<In>> s : subscriptions) {
-				disconnect(s, this);
+				disconnect(s);
 			}
 			connected = false;
 		}
@@ -171,7 +171,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		isOpen = false;
 
 		for (ISubscription<? extends ISource<In>> s : connectedSubscriptions.toArray(new ISubscription[0])) {
-			disconnect(s, this);
+			disconnect(s);
 		}
 	}
 
@@ -248,20 +248,20 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		}
 	}
 
-	private void connect(ISubscription<? extends ISource<In>> s, ISink<In> sink) {
+	private void connect(ISubscription<? extends ISource<In>> s) {
 		if (connectedSubscriptions.contains(s)) {
 			LOG.warn("Tried to connect to {} multiple times.", s);
 			return;
 		}
 
 		LOG.debug("Connecting to {}.", s.getTarget());
-		s.getTarget().connectSink(sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+		s.getTarget().connectSink(this, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
 		connectedSubscriptions.add(s);
 	}
 
-	private void disconnect(ISubscription<? extends ISource<In>> s, ISink<In> sink) {
+	private void disconnect(ISubscription<? extends ISource<In>> s ) {
 		LOG.debug("Disconnecting from {}.", s.getTarget());
-		s.getTarget().disconnectSink(sink, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+		s.getTarget().disconnectSink(this, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
 		connectedSubscriptions.remove(s);
 	}
 
