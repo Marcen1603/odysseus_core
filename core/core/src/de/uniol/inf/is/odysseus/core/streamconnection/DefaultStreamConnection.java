@@ -80,6 +80,21 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	public final ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions() {
 		return ImmutableList.copyOf(subscriptions);
 	}
+	
+	@Override
+	public ImmutableList<IPhysicalOperator> getConnectedOperators() {
+		return ImmutableList.copyOf(operators);
+	}
+	
+	@Override
+	public IPhysicalOperator getOperatorOfPort(int port) {
+		return portOperatorMap.get(port);
+	}
+	
+	@Override
+	public int getPortOfOperator(IPhysicalOperator operator) {
+		return operatorPortMap.get(operator);
+	}
 
 	private static Map<IPhysicalOperator, Integer> generateOperatorMap(Map<Integer, IPhysicalOperator> map) {
 		Map<IPhysicalOperator, Integer> m = Maps.newHashMap();
