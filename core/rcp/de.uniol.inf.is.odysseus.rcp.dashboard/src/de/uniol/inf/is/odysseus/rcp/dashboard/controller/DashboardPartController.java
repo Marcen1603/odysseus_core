@@ -15,12 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.controller;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -28,11 +30,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
-public final class DashboardPartController {
+public final class DashboardPartController implements IConfigurationListener {
 
 	private static enum Status {
 		RUNNING, STOPPED, PAUSED
@@ -75,23 +79,16 @@ public final class DashboardPartController {
 		final ISession caller = OdysseusRCPPlugIn.getActiveSession();
 
 		try {
-			final List<?> results = parser.execute(parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);
+			List<?> results = parser.execute(parser.parseScript(queryTextLines.toArray(new String[0]), caller), caller, null);
 			queryIDs = getExecutedQueryIDs(results);
-
-			final List<IPhysicalOperator> roots = Lists.newArrayList();
-			for (final Integer id : queryIDs) {
-				for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id)) {
-					if (!(rootOfQuery instanceof DefaultStreamConnection)) {
-						roots.add(rootOfQuery);
-					}
-				}
-			}
+			List<IPhysicalOperator> roots = determineRoots(queryIDs);
 
 			streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
 
 			dashboardPart.onStart(roots);
+			dashboardPart.getConfiguration().addListener(this);
+			addAsListener();
 
-			streamConnection.addStreamElementListener(dashboardPart);
 			streamConnection.connect();
 
 			status = Status.RUNNING;
@@ -100,14 +97,54 @@ public final class DashboardPartController {
 		}
 	}
 
+	private static List<IPhysicalOperator> determineRoots(Collection<Integer> queryIDs) {
+		final List<IPhysicalOperator> roots = Lists.newArrayList();
+		for (final Integer id : queryIDs) {
+			for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id)) {
+				if (!(rootOfQuery instanceof DefaultStreamConnection)) {
+					roots.add(rootOfQuery);
+				}
+			}
+		}
+		return roots;
+	}
+
+	private void addAsListener() {
+		String[] sinkNames = determineDashboardPartSinkNames();
+		if (sinkNames.length > 0) {
+			for (String sinkName : sinkNames) {
+				streamConnection.addStreamElementListener(dashboardPart, sinkName.trim());
+			}
+		} else {
+			streamConnection.addStreamElementListener(dashboardPart);
+		}
+	}
+
+	private String[] determineDashboardPartSinkNames() {
+		Configuration configuration = dashboardPart.getConfiguration();
+		String sinkNamesString = configuration.get(Configuration.SINK_NAME_CFG);
+		if (!Strings.isNullOrEmpty(sinkNamesString)) {
+			return sinkNamesString.split(",");
+		}
+		return new String[0];
+	}
+
 	public void stop() {
 		if (status == Status.STOPPED) {
 			return;
 		}
 
 		streamConnection.disconnect();
+		removeAsListener();
+		dashboardPart.getConfiguration().removeListener(this);
 		dashboardPart.onStop();
 
+		stopQueries();
+
+		status = Status.STOPPED;
+	}
+
+	private void stopQueries() {
 		for (final Integer id : queryIDs) {
 			try {
 				DashboardPlugIn.getExecutor().removeQuery(id, OdysseusRCPPlugIn.getActiveSession());
@@ -116,14 +153,31 @@ public final class DashboardPartController {
 			}
 		}
 		queryIDs = null;
-
-		status = Status.STOPPED;
 	}
-	
+
+	private void removeAsListener() {
+		String[] sinkNames = determineDashboardPartSinkNames();
+		if (sinkNames.length > 0) {
+			for (String sinkName : sinkNames) {
+				streamConnection.removeStreamElementListener(dashboardPart, sinkName.trim());
+			}
+		} else {
+			streamConnection.removeStreamElementListener(dashboardPart);
+		}
+	}
+
+	@Override
+	public void settingChanged(String settingName, Object oldValue, Object newValue) {
+		if (settingName.equals(Configuration.SINK_NAME_CFG)) {
+			removeAsListener();
+			addAsListener();
+		}
+	}
+
 	public boolean isStarted() {
 		return status == Status.RUNNING;
 	}
-	
+
 	public boolean isPaused() {
 		return status == Status.PAUSED;
 	}

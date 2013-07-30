@@ -107,7 +107,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		super.onStart(physicalRoots);
 
 		if (physicalRoots.size() > 1) {
-			throw new Exception("Table DashboardPart only supports one query!");
+			LOG.warn("Table DashboardPart only supports one query!");
 		}
 
 		operator = physicalRoots.get(0);

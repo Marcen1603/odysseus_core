@@ -292,16 +292,17 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			}
 		}
 		
-		IPhysicalOperator operator = portOperatorMap.get(port);
-		String name = operator.getName();
+		String name = getOperatorNameFromPort(port);
 		if( !Strings.isNullOrEmpty(name)) {
 			synchronized(specialListener) {
 				Collection<IStreamElementListener<In>> l = specialListener.get(name);
-				for( IStreamElementListener<In> ls : l ) {
-					try {
-						ls.streamElementRecieved(element, port);
-					} catch( Throwable t ) {
-						LOG.error("Exception during invoking specialized listener for DefaultStreamConnection for sinkname {}", name, t);
+				if( l != null ) {
+					for( IStreamElementListener<In> ls : l ) {
+						try {
+							ls.streamElementRecieved(element, port);
+						} catch( Throwable t ) {
+							LOG.error("Exception during invoking specialized listener for DefaultStreamConnection for sinkname {}", name, t);
+						}
 					}
 				}
 			}
@@ -320,16 +321,17 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			}
 		}
 		
-		IPhysicalOperator operator = portOperatorMap.get(port);
-		String name = operator.getName();
+		String name = getOperatorNameFromPort(port);
 		if( !Strings.isNullOrEmpty(name)) {
 			synchronized(specialListener) {
 				Collection<IStreamElementListener<In>> l = specialListener.get(name);
-				for( IStreamElementListener<In> ls : l ) {
-					try {
-						ls.punctuationElementRecieved(point, port);
-					} catch( Throwable t ) {
-						LOG.error("Exception during invoking specialized punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
+				if( l != null ) {
+					for( IStreamElementListener<In> ls : l ) {
+						try {
+							ls.punctuationElementRecieved(point, port);
+						} catch( Throwable t ) {
+							LOG.error("Exception during invoking specialized punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
+						}
 					}
 				}
 			}
@@ -348,20 +350,27 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			}
 		}
 		
-		IPhysicalOperator operator = portOperatorMap.get(port);
-		String name = operator.getName();
+		String name = getOperatorNameFromPort(port);
 		if( !Strings.isNullOrEmpty(name)) {
 			synchronized(specialListener) {
 				Collection<IStreamElementListener<In>> l = specialListener.get(name);
-				for( IStreamElementListener<In> ls : l ) {
-					try {
-						ls.securityPunctuationElementRecieved(sp, port);
-					} catch( Throwable t ) {
-						LOG.error("Exception during invoking specialized security punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
+				if( l != null ) {
+					for( IStreamElementListener<In> ls : l ) {
+						try {
+							ls.securityPunctuationElementRecieved(sp, port);
+						} catch( Throwable t ) {
+							LOG.error("Exception during invoking specialized security punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
+						}
 					}
 				}
 			}
 		}
+	}
+
+	private String getOperatorNameFromPort(int port) {
+		IPhysicalOperator operator = portOperatorMap.get(port);
+		String name = operator.getName();
+		return name;
 	}
 
 	@SuppressWarnings({ "unchecked" })

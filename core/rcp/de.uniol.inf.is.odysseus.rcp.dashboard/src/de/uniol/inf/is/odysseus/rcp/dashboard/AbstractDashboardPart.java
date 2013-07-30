@@ -46,7 +46,6 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	public boolean init(Configuration configuration) {
 		this.configuration = configuration;
 		this.configuration.addListener(this);
-		
 
 		return true;
 	}
