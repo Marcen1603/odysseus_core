@@ -156,9 +156,20 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// Check, if any fragmentation strategy is defined
 		Map<String, IDataFragmentation> sourceToFragStrat;
-		if(cfg.get(ParameterDoDataFragmentation.class).getValue())
+		boolean replicationOnly = true;
+		if(cfg.get(ParameterDoDataFragmentation.class).getValue()) {
+			
 			sourceToFragStrat = this.getFragmentationStrategies((IServerExecutor) sender, cfg);
-		else {
+			
+			// check for replication only
+			for(IDataFragmentation strat : sourceToFragStrat.values()) {
+				
+				if(!(strat instanceof Replication))
+					replicationOnly = false;
+				
+			}
+		
+		} else {
 			
 			sourceToFragStrat = Maps.newHashMap();
 			sourceToFragStrat.put(AbstractLoadBalancer.getNameForNotSpecifiedSources(), new Replication());
@@ -179,12 +190,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		int wantedDegreeOfParallelism = this.determineWantedDegreeOfParallelism(cfg);
 		int maxDegree = remotePeerIDs.size();
 		int degreeOfParallelism = this.getDegreeOfParallelismn(wantedDegreeOfParallelism, maxDegree);
-		if(sourceToFragStrat.size() > 1 && degreeOfParallelism < 2) {
+		if(!replicationOnly && degreeOfParallelism < 2) {
 			
 			// size > 1 means fragmentation
 			LOG.error("Degree of parallelism must be at least 2 to use data fragmentation. Turned off data fragmentation.");
 			sourceToFragStrat.clear();
 			sourceToFragStrat.put(AbstractLoadBalancer.getNameForNotSpecifiedSources(), new Replication());
+			replicationOnly = true;
 			
 		}
 		
@@ -212,7 +224,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 				RestructHelper.removeTopAOs(operators);
 				
-				if(sourceToFragStrat.size() > 1) {
+				if(!replicationOnly) {
 					
 					if(sourceParts.isEmpty()) {
 						
@@ -249,8 +261,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			}
 			
-			// Initialize all operators of the source and the local part and add it ONCE
-			if(sourceToFragStrat.size() > 1 && !sourceParts.isEmpty()) {
+			// Add all operators of the source and the local part ONCE
+			if(!replicationOnly && !sourceParts.isEmpty()) {
 			
 				for(QueryPart sourcePart : sourceParts) {
 					
