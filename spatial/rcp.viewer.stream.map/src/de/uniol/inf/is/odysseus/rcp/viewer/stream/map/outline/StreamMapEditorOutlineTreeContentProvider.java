@@ -63,7 +63,7 @@ public class StreamMapEditorOutlineTreeContentProvider implements ITreeContentPr
 		if (parentElement instanceof LayerUpdater[]) {
 			return (LayerUpdater[]) parentElement;
 		} else if (parentElement instanceof LayerUpdater) {
-			return ((LayerUpdater) parentElement).getConnection().getSubscriptions().get(0).getSchema().toArray();
+			return ((LayerUpdater) parentElement).getConnection().getOutputSchema().toArray();
 		} else if (parentElement instanceof MapEditorModel) {
 			Collection<LayerUpdater> coll = input.getConnectionCollection();
 			return new Object[]{coll.toArray(new LayerUpdater[coll.size()]), input.getLayers()};

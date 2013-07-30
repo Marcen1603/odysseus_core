@@ -15,11 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.core.streamconnection;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IStreamConnection<In> {
 
@@ -34,6 +34,6 @@ public interface IStreamConnection<In> {
 	public void addStreamElementListener( IStreamElementListener<In> listener );
 	public void removeStreamElementListener( IStreamElementListener<In> listener );
 	
-	public List<ISubscription<? extends ISource<In>>> getSubscriptions();
-	
+	public SDFSchema getOutputSchema();
+	ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions();
 }

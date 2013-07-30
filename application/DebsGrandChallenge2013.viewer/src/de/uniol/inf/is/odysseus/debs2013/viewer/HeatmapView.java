@@ -78,8 +78,7 @@ public class HeatmapView extends AbstractSoccerView implements IStreamEditorType
 		LOG.info("----------- HeatmapView opened -----------");
 		
 		
-		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
-		setSchema(subs.get(0).getSchema());
+		setSchema(editorInput.getStreamConnection().getOutputSchema());
 		
 		attributeIndexMap = new ConcurrentHashMap<>();
 		for (int i = 0; i < schema.getAttributes().size(); i++) {

@@ -338,8 +338,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 				layerConfiguration.setQuery(streamSelect.getText());
 				LOG.debug("Set Query: " + layerConfiguration.getQuery());
 				SDFSchema schema = ((LayerUpdater) connections.toArray()[streamSelect
-						.getSelectionIndex()]).getConnection()
-						.getSubscriptions().get(0).getSchema();
+						.getSelectionIndex()]).getConnection().getOutputSchema();
 
 				for (int i = 0; i < schema.size(); i++) {
 					attributeSelect.add(schema.getAttribute(i)

@@ -198,7 +198,7 @@ public class VectorLayerConfigurationComposite extends Composite {
 			}
 			@Override
 			public Object[] getElements(Object inputElement) {
-				return input.getConnection().getSubscriptions().get(0).getSchema().getAttributes().toArray();
+				return input.getConnection().getOutputSchema().getAttributes().toArray();
 			}
 		});
 		comboViewer.setLabelProvider(new LabelProvider() {

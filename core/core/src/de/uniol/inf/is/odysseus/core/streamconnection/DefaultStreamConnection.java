@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -36,12 +37,17 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class DefaultStreamConnection<In extends IStreamObject<?>> extends ListenerSink<In> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamConnection.class);
 
+	private final Collection<IPhysicalOperator> operators;
+	private final Map<Integer, IPhysicalOperator> portOperatorMap;
+	private final Map<IPhysicalOperator, Integer> operatorPortMap;
+	private final Collection<IPhysicalOperator> connectedOperators = Lists.newArrayList();
 	private final List<ISubscription<? extends ISource<In>>> subscriptions;
 
 	private boolean connected = false;
@@ -49,7 +55,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 	private ArrayList<In> collectedObjects = new ArrayList<In>();
 	private ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
-	private List<ISubscription<? extends ISource<In>>> connectedSubscriptions = Lists.newArrayList();
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
 	private boolean isOpen = true;
@@ -64,33 +69,54 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		Preconditions.checkNotNull(operators, "List of operators must not be null!");
 		Preconditions.checkArgument(!operators.isEmpty(), "List of operators must not be empty!");
 
+		this.operators = operators;
+		portOperatorMap = generatePortMap(operators);
+		operatorPortMap = generateOperatorMap(portOperatorMap);
 		subscriptions = determineSubscriptions(operators);
 	}
 
+	@Deprecated
 	@Override
 	public final ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions() {
 		return ImmutableList.copyOf(subscriptions);
 	}
 
+	private static Map<IPhysicalOperator, Integer> generateOperatorMap(Map<Integer, IPhysicalOperator> map) {
+		Map<IPhysicalOperator, Integer> m = Maps.newHashMap();
+		for( Integer port : map.keySet() ) {
+			m.put(map.get(port), port);
+		}
+		return m;
+	}
+
+	private static Map<Integer, IPhysicalOperator> generatePortMap(Collection<IPhysicalOperator> ops) {
+		Map<Integer, IPhysicalOperator> map = Maps.newHashMap();
+		int counter = 0;
+		for( IPhysicalOperator op : ops ) {
+			map.put(counter++, op);
+		}
+		return map;
+	}
+
+	@Override
+	public SDFSchema getOutputSchema() {
+		return operators.iterator().next().getOutputSchema();
+	}
+
 	@Override
 	public final void connect() {
-		if (subscriptions != null) {
-			for (ISubscription<? extends ISource<In>> s : subscriptions) {
-				connect(s);
-			}
-			connected = true;
+		for (IPhysicalOperator op : operators) {
+			connect(op);
 		}
-
+		connected = true;
 	}
 
 	@Override
 	public final void disconnect() {
-		if (subscriptions != null) {
-			for (ISubscription<? extends ISource<In>> s : subscriptions) {
-				disconnect(s);
-			}
-			connected = false;
+		for (IPhysicalOperator op : operators) {
+			disconnect(op);
 		}
+		connected = false;
 	}
 
 	@Override
@@ -152,7 +178,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		return isOpen;
 	}
 
-	//@Override
+	// @Override
 	public void open() throws OpenFailedException {
 		LOG.debug("Opening");
 		isOpen = true;
@@ -164,13 +190,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		open();
 	}
 
-	@SuppressWarnings("unchecked")
-	//@Override
+	// @Override
 	public void close() {
 		LOG.debug("Closing");
 		isOpen = false;
 
-		for (ISubscription<? extends ISource<In>> s : connectedSubscriptions.toArray(new ISubscription[0])) {
+		for (IPhysicalOperator s : connectedOperators.toArray(new IPhysicalOperator[0])) {
 			disconnect(s);
 		}
 	}
@@ -248,21 +273,38 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		}
 	}
 
-	private void connect(ISubscription<? extends ISource<In>> s) {
-		if (connectedSubscriptions.contains(s)) {
-			LOG.warn("Tried to connect to {} multiple times.", s);
-			return;
+	@SuppressWarnings({ "unchecked" })
+	private void connect(IPhysicalOperator operator) {
+		if( operator instanceof ISource ) {
+			ISource<In> source = (ISource<In>)operator;
+			source.connectSink(this, operatorPortMap.get(operator), 0, operator.getOutputSchema());
+		} else {
+			ISink<?> sink = (ISink<?>)operator;
+			Collection<?> subs = sink.getSubscribedToSource();
+			for( Object sub : subs ) {
+				PhysicalSubscription<ISource<In>> physSub = (PhysicalSubscription<ISource<In>>)sub;
+				physSub.getTarget().connectSink(this, operatorPortMap.get(operator), 0, physSub.getTarget().getOutputSchema());
+			}
 		}
-
-		LOG.debug("Connecting to {}.", s.getTarget());
-		s.getTarget().connectSink(this, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
-		connectedSubscriptions.add(s);
+		
+		connectedOperators.add(operator);
 	}
 
-	private void disconnect(ISubscription<? extends ISource<In>> s ) {
-		LOG.debug("Disconnecting from {}.", s.getTarget());
-		s.getTarget().disconnectSink(this, s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
-		connectedSubscriptions.remove(s);
+	@SuppressWarnings("unchecked")
+	private void disconnect(IPhysicalOperator operator) {
+		if( operator instanceof ISource ) {
+			ISource<In> source = (ISource<In>)operator;
+			source.disconnectSink(this, operatorPortMap.get(operator), 0, operator.getOutputSchema());
+		} else {
+			ISink<?> sink = (ISink<?>)operator;
+			Collection<?> subs = sink.getSubscribedToSource();
+			for( Object sub : subs ) {
+				PhysicalSubscription<ISource<In>> physSub = (PhysicalSubscription<ISource<In>>)sub;
+				physSub.getTarget().disconnectSink(this, operatorPortMap.get(operator), 0, physSub.getTarget().getOutputSchema());
+			}			
+		}
+		
+		connectedOperators.remove(operator);
 	}
 
 	private void collectElement(In element, int port) {
@@ -284,7 +326,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			}
 		}
 	}
-
+	
+	
 	@SuppressWarnings("unchecked")
 	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(Collection<IPhysicalOperator> operators) {
 		List<ISubscription<? extends ISource<In>>> subscriptions = Lists.newLinkedList();
@@ -313,5 +356,5 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 		return subs;
 	}
-
+	
 }

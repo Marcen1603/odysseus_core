@@ -390,8 +390,7 @@ public class MapEditorModel extends ModelObject {
 					.equals(layerConfiguration.getQuery())) {
 
 				// Connect the Stream to the iStreamListner
-				schema = connection.getConnection().getSubscriptions().get(0)
-						.getSchema();
+				schema = connection.getConnection().getOutputSchema();
 				// AttributeResolver resolver = new AttributeResolver();
 				// resolver.addSource(connection.getConnection().getSubscriptions().get(0).getSchema().getURI(),
 				// (ILogicalOperator)

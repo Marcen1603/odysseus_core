@@ -232,8 +232,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Fill this combobox
 		geoAttrInput.removeAll();
-		SDFSchema schema = tracemap.getLayerUpdater().getConnection()
-				.getSubscriptions().get(0).getSchema();
+		SDFSchema schema = tracemap.getLayerUpdater().getConnection().getOutputSchema();
 
 		for (int i = 0; i < schema.size(); i++) {
 			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);
@@ -467,8 +466,7 @@ public class MapPropertiesDialog extends TitleAreaDialog {
 
 		// Fill this combobox
 		geoAttrInput.removeAll();
-		SDFSchema schema = heatmap.getLayerUpdater().getConnection()
-				.getSubscriptions().get(0).getSchema();
+		SDFSchema schema = heatmap.getLayerUpdater().getConnection().getOutputSchema();
 
 		for (int i = 0; i < schema.size(); i++) {
 			geoAttrInput.add(schema.getAttribute(i).getAttributeName(), i);

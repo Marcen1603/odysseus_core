@@ -63,7 +63,7 @@ public class MapLayerViewTreeContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof LayerUpdater[]) {
 			return (LayerUpdater[]) parentElement;
 		} else if (parentElement instanceof LayerUpdater) {
-			return ((LayerUpdater) parentElement).getConnection().getSubscriptions().get(0).getSchema().toArray();
+			return ((LayerUpdater) parentElement).getConnection().getOutputSchema().toArray();
 		} else if (parentElement instanceof MapEditorModel) {
 			return input.getLayers().toArray(new ILayer[0]);
 		} else if (parentElement instanceof SDFSchema) {

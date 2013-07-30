@@ -88,7 +88,7 @@ public class MapLayerViewLabelProvider implements ILabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof LayerUpdater) {
-			return ((LayerUpdater) element).getConnection().getSubscriptions().get(0).getSchema().toString();
+			return ((LayerUpdater) element).getConnection().getOutputSchema().toString();
 		} else if (element instanceof SDFSchema) {
 			return ((SDFSchema) element).toString();
 		} else if (element instanceof SDFAttribute) {

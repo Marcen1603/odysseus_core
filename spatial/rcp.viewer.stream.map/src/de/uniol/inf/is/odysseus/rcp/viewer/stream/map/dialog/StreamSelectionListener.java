@@ -41,8 +41,7 @@ public class StreamSelectionListener extends SelectionAdapter {
 		// Show the right Schema-Attributes for selected stream
 		geometrieSelect.removeAll();
 		SDFSchema schema = ((LayerUpdater) connections.toArray()[streamSelectionBox
-				.getSelectionIndex()]).getConnection().getSubscriptions()
-				.get(0).getSchema();
+				.getSelectionIndex()]).getConnection().getOutputSchema();
 
 		for (int i = 0; i < schema.size(); i++) {
 			geometrieSelect.add(schema.getAttribute(i).getAttributeName(), i);

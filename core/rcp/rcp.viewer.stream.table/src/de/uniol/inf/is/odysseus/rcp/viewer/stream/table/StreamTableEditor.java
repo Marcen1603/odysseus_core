@@ -40,10 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -76,9 +74,8 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
-		List<ISubscription<? extends ISource<Object>>> subs = editorInput.getStreamConnection().getSubscriptions();
 		// TODO: Adapt to multiple sources
-		setSchema(subs.get(0).getSchema());
+		setSchema(editorInput.getStreamConnection().getOutputSchema());
 		editor = editorPart;
 	}
 
