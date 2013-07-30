@@ -91,7 +91,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 
 /**
  * 
- * @author Dennis Geesen Created at: 09.08.2011
+ * @author Dennis Geesen, Thore Stratmann
  */
 
 @WebService
@@ -225,9 +225,13 @@ public class WebserviceServer {
 	public Response removeQuery(
 			@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "queryID") int queryID)
-			throws InvalidUserDataException {
+			throws InvalidUserDataException, QueryNotExistsException {
 		ISession user = loginWithSecurityToken(securityToken);
-		ExecutorServiceBinding.getExecutor().removeQuery(queryID, user);
+		try {
+			ExecutorServiceBinding.getExecutor().removeQuery(queryID, user);
+		} catch (Exception e) {
+			throw new QueryNotExistsException();
+		}
 		return new Response(true);
 
 	}
@@ -412,22 +416,26 @@ public class WebserviceServer {
 
 	public QueryResponse getLogicalQuery(
 			@WebParam(name = "securitytoken") String securityToken,
-			@WebParam(name = "id") String id) throws InvalidUserDataException {
+			@WebParam(name = "id") String id) throws InvalidUserDataException, QueryNotExistsException {
 		return getLogicalQueryById(securityToken, id);
 	}
 
 	public QueryResponse getLogicalQueryById(
 			@WebParam(name = "securitytoken") String securityToken,
-			@WebParam(name = "id") String id) throws InvalidUserDataException {
+			@WebParam(name = "id") String id) throws InvalidUserDataException, QueryNotExistsException {
 		loginWithSecurityToken(securityToken);
-
-		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor()
-				.getExecutionPlan().getQueryById(Integer.valueOf(id));
-		return new QueryResponse((LogicalQuery) ExecutorServiceBinding
-				.getExecutor().getLogicalQueryById(Integer.valueOf(id)),
+		
+		IPhysicalQuery queryById;
+		LogicalQuery logicalQuery;	
+		try {
+			queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(Integer.valueOf(id));
+			logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id));
+		} catch (Exception e) {
+			throw new QueryNotExistsException();
+		}		
+		return new QueryResponse(logicalQuery,
 				queryById.getSession().getUser().getName(),
-				queryById.isOpened(), true);
-
+				queryById.isOpened(),queryById.getRoots().size(), true);
 	}
 
 	public QueryResponse getLogicalQueryByName(
@@ -439,7 +447,7 @@ public class WebserviceServer {
 				.getExecutionPlan().getQueryByName(name);
 		return new QueryResponse((LogicalQuery) ExecutorServiceBinding
 				.getExecutor().getLogicalQueryByName(name), queryById
-				.getSession().getUser().getName(), queryById.isOpened(), true);
+				.getSession().getUser().getName(), queryById.isOpened(),queryById.getRoots().size(), true);
 
 	}
 

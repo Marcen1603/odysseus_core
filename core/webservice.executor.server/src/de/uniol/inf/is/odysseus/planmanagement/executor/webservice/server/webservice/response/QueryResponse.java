@@ -33,7 +33,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webse
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 
 /**
- * @author Merlin Wasmann
+ * @author Merlin Wasmann, Thore Stratmann
  *
  */
 public class QueryResponse extends Response {
@@ -44,16 +44,30 @@ public class QueryResponse extends Response {
 	
 	private String username;
 	
+	private int numberOfRoots;
+
+	
 	public QueryResponse() {
 		super();
 	}
 	
-	public QueryResponse(LogicalQuery value, String username, boolean isRunning, boolean success) {
+	public QueryResponse(LogicalQuery value, String username, boolean isRunning, int numberOfRoots, boolean success) {
 		super(success);
 		this.query = value;
 		this.username = username;
 		this.isRunning = isRunning;
+		this.numberOfRoots = numberOfRoots;
 	}
+	
+	
+	public void setNumberOfRoots(int numberOfRoots) {
+		this.numberOfRoots = numberOfRoots;
+	}
+	
+	public int getNumberOfRoots() {
+		return this.numberOfRoots;
+	}
+	
 	
 	public LogicalQuery getResponseValue() {
 		return this.query;
