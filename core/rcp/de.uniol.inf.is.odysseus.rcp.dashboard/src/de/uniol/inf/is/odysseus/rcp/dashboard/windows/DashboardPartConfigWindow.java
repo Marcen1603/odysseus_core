@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -24,9 +26,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -34,6 +38,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.Setting;
 import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
 
@@ -49,10 +54,12 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		}
 	}
 	
+	private static final String DEFAULT_MESSAGE = "Configure the individual settings of this dashboard part";
 	private static final String WINDOW_TITLE = "Configure Dashboard Part";
 	private static final String DISPLAY_TITLE = "Dashboard Part settings";
 	
 	private final List<SettingValuePair> settings;
+	private String sinkName;
 	private Button okButton;
 
 	public DashboardPartConfigWindow(Shell parentShell, Configuration partConfig ) {
@@ -60,13 +67,16 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		Preconditions.checkNotNull(partConfig, "Configuration of dashboard part must not be null!");
 		
 		this.settings = createSettingsList(partConfig);
+		this.sinkName = partConfig.get(Configuration.SINK_NAME_CFG);
 	}
 
 	private static List<SettingValuePair> createSettingsList(Configuration partConfig) {
 		List<SettingValuePair> result = Lists.newArrayList();
 		for( Setting<?> setting : partConfig.getSettings() ) {
-			SettingDescriptor<?> settingDescriptor = setting.getSettingDescriptor();
-			result.add(new SettingValuePair(settingDescriptor, setting.get()));
+			if( !setting.getSettingDescriptor().getName().equals(Configuration.SINK_NAME_CFG)) {
+				SettingDescriptor<?> settingDescriptor = setting.getSettingDescriptor();
+				result.add(new SettingValuePair(settingDescriptor, setting.get()));
+			}
 		}
 		return result;
 	}
@@ -75,6 +85,7 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		setTitle(DISPLAY_TITLE);
+		setMessage(DEFAULT_MESSAGE);
 		getShell().setText(WINDOW_TITLE);
 		return contents;
 	}
@@ -88,10 +99,52 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		TableViewer tableViewer = createSettingsTableViewer(tableComposite);
 		tableViewer.setInput(settings);
 		
+		createSinkSelectControls(parent);
+		
 		tableComposite.pack();
 		return tableComposite;
 	}
 
+	private void createSinkSelectControls(Composite parent) {
+		Composite sinkNameComposite = new Composite(parent, SWT.NONE);
+		sinkNameComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		sinkNameComposite.setLayout(new GridLayout(3, false));
+		
+		createLabel(sinkNameComposite, "Name of sink");
+		Text sinkNameText = createSinkSelectText(sinkNameComposite);
+		createSinkSelectResetButton(sinkNameComposite, sinkNameText);
+	}
+
+	private static void createLabel(Composite sinkNameComposite, String text) {
+		Label sinkNameLabel = new Label(sinkNameComposite, SWT.NONE);
+		sinkNameLabel.setText(text);
+	}
+
+	private static void createSinkSelectResetButton(Composite sinkNameComposite, final Text sinkNameText) {
+		Button cleanTextButton = new Button(sinkNameComposite, SWT.PUSH);
+		cleanTextButton.setImage(DashboardPlugIn.getImageManager().get("resetImage"));
+		cleanTextButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				sinkNameText.setText("");
+			}
+		});
+	}
+
+	private Text createSinkSelectText(Composite sinkNameComposite) {
+		final Text sinkNameText = new Text(sinkNameComposite, SWT.BORDER);
+		sinkNameText.setText(sinkName != null ? sinkName : "");
+		sinkNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		sinkNameText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				sinkName = sinkNameText.getText();
+			}
+		});
+		return sinkNameText;
+	}
+
+	// TODO: extract to own class
 	private TableViewer createSettingsTableViewer(Composite parent) {
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -176,6 +229,10 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 			settingMap.put(pair.setting.getName(), pair.value);
 		}
 		return settingMap;
+	}
+	
+	public String getSelectedSinkName() {
+		return sinkName != null ? sinkName : "";
 	}
 	
 	@Override

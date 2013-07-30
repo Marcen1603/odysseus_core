@@ -27,8 +27,12 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
+
 public class Configuration {
 
+	public static final String SINK_NAME_CFG = "sinkName";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
 
 	private final Map<String, Setting<?>> settings;
@@ -36,6 +40,14 @@ public class Configuration {
 
 	public Configuration(Map<String, Setting<?>> settings) {
 		this.settings = Preconditions.checkNotNull(settings, "Map of settings must not be null!");
+		
+		addDefaultSettings();
+	}
+
+	private void addDefaultSettings() {
+		if( !this.settings.containsKey(SINK_NAME_CFG)) {
+			this.settings.put(SINK_NAME_CFG, new Setting<String>(new SettingDescriptor<String>(SINK_NAME_CFG, "Name of sinks to receive data from", "String", "", false, true)));
+		}
 	}
 
 	public void addListener(IConfigurationListener listener) {

@@ -23,7 +23,7 @@ public class ConfigureCurrentDashboardPartCommand extends AbstractHandler implem
 		
 		Configuration config = selectedPart.getDashboardPart().getConfiguration();
 		if( !config.getSettings().isEmpty() ) {
-			DashboardPartConfigurer configurer = new DashboardPartConfigurer(config);
+			DashboardPartConfigurer configurer = new DashboardPartConfigurer(selectedPart.getDashboardPart());
 			configurer.startConfigure();
 			
 		} else {

@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	private Configuration configuration;
+	
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private List<IDashboardPartListener> listener = new ArrayList<>();
 
@@ -45,6 +46,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	public boolean init(Configuration configuration) {
 		this.configuration = configuration;
 		this.configuration.addListener(this);
+		
 
 		return true;
 	}
