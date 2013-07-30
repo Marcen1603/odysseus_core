@@ -50,6 +50,25 @@ public class RouteAO extends UnaryLogicalOp {
 	@Parameter(type=PredicateParameter.class, isList=true)
 	public void setPredicates(List<IPredicate<?>> predicates) {
 		super.setPredicates(predicates);
+		addParameterInfo("PREDICATES", generatePredicatesString(predicates));
+	}
+	
+	private String generatePredicatesString(List<IPredicate<?>> predicates) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for(int i = 0; i < predicates.size(); i++) {
+			IPredicate<?> predicate = predicates.get(i);
+			sb.append(generatePredicateString(predicate));
+			if( i < predicates.size() - 1) {
+				sb.append(",");
+			}
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	private String generatePredicateString(IPredicate<?> predicate) {
+		return "RelationalPredicate('" + predicate.toString() + "')";
 	}
 	
 	@Parameter(name="overlappingPredicates", type=BooleanParameter.class, optional=true, doc="Evaluate all (true) or only until first true predicate (false), i.e. deliver to all ports where predicate is true or only to first")
