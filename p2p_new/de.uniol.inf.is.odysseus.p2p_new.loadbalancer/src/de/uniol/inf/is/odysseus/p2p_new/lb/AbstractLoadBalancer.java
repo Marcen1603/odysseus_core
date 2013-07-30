@@ -260,7 +260,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				}
 				
 			}
-			this.initPart(localPart);
+
 			queryPartsMap.get(originQuery).values().iterator().next().add(localPart);
 			
 		}
@@ -840,7 +840,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		for(QueryPart part : queryParts) {
 			
 			QueryPart preparedPart = DistributionHelper.replaceStreamAOs(this.insertOperatorsForFragmentation(
-						part, sourceToFragStrat, degreeOfParallelism, cfg));			
+						part, sourceToFragStrat, degreeOfParallelism, cfg));
+			this.initPart(preparedPart);
 			queryPartPeerMap.put(preparedPart, queryPartDistributionMap.get(part));
 			
 		}
@@ -981,7 +982,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkNotNull(part, "part must not be null!");
 		Preconditions.checkNotNull(sourceToFragStrat, "sourceToFragStrat must not be null!");
 		Preconditions.checkArgument(sourceToFragStrat.size() > 0, "sourceToFragStrat must be not empty!");
-		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be greater than one!");
+		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
 		Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
 		if(!part.getDestinationName().isPresent() || !part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
