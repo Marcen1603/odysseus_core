@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -57,6 +58,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	private ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
 
 	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
+	private final Map<String, Collection<IStreamElementListener<In>>> specialListener = Maps.newHashMap();
 	private boolean isOpen = true;
 
 	private Map<String, String> infos;
@@ -175,12 +177,41 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			}
 		}
 	}
+	
+	@Override
+	public void addStreamElementListener(IStreamElementListener<In> listener, String sinkName) {
+		Preconditions.checkNotNull(listener, "Listener to add to DefaultStreamConnection must not be null!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(sinkName), "Sinkname must not be null or empty!");
+		
+		synchronized(specialListener ) {
+			Collection<IStreamElementListener<In>> l = specialListener.get(sinkName);
+			if( l == null ) {
+				l = Lists.newArrayList();
+				specialListener.put(sinkName, l);
+			}
+			l.add(listener);
+		}
+	}
 
 	@Override
 	public void removeStreamElementListener(IStreamElementListener<In> listener) {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
+	}
+	
+	@Override
+	public void removeStreamElementListener(IStreamElementListener<In> listener, String sinkName) {
+		synchronized(specialListener ) {
+			Collection<IStreamElementListener<In>> l = specialListener.get(sinkName);
+			if( l != null ) {
+				l.remove(listener);
+				
+				if( l.isEmpty() ) {
+					specialListener.remove(l);
+				}
+			}
+		}		
 	}
 
 	@Override
@@ -260,6 +291,21 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				}
 			}
 		}
+		
+		IPhysicalOperator operator = portOperatorMap.get(port);
+		String name = operator.getName();
+		if( !Strings.isNullOrEmpty(name)) {
+			synchronized(specialListener) {
+				Collection<IStreamElementListener<In>> l = specialListener.get(name);
+				for( IStreamElementListener<In> ls : l ) {
+					try {
+						ls.streamElementRecieved(element, port);
+					} catch( Throwable t ) {
+						LOG.error("Exception during invoking specialized listener for DefaultStreamConnection for sinkname {}", name, t);
+					}
+				}
+			}
+		}
 	}
 
 	protected final void notifyListenersPunctuation(IPunctuation point, int port) {
@@ -273,6 +319,21 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				}
 			}
 		}
+		
+		IPhysicalOperator operator = portOperatorMap.get(port);
+		String name = operator.getName();
+		if( !Strings.isNullOrEmpty(name)) {
+			synchronized(specialListener) {
+				Collection<IStreamElementListener<In>> l = specialListener.get(name);
+				for( IStreamElementListener<In> ls : l ) {
+					try {
+						ls.punctuationElementRecieved(point, port);
+					} catch( Throwable t ) {
+						LOG.error("Exception during invoking specialized punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
+					}
+				}
+			}
+		}
 	}
 
 	protected final void notifyListenersSecurityPunctuation(ISecurityPunctuation sp, int port) {
@@ -283,6 +344,21 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 					l.securityPunctuationElementRecieved(sp, port);
 				} catch (Throwable t) {
 					LOG.error("Exception during invoking security punctuation listener for DefaultStreamConnection", t);
+				}
+			}
+		}
+		
+		IPhysicalOperator operator = portOperatorMap.get(port);
+		String name = operator.getName();
+		if( !Strings.isNullOrEmpty(name)) {
+			synchronized(specialListener) {
+				Collection<IStreamElementListener<In>> l = specialListener.get(name);
+				for( IStreamElementListener<In> ls : l ) {
+					try {
+						ls.securityPunctuationElementRecieved(sp, port);
+					} catch( Throwable t ) {
+						LOG.error("Exception during invoking specialized security punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
+					}
 				}
 			}
 		}

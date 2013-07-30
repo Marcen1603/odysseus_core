@@ -33,7 +33,9 @@ public interface IStreamConnection<In> {
 	public boolean isEnabled();
 	
 	public void addStreamElementListener( IStreamElementListener<In> listener );
+	public void addStreamElementListener( IStreamElementListener<In> listener, String sinkName);
 	public void removeStreamElementListener( IStreamElementListener<In> listener );
+	public void removeStreamElementListener( IStreamElementListener<In> listener, String sinkName);
 	
 	public SDFSchema getOutputSchema();
 	public ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions();
