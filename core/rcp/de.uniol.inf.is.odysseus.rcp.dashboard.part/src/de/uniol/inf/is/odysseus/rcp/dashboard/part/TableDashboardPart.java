@@ -26,8 +26,12 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.ToolBar;
@@ -55,17 +59,18 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	private IPhysicalOperator operator;
 
 	private TableViewer tableViewer;
-
+	private TableColumnLayout tableColumnLayout;
+	private Composite tableComposite;
+	private Font titleFont;
+	
 	private String[] attributes;
 	private int[] positions;
-
-	private final List<Tuple<?>> data = Lists.newArrayList();
-	private int maxData = 10;
 	private boolean refreshing = false;
 
-	private TableColumnLayout tableColumnLayout;
-
-	private Composite tableComposite;
+	private final List<Tuple<?>> data = Lists.newArrayList();
+	
+	private int maxData = 10;
+	private String title;
 	
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -77,8 +82,18 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		
 		attributes = determineAttributes(attributeList);
 		maxData = determineMaxData(getConfiguration());
+		title = determineTitle(getConfiguration());
 		
-		tableComposite = new Composite(parent, SWT.NONE);
+		Composite topComposite = new Composite(parent, SWT.NONE);
+		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		topComposite.setLayout(new GridLayout(1, false));
+		topComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		
+		if( !Strings.isNullOrEmpty(title)) {
+			createLabel(topComposite);
+		}
+		
+		tableComposite = new Composite(topComposite, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
@@ -90,6 +105,39 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		table.setHeaderVisible(true);
 		
 		parent.layout();
+	}
+
+	private void createLabel(Composite topComposite) {
+		Label label = new Label(topComposite, SWT.BOLD);
+		label.setText(title);
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label.setAlignment(SWT.CENTER);
+		label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		
+		titleFont = createBoldFont(label.getFont());
+		label.setFont(titleFont);
+	}
+
+	private static Font createBoldFont(Font baseFont) {
+		FontData[] fontData = baseFont.getFontData();
+		fontData[0].setStyle(SWT.BOLD);
+		return new Font(Display.getCurrent(), fontData[0]);
+	}
+	
+	private static String determineTitle(Configuration configuration) {
+		if( configuration.exists("Title")) {
+			return configuration.get("Title");
+		} 
+		
+		return null;
+	}
+	
+	@Override
+	public void dispose() {
+		if( titleFont != null ) {
+			titleFont.dispose();
+		}
+		super.dispose();
 	}
 
 	@Override

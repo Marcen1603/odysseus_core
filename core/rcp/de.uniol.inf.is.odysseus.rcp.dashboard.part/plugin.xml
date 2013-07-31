@@ -24,6 +24,13 @@
                name="MaxData"
                type="Integer">
          </setting>
+         <setting
+               description="Title of the table shown above"
+               isEditable="true"
+               isOptional="true"
+               name="Title"
+               type="String">
+         </setting>
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.LineChartDashboardPart"

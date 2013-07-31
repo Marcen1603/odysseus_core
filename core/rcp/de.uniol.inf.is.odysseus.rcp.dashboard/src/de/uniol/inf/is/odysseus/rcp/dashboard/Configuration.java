@@ -65,7 +65,7 @@ public class Configuration {
 	@SuppressWarnings("unchecked")
 	public <T> T get(String settingName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(settingName), "Name of setting must not be null or empty!");
-		Preconditions.checkArgument(exists(settingName), "Setting with name {} does not exist!", settingName);
+		Preconditions.checkArgument(exists(settingName), "Setting with name %s does not exist!", settingName);
 
 		return (T) settings.get(settingName).get();
 	}
