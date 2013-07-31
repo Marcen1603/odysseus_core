@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
@@ -32,6 +33,8 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 @SuppressWarnings({"rawtypes"})
 public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
+	private static final String RULE_NAME = "Split Selection with more than one Predicate";
+
 	@Override
 	public int getPriority() {
 		return 4;
@@ -39,28 +42,41 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration config) {
-		List<IPredicate> preds = null;
-		// AndPredicate splitten und verteilen
-		if (ComplexPredicateHelper.isAndPredicate(sel.getPredicate())) {
-			preds = ComplexPredicateHelper.splitPredicate(sel.getPredicate());
-		} else { // RelationalPredicate with and
-			preds = ((RelationalPredicate)sel.getPredicate()).splitPredicate(false);
-		}
+		List<IPredicate> preds = splitPredicate(sel.getPredicate());
+		
 		for (int i = 0; i < preds.size() - 1; i++) {
-			// Neuen SelectAO erstellen
 			SelectAO newSel = new SelectAO(sel);
 			for (IOperatorOwner owner:sel.getOwner()){
 				newSel.addOwner(owner);
 			}
 			newSel.setPredicate(preds.get(i));
-			// Den neuen SelectAO als inputAO der alten setzen
-			// Reihenfolge??
+			
+			replacePredicateParameterInfo(newSel, preds.get(i));
+			
 			RestructHelper.insertOperator(newSel, sel, 0, 0, 0);
 			insert(newSel);
 		}
 		sel.setPredicate(preds.get(preds.size() - 1));
-		// neuen SelectAO einf�gen, anderen updaten
+		replacePredicateParameterInfo(sel, preds.get(preds.size() - 1));
+		
 		update(sel);
+	}
+
+	private static List<IPredicate> splitPredicate(IPredicate sel) {
+		List<IPredicate> preds;
+		if (ComplexPredicateHelper.isAndPredicate(sel)) {
+			preds = ComplexPredicateHelper.splitPredicate(sel);
+		} else { 
+			preds = ((RelationalPredicate)sel).splitPredicate(false);
+		}
+		return preds;
+	}
+
+	private static void replacePredicateParameterInfo(ILogicalOperator sel, IPredicate newPredicate) {
+		String predicateString = sel.getParameterInfos().get("PREDICATE");
+		int pos = predicateString.indexOf("(");
+		String newPredicateString = predicateString.substring(0, pos + 1) + "'" + newPredicate.toString() + "')";
+		sel.addParameterInfo("PREDICATE", newPredicateString);
 	}
 
 	@Override
@@ -81,7 +97,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 
 	@Override
 	public String getName() {
-		return "Split Selection with more than one Predicate";
+		return RULE_NAME;
 	}
 
 	@Override
