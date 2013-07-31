@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
@@ -51,13 +50,13 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 			}
 			newSel.setPredicate(preds.get(i));
 			
-			replacePredicateParameterInfo(newSel, preds.get(i));
+			RestructParameterInfoUtil.updatePredicateParameterInfo(newSel);
 			
 			RestructHelper.insertOperator(newSel, sel, 0, 0, 0);
 			insert(newSel);
 		}
 		sel.setPredicate(preds.get(preds.size() - 1));
-		replacePredicateParameterInfo(sel, preds.get(preds.size() - 1));
+		RestructParameterInfoUtil.updatePredicateParameterInfo(sel);
 		
 		update(sel);
 	}
@@ -70,13 +69,6 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 			preds = ((RelationalPredicate)sel).splitPredicate(false);
 		}
 		return preds;
-	}
-
-	private static void replacePredicateParameterInfo(ILogicalOperator sel, IPredicate newPredicate) {
-		String predicateString = sel.getParameterInfos().get("PREDICATE");
-		int pos = predicateString.indexOf("(");
-		String newPredicateString = predicateString.substring(0, pos + 1) + "'" + newPredicate.toString() + "')";
-		sel.addParameterInfo("PREDICATE", newPredicateString);
 	}
 
 	@Override
