@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.windows;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -22,6 +24,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
@@ -29,6 +32,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardSettings;
 
 public class DashboardConfigWindow extends TitleAreaDialog {
 
+	private static final List<String> ACCEPTED_IMAGE_FILE_EXTENSIONS = new ImmutableList.Builder<String>()
+			.add("png")
+			.add("jpg")
+			.add("gif")
+			.build();
+		
 	private static final String WINDOW_TITLE = "Configure Dashboard";
 	private static final String DISPLAY_TITLE = "Dashboard settings";
 	private static final String DEFAULT_MESSAGE = "Change settings of";
@@ -221,7 +230,7 @@ public class DashboardConfigWindow extends TitleAreaDialog {
 	}
 
 	private static IFile selectImageFileWithDialog(Shell shell) {
-		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(), new ImageFileContentProvider());
+		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(), new FileContentProvider(ACCEPTED_IMAGE_FILE_EXTENSIONS));
 		dialog.setTitle("Tree Selection");
 		dialog.setMessage("Select the elements from the tree:");
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
