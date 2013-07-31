@@ -20,6 +20,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 
+import com.google.common.base.Strings;
+
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 
 public class DashboardOutlineLabelProvider implements ILabelProvider {
@@ -44,11 +47,24 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof DashboardPartPlacement) {
 			final DashboardPartPlacement placement = (DashboardPartPlacement) element;
-			return placement.getDashboardPart().getClass().getSimpleName();
+			return generateName(placement);
 		} else if (element instanceof String) {
 			return (String) element;
 		}
 		return null;
+	}
+
+	private static String generateName(DashboardPartPlacement placement) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(placement.getDashboardPart().getClass().getSimpleName());
+		Configuration configuration = placement.getDashboardPart().getConfiguration();
+		if( configuration.exists(Configuration.SINK_NAME_CFG)) {
+			String sinkName = configuration.get(Configuration.SINK_NAME_CFG);
+			if( !Strings.isNullOrEmpty(sinkName)) {
+				sb.append(" [" + sinkName + "]");
+			} 
+		}
+		return sb.toString();
 	}
 
 	@Override

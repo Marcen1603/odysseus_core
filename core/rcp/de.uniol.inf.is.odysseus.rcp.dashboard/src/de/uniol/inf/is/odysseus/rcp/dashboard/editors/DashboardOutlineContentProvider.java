@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
+
 
 public class DashboardOutlineContentProvider implements ITreeContentProvider {
 
@@ -50,8 +52,10 @@ public class DashboardOutlineContentProvider implements ITreeContentProvider {
 		objects.add("W = " + placement.getWidth());
 		objects.add("H = " + placement.getHeight());
 		for(String settingName : placement.getDashboardPart().getConfiguration().getNames() ) {
-			Object object = placement.getDashboardPart().getConfiguration().get(settingName);
-			objects.add(settingName + " = " + ( object == null ? "null" : object.toString()) );
+			if( !Configuration.SINK_NAME_CFG.equalsIgnoreCase(settingName)) {
+				Object object = placement.getDashboardPart().getConfiguration().get(settingName);
+				objects.add(settingName + " = " + ( object == null ? "null" : object.toString()) );
+			}
 		}
 		return objects.toArray();
 	}
