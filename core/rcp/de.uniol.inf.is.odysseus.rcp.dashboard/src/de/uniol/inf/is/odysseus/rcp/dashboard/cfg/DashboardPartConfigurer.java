@@ -27,6 +27,8 @@ public class DashboardPartConfigurer {
 		if( applyNewSettings(window.getSelectedSettings(), window.getSelectedSinkName() ) && EditorUtil.isActiveEditorDashboardEditor()) {
 			DashboardEditor dashboardEditor = (DashboardEditor) EditorUtil.determineActiveEditor();
 			dashboardEditor.setDirty(true);
+			
+			dashboardEditor.getDashboard().update();
 		}		
 	}
 	
