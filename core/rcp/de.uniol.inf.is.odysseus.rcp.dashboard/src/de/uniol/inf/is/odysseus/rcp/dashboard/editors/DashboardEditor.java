@@ -382,7 +382,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		try {
 			controller.start();
 		} catch (final ControllerException e1) {
-			LOG.error("Could not start dahsboardpart", e1);
+			LOG.error("Could not start dashboardpart", e1);
 		}
 	}
 }
