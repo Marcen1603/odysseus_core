@@ -184,8 +184,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 
 	private static String concatLines(String[] text) {
 		StringBuilder sb = new StringBuilder();
-		for (String t : text) {
-			sb.append(t).append("\n");
+		for (String line : text) {
+			sb.append(line).append("\n");
 		}
 		return sb.toString();
 	}
