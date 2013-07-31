@@ -16,8 +16,6 @@
 
 package de.uniol.inf.is.odysseus.rcp.dashboard.test.controller;
 
-import static org.testng.Assert.assertEquals;
-
 import org.testng.annotations.Test;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
@@ -33,13 +31,5 @@ public class DashboardPartControllerTest {
 	@Test(expectedExceptions = NullPointerException.class)
 	public void testConstructorNullArgs() {
 		new DashboardPartController(null);
-	}
-
-	@Test
-	public void testGetPart() {
-		final TestDashboardPart part = new TestDashboardPart();
-		final DashboardPartController controller = new DashboardPartController(part);
-
-		assertEquals(controller.getDashboardPart(), part);
 	}
 }
