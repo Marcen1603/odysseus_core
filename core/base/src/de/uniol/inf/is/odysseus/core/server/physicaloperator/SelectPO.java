@@ -39,6 +39,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 	}
 	
 	public SelectPO(SelectPO<T> po){
+		super(po);
 		this.predicate = po.predicate.clone();
 		this.heartbeatGenerationStrategy = po.heartbeatGenerationStrategy.clone();
 	}
@@ -141,7 +142,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 		if(!(ip instanceof SelectPO) || !this.hasSameSources(ip)) {
 			return false;
 		}
-		// Sonderfall, dass das Prädikat des anderen SelectPOs ein OrPredicate ist und das Prädikat von diesem SelectPO nicht.
+		// Sonderfall, dass das Prï¿½dikat des anderen SelectPOs ein OrPredicate ist und das Prï¿½dikat von diesem SelectPO nicht.
 		if((ComplexPredicateHelper.isOrPredicate(((SelectPO)ip).getPredicate()) && !ComplexPredicateHelper.isOrPredicate(this.predicate))) {
 			return ComplexPredicateHelper.contains(((SelectPO)ip).getPredicate(), this.predicate);
 		}
