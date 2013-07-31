@@ -39,6 +39,8 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 	public Image getImage(Object element) {
 		if (element instanceof DashboardPartPlacement) {
 			return DashboardPlugIn.getImageManager().get("dashboardPart");
+		} else if( element instanceof String ) {
+			return DashboardPlugIn.getImageManager().get("setting");
 		}
 		return null;
 	}
