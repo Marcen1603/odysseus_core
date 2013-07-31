@@ -22,6 +22,8 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -33,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.internal.org.json.JSONException;
+import twitter4j.internal.org.json.JSONObject;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
@@ -212,33 +216,26 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 
 	@Override
 	public void onStatus(final Status status) {
-		try {			
-			
-			GeoLocation statusLocation = status.getGeoLocation();
-			
-			String geoData;
-			if(statusLocation == null){
-				 geoData = "null";
-			}else{
-				 geoData = statusLocation.toString();
-			}
-			
-			//replace some special chars 
-			String text = status.getText().replace("\"", "").replace("“", "").replace("„", "");
-			
-			//create csv line
-			String csvLine = "\""+status.getId()+"\",\""+status.getId()+"\",\""+status.getCreatedAt()+"\",\""+text+"\",\""+geoData+"\"";
-			
-			ByteBuffer charBuffer = encoder.encode(CharBuffer.wrap(csvLine));
-			ByteBuffer buffer = ByteBuffer.allocate(charBuffer.capacity() + 4);
-			buffer.putInt(charBuffer.capacity());
-			buffer.put(charBuffer);
+		GeoLocation statusLocation = status.getGeoLocation();
 		
-			this.fireProcess(buffer);
-		
-		} catch (CharacterCodingException e) {
-			LOG.error(e.getMessage(), e);
+		String geoData;
+		if(statusLocation == null){
+			 geoData = "null";
+		}else{
+			 geoData = statusLocation.toString();
 		}
+	
+	
+		List<String> tweetlist = new ArrayList<>();
+		tweetlist.add(Long.toString(status.getId()));
+		tweetlist.add(status.getCreatedAt().toString());
+		tweetlist.add(status.getText());
+		tweetlist.add(geoData);
+
+		//parse to string[]
+		String [] tweet = tweetlist.toArray(new String[tweetlist.size()]);
+		
+		this.fireProcess(tweet);
 	}
 	
 
