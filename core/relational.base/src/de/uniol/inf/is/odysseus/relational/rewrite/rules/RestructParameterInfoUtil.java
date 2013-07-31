@@ -7,6 +7,7 @@ public class RestructParameterInfoUtil {
 	private RestructParameterInfoUtil() {
 	}
 	
+	// TODO: Make indipendent from ILogicalOperator (use ParameterInfo-Map directly)
 	public static void updatePredicateParameterInfo(ILogicalOperator sel) {
 		String predicateString = sel.getParameterInfos().get("PREDICATE");
 		int pos = predicateString.indexOf("(");
