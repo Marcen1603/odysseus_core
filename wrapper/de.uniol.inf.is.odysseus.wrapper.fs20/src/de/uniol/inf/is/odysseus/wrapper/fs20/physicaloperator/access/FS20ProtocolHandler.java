@@ -146,6 +146,12 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		throw new RuntimeException("Not implemented yet");
 	}
 
+	@Override
+	public void process(String[] message) {
+		// getTransfer().transfer(getDataHandler().readData(message));
+		throw new RuntimeException("Not implemented yet");
+	}
+	
 	/**
 	 * @param args
 	 */

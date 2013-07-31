@@ -296,6 +296,11 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void process(ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
+	
+	@Override
+	public void process(String[] message) {
+		getTransfer().transfer(getDataHandler().readData(message));		
+	}
 
 	public int getDelayeach() {
 		return delayeach;

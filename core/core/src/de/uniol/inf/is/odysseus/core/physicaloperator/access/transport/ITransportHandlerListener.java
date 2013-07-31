@@ -25,5 +25,6 @@ public interface ITransportHandlerListener {
 	
 
 	public void process(ByteBuffer message);
-
+	public void process(String[] message);
+	
 }

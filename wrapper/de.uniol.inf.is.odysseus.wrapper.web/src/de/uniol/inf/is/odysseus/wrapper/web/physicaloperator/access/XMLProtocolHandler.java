@@ -276,5 +276,10 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	public void process(final ByteBuffer message) {
 		this.getTransfer().transfer(this.getDataHandler().readData(message));
 	}
+	
+	@Override
+	public void process(String[] message) {
+		getTransfer().transfer(getDataHandler().readData(message));
+	}
 
 }

@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1179,7 +1181,11 @@ public class JSONProtocolHandler extends
 
 	@Override
 	public void process(ByteBuffer message) {
-		// TODO Auto-generated method stub
-
+		throw new RuntimeException("Not implemented yet");
+	}
+	
+	@Override
+	public void process(String[] message) {
+		throw new RuntimeException("Not implemented yet");
 	}
 }

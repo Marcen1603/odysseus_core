@@ -36,8 +36,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	public AbstractTransportHandler(ITransportExchangePattern exchangePattern) {
 		this.exchangePattern = exchangePattern;
 	}
-	
-	
+
 	public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
 		this.exchangePattern = protocolHandler.getExchangePattern();
 		protocolHandler.setTransportHandler(this);
@@ -65,6 +64,12 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		}
 	}
 
+	public void fireProcess(String[] message) {
+		for (ITransportHandlerListener l : transportHandlerListener) {
+			l.process(message);
+		}
+	}
+
 	public void fireOnConnect() {
 		for (ITransportHandlerListener l : transportHandlerListener) {
 			l.onConnect(this);
@@ -83,14 +88,23 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	}
 
 	@Override
-	final synchronized public void open() throws UnknownHostException, IOException {
+	final synchronized public void open() throws UnknownHostException,
+			IOException {
 		if (openCounter == 0) {
-			if (getExchangePattern() != null && ( getExchangePattern().equals(ITransportExchangePattern.InOnly) || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
-					|| getExchangePattern().equals(ITransportExchangePattern.InOut))) {
+			if (getExchangePattern() != null
+					&& (getExchangePattern().equals(
+							ITransportExchangePattern.InOnly)
+							|| getExchangePattern().equals(
+									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
+							.equals(ITransportExchangePattern.InOut))) {
 				processInOpen();
 			}
-			if (getExchangePattern() != null && ( getExchangePattern().equals(ITransportExchangePattern.OutOnly) || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
-					|| getExchangePattern().equals(ITransportExchangePattern.InOut))) {
+			if (getExchangePattern() != null
+					&& (getExchangePattern().equals(
+							ITransportExchangePattern.OutOnly)
+							|| getExchangePattern().equals(
+									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
+							.equals(ITransportExchangePattern.InOut))) {
 				processOutOpen();
 			}
 		}
@@ -105,12 +119,20 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	final synchronized public void close() throws IOException {
 		openCounter--;
 		if (openCounter == 0) {
-			if (getExchangePattern() != null && (getExchangePattern().equals(ITransportExchangePattern.InOnly) || getExchangePattern().equals(ITransportExchangePattern.InOptionalOut)
-					|| getExchangePattern().equals(ITransportExchangePattern.InOut))) {
+			if (getExchangePattern() != null
+					&& (getExchangePattern().equals(
+							ITransportExchangePattern.InOnly)
+							|| getExchangePattern().equals(
+									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
+							.equals(ITransportExchangePattern.InOut))) {
 				processInClose();
 			}
-			if (getExchangePattern() != null && (getExchangePattern().equals(ITransportExchangePattern.OutOnly) || getExchangePattern().equals(ITransportExchangePattern.OutOptionalIn)
-					|| getExchangePattern().equals(ITransportExchangePattern.InOut))) {
+			if (getExchangePattern() != null
+					&& (getExchangePattern().equals(
+							ITransportExchangePattern.OutOnly)
+							|| getExchangePattern().equals(
+									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
+							.equals(ITransportExchangePattern.InOut))) {
 				processOutClose();
 			}
 		}
@@ -124,5 +146,5 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	public boolean isDone() {
 		return false;
 	}
-	
+
 }

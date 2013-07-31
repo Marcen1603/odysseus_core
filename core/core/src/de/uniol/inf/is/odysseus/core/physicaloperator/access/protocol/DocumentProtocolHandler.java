@@ -251,6 +251,12 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void process(ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
+	
+	@Override
+	public void process(String[] message) {
+		getTransfer().transfer(getDataHandler().readData(message));
+	}
+
 
 	protected void init(Map<String, String> options) {
 		if (options.containsKey("delay")) {

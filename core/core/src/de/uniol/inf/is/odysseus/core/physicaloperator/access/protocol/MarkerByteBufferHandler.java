@@ -151,6 +151,12 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
            }
     }
 
+	@Override
+	public void process(String[] message) {
+		throw new RuntimeException("Not implemented!");
+	}
+
+    
     @Override
     public ITransportExchangePattern getExchangePattern() {
         if (this.getDirection().equals(ITransportDirection.IN)) {

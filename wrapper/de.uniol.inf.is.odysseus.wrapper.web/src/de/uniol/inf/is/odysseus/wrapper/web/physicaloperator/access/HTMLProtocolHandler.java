@@ -299,4 +299,9 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 		this.getTransfer().transfer(this.getDataHandler().readData(message));
 	}
 
+	@Override
+	public void process(final String[] message) {
+		this.getTransfer().transfer(this.getDataHandler().readData(message));
+	}
+
 }
