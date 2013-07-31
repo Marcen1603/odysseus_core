@@ -24,9 +24,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
@@ -435,6 +437,42 @@ public class DistributionHelper {
 		
 		operators.removeAll(operatorsForLocalPart);
 		return operatorsForLocalPart;
+		
+	}
+	
+	/**
+	 * Returns the name of the used source.
+	 * @param operator A {@link AccessAO}, {@link StreamAO} or {@link WindowAO}, which used source shall be determined.
+	 */
+	public static String getSourceName(ILogicalOperator operator) {
+		
+		// Preconditions
+		Preconditions.checkNotNull(operator, "operator has to be not null!");
+		Preconditions.checkArgument(operator instanceof StreamAO || operator instanceof AccessAO || operator instanceof WindowAO, 
+				"operator needs to be an instance of StreamAO, WindowAO or AccessAO");
+		
+		if(operator instanceof StreamAO)
+			return ((StreamAO) operator).getStreamname();
+		else if(operator instanceof AccessAO)
+			return ((AccessAO) operator).getInput();
+		else /* WindowAO */ {
+			
+			for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+				
+				ILogicalOperator source = subToSource.getTarget();
+				
+				if(operator instanceof StreamAO)
+					return ((StreamAO) operator).getStreamname();
+				else if(operator instanceof AccessAO)
+					return ((AccessAO) operator).getInput();
+				else if(operator instanceof WindowAO)
+					return DistributionHelper.getSourceName(source);
+				
+			}
+			
+			throw new IllegalArgumentException("no source name found for operator " + operator.toString());
+			
+		}
 		
 	}
 
