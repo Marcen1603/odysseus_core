@@ -48,7 +48,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
 		}
 		for (int i = 0; i < preds.size() - 1; i++) {
 			// Neuen SelectAO erstellen
-			SelectAO newSel = new SelectAO();
+			SelectAO newSel = new SelectAO(sel);
 			for (IOperatorOwner owner:sel.getOwner()){
 				newSel.addOwner(owner);
 			}
