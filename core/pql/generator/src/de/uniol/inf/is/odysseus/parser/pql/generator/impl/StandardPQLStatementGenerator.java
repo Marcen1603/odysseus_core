@@ -13,8 +13,14 @@ public class StandardPQLStatementGenerator extends AbstractPQLStatementGenerator
 	protected String generateParameters(ILogicalOperator operator) {
 		Map<String, String> parameterMap = removeNullValues(operator.getParameterInfos());
 		parameterMap.put("NAME", "'" + operator.getName() + "'");
+		
 		StringBuilder sb = new StringBuilder();
+		sb.append(toPQLString(parameterMap));
+		return sb.toString();
+	}
 
+	private String toPQLString(Map<String, String> parameterMap) {
+		StringBuilder sb = new StringBuilder();
 		if (!parameterMap.isEmpty()) {
 			String[] keys = parameterMap.keySet().toArray(new String[0]);
 			for (int i = 0; i < keys.length; i++) {
@@ -24,7 +30,6 @@ public class StandardPQLStatementGenerator extends AbstractPQLStatementGenerator
 				}
 			}
 		}
-
 		return sb.toString();
 	}
 	
