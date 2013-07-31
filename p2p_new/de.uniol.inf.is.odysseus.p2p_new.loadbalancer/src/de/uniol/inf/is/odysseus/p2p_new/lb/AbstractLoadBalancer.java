@@ -156,6 +156,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// Check, if any fragmentation strategy is defined
 		Map<String, IDataFragmentation> sourceToFragStrat;
+		Map<ILogicalOperator, Integer> fragOPToNumUsedOutputs = Maps.newHashMap();
 		boolean replicationOnly = true;
 		if(cfg.get(ParameterDoDataFragmentation.class).getValue()) {
 			
@@ -164,8 +165,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			// check for replication only
 			for(IDataFragmentation strat : sourceToFragStrat.values()) {
 				
-				if(!(strat instanceof Replication))
+				if(!(strat instanceof Replication)) {
+					
 					replicationOnly = false;
+					break;
+					
+				}
 				
 			}
 		
@@ -230,11 +235,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 						
 						// Create the source parts
 						sourceParts = this.createSourceParts(operators);
+						Collection<QueryPart> enhancedSourceParts = Lists.newArrayList();
+						for(QueryPart sourcePart : sourceParts)
+							enhancedSourceParts.add(this.insertOperatorsForFragmentation(
+									sourcePart, sourceToFragStrat, fragOPToNumUsedOutputs, degreeOfParallelism, cfg));
+						sourceParts.clear();
+						sourceParts.addAll(enhancedSourceParts);
 						
 					} else {
 					
 						// Subscribe copy to source parts
-						this.subscribeCopyToSourceParts(operators, sourceParts);
+						this.subscribeCopyToSourceParts(operators, sourceParts, sourceToFragStrat, fragOPToNumUsedOutputs);
 						
 					}
 				
@@ -266,13 +277,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 				for(QueryPart sourcePart : sourceParts) {
 					
-					// Note: There are no operators which have to be initialized
+					this.initPart(sourcePart);
 					queryPartsMap.get(originQuery).values().iterator().next().add(sourcePart);
 					
 				}
 				
 			}
-
+			this.initPart(localPart);
 			queryPartsMap.get(originQuery).values().iterator().next().add(localPart);
 			
 		}
@@ -605,12 +616,17 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * to an existing source part and removes all {@link StreamAO}s and {@link WindowAO}s from <code>operators</code>.
 	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
 	 * @param sourcePart The source part to which the {@link ILogicalQuery} shall be subscribed.
+	 * @param sourceToFragStrat A mapping of source name and fragmentation strategy for that source.
+	 * @param fragOpToNumUsedOutputs A mapping of fragmentation operators and the number of used output ports.
 	 */
-	protected void subscribeCopyToSourceParts(Collection<ILogicalOperator> operators, Collection<QueryPart> sourceParts) {
+	protected void subscribeCopyToSourceParts(Collection<ILogicalOperator> operators, Collection<QueryPart> sourceParts, 
+			Map<String, IDataFragmentation> sourceToFragStrat, Map<ILogicalOperator, Integer> fragOpToNumUsedOutputs) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkNotNull(sourceParts, "sourceParts must be not null!");
 		Preconditions.checkArgument(!sourceParts.isEmpty(), "sourceParts must be not empty!");
+		Preconditions.checkNotNull(sourceToFragStrat, "sourceToFragStrat must not be null!");
+		Preconditions.checkArgument(sourceToFragStrat.size() > 0, "sourceToFragStrat must be not empty!");
 		
 		final List<ILogicalOperator> sourceOperators = Lists.newArrayList();
 		
@@ -653,7 +669,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					else if(target instanceof WindowAO) {
 						
 						boolean onlySubscribedToSourceAccesses = true;
-						for(LogicalSubscription sub : operator.getSubscribedToSource()) {
+						for (LogicalSubscription sub : target.getSubscribedToSource()) {
 							
 							if(!(sub.getTarget() instanceof StreamAO) && !(sub.getTarget() instanceof WindowAO)) {
 								
@@ -669,16 +685,37 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					}
 					
 					// StreamAO or WindowAO with subscriptions to StreamAOs
-					while(!sourceIter.hasNext()) {
+					String sourceName = DistributionHelper.getSourceName(target);
+					IDataFragmentation fragStrat;
+					if(sourceToFragStrat.containsKey(sourceName))
+						fragStrat = sourceToFragStrat.get(sourceName);
+					else fragStrat = sourceToFragStrat.get(AbstractLoadBalancer.getNameForNotSpecifiedSources());
+					Class<? extends ILogicalOperator> classForDistribution;
+					classForDistribution = fragStrat.getOperatorForDistributionClass();	// null for replication
+					ILogicalOperator source = null;
+					
+					while(source == null || (classForDistribution != null && source.getClass() != classForDistribution)) {
 						
-						sourcePart = sourcePartsIter.next();
-						sourceIter = sourcePart.getOperators().iterator();
+						while(!sourceIter.hasNext()) {
+							
+							sourcePart = sourcePartsIter.next();
+							sourceIter = sourcePart.getOperators().iterator();
+							
+						}
+						source = sourceIter.next();
 						
-					}					
-					ILogicalOperator source = sourceIter.next();
+					}
 					
 					subsToRemove.add(subToSource);
-					subsToAdd.add(new LogicalSubscription(source, subToSource.getSinkInPort(), subToSource.getSourceOutPort(), subToSource.getSchema()));
+					int sourceOutPort;
+					if(classForDistribution != null) {
+						
+						sourceOutPort = fragOpToNumUsedOutputs.get(source);
+						fragOpToNumUsedOutputs.put(source, sourceOutPort + 1);
+						
+					} else sourceOutPort = subToSource.getSourceOutPort(); // Replication
+					
+					subsToAdd.add(new LogicalSubscription(source, subToSource.getSinkInPort(), sourceOutPort, subToSource.getSchema()));
 					
 				}
 				
@@ -851,9 +888,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final Map<QueryPart, PeerID> queryPartPeerMap = Maps.newHashMap();
 		for(QueryPart part : queryParts) {
 			
-			QueryPart preparedPart = DistributionHelper.replaceStreamAOs(this.insertOperatorsForFragmentation(
-						part, sourceToFragStrat, degreeOfParallelism, cfg));
-			this.initPart(preparedPart);
+			QueryPart preparedPart = DistributionHelper.replaceStreamAOs(part);
 			queryPartPeerMap.put(preparedPart, queryPartDistributionMap.get(part));
 			
 		}
@@ -978,7 +1013,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	/**
 	 * Inserts all {@link ILogicalOperator}s needed for a data fragmentation into a {@link QueryPart}.
 	 * @param part The {@link QueryPart}.
-	 * @param @param sourceToFragStrat A mapping of source name and fragmentation strategy for that source.
+	 * @param sourceToFragStrat A mapping of source name and fragmentation strategy for that source.
+	 * @param fragOpToNumUsedOutputs A mapping of fragmentation operators and the number of used output ports.
 	 * @param degreeOfParallelism The degree of parallelism.
 	 * @param parameters The transfer configuration.
 	 * @return <code>part</code> enhanced with an {@link ILogicalOperator} for data distribution, 
@@ -988,22 +1024,57 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @see IDataFragmentation#insertOperatorForJunction(Collection, QueryBuildConfiguration)
 	 */
 	protected QueryPart insertOperatorsForFragmentation(QueryPart part, Map<String, IDataFragmentation> sourceToFragStrat, 
-			int degreeOfParallelism, QueryBuildConfiguration parameters) {
+			Map<ILogicalOperator, Integer> fragOpToNumUsedOutputs, int degreeOfParallelism, QueryBuildConfiguration parameters) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(part, "part must not be null!");
+		Preconditions.checkArgument(part.getDestinationName().isPresent() && 
+				part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()), "part must be a source part");
 		Preconditions.checkNotNull(sourceToFragStrat, "sourceToFragStrat must not be null!");
 		Preconditions.checkArgument(sourceToFragStrat.size() > 0, "sourceToFragStrat must be not empty!");
-		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
+		Preconditions.checkArgument(degreeOfParallelism > 1, "degreeOfParallelism must be greater than one!");
 		Preconditions.checkNotNull(parameters, "parameters must not be null!");
 		
 		if(!part.getDestinationName().isPresent() || !part.getDestinationName().get().equals(AbstractLoadBalancer.getSourceDestinationName()))
 			return part;
 		
 		Collection<ILogicalOperator> operators = part.getOperators();
-		for(String sourceName : sourceToFragStrat.keySet())
-			operators = sourceToFragStrat.get(sourceName).insertOperatorForDistribution(operators, sourceName, degreeOfParallelism, parameters);
-		return new QueryPart(operators);
+		Collection<ILogicalOperator> enhancedOperators = Lists.newArrayList(operators);
+		Collection<String> processedSourceNames = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : operators) {
+			
+			if(!(operator instanceof StreamAO) && !(operator instanceof WindowAO))
+				continue;
+			
+			String sourceName = DistributionHelper.getSourceName(operator);
+			if(processedSourceNames.contains(sourceName))
+				continue;
+			
+			IDataFragmentation fragStrat;
+			if(sourceToFragStrat.containsKey(sourceName))
+				fragStrat = sourceToFragStrat.get(sourceName);
+			else fragStrat = sourceToFragStrat.get(AbstractLoadBalancer.getNameForNotSpecifiedSources());
+			
+			enhancedOperators = fragStrat.insertOperatorForDistribution(enhancedOperators, sourceName, degreeOfParallelism, parameters);
+			
+			// Search the new Operator
+			if(fragStrat.getOperatorForDistributionClass() != null) {
+				
+				for(ILogicalOperator enhancedOperator : enhancedOperators) {
+					
+					if(enhancedOperator.getClass() == fragStrat.getOperatorForDistributionClass())
+						fragOpToNumUsedOutputs.put(enhancedOperator, 1);
+					
+				}
+				
+			}
+			
+			processedSourceNames.add(sourceName);
+			
+		}
+		
+		return new QueryPart(enhancedOperators);
 		
 	}
 
