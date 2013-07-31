@@ -239,7 +239,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		// Caution: Used in PQL-Generator to get parameter values
 		for(IParameter<?> p : this.parameters){
 			if(p.hasValue()){
-				op.addParameterInfo(p.getName(), p.getPQLString());
+				op.addParameterInfo(p.getName().toUpperCase(), p.getPQLString());
 			}
 		}
 	}
