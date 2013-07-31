@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class RestructParameterInfoUtil {
+public final class RestructParameterInfoUtil {
 	
 	private RestructParameterInfoUtil() {
 	}
