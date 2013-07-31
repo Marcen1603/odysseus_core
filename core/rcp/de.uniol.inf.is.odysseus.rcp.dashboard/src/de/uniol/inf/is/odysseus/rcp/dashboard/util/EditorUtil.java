@@ -18,10 +18,11 @@ public final class EditorUtil {
 		return activeEditor instanceof DashboardEditor;
 	}
 
-	public static IEditorPart determineActiveEditor() {
+	@SuppressWarnings("unchecked")
+	public static <T extends IEditorPart> T determineActiveEditor() {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart activeEditor = page.getActiveEditor();
-		return activeEditor;
+		return (T)activeEditor;
 	}
 	
 	public static Shell determineCurrentShell() {

@@ -11,12 +11,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -29,6 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.util.EditorUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class AddDashboardPartCommand extends AbstractHandler {
@@ -61,25 +60,17 @@ public class AddDashboardPartCommand extends AbstractHandler {
 	@Override
 	public boolean isEnabled() {
 
-		final Optional<IEditorPart> editor = getActiveEditor();
-		if (!editor.isPresent() || !isValidDashboardEditor(editor.get())) {
-			return false;
-		}
-		dashboardEditor = (DashboardEditor) editor.get();
-
-		final ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-		final List<Object> selectedObjects = getSelectedObjects(selection);
-		dashboardPartFiles = getDashboardPartFiles(selectedObjects);
-
-		return !dashboardPartFiles.isEmpty();
-	}
-
-	private static Optional<IEditorPart> getActiveEditor() {
-		try {
-			return Optional.of(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor());
-		} catch (final Throwable t) {
-			return Optional.absent();
-		}
+		if( EditorUtil.isActiveEditorDashboardEditor() ) {
+			dashboardEditor = EditorUtil.determineActiveEditor();
+			
+			final ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
+			final List<Object> selectedObjects = getSelectedObjects(selection);
+			dashboardPartFiles = getDashboardPartFiles(selectedObjects);
+			
+			return !dashboardPartFiles.isEmpty();
+		} 
+		
+		return false;
 	}
 
 	private static List<IFile> getDashboardPartFiles(List<Object> selectedObjects) {
@@ -110,10 +101,6 @@ public class AddDashboardPartCommand extends AbstractHandler {
 
 	private static boolean isDashboardPartFile(Object obj) {
 		return obj instanceof IFile && ((IFile) obj).getFileExtension().equals(DashboardPlugIn.DASHBOARD_PART_EXTENSION);
-	}
-
-	private static boolean isValidDashboardEditor(IEditorPart editor) {
-		return editor instanceof DashboardEditor && ((DashboardEditor) editor).hasDashboard();
 	}
 
 	private static Map<IFile, IDashboardPart> loadDashboardParts(List<IFile> dashboardPartFiles) {

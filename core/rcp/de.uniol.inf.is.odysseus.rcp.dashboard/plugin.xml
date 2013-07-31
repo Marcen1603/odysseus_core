@@ -85,6 +85,11 @@
                label="Configure Part..."
                style="push">
          </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveDashboardPartCommand"
+               label="Remove"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -113,6 +118,11 @@
             defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.ConfigureCurrentDashboardPartCommand"
             id="de.uniol.inf.is.odysseus.rcp.commands.ConfigureCurrentDashboardPart"
             name="Configure Dashboard Part">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.dashboard.commands.RemoveDashboardPartCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveDashboardPartCommand"
+            name="Remove Dashboard Part">
       </command>
    </extension>
    <extension
