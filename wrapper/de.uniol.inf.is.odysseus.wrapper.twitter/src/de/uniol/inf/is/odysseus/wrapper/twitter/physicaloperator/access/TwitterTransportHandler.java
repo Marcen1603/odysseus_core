@@ -25,6 +25,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.Map;
 import java.util.Scanner;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,10 +213,24 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	@Override
 	public void onStatus(final Status status) {
 		try {			
-			ByteBuffer charBuffer = encoder.encode(CharBuffer
-					.wrap(status.getText()));
-			ByteBuffer buffer = ByteBuffer.allocate(charBuffer
-					.capacity() + 4);
+			
+			GeoLocation statusLocation = status.getGeoLocation();
+			
+			String geoData;
+			if(statusLocation == null){
+				 geoData = "null";
+			}else{
+				 geoData = statusLocation.toString();
+			}
+			
+			//replace some special chars 
+			String text = status.getText().replace("\"", "").replace("“", "").replace("„", "");
+			
+			//create csv line
+			String csvLine = "\""+status.getId()+"\",\""+status.getId()+"\",\""+status.getCreatedAt()+"\",\""+text+"\",\""+geoData+"\"";
+			
+			ByteBuffer charBuffer = encoder.encode(CharBuffer.wrap(csvLine));
+			ByteBuffer buffer = ByteBuffer.allocate(charBuffer.capacity() + 4);
 			buffer.putInt(charBuffer.capacity());
 			buffer.put(charBuffer);
 		
