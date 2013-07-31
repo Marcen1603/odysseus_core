@@ -20,10 +20,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
@@ -34,11 +37,13 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	private String allLines;
 	private IFile file;
 	private Map<String, List<String>> values;
+	private EvaluationSetting settings;
 
-	public EvaluationJob(String name, Map<String, List<String>> values, int number, String allLines, IFile file) {
+	public EvaluationJob(String name, EvaluationSetting es, String allLines, IFile file) {
 		super(name);
-		this.values = values;
-		this.number = number;
+		this.values = es.getVariables();
+		this.number = es.getNumberOfTimes();
+		this.settings = es;
 		this.allLines = allLines;
 		this.file = file;
 	}
@@ -50,11 +55,6 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 		try {
 			synchronized (this) {
-
-				// String[] algorithms = {"J48", "DECISIONTABLE", "NaiveBayes"};
-				// String[] algorithms = {"SIMPLEKMEANS", "EM", "DENSITY_KMEANS"};
-				// String[] algorithms = {"5", "10", "15", "20"};
-
 				List<String> variableNames = new ArrayList<>();
 
 				int totalEvaluations = number;
@@ -122,8 +122,17 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				thislines = thislines.replaceAll(currentValue.getKey(), currentValue.getValue());
 			}
 			monitor.subTask(prefix + "Executing Script \"" + file.getName() + "\"... ");
-			long timeStarted = System.currentTimeMillis();
-			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard");
+			long timeStarted = System.currentTimeMillis();					
+			List<IQueryBuildSetting<?>> buildSettings = new ArrayList<>();
+			for(IQueryBuildSetting<?> iq : executor.getQueryBuildConfiguration("Standard").getConfiguration()){
+				if(iq instanceof ParameterTransformationConfiguration){
+					TransformationConfiguration tc = ((ParameterTransformationConfiguration)iq).getValue();
+					tc.setOption("EVALUATION_SETTINGS", settings);
+					buildSettings.add(iq);
+				}
+			}
+			
+			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", buildSettings);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			this.wait();
 			monitor.worked(1);

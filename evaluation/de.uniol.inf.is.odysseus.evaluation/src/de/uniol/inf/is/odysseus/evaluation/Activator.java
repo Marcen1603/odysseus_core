@@ -18,7 +18,7 @@ public class Activator extends AbstractUIPlugin {
 
 		private static IExecutor executor;
 		
-		/**
+		/**go
 		 * The constructor
 		 */
 		public Activator() {
