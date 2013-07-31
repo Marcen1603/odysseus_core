@@ -54,10 +54,6 @@ public final class DashboardPartController implements IConfigurationListener {
 		this.dashboardPart = Preconditions.checkNotNull(dashboardPart, "DashboardPart for container must not be null!");
 	}
 
-	public IDashboardPart getDashboardPart() {
-		return dashboardPart;
-	}
-
 	public void pause() {
 		if (status == Status.PAUSED) {
 			return;
