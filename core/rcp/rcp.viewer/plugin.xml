@@ -201,7 +201,7 @@
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditorList100"
             icon="icons/application-list.png"
-            id="de.uniol.inf.is.odysseus.rcp.streams.List"
+            id="de.uniol.inf.is.odysseus.rcp.streams.List100"
             label="List - Show last 100 elements">
       </editor>
             <editor
