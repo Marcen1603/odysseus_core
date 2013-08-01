@@ -123,7 +123,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 	 * @return the cache
 	 */
 	private IReadOnlyCache createCache(WSEnrichAO logical) {
-		ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<>(logical.getCacheSize() + 1, 1.0f);
+		ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<>(logical.getCacheSize() + 1);
 		IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
 		return new ReadOnlyCache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());	
 	}

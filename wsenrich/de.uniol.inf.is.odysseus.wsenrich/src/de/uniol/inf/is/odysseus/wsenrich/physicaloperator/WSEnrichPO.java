@@ -119,7 +119,6 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		
 	@Override
 	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
-		
 		return OutputMode.NEW_ELEMENT;
 	}
 
@@ -133,7 +132,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 	
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		if(soapMessageCreator != null) {
 			soapMessageCreator.buildSoapMessage();
 		}
@@ -142,12 +141,17 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 	
 	@Override
-	protected synchronized void process_close() {	
-		System.out.println("Cache hits: " + cacheManager.getCacheHits());
-		System.out.println("Cache miss: " + cacheManager.getCacheMiss());
-		System.out.println("Cache inserts: " + cacheManager.getCacheInsert());
-		System.out.println("Cache removes: " + cacheManager.getCacheRemoves());
-		cacheManager.close();
+	protected void process_close() {
+		connection.closeConnection();
+		//Print the Caching Statistics
+		if(this.cacheManager != null) {
+			System.out.println("Caching Statistics: ");
+			System.out.println("Cache hits: " + cacheManager.getCacheHits());
+			System.out.println("Cache miss: " + cacheManager.getCacheMiss());
+			System.out.println("Cache inserts: " + cacheManager.getCacheInsert());
+			System.out.println("Cache removes: " + cacheManager.getCacheRemoves());
+			cacheManager.close();
+		}	
 	}
 
 	@Override
@@ -252,6 +256,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 * @param inputTuple the input tuple
 	 * @param port the port
 	 */
+	@SuppressWarnings("unchecked")
 	private void process_next_with_cache(Tuple<T> inputTuple, int port) {
 		//get Tuples from the Cache with the HashCode of the inputTuple as the referencing key
 		ArrayList<IStreamObject<?>> cachedTuples = cacheManager.get(inputTuple.hashCode());
@@ -279,7 +284,6 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			//Convert the Http Entity into a String, finally close the Http Connection
 			converter.setInput(entity);
 			converter.convert();
-			connection.closeConnection();
 			//Set the Message for the Key (Element) Finder an find the defined Elements and paste
 			//them to the tuple(s)
 			keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
@@ -288,7 +292,6 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			
 			for(int i = 0; i < keyFinder.getTupleCount(); i++) {
 				Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
-				 
 				for(int j = 0; j < receivedData.size(); j++) {
 					keyFinder.setSearch(receivedData.get(j).getAttributeName());
 					Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
@@ -302,13 +305,14 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 				}
 				tuplesToCache.add(wsTuple);
 				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+				outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 				transfer(outputTuple);
 			}
 		cacheManager.put(inputTuple.hashCode(), tuplesToCache);
 		} else { //This means, there are tuples in the cache with the specified key
 			for(int i = 0; i < cachedTuples.size(); i++) {
-				@SuppressWarnings("unchecked")
 				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>) cachedTuples.get(i), metaMergeFunction, Order.LeftRight);
+				outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 				transfer(outputTuple);
 			}
 		}
@@ -319,6 +323,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 * @param inputTuple the input tuple
 	 * @param port the port
 	 */
+	@SuppressWarnings("unchecked")
 	private void process_next_without_cache(Tuple<T> inputTuple, int port) {
 
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
@@ -347,8 +352,6 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		//Convert the Http Entity into a String, finally close the Http Connection
 		converter.setInput(entity);
 		converter.convert();
-		connection.closeConnection();
-		
 		//Set the Message for the Key (Element) Finder an find the defined Elements and paste
 		//them to the tuple(s)
 		keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
@@ -367,6 +370,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 				}
 			}
 			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+			outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 			transfer(outputTuple);
 		}
 	}

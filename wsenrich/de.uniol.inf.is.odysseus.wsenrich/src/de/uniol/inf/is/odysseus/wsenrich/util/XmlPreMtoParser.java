@@ -4,25 +4,55 @@ import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * The class splits a xml documnt in n documents measured on the number
+ * of complex child elements behind the root element
+ *
+ */
 public class XmlPreMtoParser {
 	
+	/**
+	 * For Logging
+	 */
+	static Logger logger = LoggerFactory.getLogger(XmlPreMtoParser.class);
+	
+	/**
+	 * the complete xml document
+	 */
 	private Document xmlDocument;
+	
+	/**
+	 * the splittet xml document fragments
+	 */
 	private ArrayList<Document> splittetXmlDocuments;
 	
+	/**
+	 * Default Constructor
+	 */
 	public XmlPreMtoParser() {
 		this.splittetXmlDocuments = new ArrayList<Document>();
 	}
 	
+	/**
+	 * Setter for the complete xml document
+	 * @param xmlDocument the complete xml Document
+	 */
 	protected void setMessage(Document xmlDocument) {
 		this.xmlDocument = xmlDocument;
 		splitDocument();
 	}
 	
+	/**
+	 * splits the given xml document in n document fragments
+	 */
 	private void splitDocument() {
 		this.splittetXmlDocuments.clear();
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -55,11 +85,13 @@ public class XmlPreMtoParser {
 				} 
 			} 
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Generaly Error while parsing XML-Document. Cause: {}", e.getMessage());
 		}	
 	}
 	
+	/**
+	 * @return the splittet xml documents
+	 */
 	public ArrayList<Document> getXmlFragments() {
 		return this.splittetXmlDocuments;
 	}

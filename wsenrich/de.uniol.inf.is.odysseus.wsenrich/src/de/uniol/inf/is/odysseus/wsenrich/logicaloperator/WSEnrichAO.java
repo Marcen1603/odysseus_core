@@ -58,24 +58,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	public static final String SERVICE_METHOD_SOAP = "SOAP";
 	
 	/**
-	 * Static Variable for the parsing Method xml experimental
-	 */
-//	private static final String PARSING_XML_EXPERIMENTAL = "XMLEXPERIMENTAL";
-	
-	/**
 	 * Static Variable for the parsing Method xpath
 	 */
 	private static final String PARSING_XML_XPATH = "XPATH";
-	
-	/**
-	 * Static Variable for the parsing Method json experimental
-	 */
-//	private static final String PARSING_JSON_EXPERIMENTAL = "JSONEXPERIMENTAL";
-	
-	/**
-	 * Static Variable for the parsing Method json with a Json parser
-	 */
-//	private static final String PARSING_JSON_PARSER = "JSONPATH";
 	
 	/**
 	 * For Logging
@@ -290,7 +275,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 					"Missing Parameter 'datafields'. You have to declare min 1 Datafield of the webservice for the Outputschema."));
 			valid = false;
 		}
-		if(expirationTime <= 0) {
+		if(expirationTime < 0) {
 			addError(new IllegalParameterException( 
 					"ExpirationTime must be > 0"));
 			valid = false;
