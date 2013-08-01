@@ -35,8 +35,6 @@ public class QuerySharingPreParserKeyword extends AbstractPreParserKeyword {
 	public void validate(Map<String, Object> variables, String parameter, ISession caller)
 			throws OdysseusScriptException {
 	}
-
-	
 	
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
