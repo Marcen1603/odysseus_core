@@ -85,17 +85,15 @@ public class ReadOnlyCache implements IReadOnlyCache {
 	@Override
 	public void put(Object key, ArrayList<IStreamObject<?>> value) {
 		CacheEntry cacheEntry = new CacheEntry(key, value);
-		//this.removalStrategy.notifyNew(key, cacheEntry);
-		int sizeAfterPut = this.actualSize + value.size();
-		while(sizeAfterPut >= this.maxSize && this.actualSize >= this.maxSize) {
+		while(this.cacheStore.size() >= this.maxSize && this.actualSize >= this.maxSize) {
 			this.cacheremove++;
 			CacheEntry removedEntry = this.removalStrategy.removeNext();
 			this.actualSize = this.actualSize - removedEntry.getData().size();
-			sizeAfterPut = sizeAfterPut - removedEntry.getData().size();
 		}
 		this.cacheStore.put(key, cacheEntry);
+		this.removalStrategy.notifyNew(key, cacheEntry);
 		this.cacheinsert++;
-		this.actualSize += value.size();
+		this.actualSize = this.actualSize + value.size();
 	}
 
 	@Override
@@ -122,18 +120,30 @@ public class ReadOnlyCache implements IReadOnlyCache {
 		return this.actualSize;
 	}
 	
+	/**
+	 * @return number of cache hits
+	 */
 	public int getCacheHits() {
 		return this.cachehit;
 	}
 	
+	/**
+	 * @return number of cache misses
+	 */
 	public int getCacheMiss() {
 		return this.cachemiss;
 	}
 	
+	/**
+	 * @return number of cache inserts
+	 */
 	public int getCacheInsert() {
 		return this.cacheinsert;
 	}
 	
+	/**
+	 * @return number of cache removes
+	 */
 	public int getCacheRemoves() {
 		return this.cacheremove;
 	}

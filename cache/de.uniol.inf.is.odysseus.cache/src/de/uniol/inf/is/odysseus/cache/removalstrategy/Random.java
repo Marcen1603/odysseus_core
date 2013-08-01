@@ -49,7 +49,7 @@ public class Random implements IRemovalStrategy {
 	@Override
 	public CacheEntry removeNext() {
 		Set<Object> entries = this.cacheStore.keySet();
-		int entryToRemove = this.random.nextInt(entries.size() + 1);
+		int entryToRemove = this.random.nextInt(entries.size());
 		int counter = 0;
 		CacheEntry removedEntry;
 		//Walk trough the Collection and find the Entry to remove. 
