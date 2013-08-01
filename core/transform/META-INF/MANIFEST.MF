@@ -15,4 +15,6 @@ Service-Component: OSGI-INF/TransformationService.xml
 Export-Package: de.uniol.inf.is.odysseus.transform.engine,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule
-Require-Bundle: de.uniol.inf.is.odysseus.core.server, de.uniol.inf.is.odysseus.core
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core,
+ org.apache.commons.lang3;bundle-version="3.1.0"
