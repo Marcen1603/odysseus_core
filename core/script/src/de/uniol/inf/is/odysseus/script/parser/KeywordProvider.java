@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.script.parser;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.script.parser.keyword.ConfigPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QuerySharingPreParserKeyword;
@@ -44,6 +45,7 @@ public class KeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(SleepPreParserKeyword.SLEEP, SleepPreParserKeyword.class);
 		keywords.put(QueryNamePreParserKeyword.QNAME, QueryNamePreParserKeyword.class);
 		keywords.put(ResumeOnErrorPreParserKeyword.KEYWORD, ResumeOnErrorPreParserKeyword.class);
+		keywords.put(ConfigPreParserKeyword.KEYWORD, ConfigPreParserKeyword.class);
 		return keywords;
 	}
 

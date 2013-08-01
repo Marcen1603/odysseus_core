@@ -17,13 +17,19 @@ package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
 public final class PreParserStatement {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PreParserStatement.class);
+	
 	private IPreParserKeyword keyword;
 	private String keywordText;
 	private String parameter;
@@ -41,9 +47,21 @@ public final class PreParserStatement {
 	}
 	
 	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+		if( keyword.isDeprecated() ) {
+			logDeprecation();
+		}
+		
 		keyword.setParser(parser);
 		Object result = keyword.execute(variables, parameter, caller);
 		return result == null ? Optional.absent() : Optional.of(result);
+	}
+
+	private void logDeprecation() {
+		if( !Strings.isNullOrEmpty(keyword.getDeprecationInfo())) {
+			LOG.error("PreParserKeyword {} is deprecated: {}", keywordText, keyword.getDeprecationInfo());
+		} else {
+			LOG.error("PreParserKeyword {} is deprecated", keywordText);
+		}
 	}
 	
 	public String getParameter() {

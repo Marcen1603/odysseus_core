@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+@Deprecated
 public class QuerySharingPreParserKeyword extends AbstractPreParserKeyword {
 
 	public static final String DOQUERYSHARING = "DOQUERYSHARING";
@@ -49,21 +50,6 @@ public class QuerySharingPreParserKeyword extends AbstractPreParserKeyword {
 			addSettings.add(ParameterPerformQuerySharing.FALSE);
 		}
 		
-		
-//		List<IQueryBuildSetting<?>> config = executor.getQueryBuildConfiguration((String)
-//						variables.get("TRANSCFG")).getConfiguration().clone();
-//		variables.put("QueryBuildConfig",config);
-//		Iterator<IQueryBuildSetting<?>> iter = config.iterator();
-//		if (iter != null){
-//			while (iter.hasNext()) {
-//				IQueryBuildSetting<?> sett = iter.next();
-//				if (sett instanceof ParameterPerformQuerySharing) {
-//					iter.remove();
-//					break;
-//				}
-//			}
-
-//		}
 		return null;
 	}
 	
