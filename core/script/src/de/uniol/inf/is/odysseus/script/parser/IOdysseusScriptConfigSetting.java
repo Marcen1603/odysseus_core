@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.script.parser;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -13,4 +14,5 @@ public interface IOdysseusScriptConfigSetting {
 	public boolean isValidValue( String value, Map<String, Object> variables, List<IQueryBuildSetting<?>> queryBuildSettings, ISession caller);
 	public void set( String newValue, Map<String, Object> variables, List<IQueryBuildSetting<?>> queryBuildSettings, ISession caller );
 	
+	public Collection<String> getAllowedValues(ISession caller);
 }

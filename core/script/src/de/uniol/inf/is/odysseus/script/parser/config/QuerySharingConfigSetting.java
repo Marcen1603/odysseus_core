@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.script.parser.config;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
@@ -32,6 +35,11 @@ public class QuerySharingConfigSetting implements IOdysseusScriptConfigSetting {
 		} else {
 			queryBuildSettings.add(ParameterPerformQuerySharing.FALSE);
 		}
+	}
+	
+	@Override
+	public Collection<String> getAllowedValues(ISession caller) {
+		return Lists.newArrayList("TRUE", "FALSE");
 	}
 
 }
