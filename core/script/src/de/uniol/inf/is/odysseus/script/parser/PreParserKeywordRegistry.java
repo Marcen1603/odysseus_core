@@ -55,8 +55,9 @@ public class PreParserKeywordRegistry {
 	public final void addKeyword(String name, Class<? extends IPreParserKeyword> keyword) {
 		Assert.isNotNull(keyword);
 		Assert.isNotNull(name);
-		if (!existsKeyword(name))
+		if (!existsKeyword(name)) {
 			getKeywords().put(name, keyword);
+		}
 	}
 
 	/**
