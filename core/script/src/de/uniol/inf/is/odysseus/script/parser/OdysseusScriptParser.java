@@ -29,6 +29,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -43,9 +46,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
+import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
 
+	private static final Logger LOG = LoggerFactory.getLogger(OdysseusScriptParser.class);
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 
 	public static final String PARAMETER_KEY = "#";
@@ -139,21 +144,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	@Override
 	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
-		Map<String, Object> variables = new HashMap<String, Object>();
-		if (defaultSink != null) {
-			variables.put("_defaultSink", defaultSink);
-		}
-		// Validieren
+		Map<String, Object> variables = prepareVariables(defaultSink);
 		for (PreParserStatement stmt : statements) {
 			stmt.validate(variables, caller);
 		}
 
-		// Ausf�hren
-		variables = new HashMap<String, Object>();
-		if (defaultSink != null) {
-			variables.put("_defaultSink", defaultSink);
-		}
-
+		variables = prepareVariables(defaultSink);
 		List results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
 			try {
@@ -162,13 +158,35 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					results.add(optionalResult.get());
 				}
 			} catch (OdysseusScriptException ex) {	
-				ex.setFailedStatement(stmt);						
-				throw ex;
+				if( isResumeOnError(variables)) {
+					LOG.error("Caught exception during executing script, but resumed execution", ex);
+				} else {
+					ex.setFailedStatement(stmt);						
+					throw ex;
+				}
 			}
 			
 		}
 
 		return results;
+	}
+
+	private static Boolean isResumeOnError(Map<String, Object> variables) {
+		try {
+			return (Boolean)variables.get(ResumeOnErrorPreParserKeyword.RESUME_ON_ERROR_FLAG);
+		} catch( Throwable t ) {
+			LOG.error("Exception during determining if resume on error was set", t);
+			return false;
+		}
+	}
+
+	private static Map<String, Object> prepareVariables(ISink<?> defaultSink) {
+		Map<String, Object> variables = new HashMap<String, Object>();
+		if (defaultSink != null) {
+			variables.put("_defaultSink", defaultSink);
+		}
+		variables.put(ResumeOnErrorPreParserKeyword.RESUME_ON_ERROR_FLAG, "false");
+		return variables;
 	}
 
 	/*

@@ -36,11 +36,11 @@ public final class PreParserStatement {
 		this.line = line;
 	}
 	
-	public void validate( Map<String, Object> variables, ISession caller ) throws OdysseusScriptException {
+	void validate( Map<String, Object> variables, ISession caller ) throws OdysseusScriptException {
 		keyword.validate(variables, parameter, caller);
 	}
 	
-	public Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		Object result = keyword.execute(variables, parameter, caller);
 		return result == null ? Optional.absent() : Optional.of(result);
