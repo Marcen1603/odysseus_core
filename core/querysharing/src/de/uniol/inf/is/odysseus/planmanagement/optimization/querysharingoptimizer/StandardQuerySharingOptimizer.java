@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
@@ -42,7 +42,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	@Override
 	public synchronized void applyQuerySharing(Collection<IPhysicalQuery> plan,
 			List<IPhysicalQuery> newQueries, OptimizationConfiguration conf,
-			IDataDictionary dd) {
+			IDataDictionaryWritable dd) {
 		boolean restructuringAllowed;
 		if (conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
 			restructuringAllowed = conf
@@ -101,7 +101,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 	@Override
 	public void applyQuerySharing(Collection<IPhysicalQuery> plan,
-			OptimizationConfiguration conf, IDataDictionary dd) {
+			OptimizationConfiguration conf, IDataDictionaryWritable dd) {
 		// Neustrukturierung eines bestehenden Plans ist erlaubt
 		if (conf.getParameterAllowRestructuringOfCurrentPlan().getValue()) {
 			applyQuerySharing(plan, null, conf, dd);
@@ -110,7 +110,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 	private boolean removeIdenticalOperators(List<IPhysicalOperator> ipos,
 			List<IPhysicalOperator> newOps, boolean restructuringAllowed,
-			IDataDictionary dd) {
+			IDataDictionaryWritable dd) {
 		int size = ipos.size();
 		for (int i = 0; i < size - 1; i++) {
 			for (int j = i + 1; j < size; j++) {
@@ -204,7 +204,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 	}
 
 	private void replaceOperator(IPhysicalOperator toReplace,
-			IPhysicalOperator replacement, IDataDictionary dd) {
+			IPhysicalOperator replacement, IDataDictionaryWritable dd) {
 		// Austausch von Operatoren
 
 		// Holen s�mtlicher Subscriptions von bei dem zu ersetzenden Operator

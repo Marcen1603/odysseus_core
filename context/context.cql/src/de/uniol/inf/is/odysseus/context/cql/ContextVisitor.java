@@ -30,15 +30,19 @@
 
 package de.uniol.inf.is.odysseus.context.cql;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
 import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
 import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
@@ -50,7 +54,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIfExists;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTInteger;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CreateStreamVisitor;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 /**
  * 
@@ -60,13 +63,14 @@ public class ContextVisitor implements IVisitor {
 
 	private ISession session;
 	private IDataDictionary datadictionary;
+	private List<IExecutorCommand> commands;
 
 	public Object visit(ASTCreateContextStore node, Object data) {
 		String name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		ASTAttributeDefinitions definitions = (ASTAttributeDefinitions) node.jjtGetChild(1);
 		ASTContextStoreType typeNode = (ASTContextStoreType) node.jjtGetChild(2);
 
-		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary);
+		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary, commands);
 		csv.visit(definitions, null);
 		SDFSchema schema = new SDFSchema("ContextStore:" + name, csv.getAttributes());
 
@@ -95,6 +99,11 @@ public class ContextVisitor implements IVisitor {
 	@Override
 	public void setDataDictionary(IDataDictionary dd) {
 		this.datadictionary = dd;
+	}
+	
+	@Override
+	public void setCommands(List<IExecutorCommand> commands) {
+		this.commands = commands;
 	}
 
 	public int visit(ASTContextStoreType node, Object data) throws QueryParseException {

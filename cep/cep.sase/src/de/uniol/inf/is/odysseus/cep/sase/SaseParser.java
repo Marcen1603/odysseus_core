@@ -1,4 +1,4 @@
-// $ANTLR 3.4 C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2013-06-13 17:19:09
+// $ANTLR 3.4 E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g 2013-08-01 10:47:07
  
 /********************************************************************************** 
   * Copyright 2011 The Odysseus Team
@@ -145,7 +145,7 @@ public TreeAdaptor getTreeAdaptor() {
     return adaptor;
 }
     public String[] getTokenNames() { return SaseParser.tokenNames; }
-    public String getGrammarFileName() { return "C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g"; }
+    public String getGrammarFileName() { return "E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g"; }
 
 
     public static class start_return extends ParserRuleReturnScope {
@@ -155,7 +155,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "start"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:1: start : ( createStmt | queryStmt );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:1: start : ( createStmt | queryStmt );
     public final SaseParser.start_return start() throws RecognitionException {
         SaseParser.start_return retval = new SaseParser.start_return();
         retval.start = input.LT(1);
@@ -170,7 +170,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:8: ( createStmt | queryStmt )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:8: ( createStmt | queryStmt )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -190,7 +190,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt1) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:10: createStmt
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:61:10: createStmt
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -205,7 +205,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:4: queryStmt
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:62:4: queryStmt
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -250,7 +250,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "createStmt"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:65:1: createStmt : CREATE VIEW NAME queryStmt -> ^( CREATEVIEW NAME queryStmt ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:65:1: createStmt : CREATE VIEW NAME queryStmt -> ^( CREATEVIEW NAME queryStmt ) ;
     public final SaseParser.createStmt_return createStmt() throws RecognitionException {
         SaseParser.createStmt_return retval = new SaseParser.createStmt_return();
         retval.start = input.LT(1);
@@ -272,8 +272,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_VIEW=new RewriteRuleTokenStream(adaptor,"token VIEW");
         RewriteRuleSubtreeStream stream_queryStmt=new RewriteRuleSubtreeStream(adaptor,"rule queryStmt");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:2: ( CREATE VIEW NAME queryStmt -> ^( CREATEVIEW NAME queryStmt ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:4: CREATE VIEW NAME queryStmt
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:2: ( CREATE VIEW NAME queryStmt -> ^( CREATEVIEW NAME queryStmt ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:4: CREATE VIEW NAME queryStmt
             {
             CREATE3=(Token)match(input,CREATE,FOLLOW_CREATE_in_createStmt174); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_CREATE.add(CREATE3);
@@ -295,7 +295,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( state.backtracking==0 ) stream_queryStmt.add(queryStmt6.getTree());
 
             // AST REWRITE
-            // elements: NAME, queryStmt
+            // elements: queryStmt, NAME
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -309,7 +309,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 66:31: -> ^( CREATEVIEW NAME queryStmt )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:34: ^( CREATEVIEW NAME queryStmt )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:66:34: ^( CREATEVIEW NAME queryStmt )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -362,7 +362,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "queryStmt"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:1: queryStmt : patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart -> ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:1: queryStmt : patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart -> ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart ) ;
     public final SaseParser.queryStmt_return queryStmt() throws RecognitionException {
         SaseParser.queryStmt_return retval = new SaseParser.queryStmt_return();
         retval.start = input.LT(1);
@@ -387,8 +387,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_wherePart=new RewriteRuleSubtreeStream(adaptor,"rule wherePart");
         RewriteRuleSubtreeStream stream_endsAtPart=new RewriteRuleSubtreeStream(adaptor,"rule endsAtPart");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:10: ( patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart -> ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:13: patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:10: ( patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart -> ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:13: patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart
             {
             pushFollow(FOLLOW_patternPart_in_queryStmt200);
             patternPart7=patternPart();
@@ -397,7 +397,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_patternPart.add(patternPart7.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:25: ( wherePart )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:25: ( wherePart )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -406,7 +406,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt2) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:25: wherePart
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:25: wherePart
                     {
                     pushFollow(FOLLOW_wherePart_in_queryStmt202);
                     wherePart8=wherePart();
@@ -421,7 +421,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:36: ( withinPart )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:36: ( withinPart )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -430,7 +430,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt3) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:36: withinPart
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:36: withinPart
                     {
                     pushFollow(FOLLOW_withinPart_in_queryStmt205);
                     withinPart9=withinPart();
@@ -445,7 +445,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:48: ( endsAtPart )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:48: ( endsAtPart )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -454,7 +454,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt4) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:48: endsAtPart
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:48: endsAtPart
                     {
                     pushFollow(FOLLOW_endsAtPart_in_queryStmt208);
                     endsAtPart10=endsAtPart();
@@ -477,7 +477,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( state.backtracking==0 ) stream_returnPart.add(returnPart11.getTree());
 
             // AST REWRITE
-            // elements: returnPart, patternPart, withinPart, wherePart, endsAtPart
+            // elements: withinPart, endsAtPart, patternPart, wherePart, returnPart
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -491,7 +491,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 69:71: -> ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:74: ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:74: ^( QUERY patternPart ( wherePart )? ( withinPart )? ( endsAtPart )? returnPart )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -500,21 +500,21 @@ public TreeAdaptor getTreeAdaptor() {
 
                 adaptor.addChild(root_1, stream_patternPart.nextTree());
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:94: ( wherePart )?
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:94: ( wherePart )?
                 if ( stream_wherePart.hasNext() ) {
                     adaptor.addChild(root_1, stream_wherePart.nextTree());
 
                 }
                 stream_wherePart.reset();
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:105: ( withinPart )?
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:105: ( withinPart )?
                 if ( stream_withinPart.hasNext() ) {
                     adaptor.addChild(root_1, stream_withinPart.nextTree());
 
                 }
                 stream_withinPart.reset();
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:117: ( endsAtPart )?
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:69:117: ( endsAtPart )?
                 if ( stream_endsAtPart.hasNext() ) {
                     adaptor.addChild(root_1, stream_endsAtPart.nextTree());
 
@@ -563,7 +563,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "withinPart"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:73:1: withinPart : WITHIN NUMBER ( timeunit )? -> ^( WITHIN NUMBER ( timeunit )? ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:73:1: withinPart : WITHIN NUMBER ( timeunit )? -> ^( WITHIN NUMBER ( timeunit )? ) ;
     public final SaseParser.withinPart_return withinPart() throws RecognitionException {
         SaseParser.withinPart_return retval = new SaseParser.withinPart_return();
         retval.start = input.LT(1);
@@ -582,8 +582,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_NUMBER=new RewriteRuleTokenStream(adaptor,"token NUMBER");
         RewriteRuleSubtreeStream stream_timeunit=new RewriteRuleSubtreeStream(adaptor,"rule timeunit");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:2: ( WITHIN NUMBER ( timeunit )? -> ^( WITHIN NUMBER ( timeunit )? ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:4: WITHIN NUMBER ( timeunit )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:2: ( WITHIN NUMBER ( timeunit )? -> ^( WITHIN NUMBER ( timeunit )? ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:4: WITHIN NUMBER ( timeunit )?
             {
             WITHIN12=(Token)match(input,WITHIN,FOLLOW_WITHIN_in_withinPart245); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_WITHIN.add(WITHIN12);
@@ -593,7 +593,7 @@ public TreeAdaptor getTreeAdaptor() {
             if ( state.backtracking==0 ) stream_NUMBER.add(NUMBER13);
 
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:18: ( timeunit )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:18: ( timeunit )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -602,7 +602,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt5) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:18: timeunit
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:18: timeunit
                     {
                     pushFollow(FOLLOW_timeunit_in_withinPart249);
                     timeunit14=timeunit();
@@ -618,7 +618,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: timeunit, NUMBER, WITHIN
+            // elements: NUMBER, WITHIN, timeunit
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -632,7 +632,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 74:28: -> ^( WITHIN NUMBER ( timeunit )? )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:31: ^( WITHIN NUMBER ( timeunit )? )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:31: ^( WITHIN NUMBER ( timeunit )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -643,7 +643,7 @@ public TreeAdaptor getTreeAdaptor() {
                 stream_NUMBER.nextNode()
                 );
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:47: ( timeunit )?
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:74:47: ( timeunit )?
                 if ( stream_timeunit.hasNext() ) {
                     adaptor.addChild(root_1, stream_timeunit.nextTree());
 
@@ -690,7 +690,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "endsAtPart"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:77:1: endsAtPart : ENDS AT attributeTerm -> ^( ENDSAT attributeTerm ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:77:1: endsAtPart : ENDS AT attributeTerm -> ^( ENDSAT attributeTerm ) ;
     public final SaseParser.endsAtPart_return endsAtPart() throws RecognitionException {
         SaseParser.endsAtPart_return retval = new SaseParser.endsAtPart_return();
         retval.start = input.LT(1);
@@ -709,8 +709,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_ENDS=new RewriteRuleTokenStream(adaptor,"token ENDS");
         RewriteRuleSubtreeStream stream_attributeTerm=new RewriteRuleSubtreeStream(adaptor,"rule attributeTerm");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:3: ( ENDS AT attributeTerm -> ^( ENDSAT attributeTerm ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:5: ENDS AT attributeTerm
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:3: ( ENDS AT attributeTerm -> ^( ENDSAT attributeTerm ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:5: ENDS AT attributeTerm
             {
             ENDS15=(Token)match(input,ENDS,FOLLOW_ENDS_in_endsAtPart274); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_ENDS.add(ENDS15);
@@ -742,7 +742,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 78:27: -> ^( ENDSAT attributeTerm )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:30: ^( ENDSAT attributeTerm )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:78:30: ^( ENDSAT attributeTerm )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -791,7 +791,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "timeunit"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:81:1: timeunit : ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:81:1: timeunit : ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND );
     public final SaseParser.timeunit_return timeunit() throws RecognitionException {
         SaseParser.timeunit_return retval = new SaseParser.timeunit_return();
         retval.start = input.LT(1);
@@ -804,8 +804,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set18_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:81:9: ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:81:9: ( WEEK | DAY | HOUR | MINUTE | SECOND | MILLISECOND )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -858,7 +858,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "wherePart"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:83:1: wherePart : ( WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE skipPart whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:83:1: wherePart : ( WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE skipPart whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) );
     public final SaseParser.wherePart_return wherePart() throws RecognitionException {
         SaseParser.wherePart_return retval = new SaseParser.wherePart_return();
         retval.start = input.LT(1);
@@ -887,7 +887,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_skipPart=new RewriteRuleSubtreeStream(adaptor,"rule skipPart");
         RewriteRuleSubtreeStream stream_whereExpressions=new RewriteRuleSubtreeStream(adaptor,"rule whereExpressions");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:2: ( WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE skipPart whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:2: ( WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY -> ^( WHERE skipPart whereExpressions ) | WHERE whereExpressions -> ^( WHERE whereExpressions ) )
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -919,7 +919,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt6) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:4: WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:4: WHERE skipPart LEFTCURLY whereExpressions RIGHTCURLY
                     {
                     WHERE19=(Token)match(input,WHERE,FOLLOW_WHERE_in_wherePart317); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_WHERE.add(WHERE19);
@@ -962,7 +962,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 84:57: -> ^( WHERE skipPart whereExpressions )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:60: ^( WHERE skipPart whereExpressions )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:84:60: ^( WHERE skipPart whereExpressions )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -985,7 +985,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:85:4: WHERE whereExpressions
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:85:4: WHERE whereExpressions
                     {
                     WHERE24=(Token)match(input,WHERE,FOLLOW_WHERE_in_wherePart342); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_WHERE.add(WHERE24);
@@ -1013,7 +1013,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 85:27: -> ^( WHERE whereExpressions )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:85:30: ^( WHERE whereExpressions )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:85:30: ^( WHERE whereExpressions )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -1064,7 +1064,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "skipPart"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:1: skipPart : skipMethod LBRACKET parameterList RBRACKET -> ^( skipMethod parameterList ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:88:1: skipPart : skipMethod LBRACKET parameterList RBRACKET -> ^( skipMethod parameterList ) ;
     public final SaseParser.skipPart_return skipPart() throws RecognitionException {
         SaseParser.skipPart_return retval = new SaseParser.skipPart_return();
         retval.start = input.LT(1);
@@ -1086,8 +1086,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_skipMethod=new RewriteRuleSubtreeStream(adaptor,"rule skipMethod");
         RewriteRuleSubtreeStream stream_parameterList=new RewriteRuleSubtreeStream(adaptor,"rule parameterList");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:89:2: ( skipMethod LBRACKET parameterList RBRACKET -> ^( skipMethod parameterList ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:89:4: skipMethod LBRACKET parameterList RBRACKET
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:89:2: ( skipMethod LBRACKET parameterList RBRACKET -> ^( skipMethod parameterList ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:89:4: skipMethod LBRACKET parameterList RBRACKET
             {
             pushFollow(FOLLOW_skipMethod_in_skipPart363);
             skipMethod26=skipMethod();
@@ -1126,7 +1126,7 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 90:2: -> ^( skipMethod parameterList )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:90:5: ^( skipMethod parameterList )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:90:5: ^( skipMethod parameterList )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(stream_skipMethod.nextNode(), root_1);
@@ -1173,7 +1173,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "skipMethod"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:93:1: skipMethod : ( SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:93:1: skipMethod : ( SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY );
     public final SaseParser.skipMethod_return skipMethod() throws RecognitionException {
         SaseParser.skipMethod_return retval = new SaseParser.skipMethod_return();
         retval.start = input.LT(1);
@@ -1186,8 +1186,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set30_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:93:11: ( SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:93:11: ( SKIP_TILL_NEXT_MATCH | SKIP_TILL_ANY_MATCH | STRICT_CONTIGUITY | PARTITION_CONTIGUITY )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1240,7 +1240,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "patternPart"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:99:1: patternPart : PATTERN ( patternDecl )* -> ^( PATTERN ( patternDecl )* ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:99:1: patternPart : PATTERN ( patternDecl )* -> ^( PATTERN ( patternDecl )* ) ;
     public final SaseParser.patternPart_return patternPart() throws RecognitionException {
         SaseParser.patternPart_return retval = new SaseParser.patternPart_return();
         retval.start = input.LT(1);
@@ -1256,14 +1256,14 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_PATTERN=new RewriteRuleTokenStream(adaptor,"token PATTERN");
         RewriteRuleSubtreeStream stream_patternDecl=new RewriteRuleSubtreeStream(adaptor,"rule patternDecl");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:2: ( PATTERN ( patternDecl )* -> ^( PATTERN ( patternDecl )* ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:4: PATTERN ( patternDecl )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:2: ( PATTERN ( patternDecl )* -> ^( PATTERN ( patternDecl )* ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:4: PATTERN ( patternDecl )*
             {
             PATTERN31=(Token)match(input,PATTERN,FOLLOW_PATTERN_in_patternPart418); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_PATTERN.add(PATTERN31);
 
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:12: ( patternDecl )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:12: ( patternDecl )*
             loop7:
             do {
                 int alt7=2;
@@ -1276,7 +1276,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt7) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:12: patternDecl
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:12: patternDecl
             	    {
             	    pushFollow(FOLLOW_patternDecl_in_patternPart420);
             	    patternDecl32=patternDecl();
@@ -1309,14 +1309,14 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 100:25: -> ^( PATTERN ( patternDecl )* )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:28: ^( PATTERN ( patternDecl )* )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:28: ^( PATTERN ( patternDecl )* )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
                 stream_PATTERN.nextNode()
                 , root_1);
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:38: ( patternDecl )*
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:100:38: ( patternDecl )*
                 while ( stream_patternDecl.hasNext() ) {
                     adaptor.addChild(root_1, stream_patternDecl.nextTree());
 
@@ -1363,7 +1363,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "returnPart"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:103:1: returnPart : RETURN attributeTerm ( COMMA attributeTerm )* ( AS NAME )? -> ^( RETURN ( attributeTerm )* ( NAME )? ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:103:1: returnPart : RETURN attributeTerm ( COMMA attributeTerm )* ( AS NAME )? -> ^( RETURN ( attributeTerm )* ( NAME )? ) ;
     public final SaseParser.returnPart_return returnPart() throws RecognitionException {
         SaseParser.returnPart_return retval = new SaseParser.returnPart_return();
         retval.start = input.LT(1);
@@ -1390,8 +1390,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_RETURN=new RewriteRuleTokenStream(adaptor,"token RETURN");
         RewriteRuleSubtreeStream stream_attributeTerm=new RewriteRuleSubtreeStream(adaptor,"rule attributeTerm");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:2: ( RETURN attributeTerm ( COMMA attributeTerm )* ( AS NAME )? -> ^( RETURN ( attributeTerm )* ( NAME )? ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:5: RETURN attributeTerm ( COMMA attributeTerm )* ( AS NAME )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:2: ( RETURN attributeTerm ( COMMA attributeTerm )* ( AS NAME )? -> ^( RETURN ( attributeTerm )* ( NAME )? ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:5: RETURN attributeTerm ( COMMA attributeTerm )* ( AS NAME )?
             {
             RETURN33=(Token)match(input,RETURN,FOLLOW_RETURN_in_returnPart443); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_RETURN.add(RETURN33);
@@ -1404,7 +1404,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_attributeTerm.add(attributeTerm34.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:26: ( COMMA attributeTerm )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:26: ( COMMA attributeTerm )*
             loop8:
             do {
                 int alt8=2;
@@ -1417,7 +1417,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt8) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:27: COMMA attributeTerm
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:27: COMMA attributeTerm
             	    {
             	    COMMA35=(Token)match(input,COMMA,FOLLOW_COMMA_in_returnPart448); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA35);
@@ -1439,7 +1439,7 @@ public TreeAdaptor getTreeAdaptor() {
             } while (true);
 
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:49: ( AS NAME )?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:49: ( AS NAME )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -1448,7 +1448,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt9) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:50: AS NAME
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:50: AS NAME
                     {
                     AS37=(Token)match(input,AS,FOLLOW_AS_in_returnPart455); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_AS.add(AS37);
@@ -1465,7 +1465,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: RETURN, NAME, attributeTerm
+            // elements: NAME, RETURN, attributeTerm
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1479,21 +1479,21 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 104:59: -> ^( RETURN ( attributeTerm )* ( NAME )? )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:62: ^( RETURN ( attributeTerm )* ( NAME )? )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:62: ^( RETURN ( attributeTerm )* ( NAME )? )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
                 stream_RETURN.nextNode()
                 , root_1);
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:71: ( attributeTerm )*
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:71: ( attributeTerm )*
                 while ( stream_attributeTerm.hasNext() ) {
                     adaptor.addChild(root_1, stream_attributeTerm.nextTree());
 
                 }
                 stream_attributeTerm.reset();
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:86: ( NAME )?
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:104:86: ( NAME )?
                 if ( stream_NAME.hasNext() ) {
                     adaptor.addChild(root_1, 
                     stream_NAME.nextNode()
@@ -1542,7 +1542,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "patternDecl"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:107:1: patternDecl : seqPatternDecl ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:107:1: patternDecl : seqPatternDecl ;
     public final SaseParser.patternDecl_return patternDecl() throws RecognitionException {
         SaseParser.patternDecl_return retval = new SaseParser.patternDecl_return();
         retval.start = input.LT(1);
@@ -1555,8 +1555,8 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:108:2: ( seqPatternDecl )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:108:5: seqPatternDecl
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:108:2: ( seqPatternDecl )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:108:5: seqPatternDecl
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1599,7 +1599,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "seqPatternDecl"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:111:1: seqPatternDecl : SEQ LBRACKET stateDef ( COMMA stateDef )* RBRACKET -> ^( SEQ ( stateDef )* ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:111:1: seqPatternDecl : SEQ LBRACKET stateDef ( COMMA stateDef )* RBRACKET -> ^( SEQ ( stateDef )* ) ;
     public final SaseParser.seqPatternDecl_return seqPatternDecl() throws RecognitionException {
         SaseParser.seqPatternDecl_return retval = new SaseParser.seqPatternDecl_return();
         retval.start = input.LT(1);
@@ -1626,8 +1626,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_stateDef=new RewriteRuleSubtreeStream(adaptor,"rule stateDef");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:2: ( SEQ LBRACKET stateDef ( COMMA stateDef )* RBRACKET -> ^( SEQ ( stateDef )* ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:4: SEQ LBRACKET stateDef ( COMMA stateDef )* RBRACKET
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:2: ( SEQ LBRACKET stateDef ( COMMA stateDef )* RBRACKET -> ^( SEQ ( stateDef )* ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:4: SEQ LBRACKET stateDef ( COMMA stateDef )* RBRACKET
             {
             SEQ40=(Token)match(input,SEQ,FOLLOW_SEQ_in_seqPatternDecl495); if (state.failed) return retval; 
             if ( state.backtracking==0 ) stream_SEQ.add(SEQ40);
@@ -1644,7 +1644,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_stateDef.add(stateDef42.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:26: ( COMMA stateDef )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:26: ( COMMA stateDef )*
             loop10:
             do {
                 int alt10=2;
@@ -1657,7 +1657,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt10) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:27: COMMA stateDef
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:27: COMMA stateDef
             	    {
             	    COMMA43=(Token)match(input,COMMA,FOLLOW_COMMA_in_seqPatternDecl502); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA43);
@@ -1684,7 +1684,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: stateDef, SEQ
+            // elements: SEQ, stateDef
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1698,14 +1698,14 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 112:53: -> ^( SEQ ( stateDef )* )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:56: ^( SEQ ( stateDef )* )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:56: ^( SEQ ( stateDef )* )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
                 stream_SEQ.nextNode()
                 , root_1);
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:62: ( stateDef )*
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:112:62: ( stateDef )*
                 while ( stream_stateDef.hasNext() ) {
                     adaptor.addChild(root_1, stream_stateDef.nextTree());
 
@@ -1752,7 +1752,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "stateDef"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:1: stateDef : ( ( NOTSIGN )? ktypeDefinition -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? typeDefinition -> ^( STATE typeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET ktypeDefinition RBRACKET -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET typeDefinition RBRACKET -> ^( STATE typeDefinition ( NOTSIGN )? ) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:1: stateDef : ( ( NOTSIGN )? ktypeDefinition -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? typeDefinition -> ^( STATE typeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET ktypeDefinition RBRACKET -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET typeDefinition RBRACKET -> ^( STATE typeDefinition ( NOTSIGN )? ) );
     public final SaseParser.stateDef_return stateDef() throws RecognitionException {
         SaseParser.stateDef_return retval = new SaseParser.stateDef_return();
         retval.start = input.LT(1);
@@ -1791,7 +1791,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_typeDefinition=new RewriteRuleSubtreeStream(adaptor,"rule typeDefinition");
         RewriteRuleSubtreeStream stream_ktypeDefinition=new RewriteRuleSubtreeStream(adaptor,"rule ktypeDefinition");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:10: ( ( NOTSIGN )? ktypeDefinition -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? typeDefinition -> ^( STATE typeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET ktypeDefinition RBRACKET -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET typeDefinition RBRACKET -> ^( STATE typeDefinition ( NOTSIGN )? ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:10: ( ( NOTSIGN )? ktypeDefinition -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? typeDefinition -> ^( STATE typeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET ktypeDefinition RBRACKET -> ^( KSTATE ktypeDefinition ( NOTSIGN )? ) | ( NOTSIGN )? LBRACKET typeDefinition RBRACKET -> ^( STATE typeDefinition ( NOTSIGN )? ) )
             int alt15=4;
             switch ( input.LA(1) ) {
             case NOTSIGN:
@@ -1919,9 +1919,9 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt15) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:12: ( NOTSIGN )? ktypeDefinition
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:12: ( NOTSIGN )? ktypeDefinition
                     {
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:12: ( NOTSIGN )?
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:12: ( NOTSIGN )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -1930,7 +1930,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt11) {
                         case 1 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:13: NOTSIGN
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:13: NOTSIGN
                             {
                             NOTSIGN46=(Token)match(input,NOTSIGN,FOLLOW_NOTSIGN_in_stateDef532); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_NOTSIGN.add(NOTSIGN46);
@@ -1950,7 +1950,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_ktypeDefinition.add(ktypeDefinition47.getTree());
 
                     // AST REWRITE
-                    // elements: NOTSIGN, ktypeDefinition
+                    // elements: ktypeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1964,7 +1964,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 116:40: -> ^( KSTATE ktypeDefinition ( NOTSIGN )? )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:43: ^( KSTATE ktypeDefinition ( NOTSIGN )? )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:43: ^( KSTATE ktypeDefinition ( NOTSIGN )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -1973,7 +1973,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                         adaptor.addChild(root_1, stream_ktypeDefinition.nextTree());
 
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:68: ( NOTSIGN )?
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:116:68: ( NOTSIGN )?
                         if ( stream_NOTSIGN.hasNext() ) {
                             adaptor.addChild(root_1, 
                             stream_NOTSIGN.nextNode()
@@ -1994,9 +1994,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:5: ( NOTSIGN )? typeDefinition
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:5: ( NOTSIGN )? typeDefinition
                     {
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:5: ( NOTSIGN )?
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:5: ( NOTSIGN )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -2005,7 +2005,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt12) {
                         case 1 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:6: NOTSIGN
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:6: NOTSIGN
                             {
                             NOTSIGN48=(Token)match(input,NOTSIGN,FOLLOW_NOTSIGN_in_stateDef555); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_NOTSIGN.add(NOTSIGN48);
@@ -2039,7 +2039,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 117:32: -> ^( STATE typeDefinition ( NOTSIGN )? )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:35: ^( STATE typeDefinition ( NOTSIGN )? )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:35: ^( STATE typeDefinition ( NOTSIGN )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2048,7 +2048,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                         adaptor.addChild(root_1, stream_typeDefinition.nextTree());
 
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:58: ( NOTSIGN )?
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:117:58: ( NOTSIGN )?
                         if ( stream_NOTSIGN.hasNext() ) {
                             adaptor.addChild(root_1, 
                             stream_NOTSIGN.nextNode()
@@ -2069,9 +2069,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:5: ( NOTSIGN )? LBRACKET ktypeDefinition RBRACKET
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:5: ( NOTSIGN )? LBRACKET ktypeDefinition RBRACKET
                     {
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:5: ( NOTSIGN )?
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:5: ( NOTSIGN )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -2080,7 +2080,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt13) {
                         case 1 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:6: NOTSIGN
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:6: NOTSIGN
                             {
                             NOTSIGN50=(Token)match(input,NOTSIGN,FOLLOW_NOTSIGN_in_stateDef580); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_NOTSIGN.add(NOTSIGN50);
@@ -2108,7 +2108,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: NOTSIGN, ktypeDefinition
+                    // elements: ktypeDefinition, NOTSIGN
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -2122,7 +2122,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 118:50: -> ^( KSTATE ktypeDefinition ( NOTSIGN )? )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:53: ^( KSTATE ktypeDefinition ( NOTSIGN )? )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:53: ^( KSTATE ktypeDefinition ( NOTSIGN )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2131,7 +2131,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                         adaptor.addChild(root_1, stream_ktypeDefinition.nextTree());
 
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:78: ( NOTSIGN )?
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:118:78: ( NOTSIGN )?
                         if ( stream_NOTSIGN.hasNext() ) {
                             adaptor.addChild(root_1, 
                             stream_NOTSIGN.nextNode()
@@ -2152,9 +2152,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 4 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:5: ( NOTSIGN )? LBRACKET typeDefinition RBRACKET
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:5: ( NOTSIGN )? LBRACKET typeDefinition RBRACKET
                     {
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:5: ( NOTSIGN )?
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:5: ( NOTSIGN )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -2163,7 +2163,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt14) {
                         case 1 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:6: NOTSIGN
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:6: NOTSIGN
                             {
                             NOTSIGN54=(Token)match(input,NOTSIGN,FOLLOW_NOTSIGN_in_stateDef606); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_NOTSIGN.add(NOTSIGN54);
@@ -2205,7 +2205,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 119:49: -> ^( STATE typeDefinition ( NOTSIGN )? )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:52: ^( STATE typeDefinition ( NOTSIGN )? )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:52: ^( STATE typeDefinition ( NOTSIGN )? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2214,7 +2214,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                         adaptor.addChild(root_1, stream_typeDefinition.nextTree());
 
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:75: ( NOTSIGN )?
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:119:75: ( NOTSIGN )?
                         if ( stream_NOTSIGN.hasNext() ) {
                             adaptor.addChild(root_1, 
                             stream_NOTSIGN.nextNode()
@@ -2265,7 +2265,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "typeDefinition"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:122:1: typeDefinition : NAME sAttributeName ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:122:1: typeDefinition : NAME sAttributeName ;
     public final SaseParser.typeDefinition_return typeDefinition() throws RecognitionException {
         SaseParser.typeDefinition_return retval = new SaseParser.typeDefinition_return();
         retval.start = input.LT(1);
@@ -2280,8 +2280,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree NAME58_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:123:2: ( NAME sAttributeName )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:123:4: NAME sAttributeName
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:123:2: ( NAME sAttributeName )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:123:4: NAME sAttributeName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -2332,7 +2332,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "ktypeDefinition"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:126:1: ktypeDefinition : NAME PLUS kAttributeName ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:126:1: ktypeDefinition : NAME PLUS kAttributeName ;
     public final SaseParser.ktypeDefinition_return ktypeDefinition() throws RecognitionException {
         SaseParser.ktypeDefinition_return retval = new SaseParser.ktypeDefinition_return();
         retval.start = input.LT(1);
@@ -2349,8 +2349,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree PLUS61_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:127:2: ( NAME PLUS kAttributeName )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:127:4: NAME PLUS kAttributeName
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:127:2: ( NAME PLUS kAttributeName )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:127:4: NAME PLUS kAttributeName
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -2409,7 +2409,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "parameterList"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:131:1: parameterList : attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:131:1: parameterList : attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) ;
     public final SaseParser.parameterList_return parameterList() throws RecognitionException {
         SaseParser.parameterList_return retval = new SaseParser.parameterList_return();
         retval.start = input.LT(1);
@@ -2427,8 +2427,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_attributeName=new RewriteRuleSubtreeStream(adaptor,"rule attributeName");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:2: ( attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:4: attributeName ( COMMA attributeName )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:2: ( attributeName ( COMMA attributeName )* -> ^( PARAMLIST ( attributeName )* ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:4: attributeName ( COMMA attributeName )*
             {
             pushFollow(FOLLOW_attributeName_in_parameterList670);
             attributeName63=attributeName();
@@ -2437,7 +2437,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_attributeName.add(attributeName63.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:18: ( COMMA attributeName )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:18: ( COMMA attributeName )*
             loop16:
             do {
                 int alt16=2;
@@ -2450,7 +2450,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt16) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:19: COMMA attributeName
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:19: COMMA attributeName
             	    {
             	    COMMA64=(Token)match(input,COMMA,FOLLOW_COMMA_in_parameterList673); if (state.failed) return retval; 
             	    if ( state.backtracking==0 ) stream_COMMA.add(COMMA64);
@@ -2487,14 +2487,14 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 132:41: -> ^( PARAMLIST ( attributeName )* )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:44: ^( PARAMLIST ( attributeName )* )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:44: ^( PARAMLIST ( attributeName )* )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
                 (CommonTree)adaptor.create(PARAMLIST, "PARAMLIST")
                 , root_1);
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:56: ( attributeName )*
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:132:56: ( attributeName )*
                 while ( stream_attributeName.hasNext() ) {
                     adaptor.addChild(root_1, stream_attributeName.nextTree());
 
@@ -2541,7 +2541,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "attributeName"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:135:1: attributeName : ( kAttributeName -> ^( KATTRIBUTE NAME ) | sAttributeName -> ^( ATTRIBUTE NAME ) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:135:1: attributeName : ( kAttributeName -> ^( KATTRIBUTE NAME ) | sAttributeName -> ^( ATTRIBUTE NAME ) );
     public final SaseParser.attributeName_return attributeName() throws RecognitionException {
         SaseParser.attributeName_return retval = new SaseParser.attributeName_return();
         retval.start = input.LT(1);
@@ -2557,7 +2557,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_sAttributeName=new RewriteRuleSubtreeStream(adaptor,"rule sAttributeName");
         RewriteRuleSubtreeStream stream_kAttributeName=new RewriteRuleSubtreeStream(adaptor,"rule kAttributeName");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:136:2: ( kAttributeName -> ^( KATTRIBUTE NAME ) | sAttributeName -> ^( ATTRIBUTE NAME ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:136:2: ( kAttributeName -> ^( KATTRIBUTE NAME ) | sAttributeName -> ^( ATTRIBUTE NAME ) )
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -2589,7 +2589,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt17) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:136:5: kAttributeName
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:136:5: kAttributeName
                     {
                     pushFollow(FOLLOW_kAttributeName_in_attributeName699);
                     kAttributeName66=kAttributeName();
@@ -2613,7 +2613,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 136:20: -> ^( KATTRIBUTE NAME )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:136:23: ^( KATTRIBUTE NAME )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:136:23: ^( KATTRIBUTE NAME )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2636,7 +2636,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:137:4: sAttributeName
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:137:4: sAttributeName
                     {
                     pushFollow(FOLLOW_sAttributeName_in_attributeName713);
                     sAttributeName67=sAttributeName();
@@ -2660,7 +2660,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 137:19: -> ^( ATTRIBUTE NAME )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:137:22: ^( ATTRIBUTE NAME )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:137:22: ^( ATTRIBUTE NAME )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2713,7 +2713,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "kAttributeName"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:140:1: kAttributeName : NAME BBRACKETLEFT BBRACKETRIGHT ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:140:1: kAttributeName : NAME BBRACKETLEFT BBRACKETRIGHT ;
     public final SaseParser.kAttributeName_return kAttributeName() throws RecognitionException {
         SaseParser.kAttributeName_return retval = new SaseParser.kAttributeName_return();
         retval.start = input.LT(1);
@@ -2730,8 +2730,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree BBRACKETRIGHT70_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:141:2: ( NAME BBRACKETLEFT BBRACKETRIGHT )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:141:4: NAME BBRACKETLEFT BBRACKETRIGHT
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:141:2: ( NAME BBRACKETLEFT BBRACKETRIGHT )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:141:4: NAME BBRACKETLEFT BBRACKETRIGHT
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -2791,7 +2791,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "sAttributeName"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:144:1: sAttributeName : NAME ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:144:1: sAttributeName : NAME ;
     public final SaseParser.sAttributeName_return sAttributeName() throws RecognitionException {
         SaseParser.sAttributeName_return retval = new SaseParser.sAttributeName_return();
         retval.start = input.LT(1);
@@ -2804,8 +2804,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree NAME71_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:145:2: ( NAME )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:145:4: NAME
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:145:2: ( NAME )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:145:4: NAME
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -2849,7 +2849,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "kAttributeUsage"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:148:1: kAttributeUsage : ( NAME current -> ^( NAME CURRENT ) | NAME first -> ^( NAME FIRST ) | NAME last -> ^( NAME PREV ) | NAME len -> ^( NAME LEN ) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:148:1: kAttributeUsage : ( NAME current -> ^( NAME CURRENT ) | NAME first -> ^( NAME FIRST ) | NAME last -> ^( NAME PREV ) | NAME len -> ^( NAME LEN ) );
     public final SaseParser.kAttributeUsage_return kAttributeUsage() throws RecognitionException {
         SaseParser.kAttributeUsage_return retval = new SaseParser.kAttributeUsage_return();
         retval.start = input.LT(1);
@@ -2880,7 +2880,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_len=new RewriteRuleSubtreeStream(adaptor,"rule len");
         RewriteRuleSubtreeStream stream_first=new RewriteRuleSubtreeStream(adaptor,"rule first");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:149:2: ( NAME current -> ^( NAME CURRENT ) | NAME first -> ^( NAME FIRST ) | NAME last -> ^( NAME PREV ) | NAME len -> ^( NAME LEN ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:149:2: ( NAME current -> ^( NAME CURRENT ) | NAME first -> ^( NAME FIRST ) | NAME last -> ^( NAME PREV ) | NAME len -> ^( NAME LEN ) )
             int alt18=4;
             int LA18_0 = input.LA(1);
 
@@ -2948,7 +2948,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt18) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:149:4: NAME current
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:149:4: NAME current
                     {
                     NAME72=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage764); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME72);
@@ -2976,7 +2976,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 149:19: -> ^( NAME CURRENT )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:149:22: ^( NAME CURRENT )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:149:22: ^( NAME CURRENT )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2999,7 +2999,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:150:4: NAME first
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:150:4: NAME first
                     {
                     NAME74=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage781); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME74);
@@ -3027,7 +3027,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 150:15: -> ^( NAME FIRST )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:150:18: ^( NAME FIRST )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:150:18: ^( NAME FIRST )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -3050,7 +3050,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:151:4: NAME last
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:151:4: NAME last
                     {
                     NAME76=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage796); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME76);
@@ -3078,7 +3078,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 151:14: -> ^( NAME PREV )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:151:17: ^( NAME PREV )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:151:17: ^( NAME PREV )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -3101,7 +3101,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 4 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:152:4: NAME len
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:152:4: NAME len
                     {
                     NAME78=(Token)match(input,NAME,FOLLOW_NAME_in_kAttributeUsage811); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(NAME78);
@@ -3129,7 +3129,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 152:13: -> ^( NAME LEN )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:152:16: ^( NAME LEN )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:152:16: ^( NAME LEN )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -3182,7 +3182,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "current"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:155:1: current : BBRACKETLEFT name= NAME BBRACKETRIGHT {...}?;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:155:1: current : BBRACKETLEFT name= NAME BBRACKETRIGHT {...}?;
     public final SaseParser.current_return current() throws RecognitionException {
         SaseParser.current_return retval = new SaseParser.current_return();
         retval.start = input.LT(1);
@@ -3199,8 +3199,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree BBRACKETRIGHT81_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:155:9: ( BBRACKETLEFT name= NAME BBRACKETRIGHT {...}?)
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:156:2: BBRACKETLEFT name= NAME BBRACKETRIGHT {...}?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:155:9: ( BBRACKETLEFT name= NAME BBRACKETRIGHT {...}?)
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:156:2: BBRACKETLEFT name= NAME BBRACKETRIGHT {...}?
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -3265,7 +3265,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "first"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:159:1: first : BBRACKETLEFT number= NUMBER BBRACKETRIGHT {...}?;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:159:1: first : BBRACKETLEFT number= NUMBER BBRACKETRIGHT {...}?;
     public final SaseParser.first_return first() throws RecognitionException {
         SaseParser.first_return retval = new SaseParser.first_return();
         retval.start = input.LT(1);
@@ -3282,8 +3282,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree BBRACKETRIGHT83_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:159:7: ( BBRACKETLEFT number= NUMBER BBRACKETRIGHT {...}?)
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:160:2: BBRACKETLEFT number= NUMBER BBRACKETRIGHT {...}?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:159:7: ( BBRACKETLEFT number= NUMBER BBRACKETRIGHT {...}?)
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:160:2: BBRACKETLEFT number= NUMBER BBRACKETRIGHT {...}?
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -3348,7 +3348,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "last"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:163:1: last : BBRACKETLEFT name= NAME MINUS number= NUMBER BBRACKETRIGHT {...}?;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:163:1: last : BBRACKETLEFT name= NAME MINUS number= NUMBER BBRACKETRIGHT {...}?;
     public final SaseParser.last_return last() throws RecognitionException {
         SaseParser.last_return retval = new SaseParser.last_return();
         retval.start = input.LT(1);
@@ -3369,8 +3369,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree BBRACKETRIGHT86_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:163:6: ( BBRACKETLEFT name= NAME MINUS number= NUMBER BBRACKETRIGHT {...}?)
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:164:2: BBRACKETLEFT name= NAME MINUS number= NUMBER BBRACKETRIGHT {...}?
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:163:6: ( BBRACKETLEFT name= NAME MINUS number= NUMBER BBRACKETRIGHT {...}?)
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:164:2: BBRACKETLEFT name= NAME MINUS number= NUMBER BBRACKETRIGHT {...}?
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -3451,7 +3451,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "len"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:1: len : BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:1: len : BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT ;
     public final SaseParser.len_return len() throws RecognitionException {
         SaseParser.len_return retval = new SaseParser.len_return();
         retval.start = input.LT(1);
@@ -3472,8 +3472,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree BBRACKETRIGHT91_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:5: ( BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:168:2: BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:167:5: ( BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:168:2: BBRACKETLEFT NAME POINT LEN BBRACKETRIGHT
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -3549,7 +3549,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "whereExpressions"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:1: whereExpressions : expression ( ( AND | COMMA ) expression )* -> ^( WHEREEXPRESSION ( expression )* ) ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:171:1: whereExpressions : expression ( ( AND | COMMA ) expression )* -> ^( WHEREEXPRESSION ( expression )* ) ;
     public final SaseParser.whereExpressions_return whereExpressions() throws RecognitionException {
         SaseParser.whereExpressions_return retval = new SaseParser.whereExpressions_return();
         retval.start = input.LT(1);
@@ -3570,8 +3570,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_COMMA=new RewriteRuleTokenStream(adaptor,"token COMMA");
         RewriteRuleSubtreeStream stream_expression=new RewriteRuleSubtreeStream(adaptor,"rule expression");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:2: ( expression ( ( AND | COMMA ) expression )* -> ^( WHEREEXPRESSION ( expression )* ) )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:4: expression ( ( AND | COMMA ) expression )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:2: ( expression ( ( AND | COMMA ) expression )* -> ^( WHEREEXPRESSION ( expression )* ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:4: expression ( ( AND | COMMA ) expression )*
             {
             pushFollow(FOLLOW_expression_in_whereExpressions923);
             expression92=expression();
@@ -3580,7 +3580,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) stream_expression.add(expression92.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:15: ( ( AND | COMMA ) expression )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:15: ( ( AND | COMMA ) expression )*
             loop20:
             do {
                 int alt20=2;
@@ -3593,9 +3593,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt20) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:16: ( AND | COMMA ) expression
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:16: ( AND | COMMA ) expression
             	    {
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:16: ( AND | COMMA )
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:16: ( AND | COMMA )
             	    int alt19=2;
             	    int LA19_0 = input.LA(1);
 
@@ -3615,7 +3615,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    switch (alt19) {
             	        case 1 :
-            	            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:17: AND
+            	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:17: AND
             	            {
             	            AND93=(Token)match(input,AND,FOLLOW_AND_in_whereExpressions927); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_AND.add(AND93);
@@ -3624,7 +3624,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:21: COMMA
+            	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:21: COMMA
             	            {
             	            COMMA94=(Token)match(input,COMMA,FOLLOW_COMMA_in_whereExpressions929); if (state.failed) return retval; 
             	            if ( state.backtracking==0 ) stream_COMMA.add(COMMA94);
@@ -3667,14 +3667,14 @@ public TreeAdaptor getTreeAdaptor() {
             root_0 = (CommonTree)adaptor.nil();
             // 172:41: -> ^( WHEREEXPRESSION ( expression )* )
             {
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:44: ^( WHEREEXPRESSION ( expression )* )
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:44: ^( WHEREEXPRESSION ( expression )* )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
                 (CommonTree)adaptor.create(WHEREEXPRESSION, "WHEREEXPRESSION")
                 , root_1);
 
-                // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:62: ( expression )*
+                // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:172:62: ( expression )*
                 while ( stream_expression.hasNext() ) {
                     adaptor.addChild(root_1, stream_expression.nextTree());
 
@@ -3721,7 +3721,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "expression"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:1: expression : ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) |f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression -> ^( COMPAREEXPRESSION $f1 $op $f2) | sAttributeName ASSIGN mathExpression -> ^( ASSIGNMENT sAttributeName mathExpression ) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:175:1: expression : ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) |f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression -> ^( COMPAREEXPRESSION $f1 $op $f2) | sAttributeName ASSIGN mathExpression -> ^( ASSIGNMENT sAttributeName mathExpression ) );
     public final SaseParser.expression_return expression() throws RecognitionException {
         SaseParser.expression_return retval = new SaseParser.expression_return();
         retval.start = input.LT(1);
@@ -3757,7 +3757,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_sAttributeName=new RewriteRuleSubtreeStream(adaptor,"rule sAttributeName");
         RewriteRuleSubtreeStream stream_mathExpression=new RewriteRuleSubtreeStream(adaptor,"rule mathExpression");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:2: ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) |f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression -> ^( COMPAREEXPRESSION $f1 $op $f2) | sAttributeName ASSIGN mathExpression -> ^( ASSIGNMENT sAttributeName mathExpression ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:2: ( BBRACKETLEFT NAME BBRACKETRIGHT -> ^( IDEXPRESSION NAME ) |f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression -> ^( COMPAREEXPRESSION $f1 $op $f2) | sAttributeName ASSIGN mathExpression -> ^( ASSIGNMENT sAttributeName mathExpression ) )
             int alt22=3;
             switch ( input.LA(1) ) {
             case BBRACKETLEFT:
@@ -3809,7 +3809,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt22) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:4: BBRACKETLEFT NAME BBRACKETRIGHT
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:4: BBRACKETLEFT NAME BBRACKETRIGHT
                     {
                     BBRACKETLEFT96=(Token)match(input,BBRACKETLEFT,FOLLOW_BBRACKETLEFT_in_expression955); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_BBRACKETLEFT.add(BBRACKETLEFT96);
@@ -3838,7 +3838,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 176:36: -> ^( IDEXPRESSION NAME )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:39: ^( IDEXPRESSION NAME )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:176:39: ^( IDEXPRESSION NAME )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -3861,7 +3861,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:3: f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:3: f1= mathExpression (op= SINGLEEQUALS |op= COMPAREOP ) f2= mathExpression
                     {
                     pushFollow(FOLLOW_mathExpression_in_expression975);
                     f1=mathExpression();
@@ -3870,7 +3870,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if (state.failed) return retval;
                     if ( state.backtracking==0 ) stream_mathExpression.add(f1.getTree());
 
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:21: (op= SINGLEEQUALS |op= COMPAREOP )
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:21: (op= SINGLEEQUALS |op= COMPAREOP )
                     int alt21=2;
                     int LA21_0 = input.LA(1);
 
@@ -3890,7 +3890,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt21) {
                         case 1 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:22: op= SINGLEEQUALS
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:22: op= SINGLEEQUALS
                             {
                             op=(Token)match(input,SINGLEEQUALS,FOLLOW_SINGLEEQUALS_in_expression980); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_SINGLEEQUALS.add(op);
@@ -3899,7 +3899,7 @@ public TreeAdaptor getTreeAdaptor() {
                             }
                             break;
                         case 2 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:38: op= COMPAREOP
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:38: op= COMPAREOP
                             {
                             op=(Token)match(input,COMPAREOP,FOLLOW_COMPAREOP_in_expression984); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_COMPAREOP.add(op);
@@ -3919,7 +3919,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_mathExpression.add(f2.getTree());
 
                     // AST REWRITE
-                    // elements: f2, f1, op
+                    // elements: f2, op, f1
                     // token labels: op
                     // rule labels: retval, f1, f2
                     // token list labels: 
@@ -3936,7 +3936,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 177:70: -> ^( COMPAREEXPRESSION $f1 $op $f2)
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:74: ^( COMPAREEXPRESSION $f1 $op $f2)
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:177:74: ^( COMPAREEXPRESSION $f1 $op $f2)
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -3961,7 +3961,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:3: sAttributeName ASSIGN mathExpression
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:3: sAttributeName ASSIGN mathExpression
                     {
                     pushFollow(FOLLOW_sAttributeName_in_expression1011);
                     sAttributeName99=sAttributeName();
@@ -3982,7 +3982,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_mathExpression.add(mathExpression101.getTree());
 
                     // AST REWRITE
-                    // elements: sAttributeName, mathExpression
+                    // elements: mathExpression, sAttributeName
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -3996,7 +3996,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 178:40: -> ^( ASSIGNMENT sAttributeName mathExpression )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:43: ^( ASSIGNMENT sAttributeName mathExpression )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:178:43: ^( ASSIGNMENT sAttributeName mathExpression )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -4049,7 +4049,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "mathExpression"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:1: mathExpression : mult ( ( PLUS ^| MINUS ^) mult )* ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:1: mathExpression : mult ( ( PLUS ^| MINUS ^) mult )* ;
     public final SaseParser.mathExpression_return mathExpression() throws RecognitionException {
         SaseParser.mathExpression_return retval = new SaseParser.mathExpression_return();
         retval.start = input.LT(1);
@@ -4068,8 +4068,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree MINUS104_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:15: ( mult ( ( PLUS ^| MINUS ^) mult )* )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:17: mult ( ( PLUS ^| MINUS ^) mult )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:15: ( mult ( ( PLUS ^| MINUS ^) mult )* )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:17: mult ( ( PLUS ^| MINUS ^) mult )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -4081,7 +4081,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, mult102.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:22: ( ( PLUS ^| MINUS ^) mult )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:22: ( ( PLUS ^| MINUS ^) mult )*
             loop24:
             do {
                 int alt24=2;
@@ -4094,9 +4094,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt24) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:23: ( PLUS ^| MINUS ^) mult
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:23: ( PLUS ^| MINUS ^) mult
             	    {
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:23: ( PLUS ^| MINUS ^)
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:23: ( PLUS ^| MINUS ^)
             	    int alt23=2;
             	    int LA23_0 = input.LA(1);
 
@@ -4116,7 +4116,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    switch (alt23) {
             	        case 1 :
-            	            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:24: PLUS ^
+            	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:24: PLUS ^
             	            {
             	            PLUS103=(Token)match(input,PLUS,FOLLOW_PLUS_in_mathExpression1039); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
@@ -4129,7 +4129,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:30: MINUS ^
+            	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:181:30: MINUS ^
             	            {
             	            MINUS104=(Token)match(input,MINUS,FOLLOW_MINUS_in_mathExpression1042); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
@@ -4192,7 +4192,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "mult"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:1: mult : term ( ( MULT ^| DIVISION ^) term )* ;
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:1: mult : term ( ( MULT ^| DIVISION ^) term )* ;
     public final SaseParser.mult_return mult() throws RecognitionException {
         SaseParser.mult_return retval = new SaseParser.mult_return();
         retval.start = input.LT(1);
@@ -4211,8 +4211,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree DIVISION108_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:7: ( term ( ( MULT ^| DIVISION ^) term )* )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:9: term ( ( MULT ^| DIVISION ^) term )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:7: ( term ( ( MULT ^| DIVISION ^) term )* )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:9: term ( ( MULT ^| DIVISION ^) term )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -4224,7 +4224,7 @@ public TreeAdaptor getTreeAdaptor() {
             if (state.failed) return retval;
             if ( state.backtracking==0 ) adaptor.addChild(root_0, term106.getTree());
 
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:14: ( ( MULT ^| DIVISION ^) term )*
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:14: ( ( MULT ^| DIVISION ^) term )*
             loop26:
             do {
                 int alt26=2;
@@ -4237,9 +4237,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt26) {
             	case 1 :
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:15: ( MULT ^| DIVISION ^) term
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:15: ( MULT ^| DIVISION ^) term
             	    {
-            	    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:15: ( MULT ^| DIVISION ^)
+            	    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:15: ( MULT ^| DIVISION ^)
             	    int alt25=2;
             	    int LA25_0 = input.LA(1);
 
@@ -4259,7 +4259,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    switch (alt25) {
             	        case 1 :
-            	            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:16: MULT ^
+            	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:16: MULT ^
             	            {
             	            MULT107=(Token)match(input,MULT,FOLLOW_MULT_in_mult1064); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
@@ -4272,7 +4272,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:22: DIVISION ^
+            	            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:184:22: DIVISION ^
             	            {
             	            DIVISION108=(Token)match(input,DIVISION,FOLLOW_DIVISION_in_mult1067); if (state.failed) return retval;
             	            if ( state.backtracking==0 ) {
@@ -4335,7 +4335,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "term"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:188:1: term : ( attributeTerm | value | LBRACKET ! mathExpression RBRACKET !);
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:188:1: term : ( attributeTerm | value | LBRACKET ! mathExpression RBRACKET !);
     public final SaseParser.term_return term() throws RecognitionException {
         SaseParser.term_return retval = new SaseParser.term_return();
         retval.start = input.LT(1);
@@ -4356,7 +4356,7 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree RBRACKET114_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:188:5: ( attributeTerm | value | LBRACKET ! mathExpression RBRACKET !)
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:188:5: ( attributeTerm | value | LBRACKET ! mathExpression RBRACKET !)
             int alt27=3;
             switch ( input.LA(1) ) {
             case AVG:
@@ -4392,7 +4392,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt27) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:188:7: attributeTerm
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:188:7: attributeTerm
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -4407,7 +4407,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:189:3: value
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:189:3: value
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -4422,7 +4422,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:190:3: LBRACKET ! mathExpression RBRACKET !
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:190:3: LBRACKET ! mathExpression RBRACKET !
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -4471,7 +4471,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "attributeTerm"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:193:1: attributeTerm : ( aggregation | kAttributeUsage POINT NAME -> ^( KMEMBER kAttributeUsage NAME ) |aName= NAME POINT member= NAME -> ^( MEMBER $aName $member) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:193:1: attributeTerm : ( aggregation | kAttributeUsage POINT NAME -> ^( KMEMBER kAttributeUsage NAME ) |aName= NAME POINT member= NAME -> ^( MEMBER $aName $member) );
     public final SaseParser.attributeTerm_return attributeTerm() throws RecognitionException {
         SaseParser.attributeTerm_return retval = new SaseParser.attributeTerm_return();
         retval.start = input.LT(1);
@@ -4498,7 +4498,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_POINT=new RewriteRuleTokenStream(adaptor,"token POINT");
         RewriteRuleSubtreeStream stream_kAttributeUsage=new RewriteRuleSubtreeStream(adaptor,"rule kAttributeUsage");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:193:14: ( aggregation | kAttributeUsage POINT NAME -> ^( KMEMBER kAttributeUsage NAME ) |aName= NAME POINT member= NAME -> ^( MEMBER $aName $member) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:193:14: ( aggregation | kAttributeUsage POINT NAME -> ^( KMEMBER kAttributeUsage NAME ) |aName= NAME POINT member= NAME -> ^( MEMBER $aName $member) )
             int alt28=3;
             int LA28_0 = input.LA(1);
 
@@ -4533,7 +4533,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt28) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:193:16: aggregation
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:193:16: aggregation
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -4548,7 +4548,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:194:5: kAttributeUsage POINT NAME
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:194:5: kAttributeUsage POINT NAME
                     {
                     pushFollow(FOLLOW_kAttributeUsage_in_attributeTerm1120);
                     kAttributeUsage116=kAttributeUsage();
@@ -4566,7 +4566,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: kAttributeUsage, NAME
+                    // elements: NAME, kAttributeUsage
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -4580,7 +4580,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 194:32: -> ^( KMEMBER kAttributeUsage NAME )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:194:35: ^( KMEMBER kAttributeUsage NAME )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:194:35: ^( KMEMBER kAttributeUsage NAME )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -4605,7 +4605,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:195:5: aName= NAME POINT member= NAME
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:195:5: aName= NAME POINT member= NAME
                     {
                     aName=(Token)match(input,NAME,FOLLOW_NAME_in_attributeTerm1143); if (state.failed) return retval; 
                     if ( state.backtracking==0 ) stream_NAME.add(aName);
@@ -4620,7 +4620,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: member, aName
+                    // elements: aName, member
                     // token labels: member, aName
                     // rule labels: retval
                     // token list labels: 
@@ -4636,7 +4636,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 195:34: -> ^( MEMBER $aName $member)
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:195:37: ^( MEMBER $aName $member)
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:195:37: ^( MEMBER $aName $member)
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -4689,7 +4689,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "aggregation"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:198:1: aggregation : ( aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION aggop $var $member) | aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION aggop $var ( $member)? ) );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:198:1: aggregation : ( aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION aggop $var $member) | aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION aggop $var ( $member)? ) );
     public final SaseParser.aggregation_return aggregation() throws RecognitionException {
         SaseParser.aggregation_return retval = new SaseParser.aggregation_return();
         retval.start = input.LT(1);
@@ -4746,7 +4746,7 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleTokenStream stream_NUMBER=new RewriteRuleTokenStream(adaptor,"token NUMBER");
         RewriteRuleSubtreeStream stream_aggop=new RewriteRuleSubtreeStream(adaptor,"rule aggop");
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:199:2: ( aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION aggop $var $member) | aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION aggop $var ( $member)? ) )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:199:2: ( aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}? -> ^( AGGREGATION aggop $var $member) | aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET -> ^( AGGREGATION aggop $var ( $member)? ) )
             int alt30=2;
             int LA30_0 = input.LA(1);
 
@@ -4814,7 +4814,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt30) {
                 case 1 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:199:5: aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}?
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:199:5: aggop LBRACKET var= NAME BBRACKETLEFT POINT POINT name= NAME MINUS number= NUMBER BBRACKETRIGHT POINT member= NAME RBRACKET {...}?
                     {
                     pushFollow(FOLLOW_aggop_in_aggregation1174);
                     aggop120=aggop();
@@ -4893,7 +4893,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 200:4: -> ^( AGGREGATION aggop $var $member)
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:200:7: ^( AGGREGATION aggop $var $member)
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:200:7: ^( AGGREGATION aggop $var $member)
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -4918,7 +4918,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:201:5: aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:201:5: aggop LBRACKET var= NAME BBRACKETLEFT BBRACKETRIGHT ( POINT member= NAME )? RBRACKET
                     {
                     pushFollow(FOLLOW_aggop_in_aggregation1232);
                     aggop129=aggop();
@@ -4943,7 +4943,7 @@ public TreeAdaptor getTreeAdaptor() {
                     if ( state.backtracking==0 ) stream_BBRACKETRIGHT.add(BBRACKETRIGHT132);
 
 
-                    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:201:56: ( POINT member= NAME )?
+                    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:201:56: ( POINT member= NAME )?
                     int alt29=2;
                     int LA29_0 = input.LA(1);
 
@@ -4952,7 +4952,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     switch (alt29) {
                         case 1 :
-                            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:201:57: POINT member= NAME
+                            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:201:57: POINT member= NAME
                             {
                             POINT133=(Token)match(input,POINT,FOLLOW_POINT_in_aggregation1245); if (state.failed) return retval; 
                             if ( state.backtracking==0 ) stream_POINT.add(POINT133);
@@ -4973,7 +4973,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     // AST REWRITE
-                    // elements: aggop, member, var
+                    // elements: member, var, aggop
                     // token labels: member, var
                     // rule labels: retval
                     // token list labels: 
@@ -4989,7 +4989,7 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
                     // 202:4: -> ^( AGGREGATION aggop $var ( $member)? )
                     {
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:202:7: ^( AGGREGATION aggop $var ( $member)? )
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:202:7: ^( AGGREGATION aggop $var ( $member)? )
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
@@ -5000,7 +5000,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                         adaptor.addChild(root_1, stream_var.nextNode());
 
-                        // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:202:33: ( $member)?
+                        // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:202:33: ( $member)?
                         if ( stream_member.hasNext() ) {
                             adaptor.addChild(root_1, stream_member.nextNode());
 
@@ -5049,7 +5049,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "aggop"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:205:1: aggop : ( MIN | MAX | SUM | COUNT | AVG );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:205:1: aggop : ( MIN | MAX | SUM | COUNT | AVG );
     public final SaseParser.aggop_return aggop() throws RecognitionException {
         SaseParser.aggop_return retval = new SaseParser.aggop_return();
         retval.start = input.LT(1);
@@ -5062,8 +5062,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set135_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:206:2: ( MIN | MAX | SUM | COUNT | AVG )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:206:2: ( MIN | MAX | SUM | COUNT | AVG )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -5116,7 +5116,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "value"
-    // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:209:1: value : ( NUMBER | BOOLEAN | STRING_LITERAL );
+    // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:209:1: value : ( NUMBER | BOOLEAN | STRING_LITERAL );
     public final SaseParser.value_return value() throws RecognitionException {
         SaseParser.value_return retval = new SaseParser.value_return();
         retval.start = input.LT(1);
@@ -5129,8 +5129,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set136_tree=null;
 
         try {
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:209:8: ( NUMBER | BOOLEAN | STRING_LITERAL )
-            // C:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:209:8: ( NUMBER | BOOLEAN | STRING_LITERAL )
+            // E:\\odysseus\\cep\\cep.sase\\src\\de\\uniol\\inf\\is\\odysseus\\cep\\sase\\SaseParser.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 

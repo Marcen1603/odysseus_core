@@ -29,15 +29,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
@@ -1361,82 +1358,79 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 
 	@Override
 	public Object visit(ASTCreateStatement node, Object data) {
-		this.isCreateStatement = true;
-
-		// the second child is either socket or channel or csv source
-		Node child = node.jjtGetChild(1);
-
-		String streamName = node.getStreamName();
-		boolean isPersistent = node.isPersistent();
-
-		// the schema
-		SDFAttribute subject = new SDFAttribute(streamName, streamName + ".subject",
-				SDFDatatype.STRING);
-		SDFAttribute predicate = new SDFAttribute(streamName, streamName
-				+ ".predicate", SDFDatatype.STRING);
-		SDFAttribute object = new SDFAttribute(streamName, streamName + ".object",
-				SDFDatatype.STRING);
-
-		SDFSchema outputSchema = new SDFSchema(streamName, subject, predicate, object);
-
-		AbstractAccessAO accAO = null;		
-		if (child instanceof ASTSocket) {
-			ASTSocket socket = (ASTSocket) child;
-			// accAO = new AccessAO(new SDFSource(streamName,
-			// "SPARQL_Access_Socket"));
-			accAO = new AccessAO(				
-					"",
-					null);
-			accAO.setHost(socket.getHost());
-			accAO.setPort(socket.getPort());			
-
-		} else if (child instanceof ASTChannel) {
-			ASTChannel channel = (ASTChannel) child;
-			// accAO = new AccessAO(new SDFSource(streamName,
-			// "SPARQL_ACCESS_Channel"));
-			accAO = new AccessAO(					
-					"",
-					null);
-			accAO.setHost(channel.getHost());
-			accAO.setPort(channel.getPort());			
-
-		} else if (child instanceof ASTCSVSource) {
-			throw new IllegalArgumentException(
-					"CSV Source currently not supported by SPARQL. Use CQL or PQL instead");
-
-			// ASTCSVSource csv = (ASTCSVSource)child;
-			// accAO = new AccessAO(new SDFSource(streamName,
-			// "SPARQL_ACCESS_CSV"));
-			// accAO = new FileAccessAO(streamName,
-			// RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
-			// ((FileAccessAO)accAO).setPath(csv.getURL());
-
-		} else {
-			throw new QueryParseException(
-					"No access specification (Socket|Channel|CSV) given for stream definition.");
-		}
-
-		accAO.setOutputSchema(outputSchema);
-		accAO.setName(streamName);
-
-		// before adding the acces operator, add the corresponding entity
-//		dd.addEntitySchema(streamName, outputSchema, user);
-
-		// TODO: Is this really necessary?
-		TimestampAO op = addTimestampAO(accAO);
-		
-		if (isPersistent) {
-			op.setUsingNoTime(true);
-		}
-		try {			
-			this.dd.setStream(node.getStreamName(), op, this.user);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-
-		((LinkedList) data).addFirst(op);
-
-		return data;
+		throw new IllegalArgumentException("Create currently not implemented in SPARQL. Use PQL or CQL");
+//		this.isCreateStatement = true;
+//
+//		// the second child is either socket or channel or csv source
+//		Node child = node.jjtGetChild(1);
+//
+//		String streamName = node.getStreamName();
+//		boolean isPersistent = node.isPersistent();
+//
+//		// the schema
+//		SDFAttribute subject = new SDFAttribute(streamName, streamName + ".subject",
+//				SDFDatatype.STRING);
+//		SDFAttribute predicate = new SDFAttribute(streamName, streamName
+//				+ ".predicate", SDFDatatype.STRING);
+//		SDFAttribute object = new SDFAttribute(streamName, streamName + ".object",
+//				SDFDatatype.STRING);
+//
+//		SDFSchema outputSchema = new SDFSchema(streamName, subject, predicate, object);
+//
+//		AbstractAccessAO accAO = null;		
+//		if (child instanceof ASTSocket) {
+//			ASTSocket socket = (ASTSocket) child;
+//			// accAO = new AccessAO(new SDFSource(streamName,
+//			// "SPARQL_Access_Socket"));
+//			accAO = new AccessAO(				
+//					"",
+//					null);
+//			accAO.setHost(socket.getHost());
+//			accAO.setPort(socket.getPort());			
+//
+//		} else if (child instanceof ASTChannel) {
+//			ASTChannel channel = (ASTChannel) child;
+//			// accAO = new AccessAO(new SDFSource(streamName,
+//			// "SPARQL_ACCESS_Channel"));
+//			accAO = new AccessAO(					
+//					"",
+//					null);
+//			accAO.setHost(channel.getHost());
+//			accAO.setPort(channel.getPort());			
+//
+//		} else if (child instanceof ASTCSVSource) {
+//			throw new IllegalArgumentException(
+//					"CSV Source currently not supported by SPARQL. Use CQL or PQL instead");
+//
+//			// ASTCSVSource csv = (ASTCSVSource)child;
+//			// accAO = new AccessAO(new SDFSource(streamName,
+//			// "SPARQL_ACCESS_CSV"));
+//			// accAO = new FileAccessAO(streamName,
+//			// RelationalAccessSourceTypes.RELATIONAL_ATOMIC_DATA_INPUT_STREAM_ACCESS,null);
+//			// ((FileAccessAO)accAO).setPath(csv.getURL());
+//
+//		} else {
+//			throw new QueryParseException(
+//					"No access specification (Socket|Channel|CSV) given for stream definition.");
+//		}
+//
+//		accAO.setOutputSchema(outputSchema);
+//		accAO.setName(streamName);
+//
+//		// before adding the acces operator, add the corresponding entity
+////		dd.addEntitySchema(streamName, outputSchema, user);
+//
+//		// TODO: Is this really necessary?
+//		TimestampAO op = addTimestampAO(accAO);
+//		
+//		if (isPersistent) {
+//			op.setUsingNoTime(true);
+//		}
+//		CreateStreamCommand cmd = new CreateStreamCommand(node.getStreamName(), op, user);
+//		
+//		((LinkedList) data).addFirst(op);
+//
+//		return data;
 	}
 
 	@Override
@@ -1551,20 +1545,20 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		return retval;
 	}
 
-	private static TimestampAO addTimestampAO(ILogicalOperator operator) {
-		TimestampAO timestampAO = new TimestampAO();
-		for (SDFAttribute attr : operator.getOutputSchema()) {
-			if (attr.getDatatype().getURI().equals("StartTimestamp")) {
-				timestampAO.setStartTimestamp(attr);
-			}
-
-			if (attr.getDatatype().getURI().equals("EndTimestamp")) {
-				timestampAO.setEndTimestamp(attr);
-			}
-		}
-
-		timestampAO.subscribeTo(operator, operator.getOutputSchema());
-		return timestampAO;
-	}
+//	private static TimestampAO addTimestampAO(ILogicalOperator operator) {
+//		TimestampAO timestampAO = new TimestampAO();
+//		for (SDFAttribute attr : operator.getOutputSchema()) {
+//			if (attr.getDatatype().getURI().equals("StartTimestamp")) {
+//				timestampAO.setStartTimestamp(attr);
+//			}
+//
+//			if (attr.getDatatype().getURI().equals("EndTimestamp")) {
+//				timestampAO.setEndTimestamp(attr);
+//			}
+//		}
+//
+//		timestampAO.subscribeTo(operator, operator.getOutputSchema());
+//		return timestampAO;
+//	}
 
 }

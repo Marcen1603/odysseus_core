@@ -31,12 +31,12 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class SaseBuilder implements IQueryParser, BundleActivator {
@@ -71,7 +71,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<ILogicalQuery> parse(Reader reader, ISession user,
+	public List<IExecutorCommand> parse(Reader reader, ISession user,
 			IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dd = dd;
@@ -85,12 +85,12 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 
 	@Override
-	public List<ILogicalQuery> parse(String text, ISession user,
+	public List<IExecutorCommand> parse(String text, ISession user,
 			IDataDictionary dd) throws QueryParseException {
 		return parse(text, user, dd, true, false);
 	}
 
-	public List<ILogicalQuery> parse(String text, ISession user,
+	public List<IExecutorCommand> parse(String text, ISession user,
 			IDataDictionary dd, boolean attachSources, boolean createTmpQuery)
 			throws QueryParseException {
 		this.user = user;
@@ -99,10 +99,10 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		return processParse(lex, attachSources, createTmpQuery);
 	}
 
-	private List<ILogicalQuery> processParse(SaseLexer lexer,
+	private List<IExecutorCommand> processParse(SaseLexer lexer,
 			boolean attachSources, boolean createTmpQuery)
 			throws QueryParseException {
-		ArrayList<ILogicalQuery> retList = new ArrayList<ILogicalQuery>();
+		ArrayList<IExecutorCommand> retList = new ArrayList<>();
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		SaseParser parser = new SaseParser(tokens);
 		SaseParser.start_return ret;
@@ -123,21 +123,23 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		CepVariable.setSymbolTableOperationFactory(walker.symTableOpFac);
 
 		try {
-			ILogicalOperator ao = walker.start(attachSources);
-			if (ao != null) {
-				ILogicalQuery query;
-				if (createTmpQuery) {
-					query = new LogicalQuery(-1);
-				} else {
-					query = new LogicalQuery();
-				}
-				query.setParserId(getLanguage());
-				query.setLogicalPlan(ao, true);
-				retList.add(query);
+			ILogicalQuery query;
+			if (createTmpQuery) {
+				query = new LogicalQuery(-1);
 			} else {
-				throw new QueryParseException(
-						"Could not create logical Operator");
+				query = new LogicalQuery();
 			}
+			query.setParserId(getLanguage());
+
+			IExecutorCommand cmd = walker.start(attachSources, query);
+			retList.add(cmd);
+			
+			//			if (ao != null) {
+//				retList.add(query);
+//			} else {
+//				throw new QueryParseException(
+//						"Could not create logical Operator");
+//			}
 		} catch (RecognitionException e) {
 			throw new QueryParseException(e);
 		}

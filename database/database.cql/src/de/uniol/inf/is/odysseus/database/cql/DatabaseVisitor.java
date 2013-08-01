@@ -34,9 +34,10 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateStreamCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
@@ -109,12 +110,13 @@ public class DatabaseVisitor extends CQLParser {
 			}
 		}
 		source.initialize();
-		try {
-			getDataDictionary().setStream(name, source, getCaller());
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return source;
+		CreateStreamCommand cmd = new CreateStreamCommand(name, source, getCaller());
+//		try {
+//			getDataDictionary().setStream(name, source, getCaller());
+//		} catch (DataDictionaryException e) {
+//			throw new QueryParseException(e.getMessage());
+//		}
+		return cmd;
 
 	}
 
@@ -153,8 +155,8 @@ public class DatabaseVisitor extends CQLParser {
 			}
 		}
 		sinkAO.initialize();
-		getDataDictionary().addSink(name, sinkAO, getCaller());
-		return sinkAO;
+		CreateSinkCommand command = new CreateSinkCommand(name, sinkAO, getCaller());
+		return command;
 	}
 
 	@Override

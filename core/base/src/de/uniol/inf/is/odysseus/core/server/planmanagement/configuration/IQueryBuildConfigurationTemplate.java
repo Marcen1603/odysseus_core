@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
-public interface IQueryBuildConfiguration {
+public interface IQueryBuildConfigurationTemplate {
 
 	public List<IQueryBuildSetting<?>> getConfiguration();
 	public String getName();

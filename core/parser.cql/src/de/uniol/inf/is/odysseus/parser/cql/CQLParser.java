@@ -26,13 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -45,6 +43,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.DropSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.DropStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.DropViewCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sla.Metric;
@@ -88,7 +93,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
-	private List<ILogicalQuery> plans = new ArrayList<ILogicalQuery>();
+	final private List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();
 	private ISession caller;
 	private IDataDictionary dataDictionary;
 	private static CQLParser instance = null;
@@ -115,14 +120,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		return parse(new StringReader(query), user, dd);
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		try {
@@ -136,7 +141,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			cqlParser.setUser(user);
 			cqlParser.setDataDictionary(dataDictionary);
 			cqlParser.visit(statement, null);
-			return cqlParser.plans;
+			return cqlParser.commands;
 		} catch (ParseException e) {
 			throw new QueryParseException(e.getMessage(), e);
 		}
@@ -173,9 +178,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		query.setParserId(getLanguage());
 		query.setPriority(priority);
 		query.setLogicalPlan(op, true);
-
-		plans.add(query);
-		return plans;
+		CreateQueryCommand cmd = new CreateQueryCommand(query, caller);
+		commands.add(cmd);
+		return cmd;
 	}
 
 	@Override
@@ -316,7 +321,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			ASTAccessSource accessNode = (ASTAccessSource) node.jjtGetChild(sourceDefinitionNodeAt);
 			this.visit(accessNode, node);
 		}
-		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary);
+		CreateStreamVisitor v = new CreateStreamVisitor(caller, dataDictionary, commands);
 		return v.visit(node, data);
 	}
 
@@ -327,7 +332,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateViewStatement node, Object data) throws QueryParseException {
-		CreateViewVisitor v = new CreateViewVisitor(caller, dataDictionary);
+		CreateViewVisitor v = new CreateViewVisitor(caller, dataDictionary, commands);
 		return v.visit(node, data);
 	}
 
@@ -374,7 +379,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public List<SDFAttribute> visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
-		CreateStreamVisitor csv = new CreateStreamVisitor(getCaller(), getDataDictionary());
+		CreateStreamVisitor csv = new CreateStreamVisitor(getCaller(), getDataDictionary(), commands);
 		csv.visit(node, data);
 		return csv.getAttributes();		
 	}
@@ -686,33 +691,34 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {
-		try {
-			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
-			m.invoke(bsv, caller);
-
-			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
-			m2.invoke(bsv, dataDictionary);
-
-			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTCreateBroker.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
-
-			addQuery(sourceOp);
-			return plans;
-		} catch (ClassNotFoundException e) {
-			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {
-			throw new QueryParseException("Error while parsing CREATE BROKER statement", e.getCause());
-		}
+//		try {
+//			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+//			Object bsv = brokerSourceVisitor.newInstance();
+//			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
+//			m.invoke(bsv, caller);
+//
+//			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+//			m2.invoke(bsv, dataDictionary);
+//
+//			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTCreateBroker.class, Object.class);
+//			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
+//
+//			addQuery(sourceOp);
+//			return commands;
+//		} catch (ClassNotFoundException e) {
+//			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
+//		} catch (Exception e) {
+//			throw new QueryParseException("Error while parsing CREATE BROKER statement", e.getCause());
+//		}
+		return null;
 	}
 
-	private void addQuery(AbstractLogicalOperator sourceOp) {
-		LogicalQuery query = new LogicalQuery();
-		query.setParserId(getLanguage());
-		query.setLogicalPlan(sourceOp, true);
-		plans.add(query);
-	}
+//	private void addQuery(AbstractLogicalOperator sourceOp) {
+//		LogicalQuery query = new LogicalQuery();
+//		query.setParserId(getLanguage());
+//		query.setLogicalPlan(sourceOp, true);
+//		commands.add(query);
+//	}
 
 	@Override
 	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
@@ -721,28 +727,29 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public Object visit(ASTBrokerSelectInto node, Object data) throws QueryParseException {
-
-		try {
-			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
-			m.invoke(bsv, caller);
-			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
-			m2.invoke(bsv, dataDictionary);
-
-			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSelectInto.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
-
-			addQuery(sourceOp);
-			return plans;
-		} catch (ClassNotFoundException e) {
-			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
-		} catch (Exception e) {
-			throw new QueryParseException("Error while parsing the SELECT INTO statement", e.getCause());
-		}
+//
+//		try {
+//			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
+//			Object bsv = brokerSourceVisitor.newInstance();
+//			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
+//			m.invoke(bsv, caller);
+//			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
+//			m2.invoke(bsv, dataDictionary);
+//
+//			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSelectInto.class, Object.class);
+//			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
+//
+//			addQuery(sourceOp);
+//			return commands;
+//		} catch (ClassNotFoundException e) {
+//			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
+//		} catch (Exception e) {
+//			throw new QueryParseException("Error while parsing the SELECT INTO statement", e.getCause());
+//		}
+		return null;
 	}
-
-	@Override
+//
+//	@Override
 	public Object visit(ASTBrokerAsSource node, Object data) throws QueryParseException {
 		return null;
 	}
@@ -856,20 +863,17 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				ifExists = true;
 			}
 		}
-		if (ifExists) {
-			if (dataDictionary.containsViewOrStream(streamname, caller)) {
-				dataDictionary.removeViewOrStream(streamname, caller);
-			}
-		} else {
-			dataDictionary.removeViewOrStream(streamname, caller);
-		}
+		DropStreamCommand cmd = new DropStreamCommand(streamname, ifExists, caller);
+		commands.add(cmd);
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropViewStatement node, Object data) throws QueryParseException {
 		String viewname = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		dataDictionary.removeViewOrStream(viewname, caller);
+		
+		DropViewCommand cmd = new DropViewCommand(viewname, false, caller);
+		commands.add(cmd);
 		return null;
 	}
 
@@ -1202,8 +1206,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTCreateSinkStatement node, Object data) throws QueryParseException {
 		String sinkName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		node.jjtGetChild(1).jjtAccept(this, sinkName);
-		return null;
+		return node.jjtGetChild(1).jjtAccept(this, sinkName);
 	}
 
 	@Override
@@ -1218,8 +1221,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		LogicalQuery query = new LogicalQuery();
 		query.setParserId(getLanguage());
 		query.setLogicalPlan(sender, true);
-		plans.add(query);
-		return plans;
+		CreateQueryCommand cmd = new CreateQueryCommand(query, caller);
+		commands.add(cmd);
+		return commands;
 	}
 
 
@@ -1303,11 +1307,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 
 		ILogicalOperator sink = new FileSinkAO(filename, type, writeAfterElements, printMetadata);
-		try {
-			dataDictionary.addSink(sinkName, sink, caller);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
+		CreateSinkCommand cmd = new CreateSinkCommand(sinkName, sink, getCaller());
+		commands.add(cmd);
 		return null;
 	}
 
@@ -1323,11 +1324,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ILogicalOperator sink = new SocketSinkAO(port, sinkType, loginNeeded, sinkName);
 		ILogicalOperator transformMeta = new TimestampToPayloadAO();
 		sink.subscribeToSource(transformMeta, 0, 0, null);
-		try {
-			dataDictionary.addSink(sinkName, sink, caller);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
+		CreateSinkCommand cmd = new CreateSinkCommand(sinkName, sink, caller);
+		commands.add(cmd);
 		return null;
 	}
 
@@ -1341,6 +1339,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		IVisitor visitor = VisitorFactory.getInstance().getVisitor("de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
+		visitor.setCommands(commands);
 		visitor.visit(node, data, this);
 		return null;
 	}
@@ -1355,6 +1354,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		IVisitor visitor = VisitorFactory.getInstance().getVisitor("de.uniol.inf.is.odysseus.context.cql.ContextVisitor");
 		visitor.setDataDictionary(dataDictionary);
 		visitor.setUser(caller);
+		visitor.setCommands(commands);
 		visitor.visit(node, data, this);
 		return null;
 	}
@@ -1406,7 +1406,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sender.setOptions(options);
 		sender.setSink(name);
 		
-		getDataDictionary().addSink(name, sender, getCaller());
+		CreateSinkCommand cmd = new CreateSinkCommand(name, sender, getCaller());
+		commands.add(cmd);
 		
 		return null;
 	}
@@ -1469,7 +1470,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		access.setDataHandler(datahandler);
 		access.setTransportHandler(transport);
 		access.setOutputSchema(outputSchema);
-		getDataDictionary().setStream(sourceName, access, getCaller());		
+		CreateStreamCommand cmd = new CreateStreamCommand(sourceName, access, getCaller());
+		commands.add(cmd);
 		
 		return null;
 	}
@@ -1483,13 +1485,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				ifExists = true;
 			}
 		}
-		if (ifExists) {
-			if(dataDictionary.containsSink(sinkname, caller)){
-				dataDictionary.removeSink(sinkname, caller);
-			}			
-		} else {
-			dataDictionary.removeSink(sinkname, caller);
-		}
+		DropSinkCommand cmd = new DropSinkCommand(sinkname, ifExists,caller);
+		commands.add(cmd);
 		return null;
 	}
 

@@ -20,18 +20,18 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfigurationTemplate;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterShareSimilarOperators;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class BenchmarkQueryBuildConfiguration extends
-		AbstractQueryBuildConfiguration {
+public class BenchmarkQueryBuildConfigurationTemplate extends
+		AbstractQueryBuildConfigurationTemplate {
 	
-	public BenchmarkQueryBuildConfiguration() {
+	public BenchmarkQueryBuildConfigurationTemplate() {
 		TransformationConfiguration trafoconfig = new TransformationConfiguration(
 				"relational", 
 				ITimeInterval.class, ILatency.class);
@@ -44,7 +44,7 @@ public class BenchmarkQueryBuildConfiguration extends
 
 	
 	
-	public BenchmarkQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+	public BenchmarkQueryBuildConfigurationTemplate(List<IQueryBuildSetting<?>> settings) {
 		settings.addAll(settings);
 	}
 
@@ -56,8 +56,8 @@ public class BenchmarkQueryBuildConfiguration extends
 	}
 	
 	@Override
-	public IQueryBuildConfiguration clone() {
-		return new BenchmarkQueryBuildConfiguration(settings);
+	public IQueryBuildConfigurationTemplate clone() {
+		return new BenchmarkQueryBuildConfigurationTemplate(settings);
 	}
 
 }

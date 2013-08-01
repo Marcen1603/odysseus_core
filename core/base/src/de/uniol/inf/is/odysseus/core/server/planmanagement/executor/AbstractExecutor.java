@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
@@ -54,7 +55,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ISettingChangeListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
@@ -148,14 +150,14 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	/**
 	 * Data Dictionary
 	 */
-	private IDataDictionary dataDictionary;
+	private IDataDictionaryWritable dataDictionary;
 
 	/**
 	 * Standard Configurationen
 	 */
 	// protected Map<String, List<IQueryBuildSetting<?>>> queryBuildConfigs =
 	// new HashMap<String, List<IQueryBuildSetting<?>>>();
-	protected Map<String, IQueryBuildConfiguration> queryBuildConfigs = new HashMap<String, IQueryBuildConfiguration>();
+	protected Map<String, IQueryBuildConfigurationTemplate> queryBuildConfigs = new HashMap<String, IQueryBuildConfigurationTemplate>();
 
 	/**
 	 * Alle Listener f�r Anfragebearbeitungs-Nachrichten
@@ -463,7 +465,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * 
 	 * @param config
 	 */
-	public void bindQueryBuildConfiguration(IQueryBuildConfiguration config) {
+	public void bindQueryBuildConfiguration(IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.put(config.getName(), config);
 		LOG.debug("Query Build Configuration " + config + " bound");
 	}
@@ -473,7 +475,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * 
 	 * @param config
 	 */
-	public void unbindQueryBuildConfiguration(IQueryBuildConfiguration config) {
+	public void unbindQueryBuildConfiguration(IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.remove(config.getName());
 	}
 
@@ -504,7 +506,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	protected void bindDataDictionary(IDataDictionary datadictionary) {
 		if (dataDictionary == null) {
-			dataDictionary = datadictionary;
+			dataDictionary = (IDataDictionaryWritable)datadictionary;
 		} else {
 			throw new RuntimeException("DataDictionary already bound!");
 		}
@@ -957,7 +959,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public IDataDictionary getDataDictionary() {
+	public IDataDictionaryWritable getDataDictionary() {
 		return dataDictionary;
 	}
 
@@ -1001,7 +1003,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	// Compiler Facade
 	@Override
-	public List<ILogicalQuery> translateQuery(String queries, String parser,
+	public List<IExecutorCommand> translateQuery(String queries, String parser,
 			ISession currentUser) {
 		return getCompiler().translateQuery(queries, parser, currentUser,
 				getDataDictionary());

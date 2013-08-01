@@ -37,23 +37,11 @@ public interface IDataDictionary extends IAddDataType {
 	String createUserUri(String resource, ISession caller);
 
 	// -------------------------------------------------------------------------
-	// Entity Management
-	// -------------------------------------------------------------------------
-//	void addEntity(String entity, ISession user) throws PermissionException, DataDictionaryException;
-//	
-//	void removeEntity(String name, ISession user) throws PermissionException, DataDictionaryException;
-//
-//	boolean containsEntity(String name, ISession user) throws PermissionException, DataDictionaryException;
-
-
-	// -------------------------------------------------------------------------
 	// View and Stream Management
 	// -------------------------------------------------------------------------
 
 	ILogicalOperator getViewOrStream(String viewname, ISession caller)
 			throws DataDictionaryException;
-
-	ILogicalOperator removeViewOrStream(String viewname, ISession caller);
 
 	boolean containsViewOrStream(String viewName, ISession user);
 
@@ -63,11 +51,6 @@ public interface IDataDictionary extends IAddDataType {
 	// View Management
 	// -------------------------------------------------------------------------
 
-	// boolean isView(String name);
-
-	void setView(String viewname, ILogicalOperator topOperator, ISession caller)
-			throws DataDictionaryException;
-
 	Set<Entry<String, ILogicalOperator>> getViews(ISession caller);
 
 	ILogicalOperator getView(String viewname, ISession caller);
@@ -75,9 +58,6 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Stream Management
 	// -------------------------------------------------------------------------
-
-	void setStream(String streamname, ILogicalOperator plan, ISession caller)
-			throws DataDictionaryException;
 
 	Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
 
@@ -89,11 +69,6 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Sink Management
 	// -------------------------------------------------------------------------
-
-	void addSink(String sinkname, ILogicalOperator sink, ISession caller)
-			throws DataDictionaryException;
-
-	ILogicalOperator removeSink(String name, ISession caller);
 
 	Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
 
@@ -110,19 +85,18 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Datatype Management
 	// -------------------------------------------------------------------------
-	void removeDatatype(String name) throws DataDictionaryException;
-
 	SDFDatatype getDatatype(String name) throws DataDictionaryException;
 
 	Set<String> getDatatypes();
 
 	boolean existsDatatype(String dtName);
+	
+	// TODO: Should possible be removed?
+	void removeDatatype(String name) throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// Query Management
 	// -------------------------------------------------------------------------
-
-	void addQuery(ILogicalQuery q, ISession caller, String queryBuildConfigName);
 
 	ILogicalQuery getQuery(int id, ISession caller);
 
@@ -130,7 +104,6 @@ public interface IDataDictionary extends IAddDataType {
 
 	List<ILogicalQuery> getQueries(IUser user, ISession caller);
 
-	void removeQuery(ILogicalQuery q, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Rights Management
@@ -157,10 +130,6 @@ public interface IDataDictionary extends IAddDataType {
 
 	boolean containsOperator(String id);
 
-	void setOperator(String id, IPhysicalOperator physical);
-
-	void removeOperator(String id);
-
 	IPhysicalOperator getOperator(String id);
 
 	// ------------------------------------------
@@ -168,21 +137,9 @@ public interface IDataDictionary extends IAddDataType {
 	// ------------------------------------------
 	ISource<?> getAccessPlan(String uri);
 
-	void putAccessPlan(String uri, ISource<?> s);
-
-	void removeAccessPlan(String uri);
-
 	Map<String, ISource<?>> getSources();
 
-	void clearSources();
-
-	void removeClosedSources();
-
-	void removeClosedSinks();
-
 	ISink<?> getSinkplan(String sinkName);
-
-	void putSinkplan(String name, ISink<?> sinkPO);
 
 	// ----------------------------------------------------------
 	// DD Listener
@@ -195,10 +152,7 @@ public interface IDataDictionary extends IAddDataType {
 	// -------------------------------------------------------------------------
 	// Stored Procedure Management
 	// -------------------------------------------------------------------------
-	void addStoredProcedure(StoredProcedure procedure, ISession user);
-
-	void removeStoredProcedure(String name, ISession user);
-
+	
 	boolean containsStoredProcedure(String name, ISession user);
 
 	StoredProcedure getStoredProcedure(String name, ISession user);

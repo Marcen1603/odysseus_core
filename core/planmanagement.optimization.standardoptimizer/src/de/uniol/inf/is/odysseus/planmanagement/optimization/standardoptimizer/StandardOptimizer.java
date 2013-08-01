@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.AbstractOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
@@ -55,7 +56,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 
 	@Override
 	public List<IPhysicalQuery> optimize(IServerExecutor executor, IExecutionPlan currentExecPlan,  List<ILogicalQuery> queries,
-			OptimizationConfiguration parameter, IDataDictionary dd)
+			OptimizationConfiguration parameter, IDataDictionaryWritable dd)
 			throws QueryOptimizationException {
 		List<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();		
 		if (!queries.isEmpty()) {

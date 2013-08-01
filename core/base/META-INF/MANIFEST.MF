@@ -16,7 +16,8 @@ Import-Package:
 Service-Component: OSGI-INF/*
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Export-Package: de.uniol.inf.is.odysseus.core.server,
+Export-Package: 
+ de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.ac,
  de.uniol.inf.is.odysseus.core.server.collection,
  de.uniol.inf.is.odysseus.core.server.costmodel,
@@ -52,6 +53,7 @@ Export-Package: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor,
+ de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.setting,
  de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution,

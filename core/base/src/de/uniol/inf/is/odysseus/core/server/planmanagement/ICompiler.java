@@ -21,6 +21,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.plangeneration.IPlanGenerator;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -46,7 +47,7 @@ public interface ICompiler extends IInfoProvider, IRewrite, IPlanGenerator {
 	 * @throws QueryParseException
 	 *             An {@link Exception} which occurs during parsing the query.
 	 */
-	public List<ILogicalQuery> translateQuery(String query, String parserID, ISession user, IDataDictionary dd)
+	public List<IExecutorCommand> translateQuery(String query, String parserID, ISession user, IDataDictionary dd)
 			throws QueryParseException;
 
 	public List<IPhysicalQuery> translateAndTransformQuery(String query, String parserID, ISession user, IDataDictionary dd,

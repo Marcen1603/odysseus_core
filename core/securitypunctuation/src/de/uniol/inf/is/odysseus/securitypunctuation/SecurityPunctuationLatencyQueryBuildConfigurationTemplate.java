@@ -20,8 +20,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfigurationTemplate;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
@@ -29,14 +29,14 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class SecurityPunctuationBenchmarkQueryBuildConfiguration extends
-		AbstractQueryBuildConfiguration {
+public class SecurityPunctuationLatencyQueryBuildConfigurationTemplate extends
+		AbstractQueryBuildConfigurationTemplate {
 
-	public SecurityPunctuationBenchmarkQueryBuildConfiguration() {
+	public SecurityPunctuationLatencyQueryBuildConfigurationTemplate() {
 		TransformationConfiguration transformationConfiguration = new TransformationConfiguration(
 				"relational", 
 				ITimeInterval.class, ILatency.class);
-//		transformationConfiguration.setOption("isSecurityAware", true);
+		transformationConfiguration.setOption("isSecurityAware", true);
 		settings.add(new ParameterTransformationConfiguration(transformationConfiguration));
 		
 		settings.add(ParameterDoRewrite.TRUE);
@@ -45,18 +45,18 @@ public class SecurityPunctuationBenchmarkQueryBuildConfiguration extends
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 	
-	public SecurityPunctuationBenchmarkQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+	public SecurityPunctuationLatencyQueryBuildConfigurationTemplate(List<IQueryBuildSetting<?>> settings) {
 		settings.addAll(settings);
 	}
 
 	@Override
 	public String getName() {
-		return "SecurityPunctuationBenchmark";
+		return "SecurityPunctuationLatency";
 	}
 	
 	@Override
-	public IQueryBuildConfiguration clone() {		
-		return new SecurityPunctuationLatencyQueryBuildConfiguration(settings);
+	public IQueryBuildConfigurationTemplate clone() {		
+		return new SecurityPunctuationLatencyQueryBuildConfigurationTemplate(settings);
 	}
 
 }

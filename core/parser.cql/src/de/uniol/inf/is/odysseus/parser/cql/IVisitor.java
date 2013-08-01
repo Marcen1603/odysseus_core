@@ -15,7 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.parser.cql;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 
@@ -24,4 +27,5 @@ public interface IVisitor {
 	public Object visit(SimpleNode node, Object data, Object baseObject); 
 	public void setUser(ISession user);
 	public void setDataDictionary(IDataDictionary dd);
+	public void setCommands(List<IExecutorCommand> commands);
 }

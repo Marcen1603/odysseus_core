@@ -16,17 +16,17 @@
 package de.uniol.inf.is.odysseus.core.server.util;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 public class RemoveIdLogicalGraphVisitor<T extends ILogicalOperator>
 		implements IGraphNodeVisitor<T, T> {
 
-	private IDataDictionary dd;
+	private IDataDictionaryWritable dd;
 	private ISession caller;
 
-	public RemoveIdLogicalGraphVisitor(IDataDictionary dd, ISession caller) {
+	public RemoveIdLogicalGraphVisitor(IDataDictionaryWritable dd, ISession caller) {
 		this.dd = dd;
 		this.caller = caller;
 	}

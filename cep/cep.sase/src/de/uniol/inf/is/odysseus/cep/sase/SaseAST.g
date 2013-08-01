@@ -48,6 +48,10 @@ options {
 	import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 	import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 	import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateViewCommand;
+	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+	import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;	
 		
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
@@ -198,7 +202,7 @@ catch(RecognitionException e){
 }
 }
 
-start[boolean attachSources] returns [ILogicalOperator op]
+start[boolean attachSources, ILogicalQuery lq] returns [IExecutorCommand op]
 @init {
 this.attachSources = attachSources;
 }
@@ -206,17 +210,14 @@ this.attachSources = attachSources;
   ^(CREATEVIEW n=NAME q=query) // Create a new Logical View
   
    {
-    try {
-    	dd.setView(n.getText(), q, user);
-    } catch (DataDictionaryException e) {
-    	throw new QueryParseException(e.getMessage());
-    }
-    getLogger().debug("Created New View " + n + " " + q);
-    $op = q;
+    CreateViewCommand cmd = new CreateViewCommand(n.getText(), q, user);
+    $op = cmd;
    }
   | o=query 
             {
-             $op = o;
+            lq.setLogicalPlan(o, true);
+            CreateQueryCommand cmd = new CreateQueryCommand(lq, user);
+             $op = cmd;
             } // Only Query
   ;
 

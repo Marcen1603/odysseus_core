@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.keyvalue;
+package de.uniol.inf.is.odysseus.relational_interval;
 /********************************************************************************** 
   * Copyright 2011 The Odysseus Team
   *
@@ -35,8 +35,8 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfigurationTemplate;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
@@ -44,13 +44,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
-public class KeyValueQueryBuildConfiguration extends
-		AbstractQueryBuildConfiguration {
+public class StandardQueryBuildConfigurationTemplate extends
+		AbstractQueryBuildConfigurationTemplate {
 
-	public KeyValueQueryBuildConfiguration() {
+	public StandardQueryBuildConfigurationTemplate() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
-						"keyvalue", 
+						"relational", 
 						ITimeInterval.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);
@@ -58,18 +58,18 @@ public class KeyValueQueryBuildConfiguration extends
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 	
-	public KeyValueQueryBuildConfiguration(List<IQueryBuildSetting<?>> settings) {
+	public StandardQueryBuildConfigurationTemplate(List<IQueryBuildSetting<?>> settings) {
 		settings.addAll(settings);
 	}
 
 	@Override
 	public String getName() {
-		return "KeyValue";
+		return "Standard";
 	}
 	
 	@Override
-	public IQueryBuildConfiguration clone() {
-		return new KeyValueQueryBuildConfiguration(settings);
+	public IQueryBuildConfigurationTemplate clone() {
+		return new StandardQueryBuildConfigurationTemplate(settings);
 	}
 
 }

@@ -20,8 +20,10 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
@@ -32,46 +34,54 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 
 // TODO javaDoc M.B.
-public class QueryPartManager implements IAdvertisementListener, IDataDictionaryListener {
+public class QueryPartManager implements IAdvertisementListener,
+		IDataDictionaryListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(QueryPartManager.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(QueryPartManager.class);
 
 	private static QueryPartManager instance;
 
 	private IServerExecutor executor;
 	private IDataDictionary dataDictionary;
-	
-	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps.newConcurrentMap();
+
+	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps
+			.newConcurrentMap();
 
 	public QueryPartManager() {
 		instance = this;
 	}
 
 	@Override
-	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
-		
-		if(advertisement instanceof QueryPartAdvertisement) {
-			
+	public void advertisementAdded(IAdvertisementManager sender,
+			Advertisement advertisement) {
+
+		if (advertisement instanceof QueryPartAdvertisement) {
+
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
-			
-			if(adv.getPeerID().equals(P2PDictionaryService.get().getLocalPeerID())) {
-				
-				LOG.debug("PQL statement to be executed on peer {}: {}", P2PDictionaryService.get().getLocalPeerName(), 
-						((QueryPartAdvertisement) advertisement).getPqlStatement());
-					
+
+			if (adv.getPeerID().equals(
+					P2PDictionaryService.get().getLocalPeerID())) {
+
+				LOG.debug("PQL statement to be executed on peer {}: {}",
+						P2PDictionaryService.get().getLocalPeerName(),
+						((QueryPartAdvertisement) advertisement)
+								.getPqlStatement());
+
 				final List<String> neededSources = determineNeededSources(adv);
-					
-				if(neededSources.isEmpty()) {
-					
+
+				if (neededSources.isEmpty()) {
+
 					callExecutor(adv);
 					LOG.debug("All source available for advertisement {}", adv);
-					
-				} else synchronized(neededSourcesMap) {
-					
-					neededSourcesMap.put(adv, neededSources);
-					
-				}
-				
+
+				} else
+					synchronized (neededSourcesMap) {
+
+						neededSourcesMap.put(adv, neededSources);
+
+					}
+
 			}
 		}
 	}
@@ -79,57 +89,76 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private List<String> determineNeededSources(final QueryPartAdvertisement adv) {
 		final List<String> neededSources = Lists.newArrayList();
 		neededSourcesMap.putIfAbsent(adv, neededSources);
-		final List<ILogicalQuery> queries = CompilerService.get().translateQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), dataDictionary);
-		for (ILogicalQuery query : queries) {
+		final List<IExecutorCommand> queries = CompilerService.get()
+				.translateQuery(adv.getPqlStatement(), "PQL",
+						SessionManagementService.getActiveSession(),
+						dataDictionary);
+		for (IExecutorCommand q : queries) {
 
-			final List<ILogicalOperator> operators = Lists.newArrayList();
-			RestructHelper.collectOperators(query.getLogicalPlan(), operators);
+			if (q instanceof CreateQueryCommand) {
+				ILogicalQuery query = ((CreateQueryCommand) q).getQuery();
 
-			for (ILogicalOperator operator : operators) {
+				final List<ILogicalOperator> operators = Lists.newArrayList();
+				RestructHelper.collectOperators(query.getLogicalPlan(),
+						operators);
 
-				if (!(operator instanceof AccessAO))
-					continue;
-				String source = ((AccessAO) operator).getName();
+				for (ILogicalOperator operator : operators) {
 
-				List<String> oldNeededSources;
-				do {
+					if (!(operator instanceof AccessAO))
+						continue;
+					String source = ((AccessAO) operator).getName();
 
-					oldNeededSources = neededSourcesMap.get(adv);
+					List<String> oldNeededSources;
+					do {
 
-					if (dataDictionary.containsViewOrStream(source, SessionManagementService.getActiveSession()) || neededSourcesMap.get(adv).contains(source))
-						break;
+						oldNeededSources = neededSourcesMap.get(adv);
 
-					neededSources.add(source);
-					LOG.debug("Source {} needed for query {}", source, adv.getPqlStatement());
-					AdvertisementManagerService.get().refreshAdvertisements();
+						if (dataDictionary.containsViewOrStream(source,
+								SessionManagementService.getActiveSession())
+								|| neededSourcesMap.get(adv).contains(source))
+							break;
 
-				} while (!neededSourcesMap.replace(adv, oldNeededSources, neededSources));
+						neededSources.add(source);
+						LOG.debug("Source {} needed for query {}", source,
+								adv.getPqlStatement());
+						AdvertisementManagerService.get()
+								.refreshAdvertisements();
 
+					} while (!neededSourcesMap.replace(adv, oldNeededSources,
+							neededSources));
+
+				}
 			}
 
 		}
 		return neededSources;
 	}
-	
-	private void callExecutor(QueryPartAdvertisement adv) {
-		
-		try {
-			
-			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
-			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), configuration);
 
-			QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
-			
-		} catch(final Throwable t) {
-			
+	private void callExecutor(QueryPartAdvertisement adv) {
+
+		try {
+
+			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(
+					executor, adv.getTransCfgName());
+			final Collection<Integer> ids = executor.addQuery(
+					adv.getPqlStatement(), "PQL",
+					SessionManagementService.getActiveSession(),
+					adv.getTransCfgName(), configuration);
+
+			QueryPartController.getInstance().registerAsSlave(ids,
+					adv.getSharedQueryID());
+
+		} catch (final Throwable t) {
+
 			LOG.error("Could not execute query part", t);
-			
+
 		}
-		
+
 	}
 
 	@Override
-	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
+	public void advertisementRemoved(IAdvertisementManager sender,
+			Advertisement adv) {
 		// do nothing
 	}
 
@@ -140,7 +169,8 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 			LOG.debug("Bound ServerExecutor {}", exe);
 		} else {
-			throw new IllegalArgumentException("Executor " + exe + " is not a ServerExecutor");
+			throw new IllegalArgumentException("Executor " + exe
+					+ " is not a ServerExecutor");
 		}
 	}
 
@@ -152,20 +182,20 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 			executor = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
-	public void bindDataDictionary(IDataDictionary dd ) {
+	public void bindDataDictionary(IDataDictionary dd) {
 		dataDictionary = dd;
-		
+
 		LOG.debug("DataDictionary bound {}", dd);
 	}
-	
+
 	// called by OSGi-DS
-	public void unbindDataDictionary(IDataDictionary dd ) {
-		if( dataDictionary == dd ) {
+	public void unbindDataDictionary(IDataDictionary dd) {
+		if (dataDictionary == dd) {
 			dataDictionary = null;
-			
-			LOG.debug("DataDictionary unbound {}", dd );
+
+			LOG.debug("DataDictionary unbound {}", dd);
 		}
 	}
 
@@ -173,9 +203,12 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 		return instance;
 	}
 
-	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(IServerExecutor executor, String cfgName) {
-		final IQueryBuildConfiguration qbc = executor.getQueryBuildConfiguration(cfgName);
-		final List<IQueryBuildSetting<?>> configuration = qbc.getConfiguration();
+	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(
+			IServerExecutor executor, String cfgName) {
+		final IQueryBuildConfigurationTemplate qbc = executor
+				.getQueryBuildConfiguration(cfgName);
+		final List<IQueryBuildSetting<?>> configuration = qbc
+				.getConfiguration();
 
 		final List<IQueryBuildSetting<?>> settings = Lists.newArrayList();
 		settings.addAll(configuration);
@@ -186,53 +219,59 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name,
 			ILogicalOperator op) {
-		
-		if(sender != dataDictionary)
+
+		if (sender != dataDictionary)
 			return;
-		
+
 		/*
-		 * XXX split doesn't work for a reason I don't know.
-		 * TODO Make sure, that a username can not contain dots.
+		 * XXX split doesn't work for a reason I don't know. TODO Make sure,
+		 * that a username can not contain dots.
 		 */
 		String source = name.substring(name.indexOf(".") + 1);
-		
-		synchronized(neededSourcesMap) {
-			
-			if(!neededSourcesMap.values().contains(source))
+
+		synchronized (neededSourcesMap) {
+
+			if (!neededSourcesMap.values().contains(source))
 				return;
-			
+
 		}
-			
-		for(QueryPartAdvertisement adv : neededSourcesMap.keySet()) {
-			
+
+		for (QueryPartAdvertisement adv : neededSourcesMap.keySet()) {
+
 			List<String> oldNeededSources;
 			List<String> newNeededSources;
-			
-			if(neededSourcesMap.get(adv).contains(source)) {	
-				
+
+			if (neededSourcesMap.get(adv).contains(source)) {
+
 				do {
-				
+
 					newNeededSources = neededSourcesMap.get(adv);
 					oldNeededSources = ImmutableList.copyOf(newNeededSources);
 					newNeededSources.remove(source);
-					LOG.debug("Needed Source {} available for advertisement {}", name, adv);
-					
-				} while(!neededSourcesMap.replace(adv, oldNeededSources, newNeededSources));
-				
-				if((oldNeededSources = neededSourcesMap.get(adv)).isEmpty() && neededSourcesMap.remove(adv, oldNeededSources))
+					LOG.debug(
+							"Needed Source {} available for advertisement {}",
+							name, adv);
+
+				} while (!neededSourcesMap.replace(adv, oldNeededSources,
+						newNeededSources));
+
+				if ((oldNeededSources = neededSourcesMap.get(adv)).isEmpty()
+						&& neededSourcesMap.remove(adv, oldNeededSources))
 					callExecutor(adv);
-				
+
 			}
-			
+
 		}
-		
+
 	}
 
 	@Override
 	public void removedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {}
+			ILogicalOperator op) {
+	}
 
 	@Override
-	public void dataDictionaryChanged(IDataDictionary sender) {}
-	
+	public void dataDictionaryChanged(IDataDictionary sender) {
+	}
+
 }

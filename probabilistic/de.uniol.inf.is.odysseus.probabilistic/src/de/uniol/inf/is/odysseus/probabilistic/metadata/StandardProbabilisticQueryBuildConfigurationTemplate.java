@@ -21,8 +21,8 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfigurationTemplate;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterAllowRestructuringOfCurrentPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPerformQuerySharing;
@@ -35,11 +35,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryBuildConfiguration {
+public class StandardProbabilisticQueryBuildConfigurationTemplate extends AbstractQueryBuildConfigurationTemplate {
 	/**
 	 * Default constructor.
 	 */
-	public StandardProbabilisticQueryBuildConfiguration() {
+	public StandardProbabilisticQueryBuildConfigurationTemplate() {
 		final Set<String> dataTypes = new HashSet<String>();
 		dataTypes.add("probabilistic");
 		dataTypes.add("relational");
@@ -51,18 +51,18 @@ public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryB
 	}
 
 	/**
-	 * Creates a new {@link StandardProbabilisticQueryBuildConfiguration} with the given settings.
+	 * Creates a new {@link StandardProbabilisticQueryBuildConfigurationTemplate} with the given settings.
 	 * 
 	 * @param settings
 	 *            The query build settings
 	 */
-	public StandardProbabilisticQueryBuildConfiguration(final List<IQueryBuildSetting<?>> settings) {
+	public StandardProbabilisticQueryBuildConfigurationTemplate(final List<IQueryBuildSetting<?>> settings) {
 		this.settings.addAll(settings);
 	}
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration#getName()
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate#getName()
 	 */
 	@Override
 	public final String getName() {
@@ -74,8 +74,8 @@ public class StandardProbabilisticQueryBuildConfiguration extends AbstractQueryB
 	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration#clone()
 	 */
 	@Override
-	public final IQueryBuildConfiguration clone() {
-		return new StandardProbabilisticQueryBuildConfiguration(this.settings);
+	public final IQueryBuildConfigurationTemplate clone() {
+		return new StandardProbabilisticQueryBuildConfigurationTemplate(this.settings);
 	}
 
 }

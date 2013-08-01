@@ -14,9 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.probabilistic.StandardProbabilisticQueryBuildConfiguration">
-   <implementation class="de.uniol.inf.is.odysseus.probabilistic.metadata.StandardProbabilisticQueryBuildConfiguration"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.probabilistic.StandardProbabilisticQueryBuildConfigurationTemplate">
+   <implementation class="de.uniol.inf.is.odysseus.probabilistic.metadata.StandardProbabilisticQueryBuildConfigurationTemplate"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate"/>
    </service>
 </scr:component>

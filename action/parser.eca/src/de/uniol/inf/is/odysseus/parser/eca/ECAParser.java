@@ -41,6 +41,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -125,12 +127,12 @@ public class ECAParser implements IQueryParser {
 		}
 	}
 
-	private List<ILogicalQuery> createNewPlan(
+	private List<IExecutorCommand> createNewPlan(
 			HashMap<Action, List<IActionParameter>> actions,
-			List<ILogicalQuery> plan) {
+			List<IExecutorCommand> plan) {
 		// not necessary cause top operator is always the one in the plan
 		// this.determineOutputOperator(plan.get(0));
-		ILogicalQuery query = plan.get(0);
+		ILogicalQuery query = ((CreateQueryCommand)plan.get(0)).getQuery();
 		ILogicalOperator outputOperator = query.getLogicalPlan();
 
 		// create new sink and subscribe to outputoperator
@@ -160,16 +162,19 @@ public class ECAParser implements IQueryParser {
 		return iLogicalOperator;
 	}
 
-	private SDFSchema determineSchema(List<ILogicalQuery> plan)
+	private SDFSchema determineSchema(List<IExecutorCommand> plan)
 			throws QueryParseException {
 		if (!plan.isEmpty()) {
 			if (plan.size() > 1) {
 				throw new QueryParseException(
 						"Multiple plans defined, cannot determine output scheme");
 			}
-            ILogicalOperator outputOperator = this
-            		.determineOutputOperator(plan.get(0).getLogicalPlan());
-            return outputOperator.getOutputSchema();
+			if (plan.get(0) instanceof CreateQueryCommand){
+				
+		           ILogicalOperator outputOperator = this
+            		.determineOutputOperator(((CreateQueryCommand) plan.get(0)).getQuery().getLogicalPlan());
+		            return outputOperator.getOutputSchema();
+			}
 		}
 		throw new QueryParseException("No output schema defined");
 	}
@@ -213,14 +218,14 @@ public class ECAParser implements IQueryParser {
 	}
 
 	@Override
-	public List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		return null;
 	}
 
 	@Override
-	public List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		HashMap<Action, List<IActionParameter>> actions = new HashMap<Action, List<IActionParameter>>();
@@ -241,7 +246,7 @@ public class ECAParser implements IQueryParser {
 				}
 
 				// create logical plan and retrieve schema
-				List<ILogicalQuery> plan = compiler.translateQuery(
+				List<IExecutorCommand> plan = compiler.translateQuery(
 						interalQuery, lang, user, dataDictionary);
 				SDFSchema schema = this.determineSchema(plan);
 

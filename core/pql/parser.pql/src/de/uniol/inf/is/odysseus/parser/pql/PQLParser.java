@@ -22,11 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl;
 import de.uniol.inf.is.odysseus.parser.pql.impl.ParseException;
@@ -47,7 +48,7 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 //		this.user = user;
 //		this.dataDictionary = dd;
@@ -57,7 +58,7 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 //		this.user = user;
 //		this.dataDictionary = dd;
@@ -74,10 +75,12 @@ public class PQLParser implements IQueryParser {
 				PQLParserImpl.ReInit(reader);
 			}
 
-			List<ILogicalQuery> queries = PQLParserImpl.query();
-			for (ILogicalQuery query : queries) {
-				query.setParserId(getLanguage());
-				query.setUser(user);
+			List<IExecutorCommand> queries = PQLParserImpl.query();
+			for (IExecutorCommand cmd : queries) {
+				if (cmd instanceof CreateQueryCommand){
+				((CreateQueryCommand) cmd).getQuery().setParserId(getLanguage());
+				((CreateQueryCommand) cmd).getQuery().setUser(user);
+				}
 			}
 			return queries;
 		}catch(ParseException e){			

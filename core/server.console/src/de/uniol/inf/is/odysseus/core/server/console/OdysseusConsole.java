@@ -59,8 +59,10 @@ import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -103,7 +105,7 @@ public class OdysseusConsole implements CommandProvider,
 	private ISession currentUser = null;
 
 	private String defaultBuildConfiguration = "Standard";
-	private IQueryBuildConfiguration originalBuildConfig;
+	private IQueryBuildConfigurationTemplate originalBuildConfig;
 
 	/**
 	 * This is the bath to files, to read queries from. This path can be set by
@@ -209,11 +211,11 @@ public class OdysseusConsole implements CommandProvider,
 			for (String tmp : tmpArgs) {
 				if (tmp.isEmpty()) {
 					continue;
-				} 
-				
+				}
+
 				StringBuilder builder = new StringBuilder();
 				builder.append(tmp);
-				newArgs.add(builder.toString());		
+				newArgs.add(builder.toString());
 			}
 			this.args = newArgs.toArray(new String[newArgs.size()]);
 		}
@@ -441,8 +443,8 @@ public class OdysseusConsole implements CommandProvider,
 									.getBufferPlacementStrategy(bufferName)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
-				} 
-				
+				}
+
 				this.executor.getConfiguration().set(
 						new ParameterBufferPlacementStrategy());
 				if ("no strategy".equalsIgnoreCase(bufferName)) {
@@ -952,7 +954,7 @@ public class OdysseusConsole implements CommandProvider,
 	// Sollte sp�ter nur auf statischen
 	// gemacht werden
 	private void resetBuildConfig() {
-		IQueryBuildConfiguration qbc = this.originalBuildConfig;
+		IQueryBuildConfigurationTemplate qbc = this.originalBuildConfig;
 		QueryBuildConfiguration buildConfiguration = new QueryBuildConfiguration(
 				qbc.getConfiguration(), qbc.getName());
 		buildConfiguration.set(this.trafoConfigParam);
@@ -989,7 +991,7 @@ public class OdysseusConsole implements CommandProvider,
 			} catch (IOException e) {
 				ci.println("File not found: " + file.getAbsolutePath());
 				return;
-			} 
+			}
 
 			String queries = "";
 			try {
@@ -1016,7 +1018,7 @@ public class OdysseusConsole implements CommandProvider,
 			}
 			try {
 				br.close();
-			} catch (IOException e) {			
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1064,19 +1066,21 @@ public class OdysseusConsole implements CommandProvider,
 			}
 
 			try {
-				List<ILogicalQuery> plans = executor.translateQuery(queries,
+				List<IExecutorCommand> plans = executor.translateQuery(queries,
 						parser(), currentUser);
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
 				GenericGraphWalker walker = new GenericGraphWalker();
-				for (ILogicalQuery plan : plans) {
-					System.out.println("PRINT PARTIAL PLAN: ");
-					walker.prefixWalk(plan.getLogicalPlan(), pv);
-					System.out.println(pv.getResult());
-					pv.clear();
-					walker.clearVisited();
-					System.out.println("PRINT END.");
+				for (IExecutorCommand plan : plans) {
+					if (plan instanceof CreateQueryCommand) {
+						System.out.println("PRINT PARTIAL PLAN: ");
+						walker.prefixWalk(((CreateQueryCommand)plan).getQuery().getLogicalPlan(), pv);
+						System.out.println(pv.getResult());
+						pv.clear();
+						walker.clearVisited();
+						System.out.println("PRINT END.");
+					}
 				}
 
 				// DEBUG:
@@ -1086,7 +1090,7 @@ public class OdysseusConsole implements CommandProvider,
 
 				// the last plan is the complete plan
 				// so transform this one
-				ILogicalQuery query = plans.get(plans.size() - 1);
+				ILogicalQuery query = ((CreateQueryCommand)plans.get(plans.size() - 1)).getQuery();
 				IPhysicalQuery transQuery = executor.transform(query,
 						this.trafoConfigParam.getValue(), currentUser);
 
@@ -1100,10 +1104,10 @@ public class OdysseusConsole implements CommandProvider,
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-			
+
 			try {
 				br.close();
-			} catch (IOException e) {			
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1155,8 +1159,8 @@ public class OdysseusConsole implements CommandProvider,
 		if (eclipseConsole) {
 			this.addQueryWithEclipseConsoleOutput(query);
 			return;
-		} 
-		
+		}
+
 		this.executor.addQuery(query, parser(), currentUser,
 				defaultBuildConfiguration);
 		return;
@@ -1793,7 +1797,7 @@ public class OdysseusConsole implements CommandProvider,
 	public void transformationBound() {
 		System.out.println("Transformation bound");
 	}
-	
+
 	@Override
 	public void planGeneratorBound() {
 		System.out.println("PlanGeneration bound");
@@ -1851,7 +1855,8 @@ public class OdysseusConsole implements CommandProvider,
 			System.gc();
 
 			// parse and run queries
-			ISession user = UserManagement.getSessionmanagement().loginSuperUser(null, "");
+			ISession user = UserManagement.getSessionmanagement()
+					.loginSuperUser(null, "");
 			try {
 				if (i == 0) {
 					ci.println("parsing and running query :");
@@ -1925,7 +1930,7 @@ public class OdysseusConsole implements CommandProvider,
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return sb.toString();
 	}
 

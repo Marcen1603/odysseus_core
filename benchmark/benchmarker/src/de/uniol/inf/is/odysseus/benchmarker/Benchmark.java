@@ -183,7 +183,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			bp.add(new ParameterTransformationConfiguration(trafoConfig));
 			bp.add(new ParameterBufferPlacementStrategy(bufferPlacement));
 
-			BenchmarkQueryBuildConfiguration qbc = new BenchmarkQueryBuildConfiguration(bp);
+			BenchmarkQueryBuildConfigurationTemplate qbc = new BenchmarkQueryBuildConfigurationTemplate(bp);
 
 			executor.getQueryBuildConfigurations().put(qbc.getName(), qbc);
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.keyvalue.KeyValueQueryBuildConfiguration">
-   <implementation class="de.uniol.inf.is.odysseus.keyvalue.KeyValueQueryBuildConfiguration"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.keyvalue.KeyValueQueryBuildConfigurationTemplate">
+   <implementation class="de.uniol.inf.is.odysseus.keyvalue.KeyValueQueryBuildConfigurationTemplate"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration"/>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate"/>
    </service>
 </scr:component>

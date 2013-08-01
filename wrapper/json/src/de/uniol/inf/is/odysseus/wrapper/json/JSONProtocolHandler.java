@@ -8,8 +8,6 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

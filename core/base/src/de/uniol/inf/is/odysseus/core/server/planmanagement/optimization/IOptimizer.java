@@ -20,6 +20,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
@@ -56,7 +57,7 @@ public interface IOptimizer extends IInfoProvider, IErrorEventHandler {
 	 * @throws QueryOptimizationException
 	 *             An exception occurred during optimization.
 	 */
-	public List<IPhysicalQuery> optimize(IServerExecutor compiler, IExecutionPlan executionPlan, List<ILogicalQuery> newQueries, OptimizationConfiguration parameter, IDataDictionary dd)
+	public List<IPhysicalQuery> optimize(IServerExecutor compiler, IExecutionPlan executionPlan, List<ILogicalQuery> newQueries, OptimizationConfiguration parameter, IDataDictionaryWritable dd)
 			throws QueryOptimizationException;
 	
 	/**

@@ -26,6 +26,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -63,7 +65,7 @@ public class SPARQL implements IQueryParser{
 	}
 
 	@Override
-	public synchronized List<ILogicalQuery> parse(String query, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 //		this.user= user;
 //		this.dd = dd;
@@ -77,7 +79,7 @@ public class SPARQL implements IQueryParser{
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public synchronized List<ILogicalQuery> parse(Reader reader, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd)
 			throws QueryParseException {
 		
 //		this.user = user;
@@ -102,13 +104,14 @@ public class SPARQL implements IQueryParser{
 			SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
 			System.out.println("Logical plan:\n" + printer.createString(logicalOp));
 	
-			List<ILogicalQuery> listOfQueries = new ArrayList<ILogicalQuery>();
+			List<IExecutorCommand> listOfQueries = new ArrayList<>();
 			// an access ao must not be returned
 			if(!visitor.isCreateStatement()){
 				ILogicalQuery query = new LogicalQuery();
 				query.setParserId(getLanguage());
 				query.setLogicalPlan(logicalOp, true);
-				listOfQueries.add(query);
+				CreateQueryCommand cmd = new CreateQueryCommand(query, user);
+				listOfQueries.add(cmd);
 			}
 			return listOfQueries;
 			

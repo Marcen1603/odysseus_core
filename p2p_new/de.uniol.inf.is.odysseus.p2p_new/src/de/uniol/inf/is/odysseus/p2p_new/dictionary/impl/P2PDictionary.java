@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
@@ -69,7 +70,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final int CHECK_INTERVAL_MILLIS = 10000;
 	
 	private static P2PDictionary instance;
-	private static IDataDictionary dataDictionary;
+	private static IDataDictionaryWritable dataDictionary;
 
 	private static String localPeerName;
 	private static PeerID localPeerID;
@@ -110,7 +111,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	// called by OSGi-DS
 	public void bindDataDictionary( IDataDictionary dd ) {
-		dataDictionary = dd;
+		dataDictionary = (IDataDictionaryWritable)dd;
 		dataDictionary.addListener(this);
 		if( isAutoExport()) {
 			autoExporter = new AutoExporter(this);

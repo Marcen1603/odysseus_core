@@ -59,7 +59,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
-abstract public class AbstractDataDictionary implements IDataDictionary {
+abstract public class AbstractDataDictionary implements IDataDictionary, IDataDictionaryWritable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractDataDictionary.class);
 

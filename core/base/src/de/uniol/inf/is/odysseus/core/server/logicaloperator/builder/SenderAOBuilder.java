@@ -116,9 +116,13 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 			return this.getDataDictionary().getSinkInput(sinkName, getCaller());
 		}
 		final ILogicalOperator ao = this.createNewSenderAO(sinkName);
-		if(this.getInputOperatorCount()==0){
-			this.getDataDictionary().addSink(sinkName, ao, getCaller());
-		}
+
+		// Moved to Transformation Rule
+//		// TODO: Was genau bedeutet das?
+//		if(this.getInputOperatorCount()==0){
+//			this.getDataDictionary().addSink(sinkName, ao, getCaller());
+//		}
+
 		return ao;
 	}
 

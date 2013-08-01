@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
@@ -71,10 +73,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 	ILogicalOperator operator;
+	private List<IExecutorCommand> commands;
 
-	public CreateStreamVisitor(ISession user, IDataDictionary dd) {
+	public CreateStreamVisitor(ISession user, IDataDictionary dd, List<IExecutorCommand> commands) {
 		this.caller = user;
 		this.dd = dd;
+		this.commands = commands;
 	}
 
 	public String getName() {
@@ -121,15 +125,17 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
+		CreateStreamCommand cmd = null;
 		try {
 			FixedSetAccessAO newPO = new FixedSetAccessAO(name, "FixedSetAccessAO", node.getTuples(attributes));
 			SDFSchema outputSchema = new SDFSchema(name, attributes);
 			newPO.setOutputSchema(outputSchema);
-			dd.setStream(name, newPO, caller);
+			cmd = new CreateStreamCommand(name, newPO, caller);
+			commands.add(cmd);
 		} catch (Exception e) {
 			throw new QueryParseException(e.getMessage());
 		}
-		return null;
+		return cmd;
 	}
 
 	@Override
@@ -150,32 +156,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 
-		// Is now done in Transformation Rule
-		//operator = addTimestampAO(operator);
-
-		try {
-			dd.setStream(name, operator, caller);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return null;
+		CreateStreamCommand cmd = new CreateStreamCommand(name, operator, caller);
+		commands.add(cmd);
+		return cmd;
 	}
-
-//	private ILogicalOperator addTimestampAO(ILogicalOperator operator) {
-//		TimestampAO timestampAO = new TimestampAO();
-//		for (SDFAttribute attr : this.attributes) {
-//			if (attr.getDatatype().equals(SDFDatatype.START_TIMESTAMP)) {
-//				timestampAO.setStartTimestamp(attr);
-//			}
-//
-//			if (attr.getDatatype().equals(SDFDatatype.END_TIMESTAMP)) {
-//				timestampAO.setEndTimestamp(attr);
-//			}
-//		}
-//
-//		timestampAO.subscribeTo(operator, operator.getOutputSchema());
-//		return timestampAO;
-//	}
 
 	@Override
 	public Object visit(ASTAttributeDefinitions node, Object data) throws QueryParseException {
@@ -307,15 +291,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setProtocolHandler("SizeByteBuffer");
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
 		source.setName(name);
-		// Is now done in Transformation Rule
-		//ILogicalOperator op = addTimestampAO(source);
-		ILogicalOperator op = source;
-		try {
-			dd.setStream(name, op, caller);			
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return data;
+		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
+		commands.add(cmd);
+		return cmd;
 	}
 
 	@Override
@@ -338,14 +316,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 
 		source.setOutputSchema(new SDFSchema(name, this.attributes));
-		//ILogicalOperator op = addTimestampAO(source);
-		ILogicalOperator op = source;
-		try {			
-			dd.setStream(name, op, caller);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return data;
+		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
+		commands.add(cmd);
+		return cmd;
+
 	}
 
 	private static boolean hasAutoReconnect(ASTChannel node) {

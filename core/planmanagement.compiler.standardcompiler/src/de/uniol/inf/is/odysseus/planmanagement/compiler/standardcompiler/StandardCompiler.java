@@ -1,18 +1,18 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Copyright 2011 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
 import java.util.ArrayList;
@@ -37,6 +37,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PlanGenerationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -69,12 +71,12 @@ public class StandardCompiler implements ICompiler {
 	 * {@link IRewrite} service
 	 */
 	protected IRewrite rewrite;
-	
+
 	/*
 	 * {@link IPlanGenerator} service
 	 */
 	protected IPlanGenerator planGenerator;
-	
+
 	/**
 	 * Listener
 	 */
@@ -101,17 +103,17 @@ public class StandardCompiler implements ICompiler {
 		return infos;
 	}
 
-	
 	/**
 	 * Method to bind a {@link IQueryParser}. Used by OSGi.
 	 * 
-	 * @param parser new {@link IQueryParser} service
+	 * @param parser
+	 *            new {@link IQueryParser} service
 	 */
 	public void bindParser(IQueryParser parser) {
 		synchronized (this.parserList) {
 			this.parserList.put(parser.getLanguage(), parser);
 		}
-		for (ICompilerListener l: listener){
+		for (ICompilerListener l : listener) {
 			l.parserBound(parser.getLanguage());
 		}
 	}
@@ -119,7 +121,8 @@ public class StandardCompiler implements ICompiler {
 	/**
 	 * Method to unbind a {@link IQueryParser}. Used by OSGi.
 	 * 
-	 * @param parser {@link IQueryParser} service to unbind
+	 * @param parser
+	 *            {@link IQueryParser} service to unbind
 	 */
 	public void unbindParser(IQueryParser parser) {
 		synchronized (this.parserList) {
@@ -132,11 +135,12 @@ public class StandardCompiler implements ICompiler {
 	/**
 	 * Method to bind a {@link ITransformation}. Used by OSGi.
 	 * 
-	 * @param transformation new {@link ITransformation} service
+	 * @param transformation
+	 *            new {@link ITransformation} service
 	 */
 	public void bindTransformation(ITransformation transformation) {
 		this.transformation = transformation;
-		for (ICompilerListener l: listener){
+		for (ICompilerListener l : listener) {
 			l.transformationBound();
 		}
 	}
@@ -144,7 +148,8 @@ public class StandardCompiler implements ICompiler {
 	/**
 	 * Method to unbind a {@link ITransformation}. Used by OSGi.
 	 * 
-	 * @param transformation {@link ITransformation} service to unbind
+	 * @param transformation
+	 *            {@link ITransformation} service to unbind
 	 */
 	public void unbindTransformation(ITransformation transformation) {
 		if (this.transformation == transformation) {
@@ -155,11 +160,12 @@ public class StandardCompiler implements ICompiler {
 	/**
 	 * Method to bind a {@link IRewrite}. Used by OSGi.
 	 * 
-	 * @param rewrite new {@link IRewrite} service
+	 * @param rewrite
+	 *            new {@link IRewrite} service
 	 */
 	public void bindRewrite(IRewrite rewrite) {
 		this.rewrite = rewrite;
-		for (ICompilerListener l: listener){
+		for (ICompilerListener l : listener) {
 			l.rewriteBound();
 		}
 
@@ -168,39 +174,46 @@ public class StandardCompiler implements ICompiler {
 	/**
 	 * Method to unbind a {@link IRewrite}. Used by OSGi.
 	 * 
-	 * @param rewrite {@link IRewrite} service to unbind
+	 * @param rewrite
+	 *            {@link IRewrite} service to unbind
 	 */
 	public void unbindRewrite(IRewrite rewrite) {
 		if (this.rewrite == rewrite) {
 			this.rewrite = null;
 		}
 	}
-	
+
 	/**
 	 * Method to bind a {@link IPlanGenerator}. Used by OSGi.
 	 * 
-	 * @param planGenerator {@link IPlanGenerator} service
+	 * @param planGenerator
+	 *            {@link IPlanGenerator} service
 	 */
 	public void bindPlanGenerator(IPlanGenerator planGenerator) {
 		this.planGenerator = planGenerator;
-		for(ICompilerListener l: listener) {
+		for (ICompilerListener l : listener) {
 			l.planGeneratorBound();
 		}
 	}
-	
+
 	/**
 	 * Method to unbind {@link IPlanGenerator}. Used by OSGi.
 	 * 
-	 * @param planGenerator {@link IPlanGenerator} service to unbind
+	 * @param planGenerator
+	 *            {@link IPlanGenerator} service to unbind
 	 */
 	public void unbindPlanGenerator(IPlanGenerator planGenerator) {
-		if(this.planGenerator == planGenerator) {
+		if (this.planGenerator == planGenerator) {
 			this.planGenerator = null;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos
+	 * ()
 	 */
 	@Override
 	public String getInfos() {
@@ -220,149 +233,167 @@ public class StandardCompiler implements ICompiler {
 		return infos;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#translateQuery(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#translateQuery
+	 * (java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<ILogicalQuery> translateQuery(String query,
-			String parserID, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> translateQuery(String query, String parserID,
+			ISession user, IDataDictionary dd) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
-			return this.parserList.get(parserID)
-					.parse(query, user, dd);
+			return this.parserList.get(parserID).parse(query, user, dd);
 		}
 
 		throw new QueryParseException("Parser with ID " + parserID
 				+ " not registered.");
 	}
 
-
-//	/* (non-Javadoc)
-//	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.core.server.ILogicalOperator, de.uniol.inf.is.odysseus.transformationConfiguration)
-//	 */
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalPlan,
-//			TransformationConfiguration transformationConfiguration, User caller)
-//			throws TransformationException {
-//		// create working copy of plan
-//		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>();
-//		AbstractGraphWalker walker = new AbstractGraphWalker();
-//		walker.prefixWalk(logicalPlan, copyVisitor);
-//		ILogicalOperator copyPlan = copyVisitor.getResult();
-//		return this.transformation.transform(copyPlan, transformationConfiguration, caller);
-//	}
+	// /* (non-Javadoc)
+	// * @see
+	// de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#transform(de.uniol.inf.is.odysseus.core.server.ILogicalOperator,
+	// de.uniol.inf.is.odysseus.transformationConfiguration)
+	// */
+	// @SuppressWarnings("unchecked")
+	// @Override
+	// public ArrayList<IPhysicalOperator> transform(ILogicalOperator
+	// logicalPlan,
+	// TransformationConfiguration transformationConfiguration, User caller)
+	// throws TransformationException {
+	// // create working copy of plan
+	// CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new
+	// CopyLogicalGraphVisitor<ILogicalOperator>();
+	// AbstractGraphWalker walker = new AbstractGraphWalker();
+	// walker.prefixWalk(logicalPlan, copyVisitor);
+	// ILogicalOperator copyPlan = copyVisitor.getResult();
+	// return this.transformation.transform(copyPlan,
+	// transformationConfiguration, caller);
+	// }
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public IPhysicalQuery transform(ILogicalQuery query,
-			TransformationConfiguration transformationConfiguration, ISession caller, IDataDictionary dd) throws TransformationException {
-//		System.err.println("TRANSFORMING QUERY");
-//		
-//		System.err.println("OLD PLAN: TREE WALKER");
-//		AbstractTreeWalker walker2 = new AbstractTreeWalker();
-//		String result = walker2.prefixWalk(query.getLogicalPlan(), new AlgebraPlanToStringVisitor());
-//		System.err.println(result);
-//		
-//		AbstractGraphWalker walker = new AbstractGraphWalker();
-//		System.err.println("OLD PLAN");
-//		PrintGraphVisitor visitor = new PrintGraphVisitor();
-//		walker.prefixWalk(query.getLogicalPlan(), visitor);
-//		System.err.println(visitor.getResult());
+			TransformationConfiguration transformationConfiguration,
+			ISession caller, IDataDictionary dd) throws TransformationException {
+		// System.err.println("TRANSFORMING QUERY");
+		//
+		// System.err.println("OLD PLAN: TREE WALKER");
+		// AbstractTreeWalker walker2 = new AbstractTreeWalker();
+		// String result = walker2.prefixWalk(query.getLogicalPlan(), new
+		// AlgebraPlanToStringVisitor());
+		// System.err.println(result);
+		//
+		// AbstractGraphWalker walker = new AbstractGraphWalker();
+		// System.err.println("OLD PLAN");
+		// PrintGraphVisitor visitor = new PrintGraphVisitor();
+		// walker.prefixWalk(query.getLogicalPlan(), visitor);
+		// System.err.println(visitor.getResult());
 
-		
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
+		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
+				query);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
 		ILogicalOperator copyPlan = copyVisitor.getResult();
-		
-//		walker = new AbstractGraphWalker();
-//		System.err.println("COPIED PLAN");
-//		visitor = new PrintGraphVisitor();
-//		walker.prefixWalk(copyPlan, visitor);
-//		System.err.println(visitor.getResult());
 
-		ArrayList<IPhysicalOperator> physicalPlan = this.transformation.transform(copyPlan, transformationConfiguration, caller, dd);
-		
+		// walker = new AbstractGraphWalker();
+		// System.err.println("COPIED PLAN");
+		// visitor = new PrintGraphVisitor();
+		// walker.prefixWalk(copyPlan, visitor);
+		// System.err.println(visitor.getResult());
+
+		ArrayList<IPhysicalOperator> physicalPlan = this.transformation
+				.transform(copyPlan, transformationConfiguration, caller, dd);
+
 		IPhysicalQuery transformedQuery = new PhysicalQuery(query, physicalPlan);
 		return transformedQuery;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#getSupportedQueryParser()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler#
+	 * getSupportedQueryParser()
 	 */
 	@Override
 	public Set<String> getSupportedQueryParser() {
 		return Collections.unmodifiableSet(this.parserList.keySet());
 	}
-	
 
 	@Override
 	public boolean isTransformationBound() {
 		return transformation != null;
 	}
 
-
 	@Override
 	public boolean isRewriteBound() {
 		return rewrite != null;
 	}
-	
 
-//	@Override
-//	public List<ILogicalOperator> createAlternativePlans(
-//			ILogicalOperator logicalPlan, OptimizationConfiguration conf) {
-//		// TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
-//		// werden, z.B. durch Join-Vertauschungen
-//		ILogicalOperator p = rewritePlan(logicalPlan, conf.getRewriteConfiguration());
-//		List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
-//		list.add(p);
-//		return list;
-//	}
+	// @Override
+	// public List<ILogicalOperator> createAlternativePlans(
+	// ILogicalOperator logicalPlan, OptimizationConfiguration conf) {
+	// // TODO mehrere Alternativen zu dem aktuellen Plan muessen generiert
+	// // werden, z.B. durch Join-Vertauschungen
+	// ILogicalOperator p = rewritePlan(logicalPlan,
+	// conf.getRewriteConfiguration());
+	// List<ILogicalOperator> list = new ArrayList<ILogicalOperator>(1);
+	// list.add(p);
+	// return list;
+	// }
 
-//	@Override
-//	public List<List<IPhysicalOperator>> transformWithAlternatives(
-//			ILogicalOperator logicalPlan,
-//			TransformationConfiguration transformationConfiguration, User caller)
-//			throws TransformationException {
-//		// TODO mehrere Alternativen muessen generiert werden, z.B. durch
-//		// verschiedene Join-Implementationen
-//		ArrayList<IPhysicalOperator> p = transform(logicalPlan,
-//				transformationConfiguration, caller);
-//		List<List<IPhysicalOperator>> list = new ArrayList<List<IPhysicalOperator>>(1);
-//		list.add(p);
-//		return list;
-//	}
-	
+	// @Override
+	// public List<List<IPhysicalOperator>> transformWithAlternatives(
+	// ILogicalOperator logicalPlan,
+	// TransformationConfiguration transformationConfiguration, User caller)
+	// throws TransformationException {
+	// // TODO mehrere Alternativen muessen generiert werden, z.B. durch
+	// // verschiedene Join-Implementationen
+	// ArrayList<IPhysicalOperator> p = transform(logicalPlan,
+	// transformationConfiguration, caller);
+	// List<List<IPhysicalOperator>> list = new
+	// ArrayList<List<IPhysicalOperator>>(1);
+	// list.add(p);
+	// return list;
+	// }
+
 	@Override
 	public void addCompilerListener(ICompilerListener listener) {
 		this.listener.add(listener);
 	}
-	
+
 	@Override
 	public void removeCompilerListener(ICompilerListener listener) {
 		this.listener.remove(listener);
 	}
 
-
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
+	public ILogicalOperator rewritePlan(ILogicalOperator plan,
+			RewriteConfiguration conf) {
 		return rewrite.rewritePlan(plan, conf);
 	}
 
-
 	@Override
 	public List<IPhysicalQuery> translateAndTransformQuery(String query,
-			String parserID, ISession user, IDataDictionary dd, TransformationConfiguration transformationConfiguration) throws QueryParseException, TransformationException {
-		List<ILogicalQuery> translate = translateQuery(query, parserID, user, dd);
+			String parserID, ISession user, IDataDictionary dd,
+			TransformationConfiguration transformationConfiguration)
+			throws QueryParseException, TransformationException {
+		List<IExecutorCommand> translate = translateQuery(query, parserID,
+				user, dd);
 		List<IPhysicalQuery> translated = new ArrayList<IPhysicalQuery>();
-		for (ILogicalQuery q:translate){
-			 translated.add(transform(q, transformationConfiguration, user, dd));
+		for (IExecutorCommand q : translate) {
+			if (q instanceof CreateQueryCommand) {
+				translated.add(transform(((CreateQueryCommand) q).getQuery(),
+						transformationConfiguration, user, dd));
+			}
 		}
 		return translated;
 	}
 
 	@Override
-	public List<ILogicalOperator> generatePlans(ILogicalOperator plan, PlanGenerationConfiguration conf, IOperatorOwner owner) {
+	public List<ILogicalOperator> generatePlans(ILogicalOperator plan,
+			PlanGenerationConfiguration conf, IOperatorOwner owner) {
 		return planGenerator.generatePlans(plan, conf, owner);
 	}
 

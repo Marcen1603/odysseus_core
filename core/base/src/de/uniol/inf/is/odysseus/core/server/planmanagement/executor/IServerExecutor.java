@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler;
@@ -42,7 +42,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.NoOptimizerLoadedException;
@@ -115,14 +116,14 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	/**
 	 * Get specific query build configuration
 	 */
-	public IQueryBuildConfiguration getQueryBuildConfiguration(String name);
+	public IQueryBuildConfigurationTemplate getQueryBuildConfiguration(String name);
 
 	/**
 	 * Get all QueryBuildConfigurations
 	 * 
 	 * @return all build configuration
 	 */
-	public Map<String, IQueryBuildConfiguration> getQueryBuildConfigurations();
+	public Map<String, IQueryBuildConfigurationTemplate> getQueryBuildConfigurations();
 
 	public void addCompilerListener(ICompilerListener compilerListener);
 
@@ -188,14 +189,14 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	ImmutableCollection<String> getDataFragmentationNames();
 
 	// Facade for Compiler
-	public List<ILogicalQuery> translateQuery(String query, String parserID,
+	public List<IExecutorCommand> translateQuery(String query, String parserID,
 			ISession user) throws QueryParseException;
 
 	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException;
 
-	IDataDictionary getDataDictionary();
+	IDataDictionaryWritable getDataDictionary();
 
 	public boolean removeAllQueries(ISession caller);
 

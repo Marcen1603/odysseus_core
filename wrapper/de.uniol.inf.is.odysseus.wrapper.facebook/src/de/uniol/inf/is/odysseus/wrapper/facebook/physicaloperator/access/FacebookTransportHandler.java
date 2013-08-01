@@ -1,22 +1,13 @@
 package de.uniol.inf.is.odysseus.wrapper.facebook.physicaloperator.access;
 
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Map;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
