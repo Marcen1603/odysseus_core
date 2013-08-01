@@ -21,14 +21,14 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ConfigPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.OdysseusDefaultsPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.keyword.QuerySharingPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ReloadFromLogPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.SleepPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.UseAdaptionPreParserKeyword;
-import de.uniol.inf.is.odysseus.script.parser.keyword.UseDistributePreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.UseFragmentationPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.UseRewritePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.deprecated.QuerySharingPreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.deprecated.UseDistributePreParserKeyword;
 
 public class KeywordProvider implements IPreParserKeywordProvider {
 
