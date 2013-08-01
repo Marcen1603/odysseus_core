@@ -23,8 +23,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-
-
 public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 	
 	public static final String ADD_TRANS_PARAMS = "ADD_TRANS_PARAMS";
@@ -69,5 +67,14 @@ public abstract class AbstractPreParserKeyword implements IPreParserKeyword {
 		return new ArrayList<>();
 	}
 
+	@Override
+	public final boolean isDeprecated() {
+		return (getClass().getAnnotation(Deprecated.class) != null );
+	}
+	
+	@Override
+	public String getDeprecationInfo() {
+		return null;
+	}
 
 }

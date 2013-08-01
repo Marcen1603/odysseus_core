@@ -37,4 +37,7 @@ public interface IPreParserKeyword {
 	IOdysseusScriptParser getParser();	
 	public Collection<String> getAllowedParameters(ISession caller);
 	
+	public boolean isDeprecated();
+	public String getDeprecationInfo();
+	
 }
