@@ -48,7 +48,7 @@ public final class OperatorDetailProviderRegistry {
 				}
 			}
 			
-			LOG.error("OperatorDetailProvider bound {}", provider);
+			LOG.debug("OperatorDetailProvider bound {}", provider);
 		} else {
 			throw new IllegalArgumentException("OperatorDetailProvider " + provider + " already bound!");
 		}
