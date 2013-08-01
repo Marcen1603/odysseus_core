@@ -537,10 +537,8 @@ public class StandardExecutor extends AbstractExecutor implements IAdmissionList
 				for (IQueryBuildSetting<?> setting : settings.getConfiguration()) {
 					if (overwrite.getClass() == setting.getClass()) {
 						newSettings.remove(setting);
-						newSettings.add(overwrite);
-					} else {
-						newSettings.add(overwrite);
-					}
+					} 
+					newSettings.add(overwrite);
 				}
 			}
 		}
