@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Commons Lang
-Bundle-SymbolicName: org.apache.commons.lang3
+Bundle-SymbolicName: org.apache.commons.lang3-v3.10
 Bundle-Version: 3.1.0
 Bundle-ClassPath: commons-lang3-3.1.jar
 Bundle-Vendor: The Apache Software Foundation
