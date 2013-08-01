@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -57,12 +56,6 @@ public class ConfigPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
-		// TODO: dass key hier als feld vorhanden sein muss, ist designtechnisch nicht optimal
-		Optional<IOdysseusScriptConfigSetting> optSetting = OdysseusScriptConfigRegistry.getInstance().getConfigSetting(key);
-		if( !optSetting.isPresent() ) {
-			return Lists.newArrayList();
-		}
-		
-		return optSetting.get().getAllowedValues(caller);
+		return OdysseusScriptConfigRegistry.getInstance().getConfigSettingNames();
 	}
 }
