@@ -67,10 +67,16 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		
 		// if a keyword is found, color it red
 		IToken parameter = createToken(SWT.COLOR_RED, false);
+		IToken deprecatedParameter = createToken(SWT.COLOR_RED, false, true);
+		
 		// everything else should be undefined (this gets the default color)
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, true);
 		for (String key : OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames()) {
-			wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, parameter);
+			if(!OdysseusRCPEditorTextPlugIn.getScriptParser().getPreParserKeywordRegistry().isDeprecated(key)) {
+				wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, parameter);
+			} else {
+				wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, deprecatedParameter);
+			}
 		}
 		rules.add(wr);
 

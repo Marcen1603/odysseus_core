@@ -110,14 +110,4 @@ public class OdysseusScriptViewerConfiguration extends SourceViewerConfiguration
 		formatter.setFormattingStrategy(new DefaultFormattingStrategy(), IDocument.DEFAULT_CONTENT_TYPE);
 		return formatter;
 	}
-
-//	@Override
-//	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
-//		return new IInformationControlCreator() {
-//			public IInformationControl createInformationControl(Shell parent) {
-//				return new DefaultInformationControl(parent, new HTMLTextPresenter(false));
-//			}
-//		};
-//	}
-
 }

@@ -77,12 +77,26 @@ public abstract class AbstractOdysseusScriptParition implements IOdysseusScriptP
 	protected IToken createToken(int swtColor, boolean bold) {
 		return createToken(convertColor(swtColor), bold);
 	}
+	
+	protected IToken createToken(int swtColor, boolean bold, boolean strikeThrough) {
+		return createToken(convertColor(swtColor), bold, strikeThrough);
+	}
 
 	protected IToken createToken(Color color, boolean bold) {
-		if (bold) {
-			return new Token(new TextAttribute(color, null, SWT.BOLD));
+		return createToken(color, bold, false);
+	}
+	
+	protected IToken createToken(Color color, boolean bold, boolean strikeThrough) {
+		if (bold && strikeThrough) {
+			return new Token(new TextAttribute(color, null, SWT.BOLD & TextAttribute.STRIKETHROUGH));
 		}
 		
+		if (bold) {
+			return new Token(new TextAttribute(color, null, SWT.BOLD));
+		} else if (strikeThrough) {
+			return new Token(new TextAttribute(color, null, TextAttribute.STRIKETHROUGH));
+		}
+
 		return new Token(new TextAttribute(color));
 	}
 		
