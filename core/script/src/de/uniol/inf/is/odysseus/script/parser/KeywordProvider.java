@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.UseRewritePreParserKeyword
 import de.uniol.inf.is.odysseus.script.parser.keyword.deprecated.QuerySharingPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.deprecated.UseDistributePreParserKeyword;
 
+@SuppressWarnings("deprecation")
 public class KeywordProvider implements IPreParserKeywordProvider {
 
 	@Override
