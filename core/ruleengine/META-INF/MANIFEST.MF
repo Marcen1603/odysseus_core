@@ -14,4 +14,4 @@ Export-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.system
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- org.apache.commons.lang3-v3.10;bundle-version="3.1.0"
+ org.apache.commons.lang3;bundle-version="3.1.0"
