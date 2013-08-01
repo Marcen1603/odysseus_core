@@ -8,10 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFile;
@@ -19,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,13 +47,12 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.GroupLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.HeatmapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.LayerConfiguration;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.RasterLayerConfiguration;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.script.parser.PreParserStatement;
 
 public class MapEditorModel extends ModelObject {
 
@@ -416,7 +414,7 @@ public class MapEditorModel extends ModelObject {
 				}
 			}
 		}
-		if (screenManager != null) {
+		if (screenManager != null && layer != null) {
 			layer.init(screenManager, schema, attribute);
 		}
 		return layer;
@@ -529,69 +527,28 @@ public class MapEditorModel extends ModelObject {
 	}
 
 	public static void execute(final String[] text) {
-		// Dieser Teil geschieht asynchron zum UIThread und wird als Job
-		// ausgef�hrt
-		// Job-Mechanismus wird von RCP gestellt.
-		// Job job = new Job("Parsing and Executing Query") {
-		// @Override
-		// protected IStatus run(IProgressMonitor monitor) {
-		// IStatus status = Status.OK_STATUS;
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			// Befehle holen
-			final List<PreParserStatement> statements = OdysseusRCPEditorTextPlugIn
-					.getScriptParser().parseScript(text, user);
-
-			// Erst Text testen
-			// monitor.beginTask("Executing Commands", statements.size() * 2);
-			// monitor.subTask("Validating");
-
-			Map<String, Object> variables = new HashMap<String, Object>();
-			for (PreParserStatement stmt : statements) {
-				stmt.validate(variables, user);
-				// monitor.worked(1);
-
-				// Wollte der Nutzer abbrechen?
-				// if (monitor.isCanceled())
-				// return Status.CANCEL_STATUS;
-			}
-
-			// Dann ausf�hren
-			variables = new HashMap<String, Object>();
-			@SuppressWarnings("unused")
-			int counter = 1;
-			for (PreParserStatement stmt : statements) {
-				// monitor.subTask("Executing (" + counter + " / " +
-				// statements.size() + ")");
-				stmt.execute(variables, user,
-						OdysseusRCPEditorTextPlugIn.getScriptParser());
-				// monitor.worked(1);
-				counter++;
-			}
+			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(concat(text), user, null);
 		} catch (OdysseusScriptException ex) {
-
-			// Evil Workaround
-
-			if (!ex.getRootMessage().contains("multiple")) {
-				MessageDialog.openError(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(),
-						ex.getMessage(), ex.getRootMessage());
-			}
-
 			LOG.error("Exception during executing script", ex);
-			//
-			// //status = new Status(Status.ERROR,
-			// IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error: "
-			// + ex.getRootMessage(), ex);
+			if (!ex.getRootMessage().contains("multiple")) {
+				MessageDialog.openError(getCurrentShell(), ex.getMessage(), ex.getRootMessage());
+			}
 		}
-		// monitor.done();
+	}
 
-		// return status;
-		// }
-		// };
-		// job.setUser(true); // gibt an, dass der Nutzer dieses Job ausgel�st
-		// hat
-		// job.schedule(); // dieser Job soll nun ausgef�hrt werden
+	private static Shell getCurrentShell() {
+		return PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell();
+	}
+
+	private static String concat(String[] text) {
+		StringBuilder sb = new StringBuilder();
+		for( String line : text ) {
+			sb.append(line).append("\n");
+		}
+		return sb.toString();
 	}
 
 	public void removeLayer(ILayer layer) {
