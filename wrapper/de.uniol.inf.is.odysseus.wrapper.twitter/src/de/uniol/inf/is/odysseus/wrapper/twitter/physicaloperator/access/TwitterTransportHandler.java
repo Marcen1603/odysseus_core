@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.wrapper.twitter.physicaloperator.access;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +40,6 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	/** Logger */
 	private final Logger LOG = LoggerFactory
 			.getLogger(TwitterTransportHandler.class);
-	private static final Charset charset = Charset.forName("UTF-8");
-	private static final CharsetEncoder encoder = charset.newEncoder();
 	private TwitterStream twitterStream;
 	private Twitter twitter;
 	private String consumerKey;
@@ -219,7 +215,6 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		}else{
 			 geoData = statusLocation.toString();
 		}
-	
 	
 		List<String> tweetlist = new ArrayList<>();
 		tweetlist.add(Long.toString(status.getId()));

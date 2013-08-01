@@ -1,12 +1,14 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
+import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 public class NaiveBayes extends AbstractClassifier {
 	
@@ -32,7 +34,7 @@ public class NaiveBayes extends AbstractClassifier {
 	}
 	
 	@Override
-	public void trainClassifier(Map<String, Integer> trainingset, boolean isTrained) {
+	public void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained) {
 		
 	logger.debug("trainingsset size: " +  trainingset.size());
 	logger.debug("domain: " + domain);
@@ -43,12 +45,12 @@ public class NaiveBayes extends AbstractClassifier {
 		negativewords.clear();
 	}	
 
-		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
+		for (TrainSetEntry e : trainingset) {
 
-			if (e.getValue() == 1) {
+			if (e.getTrueDecisio() == 1) {
 				// positive
 				//	for (String singleword : e.getKey().split(" ")) {
-				for (String singleword : NGramm.ngrams(e.getKey(), ngram)) { 
+				for (String singleword : NGramm.ngrams(e.getRecord(), ngram)) { 
 					if (!positivewords.containsKey(singleword.toLowerCase())) {
 						  positivewords.put(singleword.toLowerCase(), 1);
 					} else {
@@ -61,7 +63,7 @@ public class NaiveBayes extends AbstractClassifier {
 			} else {
 				// negative
 				//for (String singleword : e.getKey().split(" ")) {
-				for (String singleword : NGramm.ngrams(e.getKey(), ngram)) {
+				for (String singleword : NGramm.ngrams(e.getRecord(), ngram)) {
 					if (!negativewords.containsKey(singleword.toLowerCase())) {
 							negativewords.put(singleword.toLowerCase(), 1);
 					} else {
@@ -77,6 +79,10 @@ public class NaiveBayes extends AbstractClassifier {
 		logger.debug(algo_type.toLowerCase() +" classifier successfully initialized!");
 		logger.debug("positivewords size: "+ positivewords.size());
 		logger.debug("negativewords size" + negativewords.size());
+		System.out.println(algo_type.toLowerCase() +" classifier successfully initialized!");
+		System.out.println("positivewords size: "+ positivewords.size());
+		System.out.println("negativewords size" + negativewords.size());
+		
 	}
 
 	

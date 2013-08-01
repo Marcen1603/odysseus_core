@@ -1,6 +1,9 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
-import java.util.Map;
+import java.util.List;
+
+
+import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 
 public interface IClassifier {
@@ -11,7 +14,7 @@ public interface IClassifier {
 	
 	void setNgram(int ngram);
 	
-	void trainClassifier(Map<String, Integer> trainingset, boolean isTrained);
+	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
 	
 	int startDetect(String text);
 	

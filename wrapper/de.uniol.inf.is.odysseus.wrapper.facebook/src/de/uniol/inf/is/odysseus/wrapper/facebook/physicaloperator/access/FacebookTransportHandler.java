@@ -85,7 +85,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		System.out.println("Page likes: " + page.getLikes());
 		*/
 	
-			String url = "https://graph.facebook.com/cocacola/feed?limit=50&access_token="+this.accessToken;
+			String url = "https://graph.facebook.com/cocacola/feed?fields=message&limit=50&access_token="+this.accessToken;
 			this.input = new URL(url).openStream();
 			
 			/* Test was im Stream drin steht....

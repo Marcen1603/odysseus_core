@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.physicaloperator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.IClassifier;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.Metrics;
+import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 @SuppressWarnings({ "rawtypes" })
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
@@ -49,7 +50,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	
 	//buffer 
 	private List<Tuple> buffer = new ArrayList<>();
-	private Map<String, Integer> trainingset = new HashMap<String, Integer>();
+	//private Map<String, Integer> trainingset = new TreeMap<String, Integer>();
+	private List<TrainSetEntry> trainingset = new ArrayList<TrainSetEntry>();
 	
 	
 	//attribute positions
@@ -125,8 +127,14 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		if (port == 0) {
 			// add trainingsset
-			trainingset.put(object.getAttribute(attributeTrainSetTextPos).toString(),
-					Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
+			System.out.println("Trainingssize: "+trainingset.size());
+			System.out.println(object.getAttribute(attributeTrainSetTextPos).toString());
+			
+			TrainSetEntry entry = new TrainSetEntry();
+			entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
+			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
+			trainingset.add(entry);
+
 
 			if (trainingset.size() >= trainSetMinSize || isTrained) {
 				algo.trainClassifier(trainingset, isTrained);

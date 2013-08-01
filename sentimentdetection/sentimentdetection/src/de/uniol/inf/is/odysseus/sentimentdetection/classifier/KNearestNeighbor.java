@@ -44,7 +44,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 	
 	@Override
-	public void trainClassifier(Map<String, Integer> trainingset, boolean isTrained) {
+	public void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained) {
 
 	if(!isTrained){	
 		freq.clear();
@@ -57,9 +57,9 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 	
 
-		for (Map.Entry<String, Integer> e : trainingset.entrySet()) {
+		for (TrainSetEntry e : trainingset) {
 
-			List<String> words = getWords(e.getKey());
+			List<String> words = getWords(e.getRecord());
 
 			for (String word : words) {
 				if (!freq.containsKey(word)) {
@@ -70,7 +70,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 				}
 			}
 
-			trainfeatures.put(words, e.getValue());
+			trainfeatures.put(words, e.getTrueDecisio());
 		}
 
 	}
