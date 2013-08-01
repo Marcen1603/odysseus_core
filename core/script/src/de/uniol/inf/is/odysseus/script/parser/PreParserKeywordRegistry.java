@@ -159,4 +159,13 @@ public class PreParserKeywordRegistry {
 		return getKeywords().keySet();
 	}
 
+	public boolean isDeprecated(String keyword) {
+		Class<? extends IPreParserKeyword> keywordClass = getKeywords().get(keyword);
+		if( keywordClass != null && ( keywordClass.getAnnotation(Deprecated.class) != null )) {
+			return true;
+		}
+		
+		return false;
+	}
+
 }
