@@ -80,6 +80,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -303,6 +305,15 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			LOG.debug("Schedulermanager unbound " + schedulerManager);
 		}
 	}
+	
+	public void bindUserManagement(IUserManagement mgmt){
+		// do nothing
+	}
+	
+	public void bindSessionManagement(ISessionManagement mgmt){
+		// do nothing
+	}
+	
 
 	public void bindAdmissionControl(IAdmissionControl control) {
 		if (admissionControl != null) {
