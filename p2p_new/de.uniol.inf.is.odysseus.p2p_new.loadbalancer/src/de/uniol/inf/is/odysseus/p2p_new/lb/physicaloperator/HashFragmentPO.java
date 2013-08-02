@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
 
@@ -11,7 +12,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
  * {@link StreamObject}s to different output ports and can handle {@link IPunctuations}.
  * @author Michael Brand
  */
-public class HashFragmentPO<T extends IStreamObject<?>> 
+public class HashFragmentPO<T extends IStreamObject<? extends ITimeInterval>> 
 		extends AbstractFragmentPO<T> {
 	
 	/**

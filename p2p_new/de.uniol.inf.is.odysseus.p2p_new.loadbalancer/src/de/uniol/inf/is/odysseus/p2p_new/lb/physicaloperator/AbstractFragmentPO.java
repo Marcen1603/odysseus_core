@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
@@ -10,7 +12,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
  * A {@link AbstractFragmentPO} can be used to realize a {@link FragmentAO}.
  * @author Michael Brand
  */
-public abstract class AbstractFragmentPO<T extends IStreamObject<?>> 
+public abstract class AbstractFragmentPO<T extends IStreamObject<? extends ITimeInterval>> 
 		extends AbstractPipe<T, T> {
 	
 	/**
@@ -67,14 +69,32 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<?>>
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		
-		this.transfer(object, this.route(object));
+		int outPort = this.route(object);
+		this.transfer(object, outPort);
+		
+		// Sending heartbeats to all other ports
+		for(int p = 0; p < this.numFragments; p++) {
+			
+			if(p != outPort)
+				this.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()));
+			
+		}
 
 	}
 	
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		
-		this.sendPunctuation(punctuation, this.route(punctuation));
+		int outPort = this.route(punctuation);
+		this.sendPunctuation(punctuation, outPort);
+		
+		// Sending heartbeats to all other ports
+		for(int p = 0; p < this.numFragments; p++) {
+			
+			if(p != outPort)
+				this.sendPunctuation(Heartbeat.createNewHeartbeat(punctuation.getTime()));
+			
+		}
 		
 	}
 	
