@@ -30,13 +30,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
-import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
-public final class DashboardPartController implements IConfigurationListener {
+public final class DashboardPartController implements IDashboardPartListener {
 
 	private static enum Status {
 		RUNNING, STOPPED, PAUSED
@@ -82,7 +81,6 @@ public final class DashboardPartController implements IConfigurationListener {
 			streamConnection = new DefaultStreamConnection<IStreamObject<?>>(roots);
 
 			dashboardPart.onStart(roots);
-			dashboardPart.getConfiguration().addListener(this);
 			addAsListener();
 
 			streamConnection.connect();
@@ -117,8 +115,7 @@ public final class DashboardPartController implements IConfigurationListener {
 	}
 
 	private String[] determineDashboardPartSinkNames() {
-		Configuration configuration = dashboardPart.getConfiguration();
-		String sinkNamesString = configuration.get(Configuration.SINK_NAME_CFG);
+		String sinkNamesString = dashboardPart.getSinkNames();
 		if (!Strings.isNullOrEmpty(sinkNamesString)) {
 			return sinkNamesString.split(",");
 		}
@@ -132,7 +129,7 @@ public final class DashboardPartController implements IConfigurationListener {
 
 		streamConnection.disconnect();
 		removeAsListener();
-		dashboardPart.getConfiguration().removeListener(this);
+		dashboardPart.addListener(this);
 		dashboardPart.onStop();
 
 		stopQueries();
@@ -159,14 +156,6 @@ public final class DashboardPartController implements IConfigurationListener {
 			}
 		} else {
 			streamConnection.removeStreamElementListener(dashboardPart);
-		}
-	}
-
-	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-		if (settingName.equals(Configuration.SINK_NAME_CFG)) {
-			removeAsListener();
-			addAsListener();
 		}
 	}
 
@@ -203,5 +192,11 @@ public final class DashboardPartController implements IConfigurationListener {
 		}
 
 		return ids;
+	}
+
+	@Override
+	public void dashboardPartChanged() {
+		removeAsListener();
+		addAsListener();
 	}
 }

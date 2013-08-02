@@ -2,13 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="Dashboard Part Examples"
-         name="Dashboard Part Examples"
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.example.AuctionStatusDashboardPart"
-            description="Sample application: AuctionStatus"
-            name="AuctionTable Example">
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.part.example.AuctionStatusConfigurer"
+            name="AuctionStatus">
       </dashboardPart>
    </extension>
 

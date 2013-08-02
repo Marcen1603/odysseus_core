@@ -25,33 +25,25 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 
-public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>, IConfigurationListener {
+public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>> {
 
 	public void createPartControl(Composite parent, ToolBar toolbar);
-
-	public Configuration getConfiguration();
-
-	public IDashboardPartQueryTextProvider getQueryTextProvider();
-
-	public boolean init(Configuration configuration);
+	public void dispose();
 
 	public void onLoad(Map<String, String> saved);
-
-	public void onPause();
-
 	public Map<String, String> onSave();
-
+	
 	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception;
-
 	public void onStop();
-
+	public void onPause();
 	public void onUnpause();
 
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider file);
+	public IDashboardPartQueryTextProvider getQueryTextProvider();
 	
-	public void dispose();
+	public void setSinkNames( String sinkNames );
+	public String getSinkNames();
 	
 	public void addListener(IDashboardPartListener listener);
-	
 	public void removeListener(IDashboardPartListener listener);
 }

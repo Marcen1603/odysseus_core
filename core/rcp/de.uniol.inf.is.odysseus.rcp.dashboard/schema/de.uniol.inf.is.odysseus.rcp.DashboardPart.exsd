@@ -50,19 +50,11 @@
    <element name="dashboardPart">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="setting"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   Name of the dashboardPart
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  Optional text for describing the dashboard part further.
                </documentation>
             </annotation>
          </attribute>
@@ -76,56 +68,14 @@
                </appinfo>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="setting">
-      <annotation>
-         <documentation>
-            Custom setting to configure dashboardParts.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Unique name of this setting
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Type of setting. Allowed are Integer, Long, Float, Double, String, Boolean
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="defaultValue" type="string">
-            <annotation>
-               <documentation>
-                  Default value to use as first value in used dashboard parts. Input as string, but it will be tried to convert it to given type.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
+         <attribute name="configClass" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="isOptional" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Sets, if this setting have to have a value.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="isEditable" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  Sets, if the setting can be changed after the dashboardpart was created.
-               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>

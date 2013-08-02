@@ -15,8 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.extension;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -25,13 +23,10 @@ import org.eclipse.core.runtime.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
-import de.uniol.inf.is.odysseus.rcp.dashboard.desc.SettingDescriptor;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
 
 public class DashboardPartExtensionPointResolver implements IRegistryEventListener {
 
@@ -73,76 +68,34 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 		// do nothing
 	}
 
-	private static Class<? extends IDashboardPart> checkAndGetDashboardPartClass(Object obj) throws Exception {
+	@SuppressWarnings("unchecked")
+	private static Class<IDashboardPart> checkAndGetDashboardPartClass(Object obj) throws Exception {
 		if (!(obj instanceof IDashboardPart)) {
 			throw new Exception("Class " + obj.getClass() + " does not implement the interface " + IDashboardPart.class);
 		}
 		final IDashboardPart part = (IDashboardPart) obj;
-		return part.getClass();
+		return (Class<IDashboardPart>) part.getClass();
 	}
 
-	private static Object convertValue(String value, String type) throws Exception {
-		if (value == null) {
-			return null;
+	@SuppressWarnings("unchecked")
+	private static Class<IDashboardPartConfigurer<? extends IDashboardPart>> checkAndGetDashboardPartConfigurerClass(Object obj) throws Exception {
+		if (!(obj instanceof IDashboardPartConfigurer)) {
+			throw new Exception("Class " + obj.getClass() + " does not implement the interface " + IDashboardPartConfigurer.class);
 		}
-
-		if ("Integer".equalsIgnoreCase(type)) {
-			return Integer.valueOf(value);
-		}
-
-		if ("Long".equalsIgnoreCase(type)) {
-			return Long.valueOf(value);
-		}
-
-		if ("Double".equalsIgnoreCase(type)) {
-			return Double.valueOf(value);
-		}
-
-		if ("Boolean".equalsIgnoreCase(type)) {
-			return Boolean.valueOf(value);
-		}
-
-		if ("Float".equalsIgnoreCase(type)) {
-			return Float.valueOf(value);
-		}
-
-		if ("String".equalsIgnoreCase(type)) {
-			return value;
-		}
-
-		throw new Exception("Setting type " + type + " not supported!");
+		final IDashboardPartConfigurer<?> part = (IDashboardPartConfigurer<?>) obj;
+		return (Class<IDashboardPartConfigurer<? extends IDashboardPart>>) part.getClass();
 	}
 
-	private static SettingDescriptor<?> evaluateSetting(IConfigurationElement e) throws Exception {
-		final String name = e.getAttribute("name");
-		final String type = e.getAttribute("type");
-		final String defaultValue = e.getAttribute("defaultValue");
-		final String description = e.getAttribute("description");
-		final String isOptional = e.getAttribute("isOptional");
-		final String isEditable = e.getAttribute("isEditable");
-
-		return new SettingDescriptor<Object>(name, description, type, convertValue(defaultValue, type), Boolean.valueOf(isOptional), Boolean.valueOf(isEditable));
-	}
-
-	private static DashboardPartDescriptor getDashboardPartDescriptorFromExtension(IConfigurationElement e) throws Exception {
-		final String name = e.getAttribute("name");
-		final String description = e.getAttribute("description");
-
-		final List<SettingDescriptor<?>> settingDescriptors = Lists.newArrayList();
-		for (final IConfigurationElement child : e.getChildren()) {
-			settingDescriptors.add(evaluateSetting(child));
-		}
-
-		return new DashboardPartDescriptor(name, description, settingDescriptors);
-	}
 
 	private static void resolveConfigurationElement(IConfigurationElement element) {
 		try {
-			final Class<? extends IDashboardPart> clazz = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));
-			final DashboardPartDescriptor desc = getDashboardPartDescriptorFromExtension(element);
-			DashboardPartRegistry.register(clazz, desc);
+			final Class<? extends IDashboardPart> dashboardPartClass = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));
+			final Class<? extends IDashboardPartConfigurer<? extends IDashboardPart>> dashboardPartConfigurerClass = checkAndGetDashboardPartConfigurerClass(element.createExecutableExtension("configClass"));
+			final String name = element.getAttribute("name");
+			DashboardPartRegistry.register(dashboardPartClass, dashboardPartConfigurerClass, name);
 		} catch (final Throwable t) {
 			LOG.error("Could not evaluate extension", t);
 		}
 	}
+
 }

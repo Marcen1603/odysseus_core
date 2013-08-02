@@ -48,7 +48,6 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -255,15 +254,25 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	 * DASHBOARD IMPLEMENTATIONS
 	 */
 
-	private Configuration configuration;
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private boolean opened = false;
+	private String sinkNames;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		initComposite(parent);
 		addToToolbar(toolbar, changeAttributesAction);
 		addToToolbar(toolbar, changeSettingsAction);
+	}
+	
+	@Override
+	public void setSinkNames(String sinkNames) {
+		this.sinkNames = sinkNames;
+	}
+	
+	@Override
+	public String getSinkNames() {
+		return sinkNames;
 	}
 
 	private void addToToolbar(ToolBar tb, final Action action) {
@@ -286,29 +295,13 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	}
 
 	@Override
-	public Configuration getConfiguration() {
-		return configuration;
-	}
-
-	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
 		return queryTextProvider;
 	}
 
 	@Override
-	public boolean init(Configuration configuration) {
-		this.configuration = configuration;
-		this.configuration.addListener(this);
-
-		return true;
-	}
-
-	@Override
 	public void dispose() {
 		super.dispose();
-		if (this.configuration != null) {
-			this.configuration.removeListener(this);
-		}
 	}
 
 	@Override
@@ -380,12 +373,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
 		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
-	}
-
-
-	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-
 	}
 	
 	@Override

@@ -22,7 +22,6 @@ import org.eclipse.swt.graphics.Image;
 
 import com.google.common.base.Strings;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 
 public class DashboardOutlineLabelProvider implements ILabelProvider {
@@ -39,7 +38,7 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 	public Image getImage(Object element) {
 		if (element instanceof DashboardPartPlacement) {
 			return DashboardPlugIn.getImageManager().get("dashboardPart");
-		} else if( element instanceof String ) {
+		} else if (element instanceof String) {
 			return DashboardPlugIn.getImageManager().get("setting");
 		}
 		return null;
@@ -59,12 +58,9 @@ public class DashboardOutlineLabelProvider implements ILabelProvider {
 	private static String generateName(DashboardPartPlacement placement) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(placement.getDashboardPart().getClass().getSimpleName());
-		Configuration configuration = placement.getDashboardPart().getConfiguration();
-		if( configuration.exists(Configuration.SINK_NAME_CFG)) {
-			String sinkName = configuration.get(Configuration.SINK_NAME_CFG);
-			if( !Strings.isNullOrEmpty(sinkName)) {
-				sb.append(" [" + sinkName + "]");
-			} 
+		String sinkName = placement.getDashboardPart().getSinkNames();
+		if (!Strings.isNullOrEmpty(sinkName)) {
+			sb.append(" [" + sinkName + "]");
 		}
 		return sb.toString();
 	}

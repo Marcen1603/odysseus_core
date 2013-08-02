@@ -106,11 +106,6 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-
-	}
-
-	@Override
 	public void streamElementRecieved(IStreamObject<?> element, int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Could not use stream-objects of class {}. Only {} supported.", element.getClass(), Tuple.class);

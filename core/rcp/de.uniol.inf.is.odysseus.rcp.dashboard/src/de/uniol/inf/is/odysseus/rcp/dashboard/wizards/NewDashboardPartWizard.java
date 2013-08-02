@@ -16,10 +16,8 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -33,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
-import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
@@ -61,15 +57,15 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	@Override
 	public void addPages() {
 		addPage(containerPage);
-		addPage(partTypePage);
 		addPage(queryFilePage);
+		addPage(partTypePage);
 	}
 
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
-		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part");
 		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
+		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part");
 	}
 
 	@Override
@@ -79,14 +75,9 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 			final IPath path = containerPage.getContainerFullPath().append(dashboardPartFileName);
 			final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-			dashboardPartFile.create(null, IResource.NONE, null);
+			dashboardPartFile.create(null, true, null);
 
-			final IDashboardPart part = DashboardPartRegistry.createDashboardPart(partTypePage.getSelectedDashboardPartName());
-			final Configuration defaultConfiguration = part.getConfiguration();
-			final Map<String, String> settings = partTypePage.getSelectedSettings();
-			for (final String key : settings.keySet()) {
-				defaultConfiguration.setAsString(key, settings.get(key));
-			}
+			final IDashboardPart part = partTypePage.getDashboardPart();
 			part.setQueryTextProvider(createQueryTextProvider(queryFilePage.isQueryFileCopy(), queryFilePage.getQueryFile()));
 
 			final IDashboardPartHandler handler = new XMLDashboardPartHandler();

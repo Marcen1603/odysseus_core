@@ -5,7 +5,7 @@
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.SoccerOverviewDashboardPart"
-            description="Overview of a soccer game"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.SoccerOverviewConfigurer"
             name="Soccer Overview">
       </dashboardPart>
    </extension>

@@ -26,17 +26,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
-
 public class DashboardPartRegistry {
 
 	private static class Registration {
 		public final Class<? extends IDashboardPart> dashboardPartClass;
-		public final DashboardPartDescriptor descriptor;
-
-		public Registration(Class<? extends IDashboardPart> dashboardPartClass, DashboardPartDescriptor descriptor) {
+		public final Class<? extends IDashboardPartConfigurer<?>> dashboardPartConfigurerClass;
+		
+		public Registration(Class<? extends IDashboardPart> dashboardPartClass, Class<? extends IDashboardPartConfigurer<?>> configurer) {
 			this.dashboardPartClass = dashboardPartClass;
-			this.descriptor = descriptor;
+			this.dashboardPartConfigurerClass = configurer;
 		}
 	}
 
@@ -51,17 +49,23 @@ public class DashboardPartRegistry {
 		final Registration reg = registeredParts.get(dashboardPartName);
 		final Optional<? extends IDashboardPart> optInstance = createDashboardPartInstance(reg.dashboardPartClass);
 		if (optInstance.isPresent()) {
-			final IDashboardPart instance = optInstance.get();
-			final DashboardPartDescriptor descriptor = reg.descriptor;
-			if (instance.init(descriptor.createDefaultConfiguration())) {
-				LOG.debug("Created DashboardPart-instance of {}.", dashboardPartName);
-				return instance;
-			}
-
-			throw new InstantiationException("Could not create instance of DashboardPart " + dashboardPartName + ", because init failed.");
+			return optInstance.get();
 		}
 
 		throw new InstantiationException("Could not create instance of DashboardPart " + dashboardPartName);
+	}
+	
+	public static IDashboardPartConfigurer<?> createDashboardPartConfigurer( String dashboardPartName ) throws InstantiationException {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
+		Preconditions.checkArgument(isRegistered(dashboardPartName), "DashboardPart %s not registered!", dashboardPartName);
+
+		final Registration reg = (Registration) registeredParts.get(dashboardPartName);
+		Optional<? extends IDashboardPartConfigurer<?>> optConfigurer = createDashboardPartConfigurerInstance(reg.dashboardPartConfigurerClass);
+		if( optConfigurer.isPresent() ) {
+			return optConfigurer.get();
+		}
+		
+		throw new InstantiationException("Could not create instance of DashboardPartConfigurer " + dashboardPartName);		
 	}
 
 	public static Optional<Class<? extends IDashboardPart>> getDashboardPartClass(String dashboardPartName) {
@@ -69,18 +73,8 @@ public class DashboardPartRegistry {
 
 		final Registration reg = registeredParts.get(dashboardPartName);
 		if (reg != null) {
-			final Class<? extends IDashboardPart> clazz = reg.dashboardPartClass;
+			final Class<? extends IDashboardPart> clazz = (Class<? extends IDashboardPart>) reg.dashboardPartClass;
 			return Optional.<Class<? extends IDashboardPart>> of(clazz);
-		}
-		return Optional.absent();
-	}
-
-	public static Optional<DashboardPartDescriptor> getDashboardPartDescriptor(String dashboardPartName) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
-
-		final Registration reg = registeredParts.get(dashboardPartName);
-		if (reg != null) {
-			return Optional.of(reg.descriptor);
 		}
 		return Optional.absent();
 	}
@@ -100,14 +94,15 @@ public class DashboardPartRegistry {
 		return registeredParts.containsKey(dashboardPartName);
 	}
 
-	public static void register(Class<? extends IDashboardPart> dashboardPartClass, DashboardPartDescriptor descriptor) {
+	public static void register(Class<? extends IDashboardPart> dashboardPartClass, Class<? extends IDashboardPartConfigurer<?>> dashboardPartConfigurer, String dashboardPartName) {
 		Preconditions.checkNotNull(dashboardPartClass, "Class of IDashboardPart must not be null!");
-		Preconditions.checkNotNull(descriptor, "Descriptor of DashboardPart must not be null!");
+		Preconditions.checkNotNull(dashboardPartConfigurer, "Class of IDashboardPartConfigurer must not be null!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "DashboardPartName must not be null or empty!");
 		Preconditions.checkArgument(!isRegistered(dashboardPartClass), "DashboardPartClass %s already registered!", dashboardPartClass);
-		Preconditions.checkArgument(!isRegistered(descriptor.getName()), "DashboardPartClass %s already registered!", dashboardPartClass);
+		Preconditions.checkArgument(!isRegistered(dashboardPartName), "DashboardPartName %s already registered!", dashboardPartName);
 
-		registeredParts.put(descriptor.getName(), new Registration(dashboardPartClass, descriptor));
-		LOG.debug("Registered DashboardPart {}.", descriptor.getName());
+		registeredParts.put(dashboardPartName, new Registration(dashboardPartClass, dashboardPartConfigurer));
+		LOG.debug("Registered DashboardPart {}.",  dashboardPartName);
 	}
 
 	public static void unregister(Class<? extends IDashboardPart> dashboardPartClass) {
@@ -145,8 +140,17 @@ public class DashboardPartRegistry {
 			return Optional.absent();
 		}
 	}
+	
+	private static Optional<? extends IDashboardPartConfigurer<?>> createDashboardPartConfigurerInstance(Class<? extends IDashboardPartConfigurer<?>> dashboardPartClass) {
+		try {
+			return Optional.of(dashboardPartClass.newInstance());
+		} catch (final Throwable t) {
+			LOG.error("Could not create instance of type {}.", dashboardPartClass, t);
+			return Optional.absent();
+		}
+	}
 
-	private static Optional<String> getRegistrationName(Class<? extends IDashboardPart> dashboardPartClass) {
+	public static Optional<String> getRegistrationName(Class<? extends IDashboardPart> dashboardPartClass) {
 		for (final String registrationName : registeredParts.keySet()) {
 			if (registeredParts.get(registrationName).dashboardPartClass.equals(dashboardPartClass)) {
 				return Optional.of(registrationName);

@@ -46,18 +46,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
-import de.uniol.inf.is.odysseus.rcp.dashboard.desc.DashboardPartDescriptor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
@@ -87,15 +84,14 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		Preconditions.checkArgument(!lines.isEmpty(), "Array of lines must not be empty!");
 
 		try {
-			final Document doc = getDocument(lines);
-			final Node rootNode = getRootNode(doc);
+			Document doc = getDocument(lines);
+			Node rootNode = getRootNode(doc);
 
-			final DashboardPartDescriptor descriptor = getDashboardPartDescriptor(rootNode);
-			final IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
-			final Map<String, String> settingsMap = parseSettingsMap(rootNode);
-			final Map<String, String> customSettings = getCustoms(doc);
+			String partName = getDashboardPartName(rootNode);
+			IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
+			Map<String, String> customSettings = getCustoms(doc);
 
-			return buildDashboardPart(descriptor, queryTextProvider, settingsMap, customSettings);
+			return buildDashboardPart(partName, queryTextProvider, customSettings);
 
 		} catch (final ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart", e);
@@ -109,6 +105,10 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		}
 	}
 
+	private String getDashboardPartName(Node rootNode) {
+		return getAttribute(rootNode, "id", null);
+	}
+
 	@Override
 	public List<String> save(IDashboardPart part) throws DashboardHandlerException {
 		Preconditions.checkNotNull(part, "Part to save must not be null!");
@@ -120,8 +120,8 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			final Document doc = docBuilder.newDocument();
 
 			final Element rootElement = createRootElement(part.getClass(), doc);
+			appendDashboardPartName( DashboardPartRegistry.getRegistrationName(part.getClass()).get(), rootElement);
 			appendQueryTextProvider(part.getQueryTextProvider(), doc, rootElement);
-			appendConfiguration(part.getConfiguration(), doc, rootElement);
 			appendCustoms(part, doc, rootElement);
 			return save(doc);
 
@@ -131,16 +131,8 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		}
 	}
 
-	private static void appendConfiguration(Configuration config, Document doc, Element rootElement) {
-		for (final String name : config.getNames()) {
-
-			final Element settingElement = doc.createElement(SETTING_XML_ELEMENT);
-			settingElement.setAttribute(SETTING_NAME_XML_ATTRIBUTE, name);
-
-			final Object value = config.get(name);
-			settingElement.setAttribute(SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : NULL_SETTING);
-			rootElement.appendChild(settingElement);
-		}
+	private static void appendDashboardPartName(String dashboardPartName, Element rootElement) {
+		rootElement.setAttribute("id", dashboardPartName);
 	}
 
 	private static void appendCustoms(IDashboardPart part, Document doc, Element rootElement) {
@@ -183,15 +175,9 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		}
 	}
 
-	private static IDashboardPart buildDashboardPart(DashboardPartDescriptor descriptor, IDashboardPartQueryTextProvider queryTextProvider, Map<String, String> settingsMap,
-			Map<String, String> customSettings) throws DashboardHandlerException {
+	private static IDashboardPart buildDashboardPart(String partName, IDashboardPartQueryTextProvider queryTextProvider, Map<String, String> customSettings) throws DashboardHandlerException {
 		try {
-			final IDashboardPart part = DashboardPartRegistry.createDashboardPart(descriptor.getName());
-			final Configuration defaultConfiguration = part.getConfiguration();
-			for (final String key : settingsMap.keySet()) {
-				final String value = settingsMap.get(key);
-				defaultConfiguration.setAsString(key, NULL_SETTING.equals(value) ? null : value);
-			}			
+			final IDashboardPart part = DashboardPartRegistry.createDashboardPart(partName);
 			part.setQueryTextProvider(queryTextProvider);
 			part.onLoad(customSettings);
 			return part;
@@ -247,29 +233,6 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			LOG.error("Could not load custom settings. <Custom>-Tag must exist exactly once.");
 		}
 		return customSettings;
-	}
-
-	private static DashboardPartDescriptor getDashboardPartDescriptor(Node rootNode) throws DashboardHandlerException {
-		final String dashboardPartClass = rootNode.getAttributes().getNamedItem(CLASS_XML_ATTRIBUTE).getNodeValue();
-		final Optional<DashboardPartDescriptor> optDescriptor = getDescriptorFromClassName(dashboardPartClass);
-		if (!optDescriptor.isPresent()) {
-			throw new DashboardHandlerException("Unknown class " + dashboardPartClass + " in registry.");
-		}
-		final DashboardPartDescriptor descriptor = optDescriptor.get();
-		return descriptor;
-	}
-
-	private static Optional<DashboardPartDescriptor> getDescriptorFromClassName(String className) {
-		final List<String> names = DashboardPartRegistry.getDashboardPartNames();
-
-		for (final String name : names) {
-			final Optional<Class<? extends IDashboardPart>> desc = DashboardPartRegistry.getDashboardPartClass(name);
-			if (desc.isPresent() && desc.get().getName().equals(className)) {
-				return DashboardPartRegistry.getDashboardPartDescriptor(name);
-			}
-		}
-
-		return Optional.absent();
 	}
 
 	private static Document getDocument(List<String> lines) throws ParserConfigurationException, SAXException, IOException {
@@ -332,24 +295,6 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 		final Node rootNode = nodes.item(0);
 		return rootNode;
-	}
-
-	private static Map<String, String> parseSettingsMap(Node rootNode) {
-		final Map<String, String> settingsMap = Maps.newHashMap();
-
-		final NodeList settingNodes = rootNode.getChildNodes();
-		for (int i = 0; i < settingNodes.getLength(); i++) {
-			final Node settingNode = settingNodes.item(i);
-
-			if (settingNode.getNodeType() == Node.ELEMENT_NODE && settingNode.getNodeName().equals(SETTING_XML_ELEMENT)) {
-				final String settingName = settingNode.getAttributes().getNamedItem(SETTING_NAME_XML_ATTRIBUTE).getNodeValue();
-				final String settingValue = settingNode.getAttributes().getNamedItem(SETTING_VALUE_XML_ATTRIBUTE).getNodeValue();
-
-				settingsMap.put(settingName, settingValue);
-			}
-		}
-
-		return settingsMap;
 	}
 
 	private static List<String> save(Document doc) throws DashboardHandlerException {

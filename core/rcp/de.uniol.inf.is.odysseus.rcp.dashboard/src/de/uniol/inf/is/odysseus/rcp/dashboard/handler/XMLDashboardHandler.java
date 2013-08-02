@@ -51,7 +51,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
@@ -140,10 +139,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	}
 
 	private void applySettingsToDashboardPart(final Map<String, String> settingsMap, final IDashboardPart dashboardPart) {
-		for (final String key : settingsMap.keySet()) {
-			final String value = settingsMap.get(key);
-			dashboardPart.getConfiguration().setAsString(key, XMLDashboardPartHandler.NULL_SETTING.equals(value) ? null : value);
-		}
+		dashboardPart.onLoad(settingsMap);
 	}
 	
 	private static Map<String, String> parseSettingsMap(Node rootNode) {
@@ -207,17 +203,17 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		element.setAttribute(FILE_ATTRIBUTE_NAME, placement.getFilename());
 		rootElement.appendChild(element);
 		
-		appendConfiguration(placement.getDashboardPart().getConfiguration(), doc, element);
+		appendConfiguration(placement.getDashboardPart().onSave(), doc, element);
 	}
 	
-	private static void appendConfiguration(Configuration config, Document doc, Element rootElement) {
-		for (final String name : config.getNames()) {
+	private static void appendConfiguration(Map<String, String> customSettings, Document doc, Element rootElement) {
+		for (final String name : customSettings.keySet()) {
 
 			final Element settingElement = doc.createElement(XMLDashboardPartHandler.SETTING_XML_ELEMENT);
 			settingElement.setAttribute(XMLDashboardPartHandler.SETTING_NAME_XML_ATTRIBUTE, name);
 
-			final Object value = config.get(name);
-			settingElement.setAttribute(XMLDashboardPartHandler.SETTING_VALUE_XML_ATTRIBUTE, value != null ? value.toString() : XMLDashboardPartHandler.NULL_SETTING);
+			final String value = customSettings.get(name);
+			settingElement.setAttribute(XMLDashboardPartHandler.SETTING_VALUE_XML_ATTRIBUTE, value != null ? value : XMLDashboardPartHandler.NULL_SETTING);
 			rootElement.appendChild(settingElement);
 		}
 	}

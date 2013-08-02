@@ -362,62 +362,62 @@
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChart"
-            description="Visualizes each attribute value as bar"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChartConfigurer"
             name="Bar Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart"
-            description="Normalizes each value and visualizes then procentual in a pie chart"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChartConfigurer"
             name="Pie Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ThermometerChart"
-            description="Creates a thermometer for one value that changes the color"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ThermometerConfigurer"
             name="Thermometer Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChart"
-            description="Creates a clock-face like dial chart "
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChartConfigurer"
             name="Dial Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChart"
-            description="A chart with filled areas under the lines"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChartConfigurer"
             name="Area Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYLineChart"
-            description="Creates a XY Line Chart where one value is used for the x-axis"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYLineChartConfigurer"
             name="XY Line Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart"
-            description="Creates a XY chart that connects the points with spline interpolated curves"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChartConfigurer"
             name="XY Spline Curve Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChart"
-            description="Draws a set of bars for each step along the x-axis"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChartConfigurer"
             name="XY Bar Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChart"
-            description="Each value is visualized by a certain step to show a stacked bar chart or discrete value switches"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChartConfigurer"
             name="XY Step Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChart"
-            description="A scatter plot for three values, x and y for coordinates and z for color"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChartConfigurer"
             name="Scatter Plot">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
-            description="A 3D version of the pie chart"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3DConfigurer"
             name="3D Pie Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.LinearFunctionChart"
-            description="Plots a linear function (mx+b) by using a slope and intercept value"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.LinearFunctionChartConfigurer"
             name="Linear Function">
       </dashboardPart>
    </extension>

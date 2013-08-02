@@ -7,110 +7,13 @@
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.TableDashboardPart"
-            description="Tabular overview of recieved tuples of one query"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.part.TableConfigurer"
             name="Table">
-         <setting
-               description="Comma-separated list of attribute-names shown in the table. Star (*) to select all attributes in result stream. Must be not empty."
-               isEditable="true"
-               isOptional="false"
-               name="Attributes"
-               type="String">
-         </setting>
-         <setting
-               defaultValue="10"
-               description="Maximum amount of lines displayed "
-               isEditable="true"
-               isOptional="false"
-               name="MaxData"
-               type="Integer">
-         </setting>
-         <setting
-               description="Title of the table shown above"
-               isEditable="true"
-               isOptional="true"
-               name="Title"
-               type="String">
-         </setting>
-      </dashboardPart>
-      <dashboardPart
-            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.LineChartDashboardPart"
-            description="Graphical line to show changes of numerical values"
-            name="Lines">
-         <setting
-               defaultValue="Line chart"
-               description="Chart title to be printed in"
-               isEditable="true"
-               isOptional="true"
-               name="Title"
-               type="String">
-         </setting>
-         <setting
-               description="List of comma-separated attributes which should be mapped on the x-axis"
-               isEditable="true"
-               isOptional="false"
-               name="X-Axis"
-               type="String">
-         </setting>
-         <setting
-               defaultValue="X-Axis"
-               description="Descriptive label of X-axis"
-               isEditable="true"
-               isOptional="true"
-               name="X-Axis label"
-               type="String">
-         </setting>
-         <setting
-               description="List of comma-separated attributes which should be mapped on the y-axis"
-               isEditable="true"
-               isOptional="false"
-               name="Y-Axis"
-               type="String">
-         </setting>
-         <setting
-               defaultValue="Y-Axis"
-               description="Descriptive label of Y-axis"
-               isEditable="true"
-               isOptional="true"
-               name="Y-Axis label"
-               type="String">
-         </setting>
-         <setting
-               defaultValue="50"
-               description="Maximum number of past data elements to be printed."
-               isEditable="true"
-               isOptional="false"
-               name="Value count"
-               type="Integer">
-         </setting>
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.dashboard.part.TextDashboardPart"
-            description="Simple toString() of received data stream elements"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.part.TextConfigurer"
             name="Text">
-         <setting
-               defaultValue="false"
-               description="Indicates, if receiving heartbeats are shown or not"
-               isEditable="true"
-               isOptional="true"
-               name="Show Heartbeats"
-               type="Boolean">
-         </setting>
-         <setting
-               defaultValue="-1"
-               description="Maximum number of past data elements to be printed. -1 means infinite."
-               isEditable="true"
-               isOptional="false"
-               name="Max elements"
-               type="Integer">
-         </setting>
-         <setting
-               defaultValue="1000"
-               description="Interval in milliseconds to update the printed elements (100 is minimum)"
-               isEditable="true"
-               isOptional="true"
-               name="Update interval"
-               type="Long">
-         </setting>
       </dashboardPart>
    </extension>
 

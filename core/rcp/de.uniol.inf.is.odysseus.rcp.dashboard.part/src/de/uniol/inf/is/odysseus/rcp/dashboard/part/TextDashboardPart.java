@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -11,12 +12,12 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 
 public class TextDashboardPart extends AbstractDashboardPart {
 
@@ -26,14 +27,12 @@ public class TextDashboardPart extends AbstractDashboardPart {
 	private Text text;
 	private Thread updateThread;
 
-	private boolean showHeartbeats;
-	private int maxElements;
-	private long updateInterval;
+	private boolean showHeartbeats = false;
+	private int maxElements = 10;
+	private long updateInterval = 1000;
 
 	@Override
 	public void createPartControl(final Composite parent, ToolBar toolbar) {
-		evaluateSettings(getConfiguration());
-
 		text = new Text(parent, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
 		text.setEditable(false);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -84,11 +83,6 @@ public class TextDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-		evaluateSettings(getConfiguration());
-	}
-
-	@Override
 	public void streamElementRecieved(IStreamObject<?> element, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add(element != null ? element.toString() : "null");
@@ -98,14 +92,50 @@ public class TextDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
-	private void evaluateSettings(Configuration configuration) {
-		showHeartbeats = getSettingValue("Show hseartbeats", false);
-		maxElements = Math.max(-1, getSettingValue("Max elements", -1));
-		updateInterval = Math.max(100, getSettingValue("Update interval", 1000L));
+	
+
+	public boolean isShowHeartbeats() {
+		return showHeartbeats;
+	}
+
+	public void setShowHeartbeats(boolean showHeartbeats) {
+		this.showHeartbeats = showHeartbeats;
+	}
+
+	public int getMaxElements() {
+		return maxElements;
+	}
+
+	public void setMaxElements(int maxElements) {
+		this.maxElements = maxElements;
+	}
+
+	public long getUpdateInterval() {
+		return updateInterval;
+	}
+
+	public void setUpdateInterval(long updateInterval) {
+		this.updateInterval = updateInterval;
 	}
 
 	private boolean isInfinite() {
 		return maxElements < 0;
+	}
+	
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		showHeartbeats = Boolean.valueOf(saved.get("ShowHeartbeats"));
+		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
+		maxElements = Integer.valueOf(saved.get("MaxElements"));
+	}
+	
+	@Override
+	public Map<String, String> onSave() {
+		Map<String, String> saveMap = Maps.newHashMap();
+		saveMap.put("ShowHeartbeats", String.valueOf(showHeartbeats));
+		saveMap.put("UpdateInterval", String.valueOf(updateInterval));
+		saveMap.put("MaxElements", String.valueOf(maxElements));
+		return saveMap;
 	}
 
 	private void refreshText() {

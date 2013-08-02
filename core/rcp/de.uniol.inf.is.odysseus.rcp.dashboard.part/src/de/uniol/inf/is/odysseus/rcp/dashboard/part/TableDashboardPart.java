@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -50,7 +51,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
-import de.uniol.inf.is.odysseus.rcp.dashboard.Configuration;
 
 public class TableDashboardPart extends AbstractDashboardPart {
 
@@ -68,21 +68,44 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	private boolean refreshing = false;
 
 	private final List<Tuple<?>> data = Lists.newArrayList();
-	
+
+	private String attributeList = "*";
 	private int maxData = 10;
-	private String title;
+	private String title = "";
 	
+	
+	public String getAttributeList() {
+		return attributeList;
+	}
+
+	public void setAttributeList(String attributeList) {
+		this.attributeList = attributeList;
+	}
+
+	public int getMaxData() {
+		return maxData;
+	}
+
+	public void setMaxData(int maxData) {
+		this.maxData = maxData;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
-		final String attributeList = getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
 			return;
 		}
 		
 		attributes = determineAttributes(attributeList);
-		maxData = determineMaxData(getConfiguration());
-		title = determineTitle(getConfiguration());
 		
 		Composite topComposite = new Composite(parent, SWT.NONE);
 		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -106,7 +129,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		
 		parent.layout();
 	}
-
+	
 	private void createLabel(Composite topComposite) {
 		Label label = new Label(topComposite, SWT.BOLD);
 		label.setText(title);
@@ -124,14 +147,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		return new Font(Display.getCurrent(), fontData[0]);
 	}
 	
-	private static String determineTitle(Configuration configuration) {
-		if( configuration.exists("Title")) {
-			return configuration.get("Title");
-		} 
-		
-		return null;
-	}
-	
 	@Override
 	public void dispose() {
 		if( titleFont != null ) {
@@ -142,12 +157,18 @@ public class TableDashboardPart extends AbstractDashboardPart {
 
 	@Override
 	public void onLoad(Map<String, String> saved) {
-
+		attributeList = saved.get("Attributes");
+		maxData = Integer.valueOf(saved.get("MaxData"));
+		title = saved.get("Title");
 	}
 
 	@Override
 	public Map<String, String> onSave() {
-		return null;
+		Map<String, String> toSaveMap = Maps.newHashMap();
+		toSaveMap.put("Attributes", attributeList);
+		toSaveMap.put("MaxData", String.valueOf(maxData));
+		toSaveMap.put("Title", title);
+		return toSaveMap;
 	}
 
 	@Override
@@ -197,11 +218,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-
-	}
-
-	@Override
 	public void streamElementRecieved(IStreamObject<?> element, int port) {
 		if( element != null ) {
 			synchronized( data ) {
@@ -235,22 +251,6 @@ public class TableDashboardPart extends AbstractDashboardPart {
 				attributes[i] = outputSchema.getAttribute(i).getAttributeName();
 			}
 		}
-	}
-
-	private static int determineMaxData(Configuration config) {
-		int maxData = 10;
-		try {
-			maxData = config.get("MaxData");
-			if (maxData < 0) {
-				throw new Exception("Negative numbers for maximum data sizes are not allowed!");
-			}
-
-		} catch (final Throwable t) {
-			LOG.error("Could not determine maximum data size for table-contents. Using 10 as default.", t);
-			maxData = 10;
-		}
-
-		return maxData;
 	}
 
 	private static String[] determineAttributes(final String attributeList) {

@@ -133,11 +133,6 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	}
 
 	@Override
-	public void settingChanged(String settingName, Object oldValue, Object newValue) {
-		// do nothing
-	}
-
-	@Override
 	public void punctuationElementRecieved(IPunctuation point, int port) {
 	}
 

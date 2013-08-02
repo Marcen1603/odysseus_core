@@ -93,6 +93,16 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	/** The chart. */
 	private ChartComposite chartComposite;
 
+	private String attributeList;
+
+	public void setAttributeList( String list ) {
+		attributeList = list;
+	}
+
+	public String getAttributeList() {
+		return attributeList;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -103,7 +113,6 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	@Override
 	public final void createPartControl(final Composite parent,
 			final ToolBar toolbar) {
-		final String attributeList = this.getConfiguration().get("Attributes");
 		if (Strings.isNullOrEmpty(attributeList)) {
 			new Label(parent, SWT.NONE).setText("Attribute List is invalid!");
 			return;
@@ -213,19 +222,6 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	@Override
 	public void securityPunctuationElementRecieved(
 			final ISecurityPunctuation sp, final int port) {
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurationListener#settingChanged
-	 * (java.lang.String, java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public void settingChanged(final String settingName, final Object oldValue,
-			final Object newValue) {
 
 	}
 
