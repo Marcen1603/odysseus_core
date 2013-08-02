@@ -732,8 +732,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					}
 					
 					// StreamAO or WindowAO with subscriptions to StreamAOs
-					String sourceName = DistributionHelper.getSourceNames(target).iterator().next();	// there can be only one source
-					IDataFragmentation fragStrat = sourceToFragStrat.get(sourceName);
+					Optional<String> optSourceName = DistributionHelper.getSourceName(target);
+					if(!optSourceName.isPresent())
+						continue;
+					IDataFragmentation fragStrat = sourceToFragStrat.get(optSourceName.get());
 					Class<? extends ILogicalOperator> classForDistribution;
 					classForDistribution = fragStrat.getOperatorForDistributionClass();	// null for replication
 					ILogicalOperator source = null;
@@ -1124,13 +1126,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			if(!(operator instanceof StreamAO) && !(operator instanceof WindowAO))
 				continue;
 			
-			String sourceName = DistributionHelper.getSourceNames(operator).iterator().next(); // There can be only one source name
-			if(processedSourceNames.contains(sourceName))
+			Optional<String> optSourceName = DistributionHelper.getSourceName(operator);
+			
+			if(!optSourceName.isPresent() ||processedSourceNames.contains(optSourceName.get()))
 				continue;
 			
-			IDataFragmentation fragStrat = sourceToFragStrat.get(sourceName);
+			IDataFragmentation fragStrat = sourceToFragStrat.get(optSourceName.get());
 			
-			enhancedOperators = fragStrat.insertOperatorForDistribution(enhancedOperators, sourceName, degreeOfParallelism, parameters);
+			enhancedOperators = fragStrat.insertOperatorForDistribution(enhancedOperators, optSourceName.get(), degreeOfParallelism, parameters);
 			
 			// Search the new Operator
 			if(fragStrat.getOperatorForDistributionClass() != null) {
@@ -1144,7 +1147,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				
 			}
 			
-			processedSourceNames.add(sourceName);
+			processedSourceNames.add(optSourceName.get());
 			
 		}
 		

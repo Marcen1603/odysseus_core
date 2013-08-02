@@ -456,11 +456,31 @@ public class DistributionHelper {
 			if(operator instanceof StreamAO)
 				sourceNames.add(((StreamAO) operator).getStreamname());
 			else if(operator instanceof AccessAO)
-				sourceNames.add(((AccessAO) operator).getInput());	// TODO does it work for getInput?
+				sourceNames.add(((AccessAO) operator).getName());
 			
 		}
 		
 		return sourceNames;
+		
+	}
+	
+	/**
+	 * Returns the name of the source first found (depth-first-search).
+	 */	
+	public static Optional<String> getSourceName(ILogicalOperator operator) {
+		
+		if(operator instanceof StreamAO)
+			return Optional.of(((StreamAO) operator).getStreamname());
+		else if(operator instanceof AccessAO)
+			return Optional.of(((AccessAO) operator).getName());
+		else {
+			
+			for(LogicalSubscription subToSource : operator.getSubscribedToSource())
+				return DistributionHelper.getSourceName(subToSource.getTarget());
+			
+		}
+		
+		return Optional.of(null);
 		
 	}
 
