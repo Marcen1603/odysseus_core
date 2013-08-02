@@ -21,10 +21,9 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public interface IOdysseusScriptParser extends IQueryParser {
+public interface IOdysseusScriptParser {
 	
 	public IExecutor getExecutor();
 
