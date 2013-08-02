@@ -106,6 +106,9 @@ public class PQLGenerator implements IPQLGenerator {
 
 		while (!operatorsToVisit.isEmpty()) {
 			ILogicalOperator operator = operatorsToVisit.remove(0);
+			if( operator instanceof TopAO ) {
+				continue;
+			}
 			
 			IPQLStatementGenerator<ILogicalOperator> generator = PQLStatementGeneratorManager.getInstance().getPQLStatementGenerator(operator);
 			String statement = generator.generateStatement(operator, names);
