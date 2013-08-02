@@ -26,11 +26,9 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 public class TopAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 6533111765567598018L;
-//	transient private ISink<?> physicalInput = null;
 
 	public TopAO(TopAO po) {
 		super(po);
-//		this.physicalInput = po.physicalInput;
 	}
 
 	public TopAO() {
@@ -41,25 +39,5 @@ public class TopAO extends AbstractLogicalOperator {
 	TopAO clone() {
 		return new TopAO(this);
 	}
-
-//	public void setPhysicalInputPO(ISink<?> physical) {
-//		this.physicalInput = physical;
-//	}
-//
-//	public IPhysicalOperator getPhysicalInput() {
-//		if (physicalInput != null) {
-//			return physicalInput;
-//		}
-//		IPhysicalOperator ret = null;
-//		Iterator<Subscription<ISource<?>>> iter = getPhysSubscriptionsTo().iterator();
-//		if (iter.hasNext()){
-//			Subscription<ISource<?>> s = iter.next();
-//			if (s!=null){
-//				ret = s.getTarget();
-//			}
-//		}
-//		return ret;
-//	}
-//	
 
 }
