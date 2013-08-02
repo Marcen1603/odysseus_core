@@ -35,29 +35,46 @@ public class RewriteExecutor implements IRewrite {
 	public static final Logger LOGGER = LoggerFactory.getLogger("rewrite");
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan, RewriteConfiguration conf) {
+	public ILogicalOperator rewritePlan(ILogicalOperator plan,
+			RewriteConfiguration conf) {
 		LOGGER.info("Starting rewriting...");
-		RewriteInventory rewriteInventory = new RewriteInventory(RewriteInventory.getInstance());
+		RewriteInventory rewriteInventory = new RewriteInventory(
+				RewriteInventory.getInstance());
 
 		RewriteEnvironment env = new RewriteEnvironment(conf, rewriteInventory);
-		TopAO top = new TopAO();
-		SDFSchema outputSchema = plan.getOutputSchema();
-		plan.subscribeSink(top, 0, 0, outputSchema);
+
+		TopAO top = null;
+		final boolean createdNewTopAO;
+		if (plan instanceof TopAO) {
+			top = (TopAO) plan;
+			createdNewTopAO = false;
+		} else {
+			SDFSchema outputSchema = plan.getOutputSchema();
+			plan.subscribeSink(top, 0, 0, outputSchema);
+			createdNewTopAO = true;
+		}
 
 		ArrayList<ILogicalOperator> list = new ArrayList<ILogicalOperator>();
 		addLogicalOperator(top, list, env);
 		// *******
 		if (LOGGER.isTraceEnabled()) {
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
-			LOGGER.trace("Before rewriting: \n" + planPrinter.createString(plan));
+			LOGGER.trace("Before rewriting: \n"
+					+ planPrinter.createString(plan));
 			LOGGER.trace("Processing rules...");
 		}
 		// start transformation
 		env.processEnvironment();
 		LOGGER.trace("Processing rules done.");
-		LogicalSubscription sub = top.getSubscribedToSource(0);
-		ILogicalOperator ret = sub.getTarget();
-		top.unsubscribeFromSource(ret, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+		final ILogicalOperator ret;
+		if (createdNewTopAO) {
+			LogicalSubscription sub = top.getSubscribedToSource(0);
+			ret = sub.getTarget();
+			top.unsubscribeFromSource(ret, sub.getSinkInPort(),
+					sub.getSourceOutPort(), sub.getSchema());
+		} else {
+			ret = top;
+		}
 		if (LOGGER.isTraceEnabled()) {
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 			LOGGER.trace("After rewriting: \n" + planPrinter.createString(ret));
@@ -66,7 +83,8 @@ public class RewriteExecutor implements IRewrite {
 		return ret;
 	}
 
-	private void addLogicalOperator(ILogicalOperator op, List<ILogicalOperator> inserted, RewriteEnvironment env) {
+	private void addLogicalOperator(ILogicalOperator op,
+			List<ILogicalOperator> inserted, RewriteEnvironment env) {
 		if (op == null) {
 			return;
 		}
