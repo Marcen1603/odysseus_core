@@ -101,5 +101,10 @@ public class UserManagementServiceImpl extends
 		}
 		return null;
 	}
+	
+	@Override
+	public String getType() {
+		return "Filestore";
+	}
 
 }

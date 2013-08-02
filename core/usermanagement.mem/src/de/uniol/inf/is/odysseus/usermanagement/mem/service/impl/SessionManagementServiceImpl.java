@@ -35,5 +35,8 @@ public class SessionManagementServiceImpl extends AbstractSessionManagement<User
 		return UserDAO.getInstance(tenant);
 	} 
 
-	
+	@Override
+	public String getType() {
+		return "Memorystore";
+	}
 }

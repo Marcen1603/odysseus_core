@@ -43,4 +43,6 @@ public interface ISessionManagement {
 	ISession login(String token);
 	
 	ISession loginSuperUser(Object secret, String tenantname);
+	
+	String getType();
 }

@@ -15,26 +15,38 @@
  */
 package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+
 
 
 public class UserManagement {
+	
+	Logger logger = LoggerFactory.getLogger(UserManagement.class);
 
-	static private IUserManagement usrMgmt = null;
-	static private ISessionManagement sessMgmt = null;
+	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
+	static private Map<String,ISessionManagement> sessMgmt = new HashMap<>();
+	
 	
 	static public IUserManagement getUsermanagement() {
-		return usrMgmt;
+		return usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
 	}
 	
 	static public ISessionManagement getSessionmanagement() {
-		return sessMgmt;
+		return sessMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
 	}
 	
 	protected void bindUserManagement(IUserManagement usermanagement) {
-		if (usrMgmt == null){
-			usrMgmt = usermanagement;
+		if (usrMgmt.get(usermanagement.getType()) == null){
+			usrMgmt.put(usermanagement.getType(), usermanagement);
+			logger.debug("Bound UserManagementService "+usermanagement.getType());
 		}else{
-			throw new RuntimeException("UserManagement already bound!");
+			throw new RuntimeException("UserManagement "+usermanagement.getType()+" already bound!");
 		}
 	}
 
@@ -44,8 +56,9 @@ public class UserManagement {
 	}
 
 	protected void bindSessionManagement(ISessionManagement sessionmanagement) {
-		if (sessMgmt == null){
-			sessMgmt = sessionmanagement;
+		if (sessMgmt.get(sessionmanagement.getType()) == null){
+			sessMgmt.put(sessionmanagement.getType(),sessionmanagement);
+			logger.debug("Bound SessionManagementService "+sessionmanagement.getType());
 		}else{
 			throw new RuntimeException("SessionManagement already bound!");
 		}

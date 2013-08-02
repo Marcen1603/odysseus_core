@@ -60,4 +60,8 @@ public class SessionManagementServiceImpl extends AbstractSessionManagement<User
 		return null;
 	}
 
+	@Override
+	public String getType() {
+		return "JPA";
+	}
 }

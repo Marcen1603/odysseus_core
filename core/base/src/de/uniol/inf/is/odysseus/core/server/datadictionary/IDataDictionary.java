@@ -159,4 +159,6 @@ public interface IDataDictionary extends IAddDataType {
 
 	List<StoredProcedure> getStoredProcedures(ISession caller);
 
+	// Service-Type
+	String getType();
 }

@@ -113,4 +113,8 @@ public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl
 		return null;
 	}
 
+	@Override
+	public String getType() {
+		return "JPA";
+	}
 }

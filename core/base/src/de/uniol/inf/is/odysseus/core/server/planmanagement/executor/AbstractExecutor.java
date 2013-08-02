@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
@@ -79,8 +80,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimizeListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -142,15 +142,9 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
 
 	/**
-	 * Nutzer- und Rechteverwaltung
-	 */
-	protected IUserManagement usrMgmt;
-	protected ISessionManagement sessMgmt;
-
-	/**
 	 * Data Dictionary
 	 */
-	private IDataDictionaryWritable dataDictionary;
+	private Map<String,IDataDictionaryWritable> dataDictionary = new HashMap<>();
 
 	/**
 	 * Standard Configurationen
@@ -479,34 +473,10 @@ public abstract class AbstractExecutor implements IServerExecutor,
 		queryBuildConfigs.remove(config.getName());
 	}
 
-	protected void bindUserManagement(IUserManagement usermanagement) {
-		if (usrMgmt == null) {
-			usrMgmt = usermanagement;
-		} else {
-			throw new RuntimeException("UserManagement already bound!");
-		}
-	}
-
-	// TODO: Will man das?
-	protected void unbindUserManagement(IUserManagement usermanagement) {
-		usermanagement = null;
-	}
-
-	protected void bindSessionManagement(ISessionManagement sessionmanagement) {
-		if (sessMgmt == null) {
-			sessMgmt = sessionmanagement;
-		} else {
-			throw new RuntimeException("SessionManagement already bound!");
-		}
-	}
-
-	protected void unbindSessionManagement(ISessionManagement sessionmanagement) {
-		sessionmanagement = null;
-	}
-
 	protected void bindDataDictionary(IDataDictionary datadictionary) {
-		if (dataDictionary == null) {
-			dataDictionary = (IDataDictionaryWritable)datadictionary;
+		if (this.dataDictionary.get(datadictionary.getType()) == null) {
+			dataDictionary.put(datadictionary.getType(),(IDataDictionaryWritable)datadictionary);
+			LOG.debug("Bound datadictionary service "+datadictionary.getType());
 		} else {
 			throw new RuntimeException("DataDictionary already bound!");
 		}
@@ -960,24 +930,24 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary() {
-		return dataDictionary;
+		return dataDictionary.get(OdysseusConfiguration.get("StoretypeDataDict"));
 	}
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
 		if (dataDictionary != null) {
-			List<ILogicalQuery> q = dataDictionary.getQueries(caller.getUser(),
+			List<ILogicalQuery> q = getDataDictionary().getQueries(caller.getUser(),
 					caller);
 			for (ILogicalQuery query : q) {
 				try {
 					if (query.getQueryText() != null) {
 						addQuery(query.getQueryText(), query.getParserId(),
 								caller,
-								dataDictionary.getQueryBuildConfigName(query
+								getDataDictionary().getQueryBuildConfigName(query
 										.getID()));
 					} else if (query.getLogicalPlan() != null) {
 						addQuery(query.getLogicalPlan(), caller,
-								dataDictionary.getQueryBuildConfigName(query
+								getDataDictionary().getQueryBuildConfigName(query
 										.getID()));
 					} else {
 						LOG.warn("Query " + query + " cannot be loaded");
@@ -993,12 +963,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
-		return sessMgmt.login(username, password, tenant);
+		return UserManagement.getSessionmanagement().login(username, password, tenant);
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		sessMgmt.logout(caller);
+		UserManagement.getSessionmanagement().logout(caller);
 	}
 
 	// Compiler Facade
@@ -1014,7 +984,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException {
 		return getCompiler().transform(query, transformationConfiguration,
-				caller, dataDictionary);
+				caller, getDataDictionary());
 	}
 
 	// DataDictionary Facade

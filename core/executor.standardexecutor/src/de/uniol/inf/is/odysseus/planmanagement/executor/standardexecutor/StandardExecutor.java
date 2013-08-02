@@ -268,7 +268,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		}
 
 		// Wrap queries again
-		for (ILogicalQuery q:queries){
+		for (ILogicalQuery q : queries) {
 			commands.add(new CreateQueryCommand(q, user));
 		}
 
@@ -380,7 +380,9 @@ public class StandardExecutor extends AbstractExecutor implements
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
-				cmd.execute(getDataDictionary(), (IUserManagementWritable)UserManagement.getUsermanagement());
+				cmd.execute(getDataDictionary(),
+						(IUserManagementWritable) UserManagement
+								.getUsermanagement());
 			}
 		}
 
@@ -527,7 +529,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				}
 				LOG.info("Adding textual query using " + parserID
 						+ " for user " + user.getUser().getName() + " done.");
-				//LOG.debug("Added the following query: " + query);
+				// LOG.debug("Added the following query: " + query);
 				return createdQueries;
 			}
 			LOG.info("Adding textual query using " + parserID + " for user "
@@ -659,7 +661,7 @@ public class StandardExecutor extends AbstractExecutor implements
 						.getConfiguration()) {
 					if (overwrite.getClass() == setting.getClass()) {
 						newSettings.remove(setting);
-					} 
+					}
 					newSettings.add(overwrite);
 				}
 			}
@@ -837,12 +839,13 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		usrMgmt.hasPermission(caller, executorAction, "Query " + query.getID())
+		UserManagement.getUsermanagement().hasPermission(caller,
+				executorAction, "Query " + query.getID())
 				||
 				// User is owner
 				query.isOwner(caller) ||
 		// User has higher right
-		usrMgmt.hasPermission(caller,
+		UserManagement.getUsermanagement().hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "
@@ -856,10 +859,10 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		usrMgmt.hasPermission(caller, executorAction,
-				ExecutorPermission.objectURI) ||
+		UserManagement.getUsermanagement().hasPermission(caller,
+				executorAction, ExecutorPermission.objectURI) ||
 		// User has higher right
-		usrMgmt.hasPermission(caller,
+		UserManagement.getUsermanagement().hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "

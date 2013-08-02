@@ -81,5 +81,10 @@ public class UserManagementServiceImpl extends
 	protected IGenericDAO<Tenant, String> getTenantDAO() {
 		return TenantDAO.getInstance();
 	}
+	
+	@Override
+	public String getType() {
+		return "Memorystore";
+	}
 
 }

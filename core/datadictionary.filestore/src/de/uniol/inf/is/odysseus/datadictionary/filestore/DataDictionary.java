@@ -110,4 +110,9 @@ public class DataDictionary extends AbstractDataDictionary {
 	protected IStore<String, IUser> createStoredProceduresFromUserStore() {
 		return tryCreateFileStore("storedProceduresFromUserFilename");
 	}
+	
+	@Override
+	public String getType() {
+		return "Filestore";
+	}
 }

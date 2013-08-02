@@ -97,4 +97,9 @@ public class DataDictionary extends AbstractDataDictionary {
 	protected IStore<String, IUser> createStoredProceduresFromUserStore() {
 		return newMemoryStore();
 	}
+	
+	@Override
+	public String getType() {
+		return "Memorystore";
+	}
 }

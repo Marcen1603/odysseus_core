@@ -95,6 +95,10 @@ public class OdysseusConfiguration {
 	private static void setDefaults(String odysseusHome) {
 		props.setProperty("odysseusHome", odysseusHome);
 
+		props.setProperty("StoretypeUserMgmt", "Memorystore");
+		props.setProperty("StoretypeDataDict", "Memorystore");
+
+		
 		// Store-Filename
 		props.setProperty("tenantStoreFilename", odysseusHome
 				+ "store/tenants.store");
