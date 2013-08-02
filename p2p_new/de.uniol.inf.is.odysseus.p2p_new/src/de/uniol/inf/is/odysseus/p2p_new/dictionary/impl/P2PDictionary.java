@@ -302,8 +302,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (advertisement.isStream()) {
 			final AccessAO accessAO = advertisement.getAccessAO();
 
-			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);			
-			dataDictionary.setStream(advertisement.getName(), timestampAO, SessionManagementService.getActiveSession());
+//			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);			
+			dataDictionary.setStream(advertisement.getName(), accessAO, SessionManagementService.getActiveSession());
 
 		} else {
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
