@@ -172,6 +172,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		
+		this.transferFunction.newElement(object, port);
 		this.purgeElements(this.getTS(object, true));
 		this.mergeElement(object, port);
 		this.inputQueue.add(new Pair<IStreamable, Integer>(object, port));
@@ -181,6 +182,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		
+		this.transferFunction.newElement(punctuation, port);
 		this.purgeElements(this.getTS(punctuation, true));
 		this.mergeElement(punctuation, port);
 		this.inputQueue.add(new Pair<IStreamable, Integer>(punctuation, port));
@@ -274,8 +276,6 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 			if(object.isPunctuation())
 				this.transferFunction.sendPunctuation((IPunctuation) object);
 			else this.transferFunction.transfer((T) object);
-			
-			this.transferFunction.newElement(object, port);
 			
 		}
 		
