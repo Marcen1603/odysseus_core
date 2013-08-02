@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.AdvertisementManagerService;
@@ -113,8 +114,10 @@ public class QueryPartManager implements IAdvertisementListener,
 
 						oldNeededSources = neededSourcesMap.get(adv);
 
-						if (dataDictionary.containsViewOrStream(source,
-								SessionManagementService.getActiveSession())
+						// TODO not a good solution to concatenate user name and source name
+						ISession session = SessionManagementService.getActiveSession();
+						if (dataDictionary.containsViewOrStream(session.getUser().getName() + "." + source,
+								session)
 								|| neededSourcesMap.get(adv).contains(source))
 							break;
 
