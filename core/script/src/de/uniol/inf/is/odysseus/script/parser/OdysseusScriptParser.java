@@ -42,15 +42,13 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 
-public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
-
+public class OdysseusScriptParser implements IOdysseusScriptParser {
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusScriptParser.class);
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 
@@ -679,11 +677,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return "OdysseusScript";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse (java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
-	 */
 	@Override
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
 		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
@@ -712,11 +705,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return new ArrayList<IExecutorCommand>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser#parse (java.io.Reader, de.uniol.inf.is.odysseus.core.usermanagement.ISession, de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary)
-	 */
 	@Override
 	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
 		return new ArrayList<>();
