@@ -31,6 +31,11 @@ public class RouteAO extends UnaryLogicalOp {
 	
 	private boolean overlappingPredicates = false;
 	
+	/**
+	 * if an element is routed to an output, heartbeats will be send to all other outputs.
+	 */
+	private boolean sendingHeartbeats = false;
+	
 	public RouteAO(){
 		super();
 	}
@@ -38,6 +43,7 @@ public class RouteAO extends UnaryLogicalOp {
 	public RouteAO(RouteAO routeAO){
 		super(routeAO);
 		this.overlappingPredicates = routeAO.overlappingPredicates;
+		this.sendingHeartbeats = routeAO.sendingHeartbeats;
 	}
 	
 	@Override
@@ -85,7 +91,20 @@ public class RouteAO extends UnaryLogicalOp {
 	 * @return
 	 */
 	public boolean isOverlappingPredicates() {
-		return false;
+		return this.overlappingPredicates;
+	}
+	
+	@Parameter(name="sendingHeartbeats", type=BooleanParameter.class, optional=true, doc="If an element is routed to an output, heartbeats will be send to all other outputs")
+	public void setSendingHeartbeats(boolean sendingHeartbeats) {
+		
+		this.sendingHeartbeats = sendingHeartbeats;
+		
+	}
+	
+	public boolean isSendingHeartbeats() {
+		
+		return this.sendingHeartbeats;
+		
 	}
 	
 }

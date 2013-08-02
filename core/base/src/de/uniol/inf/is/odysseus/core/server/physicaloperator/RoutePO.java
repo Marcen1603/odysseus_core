@@ -16,10 +16,15 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -32,17 +37,24 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 
 	private List<IPredicate<? super T>> predicates;
 	final boolean overlappingPredicates;
+	
+	/**
+	 * if an element is routed to an output, heartbeats will be send to all other outputs.
+	 */
+	final boolean sendingHeartbeats;
 
 	public RoutePO(List<IPredicate<? super T>> predicates,
-			boolean overlappingPredicates) {
+			boolean overlappingPredicates, boolean sendingHeartbeats) {
 		super();
 		this.overlappingPredicates = overlappingPredicates;
+		this.sendingHeartbeats = sendingHeartbeats;
 		initPredicates(predicates);
 	}
 
 	public RoutePO(RoutePO<T> splitPO) {
 		super();
 		this.overlappingPredicates = splitPO.overlappingPredicates;
+		this.sendingHeartbeats = splitPO.sendingHeartbeats;
 		initPredicates(splitPO.predicates);
 	}
 
@@ -71,6 +83,7 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 	@Override
 	protected void process_next(T object, int port) {
 		boolean found = false;
+		Collection<Integer> routedToPorts = Lists.newArrayList();
 		for (int i = 0; i < predicates.size(); i++) {
 			if (predicates.get(i).evaluate(object)) {
 				T out = object;
@@ -82,13 +95,22 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 				}
 				transfer(out, i);
 				found = true;
+				routedToPorts.add(i);
 				if (!overlappingPredicates) {
-					return;
+					break;
 				}
 			}
 		}
 		if (!found) {
 			transfer(object, predicates.size());
+			routedToPorts.add(predicates.size());
+		}
+		// Sending heartbeats to all other ports
+		for(int i = 0; i < predicates.size(); i++) {
+			
+			if(!routedToPorts.contains(i))
+				this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()));
+			
 		}
 	}
 
