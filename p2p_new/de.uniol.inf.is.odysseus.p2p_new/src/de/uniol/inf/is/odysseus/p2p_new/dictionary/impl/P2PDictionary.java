@@ -302,7 +302,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (advertisement.isStream()) {
 			final AccessAO accessAO = advertisement.getAccessAO();
 
-//			final ILogicalOperator timestampAO = addTimestampAO(accessAO, null);			
 			dataDictionary.setStream(advertisement.getName(), accessAO, SessionManagementService.getActiveSession());
 
 		} else {
@@ -862,28 +861,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 
 		return Optional.absent();
-	}
-
-	private static ILogicalOperator addTimestampAO(ILogicalOperator operator, String dateFormat) {
-		final TimestampAO timestampAO = new TimestampAO();
-		timestampAO.setDestinationName("local");
-		timestampAO.setDateFormat(dateFormat);
-		if (operator.getOutputSchema() != null) {
-
-			for (final SDFAttribute attr : operator.getOutputSchema()) {
-				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.START_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
-					timestampAO.setStartTimestamp(attr);
-				}
-
-				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI()) || SDFDatatype.END_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
-					timestampAO.setEndTimestamp(attr);
-				}
-
-			}
-		}
-		timestampAO.subscribeTo(operator, operator.getOutputSchema());
-		timestampAO.setName(timestampAO.getStandardName());
-		return timestampAO;
 	}
 	
 	private static String removeUserFromName(String streamName) {
