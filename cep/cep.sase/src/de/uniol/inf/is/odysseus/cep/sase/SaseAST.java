@@ -17,37 +17,37 @@
   */
 	package de.uniol.inf.is.odysseus.cep.sase; 
 	import java.util.LinkedList;
-	import java.util.Map;
-	import java.util.HashMap;
-	import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
 	
 	import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-	import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-	import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
-	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-	import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-	import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
-	import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
-	import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
-	import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
-	import de.uniol.inf.is.odysseus.cep.metamodel.State;
-	import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
-	import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPCondition;
-	import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
-	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
-	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
-	import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-	import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-	import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
-	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateViewCommand;
-	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
-	import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;	
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
+import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
+import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
+import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
+import de.uniol.inf.is.odysseus.cep.metamodel.State;
+import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
+import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
+import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPCondition;
+import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;	
 		
 	import org.slf4j.Logger;
-  import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory;
 
 
 import org.antlr.runtime.*;

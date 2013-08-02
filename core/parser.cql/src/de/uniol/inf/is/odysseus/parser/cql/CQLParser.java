@@ -43,13 +43,21 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateSinkCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.DropSinkCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.DropStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.DropViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropViewCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.ChangeUserPasswordCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateUserCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropUserCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantPermissionCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.RevokeRoleCommand;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sla.Metric;
@@ -70,7 +78,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
-import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
@@ -831,11 +838,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTCreateUserStatement node, Object data) throws QueryParseException {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
-		IUser user = UserManagement.getUsermanagement().createUser(username, caller);
-		if (user == null)
-			throw new QueryParseException("User cannot be created.");
-		UserManagement.getUsermanagement().changePassword(user, password.getBytes(), caller);
-		UserManagement.getUsermanagement().activateUser(user, caller);
+		CreateUserCommand cmd = new CreateUserCommand(username, password, caller);
+		commands.add(cmd);
 		return null;
 	}
 
@@ -843,14 +847,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public Object visit(ASTAlterUserStatement node, Object data) throws QueryParseException {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		String password = node.getPassword();
-		try {
-			IUser user = UserManagement.getUsermanagement().findUser(username, caller);
-			if (user != null) {
-				UserManagement.getUsermanagement().changePassword(user, password.getBytes(), caller);
-			}
-		} catch (Exception e) {
-			throw new QueryParseException(e);
-		}
+		ChangeUserPasswordCommand cmd = new ChangeUserPasswordCommand(username, password, caller);
+		commands.add(cmd);
 		return null;
 	}
 
@@ -890,37 +888,24 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	@Override
 	public Object visit(ASTDropUserStatement node, Object data) throws QueryParseException {
 		String userName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		try {
-			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
-			UserManagement.getUsermanagement().deleteUser(user, caller);
-		} catch (Exception e) {
-			throw new QueryParseException(e);
-		}
+		DropUserCommand cmd = new DropUserCommand(userName, caller);
+		commands.add(cmd);
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTCreateRoleStatement node, Object data) throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		try {
-			UserManagement.getUsermanagement().createRole(rolename, caller);
-		} catch (Exception e) {
-			throw new QueryParseException(e);
-		}
+		CreateRoleCommand cmd = new CreateRoleCommand(rolename, caller);
+		commands.add(cmd);
 		return null;
 	}
 
 	@Override
 	public Object visit(ASTDropRoleStatement node, Object data) throws QueryParseException {
 		String rolename = ((ASTIdentifier) node.jjtGetChild(0)).getName();
-		try {
-			IRole role = UserManagement.getUsermanagement().findRole(rolename, caller);
-			if (role != null) {
-				UserManagement.getUsermanagement().deleteRole(role, caller);
-			}
-		} catch (Exception e) {
-			throw new QueryParseException(e);
-		}
+		DropRoleCommand cmd = new DropRoleCommand(rolename, caller);
+		commands.add(cmd);
 		return null;
 	}
 
@@ -947,35 +932,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		} else {
 			userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
 		}
-		IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
-		if (user != null) {
-			for (IPermission action : operations) {
-
-				if (PermissionFactory.needsNoObject(action)) {
-					UserManagement.getUsermanagement().grantPermission(user, action, null, caller);
-				} else {
-					for (String entityname : objects) {
-						UserManagement.getUsermanagement().grantPermission(user, action, entityname, caller);
-					}
-				}
-
-			}
-		}
-		IRole role = UserManagement.getUsermanagement().findRole(userName, caller);
-		if (role != null) {
-			for (IPermission action : operations) {
-
-				if (PermissionFactory.needsNoObject(action)) {
-					UserManagement.getUsermanagement().grantPermission(role, action, null, caller);
-				} else {
-					for (String entityname : objects) {
-						UserManagement.getUsermanagement().grantPermission(role, action, entityname, caller);
-					}
-				}
-
-			}
-		}
-
+		GrantPermissionCommand cmd = new GrantPermissionCommand(userName, operations, objects, caller);
+		commands.add(cmd);
 		return null;
 	}
 
@@ -990,19 +948,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			@SuppressWarnings("unchecked")
 			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(this, data);
 			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
-			if (user != null){
-			for (String rolename : roles) {
-				IRole role = UserManagement.getUsermanagement().getRole(rolename, caller);
-				if (role != null){
-				UserManagement.getUsermanagement().grantRole(user, role, caller);
-				}else{
-					throw new QueryParseException("Role "+rolename+" not defined!");
-				}
-			}
-			}else{
-				throw new QueryParseException("User "+userName+" not found");
-			}
+			GrantRoleCommand cmd = new GrantRoleCommand(userName, roles, caller);
+			commands.add(cmd);
 		}
 		return null;
 	}
@@ -1013,11 +960,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			@SuppressWarnings("unchecked")
 			List<String> roles = (List<String>) node.jjtGetChild(0).jjtAccept(this, data);
 			String userName = ((ASTIdentifier) node.jjtGetChild(1)).getName();
-			IUser user = UserManagement.getUsermanagement().findUser(userName, caller);
-			for (String rolename : roles) {
-				IRole role = UserManagement.getUsermanagement().getRole(rolename, caller);
-				UserManagement.getUsermanagement().revokeRole(user, role, caller);
-			}
+			RevokeRoleCommand cmd = new RevokeRoleCommand(userName, roles, caller);
+			commands.add(cmd);
 		}
 		return null;
 	}

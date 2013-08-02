@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command;
+package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 

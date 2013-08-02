@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 abstract public class AbstractUserManagement<TENANT extends ITenant, USER extends IUser, ROLE extends IRole, PRIVILEGE extends IPrivilege>
-		implements IUserManagement {
+		implements IUserManagementWritable {
 
 	Logger logger = LoggerFactory.getLogger(AbstractUserManagement.class);
 

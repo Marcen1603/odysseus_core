@@ -57,8 +57,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.IExecutionSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
@@ -86,6 +86,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -378,7 +380,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
-				cmd.execute(getDataDictionary());
+				cmd.execute(getDataDictionary(), (IUserManagementWritable)UserManagement.getUsermanagement());
 			}
 		}
 

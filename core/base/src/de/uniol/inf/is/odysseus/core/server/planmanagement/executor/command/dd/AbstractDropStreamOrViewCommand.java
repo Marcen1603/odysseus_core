@@ -1,8 +1,10 @@
-package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command;
+package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand{
@@ -18,7 +20,7 @@ public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand{
 	}
 	
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd) {
+	public Collection<Integer> execute(IDataDictionaryWritable dd, IUserManagementWritable um) {
 		if (ifExits){
 			dropViewOrStream(dd);
 		}else{
