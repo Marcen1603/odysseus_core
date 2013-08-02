@@ -109,7 +109,7 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		for(int i = 0; i < predicates.size(); i++) {
 			
 			if(!routedToPorts.contains(i))
-				this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()));
+				this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()), i);
 			
 		}
 	}

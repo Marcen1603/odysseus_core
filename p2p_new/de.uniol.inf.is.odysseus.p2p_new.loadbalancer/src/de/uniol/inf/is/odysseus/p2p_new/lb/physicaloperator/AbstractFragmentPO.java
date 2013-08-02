@@ -76,7 +76,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<? extends ITime
 		for(int p = 0; p < this.numFragments; p++) {
 			
 			if(p != outPort)
-				this.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()));
+				this.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()), port);
 			
 		}
 
