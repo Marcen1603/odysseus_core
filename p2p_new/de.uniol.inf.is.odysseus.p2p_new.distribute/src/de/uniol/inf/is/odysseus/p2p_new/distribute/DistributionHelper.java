@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
@@ -441,38 +440,27 @@ public class DistributionHelper {
 	}
 	
 	/**
-	 * Returns the name of the used source.
-	 * @param operator A {@link AccessAO}, {@link StreamAO} or {@link WindowAO}, which used source shall be determined.
+	 * Returns the names of all used sources.
 	 */
-	public static String getSourceName(ILogicalOperator operator) {
+	public static Collection<String> getSourceNames(ILogicalOperator logicalPlan) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(operator, "operator has to be not null!");
-		Preconditions.checkArgument(operator instanceof StreamAO || operator instanceof AccessAO || operator instanceof WindowAO, 
-				"operator needs to be an instance of StreamAO, WindowAO or AccessAO");
+		Preconditions.checkNotNull(logicalPlan, "logicalPlan has to be not null!");
 		
-		if(operator instanceof StreamAO)
-			return ((StreamAO) operator).getStreamname();
-		else if(operator instanceof AccessAO)
-			return ((AccessAO) operator).getInput();
-		else /* WindowAO */ {
-			
-			for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
-				
-				ILogicalOperator source = subToSource.getTarget();
-				
-				if(operator instanceof StreamAO)
-					return ((StreamAO) operator).getStreamname();
-				else if(operator instanceof AccessAO)
-					return ((AccessAO) operator).getInput();
-				else if(operator instanceof WindowAO)
-					return DistributionHelper.getSourceName(source);
-				
-			}
-			
-			throw new IllegalArgumentException("no source name found for operator " + operator.toString());
+		Collection<String> sourceNames = Lists.newArrayList();
+		Collection<ILogicalOperator> operators = Lists.newArrayList();
+		RestructHelper.collectOperators(logicalPlan, operators);
+		
+		for(ILogicalOperator operator : operators) {
+		
+			if(operator instanceof StreamAO)
+				sourceNames.add(((StreamAO) operator).getStreamname());
+			else if(operator instanceof AccessAO)
+				sourceNames.add(((AccessAO) operator).getInput());	// TODO does it work for getInput?
 			
 		}
+		
+		return sourceNames;
 		
 	}
 

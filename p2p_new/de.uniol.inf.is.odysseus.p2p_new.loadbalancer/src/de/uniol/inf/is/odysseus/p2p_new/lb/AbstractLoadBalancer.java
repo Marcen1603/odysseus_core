@@ -685,7 +685,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					}
 					
 					// StreamAO or WindowAO with subscriptions to StreamAOs
-					String sourceName = DistributionHelper.getSourceName(target);
+					String sourceName = DistributionHelper.getSourceNames(target).iterator().next();
 					IDataFragmentation fragStrat;
 					if(sourceToFragStrat.containsKey(sourceName))
 						fragStrat = sourceToFragStrat.get(sourceName);
@@ -1047,7 +1047,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			if(!(operator instanceof StreamAO) && !(operator instanceof WindowAO))
 				continue;
 			
-			String sourceName = DistributionHelper.getSourceName(operator);
+			String sourceName = DistributionHelper.getSourceNames(operator).iterator().next();
 			if(processedSourceNames.contains(sourceName))
 				continue;
 			
