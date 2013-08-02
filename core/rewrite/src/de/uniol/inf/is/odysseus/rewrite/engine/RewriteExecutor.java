@@ -49,6 +49,7 @@ public class RewriteExecutor implements IRewrite {
 			top = (TopAO) plan;
 			createdNewTopAO = false;
 		} else {
+			top = new TopAO();
 			SDFSchema outputSchema = plan.getOutputSchema();
 			plan.subscribeSink(top, 0, 0, outputSchema);
 			createdNewTopAO = true;
