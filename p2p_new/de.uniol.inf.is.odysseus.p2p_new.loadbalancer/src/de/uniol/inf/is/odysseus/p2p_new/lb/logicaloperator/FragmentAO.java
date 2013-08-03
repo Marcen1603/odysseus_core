@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.RRFragmentation;
 
 /**
  * A {@link FragmentAO} can be used to fragment incoming streams. <br />
@@ -37,9 +38,10 @@ public class FragmentAO extends UnaryLogicalOp {
 	public FragmentAO() {
 		
 		super();
-		this.numFragments = 0;
-		this.type = "roundrobin";
-		this.addParameterInfo("TYPE", "\'" + type + "\'");
+		// no fragmentation per default
+		this.numFragments = 1;
+		// roundrobin per default
+		this.setType(RRFragmentation.NAME);
 		
 	}
 
