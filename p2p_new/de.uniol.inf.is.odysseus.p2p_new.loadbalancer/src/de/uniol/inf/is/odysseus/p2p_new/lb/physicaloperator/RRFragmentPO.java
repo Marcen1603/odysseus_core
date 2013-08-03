@@ -1,9 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
 
@@ -12,7 +11,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
  * The {@link RRFragmentPO} uses a modulo n function to transfer {@link StreamObject}s to different output ports and can handle {@link IPunctuations}.
  * @author Michael Brand
  */
-public class RRFragmentPO<T extends IStreamObject<? extends ITimeInterval>> 
+public class RRFragmentPO<T extends IStreamObject<IMetaAttribute>> 
 		extends AbstractFragmentPO<T> {
 	
 	/**
@@ -46,28 +45,6 @@ public class RRFragmentPO<T extends IStreamObject<? extends ITimeInterval>>
 	public AbstractPipe<T, T> clone() {
 		
 		return new RRFragmentPO<T>(this);
-		
-	}
-	
-	@Override
-	protected synchronized void process_open() throws OpenFailedException {
-		
-		this.objectCounter = 0;
-		
-	}
-	
-	@Override
-	protected synchronized void process_close() {
-		
-		this.objectCounter = 0;
-		
-	}
-	
-	@Override
-	protected synchronized void process_done() {
-		
-		if(this.isOpen())
-			this.objectCounter = 0;
 		
 	}
 	

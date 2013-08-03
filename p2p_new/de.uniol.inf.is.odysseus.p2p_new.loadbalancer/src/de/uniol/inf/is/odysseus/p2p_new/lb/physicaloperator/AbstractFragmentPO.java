@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
  * A {@link AbstractFragmentPO} can be used to realize a {@link FragmentAO}.
  * @author Michael Brand
  */
-public abstract class AbstractFragmentPO<T extends IStreamObject<? extends ITimeInterval>> 
+public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>> 
 		extends AbstractPipe<T, T> {
 	
 	/**
@@ -52,20 +53,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<? extends ITime
 		
 	}
 	
-	@Override
-	protected synchronized boolean isDone() {
-		
-		for(int port = 0; port < this.getInputPortCount(); port++) {
-			
-			if(!this.getSubscribedToSource(port).isDone())
-				return false;
-			
-		}
-		
-		return true;
-		
-	}
-	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(T object, int port) {
 		
@@ -76,7 +64,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<? extends ITime
 		for(int p = 0; p < this.numFragments; p++) {
 			
 			if(p != outPort)
-				this.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()), port);
+				this.sendPunctuation(Heartbeat.createNewHeartbeat(((IStreamObject<? extends ITimeInterval>) object).getMetadata().getStart()), port);
 			
 		}
 
