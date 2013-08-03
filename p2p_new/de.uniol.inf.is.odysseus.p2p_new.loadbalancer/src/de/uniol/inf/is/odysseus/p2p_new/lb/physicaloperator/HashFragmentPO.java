@@ -45,7 +45,7 @@ public class HashFragmentPO<T extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	protected int route(IStreamable object) {
 		
-		return (int) (object.hashCode() % this.numFragments);
+		return (int) (Math.abs(object.hashCode()) % this.numFragments);
 		
 	}
 	
