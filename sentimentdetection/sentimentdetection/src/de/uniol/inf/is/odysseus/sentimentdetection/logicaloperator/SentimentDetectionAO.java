@@ -31,6 +31,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	
 	private int ngram = 1;
+	private boolean removeStopWords = false;
 	
 	private String attributeTrainSetText;
 	private String attributeTrainSetTrueDecision;
@@ -60,6 +61,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.domain = sentimentDetectionAO.domain;
         this.debugClassifier = sentimentDetectionAO.debugClassifier;
         this.ngram = sentimentDetectionAO.ngram;
+        this.removeStopWords = sentimentDetectionAO.removeStopWords;
+        
+        
         this.maxBufferSize = sentimentDetectionAO.maxBufferSize;
  
         this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;
@@ -148,6 +152,13 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.ngram   = ngram;
 	}
 	
+	
+	@Parameter(name = "removeStopWords", type=BooleanParameter.class, optional= true, doc="")
+	public void setRemoveStopWords(boolean removeStopWords) {
+		this.removeStopWords   = removeStopWords;
+	}
+	
+	
 	@Parameter(name = "maxBufferSize", type=IntegerParameter.class, optional= true, doc="")
 	public void setMaxBufferSize(int maxBufferSize) {
 		this.maxBufferSize   = maxBufferSize;
@@ -159,6 +170,10 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public int getNgram(){
 		return ngram;
+	}
+	
+	public boolean getRemoveStopWords(){
+		return removeStopWords;
 	}
 	
 	public String getAttributeTestSetTrueDecision(){

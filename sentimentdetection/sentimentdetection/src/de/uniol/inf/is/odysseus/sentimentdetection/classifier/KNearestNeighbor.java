@@ -21,12 +21,10 @@ public class KNearestNeighbor extends AbstractClassifier {
 	static Logger logger = LoggerFactory.getLogger(KNearestNeighbor.class);
 	
 	private final String algo_type = "KNearestNeighbor";
-	private String domain;
-	private int ngram = 1;
 
 	private Map<String, Integer> freq = new HashMap<String, Integer>();
 	private Map<List<String>, Integer> trainfeatures = new HashMap<List<String>, Integer>();
-	private List<String> stopwords = new ArrayList<String>();
+
 
 	private int ntr = 0;
 
@@ -49,9 +47,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 	if(!isTrained){	
 		freq.clear();
 		trainfeatures.clear();
-		stopwords.clear();
 		ntr = trainingset.size();
-		setStopWords();
 	}else{
 		ntr += trainingset.size();
 	}
@@ -140,8 +136,6 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 
 
-
-
 	/*
 	 * remove duplicates with order 
 	 */
@@ -169,11 +163,8 @@ public class KNearestNeighbor extends AbstractClassifier {
 		for (String singleword : NGramm.ngrams(text, ngram)) {
 			//only add words length > 2
 			if (singleword.trim().length() > 2) {
-				// only add none stopwords
-				if (!stopwords.contains(singleword)) {
 					String stem = stemmer.stem(singleword);
 					words.add(stem);
-				}
 			}
 		}
 		// remove duplicates words
@@ -181,31 +172,10 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 	
 
-	private void setStopWords() {
-		this.stopwords = StopWords.getStopWords();
-	}
-	
-	
 	@Override
 	public String getType() {
 		return algo_type;
 	}
-	
-	@Override
-	public String getDomain() {
-		return domain;
-	}
-
-	@Override
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-	
-	@Override
-	public void setNgram(int ngram){
-		this.ngram = ngram;
-	}
-
 	
 
 }

@@ -49,7 +49,6 @@ public class NaiveBayes extends AbstractClassifier {
 
 			if (e.getTrueDecisio() == 1) {
 				// positive
-				//	for (String singleword : e.getKey().split(" ")) {
 				for (String singleword : NGramm.ngrams(e.getRecord(), ngram)) { 
 					if (!positivewords.containsKey(singleword.toLowerCase())) {
 						  positivewords.put(singleword.toLowerCase(), 1);
@@ -62,7 +61,6 @@ public class NaiveBayes extends AbstractClassifier {
 				}
 			} else {
 				// negative
-				//for (String singleword : e.getKey().split(" ")) {
 				for (String singleword : NGramm.ngrams(e.getRecord(), ngram)) {
 					if (!negativewords.containsKey(singleword.toLowerCase())) {
 							negativewords.put(singleword.toLowerCase(), 1);

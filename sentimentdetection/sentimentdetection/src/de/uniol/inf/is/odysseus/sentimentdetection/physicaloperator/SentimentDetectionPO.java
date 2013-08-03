@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.IClassifier;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.Metrics;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
+import de.uniol.inf.is.odysseus.sentimentdetection.util.StopWords;
 
 @SuppressWarnings({ "rawtypes" })
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
@@ -29,6 +30,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	
 	//klassificator parameter
 	private int ngram;
+	private boolean removeStopWords;
 
 	//variable for debug
 	private int posCtr = 0;
@@ -41,9 +43,17 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	
 	private int wrongdecision = 0;
 	
+	private long startTime;
+	private long stopTime;
+	private boolean isStarted= false;
+	
+	private long startTimeTrain;
+	private long stopTimeTrain;
+	
 	//help variable
 	private static int ctr = 0;
 	private boolean isTrained = false;
+
 	
 	//currend classifier
 	private IClassifier algo;
@@ -62,8 +72,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int attributeTestSetTrueDecisionPos = -1;
 
 
-	
-
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
 			int trainSetMinSize, 
 			String domain, 
@@ -73,6 +81,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTestSetTextPos,
 			int attributeTestSetTrueDecisionPos,
 			int ngram,
+			boolean removeStopWords,
 			int maxBufferSize) {
 		super();
 		
@@ -89,6 +98,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
 		
 		this.ngram = ngram;
+		this.removeStopWords = removeStopWords;
 		
 		this.maxBufferSize = maxBufferSize;
 	}
@@ -120,24 +130,36 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		algo = (IClassifier) ClassifierRegistry
 				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);	
 		algo.setNgram(ngram);
+		algo.setRemoveStopWords(removeStopWords);
+		
 	}
 
 	@Override
 	protected  void process_next(Tuple object, int port) {
-
+	if(!isStarted){
+		startTime = System.currentTimeMillis();
+		isStarted= true;
+	}
 		if (port == 0) {
 			// add trainingsset
 			System.out.println("Trainingssize: "+trainingset.size());
 			System.out.println(object.getAttribute(attributeTrainSetTextPos).toString());
 			
 			TrainSetEntry entry = new TrainSetEntry();
-			entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
+			//remove stopwords
+			if(algo.getRemoveStopWords()){
+				entry.setRecord(StopWords.removeStopWords(object.getAttribute(attributeTrainSetTextPos).toString()));
+			}else{
+				entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
+			}
 			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
 			trainingset.add(entry);
-
+			
 
 			if (trainingset.size() >= trainSetMinSize || isTrained) {
+				startTimeTrain =  System.currentTimeMillis();
 				algo.trainClassifier(trainingset, isTrained);
+				stopTimeTrain =  System.currentTimeMillis();
 				isTrained = true;
 				// synchronized for java.util.ConcurrentModificationException problems				
 				synchronized (this.buffer) {
@@ -150,7 +172,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 						buffer.clear();
 					}
 					trainingset.clear();
-
 				}
 
 			}
@@ -193,34 +214,31 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			System.arraycopy(object.getAttributes(), 0,
 					outputTuple.getAttributes(), 0, inputSize);
 
+			int decision;
 			// text positive or negative
-			// String erg = detect(object.getAttribute(0).toString());
-
-			int decision = algo.startDetect(object.getAttribute(attributeTestSetTextPos).toString());
+			if(algo.getRemoveStopWords()){
+				decision = algo.startDetect(StopWords.removeStopWords(object.getAttribute(attributeTestSetTextPos).toString()));
+			}else{
+			    decision = algo.startDetect(object.getAttribute(attributeTestSetTextPos).toString());
+			}	
 
 			// get OutputPort
 			int outputPort = getOutPutPort(decision);
 
 			// set the decision Attribute
-			outputTuple.setAttribute(object.size(), decision);
-		
-	
-		
+			outputTuple.setAttribute(object.size(), decision);		
 			outputTuple.setMetadata(object.getMetadata());
 			outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 
-			
 			if(debugClassifier){
 				// calculate error
 				String truedecision = outputTuple.getAttribute(attributeTestSetTrueDecisionPos).toString();
-				
-				
+					
 				if(Integer.parseInt(truedecision.trim()) == 1){
 					totalExistPosCtr++;
 				}else{
 					totalExistNegCtr++;
 				}
-				
 				
 				if(decision == 1){
 					totalPosCtr++;
@@ -247,6 +265,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			}
 			ctr++;
 			transfer(outputTuple, outputPort);
+		
 	}
 
 	/*
@@ -272,6 +291,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	protected void process_close() {
 		
 		if(debugClassifier){
+			System.out.println("Total counter: "+ctr);
+			stopTime = System.currentTimeMillis();
+			System.out.println("Total time used: " + (stopTime-startTime));
+			System.out.println("Total train time used: " + (stopTimeTrain-startTimeTrain));
+			
+			
 			System.out.println("pos recall: " + Metrics.recall(posCtr, totalExistPosCtr));
 			System.out.println("pos precision: " + Metrics.precision(posCtr, totalPosCtr));
 			System.out.println("pos f-score: "+ Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr), Metrics.precision(posCtr, totalPosCtr)));
@@ -282,6 +307,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			System.out.println("neg recall: " + Metrics.recall(negCtr, totalExistNegCtr));
 			System.out.println("neg precision: " + Metrics.precision(negCtr, totalNegCtr));
 			System.out.println("neg f-score: "+ Metrics.f_score(Metrics.recall(negCtr, totalExistNegCtr), Metrics.precision(negCtr, totalNegCtr)));
+		
+		
 		}
 		
 		super.process_close();

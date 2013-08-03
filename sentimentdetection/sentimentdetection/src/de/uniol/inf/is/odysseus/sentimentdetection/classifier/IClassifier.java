@@ -12,6 +12,8 @@ public interface IClassifier {
 	
 	void setDomain(String domain);
 	
+	void setRemoveStopWords(boolean removeStopWords);
+	
 	void setNgram(int ngram);
 	
 	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
@@ -21,5 +23,7 @@ public interface IClassifier {
 	String getType();
 	
 	String getDomain();
+	
+	boolean getRemoveStopWords();
 		
 }

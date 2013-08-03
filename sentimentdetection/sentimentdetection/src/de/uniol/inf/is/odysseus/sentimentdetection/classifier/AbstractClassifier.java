@@ -6,10 +6,15 @@ public abstract class AbstractClassifier implements IClassifier{
 
 	protected String domain;
 	protected int ngram;
+	protected boolean removeStopWords;
 
 
 	public void setNgram(int ngram){
 		this.ngram = ngram;
+	}
+	
+	public void setRemoveStopWords(boolean removeStopWords){
+		this.removeStopWords = removeStopWords;
 	}
 	
 	public String getDomain(){
@@ -18,6 +23,10 @@ public abstract class AbstractClassifier implements IClassifier{
 	
 	public void setDomain(String domain) {
 		this.domain = domain;
+	}
+	
+	public boolean getRemoveStopWords(){
+		return removeStopWords;
 	}
 
 	
