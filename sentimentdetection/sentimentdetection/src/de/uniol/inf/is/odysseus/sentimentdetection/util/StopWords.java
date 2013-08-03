@@ -55,5 +55,18 @@ public class StopWords {
 			return false;
 		}
 	}
+	
+	public static String stemmRecord(String record){
+		String result= "";
+		
+		PorterStemmer stemmer = new PorterStemmer();
+		
+		for (String singleword : NGramm.ngrams(record, 1)) {
+			String stem = stemmer.stem(singleword);
+			result += stem + " ";
+		}
+		
+		return result;
+	}
 
 }

@@ -31,6 +31,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	//klassificator parameter
 	private int ngram;
 	private boolean removeStopWords;
+	private boolean stemmWords;
 
 	//variable for debug
 	private int posCtr = 0;
@@ -82,6 +83,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTestSetTrueDecisionPos,
 			int ngram,
 			boolean removeStopWords,
+			boolean stemmWords,
 			int maxBufferSize) {
 		super();
 		
@@ -99,6 +101,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		
 		this.ngram = ngram;
 		this.removeStopWords = removeStopWords;
+		this.stemmWords = stemmWords;
 		
 		this.maxBufferSize = maxBufferSize;
 	}
@@ -131,6 +134,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);	
 		algo.setNgram(ngram);
 		algo.setRemoveStopWords(removeStopWords);
+		algo.setStemmWords(stemmWords);
 		
 	}
 
@@ -152,6 +156,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			}else{
 				entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
 			}
+			
+			//stemm words
+			if(algo.getStemmWords()){
+				entry.setRecord(StopWords.stemmRecord(entry.getRecord()));
+			}
+			
 			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
 			trainingset.add(entry);
 			
@@ -213,15 +223,23 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			// Copy object Attributes to the new outputTuple
 			System.arraycopy(object.getAttributes(), 0,
 					outputTuple.getAttributes(), 0, inputSize);
-
-			int decision;
+			
 			// text positive or negative
+			int decision;
+			String text = object.getAttribute(attributeTestSetTextPos).toString();
+			
+			//remove stopwords
 			if(algo.getRemoveStopWords()){
-				decision = algo.startDetect(StopWords.removeStopWords(object.getAttribute(attributeTestSetTextPos).toString()));
-			}else{
-			    decision = algo.startDetect(object.getAttribute(attributeTestSetTextPos).toString());
-			}	
-
+				text = StopWords.removeStopWords(text);
+			}
+			
+			//stemm words
+			if(algo.getStemmWords()){
+				text = StopWords.stemmRecord(text);
+			}
+			
+			decision = algo.startDetect(text);
+			
 			// get OutputPort
 			int outputPort = getOutPutPort(decision);
 

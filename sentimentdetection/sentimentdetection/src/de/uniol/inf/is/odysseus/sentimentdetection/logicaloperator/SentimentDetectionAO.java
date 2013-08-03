@@ -32,6 +32,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	private int ngram = 1;
 	private boolean removeStopWords = false;
+	private boolean stemmWords = false;
 	
 	private String attributeTrainSetText;
 	private String attributeTrainSetTrueDecision;
@@ -62,6 +63,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.debugClassifier = sentimentDetectionAO.debugClassifier;
         this.ngram = sentimentDetectionAO.ngram;
         this.removeStopWords = sentimentDetectionAO.removeStopWords;
+        this.stemmWords = sentimentDetectionAO.stemmWords;
         
         
         this.maxBufferSize = sentimentDetectionAO.maxBufferSize;
@@ -159,6 +161,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	}
 	
 	
+	@Parameter(name = "stemmWords", type=BooleanParameter.class, optional= true, doc="")
+	public void setStemmWords(boolean stemmWords) {
+		this.stemmWords   = stemmWords;
+	}
+	
+	
 	@Parameter(name = "maxBufferSize", type=IntegerParameter.class, optional= true, doc="")
 	public void setMaxBufferSize(int maxBufferSize) {
 		this.maxBufferSize   = maxBufferSize;
@@ -170,6 +178,10 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public int getNgram(){
 		return ngram;
+	}
+	
+	public boolean getStemmWords(){
+		return stemmWords;
 	}
 	
 	public boolean getRemoveStopWords(){

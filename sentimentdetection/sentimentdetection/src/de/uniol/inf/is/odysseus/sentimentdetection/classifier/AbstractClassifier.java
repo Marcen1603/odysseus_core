@@ -7,6 +7,7 @@ public abstract class AbstractClassifier implements IClassifier{
 	protected String domain;
 	protected int ngram;
 	protected boolean removeStopWords;
+	protected boolean stemmWords;
 
 
 	public void setNgram(int ngram){
@@ -27,6 +28,14 @@ public abstract class AbstractClassifier implements IClassifier{
 	
 	public boolean getRemoveStopWords(){
 		return removeStopWords;
+	}
+	
+	public void setStemmWords(boolean stemmWords){
+		this.stemmWords = stemmWords;
+	}
+	
+	public boolean getStemmWords(){
+		return stemmWords;
 	}
 
 	

@@ -16,6 +16,8 @@ public interface IClassifier {
 	
 	void setNgram(int ngram);
 	
+	void setStemmWords(boolean stemmWords);
+	
 	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
 	
 	int startDetect(String text);
@@ -25,5 +27,7 @@ public interface IClassifier {
 	String getDomain();
 	
 	boolean getRemoveStopWords();
+	
+	boolean getStemmWords();
 		
 }

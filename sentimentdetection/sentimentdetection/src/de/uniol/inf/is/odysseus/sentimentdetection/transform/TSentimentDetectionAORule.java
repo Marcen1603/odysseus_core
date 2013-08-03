@@ -32,6 +32,7 @@ public class TSentimentDetectionAORule extends
 						sentimentDetectionAO.getAttributeTestSetTrueDecisionPos(),
 						sentimentDetectionAO.getNgram(),
 						sentimentDetectionAO.getRemoveStopWords(),
+						sentimentDetectionAO.getStemmWords(),
 						sentimentDetectionAO.getMaxBufferSize()),
 						config, true, true);
 	}
