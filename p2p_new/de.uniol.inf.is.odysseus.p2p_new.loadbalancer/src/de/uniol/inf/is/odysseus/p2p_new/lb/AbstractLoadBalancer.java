@@ -1151,7 +1151,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 		}
 		
-		return new QueryPart(enhancedOperators);
+		return new QueryPart(enhancedOperators, AbstractLoadBalancer.getSourceDestinationName());
 		
 	}
 
