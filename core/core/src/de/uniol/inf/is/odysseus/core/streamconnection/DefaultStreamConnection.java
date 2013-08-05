@@ -50,15 +50,16 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	private final Map<IPhysicalOperator, Integer> operatorPortMap;
 	private final Collection<IPhysicalOperator> connectedOperators = Lists.newArrayList();
 	private final List<ISubscription<? extends ISource<In>>> subscriptions;
+	
+	private final ArrayList<In> collectedObjects = new ArrayList<In>();
+	private final ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
+
+	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
+	private final Map<String, Collection<IStreamElementListener<In>>> specialListener = Maps.newHashMap();
 
 	private boolean connected = false;
 	private boolean enabled = true;
 
-	private ArrayList<In> collectedObjects = new ArrayList<In>();
-	private ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
-
-	private final Collection<IStreamElementListener<In>> listeners = new ArrayList<IStreamElementListener<In>>();
-	private final Map<String, Collection<IStreamElementListener<In>>> specialListener = Maps.newHashMap();
 	private boolean isOpen = true;
 
 	private Map<String, String> infos;
@@ -411,11 +412,16 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			source.disconnectSink(this, operatorPortMap.get(operator), 0, operator.getOutputSchema());
 		} else {
 			ISink<?> sink = (ISink<?>)operator;
-			Collection<?> subs = sink.getSubscribedToSource();
-			for( Object sub : subs ) {
-				PhysicalSubscription<ISource<In>> physSub = (PhysicalSubscription<ISource<In>>)sub;
-				physSub.getTarget().disconnectSink(this, operatorPortMap.get(operator), 0, physSub.getTarget().getOutputSchema());
-			}			
+			Collection<?> subsToSource = sink.getSubscribedToSource();
+			
+			for( Object sourceSub : subsToSource ) {
+				PhysicalSubscription<ISource<In>> physSourceSub = (PhysicalSubscription<ISource<In>>)sourceSub;
+			
+				ISource<In> source = physSourceSub.getTarget();
+				int sourceOutPort = determineSourceOutPort(source, operator);
+				
+				physSourceSub.getTarget().disconnectSink(this, operatorPortMap.get(operator), sourceOutPort, physSourceSub.getTarget().getOutputSchema());
+			}
 		}
 		
 		connectedOperators.remove(operator);
