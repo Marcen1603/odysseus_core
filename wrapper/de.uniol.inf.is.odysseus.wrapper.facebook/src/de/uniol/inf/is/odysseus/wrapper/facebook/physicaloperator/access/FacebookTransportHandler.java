@@ -22,6 +22,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	private final Logger logger = LoggerFactory.getLogger(FacebookTransportHandler.class);
 
 	private String accessToken;
+	private String page;
 	
 	private InputStream input;
 	private OutputStream output;
@@ -55,6 +56,10 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		if (options.containsKey("accesstoken")) {
 			setAccessToken(options.get("accesstoken"));
 		}
+		if (options.containsKey("page")) {
+			setPage(options.get("page"));
+		}
+		
 	}
 
 
@@ -85,7 +90,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		System.out.println("Page likes: " + page.getLikes());
 		*/
 	
-			String url = "https://graph.facebook.com/cocacola/feed?fields=message&limit=50&access_token="+this.accessToken;
+			String url = "https://graph.facebook.com/"+page+"/feed?fields=message&limit=50&access_token="+this.accessToken;
 			this.input = new URL(url).openStream();
 			
 			/* Test was im Stream drin steht....
@@ -143,9 +148,18 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	public String getAccessToken() {
 		return this.accessToken;
 	}
+	
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
+	}
+	
+	public String getPage() {
+		return this.page;
+	}
+	
+	public void setPage(String page){
+		this.page = page;
 	}
 
 	@Override
