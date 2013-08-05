@@ -26,11 +26,11 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
 public class StreamEditorInput implements IStreamEditorInput {
 
-	private IStreamConnection<Object> connection;
-	private IStreamEditorType editorType;
-	private String editorTypeID;
-	private String editorLabel;
-	private IPhysicalOperator operator;
+	private final IStreamConnection<Object> connection;
+	private final IStreamEditorType editorType;
+	private final String editorTypeID;
+	private final String editorLabel;
+	private final IPhysicalOperator operator;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public StreamEditorInput( IPhysicalOperator operator, IStreamEditorType type, String editorTypeID, String editorLabel ) {
