@@ -27,9 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
 
 public class BarChart extends AbstractCategorySingleValuesChart {
 
-	
 	private Boolean autoadjust = true;
-
 
 	@Override
 	protected JFreeChart createChart() {
@@ -65,6 +63,4 @@ public class BarChart extends AbstractCategorySingleValuesChart {
 	public void reloadChart() {			
 		getChart().getCategoryPlot().getRangeAxis().setAutoRange(this.autoadjust);
 	}
-	
-
 }

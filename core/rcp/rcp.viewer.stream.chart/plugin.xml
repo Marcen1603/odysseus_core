@@ -362,62 +362,62 @@
          point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.BarChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Bar Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Pie Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ThermometerChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ThermometerConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Thermometer Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.DialChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Dial Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.AreaChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Area Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYLineChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYLineChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="XY Line Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.CurveChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="XY Spline Curve Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.XYBarChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="XY Bar Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.StepChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="XY Step Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ScatterPlotChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Scatter Plot">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3D"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.PieChart3DConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="3D Pie Chart">
       </dashboardPart>
       <dashboardPart
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.LinearFunctionChart"
-            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.LinearFunctionChartConfigurer"
+            configClass="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts.ChartConfigurer"
             name="Linear Function">
       </dashboardPart>
    </extension>
