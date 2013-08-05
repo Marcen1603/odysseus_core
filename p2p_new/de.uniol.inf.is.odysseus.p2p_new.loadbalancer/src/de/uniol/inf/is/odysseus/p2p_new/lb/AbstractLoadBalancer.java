@@ -219,6 +219,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			Collection<QueryPart> sourceParts = Lists.newArrayList();	// the query parts for all StreamAOs, WindowAOs and operators for fragmentation,
 																		// if fragmentation is used
 			List<ILogicalQuery> queryCopies = Lists.newArrayList();		// A list of all copies of the originquery
+//			AggregateAO aggregateAO = null;								// An AggregateAO, which has to be part of the local part if and only if:
+																		// an AggregateAO shall be distributed.
+																		// If that's the case the cloned distributed AggregateAOs must calculate 
+																		// partial aggregations and this AggregateAO must put the partial ones 
+																		// together.
 			
 			// Add an entry for the origin query to the queryPartsMap
 			queryPartsMap.put(originQuery, new HashMap<ILogicalQuery, List<QueryPart>>());			
@@ -1013,6 +1018,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		String[] strFragStrats = parameters.get(ParameterFragmentationType.class).getValue().split(ParameterFragmentationType.OUTER_SEP);
+		
+		// XXX At the moment there is only one strategy for one source allowed!
+		if(strFragStrats.length > 1)
+			throw new IllegalArgumentException("More than one fragmentation startegy or source specification is not allowed yet!");
+		
 		for(String strFragStrat : strFragStrats) {
 			
 			String[] strParameters = strFragStrat.split(ParameterFragmentationType.INNER_SEP);
@@ -1045,33 +1055,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			if(strParameters.length < 2) {
 				
 				// No source name given
-				
-				for(String sourceName : sourceNames) {
-					
-					boolean foundNotMappedSourceName = false;
-					
-					if(!sourceToFragStrat.containsKey(sourceName)) {
-						
-						sourceToFragStrat.put(sourceName, fragStrat);
-						foundNotMappedSourceName = true;
-						
-					}
-					
-					if(foundNotMappedSourceName)
-						LOG.debug("No source specified for fragmentation strategy '{}'. " +
-								"Using '{}' for all not specified sources.", strategyName, strategyName);
-					else LOG.error("No source specified for fragmentation strategy '{}'. Skipping strategy.", strategyName);
-					
-				}
+				throw new IllegalArgumentException("No source specified for fragmentation strategy 'strategyName'.");
 				
 			} else {
 							
 				String sourceName = strParameters[1];
 				
 				if(!sourceNames.contains(sourceName))
-					LOG.error("Unknown source '{}'. Skipping strategy '{}'.", sourceName, fragStrat);
-				else if(sourceToFragStrat.containsKey(sourceName))
-					LOG.error("Duplicate source '{}'. Skipping strategy '{}'.", sourceName, fragStrat);
+					throw new IllegalArgumentException("Unknown source 'sourceName'.");
 				else sourceToFragStrat.put(sourceName, fragStrat);
 					
 			}
