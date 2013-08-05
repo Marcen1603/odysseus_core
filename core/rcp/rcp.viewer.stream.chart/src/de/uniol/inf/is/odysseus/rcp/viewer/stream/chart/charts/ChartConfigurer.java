@@ -42,8 +42,9 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
 @SuppressWarnings("rawtypes")
 public class ChartConfigurer implements IDashboardPartConfigurer<AbstractJFreeChart> {
 
-	// SETTINGS
 	private static final Logger LOG = LoggerFactory.getLogger(ChartConfigurer.class);
+	
+	// SETTINGS
 	private static final String MAIN_PREFERENCE_NODE = "de.uniol.inf.is.odysseus.rcp.viewer";
 	
 	private final Map<MethodSetting, Object> currentValues = new TreeMap<MethodSetting, Object>();
@@ -74,7 +75,7 @@ public class ChartConfigurer implements IDashboardPartConfigurer<AbstractJFreeCh
 			try {
 				currentValues.put(ms, ms.getGetter().invoke(this.changeable));
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.error("Could not determine value", e);
 			}
 		}
 		
