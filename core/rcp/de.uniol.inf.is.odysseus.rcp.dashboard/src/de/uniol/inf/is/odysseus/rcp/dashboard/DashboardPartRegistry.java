@@ -59,7 +59,7 @@ public class DashboardPartRegistry {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(dashboardPartName), "Name of DashboardPart must not be null or empty!");
 		Preconditions.checkArgument(isRegistered(dashboardPartName), "DashboardPart %s not registered!", dashboardPartName);
 
-		final Registration reg = (Registration) registeredParts.get(dashboardPartName);
+		final Registration reg = registeredParts.get(dashboardPartName);
 		Optional<? extends IDashboardPartConfigurer<?>> optConfigurer = createDashboardPartConfigurerInstance(reg.dashboardPartConfigurerClass);
 		if( optConfigurer.isPresent() ) {
 			return optConfigurer.get();
@@ -73,7 +73,7 @@ public class DashboardPartRegistry {
 
 		final Registration reg = registeredParts.get(dashboardPartName);
 		if (reg != null) {
-			final Class<? extends IDashboardPart> clazz = (Class<? extends IDashboardPart>) reg.dashboardPartClass;
+			final Class<? extends IDashboardPart> clazz = reg.dashboardPartClass;
 			return Optional.<Class<? extends IDashboardPart>> of(clazz);
 		}
 		return Optional.absent();

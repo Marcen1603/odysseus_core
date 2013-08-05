@@ -30,11 +30,7 @@ public class DashboardPartConfigurer {
 	}
 
 	private boolean applyNewSettings(String selectedSinkNames) {
-		String currentSinkNames = dashboardPart.getSinkNames();
-		if( (currentSinkNames == null && selectedSinkNames != null) || currentSinkNames.equals(selectedSinkNames)) {
-			dashboardPart.setSinkNames(selectedSinkNames);
-			return true;
-		}
-		return false;
+		dashboardPart.setSinkNames(selectedSinkNames);
+		return true;
 	}
 }

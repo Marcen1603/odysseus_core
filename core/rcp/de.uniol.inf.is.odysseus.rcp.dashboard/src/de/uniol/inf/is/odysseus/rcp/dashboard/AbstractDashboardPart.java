@@ -84,7 +84,8 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 		return sinkNames;
 	}
 	
+	@Override
 	public void setSinkNames(String sinkNames) {
 		this.sinkNames = sinkNames;
-	};
+	}
 }
