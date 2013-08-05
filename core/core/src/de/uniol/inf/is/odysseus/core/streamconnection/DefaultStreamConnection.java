@@ -380,14 +380,28 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 			source.connectSink(this, operatorPortMap.get(operator), 0, operator.getOutputSchema());
 		} else {
 			ISink<?> sink = (ISink<?>)operator;
-			Collection<?> subs = sink.getSubscribedToSource();
-			for( Object sub : subs ) {
-				PhysicalSubscription<ISource<In>> physSub = (PhysicalSubscription<ISource<In>>)sub;
-				physSub.getTarget().connectSink(this, operatorPortMap.get(operator), 0, physSub.getTarget().getOutputSchema());
+			Collection<?> subsToSource = sink.getSubscribedToSource();
+			for( Object sourceSub : subsToSource ) {
+				PhysicalSubscription<ISource<In>> physSourceSub = (PhysicalSubscription<ISource<In>>)sourceSub;
+			
+				ISource<In> source = physSourceSub.getTarget();
+				int sourceOutPort = determineSourceOutPort(source, operator);
+				
+				physSourceSub.getTarget().connectSink(this, operatorPortMap.get(operator), sourceOutPort, physSourceSub.getTarget().getOutputSchema());
 			}
 		}
 		
 		connectedOperators.add(operator);
+	}
+
+	private int determineSourceOutPort(ISource<In> sourceOperator, IPhysicalOperator targetOperator) {
+		Collection<PhysicalSubscription<ISink<? super In>>> subsToSinks = sourceOperator.getSubscriptions();
+		for( PhysicalSubscription<ISink<? super In>> sinkSub : subsToSinks ) {
+			if( sinkSub.getTarget().equals(targetOperator)) {
+				return sinkSub.getSourceOutPort();
+			}
+		}
+		return 0;
 	}
 
 	@SuppressWarnings("unchecked")
