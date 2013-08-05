@@ -159,12 +159,14 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 		List<String> words = new ArrayList<String>();
 
+		for(int i=1 ; i<ngramUpTo;i++){
 		// split text in singlewords
-		for (String singleword : NGramm.ngrams(text, ngram)) {
+		for (String singleword : NGramm.ngrams(text, i)) {
 			//only add words length > 2
 			if (singleword.trim().length() > 2) {
 					words.add(singleword);
 			}
+		}
 		}
 		// remove duplicates words
 		return removeDuplicateWithOrder(words);

@@ -19,6 +19,8 @@ public class NaiveBayes extends AbstractClassifier {
 	
 	static Logger logger = LoggerFactory.getLogger(NaiveBayes.class);
 
+	
+	
 	public NaiveBayes(){
 		//OSGI
 	}
@@ -38,6 +40,9 @@ public class NaiveBayes extends AbstractClassifier {
 		
 	logger.debug("trainingsset size: " +  trainingset.size());
 	logger.debug("domain: " + domain);
+	
+
+		
 
 	//clear positivewords/negativewords
 	if(!isTrained){
@@ -49,7 +54,8 @@ public class NaiveBayes extends AbstractClassifier {
 
 			if (e.getTrueDecisio() == 1) {
 				// positive
-				for (String singleword : NGramm.ngrams(e.getRecord(), ngram)) { 
+			for(int i=1; i<=ngramUpTo;i++){
+				for (String singleword : NGramm.ngrams(e.getRecord(), i)) { 
 					if (!positivewords.containsKey(singleword.toLowerCase())) {
 						  positivewords.put(singleword.toLowerCase(), 1);
 					} else {
@@ -59,17 +65,20 @@ public class NaiveBayes extends AbstractClassifier {
 					}
 
 				}
+			}
 			} else {
 				// negative
-				for (String singleword : NGramm.ngrams(e.getRecord(), ngram)) {
-					if (!negativewords.containsKey(singleword.toLowerCase())) {
-							negativewords.put(singleword.toLowerCase(), 1);
-					} else {
-						// exist,  ctr + 1
-						int ctr = negativewords.get(singleword.toLowerCase())+1;
-						negativewords.put(singleword.toLowerCase(), ctr);
+				for(int i=1; i<=ngramUpTo;i++){
+					for (String singleword : NGramm.ngrams(e.getRecord(), i)) {
+						if (!negativewords.containsKey(singleword.toLowerCase())) {
+								negativewords.put(singleword.toLowerCase(), 1);
+						} else {
+							// exist,  ctr + 1
+							int ctr = negativewords.get(singleword.toLowerCase())+1;
+							negativewords.put(singleword.toLowerCase(), ctr);
+						}
+	
 					}
-
 				}
 			}
 		}
@@ -95,26 +104,27 @@ public class NaiveBayes extends AbstractClassifier {
 
 		//split the record in single words
 		//for (String singleword : text.split(" ")) {
-		for (String singleword : NGramm.ngrams(text, ngram)) {
-			double a = 1.0;
-			double b = 1.0;
-
-			// positive count
-			if (positivewords.containsKey(singleword.toLowerCase())) {
-				a = a + positivewords.get(singleword.toLowerCase());
+		for(int i=1; i<=ngramUpTo;i++){
+			for (String singleword : NGramm.ngrams(text, i)) {
+				double a = 1.0;
+				double b = 1.0;
+	
+				// positive count
+				if (positivewords.containsKey(singleword.toLowerCase())) {
+					a = a + positivewords.get(singleword.toLowerCase());
+				}
+	
+				// negative count
+				if (negativewords.containsKey(singleword.toLowerCase())) {
+					b = b + negativewords.get(singleword.toLowerCase());
+				}
+	
+				//positive rate
+				decisionpos += a/(a+b);
+				//negative rate
+				decisionneg += b/(a+b);
 			}
-
-			// negative count
-			if (negativewords.containsKey(singleword.toLowerCase())) {
-				b = b + negativewords.get(singleword.toLowerCase());
-			}
-
-			//positive rate
-			decisionpos += a/(a+b);
-			//negative rate
-			decisionneg += b/(a+b);
 		}
-		
 		
 		logger.debug("----analysis----");
 		logger.debug("record: " + text);
@@ -138,6 +148,9 @@ public class NaiveBayes extends AbstractClassifier {
 	public String getType() {
 		return algo_type;
 	}
+
+
+
 
 	
 

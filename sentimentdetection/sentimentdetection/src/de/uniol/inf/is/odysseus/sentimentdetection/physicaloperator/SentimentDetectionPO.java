@@ -30,6 +30,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	
 	//klassificator parameter
 	private int ngram;
+	private boolean ngramUpTo;
 	private boolean removeStopWords;
 	private boolean stemmWords;
 
@@ -84,6 +85,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int ngram,
 			boolean removeStopWords,
 			boolean stemmWords,
+			boolean ngramUpto,
 			int maxBufferSize) {
 		super();
 		
@@ -100,6 +102,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
 		
 		this.ngram = ngram;
+		this.ngramUpTo = ngramUpto;
 		this.removeStopWords = removeStopWords;
 		this.stemmWords = stemmWords;
 		
@@ -135,6 +138,10 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		algo.setNgram(ngram);
 		algo.setRemoveStopWords(removeStopWords);
 		algo.setStemmWords(stemmWords);
+		if(ngramUpTo){
+			algo.setNgramUpTo(ngram);
+		}
+		
 		
 	}
 

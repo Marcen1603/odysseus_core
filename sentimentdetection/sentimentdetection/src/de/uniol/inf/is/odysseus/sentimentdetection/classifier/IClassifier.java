@@ -18,6 +18,8 @@ public interface IClassifier {
 	
 	void setStemmWords(boolean stemmWords);
 	
+	void setNgramUpTo(int ngramUpTo);
+	
 	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
 	
 	int startDetect(String text);
