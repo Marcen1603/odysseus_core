@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
@@ -101,6 +102,11 @@ public class RelationalMinMax extends AbstractAggregateFunction<Tuple<?>, Tuple<
 	@Override
 	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
 		return ((RelationalElementPartialAggregate)p).getElem();
+	}
+	
+	@Override
+	public SDFDatatype getPartialAggregateType() {
+		return SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE;
 	}
 
 }

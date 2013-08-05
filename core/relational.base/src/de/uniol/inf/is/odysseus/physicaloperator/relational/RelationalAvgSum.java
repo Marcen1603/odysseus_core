@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSum;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
@@ -148,6 +149,11 @@ public class RelationalAvgSum extends AvgSum<Tuple<?>, Tuple<?>> {
 			r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
 		}
 		return r;
+	}
+	
+	@Override
+	public SDFDatatype getPartialAggregateType() {
+		return SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE;
 	}
 
 }

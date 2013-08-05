@@ -15,6 +15,8 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 abstract public class AbstractAggregateFunction<R,W> implements IAggregateFunction<R,W> {
 	
 	/**
@@ -54,6 +56,11 @@ abstract public class AbstractAggregateFunction<R,W> implements IAggregateFuncti
 	public IPartialAggregate<R> merge(IPartialAggregate<R> p,
 			IPartialAggregate<R> toMerge, boolean createNew) {
 		throw new RuntimeException("Sorry. Cannot process partial aggregates as input");
+	}
+	
+	@Override
+	public SDFDatatype getPartialAggregateType() {
+		return null;
 	}
 	
 }
