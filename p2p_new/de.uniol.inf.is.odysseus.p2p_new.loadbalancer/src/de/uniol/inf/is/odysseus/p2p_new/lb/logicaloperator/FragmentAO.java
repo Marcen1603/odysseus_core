@@ -39,7 +39,7 @@ public class FragmentAO extends UnaryLogicalOp {
 		
 		super();
 		// no fragmentation per default
-		this.numFragments = 1;
+		this.setNumberOfFragments(1);
 		// roundrobin per default
 		this.setType(RRFragmentation.NAME);
 		
