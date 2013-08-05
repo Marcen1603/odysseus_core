@@ -23,6 +23,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 
 	private String accessToken;
 	private String page;
+	private int limit = 50;
 	
 	private InputStream input;
 	private OutputStream output;
@@ -60,6 +61,10 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 			setPage(options.get("page"));
 		}
 		
+		if (options.containsKey("limit")) {
+			setLimit(Integer.parseInt(options.get("limit")));
+		}
+		
 	}
 
 
@@ -90,7 +95,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		System.out.println("Page likes: " + page.getLikes());
 		*/
 	
-			String url = "https://graph.facebook.com/"+page+"/feed?fields=message&limit=50&access_token="+this.accessToken;
+			String url = "https://graph.facebook.com/"+page+"/feed?fields=message&limit="+limit+"&access_token="+this.accessToken;
 			this.input = new URL(url).openStream();
 			
 			/* Test was im Stream drin steht....
@@ -160,6 +165,15 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	
 	public void setPage(String page){
 		this.page = page;
+	}
+	
+	
+	public int getLimit() {
+		return this.limit;
+	}
+	
+	public void setLimit(int limit){
+		this.limit = limit;
 	}
 
 	@Override
