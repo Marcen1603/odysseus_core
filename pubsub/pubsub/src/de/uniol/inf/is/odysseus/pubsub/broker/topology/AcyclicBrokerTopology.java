@@ -166,7 +166,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 		} else {
 			// TODO If Broker Topology is distributed, don't select a random
 			// Broker, select fastest broker (ping or something else)
-			IRoutingBroker<T> randBroker = getRandomBroker();
+			IRoutingBroker<T> randBroker = getBrokerWithMinimumLoad();
 			// Map Publisher with Broker, for better performance
 			subscriberToBroker.put(subscriberUid, randBroker);
 			return randBroker;
@@ -184,6 +184,27 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 		String brokerName = new ArrayList<String>(brokers.keySet())
 				.get(randIndex);
 		return brokers.get(brokerName);
+	}
+	
+	/**
+	 * Returns a random broker
+	 * 
+	 * @return routing broker
+	 */
+	private IRoutingBroker<T> getBrokerWithMinimumLoad() {
+		IRoutingBroker<T> firstBroker = brokers.values().iterator().next();
+		int minimumLoad = firstBroker.getNumberOfSubscribers();
+		String currentBrokerName = firstBroker.getName();
+		
+		for (IRoutingBroker<T> broker : brokers.values()) {
+			if (broker.getNumberOfSubscribers() == 0) {
+				return brokers.get(broker.getName());
+			}
+			if (broker.getNumberOfSubscribers() < minimumLoad) {
+				currentBrokerName = broker.getName();
+			}
+		}
+		return brokers.get(currentBrokerName);
 	}
 
 }

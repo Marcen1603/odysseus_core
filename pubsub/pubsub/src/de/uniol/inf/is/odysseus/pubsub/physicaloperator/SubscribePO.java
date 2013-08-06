@@ -69,6 +69,15 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public void update(Observable observable, Object object) {
+		// transfer object to next operator, object send from broker via Observer
+		transfer((T) object);	
+	}
+
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	protected void process_open() throws OpenFailedException {
 		// Get topology from registry
 		brokerTopology = (IBrokerTopology<T>) BrokerTopologyRegistry
@@ -96,7 +105,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			}
 		}
 	}
-
+	
 	@Override
 	protected void process_close() {
 		// unsubscribe and unregister from topology
@@ -112,7 +121,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 	public AbstractPipe<T, T> clone() {
 		return new SubscribePO<T>(this);
 	}
-
+	
 	private void initPredicates(List<IPredicate<? super T>> predicates) {
 		this.predicates = new ArrayList<IPredicate<? super T>>(
 				predicates.size());
@@ -120,25 +129,7 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 			this.predicates.add(p.clone());
 		}
 	}
-
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
-	}
-
-	@Override
-	protected void process_next(T object, int port) {
-		// No transfer in process_next, because broker calls update (via Observer)
-		// transfer(object);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void update(Observable observable, Object object) {
-		// transfer object to next operator, object send from broker via Observer
-		transfer((T) object);	
-	}
-
+	
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -151,5 +142,16 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		return topics;
 	}
 
+	@Override
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+		return OutputMode.INPUT;
+	}
+
+	@Override
+	protected void process_next(T object, int port) {
+		// hier passiert nix
+		
+	}
+	
 
 }

@@ -70,7 +70,7 @@ public class PublishAO extends UnaryLogicalOp{
 				} else {
 					// Check if routing type is valid (only if needed)
 					List<String> routingTypes = RoutingBrokerRegistry.getValidRoutingTypes();
-					if (!routingTypes.contains(routing)){
+					if (!routingTypes.contains(routing.toLowerCase())){
 						addError(new IllegalParameterException(
 								"Routing Type: '"+ routing +"' is not valid. Available Types are: "+routingTypes.toString()));
 						return false;

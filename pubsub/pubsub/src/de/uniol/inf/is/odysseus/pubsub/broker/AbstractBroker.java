@@ -75,6 +75,10 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 	// Maps publisherUid and list of advertisements
 	protected Map<String, BrokerAdvertisements> advertisements;
 
+	private static long endTime;
+
+	private static long startTime;
+
 	
 	public AbstractBroker(String name, String domain) {
 		this.name = name;
@@ -184,6 +188,8 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		List<String> matchedSubscriberTopics = new ArrayList<String>();
 		List<String> matchedSubscriberPredicates = new ArrayList<String>();
 		
+		logger.debug("Filtering for Message"+object.hashCode());
+		
 		// Clear Observer list
 		this.deleteObservers();
 
@@ -192,19 +198,27 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 			if (!isAnyTopicHierarchical) {
 				// Channel based filtering
 				IFiltering<T> filter = filters.get(Filtertype.channel);
+				startTimer();
+				boolean withOptimization = false;
 				if (filter.needsReinitialization()) {
 					filter.reinitializeFilter(subscriptions.values(),
 							advertisements.values());
+					withOptimization = true;
 				}
+				stopTimer(Filtertype.channel.toString(), withOptimization);
 				matchedSubscriberTopics
 						.addAll(filter.filter(object, publisherUid));
 			} else {
 				// Hierarchical Filtering
 				IFiltering<T> filter = filters.get(Filtertype.hierarchical);
+				startTimer();
+				boolean withOptimization = false;
 				if (filter.needsReinitialization()) {
 					filter.reinitializeFilter(subscriptions.values(),
 							advertisements.values());
+					withOptimization = true;
 				}
+				stopTimer(Filtertype.hierarchical.toString(), withOptimization);
 				matchedSubscriberTopics
 						.addAll(filter.filter(object, publisherUid));
 			}
@@ -223,10 +237,14 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		// Content based filtering
 		if (hasAnySubscriptionPredicates) {
 			IFiltering<T> filter = filters.get(Filtertype.content);
+			startTimer();
+			boolean withOptimization = false;
 			if (filter.needsReinitialization()) {
 				filter.reinitializeFilter(subscriptions.values(),
 						advertisements.values());
+				withOptimization = true;
 			}
+			stopTimer(Filtertype.content.toString(), withOptimization);
 			matchedSubscriberPredicates
 					.addAll(filter.filter(object, publisherUid));
 
@@ -307,6 +325,30 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 	}
 	
 	public int getNumberOfSubscribers(){
-		return 0;
+		return subscriptions.values().size();
 	}
+	
+	public static void startTimer(){
+		// Reset first
+		startTime = 0;
+	    endTime = 0;
+		
+		startTime = System.nanoTime();
+	}
+	
+	public static void stopTimer(String filtername, boolean withOptimization) {
+		endTime = System.nanoTime();
+		
+		long nanoseconds = (endTime - startTime) / 1000;
+	    if (withOptimization){
+	    	logger.debug(filtername+" Filtering needs with Optimization "+nanoseconds+" Nanoseconds");	
+	    } else {
+	    	logger.debug(filtername+" Filter needs "+nanoseconds+" Nanoseconds");	    	
+	    }
+	    
+	    // Reset after
+	    startTime = 0;
+	    endTime = 0;
+	}
+
 }
