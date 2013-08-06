@@ -83,7 +83,7 @@ public class OdysseusConfiguration {
 				properties.load(in);
 				getLogger().debug("Property file migrated");
 			}catch(Exception e2){
-				e2.printStackTrace();
+				//e2.printStackTrace();
 			}
 		}
 		in.close();
