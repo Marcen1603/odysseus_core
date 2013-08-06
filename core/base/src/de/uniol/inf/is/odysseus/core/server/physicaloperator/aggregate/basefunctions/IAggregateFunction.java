@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunc
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-
 public interface IAggregateFunction<R,W> extends IInitializer<R>, IMerger<R>,
 		IEvaluator<R,W>, Serializable{
 	public String getName();

@@ -52,6 +52,11 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 	public final long getLatency() {
 		return latency.getLatency();
 	}
+	
+	@Override
+	public long getMaxLatency() {
+		return latency.getMaxLatency();
+	}
 
 	@Override
 	public final long getLatencyEnd() {
@@ -62,6 +67,11 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 	public final long getLatencyStart() {
 		return latency.getLatencyStart();
 	}
+	
+	@Override
+	public long getMaxLatencyStart() {
+		return latency.getMaxLatencyStart();
+	}
 
 	@Override
 	public final void setLatencyEnd(long timestamp) {
@@ -69,8 +79,13 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 	}
 
 	@Override
-	public final void setLatencyStart(long timestamp) {
-		latency.setLatencyStart(timestamp);
+	public final void setMinLatencyStart(long timestamp) {
+		latency.setMinLatencyStart(timestamp);
+	}
+	
+	@Override
+	public void setMaxLatencyStart(long timestamp) {
+		latency.setMaxLatencyStart(timestamp);
 	}
 
 	@Override

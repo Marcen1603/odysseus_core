@@ -29,26 +29,34 @@ public class Latency implements ILatency{
 	};
 	
 	private static final long serialVersionUID = -3355802503979937479L;
-	private long lstart;
+	private long minlstart;
+	private long maxlstart;
 	private long lend;
 	
 	public Latency(){
-		this.lstart = System.nanoTime();
+		this.minlstart = System.nanoTime();
+		this.maxlstart = minlstart;
 	}
 	
-	public Latency(long start, long end){
-		this.lend = end;
-		this.lstart = start;
-	}
+//	public Latency(long start, long end){
+//		this.lend = end;
+//		this.lstart = start;
+//	}
 	
 	private Latency(Latency copy){
 		this.lend = copy.lend;
-		this.lstart = copy.lstart;
+		this.minlstart = copy.minlstart;
+		this.maxlstart = copy.maxlstart;
 	}
 	
 	@Override
 	public long getLatency() {
-		return this.lend - this.lstart;
+		return this.lend - this.minlstart;
+	}
+	
+	@Override
+	public long getMaxLatency() {
+		return this.lend - this.maxlstart;
 	}
 
 	@Override
@@ -58,7 +66,12 @@ public class Latency implements ILatency{
 
 	@Override
 	public long getLatencyStart() {
-		return this.lstart;
+		return this.minlstart;
+	}
+	
+	@Override
+	public long getMaxLatencyStart(){
+		return this.maxlstart;
 	}
 
 	@Override
@@ -67,9 +80,13 @@ public class Latency implements ILatency{
 	}
 
 	@Override
-	public void setLatencyStart(long timestamp) {
-		this.lstart = timestamp;
-		
+	public void setMinLatencyStart(long timestamp) {
+		this.minlstart = timestamp;
+	}
+	
+	@Override
+	public void setMaxLatencyStart(long timestamp) {
+		this.maxlstart = timestamp;
 	}
 	
 	@Override
@@ -79,23 +96,23 @@ public class Latency implements ILatency{
 	
 	@Override
 	public String toString(){
-		return "[" + this.lstart + ", " + this.lend + "[" + (this.lend > this.lstart?  (this.lend - this.lstart):"oo");
+		return "[(max=" +this.maxlstart+")"+ this.minlstart + ", " + this.lend + "[" + (this.lend > this.minlstart?  (this.lend - this.minlstart):"oo");
 	}
 	
 	@Override
 	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
 		StringBuffer retBuffer = new StringBuffer();
 		if (numberFormatter != null){
-			retBuffer.append(numberFormatter.format(this.lstart)).append(delimiter).append(numberFormatter.format(this.lend)).append(delimiter).append(numberFormatter.format(this.lend - this.lstart));
+			retBuffer.append(numberFormatter.format(this.minlstart)).append(delimiter).append(numberFormatter.format(this.lend)).append(delimiter).append(numberFormatter.format(this.lend - this.minlstart));
 		}else{
-			retBuffer.append(this.lstart).append(delimiter).append(this.lend).append(delimiter).append(this.lend - this.lstart);
+			retBuffer.append(this.maxlstart).append(delimiter).append(this.minlstart).append(delimiter).append(this.lend).append(delimiter).append(this.lend - this.minlstart);
 		}
 		return retBuffer.toString();
 	}
 	
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return "lstart"+delimiter+"lend"+delimiter+"latency";
+		return "maxlstart"+delimiter+"minlstart"+delimiter+"lend"+delimiter+"latency";
 	}
 	
 	@Override

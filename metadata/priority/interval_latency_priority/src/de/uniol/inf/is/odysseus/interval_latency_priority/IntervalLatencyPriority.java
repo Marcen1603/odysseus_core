@@ -51,7 +51,7 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 											// infinity???
 		this.latency = new Latency();
 		this.prio = new Priority();
-		setLatencyStart(start);
+		setMinLatencyStart(start);
 	}
 
 	public IntervalLatencyPriority(IntervalLatencyPriority original) {
@@ -67,10 +67,20 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	}
 
 	@Override
+	public long getMaxLatencyStart() {
+		return latency.getMaxLatencyStart();
+	}
+	
+	@Override
 	public final long getLatency() {
 		return this.latency.getLatency();
 	}
-
+	
+	@Override
+	public long getMaxLatency() {
+		return this.latency.getMaxLatency();
+	}
+	
 	@Override
 	public final long getLatencyStart() {
 		return this.latency.getLatencyStart();
@@ -82,10 +92,15 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	}
 
 	@Override
-	public final void setLatencyStart(long timestamp) {
-		this.latency.setLatencyStart(timestamp);
+	public final void setMinLatencyStart(long timestamp) {
+		this.latency.setMinLatencyStart(timestamp);
 	}
-
+	
+	@Override
+	public void setMaxLatencyStart(long timestamp) {
+		latency.setMaxLatencyStart(timestamp);
+	}
+	
 	@Override
 	public IntervalLatencyPriority clone() {
 		return new IntervalLatencyPriority(this);

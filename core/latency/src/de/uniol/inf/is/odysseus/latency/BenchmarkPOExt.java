@@ -116,7 +116,7 @@ public class BenchmarkPOExt<R extends IStreamObject<? extends ILatency>> extends
 //			double addNSSec = (double)next.getMetadata().getLatencyStart() - (double)latencyStart;
 //			double addSec = addNSSec/1000000;
 //			System.out.println("Will add " + addNSSec);
-			next.getMetadata().setLatencyStart(latencyStart);
+			next.getMetadata().setMinLatencyStart(latencyStart);
 			transfer(next);
 		}
 	}

@@ -19,11 +19,14 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 
 public interface ILatency extends IMetaAttribute{
-	public void setLatencyStart(long timestamp);
-	public void setLatencyEnd(long timestamp);
-	public long getLatencyStart();
-	public long getLatencyEnd();
-	public long getLatency();
+	void setMinLatencyStart(long timestamp);
+	void setMaxLatencyStart(long timestamp);
+	void setLatencyEnd(long timestamp);
+	long getLatencyStart();
+	long getMaxLatency();
+	long getLatencyEnd();
+	long getLatency();
 	@Override
-	public ILatency clone();
+	ILatency clone();
+	long getMaxLatencyStart();
 }

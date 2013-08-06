@@ -64,7 +64,7 @@ public class TestproducerPO extends AbstractSource<Tuple<IntervalLatency>> {
 						waitSomeTime(offset);
 					}
 					lastTime = expectedTime;
-					meta.setLatencyStart(System.nanoTime());
+					meta.setMinLatencyStart(System.nanoTime());
 					instance.transfer(r);
 				}
 			}

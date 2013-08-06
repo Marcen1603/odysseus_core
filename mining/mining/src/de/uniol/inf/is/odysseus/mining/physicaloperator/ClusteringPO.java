@@ -107,7 +107,7 @@ public class ClusteringPO<M extends ILatencyTimeInterval> extends AbstractPipe<T
 							M metadata = (M) result.getMetadata().clone();
 							newTuple.setMetadata(metadata);
 							newTuple.getMetadata().setStartAndEnd(startP, endP);
-							newTuple.getMetadata().setLatencyStart(latency);
+							newTuple.getMetadata().setMinLatencyStart(latency);
 							// ((ILatency)newTuple.getMetadata()).setLatencyEnd(end);
 							newTuple.setMetadata("LATENCY_BEFORE", tillclustering);
 							newTuple.setMetadata("LATENCY_AFTER", afterclustering);
