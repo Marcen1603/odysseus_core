@@ -68,24 +68,33 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 		IDataHandler<?> dataHandler = getDataHandler(operator);
 		if (dataHandler == null) {
 			LOG.error("No data handler {} found.", operator.getDataHandler());
-			throw new TransformationException("No data handler " + operator.getDataHandler() + " found.");
+			throw new TransformationException("No data handler "
+					+ operator.getDataHandler() + " found.");
 		}
 
-		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator, dataHandler);
+		IProtocolHandler<?> protocolHandler = getProtocolHandler(operator,
+				dataHandler);
 		if (protocolHandler == null) {
-			LOG.error("No protocol handler {} found.", operator.getProtocolHandler());
-			throw new TransformationException("No protocol handler " + operator.getProtocolHandler() + " found.");
+			LOG.error("No protocol handler {} found.",
+					operator.getProtocolHandler());
+			throw new TransformationException("No protocol handler "
+					+ operator.getProtocolHandler() + " found.");
 		}
 
-		ITransportHandler transportHandler = getTransportHandler(operator, protocolHandler);
+		ITransportHandler transportHandler = getTransportHandler(operator,
+				protocolHandler);
 		if (transportHandler == null) {
-			LOG.error("No transport handler {} found.", operator.getTransportHandler());
-			throw new TransformationException("No transport handler " + operator.getTransportHandler() + " found.");
+			LOG.error("No transport handler {} found.",
+					operator.getTransportHandler());
+			throw new TransformationException("No transport handler "
+					+ operator.getTransportHandler() + " found.");
 		}
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		ISink<?> senderPO = new SenderPO(protocolHandler);
 		getDataDictionary().putSinkplan(senderPOName, senderPO);
-		getDataDictionary().addSink(senderPOName, operator, getCaller());
+		if (!getDataDictionary().containsSink(senderPOName, getCaller())) {
+			getDataDictionary().addSink(senderPOName, operator, getCaller());
+		}
 		defaultExecute(operator, senderPO, config, true, true);
 	}
 
@@ -97,14 +106,17 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(SenderAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(SenderAO operator,
+			TransformationConfiguration config) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (getDataDictionary().getSinkplan(operator.getSinkname()) == null) {
 				if (operator.getWrapper() != null) {
-					if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
+					if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
+							.getWrapper())) {
 						return true;
 					}
-					if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator.getWrapper())) {
+					if (Constants.GENERIC_PUSH.equalsIgnoreCase(operator
+							.getWrapper())) {
 						return true;
 					}
 				}
@@ -153,10 +165,13 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 *            the current protocol handler
 	 * @return The transport handler
 	 */
-	private ITransportHandler getTransportHandler(SenderAO operator, IProtocolHandler<?> protocolHandler) {
+	private ITransportHandler getTransportHandler(SenderAO operator,
+			IProtocolHandler<?> protocolHandler) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
-			transportHandler = TransportHandlerRegistry.getInstance(operator.getTransportHandler(), protocolHandler, operator.getOptionsMap());
+			transportHandler = TransportHandlerRegistry.getInstance(
+					operator.getTransportHandler(), protocolHandler,
+					operator.getOptionsMap());
 		}
 		return transportHandler;
 	}
@@ -170,14 +185,19 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 *            The current data handler
 	 * @return The protocol handler
 	 */
-	private IProtocolHandler<?> getProtocolHandler(SenderAO operator, IDataHandler<?> dataHandler) {
+	private IProtocolHandler<?> getProtocolHandler(SenderAO operator,
+			IDataHandler<?> dataHandler) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.OUT, IAccessPattern.PULL, operator.getOptionsMap(),
+				protocolHandler = ProtocolHandlerRegistry.getInstance(
+						operator.getProtocolHandler(), ITransportDirection.OUT,
+						IAccessPattern.PULL, operator.getOptionsMap(),
 						dataHandler);
 			} else {
-				protocolHandler = ProtocolHandlerRegistry.getInstance(operator.getProtocolHandler(), ITransportDirection.OUT, IAccessPattern.PUSH, operator.getOptionsMap(),
+				protocolHandler = ProtocolHandlerRegistry.getInstance(
+						operator.getProtocolHandler(), ITransportDirection.OUT,
+						IAccessPattern.PUSH, operator.getOptionsMap(),
 						dataHandler);
 			}
 		}
@@ -195,7 +215,8 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 		IDataHandler<?> dataHandler = null;
 		if (operator.getDataHandler() != null) {
 			if (operator.getOutputSchema() != null) {
-				dataHandler = DataHandlerRegistry.getDataHandler(operator.getDataHandler(), operator.getOutputSchema());
+				dataHandler = DataHandlerRegistry.getDataHandler(
+						operator.getDataHandler(), operator.getOutputSchema());
 			}
 
 		}
