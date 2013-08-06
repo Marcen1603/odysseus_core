@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.EvalFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IfFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction2;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SMaxFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SMinFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SleepFunction;
@@ -216,6 +217,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToIntegerFunction());
         registerFunction(new ToStringFunction());
         registerFunction(new RandomFunction());
+        registerFunction(new RandomFunction2());
         registerFunction(new RoundFunction());
 
         registerFunction(new PIFunction());
