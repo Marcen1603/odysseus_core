@@ -142,7 +142,7 @@
             </actorProperties>  
            <properties>  
                 <property key="profile" value="${product.profile}" />  
-                <property key="iu" value="${product.id}" />  
+                <property key="iu" value="${product.server.id}" />  
                 <property key="features" value="${product.server.features}" />  
             </properties>   
            <prerequisites alias="updateSite">  
