@@ -75,6 +75,9 @@ public class QueryExecutionHandler {
 	}
 	
 	public ImmutableCollection<IPhysicalOperator> getRoots() {
+		if( queryRoots == null ) {
+			return ImmutableList.of();
+		}
 		return ImmutableList.copyOf(queryRoots);
 	}
 	

@@ -16,7 +16,10 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
 import java.util.List;
+import java.util.Scanner;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,18 +32,21 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.controller.QueryExecutionHandler;
+import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class DashboardPartTypeSelectionPage extends WizardPage {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartTypeSelectionPage.class);
 	
 	private final List<String> dashboardPartNames;
+	private final QueryFileSelectionPage queryFilePage;
 
 	private Combo choosePartNameCombo;
 
@@ -50,14 +56,16 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	private int selectedIndex = -1;
 
 	private IDashboardPartConfigurer<IDashboardPart> selectedConfigurer;
+	private QueryExecutionHandler handler;
 	
-	public DashboardPartTypeSelectionPage(String pageName) {
+	public DashboardPartTypeSelectionPage(String pageName, QueryFileSelectionPage queryFilePage) {
 		super(pageName);
 
 		setTitle("Choose type of DashboardPart");
 		setDescription("Choose one type of DashboardPart and configure it.");
 
 		dashboardPartNames = determineDashboardPartNames();
+		this.queryFilePage = queryFilePage;
 	}
 
 	@Override
@@ -87,12 +95,13 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 
 		});
 
-		selectDashboardPart(0);
 		finishCreation(rootComposite);
 	}
 	
 	@Override
 	public void dispose() {
+		stopQueryExecution();
+		
 		disposeConfigurer();
 		super.dispose();
 	}
@@ -109,8 +118,45 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		super.setVisible(visible);
 		
 		if( visible == true ) {
-			setPageComplete(true);
+			handler = new QueryExecutionHandler(copyQueryTextFromFile(queryFilePage.getQueryFile()));
+			try {
+				handler.start();
+				setPageComplete(true);
+			} catch( OdysseusScriptException ex ) {
+				LOG.error("Could not execute query", ex);
+				setErrorMessage("Script " + queryFilePage.getQueryFile().getName() + " has some errors. See log for details.");
+			}
+			selectDashboardPart(0);
+		} else {
+			stopQueryExecution();
 		}
+	}
+
+	private void stopQueryExecution() {
+		if( handler != null ) {
+			handler.stop();
+		}
+	}
+	
+	private static ImmutableList<String> copyQueryTextFromFile(IFile file) {
+		try {
+			if (!file.isSynchronized(IResource.DEPTH_ZERO)) {
+				file.refreshLocal(IResource.DEPTH_ZERO, null);
+			}
+			final Scanner lineScanner = new Scanner(file.getContents());
+
+			final List<String> lines = Lists.newArrayList();
+
+			while (lineScanner.hasNextLine()) {
+				lines.add(lineScanner.nextLine());
+			}
+			lineScanner.close();
+			return ImmutableList.copyOf(lines);
+		} catch (final Exception ex) {
+			LOG.error("Could not copy query text from file {}.", file.getName(), ex);
+			return ImmutableList.of();
+		}
+
 	}
 
 	private String getDashboardPartName(int index) {
@@ -146,7 +192,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			IDashboardPart newDashboardPart = DashboardPartRegistry.createDashboardPart(dashboardPartName);
 			
 			selectedConfigurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(dashboardPartName);
-			selectedConfigurer.init(newDashboardPart, Lists.<IPhysicalOperator>newArrayList());
+			selectedConfigurer.init(newDashboardPart, handler.getRoots());
 			
 			selectedConfigurer.createPartControl(configComposite);
 			selectedDashboardPart = newDashboardPart;

@@ -65,7 +65,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		containerPage = new ContainerSelectionPage("Select file name", selection, DEFAULT_DASHBOARD_FILENAME);
 		queryFilePage = new QueryFileSelectionPage("Select query", containerPage);
-		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part");
+		partTypePage = new DashboardPartTypeSelectionPage("Select type of Dashboard Part", queryFilePage);
 	}
 
 	@Override
