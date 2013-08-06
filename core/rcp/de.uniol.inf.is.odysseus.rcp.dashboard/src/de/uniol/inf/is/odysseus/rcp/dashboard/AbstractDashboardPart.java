@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	}
 
 	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 	}
 
 	@Override

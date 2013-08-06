@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -50,7 +50,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
 		startChart(physicalRoots);
 	}
@@ -110,5 +110,5 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 
 	protected abstract void decorateChart(JFreeChart chart);
 
-	protected abstract void startChart(List<IPhysicalOperator> physicalRoots) throws Exception;
+	protected abstract void startChart(Collection<IPhysicalOperator> physicalRoots) throws Exception;
 }

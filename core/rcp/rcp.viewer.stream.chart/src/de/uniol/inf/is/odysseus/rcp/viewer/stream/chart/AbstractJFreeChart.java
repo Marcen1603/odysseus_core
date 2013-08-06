@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 import java.awt.Color;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -357,8 +358,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	}
 
 	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
-		initWithOperator(physicalRoots.get(0));
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		initWithOperator(physicalRoots.iterator().next());
 		opened = true;
 	}
 

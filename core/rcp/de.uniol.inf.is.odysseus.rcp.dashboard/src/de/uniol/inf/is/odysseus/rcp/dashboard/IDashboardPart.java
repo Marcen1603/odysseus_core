@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
@@ -33,7 +33,7 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public void onLoad(Map<String, String> saved);
 	public Map<String, String> onSave();
 	
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception;
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception;
 	public void onStop();
 	public void onPause();
 	public void onUnpause();

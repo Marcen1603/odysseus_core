@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -172,14 +173,14 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
 
 		if (physicalRoots.size() > 1) {
 			LOG.warn("Table DashboardPart only supports one query!");
 		}
 
-		operator = physicalRoots.get(0);
+		operator = physicalRoots.iterator().next();
 		positions = determinePositions(operator.getOutputSchema(), attributes);
 		refreshAttributesList( operator.getOutputSchema() ); // if attributes was = "*"
 		

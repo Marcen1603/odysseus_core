@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp.dashboard.soccer;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -94,8 +95,8 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	}
 
 	@Override
-	public void onStart(List<IPhysicalOperator> physicalRoots) throws Exception {
-		attributeIndexMap = createAttributeIndexMap(physicalRoots.get(0).getOutputSchema());
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		attributeIndexMap = createAttributeIndexMap(physicalRoots.iterator().next().getOutputSchema());
 
 		xIndex = getAttributeIndex("x");
 		yIndex = getAttributeIndex("y");

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import net.ericaro.surfaceplotter.JSurfacePanel;
 import net.ericaro.surfaceplotter.ProgressiveSurfaceModel;
@@ -215,7 +215,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 	 * java.util.List)
 	 */
 	@Override
-	public final void onStart(final List<IPhysicalOperator> physicalRoots)
+	public final void onStart(final Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {
 		super.onStart(physicalRoots);
 		if (physicalRoots.size() > 1) {
@@ -224,7 +224,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 			throw new Exception(
 					"Probability Chart DashboardPart only supports one query!");
 		}
-		this.operator = physicalRoots.get(0);
+		this.operator = physicalRoots.iterator().next();
 		this.positions = ProbabilityChart3DDashboardPart.determinePositions(
 				this.operator.getOutputSchema(), this.attributes);
 		this.continuousAttributes = new Boolean[this.positions.length];

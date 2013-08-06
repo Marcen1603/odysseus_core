@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,7 +234,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * java.util.List)
 	 */
 	@Override
-	public final void onStart(final List<IPhysicalOperator> physicalRoots)
+	public final void onStart(final Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {
 		super.onStart(physicalRoots);
 		if (physicalRoots.size() > 1) {
@@ -242,7 +243,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 			throw new Exception(
 					"Probability Chart DashboardPart only supports one query!");
 		}
-		this.operator = physicalRoots.get(0);
+		this.operator = physicalRoots.iterator().next();
 		this.positions = ProbabilityChart2DDashboardPart.determinePositions(
 				this.operator.getOutputSchema(), this.attributes);
 
