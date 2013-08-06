@@ -142,4 +142,8 @@ public final class DashboardPartController implements IDashboardPartListener {
 		removeAsListener();
 		addAsListener();
 	}
+	
+	public Collection<IPhysicalOperator> getQueryRoots() {
+		return queryHandler.getRoots();
+	}
 }

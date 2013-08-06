@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part;
 
+import java.util.Collection;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -12,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 
 public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboardPart> {
@@ -19,7 +22,7 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 	private TextDashboardPart dashboardPart;
 
 	@Override
-	public void init(TextDashboardPart dashboardPartToConfigure) {
+	public void init(TextDashboardPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots ) {
 		dashboardPart = dashboardPartToConfigure;
 	}
 

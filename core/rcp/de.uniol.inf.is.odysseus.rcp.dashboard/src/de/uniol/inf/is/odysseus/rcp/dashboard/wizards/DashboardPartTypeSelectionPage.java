@@ -29,6 +29,9 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
@@ -134,7 +137,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			IDashboardPart newDashboardPart = DashboardPartRegistry.createDashboardPart(dashboardPartName);
 			
 			selectedConfigurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(dashboardPartName);
-			selectedConfigurer.init(newDashboardPart);
+			selectedConfigurer.init(newDashboardPart, Lists.<IPhysicalOperator>newArrayList());
 			
 			selectedConfigurer.createPartControl(configComposite);
 			selectedDashboardPart = newDashboardPart;

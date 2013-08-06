@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 
 public class DashboardPartConfigWindow extends TitleAreaDialog {
 
@@ -35,18 +36,21 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 	private static final String WINDOW_TITLE = "Configure Dashboard Part";
 	private static final String DISPLAY_TITLE = "Dashboard Part settings";
 	
-	private IDashboardPart dashboardPart; 
 	private String selectedSinks;
 	private Button okButton;
 
+	private IDashboardPart dashboardPart; 
 	private IDashboardPartConfigurer<IDashboardPart> dashboardPartConfigurer;
+	private DashboardPartController controller;
 
-	public DashboardPartConfigWindow(Shell parentShell, IDashboardPart dashboardPart ) {
+	public DashboardPartConfigWindow(Shell parentShell, IDashboardPart dashboardPart, DashboardPartController controller) {
 		super(parentShell);
 		Preconditions.checkNotNull(dashboardPart, "DashboardPart must not be null!");
+		Preconditions.checkNotNull(controller, "DashboardPartController must not be null!");
 		
 		this.dashboardPart = dashboardPart;
 		this.selectedSinks = dashboardPart.getSinkNames();
+		this.controller = controller;
 	}
 
 	@Override
@@ -70,7 +74,7 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 			try {
 				String regName = optRegName.get();
 				dashboardPartConfigurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(regName);
-				dashboardPartConfigurer.init(dashboardPart);
+				dashboardPartConfigurer.init(dashboardPart, controller.getQueryRoots());
 				
 				dashboardPartConfigurer.createPartControl(configComposite);
 			} catch( InstantiationException ex ) {

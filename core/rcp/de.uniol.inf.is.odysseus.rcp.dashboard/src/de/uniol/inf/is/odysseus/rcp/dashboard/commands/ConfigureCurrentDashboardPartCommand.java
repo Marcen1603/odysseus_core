@@ -7,9 +7,13 @@ import org.eclipse.core.commands.IHandler;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.cfg.DashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
+import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.CommandUtil;
+import de.uniol.inf.is.odysseus.rcp.dashboard.util.EditorUtil;
 
 public class ConfigureCurrentDashboardPartCommand extends AbstractHandler implements IHandler {
 
@@ -18,7 +22,11 @@ public class ConfigureCurrentDashboardPartCommand extends AbstractHandler implem
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		DashboardPartConfigurer configurer = new DashboardPartConfigurer(selectedPart.getDashboardPart());
+		IDashboardPart selectedDashboardPart = selectedPart.getDashboardPart();
+		DashboardEditor dashboardEditor = (DashboardEditor)EditorUtil.determineActiveEditor();
+		DashboardPartController dashboardPartController = dashboardEditor.getDashboardPartController(selectedDashboardPart);
+		
+		DashboardPartConfigurer configurer = new DashboardPartConfigurer(selectedDashboardPart, dashboardPartController);
 		configurer.startConfigure();
 		
 		return null;

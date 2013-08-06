@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.osgi.service.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
@@ -67,7 +69,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	private Table table;
 
 	@Override
-	public void init(AbstractJFreeChart dashboardPartToConfigure) {
+	public void init(AbstractJFreeChart dashboardPartToConfigure, Collection<IPhysicalOperator> roots ) {
 		changeable = dashboardPartToConfigure;
 		attributesChangeable = dashboardPartToConfigure;
 		

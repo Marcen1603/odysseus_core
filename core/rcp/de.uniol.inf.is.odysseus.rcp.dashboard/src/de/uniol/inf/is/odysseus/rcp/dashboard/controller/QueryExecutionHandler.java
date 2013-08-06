@@ -87,5 +87,6 @@ public class QueryExecutionHandler {
 			}
 		}
 		queryIDs = null;
+		queryRoots = null;
 	}
 }

@@ -199,6 +199,12 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 			throw new PartInitException("Could not load Dashboard!", ex);
 		}
 	}
+	
+	public final DashboardPartController getDashboardPartController(IDashboardPart dashboardPart) {
+		Preconditions.checkNotNull(dashboardPart, "DashboardPart to get dashboard part controller must not be null!");
+		
+		return controllers.get(dashboardPart);
+	}
 
 	@Override
 	public boolean isDirty() {

@@ -75,8 +75,8 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 		final Composite presentationTab = createTabComposite(tabFolder, "Presentation");
 		final Composite settingsTab = createTabComposite(tabFolder, "Settings");
-		createSettingsTabContent(settingsTab);
 		createPresentationTabContent(presentationTab);
+		createSettingsTabContent(settingsTab);
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 			try {
 				configurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(name);
 				configurer.addListener(this);
-				configurer.init(dashboardPart);
+				configurer.init(dashboardPart, dashboardPartController.getQueryRoots());
 				
 				configurer.createPartControl(settingsTab);
 				
