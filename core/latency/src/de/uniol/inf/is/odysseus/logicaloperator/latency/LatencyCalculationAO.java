@@ -36,5 +36,12 @@ public class LatencyCalculationAO extends UnaryLogicalOp {
 	public AbstractLogicalOperator clone() {
 		return new LatencyCalculationAO(this);
 	}
+	
+	@Override
+	public boolean needsLocalResources() {
+
+		return true;
+
+	}
 
 }
