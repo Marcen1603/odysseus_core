@@ -390,6 +390,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 				}
 			}
 			invokeForType(entry.getKey(), entry.getValue());
+			fireListener();
 			
 		} catch (Throwable ex) {
 			LOG.error("Could not set value", ex);

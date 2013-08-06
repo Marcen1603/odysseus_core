@@ -41,6 +41,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardHandlerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IConfigurerListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
@@ -49,7 +50,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
-public class DashboardPartEditor extends EditorPart implements IDashboardPartListener {
+public class DashboardPartEditor extends EditorPart implements IDashboardPartListener, IConfigurerListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPartEditor.class);
 	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
@@ -83,6 +84,8 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		dashboardPartController.stop();
 
 		dashboardPart.dispose();
+		
+		configurer.removeListener(this);
 		configurer.dispose();
 
 		super.dispose();
@@ -204,6 +207,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 			
 			try {
 				configurer = (IDashboardPartConfigurer<IDashboardPart>) DashboardPartRegistry.createDashboardPartConfigurer(name);
+				configurer.addListener(this);
 				configurer.init(dashboardPart);
 				
 				configurer.createPartControl(settingsTab);
@@ -229,6 +233,11 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 	@Override
 	public void dashboardPartChanged() {
+		setDirty(true);
+	}
+
+	@Override
+	public void configChanged(IDashboardPartConfigurer<?> sender) {
 		setDirty(true);
 	}
 }

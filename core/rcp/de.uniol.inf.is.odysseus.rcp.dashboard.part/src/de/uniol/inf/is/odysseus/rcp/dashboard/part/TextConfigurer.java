@@ -46,6 +46,7 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 			@Override
 			public void modifyText(ModifyEvent e) {
 				dashboardPart.setMaxElements(Integer.valueOf(maxElementsText.getText()));
+				fireListener();
 			}
 		});
 	}
@@ -57,6 +58,7 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 			@Override
 			public void modifyText(ModifyEvent e) {
 				dashboardPart.setUpdateInterval(Long.valueOf(attributesInput.getText()));
+				fireListener();
 			}
 		});
 	}
@@ -68,6 +70,7 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				dashboardPart.setShowHeartbeats(comboLocked.getSelectionIndex() == 0);
+				fireListener();
 			}
 		});
 	}

@@ -38,6 +38,7 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 			@Override
 			public void modifyText(ModifyEvent e) {
 				dashboardPart.setTitle(titleText.getText());
+				fireListener();
 			}
 		});
 	}
@@ -49,6 +50,7 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 			@Override
 			public void modifyText(ModifyEvent e) {
 				dashboardPart.setMaxData(Integer.valueOf(maxDataText.getText()));
+				fireListener();
 			}
 		});
 	}
@@ -60,6 +62,7 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 			@Override
 			public void modifyText(ModifyEvent e) {
 				dashboardPart.setAttributeList(attributesInput.getText());
+				fireListener();
 			}
 		});
 	}
