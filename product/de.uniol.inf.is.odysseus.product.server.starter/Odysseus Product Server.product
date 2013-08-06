@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="Odysseus Server Product" uid="de.uniol.inf.is.odysseus.product.server" id="de.uniol.inf.is.odysseus.product.server.starter.odysseusserverproduct" application="de.uniol.inf.is.odysseus.product.server.starter.OdysseusServerApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
+
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages/>
+
+
+   <launcher>
+      <solaris/>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+
+   <plugins>
+   </plugins>
+
+   <features>
+      <feature id="de.uniol.inf.is.odysseus.product.server.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.product.server.feature" version="1.0.0.qualifier"/>
+   </features>
+
+   <configurations>
+      <plugin id="de.uniol.inf.is.odysseus.product.server.starter" autoStart="true" startLevel="0" />
+   </configurations>
+
+</product>
