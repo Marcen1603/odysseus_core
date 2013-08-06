@@ -84,4 +84,12 @@ public class UserManagementServiceImpl extends
 		initDefaultUsers();	
 	}
 	
+	protected void activate(ComponentContext context) {
+		// is needed to satisfy
+	}
+
+	protected void deactivate(ComponentContext context) {
+
+	}
+	
 }
