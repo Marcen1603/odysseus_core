@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,21 @@
  */
 package de.uniol.inf.is.odysseus.relational.transform;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.relational.base.Relational;
@@ -45,17 +49,14 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	@Override
 	public void execute(AggregatePO aggregatePO,
 			TransformationConfiguration transformConfig) {
-		
-		RelationalGroupProcessor r = new RelationalGroupProcessor(
-				aggregatePO.getInputSchema(), aggregatePO.getInternalOutputSchema(),
-				aggregatePO.getGroupingAttribute(),
-				aggregatePO.getAggregations());
-		aggregatePO.setGroupProcessor(r);
+
+		SDFSchema outputSchema = aggregatePO.getInternalOutputSchema();
+		List<SDFAttribute> outAttributes = new ArrayList<>(
+				outputSchema.getAttributes());
 		SDFSchema inputSchema = aggregatePO.getInputSchema();
-		
 		Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = aggregatePO
 				.getAggregations();
-		
+
 		for (SDFSchema attrList : aggregations.keySet()) {
 			if (SDFSchema.subset(attrList, inputSchema)) {
 				Map<AggregateFunction, SDFAttribute> funcs = aggregations
@@ -70,24 +71,56 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					for (int i = 0; i < p.getE1().size(); ++i) {
 						SDFAttribute attr = p.getE1().get(i);
 						posArray[i] = inputSchema.indexOf(attr);
-						if (attr.getDatatype().isPartialAggregate()){
+						if (attr.getDatatype().isPartialAggregate()) {
 							partialAggregateInput = true;
 						}
-						// For most cases its the only datatype ... so keep one of them
+						// For most cases its the only datatype ... so keep one
+						// of them
 						datatype = attr.getDatatype().getURI();
 					}
-					IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
-					IAggregateFunctionBuilder builder = registry.getBuilder(Relational.RELATIONAL,p.getE2().getName());
-					if (builder == null){
-						throw new RuntimeException("Could not find a builder for "+p.getE2().getName());
+					IAggregateFunctionBuilderRegistry registry = Activator
+							.getAggregateFunctionBuilderRegistry();
+					IAggregateFunctionBuilder builder = registry.getBuilder(
+							Relational.RELATIONAL, p.getE2().getName());
+					if (builder == null) {
+						throw new RuntimeException(
+								"Could not find a builder for "
+										+ p.getE2().getName());
 					}
-					IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, datatype);
+					IAggregateFunction aggFunction = builder.createAggFunction(
+							p.getE2(), posArray, partialAggregateInput,
+							datatype);
 					aggregatePO.setInitFunction(p, aggFunction);
 					aggregatePO.setMergeFunction(p, aggFunction);
 					aggregatePO.setEvalFunction(p, aggFunction);
 				}
 			}
 		}
+
+		// UPDATE PARTIAL_AGGREGATE IN OUTPUT SCHEMA!!
+		// Determine Aggregate-Function for output attribute
+		for (int i = 0; i < outAttributes.size(); i++) {
+			SDFAttribute attr = outAttributes.get(i);
+			if (attr.getDatatype().equals(SDFDatatype.PARTIAL_AGGREGATE)) {
+				IInitializer ifunc = aggregatePO.getInitFunction(attr);
+				if (ifunc != null) {
+					SDFDatatype dt = ifunc.getPartialAggregateType();
+					outAttributes.remove(i);
+					outAttributes.add(i, new SDFAttribute(attr.getSourceName(), attr.getAttributeName(), dt));
+				}
+			}
+
+		}
+		
+		SDFSchema newOutputSchema = new SDFSchema(
+				outputSchema.getURI(), outAttributes);
+
+		RelationalGroupProcessor r = new RelationalGroupProcessor(
+				aggregatePO.getInputSchema(), newOutputSchema,
+				aggregatePO.getGroupingAttribute(),
+				aggregatePO.getAggregations());
+		aggregatePO.setGroupProcessor(r);
+		aggregatePO.setOutputSchema(newOutputSchema);
 		update(aggregatePO);
 	}
 
@@ -111,9 +144,9 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.METAOBJECTS;
 	}
-	
+
 	@Override
-	public Class<? super AggregatePO> getConditionClass() {	
+	public Class<? super AggregatePO> getConditionClass() {
 		return AggregatePO.class;
 	}
 

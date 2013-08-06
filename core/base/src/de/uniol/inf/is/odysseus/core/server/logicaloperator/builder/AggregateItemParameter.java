@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
@@ -57,7 +58,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 			if (value.size() == 4) {
 				IDataDictionary dd = getDataDictionary();
 				SDFDatatype type;
-
+				
 				type = dd.getDatatype(value.get(3));
 
 				outAttr = new SDFAttribute(null, outputName, type);

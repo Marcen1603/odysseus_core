@@ -25,8 +25,5 @@ public interface IAggregateFunction<R,W> extends IInitializer<R>, IMerger<R>,
 	@Override
 	public int hashCode();
 	@Override
-	public boolean equals(Object obj);
-
-	SDFDatatype getPartialAggregateType();
-	
+	public boolean equals(Object obj);	
 }

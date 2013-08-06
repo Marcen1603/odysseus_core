@@ -15,8 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+
 
 public interface IInitializer<R> {
 	IPartialAggregate<R> init(R in);
 	IPartialAggregate<R> init(IPartialAggregate<R> in);
+	SDFDatatype getPartialAggregateType();
 }

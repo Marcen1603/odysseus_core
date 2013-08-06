@@ -193,6 +193,28 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
         return ret;
     }
     
+    public IInitializer<R> getInitFunction(SDFAttribute outAttribute){
+    	FESortedClonablePair<SDFSchema, AggregateFunction> pair = null;
+    	for (Entry<SDFSchema, Map<AggregateFunction, SDFAttribute>> vs: aggregations.entrySet()){
+    		if (pair != null){
+    			break;
+    		}
+    		for (Entry<AggregateFunction, SDFAttribute> v: vs.getValue().entrySet()){
+    			if (v.getValue().equals(outAttribute)){
+    				pair = new FESortedClonablePair<SDFSchema, AggregateFunction>(vs.getKey(), v.getKey());
+    				break;
+    			}
+    		}
+    	}
+    	
+    	if (pair != null ){
+    		return getInitFunction(pair);
+    	}else{
+    		return null;
+    	}
+    	
+    }
+    
     @Override
     public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
     	if(!(ipo instanceof AggregatePO)) {
