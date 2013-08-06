@@ -133,7 +133,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * to the distribution plus copies of the {@link ILogicalQuery}s as the case may be. The returned {@link ILogicalQuerie}s will be semantically 
 	 * equivalent to those in <code>queries</code>.
 	 */
-	// TODO Problem mit Aggregationen beschreiben
+	// TODO Aggregationen rausnehmen und in den Ausblick
 	// TODO Problem mit mehreren Fragmentierungen beschreiben
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
@@ -542,7 +542,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		for(ILogicalOperator operator : operators) {
 			
-			if(!operator.getSubscriptions().isEmpty()) {
+			if(!operator.needsLocalResources() && !operator.getSubscriptions().isEmpty()) {
 				
 				// Not a sink of the query
 				continue;
@@ -569,26 +569,39 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				mergeAO.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
 				LOG.debug("Subscribed {} to {}", operator, mergeAO);
 				
-			} else {	// operator.needsLocalResources() && degreeOfParallelism > 1
+			} else if(operator.needsLocalResources()) {
 				
-				// Map operator to local part; Merging needed before
-				localOperators.add(mergeAO);
 				localOperators.add(operator);
 				
-				// Delete subscriptions from all sources of the operator towards it; subscribe them to mergeAO
+				boolean firstOpWhichNeedsLocalRessources = false;
 				for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 					
-					operator.unsubscribeFromSource(subToSource);
-					LOG.debug("Unsubscribed {} from {}", subToSource.getTarget(), operator);
-					mergeAO.subscribeToSource(subToSource.getTarget(), mergeAO.getNumberOfInputs(), subToSource.getSourceOutPort(), 
-							subToSource.getTarget().getOutputSchema());
-					LOG.debug("Subscribed {} to {}", subToSource.getTarget(), mergeAO);
+					if(!subToSource.getTarget().needsLocalResources())
+						firstOpWhichNeedsLocalRessources = true;
 					
 				}
 				
-				// Subscribe mergeAO to the operator
-				mergeAO.subscribeSink(operator, 0, 0, mergeAO.getOutputSchema());
-				LOG.debug("Subscribed {} to {}", mergeAO, operator);
+				if(firstOpWhichNeedsLocalRessources) {
+					
+					// Map operator to local part; Merging needed before
+					localOperators.add(mergeAO);			
+					
+					// Delete subscriptions from all sources of the operator towards it; subscribe them to mergeAO
+					for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+						
+						operator.unsubscribeFromSource(subToSource);
+						LOG.debug("Unsubscribed {} from {}", subToSource.getTarget(), operator);
+						mergeAO.subscribeToSource(subToSource.getTarget(), mergeAO.getNumberOfInputs(), subToSource.getSourceOutPort(), 
+								subToSource.getTarget().getOutputSchema());
+						LOG.debug("Subscribed {} to {}", subToSource.getTarget(), mergeAO);
+						
+					}
+					
+					// Subscribe mergeAO to the operator
+					mergeAO.subscribeSink(operator, 0, 0, mergeAO.getOutputSchema());
+					LOG.debug("Subscribed {} to {}", mergeAO, operator);
+					
+				}
 				
 			}
 			
@@ -869,7 +882,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		for(ILogicalOperator operator : operators) {
 			
-			if(!operator.getSubscriptions().isEmpty()) {
+			if(!operator.needsLocalResources() && !operator.getSubscriptions().isEmpty()) {
 				
 				// Not a sink of the query
 				continue;
@@ -884,21 +897,34 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				mergeAO.subscribeToSource(operator, mergeAO.getNumberOfInputs(), 0, operator.getOutputSchema());
 				LOG.debug("Subscribed {} to {}", operator, mergeAO);
 				
-			} else {	// operator.needsLocalResources() && degreeOfParallelism > 1
+			} else if(operator.needsLocalResources()) {
 				
-				// Subscribe sources of operator to existing merger
 				localOperators.add(operator);
-				ILogicalOperator mergeAO = null;
-				do mergeAO = localIter.next();
-				while(mergeAO.getClass() != mergeAOClass && localIter.hasNext());
 				
+				boolean firstOpWhichNeedsLocalRessources = false;
 				for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 					
-					operator.unsubscribeFromSource(subToSource);
-					LOG.debug("Unsubscribed {} from {}", subToSource.getTarget(), operator);
-					mergeAO.subscribeToSource(subToSource.getTarget(), mergeAO.getNumberOfInputs(), subToSource.getSourceOutPort(), 
-							subToSource.getTarget().getOutputSchema());
-					LOG.debug("Subscribed {} to {}", subToSource.getTarget(), mergeAO);
+					if(!subToSource.getTarget().needsLocalResources())
+						firstOpWhichNeedsLocalRessources = true;
+					
+				}
+				
+				if(firstOpWhichNeedsLocalRessources) {
+					
+					// Subscribe sources of operator to existing merger
+					ILogicalOperator mergeAO = null;
+					do mergeAO = localIter.next();
+					while(mergeAO.getClass() != mergeAOClass && localIter.hasNext());
+					
+					for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+						
+						operator.unsubscribeFromSource(subToSource);
+						LOG.debug("Unsubscribed {} from {}", subToSource.getTarget(), operator);
+						mergeAO.subscribeToSource(subToSource.getTarget(), mergeAO.getNumberOfInputs(), subToSource.getSourceOutPort(), 
+								subToSource.getTarget().getOutputSchema());
+						LOG.debug("Subscribed {} to {}", subToSource.getTarget(), mergeAO);
+						
+					}
 					
 				}
 				
