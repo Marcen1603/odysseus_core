@@ -101,7 +101,16 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(rootComposite);
-		setPageComplete(true);
+		setPageComplete(false);
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		
+		if( visible == true ) {
+			setPageComplete(true);
+		}
 	}
 
 	private String getDashboardPartName(int index) {
