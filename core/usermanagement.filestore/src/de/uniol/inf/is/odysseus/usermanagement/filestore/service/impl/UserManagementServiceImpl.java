@@ -55,7 +55,6 @@ public class UserManagementServiceImpl extends
 	}
 
 	protected void activate(ComponentContext context) {
-		initDefaultUsers();
 	}
 
 	protected void deactivate(ComponentContext context) {
@@ -107,4 +106,9 @@ public class UserManagementServiceImpl extends
 		return "Filestore";
 	}
 
+	@Override
+	protected void process_init() {
+		initDefaultUsers();
+	}
+	
 }

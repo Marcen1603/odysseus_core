@@ -46,6 +46,8 @@ abstract public class AbstractUserManagement<TENANT extends ITenant, USER extend
 
 	private final SessionStore sessionStore = SessionStore.getInstance();
 
+	boolean initialized = false;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -631,7 +633,7 @@ abstract public class AbstractUserManagement<TENANT extends ITenant, USER extend
 	}
 
 	public void initDefaultUsers() {
-		TENANT t = getTenantDAO().findByName("default");
+		TENANT t = getTenantDAO().findByName("");
 		if (t == null){
 			t = createDefaultTenant();
 		}
@@ -769,5 +771,19 @@ abstract public class AbstractUserManagement<TENANT extends ITenant, USER extend
 
 		getUserDAO(t).update(user);
 	}
+	
+	@Override
+	public boolean isInitialized() {
+		return initialized;
+	}
+	
+	@Override
+	public void initialize(){
+		if (!initialized){
+			process_init();
+		}
+	}
+	
+	abstract protected void process_init(); 
 
 }

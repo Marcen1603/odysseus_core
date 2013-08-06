@@ -90,4 +90,8 @@ public interface IUserManagement {
 
 	String getType();
 
+	boolean isInitialized();
+
+	void initialize();
+
 }

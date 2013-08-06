@@ -54,14 +54,6 @@ public class UserManagementServiceImpl extends
 		return new Privilege();
 	}
 
-	protected void activate(ComponentContext context) {
-		initDefaultUsers();
-	}
-
-	protected void deactivate(ComponentContext context) {
-
-	}
-
 	@Override
 	protected IGenericDAO<User, String> getUserDAO(ITenant tenant) {
 		return UserDAO.getInstance(tenant);
@@ -87,4 +79,9 @@ public class UserManagementServiceImpl extends
 		return "Memorystore";
 	}
 
+	@Override
+	protected void process_init() {
+		initDefaultUsers();	
+	}
+	
 }

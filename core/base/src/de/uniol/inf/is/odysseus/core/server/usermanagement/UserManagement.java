@@ -34,11 +34,16 @@ public class UserManagement {
 	
 	
 	static public IUserManagement getUsermanagement() {
-		return usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
+		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
+		if (!ret.isInitialized()){
+			ret.initialize();
+		}
+		return ret;
 	}
 	
 	static public ISessionManagement getSessionmanagement() {
-		return sessMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
+		ISessionManagement ret = sessMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
+		return ret;
 	}
 	
 	protected void bindUserManagement(IUserManagement usermanagement) {

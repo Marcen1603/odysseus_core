@@ -61,16 +61,6 @@ public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl
 		return new PrivilegeImpl();
 	}
 
-	protected void activate(ComponentContext context) {
-		entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
-		em = entityManagerFactory.createEntityManager();
-		initDefaultUsers();
-	}
-
-	protected void deactivate(ComponentContext context) {
-
-	}
-
     @Override
     protected IGenericDAO<UserImpl, String> getUserDAO(ITenant tenant) {
     	// FIXME: Treat tenant
@@ -113,6 +103,13 @@ public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl
 		return null;
 	}
 
+	@Override
+	protected void process_init() {
+		entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
+		em = entityManagerFactory.createEntityManager();
+		initDefaultUsers();		
+	}
+	
 	@Override
 	public String getType() {
 		return "JPA";
