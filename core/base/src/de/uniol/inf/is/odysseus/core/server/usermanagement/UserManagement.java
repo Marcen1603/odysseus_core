@@ -42,6 +42,8 @@ public class UserManagement {
 	}
 	
 	static public ISessionManagement getSessionmanagement() {
+		// Init User Management
+		getUsermanagement();
 		ISessionManagement ret = sessMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
 		return ret;
 	}
