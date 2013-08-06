@@ -41,8 +41,6 @@ public class PrivilegeDAO extends AbstractStoreDAO<Privilege> {
 
 	
 	PrivilegeDAO(ITenant tenant) throws IOException {
-		// this does not work
-		//super(new FileStore<String, Privilege>(tenant.getName()+"_"+OdysseusConfiguration.get("privilegStoreFilename")), new ArrayList<Privilege>())
-		super(new FileStore<String, Privilege>(OdysseusConfiguration.get("privilegStoreFilename")), new ArrayList<Privilege>());
+		super(new FileStore<String, Privilege>(tenant.getName().length()>0?tenant.getName()+"_":""+OdysseusConfiguration.get("privilegStoreFilename")), new ArrayList<Privilege>());
 	}
 }
