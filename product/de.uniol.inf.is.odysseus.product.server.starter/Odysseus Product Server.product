@@ -8,13 +8,15 @@
    </configIni>
 
    <launcherArgs>
+      <programArgs>-console -debug -nl en -data @noDefault</programArgs>
+      <vmArgs>-Xms1000M -Xmx1000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
 
 
-   <launcher>
+   <launcher name="odysseus">
       <solaris/>
       <win useIco="false">
          <bmp/>
@@ -23,6 +25,7 @@
 
 
    <vm>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</windows>
    </vm>
 
 
