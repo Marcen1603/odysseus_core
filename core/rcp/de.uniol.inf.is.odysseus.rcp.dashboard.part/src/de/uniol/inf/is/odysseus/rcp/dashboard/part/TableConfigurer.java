@@ -9,9 +9,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 
-public class TableConfigurer implements IDashboardPartConfigurer<TableDashboardPart> {
+public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashboardPart> {
 
 	private TableDashboardPart dashboardPart;
 

@@ -10,4 +10,7 @@ public interface IDashboardPartConfigurer<T extends IDashboardPart> {
 	
 	public void dispose();
 	
+	public void addListener( IConfigurerListener listener );
+	
+	public void removeListener( IConfigurerListener listener );
 }

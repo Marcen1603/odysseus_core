@@ -31,7 +31,7 @@ import org.osgi.service.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.AbstractViewableAttribute;
@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingCh
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
 
 @SuppressWarnings("rawtypes")
-public class ChartConfigurer implements IDashboardPartConfigurer<AbstractJFreeChart> {
+public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFreeChart> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChartConfigurer.class);
 	
