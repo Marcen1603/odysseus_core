@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
@@ -133,6 +132,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * to the distribution plus copies of the {@link ILogicalQuery}s as the case may be. The returned {@link ILogicalQuerie}s will be semantically 
 	 * equivalent to those in <code>queries</code>.
 	 */
+	// TODO Probleme mit Aggregationen bschreiben
 	// TODO Aggregationen rausnehmen und in den Ausblick
 	// TODO Problem mit mehreren Fragmentierungen beschreiben
 	@Override
@@ -267,12 +267,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				if(localPart == null) {
 					
 					// Create the local part
-					localPart = this.createLocalPart(operators, degreeOfParallelism, sourceToFragStrat, replicationOnly);
+					localPart = this.createLocalPart(operators, degreeOfParallelism, sourceToFragStrat);
 					
 				} else {
 
 					// Subscribe copy to local part
-					this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, sourceToFragStrat, replicationOnly);
+					this.subscribeCopyToLocalPart(operators, degreeOfParallelism, localPart, sourceToFragStrat);
 					
 				}
 				
@@ -498,8 +498,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * TODO javaDoc update
-	 * TODO Klassendiagramm update
 	 * Creates a new {@link QueryPart} to be executed locally and makes the subscriptions for a single {@link ILogicalQuery}, 
 	 * which {@link ILogicalOperator}s are <code>operators</code>.
 	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
@@ -516,7 +514,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * if <code>degreeOfParallelism</code> is greater than <code>1</code> and {@link ILogicalOperator#needsLocalResources()} is true for the sink.
 	 */
 	protected QueryPart createLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism, Map<String, 
-			IDataFragmentation> sourceToFragStrat, boolean replicationOnly) {
+			IDataFragmentation> sourceToFragStrat) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
@@ -604,43 +602,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				}
 				
 			}
-			
-		}
-		
-		/*
-		 * Aggregation-Handling
-		 * 1. Search for aggregations, replace them with partial ones and cut out all operators between the aggregation and the operator fur junction.
-		 * 2. Put in the operators, which were cut out, after the operator for junction.
-		 */
-		if(!replicationOnly) {
-			
-			List<ILogicalOperator> operatorsToInsertAfterMerge = this.replaceAggregationsWithPartialAggregations(operators, mergeAO.getClass());
-			Collection<LogicalSubscription> subsToRemove = Lists.newArrayList();
-			
-			localOperators.addAll(operatorsToInsertAfterMerge);
-			for(int i = 0; i < operatorsToInsertAfterMerge.size(); i++) {
-				
-				if(i == 0) {
-					
-					// First operator has to be subscribed as sink to mergeAO
-					subsToRemove = mergeAO.getSubscriptions();
-					mergeAO.subscribeSink(operatorsToInsertAfterMerge.get(i), 0, 0, mergeAO.getOutputSchema());
-					
-				} 
-				
-				if(i == operatorsToInsertAfterMerge.size() - 1) {
-					
-					// Last Operator has to be subscribed as source to any operator after mergeAO
-					for(LogicalSubscription oldSub : subsToRemove)
-						operatorsToInsertAfterMerge.get(i).subscribeSink(oldSub.getTarget(), oldSub.getSinkInPort(), 
-								oldSub.getSourceOutPort(), oldSub.getSchema());
-					
-				}
-				
-			}
-			
-			for(LogicalSubscription oldSub : subsToRemove)
-				mergeAO.unsubscribeSink(oldSub);
 			
 		}
 		
@@ -841,8 +802,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * TODO javaDoc update
-	 * TODO Klassendiagramm update
 	 * Makes the subscriptions for a single {@link ILogicalQuery}, which {@link ILogicalOperator}s are <code>operators</code>, to an existing local part.
 	 * @param operators A collection of all {@link ILogicalOperator}s within an {@link ILogicalQuery} without any {@link TopAO}s.
 	 * @param degreeOfParallelism The degree of parallelism. <br />
@@ -851,7 +810,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param sourceToFragStrat A mapping of source name and fragmentation strategy for that source.
 	 */
 	protected void subscribeCopyToLocalPart(Collection<ILogicalOperator> operators, int degreeOfParallelism, QueryPart localPart, 
-			Map<String,IDataFragmentation> sourceToFragStrat, boolean replicationOnly) {
+			Map<String,IDataFragmentation> sourceToFragStrat) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(degreeOfParallelism > 0, "degreeOfParallelism must be greater than zero!");
@@ -931,13 +890,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			}
 			
 		}
-		
-		/*
-		 * Aggregation-Handling
-		 * Search for aggregations, replace them with partial ones and cut out all operators between the aggregation and the operator fur junction.
-		 */
-		if(!replicationOnly)
-			localOperators.addAll(this.replaceAggregationsWithPartialAggregations(operators, mergeAOClass));
 		
 		operators.removeAll(localOperators);
 		
@@ -1214,53 +1166,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		return new QueryPart(enhancedOperators, AbstractLoadBalancer.getSourceDestinationName());
-		
-	}
-	
-	// TODO javaDoc
-	// TODO Klassendiagramm update
-	protected List<ILogicalOperator> replaceAggregationsWithPartialAggregations(Collection<ILogicalOperator> operators, 
-			Class<? extends ILogicalOperator> mergeAOClass) {
-		
-		List<ILogicalOperator> operatorsToCutOut = Lists.newArrayList();
-		
-		for(ILogicalOperator operator : operators) {
-			
-			if(operator instanceof AggregateAO) {
-				
-				// Change to partial aggregation
-				operatorsToCutOut.add(operator.clone());
-				((AggregateAO) operator).setOutputPA(true);
-				
-				// Collect all operators between the aggregation and the mergeAO
-				this.collectOperatorsAfterAggregation(operator, mergeAOClass, operatorsToCutOut);
-				return operatorsToCutOut;
-				
-			}
-			
-		}
-		
-		return operatorsToCutOut;
-		
-	}
-	
-	// TODO javaDoc
-	// TODO Klassendiagramm update
-	protected void collectOperatorsAfterAggregation(ILogicalOperator operator, Class<? extends ILogicalOperator> mergeAOClass, 
-			List<ILogicalOperator> operatorsToCutOut) {
-		
-		for(LogicalSubscription subToSink : operator.getSubscriptions()) {
-			
-			if(subToSink.getTarget().getClass() == mergeAOClass)
-				return;
-			else {
-				
-				operatorsToCutOut.add(subToSink.getTarget());
-				this.collectOperatorsAfterAggregation(subToSink.getTarget(), mergeAOClass, operatorsToCutOut);
-				
-			}
-			
-		}
 		
 	}
 
