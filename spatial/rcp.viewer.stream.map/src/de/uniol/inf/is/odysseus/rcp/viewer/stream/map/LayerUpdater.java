@@ -91,8 +91,10 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			// wrong csv-data)
 			this.streamMapEditor.getScreenManager()
 					.setMaxIntervalEnd(timestamp);
-		} else if(timestamp.beforeOrEquals(streamMapEditor.getScreenManager().getMaxIntervalStart())) {
-			this.streamMapEditor.getScreenManager().setMaxIntervalStart(timestamp);
+		} else if (timestamp.beforeOrEquals(streamMapEditor.getScreenManager()
+				.getMaxIntervalStart())) {
+			this.streamMapEditor.getScreenManager().setMaxIntervalStart(
+					timestamp);
 		}
 
 		puffer.insert(tuple);
@@ -176,6 +178,30 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 					.queryOverlapsAsList(this.streamMapEditor
 							.getScreenManager().getInterval());
 			this.index = new HashMap<Integer, Quadtree>(this.index.size());
+		}
+	}
+
+	/**
+	 * Updates the interval in the screenManager, e.g. when a connection was
+	 * deleted and the maximal possible interval changed
+	 * @param first If this is the first connection to update, it will ignore, if there
+	 * was an older / earlier date in the settings of the manager -> just sets the times from this buffer
+	 * as the timerange in the manager 
+	 */
+	public void updateIntervallInScreenManager(boolean first) {
+
+		// Start
+		if (streamMapEditor.getScreenManager().getMaxIntervalStart()
+				.after(puffer.getMinTs()) || first) {
+			streamMapEditor.getScreenManager().setMaxIntervalStart(
+					puffer.getMinTs());
+		}
+
+		// End
+		if (streamMapEditor.getScreenManager().getMaxIntervalEnd()
+				.before(puffer.getMaxTs()) || first) {
+			streamMapEditor.getScreenManager().setMaxIntervalEnd(
+					puffer.getMaxTs());
 		}
 	}
 

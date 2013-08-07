@@ -109,9 +109,24 @@ public class TimeSliderComposite extends Composite implements
 					manager.setIntervalStart(manager.getMaxIntervalStart()
 							.clone());
 					manager.setIntervalEnd(PointInTime.getInfinityTime());
-				} else {
+				} else {					
 					// It's set to active -> set the values of the slider
 
+					// Update the range (e.g. if a connection was deleted)				
+					ArrayList<LayerUpdater> connections = manager.getConnections();
+					if (connections != null) {
+						boolean first = true;
+						for (LayerUpdater conn : connections) {
+							conn.updateIntervallInScreenManager(first);
+							first = false;
+						}
+						if(first) {
+							// There is no connection
+							manager.setMaxIntervalStart(new PointInTime(0));
+							manager.setMaxIntervalEnd(new PointInTime(0));
+						}
+					}
+					
 					boolean setBackToEnd = false;
 					if (rangeSlider.getUpperValue() >= rangeSlider.getMaximum() - 1) {
 						// On the right end -> "glue"
@@ -150,12 +165,13 @@ public class TimeSliderComposite extends Composite implements
 						}
 
 					}
-
 					// And update the selection
 					updateInterval();
 					
 					// And update the labels
 					updateLabels();
+					
+					
 				}
 			}
 		});
@@ -293,7 +309,7 @@ public class TimeSliderComposite extends Composite implements
 						okButton.addSelectionListener(timeListener);
 						// This would make it "live" - but the moment you tip
 						// "1 second"
-						// nearly all old data (but the one seconds) is lost :(
+						// nearly all old data (but the one second) is lost :(
 						// hours.addSelectionListener(timeListener);
 						// minutes.addSelectionListener(timeListener);
 						// seconds.addSelectionListener(timeListener);
