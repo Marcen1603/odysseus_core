@@ -48,17 +48,14 @@ public class NaiveBayes extends AbstractClassifier {
 		negativewords.clear();
 	}	
 	
-	int x = 1;
-	if(ngramUpTo==1){
-		x = ngram;
-	}
+
 
 		for (TrainSetEntry e : trainingset) {
 
 			if (e.getTrueDecisio() == 1) {
 				// positive
-			for(int i=1; i<=ngramUpTo;i++){
-				for (String singleword : NGramm.ngrams(e.getRecord(), x)) { 
+			for(int i=0; i<ngramUpTo;i++){
+				for (String singleword : NGramm.ngrams(e.getRecord(), ngram-i)) { 
 					if (!positivewords.containsKey(singleword.toLowerCase())) {
 						  positivewords.put(singleword.toLowerCase(), 1);
 					} else {
@@ -71,8 +68,8 @@ public class NaiveBayes extends AbstractClassifier {
 			}
 			} else {
 				// negative
-				for(int i=1; i<=ngramUpTo;i++){
-					for (String singleword : NGramm.ngrams(e.getRecord(), x)) {
+				for(int i=0; i<ngramUpTo;i++){
+					for (String singleword : NGramm.ngrams(e.getRecord(), ngram-i)) {
 						if (!negativewords.containsKey(singleword.toLowerCase())) {
 								negativewords.put(singleword.toLowerCase(), 1);
 						} else {
@@ -82,6 +79,7 @@ public class NaiveBayes extends AbstractClassifier {
 						}
 	
 					}
+					System.out.println("DAS IST EIN TEST");
 				}
 			}
 		}
@@ -105,18 +103,11 @@ public class NaiveBayes extends AbstractClassifier {
 		double decisionpos = 0.0;
 		double decisionneg = 0.0;
 		
-		int x = 1;
-		/*
-		 * Wenn ngramUpTo = 1 dann soll eine einfache Anwendung vom 
-		 * N-Gram verwendet werden. 
-		 */
-		if(ngramUpTo == 1){
-			x = ngram;
-		}
+	
 
 		//split the record in single words
-		for(int i=1; i<=ngramUpTo;i++){
-			for (String singleword : NGramm.ngrams(text, x)) {
+		for(int i=0; i<ngramUpTo;i++){
+			for (String singleword : NGramm.ngrams(text, ngram-i)) {
 				double a = 1.0;
 				double b = 1.0;
 	

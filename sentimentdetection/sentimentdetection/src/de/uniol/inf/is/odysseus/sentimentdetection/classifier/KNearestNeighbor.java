@@ -158,14 +158,11 @@ public class KNearestNeighbor extends AbstractClassifier {
 		//PorterStemmer stemmer = new PorterStemmer();
 
 		List<String> words = new ArrayList<String>();
-		int x = 1;
 		
-		for(int i=1 ; i<=ngramUpTo;i++){	
-		if(ngramUpTo == 1){
-			x = ngram;
-		}
+		
+		for(int i=0 ; i<ngramUpTo;i++){	
 		// split text in singlewords
-			for (String singleword : NGramm.ngrams(text, x)) {
+			for (String singleword : NGramm.ngrams(text, ngram-i)) {
 				//only add words length > 2
 				if (singleword.trim().length() > 2) {
 						words.add(singleword);
