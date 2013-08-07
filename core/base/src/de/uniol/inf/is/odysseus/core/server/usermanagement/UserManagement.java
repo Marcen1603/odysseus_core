@@ -53,7 +53,7 @@ public class UserManagement {
 	}
 
 	protected void unbindUserManagement(IUserManagement usermanagement) {
-		if (usrMgmt.get(usermanagement) != null){
+		if (usrMgmt.get(usermanagement.getType())!= null){
 			usrMgmt.remove(usermanagement.getType());
 			logger.debug("User management "+usermanagement.getType()+" removed");
 		}else{
