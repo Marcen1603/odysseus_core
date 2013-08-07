@@ -183,8 +183,8 @@
                 <path path="${product.name}.serverandstudio.${target.ws}.${target.os}.${target.arch}/" />  
             </products>            
         </public>  
-  
-        <public name="create.serverandstudio.zip" actor="ant">  
+  			
+        <public name="create.serverandstudio.product.zip" actor="ant">  
             <actorProperties>  
                 <property key="buildFileId" value="buckminster.pdetasks" />  
                 <property key="targets" value="create.zip" />  
