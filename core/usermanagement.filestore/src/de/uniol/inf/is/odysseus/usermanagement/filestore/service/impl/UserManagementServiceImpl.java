@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.usermanagement.filestore.service.impl;
 
 import java.io.IOException;
-import java.nio.channels.SeekableByteChannel;
 
 import org.osgi.service.component.ComponentContext;
 
