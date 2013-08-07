@@ -441,6 +441,10 @@
             productId="de.uniol.inf.is.odysseus.rcp.starter.OdysseusStudio"
             splashId="de.uniol.inf.is.odysseus.rcp.base.splashHandler">
       </splashHandlerProductBinding>
+      <splashHandlerProductBinding
+            productId="de.uniol.inf.is.odysseus.product.studio.starter.OdysseusStudioProduct"
+            splashId="de.uniol.inf.is.odysseus.rcp.base.splashHandler">
+      </splashHandlerProductBinding>
    </extension>
    <extension
          point="org.eclipse.core.expressions.definitions">

@@ -31,10 +31,6 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.feature"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.platform"
          version="0.0.0"/>
 
@@ -43,11 +39,19 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.relational.feature"
+         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
+         id="de.uniol.inf.is.odysseus.core.client.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.relational.feature"
          version="0.0.0"/>
 
    <plugin
@@ -77,13 +81,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.rcp.starter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.ui.views.log"
          download-size="0"
          install-size="0"
@@ -99,6 +96,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.viewer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.editor.text.pql"
          download-size="0"
          install-size="0"
          version="0.0.0"
