@@ -184,7 +184,7 @@
             </products>            
         </public>  
   
-        <public name="create.server.serverandstudio.zip" actor="ant">  
+        <public name="create.serverandstudio.zip" actor="ant">  
             <actorProperties>  
                 <property key="buildFileId" value="buckminster.pdetasks" />  
                 <property key="targets" value="create.zip" />  
