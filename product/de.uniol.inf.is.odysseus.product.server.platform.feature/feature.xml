@@ -5,8 +5,10 @@
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      This feature bundles all features that are at least needed for
+the Odysseus Product Application. It may not have any dependencies
+to Odysseus.
    </description>
 
    <copyright url="http://www.example.com/copyright">
