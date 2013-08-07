@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class FacebookTransportHandler extends AbstractPullTransportHandler {
 
+	@SuppressWarnings("unused")
 	private final Logger logger = LoggerFactory.getLogger(FacebookTransportHandler.class);
 
 	private String accessToken;
