@@ -31,10 +31,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -126,7 +126,7 @@ public class DistributionHelper {
 			
 			if(operator instanceof StreamAO) {
 				
-				ILogicalOperator streamPlan = DataDictionaryService.get().getStreamForTransformation(((StreamAO) operator).getStreamname(), 
+				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary().getStreamForTransformation(((StreamAO) operator).getStreamname(), 
 						SessionManagementService.getActiveSession());
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 				RestructHelper.replaceWithSubplan(operator, streamPlanCopy);
