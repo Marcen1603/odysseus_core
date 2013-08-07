@@ -57,18 +57,16 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
         super(sentimentDetectionAO);
-        this.splitDecision = sentimentDetectionAO.splitDecision;
         this.classifier = sentimentDetectionAO.classifier;
         this.trainSetMinSize = sentimentDetectionAO.trainSetMinSize;
         this.domain = sentimentDetectionAO.domain;
+        this.splitDecision = sentimentDetectionAO.splitDecision;
         this.debugClassifier = sentimentDetectionAO.debugClassifier;
-        this.ngram = sentimentDetectionAO.ngram;
         this.removeStopWords = sentimentDetectionAO.removeStopWords;
-        this.stemmWords = sentimentDetectionAO.stemmWords;
-        
+        this.ngram = sentimentDetectionAO.ngram;
         this.ngramUpTo = sentimentDetectionAO.ngramUpTo;
-        
-        
+        this.stemmWords = sentimentDetectionAO.stemmWords;
+     
         this.maxBufferSize = sentimentDetectionAO.maxBufferSize;
  
         this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;

@@ -42,8 +42,6 @@ public class NaiveBayes extends AbstractClassifier {
 	logger.debug("domain: " + domain);
 	
 
-		
-
 	//clear positivewords/negativewords
 	if(!isTrained){
 		positivewords.clear();
