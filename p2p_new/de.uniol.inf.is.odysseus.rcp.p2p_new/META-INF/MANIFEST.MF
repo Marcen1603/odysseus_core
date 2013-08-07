@@ -22,5 +22,5 @@ Import-Package: de.uniol.inf.is.odysseus.p2p_new,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources,
  org.slf4j
-Service-Component: OSGI-INF/p2pDictionary.xml,OSGI-INF/dataDictionaryService.xml,OSGI-INF/jxtaReceiverOperatorDetailProvider.xml,
- OSGI-INF/jxtaSenderOperatorDetailProvider.xml
+Service-Component: OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaReceiverOperatorDetailProvider.xml,OSGI-INF/jxtaSenderOperatorDetailProvider.xml,
+ OSGI-INF/serverExecutorService.xml

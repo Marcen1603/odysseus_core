@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -30,11 +29,11 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 			throw new OdysseusScriptException("Cannot export: Name of transformation configuration not set!");
 		}
 		
-		if( !DataDictionaryService.isBound() ) {
-			throw new OdysseusScriptException("Cannot export: Data dictionary is not bound");
+		if( !ServerExecutorService.isBound() ) {
+			throw new OdysseusScriptException("Cannot export: Server executor is not bound");
 		}
 		
-		if( ServerExecutorService.get().getQueryBuildConfiguration(transCfgName) == null) {
+		if( ServerExecutorService.getServerExecutor().getQueryBuildConfiguration(transCfgName) == null) {
 			throw new OdysseusScriptException("Cannot export: TransformationConfiguration '" + transCfgName + "' not found");
 		}
 
@@ -59,7 +58,7 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	private static List<String> determineCurrentSourceNames() {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = DataDictionaryService.get().getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary().getStreamsAndViews(SessionManagementService.getActiveSession());
 		List<String> sourceNames = Lists.newArrayList();
 		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
 			sourceNames.add(streamOrView.getKey());

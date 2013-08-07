@@ -7,7 +7,6 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
-import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -24,15 +23,11 @@ public class ExportPreParserKeyword extends AbstractPreParserKeyword {
 			throw new OdysseusScriptException("Cannot export: Name of transformation configuration not set!");
 		}
 		
-		if( !DataDictionaryService.isBound() ) {
-			throw new OdysseusScriptException("Cannot export: DataDictionary is not bound!");
-		}
-		
 		if( !ServerExecutorService.isBound()) {
 			throw new OdysseusScriptException("Cannot export: Server Executor is not bound!");
 		}
 		
-		if( ServerExecutorService.get().getQueryBuildConfiguration(transCfgName) == null) {
+		if( ServerExecutorService.getServerExecutor().getQueryBuildConfiguration(transCfgName) == null) {
 			throw new OdysseusScriptException("Cannot export: TransformationConfiguration '" + transCfgName + "' not found");
 		}
 	}

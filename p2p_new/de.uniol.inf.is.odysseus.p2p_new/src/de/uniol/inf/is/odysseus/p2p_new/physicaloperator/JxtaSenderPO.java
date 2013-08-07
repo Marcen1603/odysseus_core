@@ -161,7 +161,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 							if (connectionsOpenCalled.size() == 1) {
 								final int queryID = determineQueryID(getOwner());
 								LOG.debug("{} : Starting query {}", getName(), queryID);
-								ServerExecutorService.get().startQuery(queryID, SessionManagementService.getActiveSession());
+								ServerExecutorService.getServerExecutor().startQuery(queryID, SessionManagementService.getActiveSession());
 							}
 
 						} catch (IOException ex) {
@@ -184,7 +184,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 						if (connectionsOpenCalled.isEmpty()) {
 							final int queryID = determineQueryID(getOwner());
 							LOG.debug("{} : Stopping query {}", getName(), queryID);
-							ServerExecutorService.get().stopQuery(queryID, SessionManagementService.getActiveSession());
+							ServerExecutorService.getServerExecutor().stopQuery(queryID, SessionManagementService.getActiveSession());
 						}
 					} else {
 						LOG.error("Got close event from connection which hasnt called open before");

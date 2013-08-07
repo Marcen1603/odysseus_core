@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOConverter;
-import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 
 public class SourceAdvertisement extends Advertisement implements Serializable {
 
@@ -318,7 +318,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		final List<SDFAttribute> attributes = Lists.newArrayList();
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute(viewName, elem.getKey(), DataDictionaryService.get().getDatatype(elem.getTextValue()));
+			final SDFAttribute attr = new SDFAttribute(viewName, elem.getKey(), ServerExecutorService.getDataDictionary().getDatatype(elem.getTextValue()));
 			attributes.add(attr);
 		}
 

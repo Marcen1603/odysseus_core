@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.SessionManagementService;
 
 public class ExportAllCommand extends AbstractHandler implements IHandler {
@@ -23,7 +23,7 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = DataDictionaryService.get().getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary().getStreamsAndViews(SessionManagementService.getActiveSession());
 		int okCount = 0;
 		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
 			String sourceName = streamOrView.getKey();

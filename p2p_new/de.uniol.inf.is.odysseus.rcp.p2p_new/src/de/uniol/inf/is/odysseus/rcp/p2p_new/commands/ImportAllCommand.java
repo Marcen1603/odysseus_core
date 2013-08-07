@@ -17,8 +17,8 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.DataDictionaryService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.SessionManagementService;
 
 public class ImportAllCommand extends AbstractHandler implements IHandler {
@@ -29,7 +29,7 @@ public class ImportAllCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		IP2PDictionary dictionary = P2PDictionaryService.get();
-		IDataDictionary dataDictionary = DataDictionaryService.get();
+		IDataDictionary dataDictionary = ServerExecutorService.getDataDictionary();
 
 		ImmutableList<SourceAdvertisement> sources = dictionary.getSources();
 		int okCount = 0;

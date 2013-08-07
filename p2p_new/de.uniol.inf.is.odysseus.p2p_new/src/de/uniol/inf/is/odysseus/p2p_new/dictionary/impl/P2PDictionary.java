@@ -408,8 +408,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			Integer queryID = exportedSourcesQueryMap.get(exportAdvertisement);
 			exportedSourcesQueryMap.remove(exportAdvertisement);
-			if (queryID != -1 && ServerExecutorService.get().getExecutionPlan().getQueryById(queryID) != null) {
-				ServerExecutorService.get().removeQuery(queryID, SessionManagementService.getActiveSession());
+			if (queryID != -1 && ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID) != null) {
+				ServerExecutorService.getServerExecutor().removeQuery(queryID, SessionManagementService.getActiveSession());
 			}
 
 			fireSourceExportRemoveEvent(exportAdvertisement, realSourceName);
@@ -780,8 +780,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			jxtaSender.setUseUDP(false);
 			view.subscribeSink(jxtaSender, 0, 0, view.getOutputSchema());
 			
-			Integer queryID = ServerExecutorService.get().addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
-			IPhysicalQuery physicalQuery = ServerExecutorService.get().getExecutionPlan().getQueryById(queryID);
+			Integer queryID = ServerExecutorService.getServerExecutor().addQuery(jxtaSender, SessionManagementService.getActiveSession(), queryBuildConfigurationName);
+			IPhysicalQuery physicalQuery = ServerExecutorService.getServerExecutor().getExecutionPlan().getQueryById(queryID);
 			ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 			logicalQuery.setName(viewName);
 			logicalQuery.setParserId("P2P");

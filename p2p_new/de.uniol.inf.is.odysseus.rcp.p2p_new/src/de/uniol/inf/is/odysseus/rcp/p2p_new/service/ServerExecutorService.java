@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.service;
+package de.uniol.inf.is.odysseus.rcp.p2p_new.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

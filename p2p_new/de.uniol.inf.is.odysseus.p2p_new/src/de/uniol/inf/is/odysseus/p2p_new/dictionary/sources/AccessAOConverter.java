@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
-import de.uniol.inf.is.odysseus.p2p_new.service.DataDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 
 public final class AccessAOConverter {
 
@@ -221,7 +221,7 @@ public final class AccessAOConverter {
 		final List<SDFAttribute> attributes = Lists.newArrayList();
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute("", elem.getKey(), DataDictionaryService.get().getDatatype(elem.getTextValue()));
+			final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary().getDatatype(elem.getTextValue()));
 			attributes.add(attr);
 		}
 
