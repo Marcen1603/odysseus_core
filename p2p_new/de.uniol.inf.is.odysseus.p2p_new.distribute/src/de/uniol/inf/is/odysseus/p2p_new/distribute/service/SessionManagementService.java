@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -38,9 +39,10 @@ public class SessionManagementService {
 	 */
 	public final void bindSessionManagement(ISessionManagement sm) {
 		
-		sessionManagement = sm;
-		activeSession = sessionManagement.loginSuperUser(null, "");
-		LOG.debug("Bound Session Management {}", sm);
+		// DO NOT BIND SESSION MANAGEMENT DIRECTLY
+//		sessionManagement = sm;
+//		activeSession = sessionManagement.loginSuperUser(null, "");
+//		LOG.debug("Bound Session Management {}", sm);
 		
 	}
 
@@ -51,14 +53,15 @@ public class SessionManagementService {
 	 * @param sm An instance of an {@link ISessionManagement} implementation.
 	 */
 	public final void unbindSessionManagement(ISessionManagement sm) {
-		
-		if(sm == sessionManagement) {
-			
-			sessionManagement = null;
-			activeSession = null;
-			LOG.debug("Unbound Session Management");
-			
-		}
+		// DO NOT BIND SESSION MANAGEMENT DIRECTLY
+
+//		if(sm == sessionManagement) {
+//			
+//			sessionManagement = null;
+//			activeSession = null;
+//			LOG.debug("Unbound Session Management");
+//			
+//		}
 		
 	}
 
@@ -67,28 +70,33 @@ public class SessionManagementService {
 	 */
 	public static ISession getActiveSession() {
 		
+		if (activeSession == null){			
+			sessionManagement = UserManagement.getSessionmanagement();
+			activeSession = sessionManagement.loginSuperUser(null, "");
+		}
+		
 		return activeSession;
 		
 	}
 	
-	/**
-	 * Determines, if a referenced {@link ISessionManagement} is bound.
-	 * @see #bindJxtaServicesProvider(ISessionManagement)
-	 * @return <code>{@link #get()} != null</code>
-	 */
-	public static boolean isBound() {
-		
-		return get() != null;
-		
-	}
-
-	/**
-	 * Returns the referenced {@link ISessionManagement}.
-	 */
-	public static ISessionManagement get() {
-		
-		return sessionManagement;
-		
-	}
-	
+//	/**
+//	 * Determines, if a referenced {@link ISessionManagement} is bound.
+//	 * @see #bindJxtaServicesProvider(ISessionManagement)
+//	 * @return <code>{@link #get()} != null</code>
+//	 */
+//	public static boolean isBound() {
+//		
+//		return get() != null;
+//		
+//	}
+//
+//	/**
+//	 * Returns the referenced {@link ISessionManagement}.
+//	 */
+//	public static ISessionManagement get() {
+//		
+//		return sessionManagement;
+//		
+//	}
+//	
 }
