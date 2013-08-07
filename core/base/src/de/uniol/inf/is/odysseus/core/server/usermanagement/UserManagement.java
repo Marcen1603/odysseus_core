@@ -23,14 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
-
-
 public class UserManagement {
 	
 	Logger logger = LoggerFactory.getLogger(UserManagement.class);
 
 	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
-	static private Map<String,ISessionManagement> sessMgmt = new HashMap<>();
 	
 	
 	static public IUserManagement getUsermanagement() {
@@ -42,9 +39,7 @@ public class UserManagement {
 	}
 	
 	static public ISessionManagement getSessionmanagement() {
-		// Init User Management
-		getUsermanagement();
-		ISessionManagement ret = sessMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
+		ISessionManagement ret = getUsermanagement().getSessionManagement();
 		return ret;
 	}
 	
@@ -57,22 +52,13 @@ public class UserManagement {
 		}
 	}
 
-	// TODO: Will man das?
 	protected void unbindUserManagement(IUserManagement usermanagement) {
-		usermanagement = null;
-	}
-
-	protected void bindSessionManagement(ISessionManagement sessionmanagement) {
-		if (sessMgmt.get(sessionmanagement.getType()) == null){
-			sessMgmt.put(sessionmanagement.getType(),sessionmanagement);
-			logger.debug("Bound SessionManagementService "+sessionmanagement.getType());
+		if (usrMgmt.get(usermanagement).getType() != null){
+			usrMgmt.remove(usermanagement.getType());
+			logger.debug("User management "+usermanagement.getType()+" removed");
 		}else{
-			throw new RuntimeException("SessionManagement already bound!");
+			throw new RuntimeException("UserManagement "+usermanagement.getType()+" not bound!");
 		}
-	}
-
-	protected void unbindSessionManagement(ISessionManagement sessionmanagement) {
-		sessionmanagement = null;
 	}
 	
 	

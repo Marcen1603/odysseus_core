@@ -19,10 +19,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.osgi.service.component.ComponentContext;
-
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.jpa.domain.impl.PrivilegeImpl;
@@ -45,6 +44,8 @@ public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl
 	private UserDAO userDAO;
 	private RoleDAO roleDAO;
 	private PrivilegeDAO privDAO;
+	
+	ISessionManagement sessionMgmt;
 	
 	@Override
 	protected UserImpl createEmptyUser() {
@@ -114,4 +115,13 @@ public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl
 	public String getType() {
 		return "JPA";
 	}
+	
+	@Override
+	public ISessionManagement getSessionManagement() {
+		if (sessionMgmt == null) {
+			sessionMgmt = new SessionManagementServiceImpl();
+		}
+		return sessionMgmt;
+	}
+
 }

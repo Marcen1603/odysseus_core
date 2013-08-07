@@ -86,6 +86,8 @@ public interface IUserManagement {
      */
     boolean hasPermission(ISession caller, IPermission permission, String objectURI);
 
+    ISessionManagement getSessionManagement();
+    
 	void addUserManagementListener(IUserManagementListener tenantView);
 
 	String getType();

@@ -16,11 +16,13 @@
 package de.uniol.inf.is.odysseus.usermanagement.filestore.service.impl;
 
 import java.io.IOException;
+import java.nio.channels.SeekableByteChannel;
 
 import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.RoleDAO;
@@ -34,11 +36,13 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 public class UserManagementServiceImpl extends
 		AbstractUserManagement<Tenant, User, Role, Privilege> {
 
+	ISessionManagement sessionMgmt;
+
 	@Override
 	protected Tenant createEmptyTenant() {
 		return new Tenant();
 	}
-	
+
 	@Override
 	protected Role createEmptyRole() {
 		return new Role();
@@ -90,7 +94,7 @@ public class UserManagementServiceImpl extends
 		}
 		return null;
 	}
-	
+
 	@Override
 	protected IGenericDAO<Tenant, String> getTenantDAO() {
 		try {
@@ -100,7 +104,7 @@ public class UserManagementServiceImpl extends
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String getType() {
 		return "Filestore";
@@ -110,5 +114,13 @@ public class UserManagementServiceImpl extends
 	protected void process_init() {
 		initDefaultUsers();
 	}
-	
+
+	@Override
+	public ISessionManagement getSessionManagement() {
+		if (sessionMgmt == null) {
+			sessionMgmt = new SessionManagementServiceImpl();
+		}
+		return sessionMgmt;
+	}
+
 }

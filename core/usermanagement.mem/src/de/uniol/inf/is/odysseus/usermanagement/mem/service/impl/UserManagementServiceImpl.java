@@ -19,6 +19,7 @@ import org.osgi.service.component.ComponentContext;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.PrivilegeDAO;
@@ -34,6 +35,9 @@ public class UserManagementServiceImpl extends
 		AbstractUserManagement<Tenant, User, Role, Privilege> implements
 		IUserManagement {
 
+	ISessionManagement sessionMgmt;
+
+	
 	@Override
 	protected Tenant createEmptyTenant() {
 		return new Tenant();
@@ -91,5 +95,13 @@ public class UserManagementServiceImpl extends
 	protected void deactivate(ComponentContext context) {
 
 	}
-	
+
+	@Override
+	public ISessionManagement getSessionManagement() {
+		if (sessionMgmt == null) {
+			sessionMgmt = new SessionManagementServiceImpl();
+		}
+		return sessionMgmt;
+	}
+
 }
