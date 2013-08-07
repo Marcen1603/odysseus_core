@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/de.uniol.inf.is.odysseus.product.memorystore.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.memorystore.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.product.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
-   </feature>
    <feature url="features/de.uniol.inf.is.odysseus.nexmark.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.nexmark.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.applications"/>
    </feature>
@@ -34,9 +28,6 @@
       <category name="de.uniol.inf.is.odysseus.update.category.features"/>
    </feature>
    <feature url="features/de.uniol.inf.is.odysseus.core.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.features"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.core.server.headless.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.core.server.headless.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.features"/>
    </feature>
    <feature url="features/de.uniol.inf.is.odysseus.database.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier">
@@ -135,22 +126,13 @@
    <feature url="features/de.uniol.inf.is.odysseus.wrapper.protobuf.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.features"/>
    </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.product.filestore.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.product.memorystore.server.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.memorystore.server.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
-   </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.product.memorystore.client.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.memorystore.client.feature" version="1.0.0.qualifier">
-      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
-   </feature>
    <feature url="features/de.uniol.inf.is.odysseus.text.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.text.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.features"/>
    </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.product.server.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.server.feature" version="1.0.0.qualifier">
+   <feature url="features/de.uniol.inf.is.odysseus.product.server.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.server.platform.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.products"/>
    </feature>
-   <feature url="features/de.uniol.inf.is.odysseus.product.server.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.server.platform.feature" version="1.0.0.qualifier">
+   <feature url="features/de.uniol.inf.is.odysseus.product.studio.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.studio.platform.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.products"/>
    </feature>
    <category-def name="de.uniol.inf.is.odysseus.update.category.products" label="Product Definitions (Do not use)"/>
