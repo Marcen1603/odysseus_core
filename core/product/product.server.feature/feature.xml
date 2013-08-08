@@ -22,14 +22,6 @@
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.datadictionary.mem.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
          version="0.0.0"/>
 

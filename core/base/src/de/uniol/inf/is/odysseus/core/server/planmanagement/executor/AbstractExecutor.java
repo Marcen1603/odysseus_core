@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
@@ -127,13 +126,15 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps
 			.newHashMap();
-	
+
 	/**
-	 * Mapping (name -> implementation) of all integrated data fragmentation strategies.
+	 * Mapping (name -> implementation) of all integrated data fragmentation
+	 * strategies.
+	 * 
 	 * @author Michael Brand
 	 */
-	private Map<String, IDataFragmentation> dataFragmentationStrategies = Maps.
-			newHashMap();
+	private Map<String, IDataFragmentation> dataFragmentationStrategies = Maps
+			.newHashMap();
 
 	private IPlanAdaptionEngine planAdaptionEngine = null;
 
@@ -141,11 +142,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * Konfiguration der Ausf�hrungsumgebung
 	 */
 	protected ExecutionConfiguration configuration = new ExecutionConfiguration();
-
-	/**
-	 * Data Dictionary
-	 */
-	private Map<String,IDataDictionaryWritable> dataDictionary = new HashMap<>();
 
 	/**
 	 * Standard Configurationen
@@ -191,6 +187,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * System Monitor Komponente
 	 */
 	protected ISystemMonitorFactory systemMonitorFactory = null;
+
+	private Object dataDictionary;
 
 	// --------------------------------------------------------------------------------------
 	// Constructors/Initialization
@@ -304,15 +302,14 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			LOG.debug("Schedulermanager unbound " + schedulerManager);
 		}
 	}
-	
-	public void bindUserManagement(IUserManagement mgmt){
-		// do nothing --> use UserManagement instead	
-	}
-	
-	public void unbindUserManagement(IUserManagement mgmt){
+
+	public void bindUserManagement(IUserManagement mgmt) {
 		// do nothing --> use UserManagement instead
 	}
-	
+
+	public void unbindUserManagement(IUserManagement mgmt) {
+		// do nothing --> use UserManagement instead
+	}
 
 	public void bindAdmissionControl(IAdmissionControl control) {
 		if (admissionControl != null) {
@@ -347,7 +344,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			admissionQuerySelector = null;
 		}
 	}
-	
+
 	public final void bindLogicalQueryDistributor(ILogicalQueryDistributor d) {
 
 		logicalQueryDistributors.put(d.getName(), d);
@@ -363,7 +360,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			LOG.debug("Logical query distributor unbound '{}'", distributorName);
 		}
 	}
-	
+
 	@Override
 	public final ImmutableCollection<String> getLogicalQueryDistributorNames() {
 		return ImmutableSet.copyOf(logicalQueryDistributors.keySet());
@@ -374,52 +371,58 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			String name) {
 		return Optional.fromNullable(logicalQueryDistributors.get(name));
 	}
-	
+
 	/**
 	 * Binds the referenced {@link IDataFragmentation}. <br />
 	 * Called by OSGI-DS.
+	 * 
 	 * @see #unbindDataFragmentation(IDataFragmentation)
-	 * @param dfStrategy An instance of an {@link IDataFragmentation} implementation.
+	 * @param dfStrategy
+	 *            An instance of an {@link IDataFragmentation} implementation.
 	 * @author Michael Brand
 	 */
 	public final void bindDataFragmentation(IDataFragmentation dfStrategy) {
 
 		dataFragmentationStrategies.put(dfStrategy.getName(), dfStrategy);
-		LOG.debug("Data fragmentation strategy bound '{}'", dfStrategy.getName());
-		
+		LOG.debug("Data fragmentation strategy bound '{}'",
+				dfStrategy.getName());
+
 	}
-	
+
 	/**
-	 * Unbinds an referenced {@link IDataFragmentation}, if <code>dfStrategy</code> is the binded one. <br />
+	 * Unbinds an referenced {@link IDataFragmentation}, if
+	 * <code>dfStrategy</code> is the binded one. <br />
 	 * Called by OSGI-DS.
+	 * 
 	 * @see #bindDataFragmentation(IDataFragmentation)
-	 * @param dfStrategy An instance of an {@link IDataFragmentation} implementation.
+	 * @param dfStrategy
+	 *            An instance of an {@link IDataFragmentation} implementation.
 	 * @author Michael Brand
 	 */
 	public final void unbindDataFragmentation(IDataFragmentation dfStrategy) {
-		
+
 		String strategyName = dfStrategy.getName();
-		if(dataFragmentationStrategies.containsKey(strategyName)) {
-			
+		if (dataFragmentationStrategies.containsKey(strategyName)) {
+
 			dataFragmentationStrategies.remove(strategyName);
 			LOG.debug("Data fragmentation strategy unbound '{}'", strategyName);
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public final ImmutableCollection<String> getDataFragmentationNames() {
-		
+
 		return ImmutableSet.copyOf(dataFragmentationStrategies.keySet());
-		
+
 	}
 
 	@Override
 	public final Optional<IDataFragmentation> getDataFragmentation(String name) {
-		
+
 		return Optional.fromNullable(dataFragmentationStrategies.get(name));
-		
+
 	}
 
 	public void bindPlanAdaption(IPlanAdaptionEngine adaption) {
@@ -469,7 +472,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * 
 	 * @param config
 	 */
-	public void bindQueryBuildConfiguration(IQueryBuildConfigurationTemplate config) {
+	public void bindQueryBuildConfiguration(
+			IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.put(config.getName(), config);
 		LOG.debug("Query Build Configuration " + config + " bound");
 	}
@@ -479,14 +483,15 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * 
 	 * @param config
 	 */
-	public void unbindQueryBuildConfiguration(IQueryBuildConfigurationTemplate config) {
+	public void unbindQueryBuildConfiguration(
+			IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.remove(config.getName());
 	}
 
 	protected void bindDataDictionary(IDataDictionary datadictionary) {
-		if (this.dataDictionary.get(datadictionary.getType()) == null) {
-			dataDictionary.put(datadictionary.getType(),(IDataDictionaryWritable)datadictionary);
-			LOG.debug("Bound datadictionary service "+datadictionary.getType());
+		if (this.dataDictionary == null) {
+			this.dataDictionary = datadictionary;
+			LOG.debug("Bound datadictionary service " + datadictionary);
 		} else {
 			throw new RuntimeException("DataDictionary already bound!");
 		}
@@ -574,12 +579,14 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * @throws SchedulerException
 	 */
 	@Override
-	public void executionPlanChanged(PlanModificationEventType type, Collection<IPhysicalQuery> affectedQueries) throws SchedulerException, NoSchedulerLoadedException {
-		if (affectedQueries != null){
-			for (IPhysicalQuery q: affectedQueries){
+	public void executionPlanChanged(PlanModificationEventType type,
+			Collection<IPhysicalQuery> affectedQueries)
+			throws SchedulerException, NoSchedulerLoadedException {
+		if (affectedQueries != null) {
+			for (IPhysicalQuery q : affectedQueries) {
 				executionPlanChanged(type, q);
 			}
-		}else{
+		} else {
 			executionPlanChanged(type, (IPhysicalQuery) null);
 		}
 	}
@@ -588,7 +595,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void executionPlanChanged(PlanModificationEventType type,
 			IPhysicalQuery affectedQuery) throws SchedulerException,
 			NoSchedulerLoadedException {
-		switch(type){
+		switch (type) {
 		case PLAN_REOPTIMIZE:
 		case QUERY_REOPTIMIZE:
 			LOG.info("Refresh Scheduling");
@@ -940,25 +947,27 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary() {
-		return dataDictionary.get(OdysseusConfiguration.get("StoretypeDataDict"));
+		return (IDataDictionaryWritable) dataDictionary;
 	}
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
-		if (dataDictionary != null) {
-			List<ILogicalQuery> q = getDataDictionary().getQueries(caller.getUser(),
-					caller);
+		LOG.debug("Try to load queries from data dictionary");
+		if (getDataDictionary() != null) {
+			List<ILogicalQuery> q = getDataDictionary().getQueries(
+					caller.getUser(), caller);
 			for (ILogicalQuery query : q) {
 				try {
 					if (query.getQueryText() != null) {
 						addQuery(query.getQueryText(), query.getParserId(),
-								caller,
-								getDataDictionary().getQueryBuildConfigName(query
-										.getID()));
+								caller, getDataDictionary()
+										.getQueryBuildConfigName(query.getID()));
 					} else if (query.getLogicalPlan() != null) {
-						addQuery(query.getLogicalPlan(), caller,
-								getDataDictionary().getQueryBuildConfigName(query
-										.getID()));
+						addQuery(
+								query.getLogicalPlan(),
+								caller,
+								getDataDictionary().getQueryBuildConfigName(
+										query.getID()));
 					} else {
 						LOG.warn("Query " + query + " cannot be loaded");
 					}
@@ -973,7 +982,8 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
-		return UserManagementProvider.getSessionmanagement().login(username, password, tenant);
+		return UserManagementProvider.getSessionmanagement().login(username,
+				password, tenant);
 	}
 
 	@Override

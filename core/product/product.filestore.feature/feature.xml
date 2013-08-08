@@ -42,10 +42,6 @@ provide any functionality by itself.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.datadictionary.filestore.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
          version="0.0.0"/>
 
