@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 
 /**
@@ -48,11 +48,11 @@ public class StandardSecurityEvaluator<T extends IStreamObject<? extends ITimeIn
 	protected ISecurityPunctuation sp;
 	
 	public StandardSecurityEvaluator() {
-		UserManagement.getUsermanagement().addUserManagementListener(this);
+		UserManagementProvider.getUsermanagement().addUserManagementListener(this);
 	}
 	
 	public StandardSecurityEvaluator(AbstractPipe<T, T> po) {
-		UserManagement.getUsermanagement().addUserManagementListener(this);
+		UserManagementProvider.getUsermanagement().addUserManagementListener(this);
 	}
 	
 	public Boolean evaluate(T object, List<IOperatorOwner> ownerList, SDFSchema outputSchema) {

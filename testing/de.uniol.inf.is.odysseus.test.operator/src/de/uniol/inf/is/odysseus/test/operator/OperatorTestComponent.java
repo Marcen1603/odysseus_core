@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.equivalentoutput.EquivalentOutputStarter;
 import de.uniol.inf.is.odysseus.equivalentoutput.enums.StatusCode;
@@ -83,10 +83,10 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 	public Object startTesting(String[] args) {
 		checkNotNull(executor, "Executor must be bound");
 		checkNotNull(parser, "ScriptParser must be bound");
-		checkNotNull(UserManagement.getSessionmanagement(), "Session management not set");
+		checkNotNull(UserManagementProvider.getSessionmanagement(), "Session management not set");
 		checkArgument(args.length == 3, "OperatorTest needs exactly arguments: [User], [Password], [FolderWithQueryFolders]");
 		
-		ISession session = UserManagement.getSessionmanagement().login(args[0], args[1].getBytes(), "");
+		ISession session = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(), "");
 		
 		out = createWriter(args[2]);
 

@@ -23,15 +23,21 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
-public class UserManagement {
+public class UserManagementProvider {
 	
-	Logger logger = LoggerFactory.getLogger(UserManagement.class);
+	Logger logger = LoggerFactory.getLogger(UserManagementProvider.class);
 
 	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
 	
 	
 	static synchronized public IUserManagement getUsermanagement() {
 		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
+		while (ret == null){
+			try {
+				UserManagementProvider.class.wait(500);
+			} catch (InterruptedException e) {
+			}
+		}
 		if (!ret.isInitialized()){
 			ret.initialize();
 		}
@@ -49,6 +55,9 @@ public class UserManagement {
 			logger.debug("Bound UserManagementService "+usermanagement.getType());
 		}else{
 			throw new RuntimeException("UserManagement "+usermanagement.getType()+" already bound!");
+		}
+		synchronized(UserManagementProvider.class){
+			UserManagementProvider.class.notifyAll();
 		}
 	}
 

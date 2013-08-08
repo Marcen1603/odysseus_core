@@ -61,7 +61,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSink
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
@@ -141,7 +141,7 @@ public class WebserviceServer {
 	public StringResponse login(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password,
 			@WebParam(name = "tenantname") String tenantname) {
-		ISession user = UserManagement.getSessionmanagement().login(username,
+		ISession user = UserManagementProvider.getSessionmanagement().login(username,
 				password.getBytes(), tenantname);
 		if (user != null) {
 			String token = user.getToken();
@@ -157,7 +157,7 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken) {
 		ISession user = sessions.get(securityToken);
 		if (user != null) {
-			UserManagement.getSessionmanagement().logout(user);
+			UserManagementProvider.getSessionmanagement().logout(user);
 			sessions.remove(securityToken);
 			return new Response(true);
 		}
@@ -213,7 +213,7 @@ public class WebserviceServer {
 
 	protected ISession loginWithSecurityToken(String securityToken)
 			throws InvalidUserDataException {
-		ISession session = UserManagement.getSessionmanagement().login(
+		ISession session = UserManagementProvider.getSessionmanagement().login(
 				securityToken);
 		if (session != null) {
 			return session;

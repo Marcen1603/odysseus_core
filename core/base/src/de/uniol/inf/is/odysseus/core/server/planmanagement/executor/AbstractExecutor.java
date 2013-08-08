@@ -81,7 +81,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQueryReoptimiz
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -973,12 +973,12 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
-		return UserManagement.getSessionmanagement().login(username, password, tenant);
+		return UserManagementProvider.getSessionmanagement().login(username, password, tenant);
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		UserManagement.getSessionmanagement().logout(caller);
+		UserManagementProvider.getSessionmanagement().logout(caller);
 	}
 
 	// Compiler Facade

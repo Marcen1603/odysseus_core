@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.service;
 
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -19,7 +19,7 @@ public class SessionManagementService {
 	public static ISession getActiveSession() {
 		
 		if(activeSession == null)		
-			activeSession = UserManagement.getSessionmanagement().loginSuperUser(null, "");
+			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 		
 		return activeSession;
 		

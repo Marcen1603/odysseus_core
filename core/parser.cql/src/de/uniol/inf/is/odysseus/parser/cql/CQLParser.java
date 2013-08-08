@@ -75,7 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -1003,7 +1003,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new QueryParseException("unknown sla: " + slaName);
 		}
 		
-		IUser user = UserManagement.getUsermanagement().findUser(userName, this.caller);
+		IUser user = UserManagementProvider.getUsermanagement().findUser(userName, this.caller);
 		if (user == null) {
 			throw new QueryParseException(new UsernameNotExistException("Unknown user: " + userName));
 		}

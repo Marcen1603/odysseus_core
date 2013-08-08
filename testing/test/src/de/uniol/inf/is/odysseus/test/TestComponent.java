@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -84,10 +84,10 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	public Object startTesting(String[] args) {
 		checkNotNull(executor, "Executor must be bound");
 		checkNotNull(parser, "Parser must be bound");
-		checkNotNull(UserManagement.getSessionmanagement(), "session management not set");
+		checkNotNull(UserManagementProvider.getSessionmanagement(), "session management not set");
 		checkArgument(args.length == 3, "NexmarkTest needs exactly three arguments: [User], [Password], [FolderWithQueries]");
 		
-		ISession session = UserManagement.getSessionmanagement().login(args[0], args[1].getBytes(),"");
+		ISession session = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(),"");
 
 		out = createWriter(args[2]);
 

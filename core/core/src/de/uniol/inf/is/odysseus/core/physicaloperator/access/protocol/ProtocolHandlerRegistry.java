@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
-public class ProtocolHandlerRegistry {
+public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 
 	static Logger logger = LoggerFactory.getLogger(ProtocolHandlerRegistry.class);
 

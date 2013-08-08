@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -89,9 +89,9 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 		checkNotNull(testFolder, "Testfolder not found");
 		checkNotNull(executor, "Executor must be bound");
 		checkNotNull(parser, "Parser must be bound");
-		checkNotNull(UserManagement.getSessionmanagement(), "session management not set");
+		checkNotNull(UserManagementProvider.getSessionmanagement(), "session management not set");
 				
-		ISession session = UserManagement.getSessionmanagement().loginSuperUser(null, "");
+		ISession session = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 		
 		// try to start the executor
 		if (!executor.isRunning()){

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -39,7 +39,7 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 
 		
 		try {
-			UserManagement.getSessionmanagement().logout(caller);
+			UserManagementProvider.getSessionmanagement().logout(caller);
 			
 		} catch( Exception ex ) {
 			ex.printStackTrace();

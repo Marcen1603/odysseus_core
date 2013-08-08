@@ -87,7 +87,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -381,7 +381,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				// execute command
 				LOG.debug("Executing " + cmd);
 				cmd.execute(getDataDictionary(),
-						(IUserManagementWritable) UserManagement
+						(IUserManagementWritable) UserManagementProvider
 								.getUsermanagement());
 			}
 		}
@@ -839,13 +839,13 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		UserManagement.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement().hasPermission(caller,
 				executorAction, "Query " + query.getID())
 				||
 				// User is owner
 				query.isOwner(caller) ||
 		// User has higher right
-		UserManagement.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement().hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "
@@ -859,10 +859,10 @@ public class StandardExecutor extends AbstractExecutor implements
 			ExecutorPermission executorAction) {
 		if (!(
 		// User has right
-		UserManagement.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement().hasPermission(caller,
 				executorAction, ExecutorPermission.objectURI) ||
 		// User has higher right
-		UserManagement.getUsermanagement().hasPermission(caller,
+		UserManagementProvider.getUsermanagement().hasPermission(caller,
 				ExecutorPermission.hasSuperAction(executorAction),
 				ExecutorPermission.objectURI))) {
 			throw new PermissionException("No Right to execute "

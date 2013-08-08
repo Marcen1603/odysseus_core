@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPerm
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.NullUserException;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.ClearPhysicalSubscriptionsLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
@@ -832,7 +832,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission, String objectURI) {
-		return UserManagement.getUsermanagement().hasPermission(caller, permission, objectURI) || UserManagement.getUsermanagement().hasPermission(caller, permission, createUserUri(objectURI, caller));
+		return UserManagementProvider.getUsermanagement().hasPermission(caller, permission, objectURI) || UserManagementProvider.getUsermanagement().hasPermission(caller, permission, createUserUri(objectURI, caller));
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission) {

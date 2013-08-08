@@ -75,7 +75,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PrintGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -863,7 +863,7 @@ public class OdysseusConsole implements CommandProvider,
 		String[] args = support.getArgs(ci);
 		try {
 			if (args.length == 3) {
-				currentUser = UserManagement.getSessionmanagement().login(
+				currentUser = UserManagementProvider.getSessionmanagement().login(
 						args[0], args[1].getBytes(), args[2]);
 				if (currentUser != null) {
 					ci.println("User " + args[0] + " successfully logged in.");
@@ -881,7 +881,7 @@ public class OdysseusConsole implements CommandProvider,
 	@Help(parameter = "<logout>", description = "Logout current user.")
 	public void _logout(CommandInterpreter ci) {
 		try {
-			UserManagement.getSessionmanagement().logout(currentUser);
+			UserManagementProvider.getSessionmanagement().logout(currentUser);
 			currentUser = null;
 			ci.println("Current user logged out ");
 		} catch (Exception e) {
@@ -1855,7 +1855,7 @@ public class OdysseusConsole implements CommandProvider,
 			System.gc();
 
 			// parse and run queries
-			ISession user = UserManagement.getSessionmanagement()
+			ISession user = UserManagementProvider.getSessionmanagement()
 					.loginSuperUser(null, "");
 			try {
 				if (i == 0) {
