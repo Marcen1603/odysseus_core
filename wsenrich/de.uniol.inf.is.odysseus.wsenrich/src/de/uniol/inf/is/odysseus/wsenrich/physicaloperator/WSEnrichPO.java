@@ -7,7 +7,7 @@ import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.cache.IReadOnlyCache;
+import de.uniol.inf.is.odysseus.cache.ICache;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -49,7 +49,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final IKeyFinder keyFinder;
 	private final ISoapMessageCreator soapMessageCreator;
 	private final IMessageManipulator soapMessageManipulator;
-	private final IReadOnlyCache cacheManager;
+	private final ICache cacheManager;
 	static Logger logger = LoggerFactory.getLogger(WSEnrichPO.class);
 	
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
@@ -60,7 +60,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
 					HttpEntityToStringConverter converter, IKeyFinder keyFinder, 
 					ISoapMessageCreator soapMessageCreator, IMessageManipulator soapMessageManipulator,
-					IReadOnlyCache cacheManager) {
+					ICache cacheManager) {
 						
 		super();
 		this.serviceMethod = serviceMethod;

@@ -25,9 +25,9 @@ import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.SoapMessageCreatorRegistry;
 import de.uniol.inf.is.odysseus.cache.CacheEntry;
 import de.uniol.inf.is.odysseus.cache.ICacheStore;
-import de.uniol.inf.is.odysseus.cache.IReadOnlyCache;
+import de.uniol.inf.is.odysseus.cache.ICache;
 import de.uniol.inf.is.odysseus.cache.MainMemoryStore;
-import de.uniol.inf.is.odysseus.cache.ReadOnlyCache;
+import de.uniol.inf.is.odysseus.cache.Cache;
 import de.uniol.inf.is.odysseus.cache.removalstrategy.IRemovalStrategy;
 import de.uniol.inf.is.odysseus.cache.removalstrategy.RemovalStrategyRegistry;
 
@@ -61,7 +61,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 		HttpEntityToStringConverter converter = new HttpEntityToStringConverter(logical.getCharset());
 		IKeyFinder keyFinder = KeyFinderRegistry.getInstance(logical.getParsingMethod());
 		
-		IReadOnlyCache cacheManager;
+		ICache cacheManager;
 		//Create a cache if its activated by the user
 		if(logical.getCache()) {
 			cacheManager = createCache(logical);
@@ -122,10 +122,10 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 	 * @param logical
 	 * @return the cache
 	 */
-	private IReadOnlyCache createCache(WSEnrichAO logical) {
+	private ICache createCache(WSEnrichAO logical) {
 		ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<>(logical.getCacheSize() + 1);
 		IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
-		return new ReadOnlyCache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());	
+		return new Cache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());	
 	}
 
 }
