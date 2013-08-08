@@ -781,6 +781,7 @@ abstract public class AbstractUserManagement<TENANT extends ITenant, USER extend
 	public void initialize(){
 		if (!initialized){
 			process_init();
+			initialized = true;
 		}
 	}
 	
