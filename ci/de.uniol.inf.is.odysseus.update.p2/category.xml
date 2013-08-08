@@ -147,11 +147,14 @@
    <feature url="features/de.uniol.inf.is.odysseus.product.serverandstudio.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.serverandstudio.feature" version="1.0.0.qualifier">
       <category name="de.uniol.inf.is.odysseus.update.category.products"/>
    </feature>
+   <feature url="features/de.uniol.inf.is.odysseus.product.platform.feature_1.0.0.qualifier.jar" id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier">
+      <category name="de.uniol.inf.is.odysseus.update.category.products"/>
+   </feature>
    <category-def name="de.uniol.inf.is.odysseus.update.category.products" label="Product Definitions (Do not use)"/>
    <category-def name="de.uniol.inf.is.odysseus.update.category.applications" label="Applications"/>
-   <category-def name="de.uniol.inf.is.odysseus.update.category.features" label="Odysseus">
+   <category-def name="de.uniol.inf.is.odysseus.update.category.features" label="Odysseus Plugins">
       <description>
-         These features can be installed additionally. However, there are some features that may not be installed at once (e.g. usermanegement.filestore and usermanagement.mem).
+         These features can be installed additionally or are already installed and may be updated.
       </description>
    </category-def>
 </site>
