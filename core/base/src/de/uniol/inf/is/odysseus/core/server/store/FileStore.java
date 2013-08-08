@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,11 +44,11 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	private MemoryStore<IDType, STORETYPE> cache = new MemoryStore<IDType, STORETYPE>();
 	private Map<IDType, Boolean> serializableTestPassed = new HashMap<IDType, Boolean>();
 
+	private boolean initialzed;
+
 	public FileStore(String path) throws IOException {
 		this.path = path;
-		loadCache();
-		logger.debug("Loaded from " + path + " " + cache.entrySet().size()
-				+ " values");
+		initialzed = false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -69,16 +69,20 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 						serializableTestPassed.put(key, Boolean.TRUE);
 
 					} catch (Exception e) {
-						logger.error("Error reading from "+path);
+						logger.error("Error reading from " + path);
 						e.printStackTrace();
 					}
 				}
 			} catch (Exception e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 			in.close();
 		} catch (EOFException e) {
 		}
+		initialzed = true;
+		logger.debug("Loaded from " + path + " " + cache.entrySet().size()
+				+ " values");
+		
 	}
 
 	private void saveCache() throws IOException {
@@ -96,11 +100,25 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 
 	@Override
 	public STORETYPE get(IDType id) {
+		if (!initialzed){
+			try {
+				loadCache();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return cache.get(id);
 	}
 
 	@Override
 	public void put(IDType id, STORETYPE elem) throws StoreException {
+		if (!initialzed){
+			try {
+				loadCache();
+			} catch (IOException e) {
+				throw new StoreException(e);
+			}
+		}
 		cache.put(id, elem);
 		// Do serializable test for this new object
 		try {
@@ -112,7 +130,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			saveCache();
 		} catch (Exception e) {
 			logger.warn(e.getMessage()
-					+ " Tried to store non serializable object " + elem+ " in "+path);
+					+ " Tried to store non serializable object " + elem
+					+ " in " + path);
 			e.printStackTrace();
 			serializableTestPassed.put(id, Boolean.FALSE);
 		}
