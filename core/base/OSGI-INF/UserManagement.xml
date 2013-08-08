@@ -15,6 +15,6 @@
   limitations under the License.
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement">
-   <implementation class="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagement"/>
+   <implementation class="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider"/>
    <reference bind="bindUserManagement" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement" name="IUserManagement" policy="dynamic" unbind="unbindUserManagement"/>
 </scr:component>
