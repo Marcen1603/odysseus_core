@@ -248,6 +248,33 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		} else if(!parsingMethod.equals(other.parsingMethod)) {
 			return false;
 		}
+		if(outerJoin == false) {
+			if(other.outerJoin == true) {
+				return false;
+			}
+		} else if(outerJoin == true) {
+			if(other.outerJoin == false) {
+				return false;
+			}
+		}
+		if(keyValueOutput == false) {
+			if(other.keyValueOutput == true) {
+				return false;
+			}
+		} else if(keyValueOutput == true) {
+			if(other.keyValueOutput == false) {
+				return false;
+			}
+		}
+		if(multiTupleOutput == false) {
+			if(other.multiTupleOutput == true) {
+				return false;
+			}
+		} else if(multiTupleOutput == true) {
+			if(other.multiTupleOutput == false) {
+				return false;
+			}
+		}
 		return true;
 	}
 	
