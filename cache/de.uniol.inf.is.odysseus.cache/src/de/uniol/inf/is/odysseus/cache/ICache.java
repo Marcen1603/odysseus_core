@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public interface IReadOnlyCache {
+public interface ICache {
 	
 	/**
 	 * get the ArrayList of IStreamObjects from the cache

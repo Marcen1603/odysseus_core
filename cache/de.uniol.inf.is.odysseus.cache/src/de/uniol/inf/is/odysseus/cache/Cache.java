@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import de.uniol.inf.is.odysseus.cache.removalstrategy.IRemovalStrategy;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-public class ReadOnlyCache implements IReadOnlyCache {
+public class Cache implements ICache {
 	
 	/**
 	 * The implementation of the cache store
@@ -46,7 +46,7 @@ public class ReadOnlyCache implements IReadOnlyCache {
 	 * @param time the expiration time
 	 * @param size the number of maximum tuples which will be hold in the cache
 	 */
-	public ReadOnlyCache(ICacheStore<Object, CacheEntry> cacheStore, IRemovalStrategy removalStrategy, 
+	public Cache(ICacheStore<Object, CacheEntry> cacheStore, IRemovalStrategy removalStrategy, 
 						long time, int size) {
 		this.cacheStore = cacheStore;
 		this.removalStrategy = removalStrategy;
