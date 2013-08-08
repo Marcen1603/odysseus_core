@@ -51,6 +51,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     private int port;
     private TCPConnector connector;
     private NioTcpConnection connection;
+    
     /** In and output for data transfer */
     private InputStream input;
     private OutputStream output;
