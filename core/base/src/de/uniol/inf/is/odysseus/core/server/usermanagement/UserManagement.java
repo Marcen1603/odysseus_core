@@ -30,7 +30,7 @@ public class UserManagement {
 	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
 	
 	
-	static public IUserManagement getUsermanagement() {
+	static synchronized public IUserManagement getUsermanagement() {
 		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
 		if (!ret.isInitialized()){
 			ret.initialize();
