@@ -190,16 +190,17 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	 */
 	public void updateIntervallInScreenManager(boolean first) {
 
+		
 		// Start
-		if (streamMapEditor.getScreenManager().getMaxIntervalStart()
-				.after(puffer.getMinTs()) || first) {
+		if (puffer.getMinTs() != null && (streamMapEditor.getScreenManager().getMaxIntervalStart()
+				.after(puffer.getMinTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalStart(
 					puffer.getMinTs());
 		}
 
 		// End
-		if (streamMapEditor.getScreenManager().getMaxIntervalEnd()
-				.before(puffer.getMaxTs()) || first) {
+		if (puffer.getMaxTs() != null && (streamMapEditor.getScreenManager().getMaxIntervalEnd()
+				.before(puffer.getMaxTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalEnd(
 					puffer.getMaxTs());
 		}
