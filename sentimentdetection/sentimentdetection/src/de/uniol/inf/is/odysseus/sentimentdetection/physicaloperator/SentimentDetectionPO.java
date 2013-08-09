@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -55,6 +58,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	// help variable
 	private static int ctr = 0;
 	private boolean isTrained = false;
+	
+	private int trainSetSize = 0;
 
 	// currend classifier
 	private IClassifier algo;
@@ -65,9 +70,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	// buffer
 	private List<Tuple> buffer = new ArrayList<>();
-	// private Map<String, Integer> trainingset = new TreeMap<String,
-	// Integer>();
-	private List<TrainSetEntry> trainingset = new ArrayList<TrainSetEntry>();
 
 	// attribute positions
 	private int attributeTrainSetTextPos = -1;
@@ -75,6 +77,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	private int attributeTestSetTextPos = -1;
 	private int attributeTestSetTrueDecisionPos = -1;
+	
+	static Logger logger = LoggerFactory.getLogger(SentimentDetectionPO.class);
 
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
 			int trainSetMinSize, String domain, boolean debugClassifier,
@@ -148,35 +152,27 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			isStarted = true;
 		}
 		if (port == 0) {
-			// add trainingsset
-			System.out.println("Trainingssize: " + trainingset.size());
-			System.out.println(object.getAttribute(attributeTrainSetTextPos)
-					.toString());
+			logger.debug("trainingSetSize: " + trainSetSize);
 
 			TrainSetEntry entry = new TrainSetEntry();
+			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
+			
 			// remove stopwords
 			if (algo.getRemoveStopWords()) {
-				entry.setRecord(stopwordsSet.removeStopWords(object.getAttribute(
-						attributeTrainSetTextPos).toString()));
+				entry.setRecord(stopwordsSet.removeStopWords(object.getAttribute(attributeTrainSetTextPos).toString()));
 			} else {
-				entry.setRecord(object.getAttribute(attributeTrainSetTextPos)
-						.toString());
+				entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
 			}
 
 			// stemm words
 			if (algo.getStemmWords()) {
 				entry.setRecord(stopwordsSet.stemmRecord(entry.getRecord()));
 			}
-
-			entry.setTrueDecision(Integer.parseInt(object
-					.getAttribute(attributeTrainSetTrueDecisionPos).toString()
-					.trim()));
-			trainingset.add(entry);
-
-			if (trainingset.size() >= trainSetMinSize || isTrained) {
-				startTimeTrain = System.currentTimeMillis();
-				algo.trainClassifier(trainingset, isTrained);
-				stopTimeTrain = System.currentTimeMillis();
+		
+			algo.trainClassifier(entry, isTrained);
+			trainSetSize++;
+			
+			if (trainSetSize >= trainSetMinSize || isTrained) {
 				isTrained = true;
 				// synchronized for java.util.ConcurrentModificationException
 				// problems
@@ -189,7 +185,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 						buffer.clear();
 					}
-					trainingset.clear();
 				}
 
 			}
@@ -287,8 +282,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				}
 			}
 
-			System.out.println("record: "
-					+ object.getAttribute(attributeTestSetTextPos).toString());
+			System.out.println("record: "+ object.getAttribute(attributeTestSetTextPos).toString());
 			System.out.println("true decision: " + truedecision);
 			System.out.println("decision: " + decision);
 			System.out.println("total wrong: " + wrongdecision);

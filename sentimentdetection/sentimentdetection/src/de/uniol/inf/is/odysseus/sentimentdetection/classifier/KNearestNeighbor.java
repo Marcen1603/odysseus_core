@@ -27,7 +27,6 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 	private Map<String, Integer> freq = new HashMap<String, Integer>();
 	private Map<List<String>, Integer> trainfeatures = new HashMap<List<String>, Integer>();
-
 	private int ntr = 0;
 
 	public KNearestNeighbor() {
@@ -44,20 +43,13 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 
 	@Override
-	public void trainClassifier(List<TrainSetEntry> trainingset,
+	public void trainClassifier(TrainSetEntry trainentry,
 			boolean isTrained) {
+		
+	ntr++;
 
-		if (!isTrained) {
-			freq.clear();
-			trainfeatures.clear();
-			ntr = trainingset.size();
-		} else {
-			ntr += trainingset.size();
-		}
 
-		for (TrainSetEntry e : trainingset) {
-
-			List<String> words = getWords(e.getRecord());
+			List<String> words = getWords(trainentry.getRecord());
 
 			for (String word : words) {
 				if (!freq.containsKey(word)) {
@@ -68,8 +60,8 @@ public class KNearestNeighbor extends AbstractClassifier {
 				}
 			}
 
-			trainfeatures.put(words, e.getTrueDecisio());
-		}
+			trainfeatures.put(words, trainentry.getTrueDecisio());
+		
 
 	}
 

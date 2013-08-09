@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -37,24 +36,15 @@ public class NaiveBayes extends AbstractClassifier {
 	}
 
 	@Override
-	public void trainClassifier(List<TrainSetEntry> trainingset,
-			boolean isTrained) {
+	public void trainClassifier(TrainSetEntry trainentry, boolean isTrained) {
+	
 
-		logger.debug("trainingsset size: " + trainingset.size());
-		logger.debug("domain: " + domain);
+	logger.debug("domain: " + domain);
 
-		// clear positivewords/negativewords
-		if (!isTrained) {
-			positivewords.clear();
-			negativewords.clear();
-		}
-
-		for (TrainSetEntry e : trainingset) {
-
-			if (e.getTrueDecisio() == 1) {
+			if (trainentry.getTrueDecisio() == 1) {
 				// positive
 				for (int i = 0; i < ngramUpTo; i++) {
-					for (String singleword : NGramm.ngrams(e.getRecord(), ngram
+					for (String singleword : NGramm.ngrams(trainentry.getRecord(), ngram
 							- i)) {
 						if (!positivewords
 								.containsKey(singleword.toLowerCase())) {
@@ -71,7 +61,7 @@ public class NaiveBayes extends AbstractClassifier {
 			} else {
 				// negative
 				for (int i = 0; i < ngramUpTo; i++) {
-					for (String singleword : NGramm.ngrams(e.getRecord(), ngram
+					for (String singleword : NGramm.ngrams(trainentry.getRecord(), ngram
 							- i)) {
 						if (!negativewords
 								.containsKey(singleword.toLowerCase())) {
@@ -86,17 +76,9 @@ public class NaiveBayes extends AbstractClassifier {
 					}
 				}
 			}
-		}
-
-		logger.debug(algo_type.toLowerCase()
-				+ " classifier successfully initialized!");
-		logger.debug("positivewords size: " + positivewords.size());
-		logger.debug("negativewords size" + negativewords.size());
-		System.out.println(algo_type.toLowerCase()
-				+ " classifier successfully initialized!");
+	
 		System.out.println("positivewords size: " + positivewords.size());
-		System.out.println("negativewords size" + negativewords.size());
-
+		System.out.println("negativewords size: " + negativewords.size());
 	}
 
 	@Override

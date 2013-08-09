@@ -47,5 +47,5 @@ public abstract class AbstractClassifier implements IClassifier {
 	public boolean getStemmWords() {
 		return stemmWords;
 	}
-
+	
 }

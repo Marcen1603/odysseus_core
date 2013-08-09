@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
-import java.util.List;
-
-
 import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 
@@ -14,7 +11,7 @@ public interface IClassifier {
 
 	IClassifier getInstance(String domain);
 	
-	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
+	void trainClassifier(TrainSetEntry trainentry, boolean isTrained);
 	
 	void setDomain(String domain);
 	
@@ -35,5 +32,6 @@ public interface IClassifier {
 	String getType();
 	
 	String getDomain();
+	
 	
 }
