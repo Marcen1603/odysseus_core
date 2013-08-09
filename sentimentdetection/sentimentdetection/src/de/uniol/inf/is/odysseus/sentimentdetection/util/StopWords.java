@@ -4,9 +4,13 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.HashSet;
 
+/**
+ * @author Marc Preuchaft
+ * 
+ */
 public class StopWords {
 
-	//stopwords
+	// stopwords
 	private static String[] stopwords = { "a", "about", "above", "after",
 			"again", "against", "all", "am", "an", "and", "any", "are",
 			"aren't", "as", "at", "be", "because", "been", "before", "being",
@@ -31,7 +35,7 @@ public class StopWords {
 			"who's", "whom", "why", "why's", "with", "won't", "would",
 			"wouldn't", "you", "you'd", "you'll", "you're", "you've", "your",
 			"yours", "yourself", "yourselves" };
-	
+
 	public static Set<String> stopWordSet = new HashSet<String>(
 			Arrays.asList(stopwords));
 
@@ -49,23 +53,23 @@ public class StopWords {
 	}
 
 	public static boolean isStopword(String word) {
-		if (stopWordSet.contains(word)){
+		if (stopWordSet.contains(word)) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
-	
-	public static String stemmRecord(String record){
-		String result= "";
-		
+
+	public static String stemmRecord(String record) {
+		String result = "";
+
 		PorterStemmer stemmer = new PorterStemmer();
-		
+
 		for (String singleword : NGramm.ngrams(record, 1)) {
 			String stem = stemmer.stem(singleword);
 			result += stem + " ";
 		}
-		
+
 		return result;
 	}
 

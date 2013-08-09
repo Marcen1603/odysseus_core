@@ -12,19 +12,21 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import de.uniol.inf.is.odysseus.sentimentdetection.util.*;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
 
+/**
+ * @author Marc Preuschaft
+ *
+ */
 public class KNearestNeighbor extends AbstractClassifier {
 
 	static Logger logger = LoggerFactory.getLogger(KNearestNeighbor.class);
-	
+
 	private final String algo_type = "KNearestNeighbor";
 
 	private Map<String, Integer> freq = new HashMap<String, Integer>();
 	private Map<List<String>, Integer> trainfeatures = new HashMap<List<String>, Integer>();
-
 
 	private int ntr = 0;
 
@@ -40,18 +42,18 @@ public class KNearestNeighbor extends AbstractClassifier {
 	public IClassifier getInstance(String domain) {
 		return new KNearestNeighbor(domain);
 	}
-	
-	@Override
-	public void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained) {
 
-	if(!isTrained){	
-		freq.clear();
-		trainfeatures.clear();
-		ntr = trainingset.size();
-	}else{
-		ntr += trainingset.size();
-	}
-	
+	@Override
+	public void trainClassifier(List<TrainSetEntry> trainingset,
+			boolean isTrained) {
+
+		if (!isTrained) {
+			freq.clear();
+			trainfeatures.clear();
+			ntr = trainingset.size();
+		} else {
+			ntr += trainingset.size();
+		}
 
 		for (TrainSetEntry e : trainingset) {
 
@@ -73,17 +75,12 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 	@Override
 	public int startDetect(String text) {
-		/*
-		 * 1. Input sentence 2. split it up 3. clean up, remove stop words,
-		 * punctuation 4. stemming
-		 */
-
 		// final decision
 		int decision = 0;
-		
+
 		// look at top 5 results / 5-NN classifier
 		int classifierNN = 5;
-		
+
 		// counter for positive and negative decisions
 		int decisionpos = 0;
 		int decisionneg = 0;
@@ -96,7 +93,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 			List<String> commonwords = new ArrayList<String>();
 
 			Iterator<String> iterator = e.getKey().iterator();
-			
+
 			while (iterator.hasNext()) {
 				String singleword = iterator.next();
 				if (testwords.contains(singleword)) {
@@ -112,7 +109,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 			results.add(new ResultEntity(score, e.getValue()));
 		}
-		
+
 		Collections.sort(results, Collections.reverseOrder());
 
 		// only the first 5(classifierNN) scores desc
@@ -124,7 +121,6 @@ public class KNearestNeighbor extends AbstractClassifier {
 			}
 		}
 
-		
 		if (decisionneg > decisionpos) {
 			decision = -1;
 		} else {
@@ -134,10 +130,8 @@ public class KNearestNeighbor extends AbstractClassifier {
 		return decision;
 	}
 
-
-
 	/*
-	 * remove duplicates with order 
+	 * remove duplicates with order
 	 */
 	private List<String> removeDuplicateWithOrder(List<String> oldList) {
 		Set<Object> set = new HashSet<Object>();
@@ -152,32 +146,28 @@ public class KNearestNeighbor extends AbstractClassifier {
 
 		return oldList;
 	}
-	
-	
+
 	private List<String> getWords(String text) {
-		//PorterStemmer stemmer = new PorterStemmer();
+		// PorterStemmer stemmer = new PorterStemmer();
 
 		List<String> words = new ArrayList<String>();
-		
-		
-		for(int i=0 ; i<ngramUpTo;i++){	
-		// split text in singlewords
-			for (String singleword : NGramm.ngrams(text, ngram-i)) {
-				//only add words length > 2
+
+		for (int i = 0; i < ngramUpTo; i++) {
+			// split text in singlewords
+			for (String singleword : NGramm.ngrams(text, ngram - i)) {
+				// only add words length > 2
 				if (singleword.trim().length() > 2) {
-						words.add(singleword);
+					words.add(singleword);
 				}
 			}
 		}
 		// remove duplicates words
 		return removeDuplicateWithOrder(words);
 	}
-	
 
 	@Override
 	public String getType() {
 		return algo_type;
 	}
-	
 
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import java.util.List;
 
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -20,92 +19,83 @@ import de.uniol.inf.is.odysseus.sentimentdetection.util.StopWords;
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	//operator parameter
+	// operator parameter
 	private boolean splitDecision;
 	private String classifier;
 	private int trainSetMinSize;
 	private String domain;
 	private boolean debugClassifier = false;
 	private int maxBufferSize;
-	
-	//klassificator parameter
+
+	// classificator parameter
 	private int ngram;
 	private boolean ngramUpTo;
 	private boolean removeStopWords;
 	private boolean stemmWords;
 
-	//variable for debug
+	// variable for debug
 	private int posCtr = 0;
 	private int totalPosCtr = 0;
 	private int totalExistPosCtr = 0;
-	
+
 	private int negCtr = 0;
 	private int totalNegCtr = 0;
 	private int totalExistNegCtr = 0;
-	
+
 	private int wrongdecision = 0;
-	
+
 	private long startTime;
 	private long stopTime;
-	private boolean isStarted= false;
-	
+	private boolean isStarted = false;
+
 	private long startTimeTrain;
 	private long stopTimeTrain;
-	
-	//help variable
+
+	// help variable
 	private static int ctr = 0;
 	private boolean isTrained = false;
 
-	
-	//currend classifier
+	// currend classifier
 	private IClassifier algo;
-	
-	//buffer 
+
+	// buffer
 	private List<Tuple> buffer = new ArrayList<>();
-	//private Map<String, Integer> trainingset = new TreeMap<String, Integer>();
+	// private Map<String, Integer> trainingset = new TreeMap<String,
+	// Integer>();
 	private List<TrainSetEntry> trainingset = new ArrayList<TrainSetEntry>();
-	
-	
-	//attribute positions
+
+	// attribute positions
 	private int attributeTrainSetTextPos = -1;
 	private int attributeTrainSetTrueDecisionPos = -1;
-	
-	private int attributeTestSetTextPos = -1 ;
+
+	private int attributeTestSetTextPos = -1;
 	private int attributeTestSetTrueDecisionPos = -1;
 
-
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
-			int trainSetMinSize, 
-			String domain, 
-			boolean debugClassifier, 
-			int attributeTrainSetTextPos,
-			int attributeTrainSetTrueDecisionPos,
-			int attributeTestSetTextPos,
-			int attributeTestSetTrueDecisionPos,
-			int ngram,
-			boolean removeStopWords,
-			boolean stemmWords,
-			boolean ngramUpto,
-			int maxBufferSize) {
+			int trainSetMinSize, String domain, boolean debugClassifier,
+			int attributeTrainSetTextPos, int attributeTrainSetTrueDecisionPos,
+			int attributeTestSetTextPos, int attributeTestSetTrueDecisionPos,
+			int ngram, boolean removeStopWords, boolean stemmWords,
+			boolean ngramUpto, int maxBufferSize) {
 		super();
-		
+
 		this.splitDecision = splitDecision;
 		this.classifier = classifier;
 		this.trainSetMinSize = trainSetMinSize;
 		this.domain = domain;
 		this.debugClassifier = debugClassifier;
-		
+
 		this.attributeTrainSetTextPos = attributeTrainSetTextPos;
 		this.attributeTrainSetTrueDecisionPos = attributeTrainSetTrueDecisionPos;
-		
+
 		this.attributeTestSetTextPos = attributeTestSetTextPos;
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
-		
+
 		this.ngram = ngram;
 		this.ngramUpTo = ngramUpto;
 		this.removeStopWords = removeStopWords;
 		this.stemmWords = stemmWords;
-		
+
 		this.maxBufferSize = maxBufferSize;
 	}
 
@@ -119,12 +109,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.ngram = senti.ngram;
 		this.maxBufferSize = senti.maxBufferSize;
 	}
-	
+
 	@Override
 	public SentimentDetectionPO<T> clone() {
 		return new SentimentDetectionPO<T>(this);
 	}
-	
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -133,52 +122,56 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		algo = (IClassifier) ClassifierRegistry
-				.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);	
+		algo = (IClassifier) ClassifierRegistry.getClassifierByTypeAndDomain(
+				classifier.toLowerCase(), domain);
 		algo.setNgram(ngram);
 		algo.setRemoveStopWords(removeStopWords);
 		algo.setStemmWords(stemmWords);
-		if(ngramUpTo){
+		if (ngramUpTo) {
 			algo.setNgramUpTo(ngram);
 		}
-		
-		
+
 	}
 
 	@Override
-	protected  void process_next(Tuple object, int port) {
-	if(!isStarted){
-		startTime = System.currentTimeMillis();
-		isStarted= true;
-	}
+	protected void process_next(Tuple object, int port) {
+		if (!isStarted) {
+			startTime = System.currentTimeMillis();
+			isStarted = true;
+		}
 		if (port == 0) {
 			// add trainingsset
-			System.out.println("Trainingssize: "+trainingset.size());
-			System.out.println(object.getAttribute(attributeTrainSetTextPos).toString());
-			
+			System.out.println("Trainingssize: " + trainingset.size());
+			System.out.println(object.getAttribute(attributeTrainSetTextPos)
+					.toString());
+
 			TrainSetEntry entry = new TrainSetEntry();
-			//remove stopwords
-			if(algo.getRemoveStopWords()){
-				entry.setRecord(StopWords.removeStopWords(object.getAttribute(attributeTrainSetTextPos).toString()));
-			}else{
-				entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
+			// remove stopwords
+			if (algo.getRemoveStopWords()) {
+				entry.setRecord(StopWords.removeStopWords(object.getAttribute(
+						attributeTrainSetTextPos).toString()));
+			} else {
+				entry.setRecord(object.getAttribute(attributeTrainSetTextPos)
+						.toString());
 			}
-			
-			//stemm words
-			if(algo.getStemmWords()){
+
+			// stemm words
+			if (algo.getStemmWords()) {
 				entry.setRecord(StopWords.stemmRecord(entry.getRecord()));
 			}
-			
-			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
+
+			entry.setTrueDecision(Integer.parseInt(object
+					.getAttribute(attributeTrainSetTrueDecisionPos).toString()
+					.trim()));
 			trainingset.add(entry);
-			
 
 			if (trainingset.size() >= trainSetMinSize || isTrained) {
-				startTimeTrain =  System.currentTimeMillis();
+				startTimeTrain = System.currentTimeMillis();
 				algo.trainClassifier(trainingset, isTrained);
-				stopTimeTrain =  System.currentTimeMillis();
+				stopTimeTrain = System.currentTimeMillis();
 				isTrained = true;
-				// synchronized for java.util.ConcurrentModificationException problems				
+				// synchronized for java.util.ConcurrentModificationException
+				// problems
 				synchronized (this.buffer) {
 					// train classifier
 					if (buffer.size() > 0) {
@@ -194,7 +187,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			}
 		} else {
 			if (isTrained) {
-				// synchronized for java.util.ConcurrentModificationException problems		
+				// synchronized for java.util.ConcurrentModificationException
+				// problems
 				synchronized (this.buffer) {
 					if (buffer.size() > 0) {
 						for (Tuple buffered : this.buffer) {
@@ -205,10 +199,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				}
 				processSentimentDetection(object);
 			} else {
-				// synchronized for java.util.ConcurrentModificationException problems		
+				// synchronized for java.util.ConcurrentModificationException
+				// problems
 				synchronized (this.buffer) {
-					if(buffer.size()>= maxBufferSize){
-						buffer.remove(0);	
+					if (buffer.size() >= maxBufferSize) {
+						buffer.remove(0);
 					}
 					buffer.add(object);
 				}
@@ -217,80 +212,80 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 	}
 
-
-
 	@SuppressWarnings("unchecked")
 	private void processSentimentDetection(Tuple object) {
-			// get inputSize of the object
-			int inputSize = object.size();
+		// get inputSize of the object
+		int inputSize = object.size();
 
-			// create new output Tuple with size + 1
-			Tuple outputTuple = new Tuple(object.size() + 1, false);
+		// create new output Tuple with size + 1
+		Tuple outputTuple = new Tuple(object.size() + 1, false);
 
-			// Copy object Attributes to the new outputTuple
-			System.arraycopy(object.getAttributes(), 0,
-					outputTuple.getAttributes(), 0, inputSize);
-			
-			// text positive or negative
-			int decision;
-			String text = object.getAttribute(attributeTestSetTextPos).toString();
-			
-			//remove stopwords
-			if(algo.getRemoveStopWords()){
-				text = StopWords.removeStopWords(text);
+		// Copy object Attributes to the new outputTuple
+		System.arraycopy(object.getAttributes(), 0,
+				outputTuple.getAttributes(), 0, inputSize);
+
+		// text positive or negative
+		int decision;
+		String text = object.getAttribute(attributeTestSetTextPos).toString();
+
+		// remove stopwords
+		if (algo.getRemoveStopWords()) {
+			text = StopWords.removeStopWords(text);
+		}
+
+		// stemm words
+		if (algo.getStemmWords()) {
+			text = StopWords.stemmRecord(text);
+		}
+
+		decision = algo.startDetect(text);
+
+		// get OutputPort
+		int outputPort = getOutPutPort(decision);
+
+		// set the decision attribute
+		outputTuple.setAttribute(object.size(), decision);
+		outputTuple.setMetadata(object.getMetadata());
+		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
+
+		if (debugClassifier) {
+			// calculate error
+			String truedecision = outputTuple.getAttribute(
+					attributeTestSetTrueDecisionPos).toString();
+
+			if (Integer.parseInt(truedecision.trim()) == 1) {
+				totalExistPosCtr++;
+			} else {
+				totalExistNegCtr++;
 			}
-			
-			//stemm words
-			if(algo.getStemmWords()){
-				text = StopWords.stemmRecord(text);
-			}
-			
-			decision = algo.startDetect(text);
-			
-			// get OutputPort
-			int outputPort = getOutPutPort(decision);
 
-			// set the decision Attribute
-			outputTuple.setAttribute(object.size(), decision);		
-			outputTuple.setMetadata(object.getMetadata());
-			outputTuple.setRequiresDeepClone(object.requiresDeepClone());
-
-			if(debugClassifier){
-				// calculate error
-				String truedecision = outputTuple.getAttribute(attributeTestSetTrueDecisionPos).toString();
-					
-				if(Integer.parseInt(truedecision.trim()) == 1){
-					totalExistPosCtr++;
-				}else{
-					totalExistNegCtr++;
-				}
-				
-				if(decision == 1){
-					totalPosCtr++;
-				}else{
-					totalNegCtr++;
-				}
-				
-				if (Integer.parseInt(truedecision.trim()) != decision) {
-					wrongdecision++;
-					System.out.println("ERROR:-------------------------");
-				}else{
-					System.out.println("CORRECT:-----------------------");
-					if(Integer.parseInt(truedecision.trim()) == 1){
-						posCtr++;
-					}else{
-						negCtr++;
-					}
-				}
-				
-				System.out.println("record: " + object.getAttribute(attributeTestSetTextPos).toString());
-				System.out.println("true decision: " + truedecision);
-				System.out.println("decision: " + decision);
-				System.out.println("total wrong: " + wrongdecision);			
+			if (decision == 1) {
+				totalPosCtr++;
+			} else {
+				totalNegCtr++;
 			}
-			ctr++;
-			transfer(outputTuple, outputPort);
-		
+
+			if (Integer.parseInt(truedecision.trim()) != decision) {
+				wrongdecision++;
+				System.out.println("ERROR:-------------------------");
+			} else {
+				System.out.println("CORRECT:-----------------------");
+				if (Integer.parseInt(truedecision.trim()) == 1) {
+					posCtr++;
+				} else {
+					negCtr++;
+				}
+			}
+
+			System.out.println("record: "
+					+ object.getAttribute(attributeTestSetTextPos).toString());
+			System.out.println("true decision: " + truedecision);
+			System.out.println("decision: " + decision);
+			System.out.println("total wrong: " + wrongdecision);
+		}
+		ctr++;
+		transfer(outputTuple, outputPort);
+
 	}
 
 	/*
@@ -309,42 +304,47 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 		return outputPort;
 	}
-	
-	
 
 	@Override
 	protected void process_close() {
-		
-		if(debugClassifier){
-			System.out.println("Total counter: "+ctr);
+
+		if (debugClassifier) {
+			System.out.println("Total counter: " + ctr);
 			stopTime = System.currentTimeMillis();
-			System.out.println("Total time used: " + (stopTime-startTime));
-			System.out.println("Total train time used: " + (stopTimeTrain-startTimeTrain));
-			
-			
-			System.out.println("pos recall: " + Metrics.recall(posCtr, totalExistPosCtr));
-			System.out.println("pos precision: " + Metrics.precision(posCtr, totalPosCtr));
-			System.out.println("pos f-score: "+ Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr), Metrics.precision(posCtr, totalPosCtr)));
-						
+			System.out.println("Total time used: " + (stopTime - startTime));
+			System.out.println("Total train time used: "
+					+ (stopTimeTrain - startTimeTrain));
+
+			System.out.println("pos recall: "
+					+ Metrics.recall(posCtr, totalExistPosCtr));
+			System.out.println("pos precision: "
+					+ Metrics.precision(posCtr, totalPosCtr));
+			System.out.println("pos f-score: "
+					+ Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr),
+							Metrics.precision(posCtr, totalPosCtr)));
+
 			System.out.println();
 			System.out.println();
-			
-			System.out.println("neg recall: " + Metrics.recall(negCtr, totalExistNegCtr));
-			System.out.println("neg precision: " + Metrics.precision(negCtr, totalNegCtr));
-			System.out.println("neg f-score: "+ Metrics.f_score(Metrics.recall(negCtr, totalExistNegCtr), Metrics.precision(negCtr, totalNegCtr)));
-		
-		
+
+			System.out.println("neg recall: "
+					+ Metrics.recall(negCtr, totalExistNegCtr));
+			System.out.println("neg precision: "
+					+ Metrics.precision(negCtr, totalNegCtr));
+			System.out.println("neg f-score: "
+					+ Metrics.f_score(Metrics.recall(negCtr, totalExistNegCtr),
+							Metrics.precision(negCtr, totalNegCtr)));
+
 		}
-		
+
 		super.process_close();
-		
+
 		this.buffer.clear();
 		this.isTrained = false;
-	
-		if(algo != null){
+
+		if (algo != null) {
 			ClassifierRegistry.unregisterDomain(domain);
 		}
-		
+
 	}
 
 }

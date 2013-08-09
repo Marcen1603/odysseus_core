@@ -6,9 +6,15 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 
+/**
+ * @author Marc Preuschaft
+ *
+ */
 public interface IClassifier {
 
 	IClassifier getInstance(String domain);
+	
+	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
 	
 	void setDomain(String domain);
 	
@@ -20,16 +26,14 @@ public interface IClassifier {
 	
 	void setNgramUpTo(int ngramUpTo);
 	
-	void trainClassifier(List<TrainSetEntry> trainingset, boolean isTrained);
-	
 	int startDetect(String text);
+	
+	boolean getRemoveStopWords();
+	
+	boolean getStemmWords();
 	
 	String getType();
 	
 	String getDomain();
 	
-	boolean getRemoveStopWords();
-	
-	boolean getStemmWords();
-		
 }
