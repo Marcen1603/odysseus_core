@@ -50,6 +50,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private int attributeTestSetTrueDecisionPos = -1;
 	
 	
+	private String enrichAttribut = "decision";
+	
+	
 	
 	public SentimentDetectionAO(){
 		super();
@@ -91,7 +94,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	@Override 
 	public SDFSchema getOutputSchemaIntern(int pos){
 		
-		SDFAttribute sentDetection = new SDFAttribute(null,"decision",SDFDatatype.STRING);
+		SDFAttribute sentDetection = new SDFAttribute(null, enrichAttribut ,SDFDatatype.STRING);
 		
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		
@@ -178,6 +181,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	public void setMaxBufferSize(int maxBufferSize) {
 		this.maxBufferSize   = maxBufferSize;
 	}
+	
+	
+	@Parameter(name = "enrichAttribut", type=StringParameter.class, optional= true, doc="")
+	public void setEnrichAttribut(String enrichAttribut) {
+		this.enrichAttribut   = enrichAttribut;
+	}
 
 	public int getMaxBufferSize(){
 		return maxBufferSize;
@@ -249,6 +258,10 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public int getAttributeTestSetTrueDecisionPos(){
 		return attributeTestSetTrueDecisionPos;
+	}
+	
+	public String getEnrichAttribut(){
+		return enrichAttribut;
 	}
 	
 	@Override
