@@ -184,26 +184,37 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	/**
 	 * Updates the interval in the screenManager, e.g. when a connection was
 	 * deleted and the maximal possible interval changed
-	 * @param first If this is the first connection to update, it will ignore, if there
-	 * was an older / earlier date in the settings of the manager -> just sets the times from this buffer
-	 * as the timerange in the manager 
+	 * 
+	 * @param first
+	 *            If this is the first connection to update, it will ignore, if
+	 *            there was an older / earlier date in the settings of the
+	 *            manager -> just sets the times from this buffer as the
+	 *            timerange in the manager
 	 */
-	public void updateIntervallInScreenManager(boolean first) {
+	public boolean updateIntervallInScreenManager(boolean first) {
 
-		
+		// If this LayerUpdater changed anything in the screenManager
+		boolean changedSomething = false;
+
 		// Start
-		if (puffer.getMinTs() != null && (streamMapEditor.getScreenManager().getMaxIntervalStart()
-				.after(puffer.getMinTs()) || first)) {
+		if (puffer.getMinTs() != null
+				&& (streamMapEditor.getScreenManager().getMaxIntervalStart()
+						.after(puffer.getMinTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalStart(
 					puffer.getMinTs());
+			changedSomething = true;
 		}
 
 		// End
-		if (puffer.getMaxTs() != null && (streamMapEditor.getScreenManager().getMaxIntervalEnd()
-				.before(puffer.getMaxTs()) || first)) {
+		if (puffer.getMaxTs() != null
+				&& (streamMapEditor.getScreenManager().getMaxIntervalEnd()
+						.before(puffer.getMaxTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalEnd(
 					puffer.getMaxTs());
+			changedSomething = true;
 		}
+
+		return changedSomething;
 	}
 
 	@Override
