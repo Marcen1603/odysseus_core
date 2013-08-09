@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
-
+import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.StopWordsRegistry;
 
 
 @LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=2)
@@ -51,6 +51,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	
 	private String enrichAttribut = "decision";
+	private String language = "english";
 	
 	
 	
@@ -69,6 +70,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.ngram = sentimentDetectionAO.ngram;
         this.ngramUpTo = sentimentDetectionAO.ngramUpTo;
         this.stemmWords = sentimentDetectionAO.stemmWords;
+        this.language = sentimentDetectionAO.language;
      
         this.maxBufferSize = sentimentDetectionAO.maxBufferSize;
  
@@ -153,6 +155,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.attributeTestSetText = attributeTestSetText;
 	}
 	
+	@Parameter(name="language", type=StringParameter.class, optional= true, doc="")
+	public void setSanguage(String language){
+		this.language = language;
+	}
+	
+	
 	@Parameter(name = "ngram", type=IntegerParameter.class, optional= true, doc="")
 	public void setNgram(int ngram) {
 		this.ngram   = ngram;
@@ -186,6 +194,10 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	@Parameter(name = "enrichAttribut", type=StringParameter.class, optional= true, doc="")
 	public void setEnrichAttribut(String enrichAttribut) {
 		this.enrichAttribut   = enrichAttribut;
+	}
+	
+	public String getLanguage(){
+		return language;
 	}
 
 	public int getMaxBufferSize(){
@@ -268,6 +280,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	public boolean isValid(){
 		
 		List<String> validClassifier = ClassifierRegistry.getValidClassifier();
+		List<String> validLanguage = StopWordsRegistry.getValidLanguage();
 		
 		if(!validClassifier.contains(classifier.toLowerCase())){
 				addError(new IllegalParameterException(
@@ -317,7 +330,13 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			}
 		}
 		
-		
+	
+		if(!validLanguage.contains(language.toLowerCase())){
+				addError(new IllegalParameterException(
+						"Language: "+ language +" for stopwords not found!"));
+				return false;
+				
+			}
 
 		return true;
 	}

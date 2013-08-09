@@ -11,9 +11,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.IClassifier;
+import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.IStopWords;
+import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.StopWordsRegistry;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.Metrics;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
-import de.uniol.inf.is.odysseus.sentimentdetection.util.StopWords;
 
 @SuppressWarnings({ "rawtypes" })
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
@@ -57,6 +58,10 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	// currend classifier
 	private IClassifier algo;
+	// currend stopwords
+	
+	private IStopWords stopwordsSet;
+	private String language;
 
 	// buffer
 	private List<Tuple> buffer = new ArrayList<>();
@@ -76,7 +81,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTrainSetTextPos, int attributeTrainSetTrueDecisionPos,
 			int attributeTestSetTextPos, int attributeTestSetTrueDecisionPos,
 			int ngram, boolean removeStopWords, boolean stemmWords,
-			boolean ngramUpto, int maxBufferSize) {
+			boolean ngramUpto, String language, int maxBufferSize) {
 		super();
 
 		this.splitDecision = splitDecision;
@@ -97,6 +102,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.stemmWords = stemmWords;
 
 		this.maxBufferSize = maxBufferSize;
+		
+		this.language = language;
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -130,7 +137,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		if (ngramUpTo) {
 			algo.setNgramUpTo(ngram);
 		}
-
+		stopwordsSet = (IStopWords) StopWordsRegistry.getStopWordsByLanguage(language);
+	
 	}
 
 	@Override
@@ -148,7 +156,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			TrainSetEntry entry = new TrainSetEntry();
 			// remove stopwords
 			if (algo.getRemoveStopWords()) {
-				entry.setRecord(StopWords.removeStopWords(object.getAttribute(
+				entry.setRecord(stopwordsSet.removeStopWords(object.getAttribute(
 						attributeTrainSetTextPos).toString()));
 			} else {
 				entry.setRecord(object.getAttribute(attributeTrainSetTextPos)
@@ -157,7 +165,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 			// stemm words
 			if (algo.getStemmWords()) {
-				entry.setRecord(StopWords.stemmRecord(entry.getRecord()));
+				entry.setRecord(stopwordsSet.stemmRecord(entry.getRecord()));
 			}
 
 			entry.setTrueDecision(Integer.parseInt(object
@@ -230,12 +238,14 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		// remove stopwords
 		if (algo.getRemoveStopWords()) {
-			text = StopWords.removeStopWords(text);
+			text = 	stopwordsSet.removeStopWords(text);
+			//text = StopWords.removeStopWords(text);
 		}
 
 		// stemm words
 		if (algo.getStemmWords()) {
-			text = StopWords.stemmRecord(text);
+			text = stopwordsSet.stemmRecord(text);
+			//text = StopWords.stemmRecord(text);
 		}
 
 		decision = algo.startDetect(text);
