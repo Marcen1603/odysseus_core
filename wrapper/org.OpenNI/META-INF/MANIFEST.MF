@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenNI
+Bundle-SymbolicName: org.OpenNI
+Bundle-Version: 1.5.4
+Bundle-ClassPath: org.OpenNI.jar
+Bundle-Vendor: PrimeSense
+Export-Package: org.OpenNI;version="1.5.4"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="Dashboard Part Defaults"
+         name="Dashboard Part Defaults"
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.KinectColorMapDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.KinectColorMapConfigurer"
+            name="Kinect Color Map">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.KinectDepthMapDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.KinectDepthMapConfigurer"
+            name="Kinect Depth Map">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.KinectPointCloudDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.KinectPointCloudConfigurer"
+            name="Kinect Point Cloud">
+      </dashboardPart>
+   </extension>
+
+</plugin>
