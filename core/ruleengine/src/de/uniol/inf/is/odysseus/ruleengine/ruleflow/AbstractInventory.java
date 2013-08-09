@@ -117,7 +117,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 		// (like workFlow.get(group).iterator())!!
 		// thus, here comes a order-safe version...
 		
-		PriorityQueue<IRule<?, ?>> rules = this.ruleBase.get(group);
+		PriorityQueue<IRule<?, ?>> rules = new PriorityQueue<>(this.ruleBase.get(group));
 		if (!filter.isEmpty()) {
 			Iterator<IRule<?,?>> iter = rules.iterator();
 			while(iter.hasNext()){
