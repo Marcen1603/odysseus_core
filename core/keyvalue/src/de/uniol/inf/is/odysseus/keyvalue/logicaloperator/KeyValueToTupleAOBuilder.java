@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
+public class KeyValueToTupleAOBuilder extends AbstractOperatorBuilder {
 
 	private static final long serialVersionUID = -490395475058441123L;
 
@@ -25,7 +25,7 @@ public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
 	private final BooleanParameter keepInput = new BooleanParameter(
 			"keepInput", REQUIREMENT.OPTIONAL);
 	
-	public KeyValueToTupleBuilder() {
+	public KeyValueToTupleAOBuilder() {
 		super("KeyValueToTuple", 1, 1);
 		addParameters(outputschema, type, keepInput);
 	}
@@ -43,7 +43,7 @@ public class KeyValueToTupleBuilder extends AbstractOperatorBuilder {
 	
 	@Override
 	public IOperatorBuilder cleanCopy() {
-		return new KeyValueToTupleBuilder();
+		return new KeyValueToTupleAOBuilder();
 	}
 
 	@Override
