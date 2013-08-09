@@ -53,7 +53,8 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     private NioTcpConnection connection;
     
     /** In and output for data transfer */
-    private InputStream input;
+    @SuppressWarnings("unused")
+	private InputStream input;
     private OutputStream output;
     private int readBufferSize;
     private int writeBufferSize;
