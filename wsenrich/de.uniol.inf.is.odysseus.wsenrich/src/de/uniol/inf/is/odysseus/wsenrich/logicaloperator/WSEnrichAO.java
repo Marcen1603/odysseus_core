@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.wsenrich.util.KeyFinderRegistry;
-import de.uniol.inf.is.odysseus.wsenrich.util.RequestBuilderRegistry;
+import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
+import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 
 
 @LogicalOperator(maxInputPorts=1, minInputPorts=1, name="WSENRICH")

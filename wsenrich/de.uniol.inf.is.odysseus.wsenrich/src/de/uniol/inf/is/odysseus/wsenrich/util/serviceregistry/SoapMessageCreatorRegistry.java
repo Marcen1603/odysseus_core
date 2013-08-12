@@ -1,10 +1,12 @@
-package de.uniol.inf.is.odysseus.wsenrich.util;
+package de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry;
 
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
+
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
 
 /* Note: Based on a copy of TransportHandlerRegistry */
 public class SoapMessageCreatorRegistry {

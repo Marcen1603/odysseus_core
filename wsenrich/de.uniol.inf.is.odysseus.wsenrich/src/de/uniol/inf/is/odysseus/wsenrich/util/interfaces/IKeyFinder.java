@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wsenrich.util;
+package de.uniol.inf.is.odysseus.wsenrich.util.interfaces;
 
 public interface IKeyFinder {
 	

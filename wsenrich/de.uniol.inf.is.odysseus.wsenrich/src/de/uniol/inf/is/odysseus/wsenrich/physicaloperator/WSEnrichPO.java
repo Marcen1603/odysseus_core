@@ -20,11 +20,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
-import de.uniol.inf.is.odysseus.wsenrich.util.IConnectionForWebservices;
-import de.uniol.inf.is.odysseus.wsenrich.util.IKeyFinder;
-import de.uniol.inf.is.odysseus.wsenrich.util.IMessageManipulator;
-import de.uniol.inf.is.odysseus.wsenrich.util.IRequestBuilder;
-import de.uniol.inf.is.odysseus.wsenrich.util.ISoapMessageCreator;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IConnectionForWebservices;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IKeyFinder;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageManipulator;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IRequestBuilder;
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
 
 public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 

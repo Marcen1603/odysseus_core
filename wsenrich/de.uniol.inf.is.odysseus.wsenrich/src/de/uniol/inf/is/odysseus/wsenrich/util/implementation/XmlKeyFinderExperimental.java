@@ -1,4 +1,6 @@
-package de.uniol.inf.is.odysseus.wsenrich.util;
+package de.uniol.inf.is.odysseus.wsenrich.util.implementation;
+
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IKeyFinder;
 
 public class XmlKeyFinderExperimental implements IKeyFinder {
 	

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wsenrich.util;
+package de.uniol.inf.is.odysseus.wsenrich.util.implementation;
 
 import java.io.IOException;
 import org.apache.xmlbeans.XmlException;
@@ -9,6 +9,8 @@ import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter;
 import com.eviware.soapui.model.iface.Operation;
 import com.eviware.soapui.support.SoapUIException;
+
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
 
 public class SoapUIImpl implements ISoapMessageCreator {
 	

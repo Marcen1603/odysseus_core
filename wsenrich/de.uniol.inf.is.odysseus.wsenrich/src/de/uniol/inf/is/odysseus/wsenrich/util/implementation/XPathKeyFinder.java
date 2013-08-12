@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wsenrich.util;
+package de.uniol.inf.is.odysseus.wsenrich.util.implementation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IKeyFinder;
 
 public class XPathKeyFinder implements IKeyFinder {
 	
