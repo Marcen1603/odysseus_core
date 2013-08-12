@@ -15,6 +15,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  com.google.protobuf;bundle-version="2.4.1",
- org.jboss.netty;bundle-version="3.3.1"
+ org.jboss.netty
 Service-Component: OSGI-INF/RuleProvider.xml, OSGI-INF/TypeRegistry.xml
 Export-Package: de.uniol.inf.is.odysseus.wrapper.protobuf
