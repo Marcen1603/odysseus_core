@@ -1643,6 +1643,13 @@ public class OdysseusConsole implements CommandProvider,
 			}
 		}
 	}
+	
+	
+	@Help(parameter = "", description = "tries to update odysseus")
+	public void _updateOdysseus(CommandInterpreter ci) {
+		P2ConsoleWrapper.checkForUpdates(ci);
+	}
+	
 
 	@Override
 	public String getHelp() {
