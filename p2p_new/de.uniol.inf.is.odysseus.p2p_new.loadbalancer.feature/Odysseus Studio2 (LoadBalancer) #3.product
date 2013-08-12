@@ -76,7 +76,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.datadictionary.mem.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
