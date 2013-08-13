@@ -32,7 +32,7 @@ public class KinectProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
      * @param direction
      * Direction of the stream.
      * @param access
-     * Acces pattern.
+     * Access pattern.
      */
     public KinectProtocolHandler(ITransportDirection direction,
             IAccessPattern access) {

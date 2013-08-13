@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="Dashboard Part Defaults"
+         name="Dashboard Part Defaults"
+         point="de.uniol.inf.is.odysseus.rcp.DashboardPart">
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.wrapper.inertiacube.dashboard.part.InertiaYawPitchRollPart"
+            configClass="de.uniol.inf.is.odysseus.wrapper.inertiacube.dashboard.part.InertiaYawPitchRollConfigurer"
+            name="InertiaCube Yaw Pitch Roll">
+      </dashboardPart>
+   </extension>
+
+</plugin>
