@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,7 +43,7 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 	abstract StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType);
 	
 	@Override
-	public Entry<Integer,T> createOperatorFromStatement(StructuredDocument<? extends TextElement<?>> doc) {
+	public SimpleImmutableEntry<Integer,T> createOperatorFromStatement(StructuredDocument<? extends TextElement<?>> doc) {
 		Enumeration<? extends TextElement<?>> elems = doc.getChildren();
 		TextElement<?> contentElement = null;
 		while(elems.hasMoreElements()) {
@@ -57,7 +58,7 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 				contentElement = elem;
 			}
 		}
-		Entry<Integer,T>  result= createSpecificOperatorFromStatement(contentElement,operatorId);
+		SimpleImmutableEntry<Integer,T>  result= createSpecificOperatorFromStatement(contentElement,operatorId);
 		setSchemataForOperator(result.getValue());
 		return result;
 	}
@@ -67,5 +68,5 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 			o.setOutputSchema(e.getValue(), e.getKey());
 		}
 	}
-	abstract Entry<Integer,T> createSpecificOperatorFromStatement(TextElement<?> contentElement, int operatorId);
+	abstract SimpleImmutableEntry<Integer,T> createSpecificOperatorFromStatement(TextElement<?> contentElement, int operatorId);
 }

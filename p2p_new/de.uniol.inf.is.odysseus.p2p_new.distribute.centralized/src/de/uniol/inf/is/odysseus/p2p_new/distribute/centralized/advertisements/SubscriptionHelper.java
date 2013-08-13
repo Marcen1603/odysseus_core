@@ -65,7 +65,7 @@ public class SubscriptionHelper {
 		return null;
 	}
 	
-	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked" })
 	public static void reconnectOperators(Map<Integer, IPhysicalOperator> newOperators, TextElement<?> statement) {
 		Enumeration<? extends TextElement<?>> elems = statement.getChildren();
 		
