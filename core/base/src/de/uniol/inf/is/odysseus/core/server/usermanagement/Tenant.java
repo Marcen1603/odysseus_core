@@ -18,5 +18,6 @@ public class Tenant extends AbstractTenant {
 	public Long getVersion() {
 		return null;
 	}
+	
 
 }

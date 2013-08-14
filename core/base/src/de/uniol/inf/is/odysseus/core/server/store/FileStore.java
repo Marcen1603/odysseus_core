@@ -70,8 +70,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 						serializableTestPassed.put(key, Boolean.TRUE);
 
 					} catch (Exception e) {
-						logger.error("Error reading from " + path);
-						e.printStackTrace();
+						logger.error("Error reading from " + path+" "+e.getMessage());
+						//e.printStackTrace();
 					}
 				}
 			} catch (Exception e) {

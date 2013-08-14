@@ -57,5 +57,10 @@ abstract public class AbstractTenant implements ITenant, Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }
