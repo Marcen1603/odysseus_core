@@ -9,6 +9,6 @@ Import-Package: com.google.common.collect,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
-Service-Component: OSGI-INF/RemovalStrategyRegistryService.xml, OSGI-INF/FIFO.xml, OSGI-INF/FIFOService.xml, OSGI-INF/LFUService.xml, OSGI-INF/LRUService.xml, OSGI-INF/RANDOMService.xml
+Service-Component: OSGI-INF/RemovalStrategyRegistryService.xml, OSGI-INF/FIFOService.xml, OSGI-INF/LFUService.xml, OSGI-INF/LRUService.xml, OSGI-INF/RANDOMService.xml
 Export-Package: de.uniol.inf.is.odysseus.cache,
  de.uniol.inf.is.odysseus.cache.removalstrategy
