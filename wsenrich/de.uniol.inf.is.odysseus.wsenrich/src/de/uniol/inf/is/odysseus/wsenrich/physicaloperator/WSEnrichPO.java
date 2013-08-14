@@ -40,6 +40,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	private final boolean outerJoin;
 	private final boolean keyValueOutput;
 	private final boolean multiTupleOutput;
+	private final int[] uniqueKeys;
 	private final int[] parameterPositions;
 	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
 	private final IMetadataMergeFunction<T> metaMergeFunction;
@@ -55,7 +56,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	public WSEnrichPO(String serviceMethod, String method, String url, String urlsuffix,
 					List<Option> arguments, String operation, List<SDFAttribute> receivedData,
 					String charset, String parsingMethod, boolean outerJoin, boolean keyValueOutput,
-					boolean multiTupleOutput, IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
+					boolean multiTupleOutput, int[] uniqueKey, IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
 					IMetadataMergeFunction<T> metaMergeFunction,
 					IConnectionForWebservices connection, IRequestBuilder requestBuilder, 
 					HttpEntityToStringConverter converter, IKeyFinder keyFinder, 
@@ -75,6 +76,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.outerJoin = outerJoin;
 		this.keyValueOutput = keyValueOutput;
 		this.multiTupleOutput = multiTupleOutput;
+		this.uniqueKeys = uniqueKey;
 		this.parameterPositions = new int[arguments.size()];
 		this.dataMergeFunction = dataMergeFunction;
 		this.metaMergeFunction = metaMergeFunction;
@@ -102,6 +104,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.outerJoin = wsEnrichPO.outerJoin;
 		this.keyValueOutput = wsEnrichPO.keyValueOutput;
 		this.multiTupleOutput = wsEnrichPO.multiTupleOutput;
+		this.uniqueKeys = wsEnrichPO.uniqueKeys;
 		this.parameterPositions = Arrays.copyOf(
 				wsEnrichPO.parameterPositions,
 				wsEnrichPO.parameterPositions.length);
@@ -126,8 +129,10 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	protected void process_next(Tuple<T> inputTuple, int port) {
 		if(cacheManager == null) {
 			process_next_without_cache(inputTuple, port);
-		} else {
+		} else if(uniqueKeys == null) {
 			process_next_with_cache(inputTuple, port);
+		} else {
+			process_next_with_uniqueKey(inputTuple, port);
 		}
 	}
 	
@@ -275,8 +280,11 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 				return false;
 			}
 		}
+		if(!Arrays.equals(uniqueKeys, other.uniqueKeys)) {
+			return false;
+		}
 		return true;
-	}
+	} 
 	
 	/**
 	 * Retrieves data from the specified webservice and puts the tuples into the cache
@@ -352,7 +360,6 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	 */
 	@SuppressWarnings("unchecked")
 	private void process_next_without_cache(Tuple<T> inputTuple, int port) {
-
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		String postData = "";
 		if(soapMessageCreator != null && soapMessageManipulator != null) {
@@ -399,6 +406,68 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
 			outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
 			transfer(outputTuple);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void process_next_with_uniqueKey(Tuple<T> inputTuple, int port) {
+		//get Tuples from the Cache with the HashCode of specified Attributes of the inputTuple as the referencing key
+		ArrayList<IStreamObject<?>> cachedTuples = cacheManager.get(inputTuple.hashCodeOfSpecifiedAttributes(uniqueKeys));
+			if(cachedTuples == null) {
+				List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
+				String postData = "";
+				if(soapMessageCreator != null && soapMessageManipulator != null) {
+					soapMessageManipulator.setMessage(soapMessageCreator.getSoapMessage());
+					soapMessageManipulator.setArguments(queryParameters);
+					postData = soapMessageManipulator.buildMessage();
+				}
+			//Build the Url and arguments
+			requestBuilder.setUrlPrefix(url);
+			requestBuilder.setUrlSuffix(urlsuffix);
+			requestBuilder.setArguments(queryParameters);
+			requestBuilder.setPostData(postData);
+			requestBuilder.buildUri();
+			//String postData = requestBuilder.getPostData();
+			String uri = requestBuilder.getUri();
+			//Connect to the Url
+			connection.setUri(uri);
+			connection.setArguments(requestBuilder.getPostData());
+			connection.connect(charset, method);
+			HttpEntity entity = connection.retrieveBody();
+			//Convert the Http Entity into a String, finally close the Http Connection
+			converter.setInput(entity);
+			converter.convert();
+			//Set the Message for the Key (Element) Finder an find the defined Elements and paste
+			//them to the tuple(s)
+			keyFinder.setMessage(converter.getOutput(), charset, multiTupleOutput);
+			//Create a ArrayList for the Tuples of the webservice data for the cache
+			ArrayList<IStreamObject<?>> tuplesToCache = new ArrayList<IStreamObject<?>>(keyFinder.getTupleCount());
+					
+			for(int i = 0; i < keyFinder.getTupleCount(); i++) {
+				Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
+				for(int j = 0; j < receivedData.size(); j++) {
+					keyFinder.setSearch(receivedData.get(j).getAttributeName());
+					Object value = keyFinder.getValueOf(keyFinder.getSearch(), keyValueOutput, i);
+					if((value == null || value.equals("")) && !outerJoin) {
+						return;
+					} else if((value == null || value.equals("")) && outerJoin) {
+						wsTuple.setAttribute(j, "null");
+					} else {
+						wsTuple.setAttribute(j, value);
+					}
+				}
+				tuplesToCache.add(wsTuple);
+				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, wsTuple, metaMergeFunction, Order.LeftRight);
+				outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
+				transfer(outputTuple);
+			}
+			cacheManager.put(inputTuple.hashCodeOfSpecifiedAttributes(uniqueKeys), tuplesToCache);
+		} else { //This means, there are tuples in the cache with the specified key
+			for(int i = 0; i < cachedTuples.size(); i++) {
+				Tuple<T> outputTuple = dataMergeFunction.merge(inputTuple, (Tuple<T>) cachedTuples.get(i), metaMergeFunction, Order.LeftRight);
+				outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
+				transfer(outputTuple);
+			}
 		}
 	}
 }

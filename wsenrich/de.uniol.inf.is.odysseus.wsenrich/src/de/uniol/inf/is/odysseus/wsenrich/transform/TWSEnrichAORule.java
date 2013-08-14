@@ -82,6 +82,7 @@ public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 			logical.getOuterJoin(),
 			logical.getKeyValueOutput(),
 			logical.getMultiTupleOutput(),
+			logical.getUniqueKeysAsArray(),
 			dataMergeFunction,
 			metaMerge,
 			connection,
