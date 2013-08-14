@@ -32,6 +32,8 @@ public class UserManagementProvider {
 
 	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
 	static private String defaultTenantName = "";
+	// Preload daos
+	@SuppressWarnings("unused")
 	static private TenantDAO dao = TenantDAO.getInstance();
 
 	static synchronized public ITenant getDefaultTenant() {
@@ -39,11 +41,11 @@ public class UserManagementProvider {
 	}
 
 	public static synchronized ITenant getTenant(String name) {
-		return dao.findByName(name);
+		return TenantDAO.getInstance().findByName(name);
 	}
 
 	public static synchronized List<ITenant> getTenants() {
-		return dao.findAll();
+		return TenantDAO.getInstance().findAll();
 	}
 
 	static synchronized public IUserManagement getUsermanagement() {
@@ -58,7 +60,7 @@ public class UserManagementProvider {
 			}
 		}
 
-		for (ITenant t : dao.allEntities) {
+		for (ITenant t : TenantDAO.getInstance().allEntities) {
 			
 			if (!ret.isInitialized(t)) {
 				ret.initialize(t);
