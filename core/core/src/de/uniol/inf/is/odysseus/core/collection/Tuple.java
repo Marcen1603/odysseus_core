@@ -584,5 +584,35 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		}
 		return ret;
 	}
+	
+	/**
+	 * Returns a hash code for the values of the specified attributes. 
+	 * Note: this method generates a hash code only for the given attributes,
+	 * not for the hole tuple
+	 * @param attributeNumbers the position of the attributes in the tuple
+	 * @return the generated hash code for the given attributes
+	 */
+	public final int hashCodeOfSpecifiedAttributes(int[] attributeNumbers) {
+		if(attributeNumbers.length > this.attributes.length) {
+			throw new IllegalArgumentException("The number of attributes for the hash code " +
+												"should be less or equal to the number of all attributes of the Tupel");
+		}
+		for(int i = 0; i < attributeNumbers.length; i++) {
+			if(attributeNumbers[i] <= this.attributes.length) {
+				continue;
+			} else {
+				throw new IllegalArgumentException("The attribute with the number " + attributeNumbers[i] + " is not a valid" +
+													" attribute in the given Tuple" );
+			}
+		}
+		int ret = 0;
+		for(int i = 0; i < attributeNumbers.length; i++) {
+			Object o = this.attributes[attributeNumbers[i]-1];
+			if(o != null) {
+				ret += o.hashCode() * Primes.PRIMES[i % Primes.size()];
+			}
+		}
+		return ret;
+	}
 
 }
