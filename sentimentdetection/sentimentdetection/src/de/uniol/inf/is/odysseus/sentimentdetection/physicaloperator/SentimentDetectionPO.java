@@ -215,6 +215,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 	}
 
+
 	@SuppressWarnings("unchecked")
 	private void processSentimentDetection(Tuple object) {
 		// get inputSize of the object

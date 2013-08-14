@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
-import de.uniol.inf.is.odysseus.sentimentdetection.util.PorterStemmer;
+import de.uniol.inf.is.odysseus.sentimentdetection.util.PorterStemmerEnglish;
 
 public abstract class AbstractStopWords implements IStopWords{
 	
@@ -36,7 +36,7 @@ public abstract class AbstractStopWords implements IStopWords{
 	public String stemmRecord(String record) {
 		String result = "";
 
-		PorterStemmer stemmer = new PorterStemmer();
+		PorterStemmerEnglish stemmer = new PorterStemmerEnglish();
 
 		for (String singleword : NGramm.ngrams(record, 1)) {
 			String stem = stemmer.stem(singleword);
