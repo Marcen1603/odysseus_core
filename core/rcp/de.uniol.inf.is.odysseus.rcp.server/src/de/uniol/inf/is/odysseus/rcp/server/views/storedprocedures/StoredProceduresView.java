@@ -15,9 +15,12 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class StoredProceduresView extends ViewPart implements IDataDictionaryListener {
+public class StoredProceduresView extends ViewPart implements IDataDictionaryListener, ISessionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StoredProceduresView.class);
 
@@ -32,7 +35,8 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 		getTreeViewer().setLabelProvider(new StoredProceduresViewLabelProvider());
 		refresh();
 		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary().addListener(this);
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).addListener(this);
+			UserManagementProvider.getSessionmanagement().subscribe(this);
 		}
 		// UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
@@ -49,7 +53,7 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 	@Override
 	public void dispose() {
 		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary().removeListener(this);
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).removeListener(this);
 		}
 		super.dispose();
 	}
@@ -94,6 +98,11 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
+		refresh();
+	}
+	
+	@Override
+	public void sessionEventOccured(ISessionEvent event) {
 		refresh();
 	}
 

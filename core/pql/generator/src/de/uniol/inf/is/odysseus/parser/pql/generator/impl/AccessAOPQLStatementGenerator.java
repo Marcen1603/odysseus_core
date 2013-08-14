@@ -10,7 +10,6 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
@@ -18,26 +17,12 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerat
 
 public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator<AccessAO> {
 
+	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(AccessAOPQLStatementGenerator.class);
-	private static IDataDictionary dataDictionary;
-
-	public void bindDataDictionary(IDataDictionary dd) {
-		dataDictionary = dd;
-
-		LOG.debug("DataDictionary bound {}", dd);
-	}
 
 	@Override
 	public Class<AccessAO> getOperatorClass() {
 		return AccessAO.class;
-	}
-
-	public void unbindDataDictionary(IDataDictionary dd) {
-		if (dd == dataDictionary) {
-			dataDictionary = null;
-
-			LOG.debug("DataDictionary unbound {}", dd);
-		}
 	}
 
 	@Override

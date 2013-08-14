@@ -25,22 +25,15 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.RoleDAO;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.TenantDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
 public class UserManagementServiceImpl extends
-		AbstractUserManagement<Tenant, User, Role, Privilege> {
+		AbstractUserManagement<User, Role, Privilege> {
 
 	ISessionManagement sessionMgmt;
-
-	@Override
-	protected Tenant createEmptyTenant() {
-		return new Tenant();
-	}
 
 	@Override
 	protected Role createEmptyRole() {
@@ -95,23 +88,13 @@ public class UserManagementServiceImpl extends
 	}
 
 	@Override
-	protected IGenericDAO<Tenant, String> getTenantDAO() {
-		try {
-			return TenantDAO.getInstance();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
 	public String getType() {
 		return "Filestore";
 	}
 
 	@Override
-	protected void process_init() {
-		initDefaultUsers();
+	protected void process_init(ITenant tenant) {
+		initDefaultUsers(tenant);
 	}
 
 	@Override

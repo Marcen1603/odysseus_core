@@ -23,13 +23,14 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.wrapper.base.Activator;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 
 /**
  * @author ckuka
@@ -76,8 +77,9 @@ public class SourceAO extends AbstractLogicalOperator {
 			final String[] schemaInformation = item.split(":");
 			SDFAttribute attribute;
 			try {
+				// This operator cannot be used in tenant contexts
 				attribute = new SDFAttribute(null,
-						schemaInformation[0], Activator.getDataDictionary().getDatatype(schemaInformation[1]));
+						schemaInformation[0], DataDictionaryProvider.getDataDictionary(UserManagementProvider.getDefaultTenant()).getDatatype(schemaInformation[1]));
 			} catch (DataDictionaryException e) {
 				throw new QueryParseException(e.getMessage());
 			}

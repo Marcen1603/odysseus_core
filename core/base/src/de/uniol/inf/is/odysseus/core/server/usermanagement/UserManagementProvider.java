@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,59 +16,85 @@
 package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 public class UserManagementProvider {
-	
-	Logger logger = LoggerFactory.getLogger(UserManagementProvider.class);
+
+	static Logger logger = LoggerFactory
+			.getLogger(UserManagementProvider.class);
 
 	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
-	
-	
+	static private String defaultTenantName = "";
+	static private TenantDAO dao = TenantDAO.getInstance();
+
+	static synchronized public ITenant getDefaultTenant() {
+		return getTenant(defaultTenantName);
+	}
+
+	public static synchronized ITenant getTenant(String name) {
+		return dao.findByName(name);
+	}
+
+	public static synchronized List<ITenant> getTenants() {
+		return dao.findAll();
+	}
+
 	static synchronized public IUserManagement getUsermanagement() {
-		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt"));
-		while (ret == null){
+		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get(
+				"StoretypeUserMgmt").toLowerCase());
+		while (ret == null) {
 			try {
-				UserManagementProvider.class.wait(500);
+				UserManagementProvider.class.wait(10000);
+				logger.debug("Waiting for UserManagement "
+						+ OdysseusConfiguration.get("StoretypeUserMgmt"));
 			} catch (InterruptedException e) {
 			}
 		}
-		if (!ret.isInitialized()){
-			ret.initialize();
+
+		for (ITenant t : dao.allEntities) {
+			
+			if (!ret.isInitialized(t)) {
+				ret.initialize(t);
+			}
 		}
 		return ret;
 	}
-	
+
 	static public ISessionManagement getSessionmanagement() {
 		ISessionManagement ret = getUsermanagement().getSessionManagement();
 		return ret;
 	}
-	
+
 	protected void bindUserManagement(IUserManagement usermanagement) {
-		if (usrMgmt.get(usermanagement.getType()) == null){
-			usrMgmt.put(usermanagement.getType(), usermanagement);
-			logger.debug("Bound UserManagementService "+usermanagement.getType());
-		}else{
-			throw new RuntimeException("UserManagement "+usermanagement.getType()+" already bound!");
+		if (usrMgmt.get(usermanagement.getType().toLowerCase()) == null) {
+			usrMgmt.put(usermanagement.getType().toLowerCase(), usermanagement);
+			logger.debug("Bound UserManagementService "
+					+ usermanagement.getType());
+		} else {
+			throw new RuntimeException("UserManagement "
+					+ usermanagement.getType() + " already bound!");
 		}
-		synchronized(UserManagementProvider.class){
+		synchronized (UserManagementProvider.class) {
 			UserManagementProvider.class.notifyAll();
 		}
 	}
 
 	protected void unbindUserManagement(IUserManagement usermanagement) {
-		if (usrMgmt.get(usermanagement.getType())!= null){
-			usrMgmt.remove(usermanagement.getType());
-			logger.debug("User management "+usermanagement.getType()+" removed");
-		}else{
-			throw new RuntimeException("UserManagement "+usermanagement.getType()+" not bound!");
+		if (usrMgmt.get(usermanagement.getType().toLowerCase()) != null) {
+			usrMgmt.remove(usermanagement.getType().toLowerCase());
+			logger.debug("User management " + usermanagement.getType()
+					+ " removed");
+		} else {
+			throw new RuntimeException("UserManagement "
+					+ usermanagement.getType() + " not bound!");
 		}
 	}
-	
-	
+
 }

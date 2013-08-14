@@ -49,6 +49,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 	public FileStore(String path) throws IOException {
 		this.path = path;
 		initialzed = false;
+		loadCache();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -19,7 +19,7 @@ public class SessionManagementService {
 	public static ISession getActiveSession() {
 		
 		if(activeSession == null)		
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
+			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 		
 		return activeSession;
 		

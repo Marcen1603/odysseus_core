@@ -15,66 +15,33 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatatypeProvider;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * Datatype provider for probabilistic datatypes.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian.kuka@offis.de>, Marco Grawunder
  */
-public class ProbabilisticDatatypeProvider {
-	/** Logger. */
-	private static Logger log = LoggerFactory.getLogger(ProbabilisticDatatypeProvider.class);
-	/** The data dictionary. */
-	private static IDataDictionary datadictionary = null;
+public class ProbabilisticDatatypeProvider implements IDatatypeProvider{
 
-	/**
-	 * Bind data dictionary.
-	 * 
-	 * @param dataDictionary
-	 *            The data dictionary
-	 */
-	protected final void bindDataDictionary(final IDataDictionary dataDictionary) {
-		ProbabilisticDatatypeProvider.datadictionary = dataDictionary;
-		try {
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_LONG.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_LONG);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_INTEGER);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_SHORT.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_SHORT);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_BYTE.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_BYTE);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_STRING);
-			ProbabilisticDatatypeProvider.datadictionary.addDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
-		} catch (final DataDictionaryException e) {
-			ProbabilisticDatatypeProvider.log.error(e.getMessage(), e);
-		}
+	@Override
+	public List<SDFDatatype> getDatatypes() {
+		List<SDFDatatype> ret = new ArrayList<>();
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_LONG);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_SHORT);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_BYTE);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_STRING);
+		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+		return ret;
 	}
+	
 
-	/**
-	 * Unbind data dictionary.
-	 * 
-	 * @param dataDictionary
-	 *            The data dictionary
-	 */
-	protected final void unbindDataDictionary(final IDataDictionary dataDictionary) {
-		try {
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_LONG.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_SHORT.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_BYTE.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI());
-			dataDictionary.removeDatatype(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
-		} catch (final DataDictionaryException e) {
-			ProbabilisticDatatypeProvider.log.error(e.getMessage(), e);
-		} finally {
-			ProbabilisticDatatypeProvider.datadictionary = null;
-		}
-	}
 }

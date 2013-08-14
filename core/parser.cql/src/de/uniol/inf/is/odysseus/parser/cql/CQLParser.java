@@ -990,7 +990,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	 */
 	@Override
 	public Object visit(ASTCreateType node, Object data) throws QueryParseException {
-		CreateTypeVisitor v = new CreateTypeVisitor(this.caller, this.dataDictionary);
+		CreateTypeVisitor v = new CreateTypeVisitor(this.caller, this.dataDictionary, commands);
 		return v.visit(node, data);
 	}
 	

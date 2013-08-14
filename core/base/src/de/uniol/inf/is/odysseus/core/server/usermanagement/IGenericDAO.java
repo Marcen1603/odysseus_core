@@ -37,9 +37,5 @@ public interface IGenericDAO<T, PK extends Serializable> {
 
     List<T> findAll();
 
-//    List<T> findAll(Integer position, Integer max);
-
-//    void refresh(T entity);
-
     void update(T entity);
-}
+  }

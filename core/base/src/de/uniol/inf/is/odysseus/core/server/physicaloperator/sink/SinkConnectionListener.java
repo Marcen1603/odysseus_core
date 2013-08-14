@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 @SuppressWarnings("rawtypes")
 class SinkConnectionListener extends Thread implements ISinkConnection {
@@ -88,7 +89,8 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 						
 						String username = in.readLine();
 						String password = in.readLine();
-						String tenant = in.readLine();
+						String tenantName = in.readLine();
+						ITenant tenant = UserManagementProvider.getTenant(tenantName);
 						ISession user = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
 						if (user != null){
 							// TODO: Test if User has right to access sink

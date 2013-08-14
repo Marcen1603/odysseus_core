@@ -34,9 +34,11 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -54,7 +56,7 @@ import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
-public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener {
+public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, IPlanModificationListener, IDatadictionaryProviderListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionary.class);
 	
@@ -67,7 +69,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final int CHECK_INTERVAL_MILLIS = 10000;
 	
 	private static P2PDictionary instance;
-	private static IDataDictionaryWritable dataDictionary;
 
 	private static String localPeerName;
 	private static PeerID localPeerID;
@@ -96,6 +97,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		
 		viewExporterThread.start();
 		sourceChecker.start();
+		
 	}
 
 	// called by OSGi-DS
@@ -106,33 +108,44 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		viewExporterThread.stopRunning();
 	}
 	
-	// called by OSGi-DS
-	public void bindDataDictionary( IDataDictionary dd ) {
-		dataDictionary = (IDataDictionaryWritable)dd;
+//	// called by OSGi-DS
+//	public void bindDataDictionary( IDataDictionary dd ) {
+//		
+//		IDataDictionary dataDictionary = DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());;
+//		newDatadictionary(dataDictionary);
+//	}
+	
+	@Override
+	public void newDatadictionary(IDataDictionary dataDictionary) {
+		// TODO: Handle unbinding of dd?
+		
 		dataDictionary.addListener(this);
 		if( isAutoExport()) {
 			autoExporter = new AutoExporter(this);
 			dataDictionary.addListener(autoExporter);
 		}
 		
-		LOG.debug("DataDictionary bound {}", dd);
+		LOG.debug("DataDictionary bound {}", dataDictionary);
 	}
 	
-	// called by OSGi-DS
-	public void unbindDataDictionary( IDataDictionary dd ) {
-		if( dataDictionary == dd ) {
-			dataDictionary.removeListener(this);
-			if( autoExporter != null ) {
-				dataDictionary.removeListener(autoExporter);
-				autoExporter = null;
-			}
-			
-			dataDictionary = null;
-			
-			LOG.debug("DataDictionary unbound {}", dd);
-		}
+//	// called by OSGi-DS
+//	public void unbindDataDictionary( IDataDictionary dd ) {
+//				
+//		if( getDataDictionary() == null ||  getDataDictionary() == dd ) {
+//			dd.removeListener(this);
+//			if( autoExporter != null ) {
+//				dd.removeListener(autoExporter);
+//				autoExporter = null;
+//			}
+//						
+//			LOG.debug("DataDictionary unbound {}", dd);
+//		}
+//	}
+	
+	
+	private IDataDictionaryWritable getDataDictionary(){
+		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
 	}
-
 	public static P2PDictionary getInstance() {
 		return instance;
 	}
@@ -273,7 +286,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		
 		final String realSrcNameToUse = removeUserFromName(sourceNameToUse);
-		if (dataDictionary.containsViewOrStream(realSrcNameToUse, SessionManagementService.getActiveSession())) {
+		if (getDataDictionary().containsViewOrStream(realSrcNameToUse, SessionManagementService.getActiveSession())) {
 			throw new PeerException("SourceName '" + realSrcNameToUse + "' is locally already in use");
 		}
 
@@ -299,7 +312,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (advertisement.isStream()) {
 			final AccessAO accessAO = advertisement.getAccessAO();
 
-			dataDictionary.setStream(advertisement.getName(), accessAO, SessionManagementService.getActiveSession());
+			getDataDictionary().setStream(advertisement.getName(), accessAO, SessionManagementService.getActiveSession());
 
 		} else {
 			final JxtaReceiverAO receiverOperator = new JxtaReceiverAO();
@@ -316,7 +329,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			receiverOperator.subscribeSink(renameNoOp, 0, 0, receiverOperator.getOutputSchema());
 			renameNoOp.initialize();
 
-			dataDictionary.setView(realSrcNameToUse, renameNoOp, SessionManagementService.getActiveSession());
+			getDataDictionary().setView(realSrcNameToUse, renameNoOp, SessionManagementService.getActiveSession());
 		}
 
 		importedSources.put(advertisement, realSrcNameToUse);
@@ -330,7 +343,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			String name = importedSources.get(advertisement);
 			importedSources.remove(advertisement);
 
-			dataDictionary.removeViewOrStream(name, SessionManagementService.getActiveSession());
+			getDataDictionary().removeViewOrStream(name, SessionManagementService.getActiveSession());
 
 			fireSourceImportRemoveEvent(advertisement, name);
 			return true;
@@ -387,12 +400,12 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			throw new PeerException("Source " + realSourceName + " is imported and cannot be exported directly");
 		}
 
-		ILogicalOperator stream = dataDictionary.getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator stream = getDataDictionary().getStreamForTransformation(realSourceName, SessionManagementService.getActiveSession());
 		if (stream != null ) {
 			return exportStream(realSourceName, queryBuildConfigurationName, stream);
 		}
 
-		ILogicalOperator view = dataDictionary.getView(realSourceName, SessionManagementService.getActiveSession());
+		ILogicalOperator view = getDataDictionary().getView(realSourceName, SessionManagementService.getActiveSession());
 		if (view != null) {
 			return exportView(realSourceName, queryBuildConfigurationName, view);
 		}

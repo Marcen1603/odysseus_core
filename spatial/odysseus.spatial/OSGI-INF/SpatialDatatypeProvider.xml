@@ -16,5 +16,7 @@
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="de.uniol.inf.is.odysseus.spatial.SpatialDatatypeProvider">
    <implementation class="de.uniol.inf.is.odysseus.spatial.SpatialDatatypeProvider"/>
-   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="dynamic" unbind="unbindDataDictionary"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDatatypeProvider"/>
+   </service>
 </scr:component>

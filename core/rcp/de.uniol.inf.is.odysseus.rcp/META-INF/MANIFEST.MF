@@ -7,7 +7,6 @@ Bundle-Activator: de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.datadictionary,
  de.uniol.inf.is.odysseus.core.event,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.metadata,

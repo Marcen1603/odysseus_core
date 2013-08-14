@@ -40,7 +40,7 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 	}
 	
 	RoleDAO(ITenant tenant) throws IOException {
-		super(new FileStore<String, Role>(tenant.getName().length()>0?tenant.getName()+"_":""+OdysseusConfiguration.get("roleStoreFilename")), new ArrayList<Role>());
+		super(new FileStore<String, Role>(OdysseusConfiguration.getFileProperty("roleStoreFilename", tenant.getName())), new ArrayList<Role>());
 	}
 
 }

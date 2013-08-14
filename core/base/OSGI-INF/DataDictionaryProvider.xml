@@ -14,7 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.wrapper.base.DataDictionary">
-   <implementation class="de.uniol.inf.is.odysseus.wrapper.base.Activator"/>
-   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="dynamic" unbind="unbindDataDictionary"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.core.server.usermanagement.DataDictionaryProvider">
+   <implementation class="de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider"/>
+   <reference bind="bindDatatypeProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDatatypeProvider" name="IDatatypeProvider" policy="static"/>
+   <reference bind="bindDataDictionary" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="dynamic" unbind="unbindDataDictionary"/>
 </scr:component>

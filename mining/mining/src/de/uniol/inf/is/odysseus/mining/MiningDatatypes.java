@@ -15,16 +15,29 @@
  */
 package de.uniol.inf.is.odysseus.mining;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatatypeProvider;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class MiningDatatypes {
+public class MiningDatatypes implements IDatatypeProvider{
 	
 	public static final SDFDatatype FREQUENT_ITEM_SET = new SDFDatatype("FrequentItemSet");
 	public static final SDFDatatype ASSOCIATION_RULE = new SDFDatatype("AssociationRule");
 	public static final SDFDatatype CLASSIFIER = new SDFDatatype("Classifier");
 
+	@Override
+	public List<SDFDatatype> getDatatypes() {
+		List<SDFDatatype> ret = new ArrayList<>();
+		ret.add(FREQUENT_ITEM_SET);
+		ret.add(ASSOCIATION_RULE);
+		ret.add(CLASSIFIER);
+		return ret;
+	}
+	
 }

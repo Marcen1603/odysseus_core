@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 /**
  * This Interface contains all methods from the executor that are accessable if
@@ -196,7 +197,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException;
 
-	IDataDictionaryWritable getDataDictionary();
+	IDataDictionaryWritable getDataDictionary(ITenant tenant);
 
 	public boolean removeAllQueries(ISession caller);
 

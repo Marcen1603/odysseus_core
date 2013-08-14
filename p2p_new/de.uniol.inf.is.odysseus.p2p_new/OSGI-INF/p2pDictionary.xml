@@ -3,6 +3,5 @@
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary"/>
-   </service>
-   <reference bind="bindDataDictionary" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary" name="IDataDictionary" policy="static" unbind="unbindDataDictionary"/>
+   </service>  
 </scr:component>

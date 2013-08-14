@@ -20,22 +20,11 @@ import java.io.IOException;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractSessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.TenantDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
-import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
-public class SessionManagementServiceImpl extends AbstractSessionManagement<User, Tenant>{
+public class SessionManagementServiceImpl extends AbstractSessionManagement<User>{
 
-	@Override
-	protected IGenericDAO<Tenant, String> getTenantDAO() {
-		try {
-			return TenantDAO.getInstance();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	@Override
 	protected IGenericDAO<User, String> getUserDAO(ITenant tenant) {

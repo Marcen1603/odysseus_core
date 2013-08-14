@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -26,7 +27,7 @@ public interface ISessionManagement {
 	 * @param password
 	 * @return
 	 */
-	ISession login(String username, byte[] password, String tenantname);
+	ISession login(String username, byte[] password, ITenant tenant);
 
 	/**
 	 * @param caller
@@ -42,7 +43,13 @@ public interface ISessionManagement {
 	
 	ISession login(String token);
 	
+	void subscribe(ISessionListener listener);
+	 
+	void unsubscribe(ISessionListener listener);
+	
 	ISession loginSuperUser(Object secret, String tenantname);
 	
+	ISession loginSuperUser(Object secret);
+		
 	String getType();
 }

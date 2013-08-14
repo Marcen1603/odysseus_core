@@ -64,6 +64,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.OperatorBuilderFactoryServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.CreateQueryException;
@@ -141,8 +142,9 @@ public class WebserviceServer {
 	public StringResponse login(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password,
 			@WebParam(name = "tenantname") String tenantname) {
+		ITenant tenant = UserManagementProvider.getTenant(tenantname);
 		ISession user = UserManagementProvider.getSessionmanagement().login(username,
-				password.getBytes(), tenantname);
+				password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -575,9 +577,9 @@ public class WebserviceServer {
 			@WebParam(name = "sourcename") String sourcename)
 			throws InvalidUserDataException {
 
-		loginWithSecurityToken(securityToken);
+		ISession session = loginWithSecurityToken(securityToken);
 		SDFSchema schema = ExecutorServiceBinding.getExecutor()
-				.getDataDictionary().getSources().get(sourcename)
+				.getDataDictionary(session.getTenant()).getSources().get(sourcename)
 				.getOutputSchema();
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
@@ -599,7 +601,7 @@ public class WebserviceServer {
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		Set<Entry<String, ILogicalOperator>> sources = ExecutorServiceBinding
-				.getExecutor().getDataDictionary().getStreamsAndViews(user);
+				.getExecutor().getDataDictionary(user.getTenant()).getStreamsAndViews(user);
 		List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
 		for (Entry<String, ILogicalOperator> source : sources) {
 			SDFSchema schema = source.getValue().getOutputSchema();

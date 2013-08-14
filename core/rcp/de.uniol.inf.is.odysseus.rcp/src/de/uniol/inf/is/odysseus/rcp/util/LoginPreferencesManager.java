@@ -48,6 +48,10 @@ public class LoginPreferencesManager {
 		return loginPrefs.get("password", "");
 	}
 	
+	public String getTenant(){
+		return loginPrefs.get("tenant", "");
+	}
+	
 	public void setUsername( String username ) {
 		loginPrefs.put("username", username);
 	}
@@ -57,6 +61,10 @@ public class LoginPreferencesManager {
 		loginPrefs.put("password", password);
 	}
 	
+	public void setTenant(String tenant){
+		loginPrefs.put("tenant", tenant);
+	}
+
 	public boolean getAutoLogin() {
 		try {
 			return Boolean.valueOf(loginPrefs.get("autologin", "false"));

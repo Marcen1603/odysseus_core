@@ -35,12 +35,15 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewContentProvider;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
 
-public class SourcesView extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
+public class SourcesView extends ViewPart implements IDataDictionaryListener, IUserManagementListener, ISessionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SourcesView.class);
 
@@ -64,7 +67,8 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 		getTreeViewer().setLabelProvider(new OperatorViewLabelProvider("source"));
 		refresh();
 		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary().addListener(this);
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).addListener(this);
+			UserManagementProvider.getSessionmanagement().subscribe(this);
 		}
 		// UserManagement.getInstance().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
@@ -86,7 +90,7 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 	@Override
 	public void dispose() {
 		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary().removeListener(this);
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).removeListener(this);
 		}
 		super.dispose();
 	}
@@ -180,6 +184,11 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	public void setRefreshEnabled(boolean refreshEnabled) {
 		this.refreshEnabled = refreshEnabled;
+	}
+	
+	@Override
+	public void sessionEventOccured(ISessionEvent event) {
+		refresh();
 	}
 
 }

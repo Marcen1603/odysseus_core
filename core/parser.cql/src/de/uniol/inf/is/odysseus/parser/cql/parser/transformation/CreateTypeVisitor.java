@@ -28,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateDatatypeCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAttributeDefinitions;
@@ -42,14 +44,15 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 public class CreateTypeVisitor extends AbstractDefaultVisitor {
 
 	String name;
-	@SuppressWarnings("unused")
 	private ISession caller;
 	private IDataDictionary dd;
 	List<SDFAttribute> attributes;
+	private List<IExecutorCommand> commands;
 
-	public CreateTypeVisitor(ISession user, IDataDictionary dd) {
+	public CreateTypeVisitor(ISession user, IDataDictionary dd, List<IExecutorCommand> commands) {
 		this.caller = user;
 		this.dd = dd;
+		this.commands = commands;
 	}
 	
 	@Override
@@ -59,12 +62,8 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
 		SDFSchema typeSchema = new SDFSchema(name, attributes);
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, typeSchema);
-		try {
-			dd.addDatatype(name, newType);
-		} catch (DataDictionaryException e) {
-			throw new QueryParseException(e.getMessage());
-		}
-
+		CreateDatatypeCommand cmd = new CreateDatatypeCommand(newType, caller);
+		commands.add(cmd);
 		return data;
 	}
 	

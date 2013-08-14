@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -31,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-public class UserView extends ViewPart implements IUserManagementListener{
+public class UserView extends ViewPart implements IUserManagementListener, ISessionListener{
 	
 	private TreeViewer viewer;
 
@@ -66,6 +68,7 @@ public class UserView extends ViewPart implements IUserManagementListener{
 		refresh();
 
 		UserManagementProvider.getUsermanagement().addUserManagementListener(this);
+		UserManagementProvider.getSessionmanagement().subscribe(this);
 	}
 
 	@Override
@@ -80,6 +83,11 @@ public class UserView extends ViewPart implements IUserManagementListener{
 
 	@Override
 	public void roleChangedEvent() {
+		refresh();
+	}
+	
+	@Override
+	public void sessionEventOccured(ISessionEvent event) {
 		refresh();
 	}
 }

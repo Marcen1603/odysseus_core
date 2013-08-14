@@ -33,26 +33,14 @@ import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.UserDAO;
  * @author Christian Kuka <christian@kuka.cc>
  */
 @SuppressWarnings("all")
-public class SessionManagementServiceImpl extends AbstractSessionManagement<UserImpl, TenantImpl> implements ISessionManagement {
+public class SessionManagementServiceImpl extends AbstractSessionManagement<UserImpl> implements ISessionManagement {
 
 	private EntityManagerFactory entityManagerFactory;
 
 	protected void activate(ComponentContext context) {
 		throw new RuntimeException("Currently not implemented!");
+	}
 		
-//		this.entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
-//		final EntityManager em = this.entityManagerFactory.createEntityManager();
-//		
-//		userDAO = new UserDAO();
-//		
-//		((UserDAO)userDAO).setEntityManager(em);
-	}
-
-	@Override
-	protected IGenericDAO<TenantImpl, String> getTenantDAO() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	protected IGenericDAO<UserImpl, String> getUserDAO(ITenant tenant) {

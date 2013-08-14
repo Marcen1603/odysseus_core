@@ -58,7 +58,7 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	private static List<String> determineCurrentSourceNames() {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary().getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
 		List<String> sourceNames = Lists.newArrayList();
 		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
 			sourceNames.add(streamOrView.getKey());

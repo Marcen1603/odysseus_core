@@ -22,6 +22,7 @@ public class OdysseusNLS extends NLS {
 
 	public static String Login;
 	public static String Username;
+	public static String Tenantname;
 	public static String Password;
 	public static String OK;
 	public static String Cancel;
@@ -57,6 +58,7 @@ public class OdysseusNLS extends NLS {
 	public static String Privilege;
 	public static String Permission;
 	public static String AutomaticallyLoggedInAs;
+	public static String LoggedInAs;
 	public static String Executor;
 	public static String Ready;
 

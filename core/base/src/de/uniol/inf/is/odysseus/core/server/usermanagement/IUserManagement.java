@@ -20,6 +20,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
@@ -92,8 +93,8 @@ public interface IUserManagement {
 
 	String getType();
 
-	boolean isInitialized();
+	boolean isInitialized(ITenant tenant);
 
-	void initialize();
+	void initialize(ITenant tenant);
 
 }

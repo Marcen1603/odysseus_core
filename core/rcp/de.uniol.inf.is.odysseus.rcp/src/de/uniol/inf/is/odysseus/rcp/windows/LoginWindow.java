@@ -53,26 +53,30 @@ public class LoginWindow {
 	private Shell wnd;
 
 	private Label usernameLabel;
+	private Label tenantLabel;
 	private Label passwordLabel;
 	private Text usernameInput;
 	private Text passwordInput;
+	private Text tenantInput;
 	private Button okButton;
 	private Button cancelButton;
 	private Button autoLoginCheck;
 
 	private final String startUserName;
+	private final String startTenantName;
 	private final boolean cancelOK;
 	private boolean loginOK = false;
 	private final Display display;
 
 	public LoginWindow(Display parent, boolean cancelOK) {
-		this(parent, "", cancelOK);
+		this(parent, "", "", cancelOK);
 	}
 
-	public LoginWindow(Display parent, String userName, boolean cancelOK) {
+	public LoginWindow(Display parent, String userName, String tenantName, boolean cancelOK) {
 		Assert.isNotNull(userName);
 		Assert.isNotNull(parent);
 		startUserName = userName;
+		startTenantName = tenantName;
 		this.cancelOK = cancelOK;
 		this.display = parent;
 	}
@@ -129,6 +133,12 @@ public class LoginWindow {
 		layout.numColumns = 2;
 		comp.setLayout(layout);
 
+		tenantLabel = new Label(comp, SWT.NONE);
+		tenantLabel.setText(OdysseusNLS.Tenantname + ":");
+		tenantInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
+		tenantInput.setText(startTenantName);
+		tenantInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		usernameLabel = new Label(comp, SWT.NONE);
 		usernameLabel.setText(OdysseusNLS.Username + ":");
 		usernameInput = new Text(comp, SWT.BORDER | SWT.SINGLE);
@@ -196,7 +206,7 @@ public class LoginWindow {
 	private void tryToLogin() {
 		// password ist klartext, daher false
 		ISession user = Login.realLogin(usernameInput.getText(),
-				passwordInput.getText());
+				passwordInput.getText(), tenantInput.getText());
 		if (user != null) {
 			// anmeldung ok
 			loginOK = true;
@@ -207,6 +217,7 @@ public class LoginWindow {
 						user.getUser().getName());
 				LoginPreferencesManager.getInstance().setPassword(
 						passwordInput.getText());
+				LoginPreferencesManager.getInstance().setTenant(tenantInput.getText());
 			}
 			LoginPreferencesManager.getInstance().setAutoLogin(
 					autoLoginCheck.getSelection());

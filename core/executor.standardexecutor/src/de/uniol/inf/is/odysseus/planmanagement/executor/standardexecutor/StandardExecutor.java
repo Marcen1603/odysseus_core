@@ -245,7 +245,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		LOG.debug("Translating query into logical plans");
 		// translate query and build logical plans
 		List<IExecutorCommand> commands = getCompiler().translateQuery(
-				queryStr, parameters.getParserID(), user, getDataDictionary());
+				queryStr, parameters.getParserID(), user, getDataDictionary(user.getTenant()));
 		LOG.trace("Number of commands: " + commands.size());
 		LOG.debug("Translation done.");
 		annotateQueries(commands, queryStr, user, parameters);
@@ -365,7 +365,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 *             An exception during optimization occurred.
 	 */
 	private Collection<IPhysicalQuery> addQueries(
-			List<IExecutorCommand> newCommands, OptimizationConfiguration conf)
+			List<IExecutorCommand> newCommands, OptimizationConfiguration conf, ISession session)
 			throws NoOptimizerLoadedException, QueryOptimizationException {
 		LOG.debug("Starting Optimization of logical queries...");
 		Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
@@ -380,7 +380,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
-				cmd.execute(getDataDictionary(),
+				cmd.execute(getDataDictionary(cmd.getCaller().getTenant()),
 						(IUserManagementWritable) UserManagementProvider
 								.getUsermanagement());
 			}
@@ -398,7 +398,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			LOG.debug("Starting optimization and transformation for "
 					+ newQueries.size() + " logical queries...");
 			optimizedQueries = getOptimizer().optimize(this,
-					getExecutionPlan(), newQueries, conf, getDataDictionary());
+					getExecutionPlan(), newQueries, conf, getDataDictionary(session.getTenant()));
 			LOG.debug("Optimization and transformation for  "
 					+ newQueries.size() + " logical queries done.");
 			LOG.debug("Changing execution plan for optimized queries...");
@@ -416,7 +416,7 @@ public class StandardExecutor extends AbstractExecutor implements
 					// TODO: Bisher k�nnen nur Namen von Configuration
 					// gespeichert werden
 					// es sollten aber echte Configs speicherbar sein!
-					getDataDictionary().addQuery(
+					getDataDictionary(session.getTenant()).addQuery(
 							optimizedQuery.getLogicalQuery(),
 							optimizedQuery.getSession(), conf.getName());
 				}
@@ -520,7 +520,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			if (newQueries != null && !newQueries.isEmpty()) {
 				Collection<IPhysicalQuery> addedQueries = addQueries(
 						newQueries, new OptimizationConfiguration(
-								buildConfiguration));
+								buildConfiguration), user);
 				reloadLog.queryAdded(query, buildConfiguration.getName(),
 						parserID, user);
 				Collection<Integer> createdQueries = new ArrayList<Integer>();
@@ -583,7 +583,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 			annotateQueries(newQueries, "", user, params);
 			Collection<IPhysicalQuery> addedQueries = addQueries(newQueries,
-					new OptimizationConfiguration(params));
+					new OptimizationConfiguration(params), user);
 			return addedQueries.iterator().next().getID();
 		} catch (Exception e) {
 			LOG.error("Error adding Queries ", e);
@@ -689,7 +689,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			try {
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
-						this.executionPlan, null, getDataDictionary());
+						this.executionPlan, null, getDataDictionary(caller.getTenant()));
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE,
 						queryToRemove);
 				stopQuery(queryToRemove.getID(), caller);
@@ -713,7 +713,7 @@ public class StandardExecutor extends AbstractExecutor implements
 						}
 						for (Entry<IOperatorOwner, String> id : p
 								.getUniqueIds().entrySet()) {
-							getDataDictionary().removeOperator(id.getValue());
+							getDataDictionary(caller.getTenant()).removeOperator(id.getValue());
 							toRemove.add(id.getKey());
 						}
 					} else { // Remove ids from query sharing with this removed
@@ -721,7 +721,7 @@ public class StandardExecutor extends AbstractExecutor implements
 						for (Entry<IOperatorOwner, String> id : p
 								.getUniqueIds().entrySet()) {
 							if (id.getKey().getID() == queryToRemove.getID()) {
-								getDataDictionary().removeOperator(
+								getDataDictionary(caller.getTenant()).removeOperator(
 										id.getValue());
 								toRemove.add(id.getKey());
 							}
@@ -735,13 +735,13 @@ public class StandardExecutor extends AbstractExecutor implements
 				if (queryToRemove.getLogicalQuery() != null) {
 					queryBuildParameter.remove(queryToRemove.getLogicalQuery());
 				}
-				getDataDictionary().removeClosedSources();
-				getDataDictionary().removeClosedSinks();
+				getDataDictionary(caller.getTenant()).removeClosedSources();
+				getDataDictionary(caller.getTenant()).removeClosedSinks();
 				LOG.info("Query " + queryToRemove.getID() + " removed.");
 				firePlanModificationEvent(new QueryPlanModificationEvent(this,
 						PlanModificationEventType.QUERY_REMOVE, queryToRemove));
 				if (queryToRemove.getLogicalQuery() != null) {
-					getDataDictionary().removeQuery(
+					getDataDictionary(caller.getTenant()).removeQuery(
 							queryToRemove.getLogicalQuery(), caller);
 					this.reloadLog.removeQuery(queryToRemove.getLogicalQuery()
 							.getQueryText());
@@ -1291,26 +1291,26 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public void addStoredProcedure(String name, StoredProcedure sp,
 			ISession caller) {
-		getDataDictionary().addStoredProcedure(sp, caller);
+		getDataDictionary(caller.getTenant()).addStoredProcedure(sp, caller);
 	}
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		return getDataDictionary().getStoredProcedure(name, caller);
+		return getDataDictionary(caller.getTenant()).getStoredProcedure(name, caller);
 	}
 
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
-		getDataDictionary().removeStoredProcedure(name, caller);
+		getDataDictionary(caller.getTenant()).removeStoredProcedure(name, caller);
 	}
 
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
-		return getDataDictionary().getStoredProcedures(caller);
+		return getDataDictionary(caller.getTenant()).getStoredProcedures(caller);
 	}
 
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
-		return getDataDictionary().containsStoredProcedure(name, caller);
+		return getDataDictionary(caller.getTenant()).containsStoredProcedure(name, caller);
 	}
 }

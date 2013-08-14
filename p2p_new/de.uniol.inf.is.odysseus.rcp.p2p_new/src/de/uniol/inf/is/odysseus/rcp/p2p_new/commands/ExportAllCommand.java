@@ -23,7 +23,7 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary().getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
 		int okCount = 0;
 		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
 			String sourceName = streamOrView.getKey();

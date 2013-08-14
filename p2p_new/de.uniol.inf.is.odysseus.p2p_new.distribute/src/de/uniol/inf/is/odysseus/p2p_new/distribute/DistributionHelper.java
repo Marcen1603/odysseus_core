@@ -126,7 +126,7 @@ public class DistributionHelper {
 			
 			if(operator instanceof StreamAO) {
 				
-				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary().getStreamForTransformation(((StreamAO) operator).getStreamname(), 
+				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), 
 						SessionManagementService.getActiveSession());
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 				RestructHelper.replaceWithSubplan(operator, streamPlanCopy);

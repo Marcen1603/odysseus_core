@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
@@ -82,6 +82,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
@@ -187,8 +188,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	 * System Monitor Komponente
 	 */
 	protected ISystemMonitorFactory systemMonitorFactory = null;
-
-	private Object dataDictionary;
 
 	// --------------------------------------------------------------------------------------
 	// Constructors/Initialization
@@ -486,19 +485,6 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public void unbindQueryBuildConfiguration(
 			IQueryBuildConfigurationTemplate config) {
 		queryBuildConfigs.remove(config.getName());
-	}
-
-	protected void bindDataDictionary(IDataDictionary datadictionary) {
-		if (this.dataDictionary == null) {
-			this.dataDictionary = datadictionary;
-			LOG.debug("Bound datadictionary service " + datadictionary);
-		} else {
-			throw new RuntimeException("DataDictionary already bound!");
-		}
-	}
-
-	protected void unbindDataDictionary(IDataDictionary dd) {
-		dataDictionary = null;
 	}
 
 	// ----------------------------------------------------------------------------------------
@@ -946,27 +932,27 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	}
 
 	@Override
-	public IDataDictionaryWritable getDataDictionary() {
-		return (IDataDictionaryWritable) dataDictionary;
+	public IDataDictionaryWritable getDataDictionary(ITenant tenant) {
+		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(tenant);
 	}
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
 		LOG.debug("Try to load queries from data dictionary");
-		if (getDataDictionary() != null) {
-			List<ILogicalQuery> q = getDataDictionary().getQueries(
+		if (getDataDictionary(caller.getTenant()) != null) {
+			List<ILogicalQuery> q = getDataDictionary(caller.getTenant()).getQueries(
 					caller.getUser(), caller);
 			for (ILogicalQuery query : q) {
 				try {
 					if (query.getQueryText() != null) {
 						addQuery(query.getQueryText(), query.getParserId(),
-								caller, getDataDictionary()
+								caller, getDataDictionary(caller.getTenant())
 										.getQueryBuildConfigName(query.getID()));
 					} else if (query.getLogicalPlan() != null) {
 						addQuery(
 								query.getLogicalPlan(),
 								caller,
-								getDataDictionary().getQueryBuildConfigName(
+								getDataDictionary(caller.getTenant()).getQueryBuildConfigName(
 										query.getID()));
 					} else {
 						LOG.warn("Query " + query + " cannot be loaded");
@@ -982,8 +968,9 @@ public abstract class AbstractExecutor implements IServerExecutor,
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
+		ITenant tenantObj = UserManagementProvider.getTenant(tenant);
 		return UserManagementProvider.getSessionmanagement().login(username,
-				password, tenant);
+				password, tenantObj);
 	}
 
 	@Override
@@ -996,7 +983,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public List<IExecutorCommand> translateQuery(String queries, String parser,
 			ISession currentUser) {
 		return getCompiler().translateQuery(queries, parser, currentUser,
-				getDataDictionary());
+				getDataDictionary(currentUser.getTenant()));
 	}
 
 	@Override
@@ -1004,28 +991,28 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller) throws TransformationException {
 		return getCompiler().transform(query, transformationConfiguration,
-				caller, getDataDictionary());
+				caller, getDataDictionary(caller.getTenant()));
 	}
 
 	// DataDictionary Facade
 	@Override
 	public ILogicalOperator removeSink(String name, ISession caller) {
-		return getDataDictionary().removeSink(name, caller);
+		return getDataDictionary(caller.getTenant()).removeSink(name, caller);
 	}
 
 	@Override
 	public void removeViewOrStream(String name, ISession caller) {
-		getDataDictionary().removeViewOrStream(name, caller);
+		getDataDictionary(caller.getTenant()).removeViewOrStream(name, caller);
 	}
 
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
 			ISession caller) {
-		return getDataDictionary().getStreamsAndViews(caller);
+		return getDataDictionary(caller.getTenant()).getStreamsAndViews(caller);
 	}
 
 	@Override
 	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
-		return getDataDictionary().getSinks(caller);
+		return getDataDictionary(caller.getTenant()).getSinks(caller);
 	}
 }

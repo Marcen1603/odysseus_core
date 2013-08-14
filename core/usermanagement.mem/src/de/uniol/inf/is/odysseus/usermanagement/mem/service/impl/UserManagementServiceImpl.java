@@ -24,25 +24,17 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.RoleDAO;
-import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.TenantDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.dao.UserDAO;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Privilege;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Role;
-import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.Tenant;
 import de.uniol.inf.is.odysseus.usermanagement.mem.service.domain.User;
 
 public class UserManagementServiceImpl extends
-		AbstractUserManagement<Tenant, User, Role, Privilege> implements
+		AbstractUserManagement<User, Role, Privilege> implements
 		IUserManagement {
 
 	ISessionManagement sessionMgmt;
 
-	
-	@Override
-	protected Tenant createEmptyTenant() {
-		return new Tenant();
-	}
-	
 	@Override
 	protected Role createEmptyRole() {
 		return new Role();
@@ -72,22 +64,17 @@ public class UserManagementServiceImpl extends
 	protected IGenericDAO<Privilege, String> getPrivilegeDAO(ITenant tenant) {
 		return PrivilegeDAO.getInstance(tenant);
 	}
-	
-	@Override
-	protected IGenericDAO<Tenant, String> getTenantDAO() {
-		return TenantDAO.getInstance();
-	}
-	
+
 	@Override
 	public String getType() {
 		return "Memorystore";
 	}
 
 	@Override
-	protected void process_init() {
-		initDefaultUsers();	
+	protected void process_init(ITenant t) {
+		initDefaultUsers(t);
 	}
-	
+
 	protected void activate(ComponentContext context) {
 		// is needed to satisfy
 	}

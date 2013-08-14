@@ -15,19 +15,23 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import de.uniol.inf.is.odysseus.core.server.usermanagement.policy.LogoutPolicy;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
-abstract public class AbstractSessionManagement<USER extends IUser, TENANT extends ITenant> implements
+abstract public class AbstractSessionManagement<USER extends IUser> implements
 		ISessionManagement {
 
 
 	private final SessionStore sessionStore = SessionStore.getInstance();
 
-	abstract protected IGenericDAO<TENANT, String> getTenantDAO();
 	abstract protected IGenericDAO<USER, String> getUserDAO(ITenant tenant);
+
+	private final List<ISessionListener> sessionListener = new CopyOnWriteArrayList<>();
 	
 	/*
 	 * (non-Javadoc)
@@ -37,18 +41,19 @@ abstract public class AbstractSessionManagement<USER extends IUser, TENANT exten
 	 */
 	@Override
 	public ISession login(final String username, final byte[] password,
-			String tenantname) {
-		return login(username, password, tenantname, true);
+			ITenant tenant) {
+		return login(username, password, tenant, true);
 	}
 	
 	private ISession login(final String username, final byte[] password,
-			String tenantname, boolean checkLogin) {
-		final ITenant tenant = getTenantDAO().findByName(tenantname);
+			ITenant tenant, boolean checkLogin) {
 		if (getUserDAO(tenant) != null) {		
 			final IUser user = getUserDAO(tenant).findByName(username);
 			if (user != null && user.isActive()
 					&& ((checkLogin && user.validatePassword(password))||!checkLogin)) {
-				return updateSessionStore(user, tenant);
+				ISession session = updateSessionStore(user, tenant);
+				fire(new UserLoggedInEvent(session));
+				return session;
 			}
 		}
 		return null;
@@ -67,9 +72,15 @@ abstract public class AbstractSessionManagement<USER extends IUser, TENANT exten
 	@Override
 	public ISession loginSuperUser(Object secret, String tenantname) {
 		// TODO: check secret
-		return login("System", null, tenantname, false);
+		ITenant tenant = UserManagementProvider.getTenant(tenantname);
+		return login("System", null, tenant, false);
 	}
 
+	@Override
+	public ISession loginSuperUser(Object secret) {
+		return loginSuperUser(secret, UserManagementProvider.getDefaultTenant().getName());
+	}
+	
 	protected ISession updateSessionStore(final IUser user, final ITenant tenant) {
 		if (this.sessionStore.containsKey(user.getId())) {
 			this.sessionStore.remove(user.getId());
@@ -92,6 +103,7 @@ abstract public class AbstractSessionManagement<USER extends IUser, TENANT exten
 		final ISession session = sessionStore.get(caller.getId());
 		if (LogoutPolicy.allow(session.getUser(), caller.getUser())) {
 			sessionStore.remove(session.getId());
+			fire(new UserLoggedOutEvent(session));
 		}
 	}
 
@@ -114,6 +126,22 @@ abstract public class AbstractSessionManagement<USER extends IUser, TENANT exten
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public void subscribe(ISessionListener listener) {
+		this.sessionListener.add(listener);
+	}
+	
+	@Override
+	public void unsubscribe(ISessionListener listener) {
+		this.sessionListener.remove(listener);
+	}
+	
+	protected void fire(ISessionEvent event){
+		for (ISessionListener l:sessionListener){
+			l.sessionEventOccured(event);
+		}
 	}
 
 }

@@ -48,6 +48,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLEditorTextPlugIn;
 
 class OutputSchemaTableViewer {
@@ -223,7 +224,7 @@ class OutputSchemaTableViewer {
 	}
 	
 	private static List<String> determineAttributeTypes() {
-		IDataDictionary dd = PQLEditorTextPlugIn.getDataDictionary();
+		IDataDictionary dd = PQLEditorTextPlugIn.getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant());
 		if( dd == null ) {
 			return Lists.newArrayList();
 		}

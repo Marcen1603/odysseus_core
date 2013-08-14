@@ -79,6 +79,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PrintGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -863,8 +864,9 @@ public class OdysseusConsole implements CommandProvider,
 		String[] args = support.getArgs(ci);
 		try {
 			if (args.length == 3) {
+				ITenant tenant = UserManagementProvider.getTenant(args[2]);
 				currentUser = UserManagementProvider.getSessionmanagement().login(
-						args[0], args[1].getBytes(), args[2]);
+						args[0], args[1].getBytes(), tenant);
 				if (currentUser != null) {
 					ci.println("User " + args[0] + " successfully logged in.");
 				} else {
@@ -1201,7 +1203,7 @@ public class OdysseusConsole implements CommandProvider,
 		addCommand();
 		System.out.println("Current registered sources");
 		for (Entry<String, ILogicalOperator> e : this.executor
-				.getDataDictionary().getStreamsAndViews(currentUser)) {
+				.getStreamsAndViews(currentUser)) {
 			ci.println(e.getKey() + " | " + e.getValue());
 		}
 	}
@@ -1901,13 +1903,12 @@ public class OdysseusConsole implements CommandProvider,
 			// clear sources
 			List<String> sourceNames = new ArrayList<String>();
 			for (Entry<String, ILogicalOperator> sourceDef : this.executor
-					.getDataDictionary().getStreamsAndViews(user)) {
+					.getStreamsAndViews(user)) {
 				sourceNames.add(sourceDef.getKey());
 			}
 			for (String name : sourceNames) {
 				System.out.println("removing source: " + name);
-				this.executor.getDataDictionary()
-						.removeViewOrStream(name, user);
+				this.executor.removeViewOrStream(name, user);
 			}
 
 			// cleanup

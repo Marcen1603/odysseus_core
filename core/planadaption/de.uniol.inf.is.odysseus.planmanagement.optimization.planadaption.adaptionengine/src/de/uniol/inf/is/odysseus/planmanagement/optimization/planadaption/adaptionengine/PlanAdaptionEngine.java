@@ -134,7 +134,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 						query,
 						this.executor.getBuildConfigForQuery(query)
 								.getTransformationConfiguration(), user,
-						this.executor.getDataDictionary());
+						this.executor.getDataDictionary(user.getTenant()));
 		List<IPhysicalOperator> newPlanRoots = newPhysicalQuery.getRoots();
 
 		// remove the newPhysicalQuery as Owner from the newly transformed physical plan

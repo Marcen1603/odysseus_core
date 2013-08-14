@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.usermanagement.mem.service.domain;
+package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractTenant;
 

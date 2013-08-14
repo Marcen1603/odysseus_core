@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.datadictionary.IAddDataType;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -30,9 +29,10 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
-public interface IDataDictionary extends IAddDataType {
+public interface IDataDictionary {
 
 	String createUserUri(String resource, ISession caller);
 
@@ -159,4 +159,9 @@ public interface IDataDictionary extends IAddDataType {
 
 	List<StoredProcedure> getStoredProcedures(ISession caller);
 
+	// -------------------------------------------------------------------------
+	// Init 
+	// -------------------------------------------------------------------------
+	
+	IDataDictionary createInstance(ITenant t);
 }

@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -44,7 +45,6 @@ public class QueryPartManager implements IAdvertisementListener,
 	private static QueryPartManager instance;
 
 	private IServerExecutor executor;
-	private IDataDictionary dataDictionary;
 
 	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps
 			.newConcurrentMap();
@@ -93,7 +93,7 @@ public class QueryPartManager implements IAdvertisementListener,
 		final List<IExecutorCommand> queries = CompilerService.get()
 				.translateQuery(adv.getPqlStatement(), "PQL",
 						SessionManagementService.getActiveSession(),
-						dataDictionary);
+						getDataDictionary());
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -116,7 +116,7 @@ public class QueryPartManager implements IAdvertisementListener,
 
 						// TODO not a good solution to concatenate user name and source name
 						ISession session = SessionManagementService.getActiveSession();
-						if (dataDictionary.containsViewOrStream(session.getUser().getName() + "." + source,
+						if (getDataDictionary().containsViewOrStream(session.getUser().getName() + "." + source,
 								session)
 								|| neededSourcesMap.get(adv).contains(source))
 							break;
@@ -186,20 +186,8 @@ public class QueryPartManager implements IAdvertisementListener,
 		}
 	}
 
-	// called by OSGi-DS
-	public void bindDataDictionary(IDataDictionary dd) {
-		dataDictionary = dd;
-
-		LOG.debug("DataDictionary bound {}", dd);
-	}
-
-	// called by OSGi-DS
-	public void unbindDataDictionary(IDataDictionary dd) {
-		if (dataDictionary == dd) {
-			dataDictionary = null;
-
-			LOG.debug("DataDictionary unbound {}", dd);
-		}
+	public IDataDictionary getDataDictionary(){
+		return DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
 	}
 
 	public static QueryPartManager getInstance() {
@@ -223,7 +211,7 @@ public class QueryPartManager implements IAdvertisementListener,
 	public void addedViewDefinition(IDataDictionary sender, String name,
 			ILogicalOperator op) {
 
-		if (sender != dataDictionary)
+		if (sender != getDataDictionary())
 			return;
 
 		/*

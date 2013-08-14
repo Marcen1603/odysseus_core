@@ -23,6 +23,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserConstants;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
@@ -69,7 +70,7 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 			}
 		}
 		// then, add also all datatypes
-		liste.addAll(Activator.getDataDictionary().getDatatypes());
+		liste.addAll(DataDictionaryProvider.getAllDatatypeNames());
 		return liste;
 	}
 

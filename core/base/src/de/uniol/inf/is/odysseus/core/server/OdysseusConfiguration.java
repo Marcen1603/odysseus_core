@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class OdysseusConfiguration {
 
-		
 	static Logger _logger = null;
 
 	static Logger getLogger() {
@@ -45,7 +44,8 @@ public class OdysseusConfiguration {
 	static Properties props = new Properties();
 
 	// TODO: Make Platform specific homedir
-	private static String odysseusDefaultHome = String.format("%s"+File.separator+"%sodysseus"+File.separator,
+	private static String odysseusDefaultHome = String.format("%s"
+			+ File.separator + "%sodysseus" + File.separator,
 			System.getProperty("user.home"),
 			getDot(System.getProperty("os.name")));
 	private static String homeDir;
@@ -70,20 +70,20 @@ public class OdysseusConfiguration {
 		File f = FileUtils.openOrCreateFile(odysseusHome + filename);
 		FileInputStream in;
 		in = new FileInputStream(f);
-//		try {
-//			properties.load(in);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		// try {
+		// properties.load(in);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 		try {
 			properties.loadFromXML(in);
 		} catch (Exception e) {
 			// Migration of old format
-			try{
+			try {
 				properties.load(in);
 				getLogger().debug("Property file migrated");
-			}catch(Exception e2){
-				//e2.printStackTrace();
+			} catch (Exception e2) {
+				// e2.printStackTrace();
 			}
 		}
 		in.close();
@@ -98,67 +98,57 @@ public class OdysseusConfiguration {
 		props.setProperty("StoretypeUserMgmt", "Memorystore");
 		props.setProperty("StoretypeDataDict", "Memorystore");
 
-		
 		// Store-Filename
-		props.setProperty("tenantStoreFilename", odysseusHome
-				+ "store/tenants.store");
-		props.setProperty("userStoreFilename", odysseusHome
-				+ "store/users.store");
-		props.setProperty("privilegStoreFilename", odysseusHome
-				+ "store/priviliges.store");
-		props.setProperty("roleStoreFilename", odysseusHome
-				+ "store/roles.store");
-		props.setProperty("slasFilename", odysseusHome + "store/slas.store");
-		props.setProperty("streamDefinitionsFilename", odysseusHome
-				+ "store/viewDefinitions.store");
-		props.setProperty("streamOrViewFromUserFilename", odysseusHome
-				+ "store/viewFromUser.store");
-		props.setProperty("viewDefinitionsFilename", odysseusHome
-				+ "store/logicalViewDefinitions.store");
-		props.setProperty("sinkDefinitionsFilename", odysseusHome
-				+ "store/sinkDefinitions.store");
-		props.setProperty("sinkDefinitionsUserFilename", odysseusHome
-				+ "store/sinkDefinitionsUser.store");
-		props.setProperty("entitiesFilename", odysseusHome
-				+ "store/entities.store");
-		props.setProperty("entityUsedByFileName", odysseusHome
-				+ "store/entityUsedBy.store");
-		props.setProperty("sourceTypeMapFilename", odysseusHome
-				+ "store/sourceTypeMap.store");
-		props.setProperty("entityFromUserFilename", odysseusHome
-				+ "store/entityFromUser.store");
-		props.setProperty("sourceFromUserFilename", odysseusHome
-				+ "store/sourceFromUser.store");
-		props.setProperty("queriesFilename", odysseusHome
-				+ "store/queries.store");
-		props.setProperty("queriesUserFilename", odysseusHome
-				+ "store/queriesUser.store");
-		props.setProperty("queriesBuildParamFilename", odysseusHome
-				+ "store/queriesBuildParam.store");
+		props.setProperty("Tenant.DefaultName","");
+		props.setProperty("tenantStoreFilename", "tenants.store");
+		props.setProperty("userStoreFilename", "users.store");
+		props.setProperty("privilegStoreFilename", "priviliges.store");
+		props.setProperty("roleStoreFilename", "roles.store");
+		props.setProperty("slasFilename", "slas.store");
+		props.setProperty("streamDefinitionsFilename", "viewDefinitions.store");
+		props.setProperty("streamOrViewFromUserFilename", "viewFromUser.store");
+		props.setProperty("viewDefinitionsFilename",
+				"logicalViewDefinitions.store");
+		props.setProperty("sinkDefinitionsFilename", "sinkDefinitions.store");
+		props.setProperty("sinkDefinitionsUserFilename",
+				"sinkDefinitionsUser.store");
+		props.setProperty("entitiesFilename", "entities.store");
+		props.setProperty("entityUsedByFileName", "entityUsedBy.store");
+		props.setProperty("sourceTypeMapFilename", "sourceTypeMap.store");
+		props.setProperty("entityFromUserFilename", "entityFromUser.store");
+		props.setProperty("sourceFromUserFilename", "sourceFromUser.store");
+		props.setProperty("queriesFilename", "queries.store");
+		props.setProperty("queriesUserFilename", "queriesUser.store");
+		props.setProperty("queriesBuildParamFilename",
+				"queriesBuildParam.store");
+
+		props.setProperty("storedProceduresFilename", "procedures.store");
+		props.setProperty("storedProceduresFromUserFilename",
+				"proceduresUser.store");
+		props.setProperty("datatypesFromDatatypesFilename", "datatypes.store");
 
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
+
 		props.setProperty("reloadLogStoreFilename", odysseusHome
 				+ "reloadlog.store");
 
 		props.setProperty("schedulingConfigFile", odysseusHome
 				+ "scheduling.conf");
-		props.setProperty("datatypesFromDatatypesFilename", odysseusHome
-				+ "store/datatypes.store");
-		props.setProperty("storedProceduresFilename", odysseusHome + "store/procedures.store");
-		props.setProperty("storedProceduresFromUserFilename", odysseusHome + "store/proceduresUser.store");
-		
+
 		props.setProperty("sessionTimeout", (24 * 60 * 60000) + ""); // Milliseconds
 
 		// Scheduling
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
 		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
 		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
-		props.setProperty("scheduler_simpleThreadScheduler_executorThreadsCount",(-1)+"");
+		props.setProperty(
+				"scheduler_simpleThreadScheduler_executorThreadsCount", (-1)
+						+ "");
 		props.setProperty("scheduler_DebugFileName", "SchedulerLog");
 		props.setProperty("scheduler_trainSize", 1 + "");
 		props.setProperty("Scheduler.sleepAllowed", "false");
-		props.setProperty("Scheduler.Simplethreaded.SourcesPerThread","10");
-		props.setProperty("Scheduler.Simplethreaded.NumberOfThreads","10");
+		props.setProperty("Scheduler.Simplethreaded.SourcesPerThread", "10");
+		props.setProperty("Scheduler.Simplethreaded.NumberOfThreads", "10");
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
@@ -185,7 +175,7 @@ public class OdysseusConfiguration {
 
 		// Event Dispatcher
 		props.setProperty("EventHandlerDispatcherPoolSize", "10");
-		
+
 		// Plan Adaption
 		props.setProperty("adaption_timer", "5000");
 		props.setProperty("adaption_blockingTime", "30000");
@@ -213,49 +203,69 @@ public class OdysseusConfiguration {
 		return ret;
 	}
 
+	public static String getFileProperty(String key, String tenantName) {
+		if (tenantName != null && tenantName.length() > 0) {
+			return odysseusDefaultHome + File.separator + "store"
+					+ File.separator + tenantName + File.separator + get(key);
+		} else {
+			return odysseusDefaultHome + File.separator + "store"
+					+ File.separator +"_default"+ File.separator+ get(key);
+		}
+	}
+
+	public static String getFileProperty(String key) {
+			return odysseusDefaultHome + File.separator + "store"
+					+ File.separator + get(key);
+	}
+
+	
 	public static long getLong(String key, long defaultValue) {
 		String val = props.getProperty(key);
 		return val != null ? Long.parseLong(val) : defaultValue;
 	}
-	
-	public static int getInt( String key, int defaultValue ) {
+
+	public static int getInt(String key, int defaultValue) {
 		String val = props.getProperty(key);
 		try {
 			return val != null ? Integer.parseInt(val) : defaultValue;
-		} catch ( Exception ex ) {
-			_logger.error("Exception during getting value of configuration-key '{}'", key, ex);
+		} catch (Exception ex) {
+			_logger.error(
+					"Exception during getting value of configuration-key '{}'",
+					key, ex);
 			return defaultValue;
 		}
 	}
 
 	public static boolean getBoolean(String key) {
 		String val = props.getProperty(key);
-		if (val != null){
+		if (val != null) {
 			return Boolean.parseBoolean(val);
 		}
 		return false;
 	}
-	
+
 	public static boolean getBoolean(String key, boolean defaultValue) {
 		try {
 			String val = props.getProperty(key);
-			if (val != null){
+			if (val != null) {
 				return Boolean.parseBoolean(val);
 			}
-		} catch( Throwable t ) {
+		} catch (Throwable t) {
 		}
 		return defaultValue;
 	}
-	
+
 	public static void set(String key, String value, boolean permanent,
 			ISession caller) {
 
 		if (UserManagementProvider.getUsermanagement().hasPermission(caller,
-				ConfigurationPermission.SET_PARAM, ConfigurationPermission.objectURI)) {
+				ConfigurationPermission.SET_PARAM,
+				ConfigurationPermission.objectURI)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (UserManagementProvider.getUsermanagement().hasPermission(caller,
-						ConfigurationPermission.SAVE_PARAM, ConfigurationPermission.objectURI)) {
+				if (UserManagementProvider.getUsermanagement().hasPermission(
+						caller, ConfigurationPermission.SAVE_PARAM,
+						ConfigurationPermission.objectURI)) {
 					savePropertyFile(homeDir);
 				} else {
 					throw new PermissionException(

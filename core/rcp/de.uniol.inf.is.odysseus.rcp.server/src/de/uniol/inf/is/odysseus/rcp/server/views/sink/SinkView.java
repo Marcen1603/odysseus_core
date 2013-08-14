@@ -50,7 +50,10 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewContentProvider;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
@@ -59,7 +62,7 @@ import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
  * 
  * @author Dennis Geesen Created at: 24.08.2011
  */
-public class SinkView extends ViewPart implements IDataDictionaryListener, IUserManagementListener {
+public class SinkView extends ViewPart implements IDataDictionaryListener, IUserManagementListener, ISessionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SinkView.class);
 	private TreeViewer viewer;
@@ -73,7 +76,8 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 	public void dispose() {
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
 		if (e instanceof IServerExecutor) {
-			((IServerExecutor) e).getDataDictionary().removeListener(this);
+			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).removeListener(this);
+			UserManagementProvider.getSessionmanagement().subscribe(this);
 		}
 		super.dispose();
 	}
@@ -155,7 +159,7 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		refresh();
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
 		if (e instanceof IServerExecutor) {
-			((IServerExecutor) e).getDataDictionary().addListener(this);
+			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).addListener(this);
 		}
 		// UserManagement.getUsermanagement().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
@@ -177,6 +181,11 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
+		refresh();
+	}
+	
+	@Override
+	public void sessionEventOccured(ISessionEvent event) {
 		refresh();
 	}
 

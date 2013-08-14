@@ -15,53 +15,27 @@
  */
 package de.uniol.inf.is.odysseus.datatype.interval;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatatypeProvider;
 import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Marco Grawunder
  */
-public class IntervalDatatypeProvider {
-	public static IDataDictionary datadictionary = null;
+public class IntervalDatatypeProvider implements IDatatypeProvider{
 
-	protected void bindDataDictionary(final IDataDictionary dd) {
-		IntervalDatatypeProvider.datadictionary = dd;
-		try {
-			IntervalDatatypeProvider.datadictionary.addDatatype(
-					SDFIntervalDatatype.INTERVAL_DOUBLE.getURI(),
-					SDFIntervalDatatype.INTERVAL_DOUBLE);
-			IntervalDatatypeProvider.datadictionary.addDatatype(
-					SDFIntervalDatatype.INTERVAL_FLOAT.getURI(),
-					SDFIntervalDatatype.INTERVAL_FLOAT);
-			IntervalDatatypeProvider.datadictionary.addDatatype(
-					SDFIntervalDatatype.INTERVAL_BYTE.getURI(),
-					SDFIntervalDatatype.INTERVAL_BYTE);
-			IntervalDatatypeProvider.datadictionary.addDatatype(
-					SDFIntervalDatatype.INTERVAL_SHORT.getURI(),
-					SDFIntervalDatatype.INTERVAL_SHORT);
-			IntervalDatatypeProvider.datadictionary.addDatatype(
-					SDFIntervalDatatype.INTERVAL_INTEGER.getURI(),
-					SDFIntervalDatatype.INTERVAL_INTEGER);
-			IntervalDatatypeProvider.datadictionary.addDatatype(
-					SDFIntervalDatatype.INTERVAL_LONG.getURI(),
-					SDFIntervalDatatype.INTERVAL_LONG);
-		} catch (final DataDictionaryException e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void unbindDataDictionary(final IDataDictionary dd) {
-		try {
-			dd.removeDatatype(SDFIntervalDatatype.INTERVAL_DOUBLE.getURI());
-			dd.removeDatatype(SDFIntervalDatatype.INTERVAL_FLOAT.getURI());
-			dd.removeDatatype(SDFIntervalDatatype.INTERVAL_BYTE.getURI());
-			dd.removeDatatype(SDFIntervalDatatype.INTERVAL_SHORT.getURI());
-			dd.removeDatatype(SDFIntervalDatatype.INTERVAL_INTEGER.getURI());
-			dd.removeDatatype(SDFIntervalDatatype.INTERVAL_LONG.getURI());
-		} catch (final DataDictionaryException e) {
-			e.printStackTrace();
-		}
-		IntervalDatatypeProvider.datadictionary = null;
-	}
+	@Override
+	public List<SDFDatatype> getDatatypes() {
+		List<SDFDatatype> ret = new ArrayList<>();
+		ret.add(SDFIntervalDatatype.INTERVAL_DOUBLE);
+		ret.add(SDFIntervalDatatype.INTERVAL_FLOAT);
+		ret.add(SDFIntervalDatatype.INTERVAL_BYTE);
+		ret.add(SDFIntervalDatatype.INTERVAL_SHORT);
+		ret.add(SDFIntervalDatatype.INTERVAL_INTEGER);
+		ret.add(SDFIntervalDatatype.INTERVAL_LONG);
+		return ret;
+	}	
 }

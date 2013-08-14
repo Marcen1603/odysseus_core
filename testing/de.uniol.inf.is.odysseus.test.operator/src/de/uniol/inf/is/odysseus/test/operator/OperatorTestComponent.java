@@ -86,7 +86,7 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 		checkNotNull(UserManagementProvider.getSessionmanagement(), "Session management not set");
 		checkArgument(args.length == 3, "OperatorTest needs exactly arguments: [User], [Password], [FolderWithQueryFolders]");
 		
-		ISession session = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(), "");
+		ISession session = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(), UserManagementProvider.getDefaultTenant());
 		
 		out = createWriter(args[2]);
 

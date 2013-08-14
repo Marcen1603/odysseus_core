@@ -16,8 +16,9 @@
 package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.datadictionary.IAddDataType;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
 /**
@@ -102,7 +103,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	/**
 	 * Datatypes for aggregations (partial aggregates
 	 */
-	public static final SDFDatatype PARTIAL_AGGREGATE = new SDFDatatype("PartialAggregate");
+	public static final SDFDatatype PARTIAL_AGGREGATE = new SDFDatatype(
+			"PartialAggregate");
 	public static final SDFDatatype AVG_SUM_PARTIAL_AGGREGATE = new SDFDatatype(
 			"AvgSumPartialAggregate");
 	public static final SDFDatatype COUNT_PARTIAL_AGGREGATE = new SDFDatatype(
@@ -199,37 +201,35 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		this.requiresDeepClone = sdfDatatype.requiresDeepClone;
 	}
 
-	public static void registerDefaultTypes(IAddDataType dd) {
+	public static List<SDFDatatype> getTypes() {
+		List<SDFDatatype> types = new ArrayList<>();
 
-		try {
-			dd.addDatatype(SDFDatatype.OBJECT);
-			dd.addDatatype(SDFDatatype.DATE);
-			dd.addDatatype(SDFDatatype.DOUBLE);
-			dd.addDatatype(SDFDatatype.END_TIMESTAMP);
-			dd.addDatatype(SDFDatatype.END_TIMESTAMP_STRING);
-			dd.addDatatype(SDFDatatype.FLOAT);
-			dd.addDatatype(SDFDatatype.INTEGER);
-			dd.addDatatype(SDFDatatype.LONG);
-			dd.addDatatype(SDFDatatype.START_TIMESTAMP);
-			dd.addDatatype(SDFDatatype.START_TIMESTAMP_STRING);
-			dd.addDatatype(SDFDatatype.SHORT);
-			dd.addDatatype(SDFDatatype.BYTE);
+		types.add(SDFDatatype.OBJECT);
+		types.add(SDFDatatype.DATE);
+		types.add(SDFDatatype.DOUBLE);
+		types.add(SDFDatatype.END_TIMESTAMP);
+		types.add(SDFDatatype.END_TIMESTAMP_STRING);
+		types.add(SDFDatatype.FLOAT);
+		types.add(SDFDatatype.INTEGER);
+		types.add(SDFDatatype.LONG);
+		types.add(SDFDatatype.START_TIMESTAMP);
+		types.add(SDFDatatype.START_TIMESTAMP_STRING);
+		types.add(SDFDatatype.SHORT);
+		types.add(SDFDatatype.BYTE);
 
-			dd.addDatatype(SDFDatatype.STRING);
-			dd.addDatatype(SDFDatatype.DOCUMENT);
-			dd.addDatatype(SDFDatatype.MV);
-			dd.addDatatype(SDFDatatype.TIMESTAMP);
-			dd.addDatatype(SDFDatatype.BOOLEAN);
+		types.add(SDFDatatype.STRING);
+		types.add(SDFDatatype.DOCUMENT);
+		types.add(SDFDatatype.MV);
+		types.add(SDFDatatype.TIMESTAMP);
+		types.add(SDFDatatype.BOOLEAN);
 
-			dd.addDatatype(SDFDatatype.PARTIAL_AGGREGATE);
-			dd.addDatatype(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
-			dd.addDatatype(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
-			dd.addDatatype(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
-			dd.addDatatype(SDFDatatype.LIST_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.AVG_SUM_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
+		types.add(SDFDatatype.LIST_PARTIAL_AGGREGATE);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return types;
 	}
 
 	@Override
@@ -305,10 +305,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public boolean isPartialAggregate() {
-		return this.getURI().equals(PARTIAL_AGGREGATE.getURI()) 
+		return this.getURI().equals(PARTIAL_AGGREGATE.getURI())
 				|| this.getURI().equals(AVG_SUM_PARTIAL_AGGREGATE.getURI())
 				|| this.getURI().equals(COUNT_PARTIAL_AGGREGATE.getURI())
-				|| this.getURI().equals(RELATIONAL_ELEMENT_PARTIAL_AGGREGATE.getURI())
+				|| this.getURI().equals(
+						RELATIONAL_ELEMENT_PARTIAL_AGGREGATE.getURI())
 				|| this.getURI().equals(LIST_PARTIAL_AGGREGATE.getURI());
 	}
 

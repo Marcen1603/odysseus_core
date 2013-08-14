@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.mining;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.mining.predicate.RulePredicateBuilder;
@@ -54,18 +53,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
-	}
-	
-	public void bindDataDictionary(IDataDictionary dd){				
-		dd.addDatatype(MiningDatatypes.FREQUENT_ITEM_SET.getURI(), MiningDatatypes.FREQUENT_ITEM_SET);
-		dd.addDatatype(MiningDatatypes.ASSOCIATION_RULE.getURI(), MiningDatatypes.ASSOCIATION_RULE);
-		dd.addDatatype(MiningDatatypes.CLASSIFIER.getURI(), MiningDatatypes.CLASSIFIER);	
-	}
-	
-	public void unbindDataDictionary(IDataDictionary dd){
-		dd.removeDatatype(MiningDatatypes.FREQUENT_ITEM_SET.getURI());
-		dd.removeDatatype(MiningDatatypes.ASSOCIATION_RULE.getURI());
-		dd.removeDatatype(MiningDatatypes.CLASSIFIER.getURI());
 	}
 	
 	public void bindOperatorBuilderFactory(IOperatorBuilderFactory obf){

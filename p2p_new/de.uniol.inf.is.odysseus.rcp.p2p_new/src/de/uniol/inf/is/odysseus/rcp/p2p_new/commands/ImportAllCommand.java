@@ -29,7 +29,7 @@ public class ImportAllCommand extends AbstractHandler implements IHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
 		IP2PDictionary dictionary = P2PDictionaryService.get();
-		IDataDictionary dataDictionary = ServerExecutorService.getDataDictionary();
+		IDataDictionary dataDictionary = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
 
 		ImmutableList<SourceAdvertisement> sources = dictionary.getSources();
 		int okCount = 0;

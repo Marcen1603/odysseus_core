@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public class DataDictionary extends AbstractDataDictionary {
@@ -41,75 +42,89 @@ public class DataDictionary extends AbstractDataDictionary {
 		return OdysseusConfiguration.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
 	}
 	
+	public DataDictionary(){
+		super(null);
+	}
+	
+	public DataDictionary(ITenant t){
+		super(t);
+	}
+	
+	@Override
+	public IDataDictionary createInstance(ITenant t) {
+		IDataDictionary dd = new DataDictionary(t);
+		return dd;
+	}
+	
 	@Override
 	protected IStore<String, ILogicalOperator> createStreamDefinitionsStore() {
-		return createStore("streamDefinitionsFilename");
+		return createStore("streamDefinitionsFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, IUser> createViewOrStreamFromUserStore() {
-		return createStore("streamOrViewFromUserFilename");
+		return createStore("streamOrViewFromUserFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, ILogicalOperator> createViewDefinitionsStore() {
-		return createStore("viewDefinitionsFilename");
+		return createStore("viewDefinitionsFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, HashMap<String, ArrayList<String>>> createEntityUsedByStore() {
-		return createStore("entityUsedByFileName");
+		return createStore("entityUsedByFileName", tenant);
 	}
 
 	@Override
 	protected IStore<String, IUser> createEntityFromUserStore() {
-		return createStore("entityFromUserFilename");
+		return createStore("entityFromUserFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, SDFDatatype> createDatatypesStore() {
-		return createStore("datatypesFromDatatypesFilename");
+		return createStore("datatypesFromDatatypesFilename", tenant);
 	}
 
 	@Override
 	protected IStore<Integer, ILogicalQuery> createSavedQueriesStore() {
-		return createStore("queriesFilename");
+		return createStore("queriesFilename", tenant);
 	}
 
 	@Override
 	protected IStore<Integer, IUser> createSavedQueriesForUserStore() {
-		return createStore("queriesUserFilename");
+		return createStore("queriesUserFilename", tenant);
 	}
 
 	@Override
 	protected IStore<Integer, String> createSavedQueriesBuildParameterNameStore() {
-		return createStore("queriesBuildParamFilename");
+		return createStore("queriesBuildParamFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, ILogicalOperator> createSinkDefinitionsStore() {
-		return createStore("sinkDefinitionsFilename");
+		return createStore("sinkDefinitionsFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, IUser> createSinkFromUserStore() {
-		return createStore("sinkDefinitionsUserFilename");
+		return createStore("sinkDefinitionsUserFilename", tenant);
 	}
 
 
 	@Override
 	protected IStore<String, StoredProcedure> createStoredProceduresStore() {
-		return createStore("storedProceduresFilename");
+		return createStore("storedProceduresFilename", tenant);
 	}
 
 	@Override
 	protected IStore<String, IUser> createStoredProceduresFromUserStore() {
-		return createStore("storedProceduresFromUserFilename");
+		return createStore("storedProceduresFromUserFilename", tenant);
 	}
 	
-	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> createStore (String key){
+	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> createStore (String key, ITenant tenant){
 		if (useFilestore()){
-			return tryCreateFileStore(key);
+			return tryCreateFileStore(key, tenant);
 		}else{
 			return newMemoryStore();
 		}
@@ -119,9 +134,9 @@ public class DataDictionary extends AbstractDataDictionary {
 		return new MemoryStore<T, U>();
 	}
 	
-	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key){
+	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key, ITenant tenant){
 		try {
-			return new FileStore<T, U>(OdysseusConfiguration.get(key));
+			return new FileStore<T, U>(OdysseusConfiguration.getFileProperty(key,tenant.getName()));
 		} catch (IOException e) {
 			LOG.error("Could not create fileStore-Instance for key " + key, e);
 			return null;

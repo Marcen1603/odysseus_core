@@ -6,10 +6,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
-public interface IDataDictionaryWritable extends IDataDictionary {
+public interface IDataDictionaryWritable extends IDataDictionary{
 
 	// -------------------------------------------------------------------------
 	// View and Stream Management
@@ -82,5 +83,11 @@ public interface IDataDictionaryWritable extends IDataDictionary {
 	void addStoredProcedure(StoredProcedure procedure, ISession user);
 
 	void removeStoredProcedure(String name, ISession user);
-	
+
+
+	// -------------------------------------------------------------------------
+	// Datatypes
+	// -------------------------------------------------------------------------
+	public void addDatatype(SDFDatatype dt);
+
 }

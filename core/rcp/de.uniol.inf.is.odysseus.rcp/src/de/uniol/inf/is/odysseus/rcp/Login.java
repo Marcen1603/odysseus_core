@@ -46,16 +46,17 @@ public class Login {
 		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();
 		String password = LoginPreferencesManager.getInstance().getPassword();
+		String tenant =  LoginPreferencesManager.getInstance().getTenant();
 
 		// Daten ok und automatisches anmelden erlaubt?
 		if (username.length() > 0 && password.length() > 0 && !forceShow && LoginPreferencesManager.getInstance().getAutoLogin()) {
 			// Automatisch anmelden (password ist md5)
-			ISession user = realLogin(username, password);
+			ISession user = realLogin(username, password, tenant);
 			if (user == null) {
 				// fehlerhafte anmeldung..
 				// Fenster anzeigen, damit der Nutzer das
 				// korrigieren kann.
-				LoginWindow wnd = new LoginWindow(parent, username, cancelOK);
+				LoginWindow wnd = new LoginWindow(parent, username, tenant, cancelOK);
 				wnd.show();
 			}else{
 				StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID, "User " + user.getUser().getName());
@@ -68,18 +69,21 @@ public class Login {
 
 	}
 
-	public static ISession realLogin(String username, String password) {
+	public static ISession realLogin(String username, String password, String tenant) {
 		try {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 
 			ISession user = null;
-			String tenant = "";
 			user = executor.login(username, password.getBytes(), tenant);
 
 			if (user != null) {
 				// anmelden ok
 				OdysseusRCPPlugIn.setActiveSession(user);
-				StatusBarManager.getInstance().setMessage(OdysseusNLS.AutomaticallyLoggedInAs + " " + username);
+				StringBuffer message = new StringBuffer(OdysseusNLS.LoggedInAs).append(" ").append(username);
+				if (tenant.length() > 0){
+					message.append(" [").append(tenant).append("]");
+				}
+				StatusBarManager.getInstance().setMessage(message.toString());
 				executor.reloadStoredQueries(user);
 				return user;
 			}

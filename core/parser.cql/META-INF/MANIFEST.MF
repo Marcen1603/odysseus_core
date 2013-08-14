@@ -5,7 +5,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.cql
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.cql.Activator
 Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.datadictionary,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.physicaloperator,

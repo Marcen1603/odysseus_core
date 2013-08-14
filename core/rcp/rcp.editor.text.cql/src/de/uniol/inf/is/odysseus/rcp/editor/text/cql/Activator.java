@@ -3,7 +3,9 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.cql;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -15,8 +17,6 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-
-	private static IDataDictionary dataDictionary;
 	
 	/**
 	 * The constructor
@@ -46,19 +46,8 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	
-	public void bindDataDictionary(IDataDictionary dd ) {
-		dataDictionary = dd;		
-	}
-	
-	public void unbindDataDictionary( IDataDictionary dd ) {
-		if( dataDictionary == dd ) {		
-			dataDictionary = null;		
-		}
-	}
-	
-	
-	public static IDataDictionary getDataDictionary() {
-		return dataDictionary;
+	public static IDataDictionary getDataDictionary(ITenant tenant) {
+		return DataDictionaryProvider.getDataDictionary(tenant);
 	}
 	
 }

@@ -6,13 +6,13 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 public class ServerExecutorService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ServerExecutorService.class);
 	
 	private static IServerExecutor serverExecutor;
-	private static IDataDictionary dataDictionary;
 	
 	// called by OSGi
 	public void bindExecutor(IExecutor executor ) {
@@ -20,9 +20,8 @@ public class ServerExecutorService {
 		if(executor instanceof IServerExecutor) {
 			
 			serverExecutor = (IServerExecutor)executor;
-			dataDictionary = serverExecutor.getDataDictionary();
 			
-			LOG.debug("Bound server executor {} and DataDictionary {}", executor, dataDictionary);
+			LOG.debug("Bound server executor {}", executor);
 			
 		}
 		
@@ -34,7 +33,6 @@ public class ServerExecutorService {
 		if(executor == serverExecutor) {
 			
 			serverExecutor = null;
-			dataDictionary = null;
 			
 			LOG.debug("Unbound server executor {} and data Dictionary", executor);
 			
@@ -47,9 +45,9 @@ public class ServerExecutorService {
 		return serverExecutor;
 	}
 	
-	public static IDataDictionary getDataDictionary() {
+	public static IDataDictionary getDataDictionary(ITenant tenant) {
 		
-		return dataDictionary;
+		return serverExecutor.getDataDictionary(tenant);
 		
 	}
 	

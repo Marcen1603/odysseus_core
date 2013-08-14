@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package de.uniol.inf.is.odysseus.usermanagement.jpa.service.impl;
+
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -36,86 +38,77 @@ import de.uniol.inf.is.odysseus.usermanagement.jpa.persistence.impl.UserDAO;
  * @author Christian Kuka <christian@kuka.cc>
  */
 @SuppressWarnings("all")
-public class UserManagementServiceImpl extends AbstractUserManagement<TenantImpl,UserImpl,RoleImpl,PrivilegeImpl> implements IUserManagement {
-	
-    private EntityManagerFactory entityManagerFactory;
-    private EntityManager em;
-    
+public class UserManagementServiceImpl extends
+		AbstractUserManagement<UserImpl, RoleImpl, PrivilegeImpl> implements
+		IUserManagement {
+
+	private EntityManagerFactory entityManagerFactory;
+	private EntityManager em;
+
 	private UserDAO userDAO;
 	private RoleDAO roleDAO;
 	private PrivilegeDAO privDAO;
-	
+
 	ISessionManagement sessionMgmt;
-	
+
 	@Override
 	protected UserImpl createEmptyUser() {
 		return new UserImpl();
 	}
-	
+
 	@Override
 	protected RoleImpl createEmptyRole() {
 		return new RoleImpl();
 	}
-	
+
 	@Override
-	protected PrivilegeImpl createEmptyPrivilege(){
+	protected PrivilegeImpl createEmptyPrivilege() {
 		return new PrivilegeImpl();
 	}
 
-    @Override
-    protected IGenericDAO<UserImpl, String> getUserDAO(ITenant tenant) {
-    	// FIXME: Treat tenant
-        if( userDAO == null ) {
-            userDAO = new UserDAO();
-            userDAO.setEntityManager(em);
-        }
-        return userDAO;
-    }
-
-    @Override
-    protected IGenericDAO<RoleImpl, String> getRoleDAO(ITenant tenant) {
-    	// FIXME: Treat tenant
-    	if( roleDAO == null ) {
-            roleDAO = new RoleDAO();
-            roleDAO.setEntityManager(em);
-        }
-        return roleDAO;
-    }
-
-    @Override
-    protected IGenericDAO<PrivilegeImpl, String> getPrivilegeDAO(ITenant tenant) {
-    	// FIXME: Treat tenant
-    	if( privDAO == null ) {
-            privDAO = new PrivilegeDAO();
-            privDAO.setEntityManager(em);
-        }
-        return privDAO;
-    }
-
 	@Override
-	protected IGenericDAO<TenantImpl, String> getTenantDAO() {
-		// TODO Auto-generated method stub
-		return null;
+	protected IGenericDAO<UserImpl, String> getUserDAO(ITenant tenant) {
+		// FIXME: Treat tenant
+		if (userDAO == null) {
+			userDAO = new UserDAO();
+			userDAO.setEntityManager(em);
+		}
+		return userDAO;
 	}
 
 	@Override
-	protected TenantImpl createEmptyTenant() {
-		// TODO Auto-generated method stub
-		return null;
+	protected IGenericDAO<RoleImpl, String> getRoleDAO(ITenant tenant) {
+		// FIXME: Treat tenant
+		if (roleDAO == null) {
+			roleDAO = new RoleDAO();
+			roleDAO.setEntityManager(em);
+		}
+		return roleDAO;
 	}
 
 	@Override
-	protected void process_init() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("odysseusPU");
+	protected IGenericDAO<PrivilegeImpl, String> getPrivilegeDAO(ITenant tenant) {
+		// FIXME: Treat tenant
+		if (privDAO == null) {
+			privDAO = new PrivilegeDAO();
+			privDAO.setEntityManager(em);
+		}
+		return privDAO;
+	}
+
+	@Override
+	protected void process_init(ITenant t) {
+		entityManagerFactory = Persistence
+				.createEntityManagerFactory("odysseusPU");
 		em = entityManagerFactory.createEntityManager();
-		initDefaultUsers();		
+		initDefaultUsers(t);
 	}
-	
+
 	@Override
 	public String getType() {
 		return "JPA";
 	}
-	
+
 	@Override
 	public ISessionManagement getSessionManagement() {
 		if (sessionMgmt == null) {

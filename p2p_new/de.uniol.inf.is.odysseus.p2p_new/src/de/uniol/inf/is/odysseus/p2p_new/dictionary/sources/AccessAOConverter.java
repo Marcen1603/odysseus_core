@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 
 public final class AccessAOConverter {
 
@@ -221,7 +222,7 @@ public final class AccessAOConverter {
 		final List<SDFAttribute> attributes = Lists.newArrayList();
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary().getDatatype(elem.getTextValue()));
+			final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()));
 			attributes.add(attr);
 		}
 
