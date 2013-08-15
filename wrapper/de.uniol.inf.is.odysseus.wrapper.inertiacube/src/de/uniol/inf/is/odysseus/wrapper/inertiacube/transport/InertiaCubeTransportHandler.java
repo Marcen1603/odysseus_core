@@ -128,8 +128,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 
 	@Override
 	public void processOutOpen() throws IOException {
-		// TODO Auto-generated method stub
-		
+		// In only
 	}
 
 	@Override
@@ -145,8 +144,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 
 	@Override
 	public void processOutClose() throws IOException {
-		// TODO Auto-generated method stub
-		
+		// In only
 	}
 
 	class UpdateTimerTask extends TimerTask {
