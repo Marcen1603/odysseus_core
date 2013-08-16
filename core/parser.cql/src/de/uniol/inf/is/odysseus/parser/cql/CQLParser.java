@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.D
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropViewCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.ChangeUserPasswordCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateTenantCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateUserCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropRoleCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropUserCommand;
@@ -697,81 +698,6 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {
-//		try {
-//			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-//			Object bsv = brokerSourceVisitor.newInstance();
-//			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
-//			m.invoke(bsv, caller);
-//
-//			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
-//			m2.invoke(bsv, dataDictionary);
-//
-//			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTCreateBroker.class, Object.class);
-//			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
-//
-//			addQuery(sourceOp);
-//			return commands;
-//		} catch (ClassNotFoundException e) {
-//			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
-//		} catch (Exception e) {
-//			throw new QueryParseException("Error while parsing CREATE BROKER statement", e.getCause());
-//		}
-		return null;
-	}
-
-//	private void addQuery(AbstractLogicalOperator sourceOp) {
-//		LogicalQuery query = new LogicalQuery();
-//		query.setParserId(getLanguage());
-//		query.setLogicalPlan(sourceOp, true);
-//		commands.add(query);
-//	}
-
-	@Override
-	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerSelectInto node, Object data) throws QueryParseException {
-//
-//		try {
-//			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-//			Object bsv = brokerSourceVisitor.newInstance();
-//			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
-//			m.invoke(bsv, caller);
-//			Method m2 = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
-//			m2.invoke(bsv, dataDictionary);
-//
-//			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSelectInto.class, Object.class);
-//			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
-//
-//			addQuery(sourceOp);
-//			return commands;
-//		} catch (ClassNotFoundException e) {
-//			throw new QueryParseException("Brokerplugin is missing in CQL parser.", e.getCause());
-//		} catch (Exception e) {
-//			throw new QueryParseException("Error while parsing the SELECT INTO statement", e.getCause());
-//		}
-		return null;
-	}
-//
-//	@Override
-	public Object visit(ASTBrokerAsSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerSimpleSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerQueue node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
 	public Object visit(ASTMetric node, Object data) throws QueryParseException {
 		try {
 			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
@@ -843,6 +769,16 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public Object visit(ASTCreateTenant node, Object data)
+			throws QueryParseException {
+		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();
+		CreateTenantCommand cmd = new CreateTenantCommand(username, caller);
+		commands.add(cmd);
+		return null;
+	}
+
+	
 	@Override
 	public Object visit(ASTAlterUserStatement node, Object data) throws QueryParseException {
 		String username = ((ASTIdentifier) node.jjtGetChild(0)).getName();

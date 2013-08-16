@@ -418,39 +418,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}	
 
 	@Override
-	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {		
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTBrokerSelectInto node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
 	public Object visit(ASTDateFormat node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}
 
-	@Override
-	public Object visit(ASTBrokerAsSource node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTBrokerSimpleSource node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTBrokerQueue node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
 
 	@Override
 	public Object visit(ASTMetric node, Object data) throws QueryParseException {
@@ -752,4 +723,10 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	public Object visit(ASTDropSinkStatement node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}	
+	
+	@Override
+	public Object visit(ASTCreateTenant node, Object data)
+			throws QueryParseException {
+		return pvisit(node);
+	}
 }

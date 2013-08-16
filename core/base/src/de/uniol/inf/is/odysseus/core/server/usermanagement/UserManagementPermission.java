@@ -43,6 +43,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
  * @author Christian van Göns
  */
 public enum UserManagementPermission implements IPermission {
+	CREATE_TENANT,
+	
 	CREATE_USER, ALTER_USER, DELETE_USER, DEACTIVATE_USER, SET_SYSTEM_USER,
 
 	CREATE_ROLE, DELETE_ROLE,

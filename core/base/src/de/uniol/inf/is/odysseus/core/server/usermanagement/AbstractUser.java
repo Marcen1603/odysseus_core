@@ -184,7 +184,7 @@ public abstract class AbstractUser implements IUser, Serializable {
 	public void addPrivilege(final IPrivilege privilege) {
 		this.privileges.add(privilege);
 	}
-
+	
 	/**
 	 * @param privilege
 	 */

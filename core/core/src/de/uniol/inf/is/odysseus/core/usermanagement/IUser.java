@@ -38,23 +38,23 @@ public interface IUser extends IAbstractEntity, Principal, Comparable<IUser>, Se
 	 */
 	boolean isActive();
 
-	public void setActive(boolean state);
+	void setActive(boolean state);
 	
 	/**
 	 * @return The roles of the user
 	 */
 	List<? extends IRole> getRoles();
 	
-	public void addRole(IRole role);
-	public void removeRole(IRole role);
-	public boolean hasRole(IRole role);
+	void addRole(IRole role);
+	void removeRole(IRole role);
+	boolean hasRole(IRole role);
 
 	/**
 	 * @return The privileges of the user
 	 */
 	List<? extends IPrivilege> getPrivileges();
-	public void addPrivilege(IPrivilege privilege);
-
+	void addPrivilege(IPrivilege privilege);
+	
 	/**
 	 * Validates if the given password is correct for this user.
 	 * 
@@ -63,7 +63,7 @@ public interface IUser extends IAbstractEntity, Principal, Comparable<IUser>, Se
 	 */
 	boolean validatePassword(byte[] password);
 	
-	public void setPassword(byte[] password);
-	public void setName(String name);
+	void setPassword(byte[] password);
+	void setName(String name);
 
 }

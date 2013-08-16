@@ -23,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class UserManagementProvider {
 
@@ -44,6 +46,21 @@ public class UserManagementProvider {
 		return TenantDAO.getInstance().findByName(name);
 	}
 
+	public static synchronized ITenant createNewTenant(String name,
+			ISession caller) {
+		if (getUsermanagement().hasPermission(caller,
+				UserManagementPermission.CREATE_TENANT,
+				UserManagementPermission.objectUri)) {
+
+			ITenant t = new Tenant();
+			t.setName(name);
+			t = TenantDAO.getInstance().create(t);
+			return t;
+		}
+		throw new PermissionException("Not right to create tenant");
+
+	}
+
 	public static synchronized List<ITenant> getTenants() {
 		return TenantDAO.getInstance().findAll();
 	}
@@ -61,7 +78,7 @@ public class UserManagementProvider {
 		}
 
 		for (ITenant t : TenantDAO.getInstance().allEntities) {
-			
+
 			if (!ret.isInitialized(t)) {
 				ret.initialize(t);
 			}

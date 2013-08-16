@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +25,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTBrokerSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTComplexSelectStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTIdentifier;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPartition;
@@ -40,8 +39,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSubselect;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTWindow;
 import de.uniol.inf.is.odysseus.parser.cql.parser.Node;
-
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 
 public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
@@ -195,32 +192,6 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(), attributes);
 		return schema;
-	}
-
-	@Override
-	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
-		try {
-			Class<?> brokerSourceVisitor = Class.forName("de.uniol.inf.is.odysseus.broker.parser.cql.BrokerVisitor");
-			Object bsv = brokerSourceVisitor.newInstance();
-			Method m = brokerSourceVisitor.getDeclaredMethod("setUser", ISession.class);
-			m.invoke(bsv, caller);
-			m = brokerSourceVisitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
-			m.invoke(bsv, dd);
-
-			m = brokerSourceVisitor.getDeclaredMethod("visit", ASTBrokerSource.class, Object.class);
-			AbstractLogicalOperator sourceOp = (AbstractLogicalOperator) m.invoke(bsv, node, data);
-			Node child = node.jjtGetChild(0);
-			ASTIdentifier ident = (ASTIdentifier) child.jjtGetChild(child.jjtGetNumChildren() - 1);
-			String name = ident.getName();
-			this.attributeResolver.addSource(name, sourceOp);
-		} catch (ClassNotFoundException ex) {
-			throw new QueryParseException("Brokerplugin is missing in CQL parser.", ex.getCause());
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new QueryParseException("Error while accessing broker as source.", e.getCause());
-		}
-
-		return null;
 	}
 
 }

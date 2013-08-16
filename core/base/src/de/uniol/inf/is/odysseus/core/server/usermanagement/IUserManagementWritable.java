@@ -133,4 +133,6 @@ public interface IUserManagementWritable extends IUserManagement{
     void revokePermissions(IRole role, Set<IPermission> permissions, String objectURI, ISession caller);
 
 	
+
+	
 }

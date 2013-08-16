@@ -443,36 +443,6 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTCreateBroker node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerSelectInto node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerAsSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerSimpleSource node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
-	public Object visit(ASTBrokerQueue node, Object data) throws QueryParseException {
-		return null;
-	}
-
-	@Override
 	public Object visit(ASTMetric node, Object data) throws QueryParseException {
 		return null;
 	}
@@ -780,6 +750,12 @@ public class AbstractDefaultVisitor implements NewSQLParserVisitor {
 
 	@Override
 	public Object visit(ASTDropSinkStatement node, Object data) throws QueryParseException {
+		return null;
+	}
+	
+	@Override
+	public Object visit(ASTCreateTenant node, Object data)
+			throws QueryParseException {
 		return null;
 	}
 }
