@@ -22,6 +22,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
+import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
@@ -33,14 +35,25 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 	static synchronized public RoleDAO getInstance(ITenant tenant) throws IOException{
 		RoleDAO dao = daos.get(tenant);
 		if (dao == null){
-			dao = new RoleDAO(tenant);
+			if (OdysseusConfiguration.get("StoretypeUserMgmt")
+					.equalsIgnoreCase("Filestore")) {
+				dao = new RoleDAO(new FileStore<String, Role>(
+						OdysseusConfiguration.getFileProperty(
+								"privilegStoreFilename", tenant.getName())),
+						new ArrayList<Role>());
+			} else {
+				dao = new RoleDAO(new MemoryStore<String, Role>(),
+						new ArrayList<Role>());
+			}
 			daos.put(tenant, dao);
 		}
 		return dao;
 	}
-	
-	RoleDAO(ITenant tenant) throws IOException {
-		super(new FileStore<String, Role>(OdysseusConfiguration.getFileProperty("roleStoreFilename", tenant.getName())), new ArrayList<Role>());
+
+	public RoleDAO(IStore<String, Role> store,
+			ArrayList<Role> arrayList) {
+		super(store, arrayList);
 	}
+
 
 }

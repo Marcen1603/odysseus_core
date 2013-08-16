@@ -22,6 +22,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
+import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
@@ -29,18 +31,28 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 public class UserDAO extends AbstractStoreDAO<User>{
 	
 	static Map<ITenant, UserDAO> userDAOs = new HashMap<>();
-	
-	static synchronized public UserDAO getInstance(ITenant tenant) throws IOException{
-		UserDAO userDAO = userDAOs.get(tenant);
-		if (userDAO == null){
-			userDAO = new UserDAO(tenant);
-			userDAOs.put(tenant, userDAO);
-		}
-		return userDAO;
-	}
-		
-	UserDAO(ITenant tenant) throws IOException {
-		super(new FileStore<String, User>(OdysseusConfiguration.getFileProperty("userStoreFilename", tenant.getName())), new ArrayList<User>());
-	}
 
+	static synchronized public UserDAO getInstance(ITenant tenant) throws IOException{
+		UserDAO dao = userDAOs.get(tenant);
+		if (dao == null){
+			if (OdysseusConfiguration.get("StoretypeUserMgmt")
+					.equalsIgnoreCase("Filestore")) {
+				dao = new UserDAO(new FileStore<String, User>(
+						OdysseusConfiguration.getFileProperty(
+								"privilegStoreFilename", tenant.getName())),
+						new ArrayList<User>());
+			} else {
+				dao = new UserDAO(new MemoryStore<String, User>(),
+						new ArrayList<User>());
+			}
+			
+			userDAOs.put(tenant, dao);
+		}
+		return dao;
+	}
+	
+	public UserDAO(IStore<String, User> store, ArrayList<User> arrayList) {
+		super(store, arrayList);
+	}	
+		
 }

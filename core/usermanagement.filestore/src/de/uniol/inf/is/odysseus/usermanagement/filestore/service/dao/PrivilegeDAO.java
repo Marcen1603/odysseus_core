@@ -22,6 +22,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
+import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractStoreDAO;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Privilege;
@@ -29,18 +31,30 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Privileg
 public class PrivilegeDAO extends AbstractStoreDAO<Privilege> {
 
 	static Map<ITenant, PrivilegeDAO> daos = new HashMap<>();
-	
-	static synchronized public PrivilegeDAO getInstance(ITenant tenant) throws IOException{
+
+	static synchronized public PrivilegeDAO getInstance(ITenant tenant)
+			throws IOException {
 		PrivilegeDAO dao = daos.get(tenant);
-		if (dao == null){
-			dao = new PrivilegeDAO(tenant);
+		if (dao == null) {
+			if (OdysseusConfiguration.get("StoretypeUserMgmt")
+					.equalsIgnoreCase("Filestore")) {
+				dao = new PrivilegeDAO(new FileStore<String, Privilege>(
+						OdysseusConfiguration.getFileProperty(
+								"privilegStoreFilename", tenant.getName())),
+						new ArrayList<Privilege>());
+			} else {
+				dao = new PrivilegeDAO(new MemoryStore<String, Privilege>(),
+						new ArrayList<Privilege>());
+			}
+
 			daos.put(tenant, dao);
 		}
 		return dao;
 	}
 
-	
-	PrivilegeDAO(ITenant tenant) throws IOException {
-		super(new FileStore<String, Privilege>(OdysseusConfiguration.getFileProperty("privilegStoreFilename", tenant.getName())), new ArrayList<Privilege>());
+	public PrivilegeDAO(IStore<String, Privilege> store,
+			ArrayList<Privilege> arrayList) {
+		super(store, arrayList);
 	}
+
 }

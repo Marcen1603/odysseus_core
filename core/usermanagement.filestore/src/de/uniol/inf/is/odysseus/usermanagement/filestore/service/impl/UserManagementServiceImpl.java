@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.osgi.service.component.ComponentContext;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
@@ -89,7 +90,12 @@ public class UserManagementServiceImpl extends
 
 	@Override
 	public String getType() {
-		return "Filestore";
+		if (OdysseusConfiguration.get("StoretypeUserMgmt").equalsIgnoreCase(
+				"Filestore")) {
+			return "Filestore";
+		} else {
+			return "Memorystore";
+		}
 	}
 
 	@Override
