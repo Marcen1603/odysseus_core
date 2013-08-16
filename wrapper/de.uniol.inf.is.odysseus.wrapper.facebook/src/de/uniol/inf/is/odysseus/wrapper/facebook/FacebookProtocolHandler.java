@@ -34,10 +34,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Marc Preuschaft
  *
  */
-/**
- * @author Marc Preuschaft
- *
- */
 public class FacebookProtocolHandler extends
 		AbstractProtocolHandler<KeyValueObject<? extends IMetaAttribute>> {
 
@@ -47,11 +43,11 @@ public class FacebookProtocolHandler extends
 
 
 	@SuppressWarnings("rawtypes")
-	List<KeyValueObject> facebookMessage = new ArrayList<KeyValueObject>();
+	List<KeyValueObject> facebookMessages = new ArrayList<KeyValueObject>();
 
 	@Override
 	public boolean hasNext() throws IOException {
-		if (facebookMessage.size() > 0) {
+		if (facebookMessages.size() > 0) {
 			return true;
 		} else {
 			intern_open();
@@ -89,7 +85,7 @@ public class FacebookProtocolHandler extends
 				
 						System.out.println("TimeStamp: "
 								+ getTimeStamp(created_time).getTime());
-						facebookMessage.add(out);
+						facebookMessages.add(out);
 						firstQuery = false;
 					}
 
@@ -124,22 +120,11 @@ public class FacebookProtocolHandler extends
 	@Override
 	public KeyValueObject<? extends IMetaAttribute> getNext()
 			throws IOException {
-
-		//if (facebookMessage.size() > 0) {
+		
 			@SuppressWarnings("unchecked")
-			KeyValueObject<IMetaAttribute> out = facebookMessage.get(0);
-			facebookMessage.remove(0);
+			KeyValueObject<IMetaAttribute> out = facebookMessages.get(0);
+			facebookMessages.remove(0);
 			return out;
-	/*	} else {
-			intern_open();
-			// Dummy Objekt erzeugen
-			KeyValueObject<IMetaAttribute> out = new KeyValueObject<IMetaAttribute>();
-			out.setAttribute("message", "");
-			out.setAttribute("id", "");
-			out.setAttribute("created_time", "");
-			return out;
-		}*/
-
 	}
 
 	@Override

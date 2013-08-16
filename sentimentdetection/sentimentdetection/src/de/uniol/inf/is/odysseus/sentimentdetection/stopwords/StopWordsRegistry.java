@@ -18,12 +18,10 @@ public class StopWordsRegistry {
 	
 	
 	public static IStopWords getStopWordsByLanguage(String language){
-		
+
 		IStopWords stopwords = stopWordsSet.get(language.toLowerCase());
-		
 		IStopWords newStopWords = stopwords.getInstance();
 		
-	
 		return newStopWords;
 		
 	}
