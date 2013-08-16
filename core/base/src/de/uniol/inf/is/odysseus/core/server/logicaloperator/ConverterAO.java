@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CONVERTER")
 public class ConverterAO extends UnaryLogicalOp {
 
+	private static final long serialVersionUID = -2630448144140835791L;
 	private String protocolHandler;
 	private String inputDataHandler;
 	private String outputDataHandler;

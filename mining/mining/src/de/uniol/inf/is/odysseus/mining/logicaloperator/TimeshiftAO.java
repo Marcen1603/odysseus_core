@@ -8,6 +8,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParamete
 @LogicalOperator(name="TIMESHIFT", maxInputPorts=1, minInputPorts=1, doc="Shifts the timestamp(s) a given time")
 public class TimeshiftAO extends AbstractLogicalOperator {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5266611795908459618L;
 	private long shift = 0L;
 	
 	public TimeshiftAO(){

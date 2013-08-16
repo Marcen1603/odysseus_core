@@ -26,6 +26,11 @@ import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegi
 public class WSEnrichAO extends UnaryLogicalOp {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9004473427566266528L;
+
+	/**
 	 * Static Variable for the Name of the Post-Argument-Method
 	 */
 	public static final String POST_WITH_ARGUMENTS = "POST_ARGUMENTS";

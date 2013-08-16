@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.RRFragmentation;
 @LogicalOperator(name = "FRAGMENT", minInputPorts = 1, maxInputPorts = 1)
 public class FragmentAO extends UnaryLogicalOp {
 	
+	private static final long serialVersionUID = -6789007084291408905L;
+
 	/**
 	 * The number of fragments.
 	 */

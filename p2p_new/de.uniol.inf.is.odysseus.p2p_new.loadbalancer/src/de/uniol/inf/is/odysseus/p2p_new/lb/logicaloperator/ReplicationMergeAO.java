@@ -15,6 +15,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 @LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE)
 public class ReplicationMergeAO extends BinaryLogicalOp {
 	
+	private static final long serialVersionUID = -4050688632559595499L;
+
 	/**
 	 * Constructs a new {@link ReplicationMergeAO}.
 	 * @see BinaryLogicalOp#BinaryLogicalOp()

@@ -31,6 +31,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  */
 @LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1)
 public class ExistenceToPayloadAO extends AbstractLogicalOperator {
+	
+	private static final long serialVersionUID = -3582366102984336742L;
+
 	/**
 	 * Default constructor.
 	 */

@@ -44,6 +44,10 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectA
 @LogicalOperator(name="Subscribe", minInputPorts=0, maxInputPorts=0, doc="This Operator provides the subscribe functionality in publish/Subscribe systems.")
 public class SubscribeAO extends UnaryLogicalOp{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4060380514816738851L;
 	private List<SDFAttribute> sdfAttributes;
 	private String source;
 	private boolean newBrokerNeeded = false;

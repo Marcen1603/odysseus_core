@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 @LogicalOperator(name="LATENCYTOPAYLOAD", maxInputPorts=1, minInputPorts=1)
 public class LatencyToPayloadAO extends AbstractLogicalOperator {
 	
+	private static final long serialVersionUID = -8208189869158067885L;
+
 	public LatencyToPayloadAO() {
 		
 	}

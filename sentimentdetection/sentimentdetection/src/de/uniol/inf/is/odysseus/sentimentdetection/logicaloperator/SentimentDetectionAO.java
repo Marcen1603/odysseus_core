@@ -22,6 +22,10 @@ import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.StopWordsRegistry;
 @LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=2)
 public class SentimentDetectionAO extends BinaryLogicalOp{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3965539158401817684L;
 	private String classifier;
 	private int trainSetMinSize = 0;
 	private boolean splitDecision = false;

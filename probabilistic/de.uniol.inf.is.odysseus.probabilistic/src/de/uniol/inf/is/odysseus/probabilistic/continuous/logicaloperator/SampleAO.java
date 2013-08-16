@@ -21,6 +21,10 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM")
 public class SampleAO extends UnaryLogicalOp {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5584282351145779955L;
 	/** The attributes to sample from. */
 	private List<SDFAttribute> attributes;
 	/** The number of samples. */

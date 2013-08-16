@@ -35,7 +35,8 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
  */
 @LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="This Operator provides the publish functionality in publish/Subscribe systems.")
 public class PublishAO extends UnaryLogicalOp{
-	
+
+	private static final long serialVersionUID = 6718305011922367185L;
 	private String topologyType;
 	private String domain;
 	private List<String> topics = new ArrayList<>();

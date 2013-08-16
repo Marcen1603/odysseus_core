@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(name="THROUGHPUT", minInputPorts=1, maxInputPorts=1)
 public class MeasureThroughputAO extends UnaryLogicalOp {
 
+	private static final long serialVersionUID = -8773782766638078153L;
 	private int each = 0;
 	private boolean dump = false;
 	private boolean active = true;
