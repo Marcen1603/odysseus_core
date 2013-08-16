@@ -4,6 +4,7 @@ package de.uniol.inf.is.odysseus.sentimentdetection.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -56,7 +57,6 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	private String enrichAttribut = "decision";
 	private String language = "english";
-	
 	
 	
 	public SentimentDetectionAO(){
@@ -332,6 +332,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 						"Attribute: "+ attributeTestSetTrueDecision +" could not found in the TestSet!"));
 				return false;
 			}
+			
 		}
 		
 	
@@ -358,5 +359,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 		return pos;
 	}
+	
 
+	
+	
 }

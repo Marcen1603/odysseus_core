@@ -22,15 +22,23 @@ public interface IClassifier {
 	void setStemmWords(boolean stemmWords);
 	
 	void setNgramUpTo(int ngramUpTo);
-	
+
 	int startDetect(String text);
 	
 	boolean getRemoveStopWords();
-	
+
 	boolean getStemmWords();
 	
+	/**
+	 * return the name of the classifier
+	 * @return
+	 */
 	String getType();
 	
+	/**
+	 * return the domain of the classifier 
+	 * @return
+	 */
 	String getDomain();
 	
 	

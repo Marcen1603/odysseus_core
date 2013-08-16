@@ -7,8 +7,13 @@ package de.uniol.inf.is.odysseus.sentimentdetection.util;
  */
 public class NGramm {
 
+	/**
+	 * 
+	 * @param s
+	 * @param len
+	 * @return
+	 */
 	public static String[] ngrams(String s, int len) {
-
 		if (checkNgramString(s, len)) {
 			String[] parts = s.split(" ");
 			String[] result = new String[parts.length - len + 1];
@@ -28,6 +33,11 @@ public class NGramm {
 		return result;
 	}
 
+	/**
+	 * @param s
+	 * @param len
+	 * @return
+	 */
 	private static boolean checkNgramString(String s, int len) {
 		String[] parts = s.split(" ");
 		if (parts.length >= len) {

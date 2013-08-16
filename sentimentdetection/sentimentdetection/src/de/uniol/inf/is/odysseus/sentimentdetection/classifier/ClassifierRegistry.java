@@ -18,6 +18,13 @@ public class ClassifierRegistry{
 
 	static Map<String, IClassifier> classifierDomains = new HashMap<String, IClassifier>();
 
+	
+	/**
+	 * return a classifier instance by classifier type and domain
+	 * @param classifierType
+	 * @param domain
+	 * @return
+	 */
 	public static IClassifier getClassifierByTypeAndDomain(
 			String classifierType, String domain) {
 
@@ -54,6 +61,9 @@ public class ClassifierRegistry{
 		}
 	}
 	
+	/**
+	 * @param domain
+	 */
 	public static void unregisterDomain(String domain){
 		IClassifier classifier = classifierDomains.get(domain
 				.toLowerCase());
@@ -63,11 +73,19 @@ public class ClassifierRegistry{
 		
 	}
 	
+	/**
+	 * return a list of available classifier
+	 * @return
+	 */
 	public static List<String> getValidClassifier(){
 		return new ArrayList<String>(classifierAlgoTypes.keySet());
 	}
 	
 	
+	/**
+	 * 
+	 * @param classifierAlgo
+	 */
 	public static void registerClassifierAlgo(IClassifier classifierAlgo) {
 
 		if (!classifierAlgoTypes.containsKey(classifierAlgo.getType()
@@ -81,6 +99,9 @@ public class ClassifierRegistry{
 
 	}
 
+	/**
+	 * @param classifierAlgo
+	 */
 	public static void unregisterClassifierAlgo(IClassifier classifierAlgo) {
 		if (classifierAlgoTypes.containsKey(classifierAlgo.getType()
 				.toLowerCase())) {

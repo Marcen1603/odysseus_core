@@ -26,6 +26,7 @@ public interface IStopWords {
 	String removeStopWords(String text);
 	
 	/**
+	 * stemm a record
 	 * @param record
 	 * @return
 	 */

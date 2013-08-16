@@ -54,6 +54,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	private long startTimeTrain;
 	private long stopTimeTrain;
+	private long trainTimeTotal;
 
 	// help variable
 	private static int ctr = 0;
@@ -142,11 +143,16 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			algo.setNgramUpTo(ngram);
 		}
 		stopwordsSet = (IStopWords) StopWordsRegistry.getStopWordsByLanguage(language);
-	
+		
 	}
 
+
+	
 	@Override
 	protected void process_next(Tuple object, int port) {
+		
+		
+		
 		if (!isStarted) {
 			startTime = System.currentTimeMillis();
 			isStarted = true;
@@ -169,8 +175,16 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				entry.setRecord(stopwordsSet.stemmRecord(entry.getRecord()));
 			}
 		
+			startTimeTrain = System.currentTimeMillis();
 			algo.trainClassifier(entry, isTrained);
+			stopTimeTrain = System.currentTimeMillis();
+			
+			trainTimeTotal += stopTimeTrain-startTimeTrain;
+			
 			trainSetSize++;
+			
+			//add DebugInfos trainsetsize
+			addParameterInfo("TRAINSET-SIZE", trainSetSize);
 			
 			if (trainSetSize >= trainSetMinSize || isTrained) {
 				isTrained = true;
@@ -235,13 +249,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		// remove stopwords
 		if (algo.getRemoveStopWords()) {
 			text = 	stopwordsSet.removeStopWords(text);
-			//text = StopWords.removeStopWords(text);
 		}
 
 		// stemm words
 		if (algo.getStemmWords()) {
 			text = stopwordsSet.stemmRecord(text);
-			//text = StopWords.stemmRecord(text);
 		}
 
 		decision = algo.startDetect(text);
@@ -290,7 +302,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 		ctr++;
 		transfer(outputTuple, outputPort);
-
+		
+		//add debug-infos
+		if(debugClassifier){
+			addDebugInfosToOperatorInfo();
+		}
 	}
 
 	/*
@@ -317,8 +333,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			System.out.println("Total counter: " + ctr);
 			stopTime = System.currentTimeMillis();
 			System.out.println("Total time used: " + (stopTime - startTime));
-			System.out.println("Total train time used: "
-					+ (stopTimeTrain - startTimeTrain));
+			System.out.println("Total train time used: "+ trainTimeTotal);
 
 			System.out.println("pos recall: "
 					+ Metrics.recall(posCtr, totalExistPosCtr));
@@ -351,5 +366,21 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 
 	}
+	
+	
+	private void addDebugInfosToOperatorInfo(){
+		addParameterInfo("TOTAL WRONG", wrongdecision);
+		addParameterInfo("POS RECALL", Metrics.recall(posCtr, totalExistPosCtr));
+		addParameterInfo("POS PRECISION", Metrics.precision(posCtr, totalPosCtr));
+		addParameterInfo("POS F-SCORE",  Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr),
+				Metrics.precision(posCtr, totalPosCtr)));
+		
+		addParameterInfo("NEG RECALL",  Metrics.recall(negCtr, totalExistNegCtr));
+		addParameterInfo("NEG PRECISION", Metrics.precision(negCtr, totalNegCtr));
+		addParameterInfo("NEG F-SCORE", Metrics.f_score(Metrics.recall(negCtr, totalExistNegCtr),
+				Metrics.precision(negCtr, totalNegCtr)));
+	}
+	
+
 
 }

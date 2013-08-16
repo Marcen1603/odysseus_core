@@ -17,6 +17,11 @@ public class StopWordsRegistry {
 	static Map<String, IStopWords> stopWordsSet = new HashMap<String, IStopWords>();
 	
 	
+	/**
+	 * return a StopWord instance by language
+	 * @param language
+	 * @return
+	 */
 	public static IStopWords getStopWordsByLanguage(String language){
 
 		IStopWords stopwords = stopWordsSet.get(language.toLowerCase());
@@ -26,6 +31,9 @@ public class StopWordsRegistry {
 		
 	}
 	
+	/**
+	 * @param stopWords
+	 */
 	public static void registerStopWordsSet(IStopWords stopWords) {
 
 		if (!stopWordsSet.containsKey(stopWords.getLanguage().toLowerCase())) {
@@ -37,6 +45,9 @@ public class StopWordsRegistry {
 
 	}
 
+	/**
+	 * @param stopWords
+	 */
 	public static void unregisterStopWordsSet(IStopWords stopWords) {
 		if (stopWordsSet.containsKey(stopWords.getLanguage().toLowerCase())) {
 			stopWordsSet.remove(stopWords.getLanguage().toLowerCase());
@@ -44,6 +55,10 @@ public class StopWordsRegistry {
 
 	}
 	
+	/**
+	 * return a list of available language
+	 * @return
+	 */
 	public static List<String> getValidLanguage(){
 		return new ArrayList<String>(stopWordsSet.keySet());
 	}
