@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.kinect.transform;
+package de.uniol.inf.is.odysseus.wrapper.urg.transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +20,7 @@ public class RuleProvider implements ITransformRuleProvider {
     @Override
     public List<IRule<?, ?>> getRules() {
         final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();
-        rules.add(new TVisualKinectSinkAORule());
-        rules.add(new TStoreKinectAORule());
+        rules.add(new TStoreUrgAORule());
         if (RuleProvider.log.isDebugEnabled()) {
             for (final IRule<?, ?> rule : rules) {
                 RuleProvider.log

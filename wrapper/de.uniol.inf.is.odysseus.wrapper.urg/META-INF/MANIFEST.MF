@@ -16,7 +16,16 @@ Import-Package: com.google.common.collect,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.securitypunctuation,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.rcp.dashboard,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  org.eclipse.swt,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
@@ -25,4 +34,4 @@ Import-Package: com.google.common.collect,
  org.slf4j
 Require-Bundle: rxtx;bundle-version="2.2.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Service-Component: OSGI-INF/UrgTransportHandler.xml, OSGI-INF/UrgProtocolHandler.xml, OSGI-INF/UrgScannDataHandler.xml, OSGI-INF/UrgDatatypeProvider.xml
+Service-Component: OSGI-INF/UrgTransportHandler.xml, OSGI-INF/UrgProtocolHandler.xml, OSGI-INF/UrgScannDataHandler.xml, OSGI-INF/UrgDatatypeProvider.xml, OSGI-INF/TransformationRuleService.xml

@@ -14,11 +14,20 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
+ de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
+ de.uniol.inf.is.odysseus.core.server.physicaloperator,
+ de.uniol.inf.is.odysseus.core.server.planmanagement,
  de.uniol.inf.is.odysseus.rcp.dashboard,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
  org.eclipse.swt,
  org.eclipse.swt.events,
  org.eclipse.swt.graphics,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets
-Service-Component: OSGI-INF/InertiaCubeTransportHandler.xml, OSGI-INF/InertiaCubeProtocolHandler.xml, OSGI-INF/InertiaCubeDatatypeProvider.xml, OSGI-INF/InertiaYawPitchRollHandler.xml
+Service-Component: OSGI-INF/InertiaCubeTransportHandler.xml, OSGI-INF/InertiaCubeProtocolHandler.xml, OSGI-INF/InertiaCubeDatatypeProvider.xml, OSGI-INF/InertiaYawPitchRollHandler.xml, OSGI-INF/TransformationRuleService.xml
 Bundle-ActivationPolicy: lazy

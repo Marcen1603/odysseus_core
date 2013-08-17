@@ -49,4 +49,9 @@ public class YawPitchRoll {
 		}
 		return -1;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("yaw: %.2f, pitch: %.2f, roll: %.2f", yaw, pitch, roll);
+	}
 }

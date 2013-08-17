@@ -27,7 +27,6 @@ public class VisualKinectSinkAO extends AbstractLogicalOperator {
      */
     public VisualKinectSinkAO(final VisualKinectSinkAO ao) {
         super(ao);
-
     }
 
     @Override

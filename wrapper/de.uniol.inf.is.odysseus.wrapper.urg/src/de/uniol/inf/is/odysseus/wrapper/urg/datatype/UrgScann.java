@@ -121,4 +121,14 @@ public class UrgScann {
 		return "M" + precision.getString() + " " + startingStep + " " + endStep + " " + clusterCount + " " + scanInterval + " " + remainingScans + " " + message + "\n" +
 				statusCode + "\n" + timeStamp + "\n" + sb;
 	}
+	
+	public String toCsvString() {
+		StringBuilder sb = new StringBuilder();
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				sb.append(data[i] + ";");
+			}
+		}
+		return System.currentTimeMillis() + ";" + startingStep + ";" + endStep + ";" + sb;
+	}
 }
