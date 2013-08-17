@@ -28,7 +28,7 @@ public class StoreInertiaPO extends AbstractSink<Tuple<? extends ITimeInterval>>
     private BufferedWriter writer = null;
     
     /** New line character. */
-    private static String newLine = "\n";
+    private static String newLine = System.getProperty("line.separator");
 
     /**
      * Constructs the operator using the given schema.
@@ -59,8 +59,6 @@ public class StoreInertiaPO extends AbstractSink<Tuple<? extends ITimeInterval>>
     @Override
     protected void process_open() throws OpenFailedException {
         super.process_open();
-        
-        newLine = System.getProperty("line.separator");
         
         if (path.equals("") || path == null)
             throw new RuntimeException("Path may not be null.");

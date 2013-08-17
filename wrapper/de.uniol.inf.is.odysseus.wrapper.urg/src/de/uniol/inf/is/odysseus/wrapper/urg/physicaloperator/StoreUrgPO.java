@@ -28,7 +28,7 @@ public class StoreUrgPO extends AbstractSink<Tuple<? extends ITimeInterval>> {
     private BufferedWriter writer = null;
     
     /** New line character. */
-    private static String newLine = "\n";
+    private static String newLine = System.getProperty("line.separator");
 
     /**
      * Constructs the operator using the given schema.

@@ -21,4 +21,8 @@ public class KinectSkeletonMap {
             skeleton.render(gl);
         }
     }
+    
+    public ArrayList<KinectSkeleton> getSkeletons() {
+        return skeletons;
+    }
 }
