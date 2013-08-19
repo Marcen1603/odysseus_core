@@ -128,6 +128,15 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		LOG.debug("DataDictionary bound {}", dataDictionary);
 	}
 	
+	@Override
+	public void removedDatadictionary(IDataDictionary dd) {
+		dd.removeListener(this);
+		if (isAutoExport()){
+			dd.removeListener(autoExporter);
+		}
+		LOG.debug("DataDictionary unbound {}", dd);
+	}
+	
 //	// called by OSGi-DS
 //	public void unbindDataDictionary( IDataDictionary dd ) {
 //				

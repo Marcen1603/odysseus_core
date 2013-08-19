@@ -90,9 +90,6 @@ public interface IDataDictionary {
 	Set<String> getDatatypes();
 
 	boolean existsDatatype(String dtName);
-	
-	// TODO: Should possible be removed?
-	void removeDatatype(String name) throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// Query Management

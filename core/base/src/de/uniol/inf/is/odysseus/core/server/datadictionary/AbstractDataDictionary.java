@@ -655,7 +655,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	}
 
 	@Override
-	public void removeDatatype(String name) throws DataDictionaryException {
+	public void removeDatatype(SDFDatatype dt) throws DataDictionaryException {
+		removeDatatype(dt.getURI());
+	}
+	
+	private void removeDatatype(String name) throws DataDictionaryException {
 		if (this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.remove(name.toLowerCase());
 			fireDataDictionaryChangedEvent();

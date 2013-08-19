@@ -90,4 +90,5 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	// -------------------------------------------------------------------------
 	public void addDatatype(SDFDatatype dt);
 
+	void removeDatatype(SDFDatatype dt) throws DataDictionaryException;
 }
