@@ -103,7 +103,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	@Override
 	public Tuple<?> readData(String[] input) {
 		Object[] attributes = new Object[dataHandlers.length];
-		for (int i = 0; i < input.length; i++) {
+		int min = Math.min(dataHandlers.length, input.length);
+		for (int i = 0; i < min; i++) {
 			try{
 			attributes[i] = dataHandlers[i].readData(input[i]);
 			}catch(Exception e){
