@@ -66,15 +66,30 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 
 	private final Map<Integer, Tuple<?>> currentTuples = Maps.newConcurrentMap();
 	private Map<String, Integer> attributeIndexMap;
-	private int xIndex;
-	private int yIndex;
-	private int tsIndex;
 	private boolean validAttributes;
 
 	private Composite soccerComposite;
 	private Canvas soccerCanvas;
 
 	private CanvasUpdater canvasUpdater;
+
+	private boolean showNumbers = true;
+	private boolean showPlayersA = true;
+	private boolean showPlayersB = true;
+	private boolean showBall = true;
+	private boolean showReferee = true;
+	private boolean showField = true;
+	private boolean showTime = true;
+	
+	private String xPosAttributeName = "x";
+	private String yPosAttributeName = "y";
+	private String timestampAttributeName = "ts";
+	private String sidAttributeName = "sid";
+	
+	private int xIndex;
+	private int yIndex;
+	private int tsIndex;
+	private int sidIndex;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -98,9 +113,10 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		attributeIndexMap = createAttributeIndexMap(physicalRoots.iterator().next().getOutputSchema());
 
-		xIndex = getAttributeIndex("x");
-		yIndex = getAttributeIndex("y");
-		tsIndex = getAttributeIndex("ts");
+		xIndex = getAttributeIndex(xPosAttributeName);
+		yIndex = getAttributeIndex(yPosAttributeName);
+		tsIndex = getAttributeIndex(timestampAttributeName);
+		sidIndex = getAttributeIndex(sidAttributeName);
 
 		validAttributes = (xIndex > -1 && yIndex > -1);
 		if (!validAttributes) {
@@ -129,7 +145,7 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 		Tuple<?> tuple = (Tuple<?>) element;
 
 		if (attributeIndexMap.get("sid") != null) {
-			currentTuples.put((Integer) tuple.getAttribute(attributeIndexMap.get("sid")), tuple);
+			currentTuples.put((Integer) tuple.getAttribute(sidIndex), tuple);
 		}
 	}
 
@@ -150,7 +166,9 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 		GC gc = new GC(soccerCanvas);
 		gc.setFont(playerIDFont);
 
-		renderBackground(gc);
+		if( showField ) {
+			renderBackground(gc);
+		}
 		
 		for (Entry<Integer, Tuple<?>> entry : currentTuples.entrySet()) {
 			Integer sid = entry.getKey();
@@ -161,7 +179,7 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 			render(gc, sid, x, y);
 		}
 
-		if (currentTuples.get(SENSOR_ID_TO_RECOGNIZE_TIME_PROGRESS) != null && tsIndex > -1) {
+		if (showTime && currentTuples.get(SENSOR_ID_TO_RECOGNIZE_TIME_PROGRESS) != null && tsIndex > -1) {
 			renderTimeProgress(gc);
 		}
 		gc.dispose();
@@ -237,25 +255,25 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	}
 
 	private void render(GC gc, Integer sid, Integer x, Integer y) {
-		if (SID_BALLS.contains(sid)) {
+		if (showBall && SID_BALLS.contains(sid)) {
 			gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
 			gc.fillOval(getCoordX(x) - (BALL_SIZE_PIXELS / 2), getCoordY(y) - (BALL_SIZE_PIXELS / 2), BALL_SIZE_PIXELS, BALL_SIZE_PIXELS);
-			if (SENSOR_PLAYER_MAP.containsKey(sid)) {
+			if (showNumbers && SENSOR_PLAYER_MAP.containsKey(sid)) {
 				gc.drawText(SENSOR_PLAYER_MAP.get(sid).toString(), getCoordX(x) - (BALL_SIZE_PIXELS / 2) + BALL_SIZE_PIXELS, getCoordY(y) - (BALL_SIZE_PIXELS / 2), true);
 			}
-		} else if (SID_TEAM_A.contains(sid)) {
+		} else if (showPlayersA && SID_TEAM_A.contains(sid)) {
 			gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 			gc.fillOval(getCoordX(x) - (PLAYER_SIZE_PIXELS / 2), getCoordY(y) - (PLAYER_SIZE_PIXELS / 2), PLAYER_SIZE_PIXELS, PLAYER_SIZE_PIXELS);
-			if (SENSOR_PLAYER_MAP.containsKey(sid)) {
+			if (showNumbers && SENSOR_PLAYER_MAP.containsKey(sid)) {
 				gc.drawText(SENSOR_PLAYER_MAP.get(sid).toString(), getCoordX(x) - (PLAYER_SIZE_PIXELS / 2) + PLAYER_SIZE_PIXELS, getCoordY(y) - (PLAYER_SIZE_PIXELS / 2), true);
 			}
-		} else if (SID_TEAM_B.contains(sid)) {
+		} else if (showPlayersB && SID_TEAM_B.contains(sid)) {
 			gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
 			gc.fillOval(getCoordX(x) - (PLAYER_SIZE_PIXELS / 2), getCoordY(y) - (PLAYER_SIZE_PIXELS / 2), PLAYER_SIZE_PIXELS, PLAYER_SIZE_PIXELS);
-			if (SENSOR_PLAYER_MAP.containsKey(sid)) {
+			if (showNumbers && SENSOR_PLAYER_MAP.containsKey(sid)) {
 				gc.drawText(SENSOR_PLAYER_MAP.get(sid).toString(), getCoordX(x) - (PLAYER_SIZE_PIXELS / 2) + PLAYER_SIZE_PIXELS, getCoordY(y) - (PLAYER_SIZE_PIXELS / 2), true);
 			}
-		} else if (SID_REFEREE.contains(sid)) {
+		} else if (showReferee && SID_REFEREE.contains(sid)) {
 			gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 			gc.fillOval(getCoordX(x) - (PLAYER_SIZE_PIXELS / 2), getCoordY(y) - (PLAYER_SIZE_PIXELS / 2), PLAYER_SIZE_PIXELS, PLAYER_SIZE_PIXELS);
 		}
@@ -288,4 +306,138 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 		}
 		return attributeIndexMap;
 	}
+
+	public boolean isShowNumbers() {
+		return showNumbers;
+	}
+
+	public void setShowNumbers(boolean isShowNumbers) {
+		showNumbers = isShowNumbers;
+	}
+	
+	@Override
+	public Map<String, String> onSave() {
+		Map<String, String> config = Maps.newHashMap();
+		config.put("showNumbers", String.valueOf(showNumbers));
+		config.put("showPlayersA", String.valueOf(showPlayersA));
+		config.put("showPlayersB", String.valueOf(showPlayersB));
+		config.put("showBall", String.valueOf(showBall));
+		config.put("showReferee", String.valueOf(showReferee));
+		config.put("showField", String.valueOf(showField));
+		config.put("showTime", String.valueOf(showTime));
+		config.put("xPosAttributeName", xPosAttributeName);
+		config.put("yPosAttributeName", yPosAttributeName);
+		config.put("timestampAttributeName", timestampAttributeName);
+		config.put("sidAttributeName", sidAttributeName);
+		return config;
+	}
+	
+	@Override
+	public void onLoad(Map<String, String> saved) {
+		showNumbers = Boolean.valueOf(getValue(saved, "showNumbers", "true"));
+		showPlayersA = Boolean.valueOf(getValue(saved, "showPlayersA", "true"));
+		showPlayersB = Boolean.valueOf(getValue(saved, "showPlayersB", "true"));
+		showBall = Boolean.valueOf(getValue(saved, "showBall", "true"));
+		showReferee = Boolean.valueOf(getValue(saved, "showReferee", "true"));
+		showField = Boolean.valueOf(getValue(saved, "showField", "true"));
+		showTime = Boolean.valueOf(getValue(saved, "showTime", "true"));
+		
+		xPosAttributeName = (getValue(saved, "xPosAttributeName", "x"));
+		yPosAttributeName = (getValue(saved, "yPosAttributeName", "y"));
+		timestampAttributeName = (getValue(saved, "timestampAttributeName", "ts"));
+		sidAttributeName = (getValue(saved, "sidAttributeName", "sid"));
+	}
+	
+	private static String getValue( Map<String, String> map, String key, String defaultValue ) {
+		if( map.containsKey(key)) {
+			return map.get(key);
+		}
+		
+		return defaultValue;
+	}
+
+	public boolean isShowPlayersA() {
+		return showPlayersA;
+	}
+
+	public void setShowPlayersA(boolean selection) {
+		showPlayersA = selection;
+	}
+
+	public boolean isShowPlayersB() {
+		return showPlayersB;
+	}
+
+	public void setShowPlayersB(boolean selection) {
+		showPlayersB = selection;
+	}
+
+	public boolean isShowBall() {
+		return showBall;
+	}
+
+	public void setShowBall(boolean showBall) {
+		this.showBall = showBall;
+	}
+
+	public boolean isShowReferee() {
+		return showReferee;
+	}
+
+	public void setShowReferee(boolean showReferee) {
+		this.showReferee = showReferee;
+	}
+
+	public boolean isShowField() {
+		return showField;
+	}
+
+	public void setShowField(boolean showField) {
+		this.showField = showField;
+	}
+
+	public boolean isShowTime() {
+		return showTime;
+	}
+
+	public void setShowTime(boolean showTime) {
+		this.showTime = showTime;
+	}
+
+	public String getXPosAttributeName() {
+		return xPosAttributeName;
+	}
+
+	public void setXPosAttributeName(String xPosAttributeName) {
+		this.xPosAttributeName = xPosAttributeName;
+		xIndex = getAttributeIndex(xPosAttributeName);
+	}
+
+	public String getYPosAttributeName() {
+		return yPosAttributeName;
+	}
+
+	public void setYPosAttributeName(String yPosAttributeName) {
+		this.yPosAttributeName = yPosAttributeName;
+		yIndex = getAttributeIndex(yPosAttributeName);
+	}
+
+	public String getTimestampAttributeName() {
+		return timestampAttributeName;
+	}
+
+	public void setTimestampAttributeName(String timestampAttributeName) {
+		this.timestampAttributeName = timestampAttributeName;
+		tsIndex = getAttributeIndex(timestampAttributeName);
+	}
+
+	public String getSIDAttributeName() {
+		return sidAttributeName;
+	}
+
+	public void setSIDAttributeName(String sidAttributeName) {
+		this.sidAttributeName = sidAttributeName;
+		sidIndex = getAttributeIndex(sidAttributeName);
+	}
+	
 }
