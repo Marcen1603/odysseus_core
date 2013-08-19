@@ -125,9 +125,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			for (String word : words) {
 				if (word.toUpperCase().startsWith(prefix.toUpperCase())) {
 					result.add(new CompletionProposal(word, offset - qlen, qlen, word.length()));
-				} else {
-					result.add(new CompletionProposal(word, offset, 0, word.length()));
-				}
+				} 
 			}
 
 			return result.toArray(new ICompletionProposal[result.size()]);
