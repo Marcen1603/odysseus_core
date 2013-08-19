@@ -175,7 +175,7 @@ public class SoccerOverviewConfigurer extends AbstractDashboardPartConfigurer<So
 			}
 		});
 		
-		createLabel(parent, "Attribute for Timestamp-Attribute");
+		createLabel(parent, "Attribute for Timestamp");
 		createAttributeSelector(parent, dashboardPart.getTimestampAttributeName(), attributeNames).addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -186,7 +186,7 @@ public class SoccerOverviewConfigurer extends AbstractDashboardPartConfigurer<So
 			}
 		});
 		
-		createLabel(parent, "Attribute for SensorID-Attribute");
+		createLabel(parent, "Attribute for SensorID");
 		createAttributeSelector(parent, dashboardPart.getSIDAttributeName(), attributeNames).addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
