@@ -34,7 +34,9 @@ public class DataDictionaryProvider {
 		}
 	}
 
-	// unbinddd
+	public void unbindDataDictionary( IDataDictionary dataDictionary ) {
+		// TODO: Implement this!
+	}
 
 	private void addDatatypes(IDataDictionary dd, List<SDFDatatype> types) {
 		for (SDFDatatype dt : types) {
