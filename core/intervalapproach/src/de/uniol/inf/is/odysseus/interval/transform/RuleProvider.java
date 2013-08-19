@@ -69,7 +69,8 @@ public class RuleProvider implements ITransformRuleProvider {
 		rules.add(new TDuplicateEliminationAORule());	
 		
 		rules.add(new TAssureOrderAORule());
-
+		
+		rules.add(new TSyncWithSystemTimeAORule());
 		return rules;
 	}
 
