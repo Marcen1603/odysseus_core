@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.viewer.editors;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
@@ -31,13 +33,19 @@ public class StreamEditorInput implements IStreamEditorInput {
 	private final String editorTypeID;
 	private final String editorLabel;
 	private final IPhysicalOperator operator;
+	private final Optional<Integer> queryIDToManage;
+	
+	public StreamEditorInput( IPhysicalOperator operator, IStreamEditorType type, String editorTypeID, String editorLabel ) {
+		this(operator, type, editorTypeID, editorLabel, -1);
+	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public StreamEditorInput( IPhysicalOperator operator, IStreamEditorType type, String editorTypeID, String editorLabel ) {
+	public StreamEditorInput( IPhysicalOperator operator, IStreamEditorType type, String editorTypeID, String editorLabel, int queryIDToManage) {
 		this.editorType = type;
 		this.editorTypeID = editorTypeID;
 		this.editorLabel = editorLabel;
 		this.operator = operator;
+		this.queryIDToManage = (Optional<Integer>) (queryIDToManage < 0 ? Optional.absent() : Optional.of(queryIDToManage)) ;
 
 		connection = new DefaultStreamConnection(operator);
 	}
@@ -104,5 +112,10 @@ public class StreamEditorInput implements IStreamEditorInput {
 
 	public IPhysicalOperator getPhysicalOperator() {
 		return operator;
+	}
+	
+	@Override
+	public Optional<Integer> getManagedQueryID() {
+		return queryIDToManage;
 	}
 }

@@ -16,6 +16,7 @@ Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.core.event,
  de.uniol.inf.is.odysseus.core.usermanagement,
  de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.viewer.stream.table,
  org.slf4j
 Service-Component: OSGI-INF/executor.xml,OSGI-INF/operatorDetailProviderRegistry.xml,OSGI-INF/generalProvider.xml,OSGI-INF/parameterInfoOperatorDetailProvider.xml,
  OSGI-INF/outputSchemaOperatorDetailProvider.xml

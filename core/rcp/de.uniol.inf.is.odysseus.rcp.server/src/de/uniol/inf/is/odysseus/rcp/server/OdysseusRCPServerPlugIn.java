@@ -95,6 +95,10 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 			LOG.debug("ServerExecutor " + executor + " unbound.");
 		} 
 	}
+	
+	public static IServerExecutor getServerExecutor() {
+		return serverExecutor;
+	}
 
 	@Override
 	public void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {

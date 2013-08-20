@@ -129,6 +129,11 @@
             id="de.uniol.inf.is.odysseus.rcp.commands.DisableRefreshSourcesViewCommand"
             name="Disable Refreshing Sources View">
       </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.rcp.server.commands.SelectAllFromSource"
+            id="de.uniol.inf.is.odysseus.rcp.commands.SelectAllFromSource"
+            name="Select all from Source">
+      </command>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -160,6 +165,16 @@
                icon="icons/disable-refresh.gif"
                label="Diable Refresh"
                style="toggle">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.SelectAllFromSource"
+               icon="icons/zoom.gif"
+               label="Show data"
+               style="push">
          </command>
       </menuContribution>
    </extension>

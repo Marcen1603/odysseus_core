@@ -32,13 +32,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 
 public class StreamEditor extends EditorPart {
 
+	private static final Logger LOG = LoggerFactory.getLogger(StreamEditor.class);
+	
 	private IStreamEditorInput input;
 	private IStreamEditorType editorType;
 	private ToolBar toolBar;
@@ -110,7 +115,21 @@ public class StreamEditor extends EditorPart {
 	public void dispose() {
 		editorType.dispose();
 		this.input.getStreamConnection().removeStreamElementListener(this.editorType);
+		
 		input.getStreamConnection().disconnect();
+		
+		removeManagedQuery();
+	}
+
+	private void removeManagedQuery() {
+		if( input.getManagedQueryID().isPresent() ) {
+			int queryIDToRemove = input.getManagedQueryID().get();
+			try {
+				OdysseusRCPViewerPlugIn.getExecutor().removeQuery(queryIDToRemove, OdysseusRCPPlugIn.getActiveSession());
+			} catch ( Throwable t ) {
+				LOG.error("Could not remove query " + queryIDToRemove, t);
+			}
+		}
 	}
 
 	public IStreamEditorInput getInput() {

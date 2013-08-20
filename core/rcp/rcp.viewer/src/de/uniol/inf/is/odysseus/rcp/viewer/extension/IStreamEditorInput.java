@@ -17,9 +17,12 @@ package de.uniol.inf.is.odysseus.rcp.viewer.extension;
 
 import org.eclipse.ui.IEditorInput;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 
 public interface IStreamEditorInput extends IEditorInput{
 
 	public IStreamConnection<Object> getStreamConnection();
+	public Optional<Integer> getManagedQueryID();
 }
