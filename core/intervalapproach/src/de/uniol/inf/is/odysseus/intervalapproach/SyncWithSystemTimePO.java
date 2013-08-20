@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterval>,W extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, W> {
+public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, R> {
 
 	private long lastSystemtime = -1;
 	private long lastApplicationTime;
@@ -17,7 +17,7 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 		this.applicationTimeUnit = applicationTimeUnit;
 	}
 	
-	public SyncWithSystemTimePO(SyncWithSystemTimePO<R, W> syncWithSystemTimePO) {
+	public SyncWithSystemTimePO(SyncWithSystemTimePO<R> syncWithSystemTimePO) {
 		this.applicationTimeUnit = syncWithSystemTimePO.applicationTimeUnit;
 	}
 
@@ -43,17 +43,16 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 				} catch (InterruptedException e) {
 				}
 			}
-			
-			
 		}else{
 			lastSystemtime = System.currentTimeMillis();
 			lastApplicationTime = object.getMetadata().getStart().getMainPoint();
 		}
+		transfer(object);
 	}
 
 	@Override
-	public AbstractPipe<R, W> clone() {
-		return new SyncWithSystemTimePO<R,W>(this);
+	public AbstractPipe<R,R> clone() {
+		return new SyncWithSystemTimePO<R>(this);
 	}
 
 }
