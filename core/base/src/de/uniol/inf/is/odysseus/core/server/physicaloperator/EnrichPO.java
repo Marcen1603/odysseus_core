@@ -30,7 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
  * @author Dennis Geesen
  * 
  */
-public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractPipe<T, T> implements IHasPredicate {
+public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
+		extends AbstractPipe<T, T> implements IHasPredicate {
 
 	private IPredicate<T> predicate;
 	// TODO: check, if it can be merged with caching strategies form DB-Enrich
@@ -117,10 +118,13 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	}
 
 	private void processEnrich(T object) {
-		for (T cached : this.cache) {
-			if (this.predicate.evaluate(cached, object)) {
-				T enriched = this.dataMergeFunction.merge(cached, object, metaMergeFunction, Order.LeftRight);
-				transfer(enriched);
+		synchronized (cache) {
+			for (T cached : this.cache) {
+				if (this.predicate.evaluate(cached, object)) {
+					T enriched = this.dataMergeFunction.merge(cached, object,
+							metaMergeFunction, Order.LeftRight);
+					transfer(enriched);
+				}
 			}
 		}
 	}
@@ -129,7 +133,9 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	protected void process_close() {
 		super.process_close();
 		this.buffer.clear();
-		this.cache.clear();
+		synchronized (cache) {
+			this.cache.clear();			
+		}
 	}
 
 	@Override
@@ -149,17 +155,15 @@ public class EnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> exte
 	public void setDataMergeFunction(IDataMergeFunction<T, M> dmf) {
 		this.dataMergeFunction = dmf;
 	}
-	
+
 	@Override
 	public long getElementsStored1() {
 		return cache.size();
 	}
-	
+
 	@Override
 	public long getElementsStored2() {
 		return buffer.size();
 	}
 
-	
-	
 }
