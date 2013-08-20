@@ -7,5 +7,7 @@
 	<classpathentry kind="src" path="/com.google.guava"/>
 	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.core.server"/>
 	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.relational.base"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.p2p_new"/>
+	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.slf4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
