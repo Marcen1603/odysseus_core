@@ -45,8 +45,8 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 		if (lastSystemtime > 0) {
 			long currentApplicationTime = object.getMetadata().getStart()
 					.getMainPoint();
-			long applicationTimeDiff = currentApplicationTime
-					- lastApplicationTime;
+			long applicationTimeDiff = applicationTimeUnit.toMillis(currentApplicationTime
+					- lastApplicationTime);
 			long waitUntil = System.currentTimeMillis()+applicationTimeDiff;
 			while (System.currentTimeMillis() < waitUntil
 					&& !terminate) {
