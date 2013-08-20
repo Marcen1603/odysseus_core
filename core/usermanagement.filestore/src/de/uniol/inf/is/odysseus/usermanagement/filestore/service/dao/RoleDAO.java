@@ -39,7 +39,7 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 					.equalsIgnoreCase("Filestore")) {
 				dao = new RoleDAO(new FileStore<String, Role>(
 						OdysseusConfiguration.getFileProperty(
-								"privilegStoreFilename", tenant.getName())),
+								"roleStoreFilename", tenant.getName())),
 						new ArrayList<Role>());
 			} else {
 				dao = new RoleDAO(new MemoryStore<String, Role>(),
