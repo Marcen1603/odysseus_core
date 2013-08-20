@@ -39,7 +39,7 @@ public class UserDAO extends AbstractStoreDAO<User>{
 					.equalsIgnoreCase("Filestore")) {
 				dao = new UserDAO(new FileStore<String, User>(
 						OdysseusConfiguration.getFileProperty(
-								"privilegStoreFilename", tenant.getName())),
+								"userStoreFilename", tenant.getName())),
 						new ArrayList<User>());
 			} else {
 				dao = new UserDAO(new MemoryStore<String, User>(),
