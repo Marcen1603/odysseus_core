@@ -100,15 +100,11 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	 * returns best broker, currently its a random broker. If broker topology is
 	 * distributed, return fastest broker (ping or something else)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public IRoutingBroker<T> getBestBroker(String publisherUid) {
 		if (brokers.isEmpty()) {
 			// If no Broker exists, create initial Broker
-			IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
-					.getRoutingBrokerInstance(getRoutingType(), getDomain(),
-							"InitialBroker");
-			brokers.put(newBroker.getName(), newBroker);
+			IRoutingBroker<T> newBroker = createInitialBroker();
 
 			// Map Publisher with Broker
 			publishToBroker.put(publisherUid, newBroker);
@@ -130,6 +126,20 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	}
 
 	/**
+	 * Create initial broker. Needed for other brokers to create a 
+	 * broker network
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private IRoutingBroker<T> createInitialBroker(){
+		IRoutingBroker<T> newBroker = (IRoutingBroker<T>) RoutingBrokerRegistry
+		.getRoutingBrokerInstance(getRoutingType(), getDomain(),
+				"InitialBroker");
+		brokers.put(newBroker.getName(), newBroker);
+		return newBroker;
+	}
+
+	/**
 	 * Returns a broker. If newBrokerNeeded is set, a new Broker would be
 	 * created otherwise the broker with minimum load is returned
 	 */
@@ -137,6 +147,10 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 	@Override
 	public IRoutingBroker<T> getBrokerForSubscriber(boolean newBrokerNeeded,
 			String subscriberUid) {
+		if (brokers.isEmpty()) {
+			// If no Broker exists, create initial Broker
+			createInitialBroker();
+		}
 		if (subscriberToBroker.containsKey(subscriberUid)) {
 			// return mapped broker
 			return subscriberToBroker.get(subscriberUid);
@@ -185,7 +199,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 				.get(randIndex);
 		return brokers.get(brokerName);
 	}
-	
+
 	/**
 	 * Returns a random broker
 	 * 
@@ -195,7 +209,7 @@ public class AcyclicBrokerTopology<T extends IStreamObject<?>> extends
 		IRoutingBroker<T> firstBroker = brokers.values().iterator().next();
 		int minimumLoad = firstBroker.getNumberOfSubscribers();
 		String currentBrokerName = firstBroker.getName();
-		
+
 		for (IRoutingBroker<T> broker : brokers.values()) {
 			if (broker.getNumberOfSubscribers() == 0) {
 				return brokers.get(broker.getName());

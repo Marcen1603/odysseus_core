@@ -52,8 +52,8 @@ public class SubscribeAO extends UnaryLogicalOp{
 	private String source;
 	private boolean newBrokerNeeded = false;
 	private String domain;
-	private List<String> topics;
-	private List<String> predicateStrings;
+	private List<String> topics = new ArrayList<String>();
+	private List<String> predicateStrings = new ArrayList<String>();;
 	private String predicateType;
 	
 	public SubscribeAO(){
@@ -108,7 +108,7 @@ public class SubscribeAO extends UnaryLogicalOp{
 		this.source = source;
 	}
 	
-	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true, doc="")
+	@Parameter(name="schema", type=CreateSDFAttributeParameter.class, isList=true)
 	public void setSchema_(List<SDFAttribute> sdfAttributes){
 		this.sdfAttributes = sdfAttributes;
 	}

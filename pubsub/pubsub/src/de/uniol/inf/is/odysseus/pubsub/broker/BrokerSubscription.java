@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.WeightedPredicate;
 import de.uniol.inf.is.odysseus.pubsub.physicaloperator.SubscribePO;
 
 /**
- * This class contains subscription data. needed in brokers
+ * This class contains subscription data from subscriber
  * 
  * @author ChrisToenjesDeye
  * 
@@ -102,6 +102,11 @@ public class BrokerSubscription<T extends IStreamObject<?>> implements Comparabl
 		return weightedPredicates.size();
 	}
 	
+	/**
+	 * returns the highest weight of all predicates
+	 * needed for predicate tree in content based filtering
+	 * @return highest predicate weight
+	 */
 	public Integer getHighestPredicateWeight(){
 		Integer highestWeight = 0;
 		for (WeightedPredicate<T> weightedPredicate : weightedPredicates) {

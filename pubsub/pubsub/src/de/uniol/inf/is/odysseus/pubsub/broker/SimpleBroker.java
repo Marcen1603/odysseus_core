@@ -20,8 +20,10 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * This class provides the functionality of a simple broker with no routing
- * needed in single broker or bus broker topology Hint: All functions are in
- * abstract broker, because they are also needed in other brokers
+ * needed in single broker or bus broker topology
+ * 
+ * Hint: All functions are in abstract broker, because they are also needed in
+ * other brokers
  * 
  * @author ChrisToenjesDeye
  * 

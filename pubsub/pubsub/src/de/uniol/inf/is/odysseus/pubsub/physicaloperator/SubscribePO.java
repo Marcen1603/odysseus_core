@@ -149,8 +149,8 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 
 	@Override
 	protected void process_next(T object, int port) {
-		// hier passiert nix
-		
+		// subscriber operator is like a source. Objects will send by observer
+		// from brokers in publish/Subscribe systems. See update() Method.
 	}
 	
 

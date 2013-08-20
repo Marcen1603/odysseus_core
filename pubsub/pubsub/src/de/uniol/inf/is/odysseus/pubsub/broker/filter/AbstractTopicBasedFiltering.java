@@ -26,6 +26,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 
+/**
+ * abstract class for topic based filtering
+ * 
+ * @author ChrisToenjesDeye
+ * 
+ */
 public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>>
 		extends AbstractFiltering<T> {
 
@@ -35,6 +41,8 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>>
 	// matches publisherUid with a list of subscriberUids for better performace
 	Map<String, List<String>> matches = new HashMap<String, List<String>>();
 
+	private Collection<BrokerSubscription<T>> subscriptions = new ArrayList<BrokerSubscription<T>>();
+
 	/**
 	 * reinitialize the filter for better performance. after initialization the
 	 * filter method only need a lookup in the matches map
@@ -43,7 +51,10 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>>
 	public void reinitializeFilter(
 			Collection<BrokerSubscription<T>> subscriptions,
 			Collection<BrokerAdvertisements> advertisements) {
-		matches.clear();
+		this.subscriptions.clear();
+		this.subscriptions = subscriptions;
+		this.matches.clear();
+
 		for (BrokerSubscription<T> subscription : subscriptions) {
 			for (BrokerAdvertisements advertisement : advertisements) {
 				boolean addSubscriberToPublisher = true;
@@ -66,28 +77,27 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>>
 					}
 				}
 
-				// Match publisher and subscriber if topics match
-				if (addSubscriberToPublisher) {
-
-					if (matches.containsKey(advertisement.getPublisherUid())) {
-						// If publisher already has assigned subscribers
-						if (!matches.get(advertisement.getPublisherUid())
-								.contains(
-										subscription.getSubscriber()
-												.getIdentifier())) {
+				if (matches.containsKey(advertisement.getPublisherUid())) {
+					// If publisher already has assigned subscribers
+					if (!matches.get(advertisement.getPublisherUid()).contains(
+							subscription.getSubscriber().getIdentifier())) {
+						if (addSubscriberToPublisher) {
 							matches.get(advertisement.getPublisherUid()).add(
 									subscription.getSubscriber()
 											.getIdentifier());
 						}
-					} else {
-						// If publisher has no assigned subscribers
-						List<String> matchedSubscriber = new ArrayList<String>();
+					}
+				} else {
+					// If publisher has no assigned subscribers
+					List<String> matchedSubscriber = new ArrayList<String>();
+					if (addSubscriberToPublisher) {
 						matchedSubscriber.add(subscription.getSubscriber()
 								.getIdentifier());
-						matches.put(advertisement.getPublisherUid(),
-								matchedSubscriber);
 					}
+					matches.put(advertisement.getPublisherUid(),
+							matchedSubscriber);
 				}
+
 			}
 		}
 		setReinitializationMode(false);
@@ -95,14 +105,25 @@ public abstract class AbstractTopicBasedFiltering<T extends IStreamObject<?>>
 
 	/**
 	 * topic based filtering. only a lookup into matches map is needed after
-	 * filter is initialized. if nothing matches an empty list is returned
+	 * filter is initialized.
 	 */
 	@Override
 	public List<String> filter(T object, String publisherUid) {
 		if (matches.containsKey(publisherUid)) {
 			return matches.get(publisherUid);
+		} else {
+			// if publisher has no advertisements,
+			// check if subscribers
+			// exists which has no topics and add them to result
+			ArrayList<String> matchWithoutTopics = new ArrayList<String>();
+			for (BrokerSubscription<T> subscription : subscriptions) {
+				if (!subscription.hasTopics()) {
+					matchWithoutTopics.add(subscription.getSubscriber()
+							.getIdentifier());
+				}
+			}
+			return matchWithoutTopics;
 		}
-		return new ArrayList<String>();
 	}
 
 }

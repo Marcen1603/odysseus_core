@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.pubsub.broker.AbstractBroker;
 
 /**
+ * Abstract class for routing brokers
  * 
  * @author ChrisToenjesDeye
  *

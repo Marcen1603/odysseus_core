@@ -26,6 +26,13 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerAdvertisements;
 import de.uniol.inf.is.odysseus.pubsub.broker.BrokerSubscription;
 
+/**
+ * Class for Content based Filtering
+ * needed for creating predicate tree and filtering
+ * 
+ * @author ChrisToenjesDeye
+ *
+ */
 public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 		AbstractFiltering<T> {
 
@@ -142,6 +149,11 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 		setReinitializationMode(false);
 	}
 
+	/**
+	 * Checks if given weighted predicate is already added
+	 * @param predicate
+	 * @return
+	 */
 	private WeightedPredicate<T> getPredicateIfAlreadyAdded(
 			IPredicate<? super T> predicate) {
 		for (WeightedPredicate<T> weightedPredicate : weightedPredicates) {
@@ -152,6 +164,11 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 		return null;
 	}
 
+	/**
+	 * Returns the Root node from predicate trees, for a given predicate
+	 * if not root node with given predicate exists, return null
+	 * @param predicate
+	 */
 	private PredicateNode<T> getRootNode(IPredicate<? super T> predicate) {
 		for (PredicateNode<T> rootNode : predicateNodes) {
 			if (rootNode.isPredicateEqual(predicate)) {
@@ -161,6 +178,12 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 		return null;
 	}
 
+	/**
+	 * checks and returns a child node from a given tree if exists
+	 * @param currentNode
+	 * @param predicate
+	 * @return
+	 */
 	private PredicateNode<T> getChildNodeIfExists(PredicateNode<T> currentNode,
 			IPredicate<? super T> predicate) {
 		for (PredicateNode<T> child : currentNode.getChildPredicates()) {
@@ -194,6 +217,13 @@ public class ContentBasedFiltering<T extends IStreamObject<?>> extends
 		return result;
 	}
 
+	/**
+	 * Recursive method for evaluating childs in predicate tree
+	 * @param rootNode
+	 * @param object
+	 * @param result
+	 * @return subscribers, for which filter matches
+	 */
 	private List<String> evaluateChilds(PredicateNode<T> rootNode, T object,
 			ArrayList<String> result) {
 		for (PredicateNode<T> node : rootNode.getChildPredicates()) {

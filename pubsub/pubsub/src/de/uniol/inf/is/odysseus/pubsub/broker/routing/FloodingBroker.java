@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.pubsub.broker.filter.Topic;
  */
 public class FloodingBroker <T extends IStreamObject<?>> extends AbstractRoutingBroker<T>{
 
-	//private static Logger logger = LoggerFactory.getLogger(FloodingBroker.class);
 	private static final String ROUTING_TYPE = "Flooding";
 	private List<IRoutingBroker<T>> connectedBrokers = new ArrayList<IRoutingBroker<T>>();
 	

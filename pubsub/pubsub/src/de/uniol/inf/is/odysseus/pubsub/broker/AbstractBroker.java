@@ -193,7 +193,7 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		// Clear Observer list
 		this.deleteObservers();
 
-		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics()) {
+		if (hasAnySubscriptionTopics) {
 			// Topic based filtering
 			if (!isAnyTopicHierarchical) {
 				// Channel based filtering
@@ -205,9 +205,9 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 							advertisements.values());
 					withOptimization = true;
 				}
-				stopTimer(Filtertype.channel.toString(), withOptimization);
 				matchedSubscriberTopics
 						.addAll(filter.filter(object, publisherUid));
+				stopTimer(Filtertype.channel.toString(), withOptimization);
 			} else {
 				// Hierarchical Filtering
 				IFiltering<T> filter = filters.get(Filtertype.hierarchical);
@@ -218,9 +218,9 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 							advertisements.values());
 					withOptimization = true;
 				}
-				stopTimer(Filtertype.hierarchical.toString(), withOptimization);
 				matchedSubscriberTopics
 						.addAll(filter.filter(object, publisherUid));
+				stopTimer(Filtertype.hierarchical.toString(), withOptimization);
 			}
 
 			// if only topic based filter active
@@ -244,12 +244,12 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 						advertisements.values());
 				withOptimization = true;
 			}
-			stopTimer(Filtertype.content.toString(), withOptimization);
 			matchedSubscriberPredicates
 					.addAll(filter.filter(object, publisherUid));
+			stopTimer(Filtertype.content.toString(), withOptimization);
 
 			// if only content based filter active
-			if (!hasAnySubscriptionTopics || !doesAnyPublisherAdvertiseTopics()) {
+			if (!hasAnySubscriptionTopics) {
 				// add observers (subscribers) and notify them
 				for (String subscriberId : matchedSubscriberPredicates) {
 					super.addObserver(subscriptions.get(subscriberId)
@@ -262,8 +262,7 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 
 		// Combine Filters with logical AND if topic and content based filters
 		// active
-		if (hasAnySubscriptionTopics && doesAnyPublisherAdvertiseTopics()
-				&& hasAnySubscriptionPredicates) {
+		if (hasAnySubscriptionTopics && hasAnySubscriptionPredicates) {
 			for (String subscriberId : matchedSubscriberTopics) {
 				if (matchedSubscriberPredicates.contains(subscriberId)) {
 					// if both filters match, add subscriber to observers
@@ -275,14 +274,6 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 			super.setChanged();
 			super.notifyObservers(object);
 		}
-	}
-
-	/**
-	 * checks if any publisher has advertised
-	 * @return
-	 */
-	private boolean doesAnyPublisherAdvertiseTopics() {
-		return !advertisements.isEmpty();
 	}
 
 	/**
