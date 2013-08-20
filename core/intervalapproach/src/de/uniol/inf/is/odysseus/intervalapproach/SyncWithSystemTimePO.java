@@ -35,7 +35,7 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 	}
 
 	@Override
-	protected void process_close() {
+	protected synchronized void process_close() {
 		this.terminate = true;
 		this.notifyAll();
 	}
