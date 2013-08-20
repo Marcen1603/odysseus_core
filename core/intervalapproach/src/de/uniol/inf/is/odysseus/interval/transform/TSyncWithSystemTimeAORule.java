@@ -19,7 +19,7 @@ public class TSyncWithSystemTimeAORule extends AbstractTransformationRule<SyncWi
 	@Override
 	public void execute(SyncWithSystemTimeAO operator,
 			TransformationConfiguration config) {
-		SyncWithSystemTimePO<IStreamObject<? extends ITimeInterval>> po = new SyncWithSystemTimePO<>(operator.getTimeUnit());
+		SyncWithSystemTimePO<IStreamObject<? extends ITimeInterval>> po = new SyncWithSystemTimePO<>(operator.getTimeUnit(), operator.getFactor());
 		defaultExecute(operator, po, config, true, true);
 	}
 

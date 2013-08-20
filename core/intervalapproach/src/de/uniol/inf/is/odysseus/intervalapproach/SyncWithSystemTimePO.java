@@ -9,18 +9,22 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractPipe<R, R> {
-
-	private long lastSystemtime = -1;
-	private long lastApplicationTime;
+	
 	final private TimeUnit applicationTimeUnit;
-	private boolean terminate;
-
-	public SyncWithSystemTimePO(TimeUnit applicationTimeUnit) {
+	private double factor;	
+	
+	transient private long lastSystemtime = -1;
+	transient  private long lastApplicationTime;
+	transient private boolean terminate;
+	
+	public SyncWithSystemTimePO(TimeUnit applicationTimeUnit, double factor) {
 		this.applicationTimeUnit = applicationTimeUnit;
+		this.factor = factor;
 	}
 
 	public SyncWithSystemTimePO(SyncWithSystemTimePO<R> syncWithSystemTimePO) {
 		this.applicationTimeUnit = syncWithSystemTimePO.applicationTimeUnit;
+		this.factor = syncWithSystemTimePO.factor;
 	}
 
 	@Override
@@ -31,6 +35,7 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 	@Override
 	protected void process_open() throws OpenFailedException {
 		lastSystemtime = -1;
+		lastApplicationTime = -1;
 		this.terminate = false;
 	}
 
@@ -45,8 +50,7 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 		if (lastSystemtime > 0) {
 			long currentApplicationTime = object.getMetadata().getStart()
 					.getMainPoint();
-			long applicationTimeDiff = applicationTimeUnit.toMillis(currentApplicationTime
-					- lastApplicationTime);
+			long applicationTimeDiff = convertApplicationTimeToMillis(currentApplicationTime-lastApplicationTime);
 			long waitUntil = System.currentTimeMillis()+applicationTimeDiff;
 			while (System.currentTimeMillis() < waitUntil
 					&& !terminate) {
@@ -59,6 +63,15 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 		lastSystemtime = System.currentTimeMillis();
 		lastApplicationTime = object.getMetadata().getStart().getMainPoint();
 		transfer(object);
+	}
+
+	private long convertApplicationTimeToMillis(long time) {
+		
+		if (factor > 0){
+			return Math.round(time *factor);
+		}else{
+			return applicationTimeUnit.toMillis(time);
+		}
 	}
 
 	@Override
