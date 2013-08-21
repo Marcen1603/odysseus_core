@@ -170,7 +170,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 			if(searchKeys.length > 0){
 				fq.track(searchKeys);
 			}
-			if(locations.length > 0){
+			if(locations != null){
 				fq.locations(locations);
 			}
 			twitterStream.filter(fq);
@@ -253,6 +253,11 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		
 	}
 	
+	/**
+	 * convert a string to a 2DArray of geo-coordinates
+	 * @param data
+	 * @return
+	 */
 	private double[][] convertStringTo2DArray(String data){
 		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(data).useDelimiter("[,|]");
