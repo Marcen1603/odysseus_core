@@ -64,8 +64,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	// currend classifier
 	private IClassifier algo;
-	// currend stopwords
 	
+	// currend stopwords
 	private IStopWords stopwordsSet;
 	private String language;
 
@@ -150,9 +150,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	
 	@Override
 	protected void process_next(Tuple object, int port) {
-		
-		
-		
 		if (!isStarted) {
 			startTime = System.currentTimeMillis();
 			isStarted = true;
