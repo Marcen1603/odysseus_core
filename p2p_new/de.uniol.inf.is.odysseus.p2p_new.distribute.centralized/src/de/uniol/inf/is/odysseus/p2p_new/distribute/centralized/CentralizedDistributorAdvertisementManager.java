@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.MasterNotificationAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.JxtaServicesProviderService;
@@ -23,15 +24,15 @@ import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
-public class PhysicalQueryPlanAdvertisementManager implements IAdvertisementListener {
-	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryPlanAdvertisementManager.class);
+public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener {
+	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributorAdvertisementManager.class);
 	private IServerExecutor executor;
 	
 	// the PeerID of the Master
 	private PeerID masterID;
 	// the PeerID of this instance
 	private PeerID localID;
-	private static PhysicalQueryPlanAdvertisementManager instance;
+	private static CentralizedDistributorAdvertisementManager instance;
 	
 	
 	// activator
@@ -51,7 +52,7 @@ public class PhysicalQueryPlanAdvertisementManager implements IAdvertisementList
 	
 
 	
-	public static PhysicalQueryPlanAdvertisementManager getInstance() {
+	public static CentralizedDistributorAdvertisementManager getInstance() {
 		return instance;
 	}
 
@@ -74,6 +75,13 @@ public class PhysicalQueryPlanAdvertisementManager implements IAdvertisementList
 				// send a PhysicalQueryPlanAdvertisement to the master to let it know of the plans currently running on this node
 				sendQueryPlanToMaster();				
 			}
+		} else if (a instanceof PhysicalQueryPartAdvertisement) {
+			PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) a;
+			// this node is a normal peer and received a physical query-part to place within the local plan
+			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
+				//this.getExecutor().addQuery(physicalPlan, user, queryBuildConfigurationName)
+			}
+			
 		}
 	}
 
