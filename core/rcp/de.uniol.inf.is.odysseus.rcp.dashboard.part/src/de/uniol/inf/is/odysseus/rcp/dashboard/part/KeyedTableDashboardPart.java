@@ -456,6 +456,10 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		}
 		return Optional.absent();
 	}
+	
+	public String[] getAttributes() {
+		return attributes;
+	}
 
 	public boolean isShowAge() {
 		return showAge;

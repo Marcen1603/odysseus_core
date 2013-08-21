@@ -9,6 +9,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -74,7 +75,7 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 
 	private void createKeyAttribbutesControls(Composite topComposite) {
 		createLabel(topComposite, "Key attribute");
-		final Text attributesInput = createText(topComposite, dashboardPart.getKeyAttribute());
+		final Combo attributesInput = createCombo(topComposite, dashboardPart.getAttributes());
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -125,6 +126,13 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text.setText(txt != null ? txt : "");
 		return text;
+	}
+	
+	private static Combo createCombo(Composite topComposite, String[] items){
+		Combo combo = new Combo(topComposite, SWT.DROP_DOWN);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		combo.setItems(items);
+		return combo;
 	}
 
 	private static void createLabel(Composite parent, String text) {
