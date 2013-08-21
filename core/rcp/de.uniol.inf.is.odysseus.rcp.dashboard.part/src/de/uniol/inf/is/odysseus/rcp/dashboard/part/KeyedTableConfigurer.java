@@ -50,6 +50,18 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		ageCheckBox.setLayoutData(gd);
+		
+		createLabel(topComposite, "Maximum colored age (ms)");
+		createText(topComposite, String.valueOf(dashboardPart.getMaxAgeMillis())).addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				Text text = (Text)e.widget;
+				try {
+					dashboardPart.setMaxAgeMillis(Long.valueOf(text.getText()));
+				} catch( Throwable ignored ) {
+				}
+			}
+		});
 	}
 
 	private static Button createCheckBox(Composite topComposite, String text, boolean selected, SelectionAdapter selectionAdapter) {

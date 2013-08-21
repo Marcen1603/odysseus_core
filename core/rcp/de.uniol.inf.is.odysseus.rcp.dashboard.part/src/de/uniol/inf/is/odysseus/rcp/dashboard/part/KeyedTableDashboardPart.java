@@ -59,7 +59,6 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KeyedTableDashboardPart.class);
 
-	private static final long MAX_COLORED_AGE_MILLIS = 5000;
 	private static final int COLOR_AGE_STEPS = 10;
 	
 	private IPhysicalOperator operator;
@@ -83,6 +82,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private String keyAttribute = "";
 	private List<Color> ageColors = Lists.newArrayList();
 	private boolean showAge = false;
+	private long maxAgeMillis = 5000;
 	
 	private int keyAttributeIndex;
 	
@@ -102,6 +102,17 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 			updateKeyAttributeIndex();
 			
 			clearData();
+		}
+	}
+	
+
+	public long getMaxAgeMillis() {
+		return maxAgeMillis;
+	}
+
+	public void setMaxAgeMillis(long maxAgeMillis) {
+		if( maxAgeMillis >= 0 ) {
+			this.maxAgeMillis = maxAgeMillis;
 		}
 	}
 
@@ -243,7 +254,17 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		
 		keyAttribute = saved.get("KeyAttribute");
 		showAge = Boolean.valueOf(saved.get("showAge"));
+		maxAgeMillis = tryConvertToLong(saved.get("maxAge"));
+		
 		updateKeyAttributeIndex();
+	}
+
+	private Long tryConvertToLong(String longString) {
+		try {
+			return Long.valueOf(longString);
+		} catch( Throwable ignore ) {
+			return maxAgeMillis;
+		}
 	}
 
 	@Override
@@ -254,6 +275,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		toSaveMap.put("Title", title);
 		toSaveMap.put("KeyAttribute", keyAttribute);
 		toSaveMap.put("showAge", String.valueOf(showAge));
+		toSaveMap.put("maxAge", String.valueOf(maxAgeMillis));
 		return toSaveMap;
 	}
 
@@ -293,10 +315,10 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 							Long timestamp = keyTimestamps.get(keyValue);
 							
 							long age = System.currentTimeMillis() - timestamp;
-							if( age > MAX_COLORED_AGE_MILLIS ) {
+							if( age > maxAgeMillis ) {
 								cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 							} else {
-								float ageStep = (float)MAX_COLORED_AGE_MILLIS / (float)COLOR_AGE_STEPS;
+								float ageStep = (float)maxAgeMillis / (float)COLOR_AGE_STEPS;
 								int index = Math.min((int)(age / ageStep), COLOR_AGE_STEPS - 1);
 								cell.setBackground(ageColors.get(index));
 							}
