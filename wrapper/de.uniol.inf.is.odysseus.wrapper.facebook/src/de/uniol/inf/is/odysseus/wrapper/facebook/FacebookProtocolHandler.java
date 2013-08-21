@@ -73,7 +73,6 @@ public class FacebookProtocolHandler extends
 					String message = singlePost.getString("message");
 					String id = singlePost.getString("id");
 					String created_time = singlePost.getString("created_time");
-					System.out.println(message);
 
 					if (firstQuery|| getTimeStamp(created_time).getTime() > lastTimeStamp && !(id.equals("empty"))) {
 						KeyValueObject<IMetaAttribute> out = new KeyValueObject<IMetaAttribute>();
@@ -83,8 +82,6 @@ public class FacebookProtocolHandler extends
 				
 						lastTimeStamp = getTimeStamp(created_time).getTime();
 				
-						System.out.println("TimeStamp: "
-								+ getTimeStamp(created_time).getTime());
 						facebookMessages.add(out);
 						firstQuery = false;
 					}
@@ -93,7 +90,6 @@ public class FacebookProtocolHandler extends
 			}
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		intern_close();
@@ -143,12 +139,10 @@ public class FacebookProtocolHandler extends
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
 		return instance;
-
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "Facebook";
 	}
 
@@ -176,6 +170,12 @@ public class FacebookProtocolHandler extends
 
 	}
 
+	/**
+	 * read the JSONObject and return it as a string
+	 * @param rd
+	 * @return
+	 * @throws IOException
+	 */
 	private String readAll(Reader rd) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		int cp;
@@ -187,6 +187,11 @@ public class FacebookProtocolHandler extends
 	
 	
 	
+	/**
+	 * convert the Facebook-TimeStamp to java timestamp
+	 * @param createdTime
+	 * @return
+	 */
 	private Timestamp getTimeStamp(String createdTime) {
 		try {
 			DateFormat formatterS;

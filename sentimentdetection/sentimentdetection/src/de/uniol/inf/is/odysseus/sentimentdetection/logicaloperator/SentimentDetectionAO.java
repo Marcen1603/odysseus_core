@@ -84,7 +84,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.attributeTestSetText = sentimentDetectionAO.attributeTestSetText;
         this.attributeTestSetTrueDecision = sentimentDetectionAO.attributeTestSetTrueDecision;
         
-        this.attributeTestSetTextPos = sentimentDetectionAO.attributeTrainSetTextPos;
+        this.attributeTestSetTextPos = sentimentDetectionAO.attributeTestSetTextPos;
         this.attributeTestSetTrueDecisionPos = sentimentDetectionAO.attributeTestSetTrueDecisionPos;
         
         this.attributeTrainSetTextPos = sentimentDetectionAO.attributeTrainSetTextPos;
