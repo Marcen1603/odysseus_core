@@ -8,11 +8,11 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 
 public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashboardPart> {
 
@@ -35,8 +35,9 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 	}
 
 	private void createTitleControls(Composite topComposite) {
-		createLabel( topComposite, "Title");
-		final Text titleText = createText(topComposite, dashboardPart.getTitle());
+		DashboardPartUtil.createLabel( topComposite, "Title");
+		final Text titleText = DashboardPartUtil.createText(topComposite, dashboardPart.getTitle());
+		titleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		titleText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -47,8 +48,9 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 	}
 
 	private void createMaxDataControls(Composite topComposite) {
-		createLabel( topComposite, "Max Data Count");
-		final Text maxDataText = createText(topComposite, String.valueOf(dashboardPart.getMaxData()));
+		DashboardPartUtil.createLabel( topComposite, "Max Data Count");
+		final Text maxDataText = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getMaxData()));
+		maxDataText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		maxDataText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -59,8 +61,9 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 	}
 
 	private void createAttributesControls(Composite topComposite) {
-		createLabel(topComposite, "Attributes");
-		final Text attributesInput = createText(topComposite, dashboardPart.getAttributeList());
+		DashboardPartUtil.createLabel(topComposite, "Attributes");
+		final Text attributesInput = DashboardPartUtil.createText(topComposite, dashboardPart.getAttributeList());
+		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -68,18 +71,6 @@ public class TableConfigurer extends AbstractDashboardPartConfigurer<TableDashbo
 				fireListener();
 			}
 		});
-	}
-
-	private static Text createText(Composite topComposite, String txt) {
-		Text text = new Text(topComposite, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		text.setText(txt);
-		return text;
-	}
-
-	private static void createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(text);
 	}
 
 	@Override

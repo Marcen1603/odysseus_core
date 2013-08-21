@@ -11,11 +11,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 
 public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboardPart> {
 
@@ -43,8 +43,9 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 	}
 
 	private void createMaxDataControls(Composite topComposite) {
-		createLabel(topComposite, "Max Elements");
-		final Text maxElementsText = createText(topComposite, String.valueOf(dashboardPart.getMaxElements()));
+		DashboardPartUtil.createLabel(topComposite, "Max Elements");
+		final Text maxElementsText = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getMaxElements()));
+		maxElementsText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		maxElementsText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -55,8 +56,9 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 	}
 
 	private void createUpdateIntervalControls(Composite topComposite) {
-		createLabel(topComposite, "Update interval (ms)");
-		final Text attributesInput = createText(topComposite, String.valueOf(dashboardPart.getUpdateInterval()));
+		DashboardPartUtil.createLabel(topComposite, "Update interval (ms)");
+		final Text attributesInput = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getUpdateInterval()));
+		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -67,7 +69,7 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 	}
 
 	private void createShowHeartbeatsControls(Composite topComposite) {
-		createLabel(topComposite, "Show Heartbeats");
+		DashboardPartUtil.createLabel(topComposite, "Show Heartbeats");
 		final Combo comboLocked = createBooleanComboDropDown(topComposite, dashboardPart.isShowHeartbeats());
 		comboLocked.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -86,17 +88,4 @@ public class TextConfigurer extends AbstractDashboardPartConfigurer<TextDashboar
 		comboDropDown.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return comboDropDown;
 	}
-
-	private static void createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(text);
-	}
-
-	private static Text createText(Composite topComposite, String txt) {
-		Text text = new Text(topComposite, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		text.setText(txt);
-		return text;
-	}
-
 }

@@ -9,14 +9,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 
 public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedTableDashboardPart> {
 
@@ -41,19 +41,23 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 	}
 
 	private void createAgeControls(Composite topComposite) {
-		Button ageCheckBox = createCheckBox(topComposite, "Show age", dashboardPart.isShowAge(), new SelectionAdapter(){
+		Button ageCheckBox = DashboardPartUtil.createCheckBox(topComposite, "Show age", dashboardPart.isShowAge());
+		ageCheckBox.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Button b = (Button)e.widget;
 				dashboardPart.setShowAge(b.getSelection());
 			}
 		});
+		
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		ageCheckBox.setLayoutData(gd);
 		
-		createLabel(topComposite, "Maximum colored age (ms)");
-		createText(topComposite, String.valueOf(dashboardPart.getMaxAgeMillis())).addModifyListener(new ModifyListener() {
+		DashboardPartUtil.createLabel(topComposite, "Maximum colored age (ms)");
+		Text maxAgeText = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getMaxAgeMillis()));
+		maxAgeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		maxAgeText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				Text text = (Text)e.widget;
@@ -65,17 +69,10 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 		});
 	}
 
-	private static Button createCheckBox(Composite topComposite, String text, boolean selected, SelectionAdapter selectionAdapter) {
-		Button box = new Button(topComposite, SWT.CHECK);
-		box.setText(text);
-		box.setSelection(selected);
-		box.addSelectionListener(selectionAdapter);
-		return box;
-	}
-
 	private void createKeyAttribbutesControls(Composite topComposite) {
-		createLabel(topComposite, "Key attribute");
-		final Combo attributesInput = createCombo(topComposite, dashboardPart.getAttributes());
+		DashboardPartUtil.createLabel(topComposite, "Key attribute");
+		final Combo attributesInput = DashboardPartUtil.createCombo(topComposite, dashboardPart.getAttributes());
+		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -86,8 +83,9 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 	}
 
 	private void createTitleControls(Composite topComposite) {
-		createLabel(topComposite, "Title");
-		final Text titleText = createText(topComposite, dashboardPart.getTitle());
+		DashboardPartUtil.createLabel(topComposite, "Title");
+		final Text titleText = DashboardPartUtil.createText(topComposite, dashboardPart.getTitle());
+		titleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		titleText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -98,8 +96,9 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 	}
 
 	private void createMaxDataControls(Composite topComposite) {
-		createLabel(topComposite, "Max Data Count");
-		final Text maxDataText = createText(topComposite, String.valueOf(dashboardPart.getMaxData()));
+		DashboardPartUtil.createLabel(topComposite, "Max Data Count");
+		final Text maxDataText = DashboardPartUtil.createText(topComposite, String.valueOf(dashboardPart.getMaxData()));
+		maxDataText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		maxDataText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -110,8 +109,9 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 	}
 
 	private void createAttributesControls(Composite topComposite) {
-		createLabel(topComposite, "Attributes");
-		final Text attributesInput = createText(topComposite, dashboardPart.getAttributeList());
+		DashboardPartUtil.createLabel(topComposite, "Attributes");
+		final Text attributesInput = DashboardPartUtil.createText(topComposite, dashboardPart.getAttributeList());
+		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -119,25 +119,6 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 				fireListener();
 			}
 		});
-	}
-
-	private static Text createText(Composite topComposite, String txt) {
-		Text text = new Text(topComposite, SWT.BORDER);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		text.setText(txt != null ? txt : "");
-		return text;
-	}
-	
-	private static Combo createCombo(Composite topComposite, String[] items){
-		Combo combo = new Combo(topComposite, SWT.DROP_DOWN);
-		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		combo.setItems(items);
-		return combo;
-	}
-
-	private static void createLabel(Composite parent, String text) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(text);
 	}
 
 	@Override
