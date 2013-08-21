@@ -5,8 +5,11 @@ import java.util.Collection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -33,7 +36,28 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 		createKeyAttribbutesControls(topComposite);
 		createMaxDataControls(topComposite);
 		createTitleControls(topComposite);
+		createAgeControls(topComposite);
+	}
 
+	private void createAgeControls(Composite topComposite) {
+		Button ageCheckBox = createCheckBox(topComposite, "Show age", dashboardPart.isShowAge(), new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Button b = (Button)e.widget;
+				dashboardPart.setShowAge(b.getSelection());
+			}
+		});
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		ageCheckBox.setLayoutData(gd);
+	}
+
+	private static Button createCheckBox(Composite topComposite, String text, boolean selected, SelectionAdapter selectionAdapter) {
+		Button box = new Button(topComposite, SWT.CHECK);
+		box.setText(text);
+		box.setSelection(selected);
+		box.addSelectionListener(selectionAdapter);
+		return box;
 	}
 
 	private void createKeyAttribbutesControls(Composite topComposite) {

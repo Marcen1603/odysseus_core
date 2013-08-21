@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
@@ -58,6 +59,9 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 
 	private static final Logger LOG = LoggerFactory.getLogger(KeyedTableDashboardPart.class);
 
+	private static final long MAX_COLORED_AGE_MILLIS = 5000;
+	private static final int COLOR_AGE_STEPS = 10;
+	
 	private IPhysicalOperator operator;
 
 	private TableViewer tableViewer;
@@ -77,6 +81,8 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 	private int maxData = 10;
 	private String title = "";
 	private String keyAttribute = "";
+	private List<Color> ageColors = Lists.newArrayList();
+	private boolean showAge = false;
 	
 	private int keyAttributeIndex;
 	
@@ -155,6 +161,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 			return;
 		}
 		
+		ageColors = determineAgeColors();
 		attributes = determineAttributes(attributeList);
 		
 		Composite topComposite = new Composite(parent, SWT.NONE);
@@ -180,6 +187,19 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		parent.layout();
 	}
 	
+	private List<Color> determineAgeColors() {
+		List<Color> colors = Lists.newArrayList();
+		for( int i = 0; i < COLOR_AGE_STEPS; i++ ) {
+			float factor = (float)i / (float)COLOR_AGE_STEPS;
+			
+			int r = (int)(255 - (255 * factor));
+			int g = (int)(255 * factor);
+			int b = (int)(255 * factor);
+			colors.add( new Color(Display.getCurrent(), r, g, b));
+		}
+		return colors;
+	}
+
 	private void createLabel(Composite topComposite) {
 		Label label = new Label(topComposite, SWT.BOLD);
 		label.setText(title);
@@ -202,7 +222,17 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		if( titleFont != null ) {
 			titleFont.dispose();
 		}
+		
+		disposeAgeColors();
+		
 		super.dispose();
+	}
+
+	private void disposeAgeColors() {
+		for( Color color : ageColors ) {
+			color.dispose();
+		}
+		ageColors.clear();
 	}
 
 	@Override
@@ -212,6 +242,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		title = saved.get("Title");
 		
 		keyAttribute = saved.get("KeyAttribute");
+		showAge = Boolean.valueOf(saved.get("showAge"));
 		updateKeyAttributeIndex();
 	}
 
@@ -222,6 +253,7 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		toSaveMap.put("MaxData", String.valueOf(maxData));
 		toSaveMap.put("Title", title);
 		toSaveMap.put("KeyAttribute", keyAttribute);
+		toSaveMap.put("showAge", String.valueOf(showAge));
 		return toSaveMap;
 	}
 
@@ -250,13 +282,28 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 				@Override
 				public void update(ViewerCell cell) {
 					final Tuple<?> tuple = (Tuple<?>) cell.getElement();
-					final Object attrValue = tuple.getAttributes()[positions[fi]];
+					final Object attrValue = tuple.getAttribute(positions[fi]);
 					cell.setText(attrValue != null ? attrValue.toString() : "null");
 					
 					if( !Strings.isNullOrEmpty(keyAttribute) && attributes[fi].equals(keyAttribute)) {
 						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					} else {
-						cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+						if( showAge && keyAttributeIndex != - 1 ) {
+							Object keyValue = tuple.getAttribute(keyAttributeIndex);
+							Long timestamp = keyTimestamps.get(keyValue);
+							
+							long age = System.currentTimeMillis() - timestamp;
+							if( age > MAX_COLORED_AGE_MILLIS ) {
+								cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+							} else {
+								float ageStep = (float)MAX_COLORED_AGE_MILLIS / (float)COLOR_AGE_STEPS;
+								int index = Math.min((int)(age / ageStep), COLOR_AGE_STEPS - 1);
+								cell.setBackground(ageColors.get(index));
+							}
+							
+						} else {
+							cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+						}
 					}
 				}
 			});
@@ -388,4 +435,11 @@ public class KeyedTableDashboardPart extends AbstractDashboardPart {
 		return Optional.absent();
 	}
 
+	public boolean isShowAge() {
+		return showAge;
+	}
+
+	public void setShowAge(boolean showAge) {
+		this.showAge = showAge;
+	}
 }
