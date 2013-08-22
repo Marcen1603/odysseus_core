@@ -12,7 +12,6 @@ public class UserDefinedDistributorPlugIn implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		AdvertisementFactory.registerAdvertisementInstance(QueryPartAdvertisement.getAdvertisementType(), new QueryPartAdvertisementInstantiator());
 	}
 
 	@Override
