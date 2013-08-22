@@ -45,3 +45,4 @@ Export-Package: org.mihalis.opal,
  org.mihalis.opal.transitionComposite,
  org.mihalis.opal.utils
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.jface;bundle-version="3.7.0"
