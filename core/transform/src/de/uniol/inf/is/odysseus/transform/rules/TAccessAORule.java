@@ -68,67 +68,79 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void execute(AccessAO operator, TransformationConfiguration config) {
-		
+
 		if (!hasTimestampAOAsFather(operator)) {
 			insertTimestampAO(operator, operator.getDateFormat());
 		}
-	
-		ISource accessPO = null;
-		if (operator.getTransportHandler() != null) {
-			IDataHandler<?> dataHandler = getDataHandler(operator);
-			if (dataHandler == null) {
-				LOG.error("No data handler {} found.",
-						operator.getDataHandler());
-				throw new TransformationException("No data handler "
-						+ operator.getDataHandler() + " found.");
-			}
 
-			IProtocolHandler<?> protocolHandler = getProtocolHandler(operator,
-					dataHandler);
-			if (protocolHandler == null) {
-				LOG.error("No protocol handler {} found.",
-						operator.getProtocolHandler());
-				throw new TransformationException("No protocol handler "
-						+ operator.getProtocolHandler() + " found.");
-			}
+		ISource accessPO = getDataDictionary()
+				.getAccessPlan(operator.getName());
 
-			ITransportHandler transportHandler = getTransportHandler(operator,
-					protocolHandler);
-			if (transportHandler == null) {
-				LOG.error("No transport handler {} found.",
-						operator.getTransportHandler());
-				throw new TransformationException("No transport handler "
-						+ operator.getTransportHandler() + " found.");
-			}
+		if (accessPO == null) {
 
-			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
-				accessPO = new AccessPO(protocolHandler);
+			if (operator.getTransportHandler() != null) {
+				IDataHandler<?> dataHandler = getDataHandler(operator);
+				if (dataHandler == null) {
+					LOG.error("No data handler {} found.",
+							operator.getDataHandler());
+					throw new TransformationException("No data handler "
+							+ operator.getDataHandler() + " found.");
+				}
+
+				IProtocolHandler<?> protocolHandler = getProtocolHandler(
+						operator, dataHandler);
+				if (protocolHandler == null) {
+					LOG.error("No protocol handler {} found.",
+							operator.getProtocolHandler());
+					throw new TransformationException("No protocol handler "
+							+ operator.getProtocolHandler() + " found.");
+				}
+
+				ITransportHandler transportHandler = getTransportHandler(
+						operator, protocolHandler);
+				if (transportHandler == null) {
+					LOG.error("No transport handler {} found.",
+							operator.getTransportHandler());
+					throw new TransformationException("No transport handler "
+							+ operator.getTransportHandler() + " found.");
+				}
+
+				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
+						.getWrapper())) {
+					accessPO = new AccessPO(protocolHandler);
+				} else {
+					accessPO = new ReceiverPO(protocolHandler);
+				}
+
 			} else {
-				accessPO = new ReceiverPO(protocolHandler);
-			}
+				LOG.warn("DEPRECATED: Use new generic AccessAO style!");
+				accessPO = executeDeprecated(operator, config);
 
-		} else {
-			LOG.warn("DEPRECATED: Use new generic AccessAO style!");
-			accessPO = executeDeprecated(operator, config);
-
-		}
-		if (operator.getOptionsMap().containsKey("scheduler.delay")) {
-			if (accessPO instanceof IIterableSource) {
-				((IIterableSource)accessPO).setDelay(Long.parseLong(operator.getOptionsMap().get(
-						"scheduler.delay")));
 			}
-		}
-		if (operator.getOptionsMap().containsKey("scheduler.yieldrate")) {
-			if (accessPO instanceof IIterableSource) {
-				((IIterableSource)accessPO).setYieldRate(Integer.parseInt(operator.getOptionsMap().get(
-						"scheduler.yieldrate")));
+			if (operator.getOptionsMap().containsKey("scheduler.delay")) {
+				if (accessPO instanceof IIterableSource) {
+					((IIterableSource) accessPO).setDelay(Long
+							.parseLong(operator.getOptionsMap().get(
+									"scheduler.delay")));
+				}
 			}
-		}	
-		if (operator.getOptionsMap().containsKey("scheduler.yieldnanos")) {
-			if (accessPO instanceof IIterableSource) {
-				((IIterableSource)accessPO).setYieldDurationNanos(Integer.parseInt(operator.getOptionsMap().get(
-						"scheduler.yieldnanos")));
+			if (operator.getOptionsMap().containsKey("scheduler.yieldrate")) {
+				if (accessPO instanceof IIterableSource) {
+					((IIterableSource) accessPO).setYieldRate(Integer
+							.parseInt(operator.getOptionsMap().get(
+									"scheduler.yieldrate")));
+				}
 			}
+			if (operator.getOptionsMap().containsKey("scheduler.yieldnanos")) {
+				if (accessPO instanceof IIterableSource) {
+					((IIterableSource) accessPO).setYieldDurationNanos(Integer
+							.parseInt(operator.getOptionsMap().get(
+									"scheduler.yieldnanos")));
+				}
+			}
+			
+			getDataDictionary().putAccessPlan(operator.getName(), accessPO);
+			
 		}
 		defaultExecute(operator, accessPO, config, true, true);
 	}
@@ -201,12 +213,12 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 			} else if (operator.getOutputSchema() != null) {
 				dataHandler = DataHandlerRegistry.getDataHandler(
 						operator.getDataHandler(), operator.getOutputSchema());
-			}else{
+			} else {
 				dataHandler = DataHandlerRegistry.getDataHandler(
 						operator.getDataHandler(), operator.getOutputSchema());
 			}
 		}
-		
+
 		return dataHandler;
 	}
 
