@@ -240,4 +240,10 @@ Unless required by applicable law or agreed to in writing, software
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="org.eclipse.nebula"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>
