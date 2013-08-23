@@ -471,11 +471,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					String variable = parts[0].trim();
 					String fromStr = parts[1].trim();
 					if(fromStr.startsWith(REPLACEMENT_START_KEY) && fromStr.endsWith(REPLACEMENT_END_KEY)){
-						fromStr = repl.get(fromStr.substring(2, fromStr.length()-1));
+						fromStr = repl.get(fromStr.substring(2, fromStr.length()-1).toUpperCase());
 					}
 					String toStr = parts[3].trim();
 					if(toStr.startsWith(REPLACEMENT_START_KEY) && toStr.endsWith(REPLACEMENT_END_KEY)){
-						toStr = repl.get(toStr.substring(2, toStr.length()-1));
+						toStr = repl.get(toStr.substring(2, toStr.length()-1).toUpperCase());
 					}
 					
 					int startCount = Integer.parseInt(fromStr);
@@ -580,14 +580,28 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
-		List<String> keys = findReplacements(line);
-		for (String key : keys) {
-			if (replacements.containsKey(key)) {
-				line = line.replace(REPLACEMENT_START_KEY + key + REPLACEMENT_END_KEY, replacements.get(key));
-			} else {
-				throw new OdysseusScriptException("Replacement key " + key + " not defined or has no value!");
+		// List<String> keys = findReplacements(line);
+		
+		int posStart = line.indexOf(REPLACEMENT_START_KEY);
+		while (posStart != -1) {
+			int posEnd = posStart + 1 + line.substring(posStart + 1).indexOf(REPLACEMENT_END_KEY);
+			if (posEnd == posStart) {
+				// end not found
+				break;
 			}
+			if (posEnd != -1 && posStart < posEnd) {
+				
+				String key = line.substring(posStart + REPLACEMENT_START_KEY.length(), posEnd);
+				String replacement = replacements.get(key.toUpperCase());
+				if( replacement == null ) {
+					throw new OdysseusScriptException("Replacement key " + key + " not defined or has no value!");
+				}
+				line = line.substring(0, posStart) + replacement + line.substring(posEnd + REPLACEMENT_END_KEY.length());
+			}
+			int searchAt = posStart + REPLACEMENT_START_KEY.length();
+			posStart = line.indexOf(REPLACEMENT_START_KEY, searchAt);
 		}
+
 		return line;
 	}
 
