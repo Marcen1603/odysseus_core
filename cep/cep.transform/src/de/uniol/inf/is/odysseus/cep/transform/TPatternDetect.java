@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,12 @@ import de.uniol.inf.is.odysseus.cep.epa.PatternDetectPO;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.IComplexEventFactory;
 import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.relational.RelationalCreator;
 import de.uniol.inf.is.odysseus.cep.epa.eventreading.relational.RelationalReader;
+import de.uniol.inf.is.odysseus.cep.epa.eventreading.IEventReader;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
@@ -42,15 +45,23 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 	}
 
 	@Override
-	public void execute(PatternDetectAO cepAO, TransformationConfiguration transformConfig) {
-		Map<Integer, RelationalReader> rMap = new HashMap<Integer, RelationalReader>();
+	public void execute(PatternDetectAO cepAO,
+			TransformationConfiguration transformConfig) {
+
+		Map<Integer, IEventReader> rMap = new HashMap<>();
 
 		StateMachine m = cepAO.getStateMachine();
 
 		for (LogicalSubscription s : cepAO.getSubscribedToSource()) {
 			String name = cepAO.getInputTypeName(s.getSinkInPort());
-			rMap.put(s.getSinkInPort(), new RelationalReader(s.getSchema(),
-					name));
+			if (s.getSchema().getType() == Tuple.class) {
+				rMap.put(s.getSinkInPort(), new RelationalReader(s.getSchema(),
+						name));
+			} else {
+				throw new TransformationException("Input "
+						+ s.getSchema().getType()
+						+ " is not allowed for Pattern Detect!");
+			}
 		}
 		IComplexEventFactory complexEventFactory = new RelationalCreator();
 		PatternDetectPO cepPO = null;
@@ -59,12 +70,10 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 			cepPO = new PatternDetectPO(m, cepAO.getSecondStateMachine(), rMap,
 					complexEventFactory, false, new TIInputStreamSyncArea(cepAO
 							.getSubscribedToSource().size()),
-					new TITransferArea(),
-					onlyOneMatchPerInstance);
+					new TITransferArea(), onlyOneMatchPerInstance);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 		if (cepAO.getHeartbeatRate() > 0) {
 			cepPO.setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(
@@ -77,12 +86,7 @@ public class TPatternDetect extends AbstractTransformationRule<PatternDetectAO> 
 	@Override
 	public boolean isExecutable(PatternDetectAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataTypes().contains("relational")) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
-			}
-		}
-		return false;
+		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
