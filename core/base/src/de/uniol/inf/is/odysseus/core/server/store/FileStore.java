@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -70,8 +71,9 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 						serializableTestPassed.put(key, Boolean.TRUE);
 
 					} catch (Exception e) {
-						logger.error("Error reading from " + path+" "+e.getMessage());
-						//e.printStackTrace();
+						logger.error("Error reading from " + path + " "
+								+ e.getMessage());
+						// e.printStackTrace();
 					}
 				}
 			} catch (Exception e) {
@@ -83,18 +85,23 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 		initialzed = true;
 		logger.debug("Loaded from " + path + " " + cache.entrySet().size()
 				+ " values");
-		
+
 	}
 
 	private void saveCache() throws IOException {
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
 				new File(path)));
 		for (Entry<IDType, STORETYPE> e : cache.entrySet()) {
+
 			if (serializableTestPassed.get(e.getKey())) {
-				out.writeObject(e.getKey());
-				out.writeObject(e.getValue());
-			}else{
-				logger.error("Object "+e.getKey()+" could not be saved.");
+				try {
+					out.writeObject(e.getKey());
+					out.writeObject(e.getValue());
+				} catch (NotSerializableException ex) {
+					logger.error("Object " + e.getKey() + " could not be saved.");
+				}
+			} else {
+				logger.error("Object " + e.getKey() + " could not be saved.");
 			}
 
 		}
@@ -103,7 +110,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 
 	@Override
 	public STORETYPE get(IDType id) {
-		if (!initialzed){
+		if (!initialzed) {
 			try {
 				loadCache();
 			} catch (IOException e) {
@@ -115,7 +122,7 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 
 	@Override
 	public void put(IDType id, STORETYPE elem) throws StoreException {
-		if (!initialzed){
+		if (!initialzed) {
 			try {
 				loadCache();
 			} catch (IOException e) {
