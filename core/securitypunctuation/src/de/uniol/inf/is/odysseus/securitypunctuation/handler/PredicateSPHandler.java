@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -101,7 +102,7 @@ public class PredicateSPHandler extends AbstractDataHandler<ISecurityPunctuation
 	}
 	
 	private void createSecurityPunctuationHandlers() {
-		schema = new SDFSchema("predicateSP", 
+		schema = new SDFSchema("predicateSP", Tuple.class,
 				new SDFAttribute("", "predicate", new SDFDatatype("String")),
 				new SDFAttribute("", "sign", new SDFDatatype("Integer")),
 				new SDFAttribute("", "mutable", new SDFDatatype("Integer")),
@@ -110,8 +111,13 @@ public class PredicateSPHandler extends AbstractDataHandler<ISecurityPunctuation
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			securityPunctuationHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
+			securityPunctuationHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", Tuple.class,attribute));
 		}
+	}
+	
+	@Override
+	public Class<?> createsType() {
+		return ISecurityPunctuation.class;
 	}
 
 }

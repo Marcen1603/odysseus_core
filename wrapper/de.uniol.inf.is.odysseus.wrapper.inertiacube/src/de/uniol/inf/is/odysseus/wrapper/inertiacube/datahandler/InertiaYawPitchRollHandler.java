@@ -70,4 +70,8 @@ public class InertiaYawPitchRollHandler extends AbstractDataHandler<YawPitchRoll
 		return Collections.unmodifiableList(types);
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return YawPitchRoll.class;
+	}
 }

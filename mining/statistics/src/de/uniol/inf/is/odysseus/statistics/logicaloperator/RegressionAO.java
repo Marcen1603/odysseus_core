@@ -30,6 +30,7 @@
 
 package de.uniol.inf.is.odysseus.statistics.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -91,7 +92,7 @@ public class RegressionAO extends UnaryLogicalOp {
 				SDFDatatype.DOUBLE);
 		SDFAttribute y = new SDFAttribute(SOURCE_NAME, "intercept",
 				SDFDatatype.DOUBLE);
-		setOutputSchema(new SDFSchema(URI_NAME, x, y));
+		setOutputSchema(new SDFSchema(URI_NAME,Tuple.class, x, y));
 		return getOutputSchema();
 	}
 

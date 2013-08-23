@@ -72,6 +72,11 @@ public class CountPartialAggregateDataHandler extends
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return CountPartialAggregate.class;
+	}
 
 
 

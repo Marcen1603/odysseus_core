@@ -352,7 +352,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 				throw new IllegalArgumentException("Unregistered datatype " + uri);
 			}
 
-			this.dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
+			this.dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", ProbabilisticTuple.class, attribute));
 
 		}
 	}
@@ -382,4 +382,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return ProbabilisticTuple.class;
+	}
 }

@@ -71,4 +71,9 @@ public class DocumentDataHandler extends AbstractDataHandler<Document<?>> {
 		return types;
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return Document.class;
+	}
+	
 }

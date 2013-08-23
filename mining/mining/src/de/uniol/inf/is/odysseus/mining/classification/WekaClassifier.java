@@ -46,7 +46,7 @@ public class WekaClassifier<M extends ITimeInterval> implements IClassifier<M> {
 		ArrayList<SDFAttribute> outattributes = new ArrayList<SDFAttribute>(schema.getAttributes());
 		// we add the class attribute (this will be the last one...)
 		outattributes.add(classAttribute);
-		SDFSchema outschema = new SDFSchema(schema.getURI(), outattributes);
+		SDFSchema outschema = new SDFSchema(schema.getURI(), schema.getType(), outattributes);
 		this.war = new WekaAttributeResolver(outschema, nominals);
 
 	}

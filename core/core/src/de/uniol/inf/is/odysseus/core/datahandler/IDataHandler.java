@@ -41,4 +41,5 @@ public interface IDataHandler<T> {
 	public void setPrototype(boolean p);
 	public SDFSchema getSchema();
 	public void setSchema(SDFSchema schema);
+	public Class<?> createsType();
 }

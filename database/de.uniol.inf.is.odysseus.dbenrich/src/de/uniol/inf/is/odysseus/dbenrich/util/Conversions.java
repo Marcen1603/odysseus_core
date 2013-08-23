@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -25,7 +26,7 @@ public class Conversions {
 			dbAttributes.add(createSDFAttribute(label, sqlType));
 		}
 
-		SDFSchema dbFetchSchema = new SDFSchema("", dbAttributes);
+		SDFSchema dbFetchSchema = new SDFSchema("", Tuple.class, dbAttributes);
 
 		return dbFetchSchema;
 	}

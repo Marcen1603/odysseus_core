@@ -72,7 +72,7 @@ public class ContextVisitor implements IVisitor {
 
 		CreateStreamVisitor csv = new CreateStreamVisitor(session, datadictionary, commands);
 		csv.visit(definitions, null);
-		SDFSchema schema = new SDFSchema("ContextStore:" + name, csv.getAttributes());
+		SDFSchema schema = new SDFSchema("ContextStore:" + name, Tuple.class, csv.getAttributes());
 
 		int size = visit(typeNode, schema);
         IContextStore<Tuple<? extends ITimeInterval>> store;

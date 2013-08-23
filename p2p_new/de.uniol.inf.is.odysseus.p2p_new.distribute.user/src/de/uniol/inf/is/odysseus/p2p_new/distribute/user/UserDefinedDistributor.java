@@ -304,7 +304,7 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 		for( SDFAttribute attribute : outputSchema ) {
 			attributes.add(new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName(), attribute));
 		}
-		return new SDFSchema("", attributes);
+		return new SDFSchema("", outputSchema.getType(), attributes);
 	}
 
 	private static ID generateSharedQueryID() {

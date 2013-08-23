@@ -91,5 +91,10 @@ public class KinectDepthMapHandler extends AbstractDataHandler<KinectDepthMap> {
     public List<String> getSupportedDataTypes() {
         return Collections.unmodifiableList(types);
     }
+    
+    @Override
+    public Class<?> createsType() {
+    	return KinectDepthMap.class;
+    }
 
 }

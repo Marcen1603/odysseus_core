@@ -159,5 +159,10 @@ public class SpatialKMLHandler extends AbstractDataHandler<Object> {
 			CoordinateSequence coordinateSequence) {
 		return 4 + coordinateSequence.size() * 16;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Object.class;
+	}
 
 }

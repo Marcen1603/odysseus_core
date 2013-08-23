@@ -297,7 +297,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
                   for(SDFAttribute old : op.getOutputSchema()){
                          attributes.add(new SDFAttribute(nameStr, old.getAttributeName(), old));
                   }
-                  rename.setOutputSchema(new SDFSchema(nameStr, attributes));
+                  rename.setOutputSchema(new SDFSchema(nameStr, op.getOutputSchema().getType(), attributes));
                   op = rename;
           commands.add(new CreateViewCommand(nameStr, op, user));
         }

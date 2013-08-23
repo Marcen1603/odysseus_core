@@ -125,7 +125,6 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			for (IFile file : optFileToRun) {
 				result.addAll(readLinesFromFile(file));
 			}
-
 			execute(result.toArray(new String[result.size()]));
 		} catch (Exception ex) {
 			LOG.error("Exception during running query file", ex);

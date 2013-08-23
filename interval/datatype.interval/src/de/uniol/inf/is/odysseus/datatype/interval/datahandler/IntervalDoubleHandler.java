@@ -81,5 +81,10 @@ public class IntervalDoubleHandler extends AbstractDataHandler<IntervalDouble> {
 	public int memSize(final Object attribute) {
 		return (2 * Double.SIZE) / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return IntervalDouble.class;
+	}
 
 }

@@ -75,6 +75,11 @@ public class AvgSumPartialAggregateDataHandler extends
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return AvgSumPartialAggregate.class;
+	}
 
 
 

@@ -92,4 +92,9 @@ public class KinectColorMapHandler extends AbstractDataHandler<KinectColorMap> {
         return Collections.unmodifiableList(types);
     }
 
+    @Override
+    public Class<?> createsType() {
+    	return KinectColorMap.class;
+    }
+    
 }

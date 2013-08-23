@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;
-	private SDFSchema attributes;
+	private List<SDFAttribute> attributes;
 	private double tolerance = 0;
 	private boolean isRelativeTolerance = false;
 	private int rate;
@@ -62,15 +62,11 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTR", isList = true)
 	public void setAttr(List<SDFAttribute> outputSchema) {
-		this.attributes = new SDFSchema("", outputSchema);
+		this.attributes = outputSchema;
 	}
 	
 	public List<SDFAttribute> getAttr() {
-		return this.attributes.getAttributes();
-	}
-
-	public SDFSchema getAttributes() {
-		return attributes;
+		return this.attributes;
 	}
 		
 	@Parameter(type = IntegerParameter.class, name = "heartbeatrate", optional = true)

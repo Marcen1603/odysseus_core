@@ -93,6 +93,8 @@ public class FileStore<IDType extends Serializable & Comparable<? extends IDType
 			if (serializableTestPassed.get(e.getKey())) {
 				out.writeObject(e.getKey());
 				out.writeObject(e.getValue());
+			}else{
+				logger.error("Object "+e.getKey()+" could not be saved.");
 			}
 
 		}

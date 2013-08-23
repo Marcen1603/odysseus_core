@@ -71,5 +71,10 @@ public class ByteDataHandler extends AbstractDataHandler<Byte> {
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Byte.class;
+	}
 
 }

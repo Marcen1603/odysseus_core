@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -150,6 +151,6 @@ public class SparqlParserHelper {
 				}
 			}
 		}
-		return new SDFSchema("", attrs);
+		return new SDFSchema("", Tuple.class, attrs);
 	}
 }

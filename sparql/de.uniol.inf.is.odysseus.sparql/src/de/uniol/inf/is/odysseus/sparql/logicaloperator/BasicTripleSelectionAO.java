@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.hp.hpl.jena.graph.Triple;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -53,7 +54,7 @@ public class BasicTripleSelectionAO extends SelectAO {
 		if (getInputAO() != null && getInputSchema() != null) {
 			l.addAll(getInputSchema().getAttributes());
 		}
-		SDFSchema schema = new SDFSchema("", l);
+		SDFSchema schema = new SDFSchema("", Tuple.class, l);
 		this.setOutputSchema(schema);
 	}
 

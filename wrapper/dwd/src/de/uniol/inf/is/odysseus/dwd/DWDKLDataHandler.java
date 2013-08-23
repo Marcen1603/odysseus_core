@@ -87,6 +87,11 @@ public class DWDKLDataHandler extends AbstractDataHandler<Tuple<?>> {
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Tuple.class;
+	}
 
 	// --------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------

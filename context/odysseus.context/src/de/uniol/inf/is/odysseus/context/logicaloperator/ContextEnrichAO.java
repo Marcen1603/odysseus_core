@@ -79,7 +79,7 @@ public class ContextEnrichAO extends AbstractLogicalOperator {
 				}
 				outattribs.add(attribute);
 			}
-			setOutputSchema(new SDFSchema(getInputSchema(0).getURI() + "_ENRICH", outattribs));
+			setOutputSchema(new SDFSchema(getInputSchema(0).getURI() + "_ENRICH", getInputSchema(0).getType(), outattribs));
 		}
 	}
 

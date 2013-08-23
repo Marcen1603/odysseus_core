@@ -64,7 +64,7 @@ public class ClassificationLearnAO extends AbstractLogicalOperator {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		SDFAttribute support = new SDFAttribute(null, "classifier", MiningDatatypes.CLASSIFIER);
 		attributes.add(support);
-		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
+		SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), getInputSchema(0).getType(), attributes);
 		return outSchema;
 
 	}

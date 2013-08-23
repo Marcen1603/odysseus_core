@@ -292,4 +292,9 @@ public class NMEADataHandler extends AbstractDataHandler<Tuple<?>> {
 		ret = new Tuple(retObj, false);
 		return ret;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Tuple.class;
+	}
 }

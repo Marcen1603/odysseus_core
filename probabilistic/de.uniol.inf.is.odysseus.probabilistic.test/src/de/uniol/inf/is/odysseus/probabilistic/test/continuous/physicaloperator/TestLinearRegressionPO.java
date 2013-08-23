@@ -50,7 +50,7 @@ public class TestLinearRegressionPO {
 		attr.add(new SDFAttribute("", "c", SDFDatatype.DOUBLE));
 		attr.add(new SDFAttribute("", "d", SDFDatatype.DOUBLE));
 
-		final SDFSchema schema = new SDFSchema("", attr);
+		final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 		final Object[] attributes1 = new Object[] { 1.0, 1.0, 6.0, 11.0 };
 		final Object[] attributes2 = new Object[] { 1.0, 2.0, 5.0, 12.0 };
 		final Object[] attributes3 = new Object[] { 1.0, 3.0, 7.0, 13.0 };

@@ -179,7 +179,7 @@ public class TestJoinPO extends ProbabilisticDiscreteJoinTIPO<ITimeIntervalProba
 		attr.add(new SDFAttribute("", "c", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "d", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "name", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-		final SDFSchema schema = new SDFSchema("", attr);
+		final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 		return schema;
 	}
 
@@ -194,7 +194,7 @@ public class TestJoinPO extends ProbabilisticDiscreteJoinTIPO<ITimeIntervalProba
 		attr.add(new SDFAttribute("", "g", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "h", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "name", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-		final SDFSchema schema = new SDFSchema("", attr);
+		final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 		return schema;
 	}
 

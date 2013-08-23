@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -446,7 +447,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 		for (SdfAttributeInformation attrInfo : attributeInfos) {
 			attributes.add(createAttributeFromInformation(attrInfo));
 		}
-		return new SDFSchema(uri, attributes);
+		// FIXME: Is this always Tuple?
+		return new SDFSchema(uri, Tuple.class, attributes);
 	}
 
 	private SDFAttribute createAttributeFromInformation(SdfAttributeInformation info) {

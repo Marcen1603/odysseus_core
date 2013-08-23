@@ -72,5 +72,10 @@ public class ShortDataHandler extends AbstractDataHandler<Short> {
 	public int memSize(Object attribute) {
 		return Short.SIZE / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Short.class;
+	}
 
 }

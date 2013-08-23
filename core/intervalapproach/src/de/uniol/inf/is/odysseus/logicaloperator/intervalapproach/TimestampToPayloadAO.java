@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.intervalapproach;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -45,15 +46,18 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		String name = "";
+		@SuppressWarnings("rawtypes")
+		Class<? extends IStreamObject> type = null;
 		
 		if (getInputSchema(0) != null) {
 			outputAttributes.addAll(getInputSchema(0).getAttributes());
 			name = getInputSchema(0).getURI();
+			type = getInputSchema(0).getType();
 		}
 		outputAttributes.add(starttimeStamp);
 		outputAttributes.add(endtimeStamp);
 		
-		setOutputSchema(new SDFSchema(name,outputAttributes));
+		setOutputSchema(new SDFSchema(name, type, outputAttributes));
 
 		return getOutputSchema();
 	}

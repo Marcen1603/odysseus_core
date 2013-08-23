@@ -177,5 +177,10 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 		}
 		return ((((ProbabilisticString) attribute).getValues().size() * Double.SIZE) + size) / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return ProbabilisticString.class;
+	}
 
 }

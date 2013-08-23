@@ -305,7 +305,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 
 	@Override
 	public void initialize() {
-		SDFSchema webserviceData = new SDFSchema("", receivedData);
+		SDFSchema webserviceData = new SDFSchema("", getInputSchema().getType(), receivedData);
 		SDFSchema outputSchema = SDFSchema.union(getInputSchema(),
 				webserviceData);
 		setOutputSchema(outputSchema);

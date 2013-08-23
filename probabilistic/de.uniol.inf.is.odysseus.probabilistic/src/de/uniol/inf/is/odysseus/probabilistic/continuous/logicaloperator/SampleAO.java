@@ -129,7 +129,7 @@ public class SampleAO extends UnaryLogicalOp {
 			}
 		}
 
-		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), outputAttributes);
+		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), outputAttributes);
 		this.setOutputSchema(outputSchema);
 	}
 

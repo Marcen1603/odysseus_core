@@ -26,7 +26,10 @@ import java.util.ListIterator;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+
+@SuppressWarnings("rawtypes")
 public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		Comparable<SDFSchema>, Serializable, IClone {
 
@@ -37,8 +40,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 */
 	private List<String> baseSourceNames = new ArrayList<String>();
 
-	protected SDFSchema(String URI) {
+	final private Class<? extends IStreamObject> type;
+
+	protected SDFSchema(String URI, Class<? extends IStreamObject> type) {
 		super(URI);
+		this.type = type;
 		if (!URI.equals("")) {
 			baseSourceNames.add(URI);
 		}
@@ -57,12 +63,17 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				}
 				baseSourceNames.addAll(attributes1.getBaseSourceNames());
 			}
+			this.type = attributes1.type;
+		}else{
+			type = null;
 		}
+
 	}
 
-	public SDFSchema(String uri, SDFAttribute attribute,
+	public SDFSchema(String uri, Class<? extends IStreamObject> type, SDFAttribute attribute,
 			SDFAttribute... attributes1) {
 		super(uri);
+		this.type = type;
 		if (attribute != null) {
 			elements.add(attribute);
 		}
@@ -76,13 +87,18 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 	}
 
-	public SDFSchema(String uri, Collection<SDFAttribute> attributes1) {
+	public SDFSchema(String uri, Class<? extends IStreamObject> type, Collection<SDFAttribute> attributes1) {
 		super(uri, attributes1);
+		this.type = type;
 		if (!uri.equals("")) {
 			baseSourceNames.add(uri);
 		}
 	}
 
+	public Class<? extends IStreamObject> getType() {
+		return type;
+	}
+	
 	@Override
 	public SDFSchema clone() {
 		return new SDFSchema(this.getURI(), this);
@@ -252,7 +268,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 */
 	public static SDFSchema intersection(SDFSchema attributes1,
 			SDFSchema attributes2) {
-		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2));
+		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2), attributes1.type);
 		for (int j = 0; j < attributes1.size(); j++) {
 			SDFAttribute nextAttr = attributes1.getAttribute(j);
 
@@ -344,7 +360,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			newattributeList.add(new SDFAttribute(newName,
 					a.getAttributeName(), a));
 		}
-		SDFSchema newSchema = new SDFSchema(newName, newattributeList);
+		SDFSchema newSchema = new SDFSchema(newName, schema.type, newattributeList);
 		return newSchema;
 	}
 

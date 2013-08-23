@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -95,7 +96,7 @@ public enum Sensor {
 						types[i]);
 				attrs.add(attribute);
 			}
-			SDFSchema schema = new SDFSchema("BedBalance", attrs);
+			SDFSchema schema = new SDFSchema("BedBalance", Tuple.class, attrs);
 			Sensor.schema.put(Sensor.BedBalance, schema);
 
 			// Bed1-Bed4
@@ -106,7 +107,7 @@ public enum Sensor {
 						types[i]);
 				attrs.add(attribute);
 			}
-			schema = new SDFSchema("Bed", attrs);
+			schema = new SDFSchema("Bed", Tuple.class, attrs);
 
 			Sensor.schema.put(Sensor.Bed1, schema);
 			Sensor.schema.put(Sensor.Bed2, schema);

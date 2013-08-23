@@ -46,6 +46,7 @@ options {
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 	import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
 	import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+	import de.uniol.inf.is.odysseus.core.collection.Tuple;
 	import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 	import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -781,7 +782,7 @@ List<PathAttribute> retAttr = new ArrayList<PathAttribute>();
     	attrList.add(attr);
     }
     String name = value != null && value.getText() != null ? value.getText() : "";
-    SDFSchema outputSchema = new SDFSchema(name, attrList);
+    SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attrList);
     ;
     patternDetectAO.getStateMachine().setOutputScheme(scheme);
     patternDetectAO.setOutputSchemaIntern(outputSchema);

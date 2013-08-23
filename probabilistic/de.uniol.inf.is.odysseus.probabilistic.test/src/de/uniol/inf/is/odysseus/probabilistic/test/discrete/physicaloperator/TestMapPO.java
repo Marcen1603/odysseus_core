@@ -123,7 +123,7 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
 		attr.add(new SDFAttribute("", "b", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "c", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
 		attr.add(new SDFAttribute("", "d", SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE));
-		final SDFSchema schema = new SDFSchema("", attr);
+		final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 		return schema;
 	}
 }

@@ -47,8 +47,9 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 	
 	private ISession login(final String username, final byte[] password,
 			ITenant tenant, boolean checkLogin) {
-		if (getUserDAO(tenant) != null) {		
-			final IUser user = getUserDAO(tenant).findByName(username);
+		IGenericDAO<USER, String> userDao = getUserDAO(tenant);
+		if (userDao != null) {		
+			final IUser user = userDao.findByName(username);
 			if (user != null && user.isActive()
 					&& ((checkLogin && user.validatePassword(password))||!checkLogin)) {
 				ISession session = updateSessionStore(user, tenant);

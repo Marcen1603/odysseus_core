@@ -71,5 +71,11 @@ public class ObjectDataHandler<M> extends AbstractDataHandler<M> {
 	public List<String> getSupportedDataTypes() {
 		return types;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		// Impossible to say ...
+		return null;
+	}
 
 }

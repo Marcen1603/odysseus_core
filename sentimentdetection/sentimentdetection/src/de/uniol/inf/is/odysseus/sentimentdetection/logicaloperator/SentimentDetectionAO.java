@@ -109,7 +109,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 		outputAttributes.add(sentDetection);
 		
-		setOutputSchema(new SDFSchema(name, outputAttributes));
+		setOutputSchema(new SDFSchema(name, getInputSchema(1).getType(), outputAttributes));
 		
 		return getOutputSchema();
 	}

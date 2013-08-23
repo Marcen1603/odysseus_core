@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT")
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
+	private List<SDFAttribute> attributes;
 
 	public ProjectAO() {
 		super();
@@ -55,17 +56,16 @@ public class ProjectAO extends UnaryLogicalOp {
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		setOutputSchema(new SDFSchema("", outputSchema));
+		attributes = outputSchema;
 	}
 	
 	public List<SDFAttribute> getOutputSchemaWithList() {
-		return getOutputSchema().getAttributes();
+		return attributes;
 	}
 	
 	@GetParameter(name ="ATTRIBUTES")
 	public SDFSchema getOutputSchemaIntern() {
-		// TODO: Dies ist nur wg. des GetParameters. Braucht man den überhaupt?
-		return getOutputSchema();
+		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
 	}
 
 	public static int[] calcRestrictList(SDFSchema in,

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
@@ -60,7 +61,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		name = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		attributes = new ArrayList<SDFAttribute>();
 		node.jjtGetChild(1).jjtAccept(this, data); // ASTAttributeDefinitions
-		SDFSchema typeSchema = new SDFSchema(name, attributes);
+		SDFSchema typeSchema = new SDFSchema(name, Tuple.class, attributes);
 		SDFDatatype newType = new SDFDatatype(name, SDFDatatype.KindOfDatatype.TUPLE, typeSchema);
 		CreateDatatypeCommand cmd = new CreateDatatypeCommand(newType, caller);
 		commands.add(cmd);

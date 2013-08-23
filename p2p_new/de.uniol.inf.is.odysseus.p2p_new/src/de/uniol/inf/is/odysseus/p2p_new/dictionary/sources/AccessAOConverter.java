@@ -227,7 +227,7 @@ public final class AccessAOConverter {
 		}
 
 		if (!attributes.isEmpty()) {
-			final SDFSchema schema = new SDFSchema(root.getTextValue(), attributes);
+			final SDFSchema schema = new SDFSchema(root.getTextValue(),accessAO.getOutputSchema().getType(), attributes);
 			accessAO.setOutputSchema(schema);
 		}
 	}

@@ -34,6 +34,7 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 	private String initString = null;
 	@SuppressWarnings("rawtypes")
 	private IUserDefinedFunction udf = null;
+	private List<SDFAttribute> attributes;
 
 	public UserDefinedOperatorAO() {
 		super();
@@ -72,13 +73,18 @@ public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
-		setOutputSchema(new SDFSchema("", outputSchema));
+		 attributes = outputSchema;
 	}
 
 	public List<SDFAttribute> getOutputSchemaWithList() {
-		return getOutputSchema().getAttributes();
+		return attributes;
 	}
 
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		return new SDFSchema(getInputSchema(0).getURI(), getInputSchema(0).getType(),attributes);
+	}
+	
 	@Override
 	public UserDefinedOperatorAO clone() {
 		return new UserDefinedOperatorAO(this);

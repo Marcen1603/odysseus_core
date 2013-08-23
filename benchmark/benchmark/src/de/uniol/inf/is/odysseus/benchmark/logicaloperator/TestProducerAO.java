@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.benchmark.logicaloperator.BatchParameter.BatchItem;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -46,7 +47,7 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	}
 	
 	public TestProducerAO() {
-		this.outputSchema = new SDFSchema("Dummy",new SDFAttribute(null,"Dummy", SDFDatatype.LONG));
+		this.outputSchema = new SDFSchema("Dummy",Tuple.class,new SDFAttribute(null,"Dummy", SDFDatatype.LONG));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -3,10 +3,8 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,8 +15,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
-
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;
 import net.jxta.document.Element;

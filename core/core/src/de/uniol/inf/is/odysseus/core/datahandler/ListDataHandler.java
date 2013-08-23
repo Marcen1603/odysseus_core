@@ -130,6 +130,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>>{
 		}
 		return size;
 	}
-
+	
+	@Override
+	public Class<?> createsType() {
+		return List.class;
+	}
 	
 }

@@ -78,5 +78,10 @@ public class DateHandler extends AbstractDataHandler<Long> {
 		return Long.SIZE / 8;
 	}
 	
+	@Override
+	public Class<?> createsType() {
+		return Long.class;
+	}
+	
 	
 }

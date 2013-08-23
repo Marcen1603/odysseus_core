@@ -22,8 +22,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -112,6 +114,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 	}
 
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 
@@ -144,16 +147,24 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		AccessAO ao = new AccessAO(wrapperName, optionsMap);
 		ao.setName(sourcename);
+
+		String dhandlerText =  dataHandler.hasValue()? dataHandler.getValue():null;
+		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dhandlerText);
+		if (type == null){
+			type = Tuple.class;
+		}
+		
 		if (outputschema.hasValue()) {
 			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
 			for (SDFAttribute a : outputschema.getValue()) {
 				s2.add(new SDFAttribute(sourcename, a.getAttributeName(), a));
 			}
-			SDFSchema schema = new SDFSchema(sourcename, s2);
+			
+			SDFSchema schema = new SDFSchema(sourcename, type, s2);
 			ao.setOutputSchema(schema);
 		}else{
-			ao.setOutputSchema(new SDFSchema(sourcename,(SDFSchema)null));
+			ao.setOutputSchema(new SDFSchema(sourcename,type,null));
 		}
 
 		if (host.hasValue()) {

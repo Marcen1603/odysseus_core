@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -70,7 +71,7 @@ public class AggregateAO extends UnaryLogicalOp {
 			AggregateFunction function, SDFAttribute outAttribute) {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(attribute);
-		SDFSchema schema = new SDFSchema("", attributes);
+		SDFSchema schema = new SDFSchema("", Tuple.class, attributes);
 		addAggregation(schema, function, outAttribute);
 	}
 
@@ -174,9 +175,9 @@ public class AggregateAO extends UnaryLogicalOp {
 		}
 		
 		if (getInputSchema() != null) {
-			outputSchema = new SDFSchema(getInputSchema().getURI(), outAttribs);
+			outputSchema = new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), outAttribs);
 		} else {
-			outputSchema = new SDFSchema("<tmp>", outAttribs);
+			outputSchema = new SDFSchema("<tmp>", Tuple.class,outAttribs);
 		}
 		return outputSchema;
 	}

@@ -2,15 +2,16 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
 
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -85,7 +86,8 @@ public class SchemaHelper {
 				attributes.add(createAttributeFromStatement(elem));
 			}
 		}
-		SDFSchema schema = new SDFSchema(uri,attributes);
+		// FIXME: Tuple set a default!
+		SDFSchema schema = new SDFSchema(uri,Tuple.class,attributes);
 		return schema;
 	}
 	

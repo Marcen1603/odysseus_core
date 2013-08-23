@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -307,7 +308,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 					}
 				}
 
-				projectAO.setOutputSchema(new SDFSchema("", attrs));
+				projectAO.setOutputSchema(new SDFSchema("", Tuple.class, attrs));
 				logOp = projectAO;
 			} else {
 				AggregateAO aggAO = new AggregateAO();

@@ -17,7 +17,10 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
@@ -149,7 +152,12 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 			ao.setProtocolHandler(this.protocolHandler.getValue());
 		}
 		if(this.schema.hasValue()){
-			ao.setOutputSchema(new SDFSchema(sinkName,this.schema.getValue()));
+			@SuppressWarnings("rawtypes")
+			Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dataHandler.getValue());
+			if (type == null){
+				type = Tuple.class;
+			}
+			ao.setOutputSchema(new SDFSchema(sinkName, type, this.schema.getValue()));
 		}		
 		return ao;
 	}

@@ -20,6 +20,7 @@ package de.uniol.inf.is.odysseus.pubsub.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -142,11 +143,11 @@ public class SubscribeAO extends UnaryLogicalOp{
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		if (source != null){
-			return new SDFSchema(source, sdfAttributes);
+			return new SDFSchema(source, Tuple.class,sdfAttributes);
 		}else if (getInputSchema() != null) {
-			return new SDFSchema(getInputSchema().getURI(), sdfAttributes);
+			return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), sdfAttributes);
 		} else {
-			return new SDFSchema("", sdfAttributes);
+			return new SDFSchema("", Tuple.class, sdfAttributes);
 		}
 	}
 	

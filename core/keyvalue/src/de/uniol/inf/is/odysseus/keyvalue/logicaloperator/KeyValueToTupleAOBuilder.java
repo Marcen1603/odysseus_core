@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -33,7 +34,7 @@ public class KeyValueToTupleAOBuilder extends AbstractOperatorBuilder {
 	@Override
 	protected ILogicalOperator createOperatorInternal() {
 		KeyValueToTupleAO ao = new KeyValueToTupleAO();
-		SDFSchema schema = new SDFSchema(this.type.getValue(), this.outputschema.getValue());
+		SDFSchema schema = new SDFSchema(this.type.getValue(), Tuple.class, this.outputschema.getValue());
 		ao.setOutputSchema(schema);
 		if (keepInput.hasValue()){
 			ao.setKeepInputObject(keepInput.getValue());

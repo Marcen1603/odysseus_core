@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -91,6 +92,21 @@ public class DataHandlerRegistry {
 	
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(dataHandlers.keySet());
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Class<? extends IStreamObject> getCreatedType(String dhandlerText) {
+		Class<? extends IStreamObject> type = null;
+		if (dhandlerText != null){
+			IDataHandler<?> dh = getDataHandler(dhandlerText, (SDFSchema)null);
+			try {
+					type =  (Class<? extends IStreamObject>) dh.createsType();
+			} catch (ClassCastException e) {
+				throw new IllegalArgumentException(dhandlerText+" cannot be used as data handler!");
+			}
+		}		
+		return type;
 	}
 	
 	/**

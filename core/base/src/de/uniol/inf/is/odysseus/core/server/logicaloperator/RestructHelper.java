@@ -235,7 +235,7 @@ public class RestructHelper {
 		for(SDFAttribute attribute : outputSchema)
 			attributes.add(new SDFAttribute(basename, attribute.getAttributeName(), attribute));
 		
-		return new SDFSchema(basename, attributes);
+		return new SDFSchema(basename, outputSchema.getType(), attributes);
 		
 	}
 	

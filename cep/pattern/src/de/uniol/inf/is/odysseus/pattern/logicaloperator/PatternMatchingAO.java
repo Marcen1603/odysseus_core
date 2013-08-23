@@ -1,13 +1,27 @@
 package de.uniol.inf.is.odysseus.pattern.logicaloperator;
 
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.ALWAYS;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.DECREASING;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.FIRST_N;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.INCREASING;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.LAST_N;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.MIXED;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.NON_DECREASING;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.NON_INCREASING;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.NON_STABLE;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.RELATIVE_N_HIGHEST;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.RELATIVE_N_LOWEST;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.SOMETIMES;
+import static de.uniol.inf.is.odysseus.pattern.util.PatternType.STABLE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import static de.uniol.inf.is.odysseus.pattern.util.PatternType.*;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
@@ -214,7 +228,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 		} else if (outputMode == PatternOutput.TUPLE_CONTAINER) {
 			// create tuple container attribute
 			SDFAttribute tuple = new SDFAttribute("PATTERN", "tuple_container", SDFDatatype.TUPLE);
-			schema = new SDFSchema("PATTERN", tuple);
+			schema = new SDFSchema("PATTERN",Tuple.class, tuple);
 		} else if (outputMode == PatternOutput.EXPRESSIONS && returnExpressions != null) {
 			// EXPRESSIONS: Ausgabe hängt vom return-Parameter ab
 			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
@@ -307,13 +321,13 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				attrs.add(attr);
 			}
 			// Was ist die URI hier??
-			schema = new SDFSchema("PATTERN", attrs);
+			schema = new SDFSchema("PATTERN", Tuple.class, attrs);
 		} else {
 			// SIMPLE: einfache Variante (ohne Expressions)
 			SDFAttribute type = new SDFAttribute("PATTERN", "type", SDFDatatype.STRING);
 			SDFAttribute timestamp = new SDFAttribute("PATTERN", "timestamp", SDFDatatype.LONG);
 			SDFAttribute detected = new SDFAttribute("PATTERN", "detected", SDFDatatype.BOOLEAN);
-			schema = new SDFSchema("PATTERN", type, timestamp, detected);
+			schema = new SDFSchema("PATTERN", Tuple.class, type, timestamp, detected);
 		}
 		setOutputSchema(schema);
 		return schema;

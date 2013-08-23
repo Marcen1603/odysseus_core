@@ -115,7 +115,7 @@ public class TupleGenerator {
 		default:
 			throw new GeneratorException("Unknown tuple type");
 		}
-		this.schema = new SDFSchema(type.name(), attrs);
+		this.schema = new SDFSchema(type.name(), Tuple.class, attrs);
 		
 	}
 	

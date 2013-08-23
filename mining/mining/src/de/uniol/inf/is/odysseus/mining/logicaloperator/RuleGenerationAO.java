@@ -78,7 +78,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 			SDFSchema innerSchema = this.getInputSchema(0).get(itemsetposition).getDatatype().getSchema();			
 			SDFAttribute attributeSet = new SDFAttribute(null, "rule", MiningDatatypes.ASSOCIATION_RULE, innerSchema);			
 			attributes.add(attributeSet);
-			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
+			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(),getInputSchema(0).getType(), attributes);
 			return outSchema;
 		} else {
 			List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
@@ -88,7 +88,7 @@ public class RuleGenerationAO extends AbstractLogicalOperator {
 			attributes.add(attributeNeeded);
 			SDFAttribute attributeTotal = new SDFAttribute(null, "total", SDFDatatype.INTEGER);
 			attributes.add(attributeTotal);
-			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(), attributes);
+			SDFSchema outSchema = new SDFSchema(getInputSchema(0).getURI(),getInputSchema(0).getType(), attributes);
 			return outSchema;
 		}
 	}

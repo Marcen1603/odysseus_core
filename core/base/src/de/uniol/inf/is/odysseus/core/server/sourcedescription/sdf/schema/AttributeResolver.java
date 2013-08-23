@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -65,7 +66,7 @@ public class AttributeResolver implements IAttributeResolver {
 
     @Override
     public SDFSchema getSchema() {
-        SDFSchema schema = new SDFSchema("", this.attributes);
+        SDFSchema schema = new SDFSchema("",Tuple.class,this.attributes);
         return schema;
     }
     

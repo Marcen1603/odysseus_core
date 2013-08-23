@@ -96,4 +96,8 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
 		return Integer.SIZE / 8;
 	}
 	
+	@Override
+	public Class<?> createsType() {
+		return Boolean.class;
+	}
 }

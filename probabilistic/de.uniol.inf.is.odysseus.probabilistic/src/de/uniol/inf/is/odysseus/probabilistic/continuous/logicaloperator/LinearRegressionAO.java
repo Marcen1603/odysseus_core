@@ -157,7 +157,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 		}
 		attributes.add(new SDFAttribute("", "$coefficients", SDFDatatype.MATRIX_DOUBLE));
 		attributes.add(new SDFAttribute("", "$residual", SDFDatatype.MATRIX_DOUBLE));
-		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), attributes);
+		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), attributes);
 		this.setOutputSchema(outputSchema);
 	}
 }

@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -44,13 +45,13 @@ public class SDFSpatialDatatype extends SDFDatatype{
 	}
 
 	public static final SDFDatatype SPATIAL_COORDINATE = new SDFSpatialDatatype("SpatialCoordinate", SDFDatatype.KindOfDatatype.BEAN, 
-			new SDFSchema("",
+			new SDFSchema("", Tuple.class,
 					new SDFAttribute(null,"x", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"y", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"z", SDFDatatype.DOUBLE)));
 	
 	public static final SDFDatatype SPATIAL_POLAR_COORDINATE = new SDFSpatialDatatype("SpatialPolarCoordinate", SDFDatatype.KindOfDatatype.BEAN, 
-			new SDFSchema("",
+			new SDFSchema("", Tuple.class,
 					new SDFAttribute(null,"r", SDFDatatype.DOUBLE),
 					new SDFAttribute(null,"a", SDFDatatype.DOUBLE)));
 
@@ -67,12 +68,12 @@ public class SDFSpatialDatatype extends SDFDatatype{
 	public static final SDFDatatype SPATIAL_GEOMETRY_COLLECTION = new SDFSpatialDatatype("SpatialGeometryCollection", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFSpatialDatatype.SPATIAL_GEOMETRY);
 //	
 	public static final SDFDatatype SPATIAL_POINT = new SDFSpatialDatatype("SpatialPoint", SDFDatatype.KindOfDatatype.BEAN, 
-			new SDFSchema("",
+			new SDFSchema("",Tuple.class,
 					new SDFAttribute(null,"coordinate", SDFSpatialDatatype.SPATIAL_COORDINATE),
 					new SDFAttribute(null,"srid", SDFDatatype.INTEGER)));
 
 	public static final SDFDatatype SPATIAL_LINE_STRING = new SDFSpatialDatatype("SpatialLineString", SDFDatatype.KindOfDatatype.BEAN, 
-			new SDFSchema("",
+			new SDFSchema("",Tuple.class,
 					new SDFAttribute(null,"points", SDFSpatialDatatype.SPATIAL_COORDINATE_SEQUENCE),
 					new SDFAttribute(null,"srid", SDFDatatype.INTEGER)));
 
@@ -80,7 +81,7 @@ public class SDFSpatialDatatype extends SDFDatatype{
 	public static final SDFDatatype SPATIAL_LINEAR_RING_ARRAY = new SDFSpatialDatatype("SpatialLinearRingArray", SDFDatatype.KindOfDatatype.MULTI_VALUE, SDFSpatialDatatype.SPATIAL_LINE_STRING);
 
 	public static final SDFDatatype SPATIAL_POLYGON = new SDFSpatialDatatype("SpatialPolygon", SDFDatatype.KindOfDatatype.BEAN,
-			new SDFSchema("",
+			new SDFSchema("",Tuple.class,
 					new SDFAttribute(null,"shell", SDFSpatialDatatype.SPATIAL_LINEAR_RING),
 					new SDFAttribute(null,"holes", SDFSpatialDatatype.SPATIAL_LINEAR_RING_ARRAY),
 					new SDFAttribute(null,"srid", SDFDatatype.INTEGER)));

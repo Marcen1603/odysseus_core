@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -86,7 +87,7 @@ public class SourceAO extends AbstractLogicalOperator {
 			attrs.add(attribute);
 		}
 		// TODO: Add Sourcename to Attributes ... e.g. collect Attributes
-		this.setOutputSchema(0,new SDFSchema("", attrs));
+		this.setOutputSchema(0,new SDFSchema("", Tuple.class, attrs));
 	}
 
 	@Parameter(name = "OPTIONS", optional = true, type = StringParameter.class, isList = true)

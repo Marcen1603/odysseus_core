@@ -139,4 +139,8 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 		return (((ProbabilisticShort) attribute).getValues().size() * (Short.SIZE + Double.SIZE)) / 8;
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return ProbabilisticShort.class;
+	}
 }

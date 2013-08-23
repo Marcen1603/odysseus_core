@@ -320,7 +320,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			// Set Type of view to name of view
 			if (topOperator.getOutputSchema() != null) {
 				SDFSchema oldSchema = topOperator.getOutputSchema();
-				SDFSchema newSchema = new SDFSchema(viewNameNormalized,
+				SDFSchema newSchema = new SDFSchema(viewNameNormalized, oldSchema.getType(),
 						oldSchema.getAttributes());
 				topOperator.setOutputSchema(newSchema);
 			}
@@ -464,11 +464,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		}
 		StreamAO ao = new StreamAO(vn);
 		ArrayList<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		SDFSchema outSchema = this.streamDefinitions.get(viewname).getOutputSchema();
 		for (SDFAttribute old : this.streamDefinitions.get(viewname)
 				.getOutputSchema()) {
 			attributes.add(new SDFAttribute(vn, old.getAttributeName(), old));
 		}
-		SDFSchema schema = new SDFSchema(vn, attributes);
+		SDFSchema schema = new SDFSchema(vn, outSchema.getType(), attributes);
 		ao.setOutputSchema(schema);
 		return ao;
 	}

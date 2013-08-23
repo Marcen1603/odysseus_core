@@ -75,4 +75,9 @@ public class LongHandler extends AbstractDataHandler<Long> {
 	public int memSize(Object attribute) {
 		return Long.SIZE / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Long.class;
+	}
 }

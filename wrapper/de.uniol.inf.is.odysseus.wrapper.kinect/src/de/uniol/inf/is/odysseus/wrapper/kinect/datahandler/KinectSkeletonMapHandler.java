@@ -86,4 +86,9 @@ public class KinectSkeletonMapHandler extends AbstractDataHandler<KinectSkeleton
     public List<String> getSupportedDataTypes() {
         return Collections.unmodifiableList(types);
     }
+    
+    @Override
+    public Class<?> createsType() {
+    	return KinectSkeletonMap.class;
+    }
 }

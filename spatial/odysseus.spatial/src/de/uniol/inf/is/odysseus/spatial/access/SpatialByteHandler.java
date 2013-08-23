@@ -231,4 +231,8 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 		return 4 + coordinateSequence.size() * 16;
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return Object.class;
+	}
 }

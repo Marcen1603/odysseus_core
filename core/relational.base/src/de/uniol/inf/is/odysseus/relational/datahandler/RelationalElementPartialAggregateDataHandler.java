@@ -95,6 +95,10 @@ public class RelationalElementPartialAggregateDataHandler extends AbstractDataHa
 		return types;
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return RelationalElementPartialAggregate.class;
+	}
 
 
 }

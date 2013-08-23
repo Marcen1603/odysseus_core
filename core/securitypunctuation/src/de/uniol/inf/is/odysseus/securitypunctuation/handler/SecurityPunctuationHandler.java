@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -34,9 +35,10 @@ import de.uniol.inf.is.odysseus.securitypunctuation.sp.SecurityPunctuation;
 /**
  * @author Jan S�ren Schwarz
  * @param <SecurityPunctuation>
- *
+ * 
  */
-public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPunctuation> {
+public class SecurityPunctuationHandler extends
+		AbstractDataHandler<ISecurityPunctuation> {
 
 	protected IDataHandler<?>[] securityPunctuationHandlers = null;
 	static protected List<String> types = new ArrayList<String>();
@@ -63,21 +65,21 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 		createSecurityPunctuationHandlers();
 		this.schema = schema;
 	}
-	
-	
+
 	@Override
 	public ISecurityPunctuation readData(ByteBuffer buffer) {
 		Object[] objects = new Object[securityPunctuationHandlers.length];
-		for(int i=0; i < securityPunctuationHandlers.length; i++) {
+		for (int i = 0; i < securityPunctuationHandlers.length; i++) {
 			objects[i] = securityPunctuationHandlers[i].readData(buffer);
 		}
-		
+
 		ISecurityPunctuation sp = new SecurityPunctuation(objects, schema);
 		return sp;
 	}
 
 	@Override
-	public ISecurityPunctuation readData(ObjectInputStream inputStream) throws IOException {
+	public ISecurityPunctuation readData(ObjectInputStream inputStream)
+			throws IOException {
 		return null;
 	}
 
@@ -104,22 +106,33 @@ public class SecurityPunctuationHandler extends AbstractDataHandler<ISecurityPun
 	public List<String> getSupportedDataTypes() {
 		return Collections.unmodifiableList(types);
 	}
-	
+
 	private void createSecurityPunctuationHandlers() {
-		schema = new SDFSchema("securityPunctuation", 
+		schema = new SDFSchema(
+				"securityPunctuation",
+				Tuple.class,
 				new SDFAttribute("SP", "streamname", new SDFDatatype("String")),
 				new SDFAttribute("SP", "tupleStartTS", new SDFDatatype("Long")),
 				new SDFAttribute("SP", "tupleEndTS", new SDFDatatype("Long")),
-				new SDFAttribute("SP", "attributeNames", new SDFDatatype("String")),
-				new SDFAttribute("SP", "role", new SDFDatatype("String")),
-				new SDFAttribute("SP", "sign", new SDFDatatype("Integer")),
-				new SDFAttribute("SP", "mutable", new SDFDatatype("Integer")),
+				new SDFAttribute("SP", "attributeNames", new SDFDatatype(
+						"String")), new SDFAttribute("SP", "role",
+						new SDFDatatype("String")), new SDFAttribute("SP",
+						"sign", new SDFDatatype("Integer")), new SDFAttribute(
+						"SP", "mutable", new SDFDatatype("Integer")),
 				new SDFAttribute("SP", "ts", new SDFDatatype("Long")));
 		this.securityPunctuationHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
 			String uri = attribute.getDatatype().getURI(false);
-			securityPunctuationHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, new SDFSchema("", attribute));
+			securityPunctuationHandlers[i++] = DataHandlerRegistry
+					.getDataHandler(uri, new SDFSchema("", Tuple.class, attribute));
 		}
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return ISecurityPunctuation.class;
+	}
+
+	
 }

@@ -89,7 +89,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		checkAttributes(aliasAttributes);
 
 		SDFSchema inputSchema = _top.getOutputSchema();
-		_outputSchema = new SDFSchema(inputSchema.getURI(), outputAttributes);
+		_outputSchema = new SDFSchema(inputSchema.getURI(), inputSchema.getType(), outputAttributes);
 		// create operator: if there is a need for a project/map operator,
 		// create one and set top operator to it
 		if (!_outputSchema.equals(inputSchema) || projectionMatrix != null) {
@@ -134,7 +134,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		}
 		RenameAO rename = new RenameAO();
 		rename.subscribeTo(_top, _top.getOutputSchema());
-		rename.setOutputSchema(new SDFSchema(_top.getOutputSchema().getURI(), this.aliasAttributes));
+		rename.setOutputSchema(new SDFSchema(_top.getOutputSchema().getURI(), _top.getOutputSchema().getType(), this.aliasAttributes));
 
 		_top = rename;
 		return _top;

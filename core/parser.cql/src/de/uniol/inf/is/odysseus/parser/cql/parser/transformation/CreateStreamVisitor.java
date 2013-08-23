@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -128,7 +129,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		CreateStreamCommand cmd = null;
 		try {
 			FixedSetAccessAO newPO = new FixedSetAccessAO(name, "FixedSetAccessAO", node.getTuples(attributes));
-			SDFSchema outputSchema = new SDFSchema(name, attributes);
+			SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attributes);
 			newPO.setOutputSchema(outputSchema);
 			cmd = new CreateStreamCommand(name, newPO, caller);
 			commands.add(cmd);
@@ -289,7 +290,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		options.put("port", port + "");
 		options.put("autoconnect", autoReconnect + "");
 		source.setProtocolHandler("SizeByteBuffer");
-		source.setOutputSchema(new SDFSchema(name, this.attributes));
+		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
 		source.setName(name);
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
@@ -315,7 +316,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setProtocolHandler(type);
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 
-		source.setOutputSchema(new SDFSchema(name, this.attributes));
+		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
@@ -363,7 +364,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTCreateFromDatabase node, Object data) throws QueryParseException {
 		ILogicalOperator ao = (ILogicalOperator) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
-		ao.setOutputSchema(new SDFSchema(name, attributes));
+		ao.setOutputSchema(new SDFSchema(name, Tuple.class, attributes));
 		//return addTimestampAO((ILogicalOperator) ao);
 		return (ILogicalOperator)ao;
 	}

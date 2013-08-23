@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -46,7 +47,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 					var.getReturnType());
 			attribs.add(a);
 		}
-		schema = new SDFSchema("", attribs);
+		schema = new SDFSchema("", Tuple.class, attribs);
 	}
 
 	public DirectAttributeResolver(

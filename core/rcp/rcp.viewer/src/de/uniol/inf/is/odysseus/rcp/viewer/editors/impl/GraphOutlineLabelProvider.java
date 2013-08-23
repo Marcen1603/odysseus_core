@@ -130,7 +130,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			return styledString.append(" In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + s.getTarget());
 		}
 		if (element instanceof SDFSchema) {
-			return styledString.append("OutputSchema (" + ((SDFSchema) element).getURI() + ")");
+			return styledString.append("OutputSchema (" + ((SDFSchema) element).getURI() +":"+((SDFSchema) element).getType().getSimpleName() +")");
 		}
 
 		if (element instanceof IPredicate) {

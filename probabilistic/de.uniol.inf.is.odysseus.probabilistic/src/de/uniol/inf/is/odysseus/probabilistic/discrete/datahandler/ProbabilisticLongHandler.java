@@ -139,4 +139,8 @@ public class ProbabilisticLongHandler extends AbstractDataHandler<ProbabilisticL
 		return (((ProbabilisticLong) attribute).getValues().size() * (Long.SIZE + Double.SIZE)) / 8;
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return ProbabilisticLong.class;
+	}
 }

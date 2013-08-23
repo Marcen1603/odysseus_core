@@ -112,5 +112,10 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	public final List<String> getSupportedDataTypes() {
 		return Collections.unmodifiableList(ProbabilisticContinuousHandler.TYPES);
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return ProbabilisticContinuousDouble.class;
+	}
 
 }

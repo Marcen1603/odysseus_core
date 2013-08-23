@@ -25,7 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -1268,7 +1271,12 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		String transport = ((ASTQuotedIdentifier) node.jjtGetChild(3)).getUnquotedName();
 		String datahandler = ((ASTQuotedIdentifier) node.jjtGetChild(4)).getUnquotedName();
 		List<SDFAttribute> schema = visit(defs, null);		
-		SDFSchema outputSchema = new SDFSchema(name, schema);
+		@SuppressWarnings("rawtypes")
+		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(datahandler);
+		if (type == null){
+			type = Tuple.class;
+		}
+		SDFSchema outputSchema = new SDFSchema(name, type, schema);
 		
 		Map<String, String> options = new HashMap<>();
 		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTOptions){
@@ -1326,14 +1334,20 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		
 		ASTAttributeDefinitions defs = (ASTAttributeDefinitions) createNode.jjtGetChild(1);
 		List<SDFAttribute> schema = visit(defs, null);		
-		SDFSchema outputSchema = new SDFSchema(sourceName, schema);
-		
-	
 		
 		String wrapper = ((ASTQuotedIdentifier) node.jjtGetChild(0)).getUnquotedName();
 		String protocol = ((ASTQuotedIdentifier) node.jjtGetChild(1)).getUnquotedName();
 		String transport = ((ASTQuotedIdentifier) node.jjtGetChild(2)).getUnquotedName();
 		String datahandler = ((ASTQuotedIdentifier) node.jjtGetChild(3)).getUnquotedName();
+
+		@SuppressWarnings("rawtypes")
+		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(datahandler);
+		if (type == null){
+			type = Tuple.class;
+		}
+		SDFSchema outputSchema = new SDFSchema(sourceName,type, schema);
+
+		
 		Map<String, String> options = new HashMap<>();
 		if(node.jjtGetChild(node.jjtGetNumChildren()-1) instanceof ASTOptions){
 			ASTOptions optionsNode = (ASTOptions) node.jjtGetChild(node.jjtGetNumChildren()-1);

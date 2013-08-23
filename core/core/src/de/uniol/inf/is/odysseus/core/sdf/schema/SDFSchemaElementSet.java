@@ -48,7 +48,9 @@ public class SDFSchemaElementSet<T> extends SDFElement implements Iterable<T> {
 
 	public SDFSchemaElementSet(String uri, Collection<T> attributes1) {
 		super(uri);
-		elements.addAll(attributes1);
+		if (attributes1 != null) {
+			elements.addAll(attributes1);
+		}
 	}
 
 	@Override

@@ -68,5 +68,10 @@ public class UrgScannDataHandler extends AbstractDataHandler<UrgScann> {
 	public List<String> getSupportedDataTypes() {
 		return Collections.unmodifiableList(types);
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return UrgScann.class;
+	}
 
 }

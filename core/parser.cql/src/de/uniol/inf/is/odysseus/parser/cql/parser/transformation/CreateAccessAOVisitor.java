@@ -190,7 +190,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			// newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}
-		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(), attributes);
+		SDFSchema schema = new SDFSchema(access.getOutputSchema().getURI(), access.getOutputSchema().getType(), attributes);
 		return schema;
 	}
 

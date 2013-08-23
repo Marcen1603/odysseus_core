@@ -98,7 +98,7 @@ public class UnNestAO extends UnaryLogicalOp {
             }
         }
         recalcOutputSchemata = false;
-        setOutputSchema(new SDFSchema("UNNEST", attrs));
+        setOutputSchema(new SDFSchema("UNNEST", getInputSchema().getType(),attrs));
         LOG.debug("Set output schema to: {}", getOutputSchema());
         return getOutputSchema();
     }

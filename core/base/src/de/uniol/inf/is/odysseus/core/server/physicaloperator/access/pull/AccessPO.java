@@ -108,11 +108,10 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 		// TODO: We should think about propagate done ... maybe its better
 		// to send a punctuation??
-		//tryPropagateDone();
+		tryPropagateDone();
 		return false;
 	}
 
-	@SuppressWarnings("unused")
 	private void tryPropagateDone() {
 		try {
 			propagateDone();

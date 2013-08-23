@@ -76,5 +76,10 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	public int memSize(Object attribute) {
 		return Integer.SIZE / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Integer.class;
+	}
 
 }

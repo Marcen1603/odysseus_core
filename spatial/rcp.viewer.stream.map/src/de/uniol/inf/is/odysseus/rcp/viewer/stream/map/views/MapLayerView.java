@@ -101,7 +101,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 			}
 		});
 		
-		if (hasMapEditorModel()) {
+		if (hasMapEditorModel() && getMapEditorModel() != null) {
 			treeViewer.setInput(getMapEditorModel());
 		}
 		createContextMenu();

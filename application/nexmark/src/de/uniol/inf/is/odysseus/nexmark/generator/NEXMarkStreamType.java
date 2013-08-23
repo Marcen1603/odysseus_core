@@ -33,6 +33,7 @@ package de.uniol.inf.is.odysseus.nexmark.generator;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -53,7 +54,7 @@ public enum NEXMarkStreamType {
 		if (schema == null) {
 			switch (type) {
 			case PERSON:
-				schema = new SDFSchema("Person", new SDFAttribute(null,
+				schema = new SDFSchema("Person",Tuple.class, new SDFAttribute(null,
 						"timestamp", SDFDatatype.LONG), new SDFAttribute(null,
 						"id", SDFDatatype.INTEGER), new SDFAttribute(null,
 						"name", SDFDatatype.STRING), new SDFAttribute(null,
@@ -64,7 +65,7 @@ public enum NEXMarkStreamType {
 				break;
 			case AUCTION:
 				schema = new SDFSchema(
-						"Auction",
+						"Auction",Tuple.class,
 						new SDFAttribute(null, "timestamp", SDFDatatype.LONG),
 						new SDFAttribute(null, "id", SDFDatatype.INTEGER),
 						new SDFAttribute(null, "itemname", SDFDatatype.STRING),
@@ -78,7 +79,7 @@ public enum NEXMarkStreamType {
 						new SDFAttribute(null, "category", SDFDatatype.INTEGER));
 				break;
 			case BID:
-				schema = new SDFSchema("Bid", new SDFAttribute(null,
+				schema = new SDFSchema("Bid",Tuple.class, new SDFAttribute(null,
 						"timestamp", SDFDatatype.LONG), new SDFAttribute(null,
 						"auction", SDFDatatype.INTEGER), new SDFAttribute(null,
 						"bidder", SDFDatatype.INTEGER), new SDFAttribute(null,
@@ -86,7 +87,7 @@ public enum NEXMarkStreamType {
 						"price", SDFDatatype.DOUBLE));
 				break;
 			case CATEGORY:
-				schema = new SDFSchema("Category", new SDFAttribute(null, "id",
+				schema = new SDFSchema("Category",Tuple.class, new SDFAttribute(null, "id",
 						SDFDatatype.INTEGER), new SDFAttribute(null, "name",
 						SDFDatatype.STRING), new SDFAttribute(null,
 						"description", SDFDatatype.STRING), new SDFAttribute(

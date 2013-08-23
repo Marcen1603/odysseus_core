@@ -306,4 +306,9 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 
 		return ret;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Tuple.class;
+	}
 }

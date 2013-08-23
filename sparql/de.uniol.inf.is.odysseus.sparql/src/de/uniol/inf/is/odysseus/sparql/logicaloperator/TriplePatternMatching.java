@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -177,8 +178,9 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 				attrs.add(graphVarAtt);
 			}
 		}
-
-		setOutputSchema(new SDFSchema("", attrs));
+		
+		// TODO: Should this be triple?
+		setOutputSchema(new SDFSchema("", Tuple.class, attrs));
 		return getOutputSchema();
 	}
 

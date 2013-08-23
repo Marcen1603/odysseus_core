@@ -251,6 +251,8 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 	}
 
 	private void createDataHandler(SDFSchema schema) {
+		if (schema == null) return;
+		
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		int i = 0;
 		for (SDFAttribute attribute : schema) {
@@ -272,7 +274,7 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			}
 
 			dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri,
-					new SDFSchema("", attribute));
+					new SDFSchema("", Tuple.class, attribute));
 
 		}
 	}
@@ -306,6 +308,11 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 			size += dataHandlers.length;
 		}
 		return size;
+	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Tuple.class;
 	}
 
 }

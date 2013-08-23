@@ -137,5 +137,10 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 	public final int memSize(final Object attribute) {
 		return (((ProbabilisticInteger) attribute).getValues().size() * (Integer.SIZE + Double.SIZE)) / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return ProbabilisticInteger.class;
+	}
 
 }

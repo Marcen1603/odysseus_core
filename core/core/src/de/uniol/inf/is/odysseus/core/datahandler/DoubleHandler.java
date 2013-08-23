@@ -82,4 +82,9 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 	public int memSize(Object attribute) {
 		return Double.SIZE / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return Double.class;
+	}
 }

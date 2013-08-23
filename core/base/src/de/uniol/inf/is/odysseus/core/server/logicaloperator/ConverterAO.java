@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -89,12 +92,19 @@ public class ConverterAO extends UnaryLogicalOp {
 			throw new IllegalArgumentException(
 					"This operator has only one input!");
 		}
+		
+		@SuppressWarnings("rawtypes")
+		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(outputDataHandler);
+		if (type == null){
+			type = Tuple.class;
+		}
+		
 		if (source != null){
-			return new SDFSchema(source, outputAttributes);
+			return new SDFSchema(source, type, outputAttributes);
 		}else if (getInputSchema() != null) {
-			return new SDFSchema(getInputSchema().getURI(), outputAttributes);
+			return new SDFSchema(getInputSchema().getURI(), type, outputAttributes);
 		} else {
-			return new SDFSchema("", outputAttributes);
+			return new SDFSchema("", type, outputAttributes);
 		}
 
 	}

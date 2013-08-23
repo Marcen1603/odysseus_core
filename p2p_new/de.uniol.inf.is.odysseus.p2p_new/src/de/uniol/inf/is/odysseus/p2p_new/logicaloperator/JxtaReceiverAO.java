@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -79,7 +80,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 
 	@Parameter(name="SCHEMA", type = CreateSDFAttributeParameter.class, isList=true,optional=false)
 	public void setSchema(List<SDFAttribute> outputSchema) {
-		assignedSchema = new SDFSchema("", outputSchema);
+		assignedSchema = new SDFSchema("", Tuple.class,outputSchema);
 		addParameterInfo("SCHEMA", schemaToString(outputSchema));
 	}
 	

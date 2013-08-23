@@ -215,4 +215,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 		return Collections.unmodifiableList(ProbabilisticDistributionHandler.TYPES);
 	}
 
+	@Override
+	public Class<?> createsType() {
+		return NormalDistributionMixture.class;
+	}
 }

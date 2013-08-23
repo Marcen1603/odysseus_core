@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
@@ -323,7 +324,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 			attributes.add(attr);
 		}
 
-		return new SDFSchema(root.getTextValue(), attributes);
+		return new SDFSchema(root.getTextValue(), Tuple.class, attributes);
 	}
 	
 	private static List<Same> handleSameAsTag(TextElement<?> root, String viewName) {

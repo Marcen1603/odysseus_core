@@ -120,4 +120,9 @@ public class StringHandler extends AbstractDataHandler<String> {
 		}
 		return Integer.SIZE / 8;
 	}
+	
+	@Override
+	public Class<?> createsType() {
+		return String.class;
+	}
 }

@@ -16,17 +16,28 @@
   * limitations under the License.
   */
 	package de.uniol.inf.is.odysseus.cep.sase; 
-	import java.util.LinkedList;
-import java.util.Map;
+	import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-	
-	import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.TreeNodeStream;
+import org.antlr.runtime.tree.TreeParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.cep.PatternDetectAO;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPCondition;
+import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.cep.metamodel.EAction;
 import de.uniol.inf.is.odysseus.cep.metamodel.EEventSelectionStrategy;
@@ -34,27 +45,20 @@ import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.State;
 import de.uniol.inf.is.odysseus.cep.metamodel.StateMachine;
 import de.uniol.inf.is.odysseus.cep.metamodel.Transition;
-import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPCondition;
-import de.uniol.inf.is.odysseus.cep.epa.metamodel.relational.RelationalMEPOutputSchemeEntry;
-import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.ISymbolTableOperationFactory;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.Write;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;	
-		
-	import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-import org.antlr.runtime.*;
-import org.antlr.runtime.tree.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class SaseAST extends TreeParser {
@@ -2305,7 +2309,7 @@ public class SaseAST extends TreeParser {
                         	attrList.add(attr);
                         }
                         String name = value != null && value.getText() != null ? value.getText() : "";
-                        SDFSchema outputSchema = new SDFSchema(name, attrList);
+                        SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attrList);
                         ;
                         patternDetectAO.getStateMachine().setOutputScheme(scheme);
                         patternDetectAO.setOutputSchemaIntern(outputSchema);

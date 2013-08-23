@@ -155,7 +155,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 			neededAttributesSet.addAll(neededAttributes);
 		}
 		this.neededAttributePos = SchemaUtils.getAttributePos(this.inputSchema, neededAttributesSet);
-		final SDFSchema restrictedSchema = new SDFSchema(schema.getURI(), neededAttributesSet);
+		final SDFSchema restrictedSchema = new SDFSchema(schema.getURI(), schema.getType(), neededAttributesSet);
 		for (final SDFExpression expression : expressionsList) {
 			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 
