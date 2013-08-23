@@ -74,7 +74,7 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 		}
 
 		ISource accessPO = getDataDictionary()
-				.getAccessPlan(operator.getName());
+				.getAccessAO(operator.getName());
 
 		if (accessPO == null) {
 
@@ -139,7 +139,7 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 				}
 			}
 			
-			getDataDictionary().putAccessPlan(operator.getName(), accessPO);
+			getDataDictionary().putAccessAO(operator.getName(), accessPO);
 			
 		}
 		defaultExecute(operator, accessPO, config, true, true);

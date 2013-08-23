@@ -76,6 +76,10 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	void removeClosedSinks();
 
 	void putSinkplan(String name, ISink<?> sinkPO);
+	
+	ISource<?> getAccessAO(String name);
+
+	void putAccessAO(String name, ISource<?> access);
 
 	// -------------------------------------------------------------------------
 	// Stored Procedure Management
@@ -91,4 +95,5 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	public void addDatatype(SDFDatatype dt);
 
 	void removeDatatype(SDFDatatype dt) throws DataDictionaryException;
+
 }

@@ -90,7 +90,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 	private final Map<String, ISource<?>> sources = Maps.newHashMap();
 	private final Map<String, ISink<?>> sinks = Maps.newHashMap();
-
+	private final Map<String, ISource<?>> accessAOs = Maps.newHashMap();
+	
 	private final Map<String, IPhysicalOperator> operators = Maps.newHashMap();
 
 	protected ITenant tenant;
@@ -1040,6 +1041,20 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		sources.put(uri, s);
 	}
 
+	@Override
+	public void putAccessAO(String name, ISource<?> access) {
+		if (accessAOs.containsKey(name)){
+			throw new IllegalArgumentException("AccessAO " + name
+					+ " already registred! Remove first");
+		}
+		accessAOs.put(name,access);
+	}
+	
+	@Override
+	public ISource<?> getAccessAO(String name) {
+		return accessAOs.get(name);
+	}
+	
 	@Override
 	public synchronized void removeAccessPlan(String uri) {
 		sources.remove(uri);
