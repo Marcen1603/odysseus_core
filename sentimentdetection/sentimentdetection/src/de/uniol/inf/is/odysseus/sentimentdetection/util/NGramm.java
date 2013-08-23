@@ -2,13 +2,14 @@ package de.uniol.inf.is.odysseus.sentimentdetection.util;
 
 
 /**
+ * class to build N-Grams
  * @author Marc Preuschaft
  *
  */
 public class NGramm {
 
 	/**
-	 * 
+	 * return a string array of ngrams
 	 * @param s
 	 * @param len
 	 * @return
@@ -34,6 +35,7 @@ public class NGramm {
 	}
 
 	/**
+	 * check if is possible to create a ngram  
 	 * @param s
 	 * @param len
 	 * @return

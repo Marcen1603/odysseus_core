@@ -16,8 +16,9 @@ import de.uniol.inf.is.odysseus.sentimentdetection.util.*;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ResultEntity;
 
 /**
+ * K-Nearest Neighbor classifier
  * @author Marc Preuschaft
- *
+ * 
  */
 public class KNearestNeighbor extends AbstractClassifier {
 
@@ -43,25 +44,24 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 
 	@Override
-	public void trainClassifier(TrainSetEntry trainentry,
-			boolean isTrained) {
+	public void trainClassifier(TrainSetEntry trainentry, boolean isTrained) {
+		//count the current training-size
+		ntr++;
+
+		List<String> words = getWords(trainentry.getSentence());
 		
-	ntr++;
-
-
-			List<String> words = getWords(trainentry.getRecord());
-
-			for (String word : words) {
-				if (!freq.containsKey(word)) {
-					freq.put(word, 1);
-				} else {
-					int ctr = freq.get(word) + 1;
-					freq.put(word, ctr);
-				}
+		//count the word frequenz
+		for (String word : words) {
+			if (!freq.containsKey(word)) {
+				freq.put(word, 1);
+			} else {
+				int ctr = freq.get(word) + 1;
+				freq.put(word, ctr);
 			}
-
-			trainfeatures.put(words, trainentry.getTrueDecisio());
+		}
 		
+		//add all words to the trainfeature
+		trainfeatures.put(words, trainentry.getTrueDecisio());
 
 	}
 
@@ -140,10 +140,7 @@ public class KNearestNeighbor extends AbstractClassifier {
 	}
 
 	private List<String> getWords(String text) {
-		// PorterStemmer stemmer = new PorterStemmer();
-
 		List<String> words = new ArrayList<String>();
-
 		for (int i = 0; i < ngramUpTo; i++) {
 			// split text in singlewords
 			for (String singleword : NGramm.ngrams(text, ngram - i)) {

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.stopwords;
 
 /**
+ * the interface for StopWords
  * @author Marc Preuschaft
  *
  */
@@ -19,17 +20,17 @@ public interface IStopWords {
 	String getLanguage();
 	
 	/**
-	 * removes the stopwords from the text
+	 * remove the stopwords from the sentence
 	 * @param text
 	 * @return
 	 */
 	String removeStopWords(String text);
 	
 	/**
-	 * stemm a record
+	 * stemm a sentence
 	 * @param record
 	 * @return
 	 */
-	String stemmRecord(String record);
+	String stemmSentence(String sentence);
 	
 }

@@ -19,6 +19,12 @@ import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.StopWordsRegistry;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.Metrics;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
+/**
+ * physical Sentiment Detection Operator
+ * @author Marc Preuschaft
+ *
+ * @param <T>
+ */
 @SuppressWarnings({ "rawtypes" })
 public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		AbstractPipe<Tuple<T>, Tuple<T>> {
@@ -57,7 +63,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private long trainTimeTotal;
 
 	// help variable
-	private static int ctr = 0;
+	private int ctr = 0;
 	private boolean isTrained = false;
 	
 	private int trainSetSize = 0;
@@ -139,14 +145,13 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		algo.setNgram(ngram);
 		algo.setRemoveStopWords(removeStopWords);
 		algo.setStemmWords(stemmWords);
+		algo.setDebugModus(debugClassifier);
+		
 		if (ngramUpTo) {
 			algo.setNgramUpTo(ngram);
 		}
 		stopwordsSet = (IStopWords) StopWordsRegistry.getStopWordsByLanguage(language);
-		
 	}
-
-
 	
 	@Override
 	protected void process_next(Tuple object, int port) {
@@ -155,21 +160,24 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			isStarted = true;
 		}
 		if (port == 0) {
-			logger.debug("trainingSetSize: " + trainSetSize);
-
+			
+			if(debugClassifier){
+				System.out.println("trainingSetSize: " + trainSetSize);
+			}
+		
 			TrainSetEntry entry = new TrainSetEntry();
 			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
 			
 			// remove stopwords
 			if (algo.getRemoveStopWords()) {
-				entry.setRecord(stopwordsSet.removeStopWords(object.getAttribute(attributeTrainSetTextPos).toString()));
+				entry.setSentence(stopwordsSet.removeStopWords(object.getAttribute(attributeTrainSetTextPos).toString()));
 			} else {
-				entry.setRecord(object.getAttribute(attributeTrainSetTextPos).toString());
+				entry.setSentence(object.getAttribute(attributeTrainSetTextPos).toString());
 			}
 
 			// stemm words
 			if (algo.getStemmWords()) {
-				entry.setRecord(stopwordsSet.stemmRecord(entry.getRecord()));
+				entry.setSentence(stopwordsSet.stemmSentence(entry.getSentence()));
 			}
 		
 			startTimeTrain = System.currentTimeMillis();
@@ -180,7 +188,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			
 			trainSetSize++;
 			
-			//add DebugInfos trainsetsize
+			//add current trainsetsize
 			addParameterInfo("TRAINSET-SIZE", trainSetSize);
 			
 			if (trainSetSize >= trainSetMinSize || isTrained) {
@@ -250,7 +258,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		// stemm words
 		if (algo.getStemmWords()) {
-			text = stopwordsSet.stemmRecord(text);
+			text = stopwordsSet.stemmSentence(text);
 		}
 
 		decision = algo.startDetect(text);
@@ -292,7 +300,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				}
 			}
 
-			System.out.println("record: "+ object.getAttribute(attributeTestSetTextPos).toString());
+			System.out.println("sentence: "+ object.getAttribute(attributeTestSetTextPos).toString());
 			System.out.println("true decision: " + truedecision);
 			System.out.println("decision: " + decision);
 			System.out.println("total wrong: " + wrongdecision);
@@ -357,14 +365,18 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		this.buffer.clear();
 		this.isTrained = false;
-
+		this.trainSetSize = 0;
+		this.ctr = 0;
+		
 		if (algo != null) {
 			ClassifierRegistry.unregisterDomain(domain);
 		}
 
 	}
 	
-	
+	/*
+	 * add Debug-Infos to the operator detail infos
+	 */
 	private void addDebugInfosToOperatorInfo(){
 		addParameterInfo("TOTAL WRONG", wrongdecision);
 		addParameterInfo("POS RECALL", Metrics.recall(posCtr, totalExistPosCtr));

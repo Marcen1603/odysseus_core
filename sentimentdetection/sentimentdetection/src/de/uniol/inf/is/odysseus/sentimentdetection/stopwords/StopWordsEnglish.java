@@ -1,6 +1,11 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.stopwords;
 
 
+/**
+ * english stopword class
+ * @author Marc Preuschaft
+ *
+ */
 public class StopWordsEnglish extends AbstractStopWords{
 
 	private final String language = "english";

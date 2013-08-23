@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 
 
+/**
+ * manage the classifier 
+ * @author Marc Preuschaft
+ *
+ */
 public class ClassifierRegistry{
 
 	static Logger logger = LoggerFactory.getLogger(ClassifierRegistry.class);
@@ -43,15 +48,19 @@ public class ClassifierRegistry{
 					.equals(classifierType.toLowerCase())) {
 				return classifier;
 			} else {
-				// Classifier with domain exist, but have a different
-				// classifierType
+				/*
+				 *  Classifier with domain exist, but have a different 
+				 *  classifierType
+				 */ 
 				logger.info("Classifier with: '" + domain.toLowerCase()
 						+ "' already exists with a different classifierType.");
 				return null;
 			}
 		} else {
-			// Classifier with domain and classifierType does not exist, create new
-			// instance
+			/*
+			 *  Classifier with domain and classifierType does not exist, create new
+			 *  instance
+			 */
 			IClassifier classifier = classifierAlgoTypes.get(classifierType
 					.toLowerCase());
 			IClassifier newClassifier = classifier.getInstance(domain.toLowerCase());
@@ -62,6 +71,7 @@ public class ClassifierRegistry{
 	}
 	
 	/**
+	 * remove a classifier by domain
 	 * @param domain
 	 */
 	public static void unregisterDomain(String domain){
@@ -83,7 +93,7 @@ public class ClassifierRegistry{
 	
 	
 	/**
-	 * 
+	 * register the classifier by starting odysseus
 	 * @param classifierAlgo
 	 */
 	public static void registerClassifierAlgo(IClassifier classifierAlgo) {
@@ -100,6 +110,7 @@ public class ClassifierRegistry{
 	}
 
 	/**
+	 * unregister the classifier by closing odysseus
 	 * @param classifierAlgo
 	 */
 	public static void unregisterClassifierAlgo(IClassifier classifierAlgo) {

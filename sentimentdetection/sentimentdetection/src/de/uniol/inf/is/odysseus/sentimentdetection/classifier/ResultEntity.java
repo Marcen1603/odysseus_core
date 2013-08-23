@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 /**
+ * ResultEntity is used in the KNearestNeighbor classifier
  * @author Marc Preuschaft
  *
  */

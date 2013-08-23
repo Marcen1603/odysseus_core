@@ -7,11 +7,10 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.PorterStemmerEnglish;
 
-public abstract class AbstractStopWords implements IStopWords{
-	
+public abstract class AbstractStopWords implements IStopWords {
 
 	protected Set<String> stopWordSet = new HashSet<String>();
-	
+
 	public String removeStopWords(String string) {
 		String result = "";
 		String[] words = string.split("\\s+");
@@ -33,25 +32,24 @@ public abstract class AbstractStopWords implements IStopWords{
 		}
 	}
 
-	public String stemmRecord(String record) {
+	public String stemmSentence(String sentence) {
 		String result = "";
 
 		PorterStemmerEnglish stemmer = new PorterStemmerEnglish();
 
-		for (String singleword : NGramm.ngrams(record, 1)) {
+		for (String singleword : NGramm.ngrams(sentence, 1)) {
 			String stem = stemmer.stem(singleword);
 			result += stem + " ";
 		}
 
 		return result;
 	}
-	
 
 	public void setStopWords(String[] stopwords) {
-		this.stopWordSet =  new HashSet<String>(Arrays.asList(stopwords));
+		this.stopWordSet = new HashSet<String>(Arrays.asList(stopwords));
 	}
-	
-	public Set<String> getStopWords(){
+
+	public Set<String> getStopWords() {
 		return stopWordSet;
 	}
 

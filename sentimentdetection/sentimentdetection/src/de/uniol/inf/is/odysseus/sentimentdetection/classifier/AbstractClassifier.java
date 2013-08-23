@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.classifier;
 
 /**
+ * 
  * @author Marc Preuschaft
  * 
  */
@@ -11,6 +12,8 @@ public abstract class AbstractClassifier implements IClassifier {
 	protected int ngramUpTo = 1;
 	protected boolean removeStopWords = false;
 	protected boolean stemmWords = false;
+	protected boolean debugModus = false;
+	
 
 	public void setDomain(String domain) {
 		this.domain = domain;
@@ -31,6 +34,10 @@ public abstract class AbstractClassifier implements IClassifier {
 	public void setStemmWords(boolean stemmWords) {
 		this.stemmWords = stemmWords;
 	}
+	
+	public void setDebugModus(boolean debugModus){
+		this.debugModus = debugModus;
+	}
 
 	public String getDomain() {
 		return domain;
@@ -46,6 +53,10 @@ public abstract class AbstractClassifier implements IClassifier {
 
 	public boolean getStemmWords() {
 		return stemmWords;
+	}
+	
+	public boolean getDebugModus(){
+		return debugModus;	
 	}
 	
 }

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.sentimentdetection.util;
 
 /**
+ * util class to calculate recall, precision and f-score
  * @author Marc Preuschaft
  *
  */

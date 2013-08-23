@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.sentimentdetection.util.NGramm;
 import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 /**
+ * Naive Bayes classifier
  * @author Marc Preuschaft
  *
  */
@@ -39,12 +40,10 @@ public class NaiveBayes extends AbstractClassifier {
 	public void trainClassifier(TrainSetEntry trainentry, boolean isTrained) {
 	
 
-	logger.debug("domain: " + domain);
-
 			if (trainentry.getTrueDecisio() == 1) {
 				// positive
 				for (int i = 0; i < ngramUpTo; i++) {
-					for (String singleword : NGramm.ngrams(trainentry.getRecord(), ngram
+					for (String singleword : NGramm.ngrams(trainentry.getSentence(), ngram
 							- i)) {
 						if (!positivewords
 								.containsKey(singleword.toLowerCase())) {
@@ -61,7 +60,7 @@ public class NaiveBayes extends AbstractClassifier {
 			} else {
 				// negative
 				for (int i = 0; i < ngramUpTo; i++) {
-					for (String singleword : NGramm.ngrams(trainentry.getRecord(), ngram
+					for (String singleword : NGramm.ngrams(trainentry.getSentence(), ngram
 							- i)) {
 						if (!negativewords
 								.containsKey(singleword.toLowerCase())) {
@@ -76,9 +75,12 @@ public class NaiveBayes extends AbstractClassifier {
 					}
 				}
 			}
-	
-		System.out.println("positivewords size: " + positivewords.size());
-		System.out.println("negativewords size: " + negativewords.size());
+				
+		if(debugModus){
+			System.out.println("positivewords size: " + positivewords.size());
+			System.out.println("negativewords size: " + negativewords.size());
+		}
+		
 	}
 
 	@Override
@@ -89,7 +91,7 @@ public class NaiveBayes extends AbstractClassifier {
 		double decisionpos = 0.0;
 		double decisionneg = 0.0;
 
-		// split the record in single words
+		// split the sentence in single words
 		for (int i = 0; i < ngramUpTo; i++) {
 			for (String singleword : NGramm.ngrams(text, ngram - i)) {
 				double a = 1.0;
@@ -111,11 +113,14 @@ public class NaiveBayes extends AbstractClassifier {
 				decisionneg += b / (a + b);
 			}
 		}
+		
+		if(debugModus){
+			System.out.println("----analysis----");
+			System.out.println("sentence: " + text);
+			System.out.println("positive: " + decisionpos);
+			System.out.println("negative: " + decisionneg);
+		}
 
-		logger.debug("----analysis----");
-		logger.debug("record: " + text);
-		logger.debug("positive: " + decisionpos);
-		logger.debug("negative: " + decisionneg);
 
 		if (decisionpos > decisionneg) {
 			decision = 1;

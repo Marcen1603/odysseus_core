@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
 
 
 
+/**
+ * class to mange the stopwords
+ * @author Marc Preuschaft
+ *
+ */
 public class StopWordsRegistry {
 	
 	static Logger logger = LoggerFactory.getLogger(StopWordsRegistry.class);
