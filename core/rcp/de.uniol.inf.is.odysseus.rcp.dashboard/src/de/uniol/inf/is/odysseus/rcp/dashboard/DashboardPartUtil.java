@@ -46,6 +46,30 @@ public final class DashboardPartUtil {
 		return combo;
 	}
 	
+	public static Combo createCombo(Composite topComposite, String[] items, String selectedItem){
+		Combo combo = new Combo(topComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		if( items != null ) {
+			combo.setItems(items);
+			if( selectedItem != null ) {
+				int index = indexOf(items, selectedItem);
+				if( index != -1) {
+					combo.select(index);
+				}
+			}
+		}
+		return combo;
+	}
+
+	private static int indexOf(String[] items, String selectedItem) {
+		for( int i = 0; i < items.length; i++ ) {
+			if( items[i].equalsIgnoreCase(selectedItem)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public static Combo createAttributeDropDown(Composite comp, Collection<SDFAttribute> attributes ) {
 		String[] attributeNames = determineAttributeNames(attributes);
 		return createCombo(comp, attributeNames);
