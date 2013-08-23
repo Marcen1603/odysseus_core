@@ -1081,8 +1081,18 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 			}
 		}
+		it = accessAOs.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<String, ISource<?>> curEntry = it.next();
+			if (!curEntry.getValue().hasOwner()) {
+				curEntry.getValue().unsubscribeFromAllSinks();
+				it.remove();
+			}
+		}
+		
 	}
 
+	
 	@Override
 	public void removeClosedSinks() {
 		Iterator<Entry<String, ISink<?>>> it = sinks.entrySet().iterator();
