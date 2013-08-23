@@ -348,16 +348,10 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		String text = object.getAttribute(attributeToClassifierTextPos)
 				.toString();
 
-		// remove stopwords
-		if (algo.getRemoveStopWords()) {
-			text = stopwordsSet.removeStopWords(text);
-		}
+		// remove stopwords / stemm words
+		text = cleanSentence(text);
 
-		// stemm words
-		if (algo.getStemmWords()) {
-			text = stopwordsSet.stemmSentence(text);
-		}
-
+		// start sentiment detection
 		decision = algo.startDetect(text);
 
 		// get OutputPort
@@ -385,24 +379,13 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		System.arraycopy(object.getAttributes(), 0,
 				outputTuple.getAttributes(), 0, inputSize);
 
-		// text positive or negative
 		int decision;
+
 		String text = object.getAttribute(attributeTestSetTextPos).toString();
 
-		// remove stopwords
-		if (algo.getRemoveStopWords()) {
-			text = stopwordsSet.removeStopWords(text);
-		}
-
-		// stemm words
-		if (algo.getStemmWords()) {
-			text = stopwordsSet.stemmSentence(text);
-		}
+		text = cleanSentence(text);
 
 		decision = algo.startDetect(text);
-
-		// get OutputPort
-		int outputPort = getOutPutPort(decision);
 
 		// set the decision attribute
 		outputTuple.setAttribute(object.size(), decision);
@@ -445,8 +428,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			System.out.println("total wrong: " + wrongdecision);
 		}
 		ctr++;
-		
-		
+
 		if (totalInputports == 3) {
 			transfer(outputTuple, 2);
 		} else {
@@ -474,6 +456,20 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			}
 		}
 		return outputPort;
+	}
+
+	private String cleanSentence(String text) {
+		// remove stopwords
+		if (algo.getRemoveStopWords()) {
+			text = stopwordsSet.removeStopWords(text);
+		}
+
+		// stemm words
+		if (algo.getStemmWords()) {
+			text = stopwordsSet.stemmSentence(text);
+		}
+
+		return text;
 	}
 
 	@Override
