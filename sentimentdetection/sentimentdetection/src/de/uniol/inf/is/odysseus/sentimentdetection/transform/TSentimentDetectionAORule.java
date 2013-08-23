@@ -35,7 +35,9 @@ public class TSentimentDetectionAORule extends
 						sentimentDetectionAO.getStemmWords(),
 						sentimentDetectionAO.getNgramUpTo(),
 						sentimentDetectionAO.getLanguage(),
-						sentimentDetectionAO.getMaxBufferSize()),
+						sentimentDetectionAO.getMaxBufferSize(),
+						sentimentDetectionAO.getAttributeToClassifierTextPos(),
+						sentimentDetectionAO.getTotalInputports()),
 						config, true, true);
 	}
 

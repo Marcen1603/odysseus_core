@@ -21,8 +21,9 @@ import de.uniol.inf.is.odysseus.sentimentdetection.util.TrainSetEntry;
 
 /**
  * physical Sentiment Detection Operator
+ * 
  * @author Marc Preuschaft
- *
+ * 
  * @param <T>
  */
 @SuppressWarnings({ "rawtypes" })
@@ -36,6 +37,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private String domain;
 	private boolean debugClassifier = false;
 	private int maxBufferSize;
+	private int totalInputports = 2;
 
 	// classificator parameter
 	private int ngram;
@@ -65,18 +67,19 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	// help variable
 	private int ctr = 0;
 	private boolean isTrained = false;
-	
+
 	private int trainSetSize = 0;
 
 	// currend classifier
 	private IClassifier algo;
-	
+
 	// currend stopwords
 	private IStopWords stopwordsSet;
 	private String language;
 
 	// buffer
 	private List<Tuple> buffer = new ArrayList<>();
+	private List<Tuple> testDataBuffer = new ArrayList<>();
 
 	// attribute positions
 	private int attributeTrainSetTextPos = -1;
@@ -84,7 +87,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	private int attributeTestSetTextPos = -1;
 	private int attributeTestSetTrueDecisionPos = -1;
-	
+
+	private int attributeToClassifierTextPos = -1;
+
 	static Logger logger = LoggerFactory.getLogger(SentimentDetectionPO.class);
 
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
@@ -92,7 +97,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTrainSetTextPos, int attributeTrainSetTrueDecisionPos,
 			int attributeTestSetTextPos, int attributeTestSetTrueDecisionPos,
 			int ngram, boolean removeStopWords, boolean stemmWords,
-			boolean ngramUpto, String language, int maxBufferSize) {
+			boolean ngramUpto, String language, int maxBufferSize,
+			int attributeToClassifierTextPos, int totalInputports) {
 		super();
 
 		this.splitDecision = splitDecision;
@@ -107,13 +113,17 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.attributeTestSetTextPos = attributeTestSetTextPos;
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
 
+		this.attributeToClassifierTextPos = attributeToClassifierTextPos;
+
+		this.totalInputports = totalInputports;
+
 		this.ngram = ngram;
 		this.ngramUpTo = ngramUpto;
 		this.removeStopWords = removeStopWords;
 		this.stemmWords = stemmWords;
 
 		this.maxBufferSize = maxBufferSize;
-		
+
 		this.language = language;
 	}
 
@@ -146,97 +156,225 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		algo.setRemoveStopWords(removeStopWords);
 		algo.setStemmWords(stemmWords);
 		algo.setDebugModus(debugClassifier);
-		
+
 		if (ngramUpTo) {
 			algo.setNgramUpTo(ngram);
 		}
-		stopwordsSet = (IStopWords) StopWordsRegistry.getStopWordsByLanguage(language);
+		stopwordsSet = (IStopWords) StopWordsRegistry
+				.getStopWordsByLanguage(language);
 	}
-	
+
+	private void addTrainData(Tuple object) {
+		TrainSetEntry entry = new TrainSetEntry();
+		entry.setTrueDecision(Integer.parseInt(object
+				.getAttribute(attributeTrainSetTrueDecisionPos).toString()
+				.trim()));
+
+		// remove stopwords
+		if (algo.getRemoveStopWords()) {
+			entry.setSentence(stopwordsSet.removeStopWords(object.getAttribute(
+					attributeTrainSetTextPos).toString()));
+		} else {
+			entry.setSentence(object.getAttribute(attributeTrainSetTextPos)
+					.toString());
+		}
+
+		// stemm words
+		if (algo.getStemmWords()) {
+			entry.setSentence(stopwordsSet.stemmSentence(entry.getSentence()));
+		}
+
+		startTimeTrain = System.currentTimeMillis();
+		algo.trainClassifier(entry, isTrained);
+		stopTimeTrain = System.currentTimeMillis();
+
+		trainTimeTotal += stopTimeTrain - startTimeTrain;
+
+		trainSetSize++;
+
+		// add current trainsetsize
+		addParameterInfo("TRAINSET-SIZE", trainSetSize);
+	}
+
 	@Override
 	protected void process_next(Tuple object, int port) {
 		if (!isStarted) {
 			startTime = System.currentTimeMillis();
 			isStarted = true;
 		}
-		if (port == 0) {
-			
-			if(debugClassifier){
-				System.out.println("trainingSetSize: " + trainSetSize);
-			}
-		
-			TrainSetEntry entry = new TrainSetEntry();
-			entry.setTrueDecision(Integer.parseInt(object.getAttribute(attributeTrainSetTrueDecisionPos).toString().trim()));
-			
-			// remove stopwords
-			if (algo.getRemoveStopWords()) {
-				entry.setSentence(stopwordsSet.removeStopWords(object.getAttribute(attributeTrainSetTextPos).toString()));
-			} else {
-				entry.setSentence(object.getAttribute(attributeTrainSetTextPos).toString());
-			}
 
-			// stemm words
-			if (algo.getStemmWords()) {
-				entry.setSentence(stopwordsSet.stemmSentence(entry.getSentence()));
-			}
-		
-			startTimeTrain = System.currentTimeMillis();
-			algo.trainClassifier(entry, isTrained);
-			stopTimeTrain = System.currentTimeMillis();
-			
-			trainTimeTotal += stopTimeTrain-startTimeTrain;
-			
-			trainSetSize++;
-			
-			//add current trainsetsize
-			addParameterInfo("TRAINSET-SIZE", trainSetSize);
-			
-			if (trainSetSize >= trainSetMinSize || isTrained) {
-				isTrained = true;
-				// synchronized for java.util.ConcurrentModificationException
-				// problems
-				synchronized (this.buffer) {
-					// train classifier
-					if (buffer.size() > 0) {
-						for (Tuple buffered : this.buffer) {
-							processSentimentDetection(buffered);
+		// NEU
+
+		if (debugClassifier) {
+
+			if (port == 0) {
+				addTrainData(object);
+
+				if (trainSetSize >= trainSetMinSize || isTrained) {
+					isTrained = true;
+					// synchronized for
+					// java.util.ConcurrentModificationException
+					// problems
+					synchronized (this.testDataBuffer) {
+						if (testDataBuffer.size() > 0) {
+							for (Tuple buffered : this.testDataBuffer) {
+								processSentimentDetectionDebug(buffered);
+							}
+							testDataBuffer.clear();
 						}
-
-						buffer.clear();
 					}
+
+					synchronized (this.buffer) {
+						if (buffer.size() > 0) {
+							for (Tuple buffered : this.buffer) {
+								processSentimentDetection(buffered);
+							}
+							buffer.clear();
+						}
+					}
+
+				}
+
+			} else {
+
+				if (port == 1) {
+
+					if (isTrained) {
+						// synchronized for
+						// java.util.ConcurrentModificationException
+						// problems
+						synchronized (this.testDataBuffer) {
+							if (testDataBuffer.size() > 0) {
+								for (Tuple buffered : this.testDataBuffer) {
+									processSentimentDetectionDebug(buffered);
+								}
+								testDataBuffer.clear();
+							}
+						}
+						processSentimentDetectionDebug(object);
+					} else {
+						// synchronized for
+						// java.util.ConcurrentModificationException
+						// problems
+						synchronized (this.testDataBuffer) {
+							testDataBuffer.add(object);
+						}
+					}
+
+				} else if (port == 2) {
+
+					if (isTrained) {
+						processSentimentDetection(object);
+					} else {
+						buffer.add(object);
+					}
+
 				}
 
 			}
+
 		} else {
-			if (isTrained) {
-				// synchronized for java.util.ConcurrentModificationException
-				// problems
-				synchronized (this.buffer) {
-					if (buffer.size() > 0) {
-						for (Tuple buffered : this.buffer) {
-							processSentimentDetection(buffered);
+
+			// zwei inputports !
+
+			if (port == 0) {
+				// traindata
+
+				addTrainData(object);
+
+				if (trainSetSize >= trainSetMinSize || isTrained) {
+					isTrained = true;
+
+					synchronized (this.buffer) {
+						// train classifier
+						if (buffer.size() > 0) {
+							for (Tuple buffered : this.buffer) {
+								processSentimentDetection(buffered);
+							}
+
+							buffer.clear();
 						}
-						buffer.clear();
 					}
+
 				}
-				processSentimentDetection(object);
+
 			} else {
-				// synchronized for java.util.ConcurrentModificationException
-				// problems
-				synchronized (this.buffer) {
-					if (buffer.size() >= maxBufferSize) {
-						buffer.remove(0);
+				// zu klassifizierende daten
+				if (isTrained) {
+					// synchronized for
+					// java.util.ConcurrentModificationException
+					// problems
+					synchronized (this.buffer) {
+						if (buffer.size() > 0) {
+							for (Tuple buffered : this.buffer) {
+								processSentimentDetection(buffered);
+							}
+							buffer.clear();
+						}
 					}
-					buffer.add(object);
+					processSentimentDetection(object);
+				} else {
+					// synchronized for
+					// java.util.ConcurrentModificationException
+					// problems
+					synchronized (this.buffer) {
+						if (buffer.size() >= maxBufferSize) {
+							buffer.remove(0);
+						}
+						buffer.add(object);
+					}
 				}
 			}
 
 		}
-	}
 
+	}
 
 	@SuppressWarnings("unchecked")
 	private void processSentimentDetection(Tuple object) {
+
+		// get inputSize of the object
+		int inputSize = object.size();
+
+		// create new output Tuple with size + 1
+		Tuple outputTuple = new Tuple(object.size() + 1, false);
+
+		// Copy object Attributes to the new outputTuple
+		System.arraycopy(object.getAttributes(), 0,
+				outputTuple.getAttributes(), 0, inputSize);
+
+		// text positive or negative
+		int decision;
+		String text = object.getAttribute(attributeToClassifierTextPos)
+				.toString();
+
+		// remove stopwords
+		if (algo.getRemoveStopWords()) {
+			text = stopwordsSet.removeStopWords(text);
+		}
+
+		// stemm words
+		if (algo.getStemmWords()) {
+			text = stopwordsSet.stemmSentence(text);
+		}
+
+		decision = algo.startDetect(text);
+
+		// get OutputPort
+		int outputPort = getOutPutPort(decision);
+
+		// set the decision attribute
+		outputTuple.setAttribute(object.size(), decision);
+		outputTuple.setMetadata(object.getMetadata());
+		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
+
+		transfer(outputTuple, outputPort);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void processSentimentDetectionDebug(Tuple object) {
+
 		// get inputSize of the object
 		int inputSize = object.size();
 
@@ -253,7 +391,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		// remove stopwords
 		if (algo.getRemoveStopWords()) {
-			text = 	stopwordsSet.removeStopWords(text);
+			text = stopwordsSet.removeStopWords(text);
 		}
 
 		// stemm words
@@ -300,16 +438,23 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				}
 			}
 
-			System.out.println("sentence: "+ object.getAttribute(attributeTestSetTextPos).toString());
+			System.out.println("sentence: "
+					+ object.getAttribute(attributeTestSetTextPos).toString());
 			System.out.println("true decision: " + truedecision);
 			System.out.println("decision: " + decision);
 			System.out.println("total wrong: " + wrongdecision);
 		}
 		ctr++;
-		transfer(outputTuple, outputPort);
 		
-		//add debug-infos
-		if(debugClassifier){
+		
+		if (totalInputports == 3) {
+			transfer(outputTuple, 2);
+		} else {
+			transfer(outputTuple, 0);
+		}
+
+		// add debug-infos
+		if (debugClassifier) {
 			addDebugInfosToOperatorInfo();
 		}
 	}
@@ -338,7 +483,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			System.out.println("Total counter: " + ctr);
 			stopTime = System.currentTimeMillis();
 			System.out.println("Total time used: " + (stopTime - startTime));
-			System.out.println("Total train time used: "+ trainTimeTotal);
+			System.out.println("Total train time used: " + trainTimeTotal);
 
 			System.out.println("pos recall: "
 					+ Metrics.recall(posCtr, totalExistPosCtr));
@@ -347,7 +492,6 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			System.out.println("pos f-score: "
 					+ Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr),
 							Metrics.precision(posCtr, totalPosCtr)));
-
 			System.out.println();
 			System.out.println();
 
@@ -367,29 +511,31 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.isTrained = false;
 		this.trainSetSize = 0;
 		this.ctr = 0;
-		
+
 		if (algo != null) {
 			ClassifierRegistry.unregisterDomain(domain);
 		}
 
 	}
-	
+
 	/*
 	 * add Debug-Infos to the operator detail infos
 	 */
-	private void addDebugInfosToOperatorInfo(){
+	private void addDebugInfosToOperatorInfo() {
 		addParameterInfo("TOTAL WRONG", wrongdecision);
 		addParameterInfo("POS RECALL", Metrics.recall(posCtr, totalExistPosCtr));
-		addParameterInfo("POS PRECISION", Metrics.precision(posCtr, totalPosCtr));
-		addParameterInfo("POS F-SCORE",  Metrics.f_score(Metrics.recall(posCtr, totalExistPosCtr),
+		addParameterInfo("POS PRECISION",
+				Metrics.precision(posCtr, totalPosCtr));
+		addParameterInfo("POS F-SCORE", Metrics.f_score(
+				Metrics.recall(posCtr, totalExistPosCtr),
 				Metrics.precision(posCtr, totalPosCtr)));
-		
-		addParameterInfo("NEG RECALL",  Metrics.recall(negCtr, totalExistNegCtr));
-		addParameterInfo("NEG PRECISION", Metrics.precision(negCtr, totalNegCtr));
-		addParameterInfo("NEG F-SCORE", Metrics.f_score(Metrics.recall(negCtr, totalExistNegCtr),
+
+		addParameterInfo("NEG RECALL", Metrics.recall(negCtr, totalExistNegCtr));
+		addParameterInfo("NEG PRECISION",
+				Metrics.precision(negCtr, totalNegCtr));
+		addParameterInfo("NEG F-SCORE", Metrics.f_score(
+				Metrics.recall(negCtr, totalExistNegCtr),
 				Metrics.precision(negCtr, totalNegCtr)));
 	}
-	
-
 
 }
