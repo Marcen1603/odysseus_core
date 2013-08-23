@@ -132,6 +132,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart {
 		Tuple<?> tuple = (Tuple<?>) element;
 		for (Entry<IPictogramGroup<?>, Integer> entry : this.groups.entrySet()) {
 			int pos = entry.getValue();
+			@SuppressWarnings("unchecked")
 			IPictogramGroup<Object> group = (IPictogramGroup<Object>) entry.getKey();
 			group.process(tuple.getAttribute(pos));			
 		}
