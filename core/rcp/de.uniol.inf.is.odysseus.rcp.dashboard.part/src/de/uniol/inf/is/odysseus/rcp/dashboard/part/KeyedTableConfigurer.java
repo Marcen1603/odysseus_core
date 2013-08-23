@@ -71,7 +71,7 @@ public class KeyedTableConfigurer extends AbstractDashboardPartConfigurer<KeyedT
 
 	private void createKeyAttribbutesControls(Composite topComposite) {
 		DashboardPartUtil.createLabel(topComposite, "Key attribute");
-		final Combo attributesInput = DashboardPartUtil.createCombo(topComposite, dashboardPart.getAttributes());
+		final Combo attributesInput = DashboardPartUtil.createCombo(topComposite, dashboardPart.getAttributes(), dashboardPart.getKeyAttribute());
 		attributesInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		attributesInput.addModifyListener(new ModifyListener() {
 			@Override
