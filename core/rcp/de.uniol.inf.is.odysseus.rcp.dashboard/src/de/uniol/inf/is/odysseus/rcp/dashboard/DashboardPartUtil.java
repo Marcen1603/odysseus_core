@@ -40,7 +40,9 @@ public final class DashboardPartUtil {
 	public static Combo createCombo(Composite topComposite, String[] items){
 		Combo combo = new Combo(topComposite, SWT.DROP_DOWN);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		combo.setItems(items);
+		if( items != null ) {
+			combo.setItems(items);
+		}
 		return combo;
 	}
 	
