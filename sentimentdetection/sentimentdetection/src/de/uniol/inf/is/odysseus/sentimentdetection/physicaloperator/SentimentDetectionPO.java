@@ -88,7 +88,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 	private int attributeTestSetTextPos = -1;
 	private int attributeTestSetTrueDecisionPos = -1;
 
-	private int attributeToClassifierTextPos = -1;
+	private int attributeTextToBeClassifiedPos = -1;
 
 	static Logger logger = LoggerFactory.getLogger(SentimentDetectionPO.class);
 
@@ -98,7 +98,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			int attributeTestSetTextPos, int attributeTestSetTrueDecisionPos,
 			int ngram, boolean removeStopWords, boolean stemmWords,
 			boolean ngramUpto, String language, int maxBufferSize,
-			int attributeToClassifierTextPos, int totalInputports) {
+			int attributeTextToBeClassifiedPos, int totalInputports) {
 		super();
 
 		this.splitDecision = splitDecision;
@@ -113,7 +113,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.attributeTestSetTextPos = attributeTestSetTextPos;
 		this.attributeTestSetTrueDecisionPos = attributeTestSetTrueDecisionPos;
 
-		this.attributeToClassifierTextPos = attributeToClassifierTextPos;
+		this.attributeTextToBeClassifiedPos = attributeTextToBeClassifiedPos;
 
 		this.totalInputports = totalInputports;
 
@@ -345,7 +345,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		// text positive or negative
 		int decision;
-		String text = object.getAttribute(attributeToClassifierTextPos)
+		String text = object.getAttribute(attributeTextToBeClassifiedPos)
 				.toString();
 
 		// remove stopwords / stemm words

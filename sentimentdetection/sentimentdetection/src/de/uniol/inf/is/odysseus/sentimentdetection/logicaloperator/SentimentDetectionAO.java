@@ -49,7 +49,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private String attributeTestSetText;
 	private String attributeTestSetTrueDecision;
 	
-	private String attributeToClassifierText;
+	private String attributeTextToBeClassifiedText;
 	
 	
 	//Attribute positions
@@ -59,7 +59,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private int attributeTestSetTextPos = -1 ;
 	private int attributeTestSetTrueDecisionPos = -1;
 	
-	private int attributeToClassifierTextPos = -1;
+	private int attributeTextToBeClassifiedPos = -1;
 	
 
 	
@@ -99,7 +99,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.attributeTrainSetTextPos = sentimentDetectionAO.attributeTrainSetTextPos;
         this.attributeTrainSetTrueDecisionPos = sentimentDetectionAO.attributeTrainSetTrueDecisionPos;
         
-        this.attributeToClassifierTextPos = sentimentDetectionAO.attributeToClassifierTextPos;
+        this.attributeTextToBeClassifiedPos = sentimentDetectionAO.attributeTextToBeClassifiedPos;
         
         this.totalInputports = sentimentDetectionAO.totalInputports;
         
@@ -173,9 +173,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.attributeTestSetText = attributeTestSetText;
 	}
 	
-	@Parameter(name = "toClassifierText", type=StringParameter.class, optional= true, doc="")
-	public void setToClassifierText(String toClassifierText) {
-		this.attributeToClassifierText   = toClassifierText;
+	@Parameter(name = "textToBeClassified", type=StringParameter.class, optional= true, doc="")
+	public void setToClassifierText(String textToBeClassified) {
+		this.attributeTextToBeClassifiedText   = textToBeClassified;
 	}
 	
 	@Parameter(name="language", type=StringParameter.class, optional= true, doc="")
@@ -304,8 +304,8 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return enrichAttribut;
 	}
 	
-	public int getAttributeToClassifierTextPos(){
-		return attributeToClassifierTextPos;
+	public int getAttributeTextToBeClassifiedPos(){
+		return attributeTextToBeClassifiedPos;
 	}
 	
 	public int getTotalInputports(){
@@ -323,8 +323,6 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			"The classifier "+ classifier.toLowerCase()+" could not found."));	
 			return false;
 		}
-		
-
 		
 		
 		//NEU
@@ -378,7 +376,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 			SDFSchema toClassifierSchema = this.getInputSchema(2);
 			
-			if(toClassifierSchema == null && attributeToClassifierText != null ){
+			if(toClassifierSchema == null && attributeTextToBeClassifiedText != null ){
 				addError(new IllegalParameterException(
 						"Please define all inputports"));
 				return false;
@@ -386,12 +384,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			
 			if(toClassifierSchema != null){
 				
-				if(getAttributePos(toClassifierSchema, attributeToClassifierText) != -1){
+				if(getAttributePos(toClassifierSchema, attributeTextToBeClassifiedText) != -1){
 					
-					this.attributeToClassifierTextPos = getAttributePos(toClassifierSchema,attributeToClassifierText);
+					this.attributeTextToBeClassifiedPos = getAttributePos(toClassifierSchema,attributeTextToBeClassifiedText);
 				}else{
 					addError(new IllegalParameterException(
-							"Attribute: "+ attributeToClassifierText +" could not found in the data that are to classifiered!"));
+							"Attribute: "+ attributeTextToBeClassifiedText +" could not found in the data that are to classifiered!"));
 					return false;
 				}
 				
@@ -425,12 +423,11 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			SDFSchema toClassifierSchema = this.getInputSchema(1);
 			
 			
-			if(getAttributePos(toClassifierSchema, attributeToClassifierText) != -1){
-				
-				this.attributeToClassifierTextPos = getAttributePos(toClassifierSchema,attributeToClassifierText);
+			if(getAttributePos(toClassifierSchema, attributeTextToBeClassifiedText) != -1){	
+				this.attributeTextToBeClassifiedPos = getAttributePos(toClassifierSchema,attributeTextToBeClassifiedText);
 			}else{
 				addError(new IllegalParameterException(
-						"Attribute: "+ attributeToClassifierText +" could not found in the data that are to classifiered!"));
+						"Attribute: "+ attributeTextToBeClassifiedText +" could not found in the data that are to classifiered!"));
 				return false;
 			}
 			
