@@ -121,9 +121,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.ngramUpTo = ngramUpto;
 		this.removeStopWords = removeStopWords;
 		this.stemmWords = stemmWords;
-
 		this.maxBufferSize = maxBufferSize;
-
 		this.language = language;
 	}
 
@@ -164,49 +162,20 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				.getStopWordsByLanguage(language);
 	}
 
-	private void addTrainData(Tuple object) {
-		TrainSetEntry entry = new TrainSetEntry();
-		entry.setTrueDecision(Integer.parseInt(object
-				.getAttribute(attributeTrainSetTrueDecisionPos).toString()
-				.trim()));
-
-		// remove stopwords
-		if (algo.getRemoveStopWords()) {
-			entry.setSentence(stopwordsSet.removeStopWords(object.getAttribute(
-					attributeTrainSetTextPos).toString()));
-		} else {
-			entry.setSentence(object.getAttribute(attributeTrainSetTextPos)
-					.toString());
-		}
-
-		// stemm words
-		if (algo.getStemmWords()) {
-			entry.setSentence(stopwordsSet.stemmSentence(entry.getSentence()));
-		}
-
-		startTimeTrain = System.currentTimeMillis();
-		algo.trainClassifier(entry, isTrained);
-		stopTimeTrain = System.currentTimeMillis();
-
-		trainTimeTotal += stopTimeTrain - startTimeTrain;
-
-		trainSetSize++;
-
-		// add current trainsetsize
-		addParameterInfo("TRAINSET-SIZE", trainSetSize);
-	}
-
 	@Override
 	protected void process_next(Tuple object, int port) {
 		if (!isStarted) {
 			startTime = System.currentTimeMillis();
 			isStarted = true;
 		}
-
-		// NEU
-
+	
 		if (debugClassifier) {
-
+			/*
+			 * Debug-Mouds two modi
+			 * 1. traindata and testdata
+			 * 2. traindata, testdata and text to be classified
+			 */
+			// in debug-modus port 0 only trainingdata
 			if (port == 0) {
 				addTrainData(object);
 
@@ -236,7 +205,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				}
 
 			} else {
-
+				// in debug-modus port 1 only testdata
 				if (port == 1) {
 
 					if (isTrained) {
@@ -260,12 +229,15 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 							testDataBuffer.add(object);
 						}
 					}
-
+				// in debug-modus on port 2 text to classified
 				} else if (port == 2) {
-
+					
+					
 					if (isTrained) {
+						//classifier is trained send text direct to the classifier
 						processSentimentDetection(object);
 					} else {
+						//classifier is not trained, add text to a buffer
 						buffer.add(object);
 					}
 
@@ -274,14 +246,15 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 			}
 
 		} else {
-
-			// zwei inputports !
-
+			/*
+			 * normalmodus only one modus
+			 * 1. traindata and text to be classified
+			 */
+			
+			//port 0 only traindata
 			if (port == 0) {
-				// traindata
-
 				addTrainData(object);
-
+				
 				if (trainSetSize >= trainSetMinSize || isTrained) {
 					isTrained = true;
 
@@ -299,7 +272,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 				}
 
 			} else {
-				// zu klassifizierende daten
+				// text to be classified
+				
+				//if classifiere trained?
 				if (isTrained) {
 					// synchronized for
 					// java.util.ConcurrentModificationException
@@ -314,9 +289,13 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 					}
 					processSentimentDetection(object);
 				} else {
-					// synchronized for
-					// java.util.ConcurrentModificationException
-					// problems
+					/*
+					 * classifier is not trained add text to the buffer
+					 * synchronized for
+					 * java.util.ConcurrentModificationException
+					 * problems
+					 * 
+					 */
 					synchronized (this.buffer) {
 						if (buffer.size() >= maxBufferSize) {
 							buffer.remove(0);
@@ -441,6 +420,33 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 	}
 
+	
+
+	/**
+	 * add a Tuple object to the trainingsset 
+	 * @param object
+	 */
+	private void addTrainData(Tuple object) {
+		
+		TrainSetEntry entry = new TrainSetEntry();
+		entry.setTrueDecision(Integer.parseInt(object
+				.getAttribute(attributeTrainSetTrueDecisionPos).toString()
+				.trim()));
+		entry.setSentence(cleanSentence(object.getAttribute(attributeTrainSetTextPos).toString()));
+		
+		startTimeTrain = System.currentTimeMillis();
+		algo.trainClassifier(entry, isTrained);
+		stopTimeTrain = System.currentTimeMillis();
+
+		trainTimeTotal += stopTimeTrain - startTimeTrain;
+
+		trainSetSize++;
+
+		// add current trainsetsize
+		addParameterInfo("TRAINSET-SIZE", trainSetSize);
+	}
+
+	
 	/*
 	 * Default port is 0 outputport is set to two transfer positive to port 0
 	 * transfer negative to port 1
@@ -458,6 +464,11 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		return outputPort;
 	}
 
+	/**
+	 * cleanup the a sentence stopwords/stemming
+	 * @param text
+	 * @return
+	 */
 	private String cleanSentence(String text) {
 		// remove stopwords
 		if (algo.getRemoveStopWords()) {
