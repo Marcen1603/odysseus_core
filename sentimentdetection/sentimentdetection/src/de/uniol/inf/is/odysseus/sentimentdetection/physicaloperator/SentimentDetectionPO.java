@@ -187,7 +187,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 					synchronized (this.testDataBuffer) {
 						if (testDataBuffer.size() > 0) {
 							for (Tuple buffered : this.testDataBuffer) {
-								processSentimentDetectionDebug(buffered);
+								processSentimentDetection(buffered,true);
 							}
 							testDataBuffer.clear();
 						}
@@ -196,7 +196,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 					synchronized (this.buffer) {
 						if (buffer.size() > 0) {
 							for (Tuple buffered : this.buffer) {
-								processSentimentDetection(buffered);
+								processSentimentDetection(buffered,false);
 							}
 							buffer.clear();
 						}
@@ -215,12 +215,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 						synchronized (this.testDataBuffer) {
 							if (testDataBuffer.size() > 0) {
 								for (Tuple buffered : this.testDataBuffer) {
-									processSentimentDetectionDebug(buffered);
+									processSentimentDetection(buffered,true);
 								}
 								testDataBuffer.clear();
 							}
 						}
-						processSentimentDetectionDebug(object);
+						processSentimentDetection(object,true);
 					} else {
 						// synchronized for
 						// java.util.ConcurrentModificationException
@@ -235,7 +235,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 					
 					if (isTrained) {
 						//classifier is trained send text direct to the classifier
-						processSentimentDetection(object);
+						processSentimentDetection(object,false);
 					} else {
 						//classifier is not trained, add text to a buffer
 						buffer.add(object);
@@ -262,7 +262,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 						// train classifier
 						if (buffer.size() > 0) {
 							for (Tuple buffered : this.buffer) {
-								processSentimentDetection(buffered);
+								processSentimentDetection(buffered,false);
 							}
 
 							buffer.clear();
@@ -282,12 +282,12 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 					synchronized (this.buffer) {
 						if (buffer.size() > 0) {
 							for (Tuple buffered : this.buffer) {
-								processSentimentDetection(buffered);
+								processSentimentDetection(buffered,false);
 							}
 							buffer.clear();
 						}
 					}
-					processSentimentDetection(object);
+					processSentimentDetection(object,false);
 				} else {
 					/*
 					 * classifier is not trained add text to the buffer
@@ -309,8 +309,9 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	}
 
+
 	@SuppressWarnings("unchecked")
-	private void processSentimentDetection(Tuple object) {
+	private void processSentimentDetection(Tuple object, boolean debug) {
 
 		// get inputSize of the object
 		int inputSize = object.size();
@@ -321,59 +322,26 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		// Copy object Attributes to the new outputTuple
 		System.arraycopy(object.getAttributes(), 0,
 				outputTuple.getAttributes(), 0, inputSize);
-
-		// text positive or negative
+		String text;
 		int decision;
-		String text = object.getAttribute(attributeTextToBeClassifiedPos)
-				.toString();
-
+		if(debug){
+			 text = object.getAttribute(attributeTestSetTextPos).toString();
+		}else{
+			 text = object.getAttribute(attributeTextToBeClassifiedPos).toString();
+		}
+		
 		// remove stopwords / stemm words
 		text = cleanSentence(text);
 
 		// start sentiment detection
 		decision = algo.startDetect(text);
 
-		// get OutputPort
-		int outputPort = getOutPutPort(decision);
-
 		// set the decision attribute
 		outputTuple.setAttribute(object.size(), decision);
 		outputTuple.setMetadata(object.getMetadata());
 		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
 
-		transfer(outputTuple, outputPort);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private void processSentimentDetectionDebug(Tuple object) {
-
-		// get inputSize of the object
-		int inputSize = object.size();
-
-		// create new output Tuple with size + 1
-		Tuple outputTuple = new Tuple(object.size() + 1, false);
-
-		// Copy object Attributes to the new outputTuple
-		System.arraycopy(object.getAttributes(), 0,
-				outputTuple.getAttributes(), 0, inputSize);
-
-		int decision;
-
-		String text = object.getAttribute(attributeTestSetTextPos).toString();
-
-		text = cleanSentence(text);
-
-		decision = algo.startDetect(text);
-
-		// set the decision attribute
-		outputTuple.setAttribute(object.size(), decision);
-		outputTuple.setMetadata(object.getMetadata());
-		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
-		
-		
-
-		if (debugClassifier) {
+		if (debug) {
 			// calculate error
 			String truedecision = outputTuple.getAttribute(
 					attributeTestSetTrueDecisionPos).toString();
@@ -410,14 +378,18 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		}
 		ctr++;
 
-		if (totalInputports == 3) {
-			transfer(outputTuple, 2);
-		} else {
-			transfer(outputTuple, 0);
+		if(debug){
+			if (totalInputports == 3) {
+				transfer(outputTuple, 2);
+			} else {
+				transfer(outputTuple, 0);
+			}
+		}else{
+			transfer(outputTuple, getOutPutPort(decision));
 		}
 
 		// add debug-infos
-		if (debugClassifier) {
+		if (debug) {
 			addDebugInfosToOperatorInfo();
 		}
 	}
