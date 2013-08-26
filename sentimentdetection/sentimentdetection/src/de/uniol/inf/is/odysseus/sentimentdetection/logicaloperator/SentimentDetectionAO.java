@@ -70,6 +70,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	public SentimentDetectionAO(){
 		super();
+		
 	}
 	
 	public SentimentDetectionAO(SentimentDetectionAO sentimentDetectionAO){
@@ -102,7 +103,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         this.attributeTextToBeClassifiedPos = sentimentDetectionAO.attributeTextToBeClassifiedPos;
         
         this.totalInputports = sentimentDetectionAO.totalInputports;
-        
+   
     }
 	
 
@@ -125,8 +126,16 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 		setOutputSchema(new SDFSchema(name, getInputSchema(outputSchemaPort).getType(), outputAttributes));
 		
+		if(totalInputports == 3){
+			List<SDFAttribute> outputAttributesneu = new ArrayList<SDFAttribute>();
+			outputAttributesneu.addAll(getInputSchema(1).getAttributes());
+			outputAttributesneu.add(sentDetection);
+			String nameneu = getInputSchema(1).getURI();
+			setOutputSchema(2,new SDFSchema(nameneu, getInputSchema(1).getType(), outputAttributesneu));
+		}
 		return getOutputSchema();
 	}
+	
 	
 	@Parameter(name = "domain", type=StringParameter.class, doc="")
 	public void setDomain(String domain) {
@@ -444,7 +453,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			return false;
 			
 		}
-		
+	 
 
 		return true;
 	}

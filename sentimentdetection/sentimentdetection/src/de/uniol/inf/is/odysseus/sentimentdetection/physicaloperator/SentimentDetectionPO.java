@@ -370,6 +370,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		outputTuple.setAttribute(object.size(), decision);
 		outputTuple.setMetadata(object.getMetadata());
 		outputTuple.setRequiresDeepClone(object.requiresDeepClone());
+		
+		
 
 		if (debugClassifier) {
 			// calculate error
