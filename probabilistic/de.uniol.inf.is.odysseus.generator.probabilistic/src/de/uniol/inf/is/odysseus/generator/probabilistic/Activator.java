@@ -40,16 +40,13 @@ public class Activator implements BundleActivator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
 	 */
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		for (int i = 0; i < Activator.SERVERS; i++) {
-			final StreamServer server = new StreamServer(Activator.PORT + i,
-					new ProbabilisticDataProvider());
+			final StreamServer server = new StreamServer(Activator.PORT + i, new ProbabilisticDataProvider());
 			server.start();
 			this.servers.add(server);
 		}
@@ -59,8 +56,7 @@ public class Activator implements BundleActivator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception {

@@ -23,6 +23,9 @@ public final class ProbabilisticConstants {
 	/** Acceptable epsilon for test on equality. */
 	public static final double EPSILON = 10E-9;
 
+	/**
+	 * Private constructor.
+	 */
 	private ProbabilisticConstants() {
 	}
 }
