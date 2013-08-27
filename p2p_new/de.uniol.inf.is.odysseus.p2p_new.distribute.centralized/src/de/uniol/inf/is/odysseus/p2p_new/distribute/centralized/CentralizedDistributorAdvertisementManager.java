@@ -80,8 +80,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			// this node is a normal peer and received a physical query-part to place within the local plan
 			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
 				//this.getExecutor().addQuery(physicalPlan, user, queryBuildConfigurationName)
-			}
-			
+			}	
 		}
 	}
 
@@ -128,7 +127,12 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	public void bindExecutor(IExecutor exe) {
 		executor = (IServerExecutor) exe;
-		LOG.debug("Eexecutor bound" + exe);
+		LOG.debug("Executor bound: " + exe);
+	}
+	
+	public void unbindExecutor(IExecutor exe) {
+		executor = null;
+		LOG.debug("Executor unbound: " + exe);
 	}
 	
 	private IServerExecutor getExecutor() {

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistributor">
+   <implementation class="de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistributor"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor"/>
+   </service>
+   <reference bind="bindCostModel" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel" name="ICostModel" policy="static" unbind="unbindCostModel"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor" name="IServerExecutor" policy="static"/>
+   <reference bind="bindQueryOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="static" unbind="unbindQueryOptimizer"/>
+</scr:component>

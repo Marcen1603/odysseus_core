@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
+@SuppressWarnings("unused")
 public class PhysicalQueryPartAdvertisement extends Advertisement {
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryPartAdvertisement.class);
 	private static final String ID_TAG = "id";
@@ -20,6 +22,14 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	private PeerID peerID;
 
 	
+	public PhysicalQueryPartAdvertisement(Element<?> root) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public PhysicalQueryPartAdvertisement() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public Document getDocument(MimeMediaType asMimeType) {
 		// TODO Auto-generated method stub

@@ -2,12 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/Jxta 2.7"/>
-	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.core"/>
-	<classpathentry kind="src" path="/com.google.guava"/>
-	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.core.server"/>
-	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.relational.base"/>
-	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.p2p_new"/>
-	<classpathentry kind="src" path="/de.uniol.inf.is.odysseus.slf4j"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
