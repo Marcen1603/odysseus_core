@@ -117,4 +117,10 @@ public final class DashboardPartUtil {
 	public static List<Button> createAttributeMultiSelector( Composite comp, String title, SDFSchema schema ) {
 		return createAttributeMultiSelector(comp, title, schema.getAttributes());
 	}
+	
+	public static Button createRadioButton( Composite comp, String title ) {
+		Button radio = new Button(comp, SWT.RADIO);
+		radio.setText(title);
+		return radio;
+	}
 }

@@ -34,10 +34,7 @@ import com.google.common.base.Optional;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
-import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class NewDashboardPartWizard extends Wizard implements INewWizard {
@@ -78,7 +75,7 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			dashboardPartFile.create(null, true, null);
 
 			final IDashboardPart part = partTypePage.getDashboardPart();
-			part.setQueryTextProvider(createQueryTextProvider(queryFilePage.isQueryFileCopy(), queryFilePage.getQueryFile()));
+			part.setQueryTextProvider(queryFilePage.getQueryTextProvider());
 
 			final IDashboardPartHandler handler = new XMLDashboardPartHandler();
 			final List<String> lines = handler.save(part);
@@ -91,13 +88,6 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			LOG.error("Could not finish wizard", ex);
 			return false;
 		}
-	}
-
-	private static IDashboardPartQueryTextProvider createQueryTextProvider(boolean queryFileCopy, IFile queryFile) {
-		if (queryFileCopy) {
-			return new SimpleQueryTextProvider(queryFile);
-		}
-		return new ResourceFileQueryTextProvider(queryFile);
 	}
 
 	private static String getDashboardPartFileName(ContainerSelectionPage containerPage) throws CancelException {
