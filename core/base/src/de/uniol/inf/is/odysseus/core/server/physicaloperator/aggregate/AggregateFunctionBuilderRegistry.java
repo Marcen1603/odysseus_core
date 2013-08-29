@@ -22,11 +22,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class AggregateFunctionBuilderRegistry implements
 		IAggregateFunctionBuilderRegistry {
 
+	static Logger logger = LoggerFactory.getLogger(AggregateFunctionBuilderRegistry.class);
+	
 	private Map<Pair<String, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<String, String>, IAggregateFunctionBuilder>();
 	private List<String> aggregateFunctionNames = new LinkedList<String>();
 	static private Pattern aggregatePattern;
@@ -35,7 +40,7 @@ public class AggregateFunctionBuilderRegistry implements
 			IAggregateFunctionBuilder builder) {
 		String datamodel = builder.getDatamodel();
 		Collection<String> functionNames = builder.getFunctionNames();
-		 System.out.println("Found new AggregateBuilder " + builder);
+		 logger.debug("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
 			Pair<String, String> key = new Pair<String, String>(datamodel,
 					functionName.toUpperCase());
@@ -43,7 +48,7 @@ public class AggregateFunctionBuilderRegistry implements
 				builders.put(key, builder);
 				aggregateFunctionNames.add(functionName.toUpperCase());
 				buildAggregatePattern();
-				 System.out.println("Binding " + key);
+				 logger.debug("Binding " + key);
 			} else {
 				throw new RuntimeException(datamodel + " and " + functionName
 						+ " already registered!");
