@@ -138,6 +138,10 @@ public class ProbabilisticByteHandler extends AbstractDataHandler<ProbabilisticB
 		return (((ProbabilisticByte) attribute).getValues().size() * (Byte.SIZE + Double.SIZE)) / 8;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class<?> createsType() {
 		return ProbabilisticByte.class;

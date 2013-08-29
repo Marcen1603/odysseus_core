@@ -321,6 +321,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 	 *            The schema
 	 */
 	private void createDataHandler(final SDFSchema schema) {
+		if (schema == null) return;
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		this.maxDistributions = 0;
 		int i = 0;
@@ -383,7 +384,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 	}
 
 	@Override
-	public Class<?> createsType() {
+	public final Class<?> createsType() {
 		return ProbabilisticTuple.class;
 	}
 }
