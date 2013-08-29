@@ -38,27 +38,29 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  */
 public class HaggisTransportHandler extends AbstractTransportHandler {
     /** Logger */
-    private final Logger        LOG              = LoggerFactory.getLogger(HaggisTransportHandler.class);
+    private final Logger LOG = LoggerFactory.getLogger(HaggisTransportHandler.class);
     // private static final Charset charset = Charset.forName("UTF-8");
     // private static final CharsetEncoder encoder = charset.newEncoder();
-    private static final String OWN_SERVICE      = "OdysseusSubscriberAdapter";
-    private static final String PROTOCOL         = "default";
-    private static final String DEFAULT_SERVICE  = "scm.eci.simulation.SimulationFacade";
-    private static final String DEFAULT_HOST     = "127.0.0.1";
-    private static final int    DEFAULT_PORT     = 10001;
-    private static final String DEFAULT_AGENT    = "LiftSupervisor";
-    private static final String DEFAULT_USERNAME = "";
-    private static final String DEFAULT_PASSWORD = "";
+    private static final String OWN_SERVICE = "OdysseusSubscriberAdapter";
+    private static final String PROTOCOL = "default";
+    private static final String DEFAULT_SERVICE = "scm.eci.simulation.SimulationFacade";
+    private static final String DEFAULT_HOST = "127.0.0.1";
+    private static final int DEFAULT_PORT = 10001;
+    private static final String DEFAULT_AGENT = "LiftSupervisor";
+    private static final String DEFAULT_USERNAME = "Foo";
+    private static final String DEFAULT_PASSWORD = "Fara";
+    private static final String DEFAULT_LISTEN = "localhost";
     /** Input stream for data transfer */
-    private InputStream         input;
-    private String              host;
-    private int                 port;
-    private String              service;
-    private String              username;
-    private String              password;
-    private String              agent;
-    private ObjectAdapter       objectAdapter;
-    private Communicator        communicator;
+    private InputStream input;
+    private String listen;
+    private String host;
+    private int port;
+    private String service;
+    private String username;
+    private String password;
+    private String agent;
+    private ObjectAdapter objectAdapter;
+    private Communicator communicator;
 
     /**
      * 
@@ -87,6 +89,12 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     }
 
     protected void init(Map<String, String> options) {
+        if (options.get("listen") != null) {
+            setListen(options.get("listen"));
+        }
+        else {
+            setListen(DEFAULT_LISTEN);
+        }
         if (options.get("host") != null) {
             setHost(options.get("host"));
         }
@@ -147,7 +155,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
         final InitializationData initializationData = new InitializationData();
         initializationData.properties = props;
         communicator = Util.initialize(initializationData);
-        objectAdapter = communicator.createObjectAdapterWithEndpoints(OWN_SERVICE, PROTOCOL + " -h 127.0.0.1 -p " + (1024 + (int) (Math.random() * 1000)));
+        objectAdapter = communicator.createObjectAdapterWithEndpoints(OWN_SERVICE, PROTOCOL + " -h " + getListen() + " -p " + (1024 + (int) (Math.random() * 1000)));
         LOG.debug(String.format("Connecting to ICE endpoint %s", Arrays.toString(objectAdapter.getEndpoints())));
         String proxy = getService() + ":" + PROTOCOL + " -h " + getHost() + " -p " + getPort();
 
@@ -158,7 +166,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
                 base.ice_ping();
                 LOG.debug(base.ice_id());
                 TelemetrieSubscriber telemetrieSubscriber = new TelemetrieSubscriber(this);
-                ObjectPrx subscriber = objectAdapter.add(telemetrieSubscriber, new Identity("Foo", "Fara"));
+                ObjectPrx subscriber = objectAdapter.add(telemetrieSubscriber, new Identity(getUsername(), getPassword()));
                 telemetrieSubscriber.open(base, subscriber);
             }
             else {
@@ -218,52 +226,109 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
         }
     }
 
-    private void setHost(String host) {
+    /**
+     * @param listen
+     *            the listen address to set
+     */
+    public void setListen(String listen) {
+        this.listen = listen;
+    }
+
+    /**
+     * @return the listen address
+     */
+    public String getListen() {
+        return this.listen;
+    }
+
+    /**
+     * @param host
+     *            the host to set
+     */
+    public void setHost(String host) {
         this.host = host;
     }
 
+    /**
+     * @return the host
+     */
     public String getHost() {
-        return host;
+        return this.host;
     }
 
-    private void setPort(int port) {
+    /**
+     * @param port
+     *            the port to set
+     */
+    public void setPort(int port) {
         this.port = port;
     }
 
+    /**
+     * @return the port
+     */
     public int getPort() {
-        return port;
+        return this.port;
     }
 
-    private void setAgent(String agent) {
+    /**
+     * @param agent
+     *            the agent to set
+     */
+    public void setAgent(String agent) {
         this.agent = agent;
     }
 
+    /**
+     * @return the agent
+     */
     public String getAgent() {
-        return agent;
+        return this.agent;
     }
 
-    private void setService(String service) {
+    /**
+     * @param service
+     *            the service to set
+     */
+    public void setService(String service) {
         this.service = service;
     }
 
+    /**
+     * @return the service
+     */
     public String getService() {
-        return service;
+        return this.service;
     }
 
-    private void setUsername(String username) {
+    /**
+     * @param username
+     *            the username to set
+     */
+    public void setUsername(String username) {
         this.username = username;
     }
 
+    /**
+     * @return the username
+     */
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
-    private void setPassword(String password) {
+    /**
+     * @param password
+     *            the password to set
+     */
+    public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * @return the password
+     */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**
@@ -276,11 +341,11 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
 
     class TelemetrieSubscriber extends _TelemetrieSubscriberDisp {
         private final HaggisTransportHandler handler;
-        private TelemetriePublisherPrx       publisher;
+        private TelemetriePublisherPrx publisher;
         /**
 		 * 
 		 */
-        private static final long            serialVersionUID = -5341086082699034964L;
+        private static final long serialVersionUID = -5341086082699034964L;
 
         /**
          * @param handler
