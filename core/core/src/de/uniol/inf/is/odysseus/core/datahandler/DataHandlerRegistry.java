@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * @author André Bolles, Marco Grawunder
+ * @author Andrï¿½ Bolles, Marco Grawunder
  * 
  */
 public class DataHandlerRegistry {
@@ -99,7 +99,10 @@ public class DataHandlerRegistry {
 	public static Class<? extends IStreamObject> getCreatedType(String dhandlerText) {
 		Class<? extends IStreamObject> type = null;
 		if (dhandlerText != null){
-			IDataHandler<?> dh = dataHandlers.get(dhandlerText);
+			IDataHandler<?> dh = dataHandlers.get(dhandlerText.toLowerCase());
+			if (dh == null) {
+			    throw new IllegalArgumentException("No such data handler: " + dhandlerText);
+			}
 			try {
 					type =  (Class<? extends IStreamObject>) dh.createsType();
 			} catch (ClassCastException e) {
