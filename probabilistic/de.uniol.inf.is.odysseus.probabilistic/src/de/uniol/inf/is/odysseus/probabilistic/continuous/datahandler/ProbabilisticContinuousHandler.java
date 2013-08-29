@@ -114,7 +114,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	}
 	
 	@Override
-	public Class<?> createsType() {
+	public final Class<?> createsType() {
 		return ProbabilisticContinuousDouble.class;
 	}
 

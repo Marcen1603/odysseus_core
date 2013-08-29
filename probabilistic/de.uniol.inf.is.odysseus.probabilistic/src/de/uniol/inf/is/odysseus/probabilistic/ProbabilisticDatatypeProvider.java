@@ -25,12 +25,15 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 /**
  * Datatype provider for probabilistic datatypes.
  * 
- * @author Christian Kuka <christian.kuka@offis.de>, Marco Grawunder
+ * @author Christian Kuka <christian@kuka.cc>, Marco Grawunder
  */
-public class ProbabilisticDatatypeProvider implements IDatatypeProvider{
-
+public class ProbabilisticDatatypeProvider implements IDatatypeProvider {
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public List<SDFDatatype> getDatatypes() {
+	public final List<SDFDatatype> getDatatypes() {
 		List<SDFDatatype> ret = new ArrayList<>();
 		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
 		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
@@ -42,6 +45,5 @@ public class ProbabilisticDatatypeProvider implements IDatatypeProvider{
 		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
 		return ret;
 	}
-	
 
 }

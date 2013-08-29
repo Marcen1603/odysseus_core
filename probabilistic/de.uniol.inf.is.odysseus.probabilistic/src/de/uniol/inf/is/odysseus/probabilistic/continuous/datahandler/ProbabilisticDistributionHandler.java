@@ -216,7 +216,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	}
 
 	@Override
-	public Class<?> createsType() {
+	public final Class<?> createsType() {
 		return NormalDistributionMixture.class;
 	}
 }
