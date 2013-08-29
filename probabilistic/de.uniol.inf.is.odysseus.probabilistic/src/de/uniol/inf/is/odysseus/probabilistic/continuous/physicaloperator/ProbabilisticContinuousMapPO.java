@@ -211,6 +211,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		boolean nullValueOccured = false;
 		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, this.distributions, false);
+		//FIXME restrict object for each expression or we will get an error if multiple expressions assume a univariate distribution
 		final ProbabilisticTuple<T> restrictedObject = object.restrict(this.neededAttributePos, false);
 		outputVal.setMetadata((T) restrictedObject.getMetadata().clone());
 		int lastObjectSize = this.lastObjects.size();
