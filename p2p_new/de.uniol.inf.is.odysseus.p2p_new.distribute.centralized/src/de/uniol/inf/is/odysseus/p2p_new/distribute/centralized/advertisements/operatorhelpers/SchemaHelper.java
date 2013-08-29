@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
 import java.util.Enumeration;
 import java.util.Map;
@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 public class SchemaHelper {
 	private static String OUTPUTSCHEMA_URI_TAG = "outputSchemaURI";

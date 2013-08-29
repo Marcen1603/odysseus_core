@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
@@ -10,6 +10,7 @@ import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 @SuppressWarnings("rawtypes")
 public class SelectPOHelper extends AbstractPhysicalOperatorHelper<SelectPO> {

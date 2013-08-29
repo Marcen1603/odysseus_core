@@ -13,7 +13,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.costmodel.opcount;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.costmodel.opcount;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0"
 Import-Package: com.google.common.base,
  com.google.common.collect,
  de.uniol.inf.is.odysseus.intervalapproach,

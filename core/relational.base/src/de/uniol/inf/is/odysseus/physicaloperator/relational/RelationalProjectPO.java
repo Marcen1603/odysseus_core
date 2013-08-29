@@ -85,4 +85,8 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		}
         return false;
 	}
+	
+	public int[] getRestrictList() {
+		return restrictList;
+	}
 }

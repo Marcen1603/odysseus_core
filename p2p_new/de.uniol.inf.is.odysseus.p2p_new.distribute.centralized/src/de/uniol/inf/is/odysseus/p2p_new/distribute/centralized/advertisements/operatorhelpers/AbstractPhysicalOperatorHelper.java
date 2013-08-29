@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
@@ -12,6 +12,7 @@ import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator> implements
 		IPhysicalOperatorHelper<T> {

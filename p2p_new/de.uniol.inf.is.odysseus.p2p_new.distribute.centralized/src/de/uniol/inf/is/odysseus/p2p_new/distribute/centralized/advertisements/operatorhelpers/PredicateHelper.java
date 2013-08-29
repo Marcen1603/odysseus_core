@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -11,6 +11,7 @@ import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class PredicateHelper {
