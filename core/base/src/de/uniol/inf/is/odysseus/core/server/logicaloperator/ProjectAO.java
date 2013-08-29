@@ -67,6 +67,14 @@ public class ProjectAO extends UnaryLogicalOp {
 	public SDFSchema getOutputSchemaIntern() {
 		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
 	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#getOutputSchemaIntern(int)
+	 */
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
+	}
 
 	public static int[] calcRestrictList(SDFSchema in,
 			SDFSchema out) {
