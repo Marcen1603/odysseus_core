@@ -70,7 +70,7 @@ public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule
 	@Override
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
 		if (operator.getPhysSubscriptionTo() != null) {
-			if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+		//	if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 				boolean isProbabilisticDiscrete = false;
 				for (final SDFExpression expr : operator.getExpressions()) {
 					if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {
@@ -80,7 +80,7 @@ public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule
 				if (isProbabilisticDiscrete) {
 					return true;
 				}
-			}
+		//	}
 		}
 		return false;
 	}

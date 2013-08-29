@@ -60,10 +60,8 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
 	 */
 	@Override
 	public final boolean isExecutable(final EMAO operator, final TransformationConfiguration config) {
-		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
-			}
+		if (operator.isAllPhysicalInputSet()) {
+			return true;
 		}
 		return false;
 	}

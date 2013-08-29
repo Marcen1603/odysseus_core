@@ -70,7 +70,7 @@ public class TProbabilisiticContinuousMapAORule extends AbstractTransformationRu
 	@Override
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
 		if (operator.getPhysSubscriptionTo() != null) {
-			if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+		//	if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 				boolean isProbabilisticContinuous = false;
 				for (final SDFExpression expr : operator.getExpressions()) {
 					if (SchemaUtils.containsContinuousProbabilisticAttributes(expr.getAllAttributes())) {
@@ -80,7 +80,7 @@ public class TProbabilisiticContinuousMapAORule extends AbstractTransformationRu
 				if (isProbabilisticContinuous) {
 					return true;
 				}
-			}
+			//}
 		}
 		return false;
 	}

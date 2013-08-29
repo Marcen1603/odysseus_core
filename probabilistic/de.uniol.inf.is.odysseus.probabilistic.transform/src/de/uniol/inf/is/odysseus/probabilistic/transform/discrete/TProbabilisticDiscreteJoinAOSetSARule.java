@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformationRule<ProbabilisticDiscreteJoinTIPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
+public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
 	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
@@ -62,7 +62,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public final void execute(final ProbabilisticDiscreteJoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+	public final void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
 		final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
 		final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
@@ -105,7 +105,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final boolean isExecutable(@SuppressWarnings("rawtypes") final ProbabilisticDiscreteJoinTIPO operator, final TransformationConfiguration transformConfig) {
+	public final boolean isExecutable(@SuppressWarnings("rawtypes") final JoinTIPO operator, final TransformationConfiguration transformConfig) {
 		if (operator.getAreas() == null) {
 			if (operator instanceof ProbabilisticDiscreteJoinTIPO) {
 				if ((transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) && transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
