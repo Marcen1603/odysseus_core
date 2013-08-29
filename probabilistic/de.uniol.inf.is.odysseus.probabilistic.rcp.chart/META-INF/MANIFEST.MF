@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: de.offis.chart.charts
 Bundle-ClassPath: batik-awt-util.jar,
  batik-ext.jar,
  batik-svggen.jar,
