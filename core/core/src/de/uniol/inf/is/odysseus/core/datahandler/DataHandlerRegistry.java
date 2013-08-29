@@ -99,7 +99,7 @@ public class DataHandlerRegistry {
 	public static Class<? extends IStreamObject> getCreatedType(String dhandlerText) {
 		Class<? extends IStreamObject> type = null;
 		if (dhandlerText != null){
-			IDataHandler<?> dh = getDataHandler(dhandlerText, (SDFSchema)null);
+			IDataHandler<?> dh = dataHandlers.get(dhandlerText);
 			try {
 					type =  (Class<? extends IStreamObject>) dh.createsType();
 			} catch (ClassCastException e) {
