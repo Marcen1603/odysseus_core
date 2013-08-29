@@ -102,7 +102,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 		final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
 		for (int i = 0; i < emArea.getMixtures(); i++) {
 			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(emArea.getMean(i).getColumn(0), emArea.getCovarianceMatrix(i).getData());
-			components.add(new Pair<Double, MultivariateNormalDistribution>(emArea.getWeight(i), distribution));
+			components.add(new Pair<Double, MultivariateNormalDistribution>(emArea.getWeight(i), distribution));	
 		}
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(components);
 		mixture.setAttributes(this.attributes);

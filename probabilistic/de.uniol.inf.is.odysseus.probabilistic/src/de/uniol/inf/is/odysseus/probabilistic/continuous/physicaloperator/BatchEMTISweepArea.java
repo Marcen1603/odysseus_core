@@ -82,15 +82,18 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 				this.means[m] = MatrixUtils.createColumnRealMatrix(new double[this.getDimension()]);
 				this.covarianceMatrices[m] = MatrixUtils.createRealIdentityMatrix(this.getDimension());
 			}
-		} else {
-			if (this.isEstimateable()) {
-				final double[][] data = this.doExpectation();
-				try {
-					this.doMaximisation(data);
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
-			}
+		} //else {
+			//if (this.isEstimateable()) {
+				for (int i = 0; i < 100; i++) {
+					final double[][] data = this.doExpectation();
+					try {
+
+						this.doMaximisation(data);
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+			//	}
+		//	}
 		}
 	}
 
