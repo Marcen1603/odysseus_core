@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -45,7 +46,7 @@ public class TApplicationTimestampRule extends
 
 		@SuppressWarnings("rawtypes")
 		IMetadataUpdater mUpdater;
-		if (timestampAO.getInputSchema().getType() == Tuple.class) {
+		if (Tuple.class.isAssignableFrom(timestampAO.getInputSchema().getType())) {
 			if (pos >= 0) {
 				int posEnd = timestampAO.hasEndTimestamp() ? timestampAO
 						.getInputSchema()
@@ -72,7 +73,7 @@ public class TApplicationTimestampRule extends
 						factor, clearEnd, timestampAO.getTimezone());
 			}
 		}else{
-			throw new TransformationException("Cannot set Time with "+timestampAO.getInputSchema().getType());
+		    throw new TransformationException("Cannot set Time with "+timestampAO.getInputSchema().getType());
 		}
 
 		@SuppressWarnings("unchecked")
