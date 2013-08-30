@@ -50,10 +50,10 @@ options {
 	import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 	import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateViewCommand;
-	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.CreateQueryCommand;
+	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
+	import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 	import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;	
-		
+	
 	import org.slf4j.Logger;
   import org.slf4j.LoggerFactory;
 }
