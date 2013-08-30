@@ -11,10 +11,8 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.HelperProvider;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.IPhysicalOperatorHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.SubscriptionHelper;
 import net.jxta.document.Advertisement;
@@ -39,9 +37,6 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 	private static final String MASTER_PEER_ID = "masterpeerid";
 	private static final String SUBSCRIPTIONS_TAG = "subscriptions";
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
-	
-	
-	private final Map<Class<? extends IPhysicalOperator>, IPhysicalOperatorHelper<IPhysicalOperator>> helpers = Maps.newHashMap();
 	
 	private ID id;
 	private PeerID masterPeerID;
@@ -91,7 +86,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 	 * @param subscriptionElement the list of subscription-statements
 	 */
 	private void handleSubscriptionsStatement(TextElement<?> subscriptionElement) {
-		// TODO Auto-generated method stub
+		SubscriptionHelper.reconnectOperators(this.opObjects, subscriptionElement);
 	}
 
 	/**
@@ -104,7 +99,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 		while(elements.hasMoreElements()) {
 			TextElement<? extends TextElement<?>> elem = elements.nextElement();
 			String operatorType = elem.getName();
-			IPhysicalOperatorHelper<?> helper = this.getPhysicalOperatorHelper(operatorType);
+			IPhysicalOperatorHelper<?> helper = HelperProvider.getInstance().getPhysicalOperatorHelper(operatorType);
 			if(helper != null) {
 				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((StructuredDocument<? extends TextElement<?>>)elem);
 				opObjects.put(e.getKey(),e.getValue());
@@ -173,37 +168,13 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 	private void generateOperatorsDocument(MimeMediaType asMimeType) {
 		StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType,getAdvertisementType());
 		for(IPhysicalOperator o : this.opObjects.values()) {
-			IPhysicalOperatorHelper<?> gen = getPhysicalOperatorHelper(o);
+			IPhysicalOperatorHelper<?> gen = HelperProvider.getInstance().getPhysicalOperatorHelper(o);
 			if(gen != null) {
 				// use the class of the operator as a tag, in order to get the right Helper on the other side to re-assemble it
 				appendElement(doc,gen.getOperatorClass().toString(),gen.generateStatement(o,asMimeType));
 			}
 		}
 		setOperators(doc);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void bindPhysicalOperatorStatementGenerator(IPhysicalOperatorHelper<?> helper) {
-		helpers.put(helper.getOperatorClass(), (IPhysicalOperatorHelper<IPhysicalOperator>) helper);
-	}
-	
-	public void unbindPhysicalOperatorStatementGenerator(IPhysicalOperatorHelper<?> helper) {
-		helpers.remove(helper.getOperatorClass());
-	}
-	
-	public IPhysicalOperatorHelper<IPhysicalOperator> getPhysicalOperatorHelper(IPhysicalOperator operator) {
-		Preconditions.checkNotNull(operator, "Operator mustn't be null");
-		
-		IPhysicalOperatorHelper<IPhysicalOperator> h = helpers.get(operator.getClass());
-		return h;
-	}
-	public IPhysicalOperatorHelper<IPhysicalOperator> getPhysicalOperatorHelper(String className) {
-		for(Class<?> c : helpers.keySet()) {
-			if(c.toString().equals(className)) {
-				return helpers.get(c);
-			}
-		}
-		return null;
 	}
 	
 	@Override
