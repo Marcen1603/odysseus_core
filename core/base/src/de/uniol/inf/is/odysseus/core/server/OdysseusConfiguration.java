@@ -97,6 +97,7 @@ public class OdysseusConfiguration {
 
 		props.setProperty("StoretypeUserMgmt", "Memorystore");
 		props.setProperty("StoretypeDataDict", "Memorystore");
+		props.setProperty("Filestore.StoreQueries","false");
 
 		// Store-Filename
 		props.setProperty("Tenant.DefaultName","");

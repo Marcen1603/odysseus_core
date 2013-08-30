@@ -42,6 +42,10 @@ public class DataDictionary extends AbstractDataDictionary {
 		return OdysseusConfiguration.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
 	}
 	
+	static private boolean saveQueries(){
+		return OdysseusConfiguration.getBoolean("Filestore.StoreQueries");
+	}
+	
 	public DataDictionary(){
 		super(null);
 	}
@@ -88,17 +92,17 @@ public class DataDictionary extends AbstractDataDictionary {
 
 	@Override
 	protected IStore<Integer, ILogicalQuery> createSavedQueriesStore() {
-		return createStore("queriesFilename", tenant);
+		return createStore("queriesFilename", tenant, useFilestore()& saveQueries());
 	}
 
 	@Override
 	protected IStore<Integer, IUser> createSavedQueriesForUserStore() {
-		return createStore("queriesUserFilename", tenant);
+		return createStore("queriesUserFilename", tenant, useFilestore()& saveQueries());
 	}
 
 	@Override
 	protected IStore<Integer, String> createSavedQueriesBuildParameterNameStore() {
-		return createStore("queriesBuildParamFilename", tenant);
+		return createStore("queriesBuildParamFilename", tenant, useFilestore()& saveQueries());
 	}
 
 	@Override
@@ -123,12 +127,17 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 	
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> createStore (String key, ITenant tenant){
-		if (useFilestore()){
+		return createStore(key, tenant, useFilestore());
+	}
+	
+	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> createStore (String key, ITenant tenant, boolean useFileStore){
+		if (useFileStore){
 			return tryCreateFileStore(key, tenant);
 		}else{
 			return newMemoryStore();
 		}
 	}
+	
 	
 	private static <T extends Comparable<?>,U> MemoryStore<T,U> newMemoryStore(){
 		return new MemoryStore<T, U>();
