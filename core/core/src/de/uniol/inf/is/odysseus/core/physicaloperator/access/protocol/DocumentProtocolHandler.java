@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -318,5 +319,21 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 				}
 			}
 		}
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("delay",Long.toString(this.delay));
+		options.put("nanodelay",Integer.toString(this.nanodelay));
+		options.put("delayEach",Integer.toString(this.delayeach));
+		options.put("dumpeachdocument",Long.toString(this.dumpEachDocument));
+		options.put("measureeachdocument",Long.toString(this.measureEachDocument));
+		options.put("lastdocument",Long.toString(this.lastDocument));
+		// setting lastdocument in addition to maxdocuments doesn't seem to have any impact,
+		// we only have to set one of them to the lastDocument-value
+		options.put("debug",Boolean.toString(this.debug));
+		options.put("onedocpercall",Boolean.toString(this.oneDocPerCall));
+		return options;
 	}
 }

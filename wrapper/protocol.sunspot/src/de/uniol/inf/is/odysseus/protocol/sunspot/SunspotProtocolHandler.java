@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -153,6 +154,12 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void process(String[] message) {
 		getTransfer().transfer(getDataHandler().readData(message));
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		// No options are used by this ProtocolHandler, return an empty map
+		return new HashMap<String,String>();
 	}
 
 }

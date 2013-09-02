@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -239,4 +240,14 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
             this.buffer.clear();
         }
     }
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("read", Integer.toString(this.readBufferSize));
+		options.put("write", Integer.toString(this.writeBufferSize));
+		options.put("host", this.host);
+		options.put("port", Integer.toString(this.port));
+		return options;
+	}
 }

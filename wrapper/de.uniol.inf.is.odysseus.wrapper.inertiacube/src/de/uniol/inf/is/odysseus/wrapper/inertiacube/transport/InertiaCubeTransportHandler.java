@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.wrapper.inertiacube.transport;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -161,5 +162,11 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 			res.position(res.limit());
 			fireProcess(res);
 		}
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		// No options are used by this TransportHandler, return an empty map
+		return new HashMap<String,String>();
 	};
 }

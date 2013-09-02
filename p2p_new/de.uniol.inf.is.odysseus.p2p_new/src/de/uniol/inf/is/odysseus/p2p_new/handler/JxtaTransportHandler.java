@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
@@ -183,5 +184,12 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 		advertisement.setType(PipeService.UnicastType);
 		LOG.info("Pipe Advertisement with id = {}", pipeID);
 		return advertisement;
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put(PIPEID_TAG, this.pipeID.toString());
+		return options;
 	}
 }

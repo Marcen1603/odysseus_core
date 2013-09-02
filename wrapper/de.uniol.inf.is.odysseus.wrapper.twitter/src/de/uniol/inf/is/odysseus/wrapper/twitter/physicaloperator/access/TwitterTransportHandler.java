@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -48,6 +49,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	private String accessTokenSecret;
 	private String[] searchKeys;
 	private double[][] locations;
+	
+	private Map<String, String> optionMap = new HashMap<String, String>();
 
 	public TwitterTransportHandler() {
 		super();
@@ -82,23 +85,31 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	}
 
 	private void init(final Map<String, String> options) {
+		// saving the options in a field is preferable to a complete rebuild of the locations-String for this Handler,
+		// so the settings are retrieved directly from the initial options-map
 		if (options.containsKey("consumerkey")) {
 			setConsumerKey(options.get("consumerkey"));
+			this.optionMap.put("consumerkey", options.get("consumerkey"));
 		}
 		if (options.containsKey("consumersecret")) {
 			setConsumerSecret(options.get("consumersecret"));
+			this.optionMap.put("consumersecret", options.get("consumersecret"));
 		}
 		if (options.containsKey("accesstoken")) {
 			setAccessToken(options.get("accesstoken"));
+			this.optionMap.put("accesstoken", options.get("accesstoken"));
 		}
 		if (options.containsKey("accesstokensecret")) {
 			setAccessTokenSecret(options.get("accesstokensecret"));
+			this.optionMap.put("accesstokensecret", options.get("accesstokensecret"));
 		}
 		if (options.containsKey("searchkeys")){
 			setSearchKeys(options.get("searchkeys"));
+			this.optionMap.put("searchkeys", options.get("searchkeys"));
 		}
 		if (options.containsKey("locations")){
 			setLocations(options.get("locations"));
+			this.optionMap.put("searchkeys", options.get("searchkeys"));
 		}
 	}
 
@@ -270,6 +281,11 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		 }
 		   
 		return matrix;    
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		return optionMap;
 	}
 
 }

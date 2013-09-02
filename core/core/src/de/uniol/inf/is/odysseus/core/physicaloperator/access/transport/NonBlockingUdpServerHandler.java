@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -220,5 +221,14 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 			final Exception ex) {
 		NonBlockingUdpServerHandler.LOG.error(ex.getMessage(), ex);
 
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("port", Integer.toString(this.port));
+		options.put("read", Integer.toString(this.readBufferSize));
+		options.put("write", Integer.toString(this.writeBufferSize));
+		return options;
 	}
 }

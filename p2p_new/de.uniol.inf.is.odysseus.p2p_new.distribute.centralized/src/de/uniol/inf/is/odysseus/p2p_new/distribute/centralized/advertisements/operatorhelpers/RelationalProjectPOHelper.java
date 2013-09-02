@@ -39,28 +39,11 @@ public class RelationalProjectPOHelper extends AbstractPhysicalOperatorHelper<Re
 		while(elements.hasMoreElements()) {
 			TextElement<?> elem = elements.nextElement();
 			if(elem.getName().equals(RESTRICTLIST_TAG)) {
-				restrictList = fromStringToArray(elem.getTextValue());
+				restrictList = Tools.fromStringToIntArray(elem.getTextValue());
 			}
 		}
 		RelationalProjectPO result = new RelationalProjectPO(restrictList);
 		
 		return new SimpleImmutableEntry<Integer, RelationalProjectPO>(operatorId,result);
 	}
-
-	// re-creates an int[]-array which was converted to a String via Arrays.toString()
-	private int[] fromStringToArray(String s) {
-		// remove the brackets
-		s= s.replace("[", "");
-		s= s.replace("]", "");
-		// split at the commas
-		String[] elements = s.split(", ");
-		int result[] = new int[elements.length];
-		// parse
-		for (int i = 0; i < result.length; i++) {
-			result[i] = Integer.parseInt(elements[i]);
-		}
-		return result;
-	}
-
-
 }

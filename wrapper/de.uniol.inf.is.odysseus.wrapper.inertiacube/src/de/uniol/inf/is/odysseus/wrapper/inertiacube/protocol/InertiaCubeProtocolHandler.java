@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.inertiacube.protocol;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -83,6 +84,12 @@ public class InertiaCubeProtocolHandler extends AbstractByteBufferHandler<Tuple<
 
 	@Override
 	public void process(String[] message) {
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		// No options are used by this ProtocolHandler, return an empty map
+		return new HashMap<String,String>();
 	}
 
 }

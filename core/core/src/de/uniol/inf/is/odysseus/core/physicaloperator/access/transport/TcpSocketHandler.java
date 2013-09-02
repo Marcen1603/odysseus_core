@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -100,5 +101,12 @@ public class TcpSocketHandler extends AbstractTransportHandler {
             socket.close();
         }
     }
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("port", Integer.toString(this.port));
+		options.put("host", this.hostname);
+		return options;
+	}
 	
 }

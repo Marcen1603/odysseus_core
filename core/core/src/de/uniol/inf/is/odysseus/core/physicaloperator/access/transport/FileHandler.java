@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -148,6 +149,15 @@ public class FileHandler extends AbstractFileHandler {
 	@Override
 	public String getName() {
 		return "File";
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("filename", this.filename);
+		options.put("append", Boolean.toString(this.append));
+		options.put("preload", Boolean.toString(this.preload));
+		return options;
 	}
 
 }

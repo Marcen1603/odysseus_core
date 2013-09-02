@@ -22,6 +22,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -208,6 +209,15 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 	@Override
 	public void socketException(final Exception ex) {
 		NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("read", Integer.toString(this.readBufferSize));
+		options.put("write", Integer.toString(this.writeBufferSize));
+		options.put("port", Integer.toString(this.port));
+		return options;
 	}
 
 }

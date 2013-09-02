@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -223,5 +224,12 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 		destArray[offset + 1] = (byte) (value >>> 16);
 		destArray[offset + 2] = (byte) (value >>> 8);
 		destArray[offset + 3] = (byte) (value);
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("byteorder",this.byteOrder.toString());
+		return result;
 	}
 }

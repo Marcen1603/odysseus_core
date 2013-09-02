@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
@@ -39,7 +40,6 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     private int          port;
     private String       user;
     private String       password;
-    @SuppressWarnings("unused")
     private boolean      autoconnect;
     @SuppressWarnings("unused")
 	private boolean      open;
@@ -152,5 +152,16 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("host", this.host);
+		options.put("port", Integer.toString(this.port));
+		options.put("autoconnect", Boolean.toString(this.autoconnect));
+		options.put("user", this.user);
+		options.put("password", this.password);
+		return options;
+	}
 
 }

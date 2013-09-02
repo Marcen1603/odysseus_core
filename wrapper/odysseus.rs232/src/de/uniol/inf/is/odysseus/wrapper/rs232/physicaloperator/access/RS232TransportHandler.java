@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TooManyListenersException;
 
@@ -231,5 +232,16 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 			this.output = null;
 		}
 
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("port", this.portName);
+		options.put("baud", Integer.toString(this.baud));
+		options.put("parity", Integer.toString(this.parity));
+		options.put("databits", Integer.toString(this.databits));
+		options.put("stopbits", Integer.toString(this.stopbits));
+		return options;
 	}
 }

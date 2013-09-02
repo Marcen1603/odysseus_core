@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -185,6 +186,15 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void process(String[] message) {
 		throw new RuntimeException("Not implemented yet");
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("charset", this.charset);
+		options.put("delimiter", this.objectDelimiter);
+		options.put("keepdelimiter", Boolean.toString(this.keepDelimiter));		
+		return options;
 	}
 
 

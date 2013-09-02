@@ -224,4 +224,13 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
     public ITransportExchangePattern getExchangePattern() {
         return ITransportExchangePattern.InOnly;
     }
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("color", Boolean.toString(this.recordColorMap));
+		options.put("depth", Boolean.toString(this.recordDepthMap));
+		options.put("skeleton", Boolean.toString(this.recordSkeletonMap));
+		return options;
+	}
 }

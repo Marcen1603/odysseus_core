@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -390,4 +391,17 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
             }
         }
     }
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("port", Integer.toString(this.port));
+		options.put("password", this.getPassword());
+		options.put("username", this.getUsername());
+		options.put("agent", this.getAgent());
+		options.put("service", this.getService());
+		options.put("host", this.getHost());
+		options.put("listen", this.getListen());
+		return options;
+	}
 }

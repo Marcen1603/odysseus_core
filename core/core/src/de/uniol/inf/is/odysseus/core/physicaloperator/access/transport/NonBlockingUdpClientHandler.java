@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -211,6 +212,16 @@ public class NonBlockingUdpClientHandler extends AbstractTransportHandler
 	public void connectionFailed(final ConnectorSelectorHandler connector,
 			final Exception cause) {
 		NonBlockingUdpClientHandler.LOG.error(cause.getMessage(), cause);
+	}
+
+	@Override
+	public Map<String, String> getOptions() {		
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("host", this.host);
+		options.put("read", Integer.toString(this.readBufferSize));
+		options.put("write", Integer.toString(this.writeBufferSize));
+		options.put("port", Integer.toString(this.port));
+		return options;
 	}
 
 }

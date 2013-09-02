@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -42,11 +43,11 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
         this.access = access;
     }
 
-    final protected ITransportHandler getTransportHandler() {
+    final public ITransportHandler getTransportHandler() {
         return transportHandler;
     }
 
-    final protected IDataHandler<T> getDataHandler() {
+    final public IDataHandler<T> getDataHandler() {
         return dataHandler;
     }
 
@@ -107,4 +108,11 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     public void writePunctuation(IPunctuation punctuation) throws IOException {
     	// do noting
     }
+    
+    /**
+     * This method is supposed to retrieve the options for an instance, which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, Map, IDataHandler, ITransferHandler)}
+     * based on the current configuration. This is useful for comparing and serialising different ProtocolHandler-instances.
+     * @return
+     */
+    public abstract Map<String, String> getOptions();
 }

@@ -28,7 +28,7 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 	public StructuredDocument<?> generateStatement(IPhysicalOperator o,
 			MimeMediaType mimeType) {
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
-		// We need some way of distinguishing the operators, just for the purposed of reconnecting them later. The hashcode will do.
+		// We need some way of distinguishing the operators, just for the purpose of reconnecting them later. The hashcode will do.
 		result.appendChild(result.createElement(OPERATOR_ID_TAG, o.hashCode()));
 		// The schema of the operator has to be determined
 		if(o.getOutputSchema() != null) {

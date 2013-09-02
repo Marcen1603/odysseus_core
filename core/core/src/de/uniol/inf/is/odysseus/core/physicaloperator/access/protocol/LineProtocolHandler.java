@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -318,5 +319,22 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public boolean isDone() {
 		return isDone;
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> result = new HashMap<String, String>();
+		result.put("debug", Boolean.toString(this.debug));
+		result.put("lastlines", Long.toString(this.lastLine));
+		// setting lastlines in addition to maxlines doesn't seem to have any impact,
+		// we only have to set one of them to the lastLine-value
+		result.put("measureeachline", Long.toString(this.measureEachLine));
+		result.put("dumpeachline", Long.toString(this.dumpEachLine));
+		result.put("readfirstline", Boolean.toString(this.readFirstLine));
+		result.put("delayeach", Integer.toString(this.delayeach));
+		result.put("nanodelay", Integer.toString(this.nanodelay));
+		result.put("delay", Long.toString(this.delay));
+		
+		return result;
 	}
 }

@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
@@ -146,5 +147,12 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	public boolean isDone() {
 		return false;
 	}
+	
+    /**
+     * This method is supposed to retrieve the options for an instance, which were used during the call of {@link ITransportHandler#createInstance(IProtocolHandler, Map))}
+     * based on the current configuration. This is useful for comparing and serialising different TransportHandler-instances.
+     * @return
+     */
+	abstract public Map<String, String> getOptions();
 
 }

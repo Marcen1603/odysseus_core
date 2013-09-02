@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -222,6 +223,23 @@ public class SystemTransportHandler extends AbstractPullTransportHandler {
 				process.destroy();
 			}
 		}
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("command", this.command);
+		// since env is at least set to "", there has to be at least 1 entry.
+		if(this.env.length == 1) {
+			options.put("env", this.getEnv()[0]);
+		} else {
+			String envString = "";
+			for(int i = 0; i < this.env.length; i++) {
+				envString = (i == 0) ? this.env[i] : "," + this.env[i];
+			}
+			options.put("env", envString);
+		}
+		return options;
 	}
 
 }

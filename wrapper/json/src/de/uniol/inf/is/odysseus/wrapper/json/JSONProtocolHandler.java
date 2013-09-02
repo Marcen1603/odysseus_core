@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -1185,5 +1186,11 @@ public class JSONProtocolHandler extends
 	@Override
 	public void process(String[] message) {
 		throw new RuntimeException("Not implemented yet");
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		// No options are used by this ProtocolHandler, return an empty map
+		return new HashMap<String,String>();
 	}
 }

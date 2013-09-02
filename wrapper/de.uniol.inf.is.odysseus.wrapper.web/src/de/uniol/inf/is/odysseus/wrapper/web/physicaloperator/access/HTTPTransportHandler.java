@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
@@ -410,4 +411,15 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
             this.client.getConnectionManager().shutdown();
         }
     }
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		if(this.uri != null) {
+			options.put("uri", this.uri);
+		}
+		options.put("method",this.getMethod().name());
+		options.put("body", this.getBody());
+		return options;
+	}
 }

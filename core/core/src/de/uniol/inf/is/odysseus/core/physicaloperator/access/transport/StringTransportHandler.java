@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,6 +92,12 @@ public class StringTransportHandler extends AbstractTransportHandler {
 	public static StringTransportHandler getInstance(List<String> output,  Map<String,String> options ) {
 		return new StringTransportHandler(output, options);
 		
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		// No options are used by this TransportHandler, return an empty map
+		return new HashMap<String,String>();
 	}
 
 }

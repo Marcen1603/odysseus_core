@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -172,5 +173,14 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		destArray[offset + 1] = (byte) (value >>> 16);
 		destArray[offset + 2] = (byte) (value >>> 18);
 		destArray[offset + 3] = (byte) (value);
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("start", Byte.toString(this.start));
+		options.put("end", Byte.toString(this.end));
+		options.put("byteorder", this.byteOrder.toString());
+		return options;
 	}
 }

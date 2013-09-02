@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -130,5 +131,12 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		// TODO Auto-generated method stub
 	}
 
-
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("accesstoken", this.accessToken);
+		options.put("page", this.page);
+		options.put("limit", Integer.toString(this.limit));
+		return options;
+	}
 }

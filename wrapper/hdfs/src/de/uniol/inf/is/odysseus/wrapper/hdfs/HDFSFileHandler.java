@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.hdfs;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -73,5 +74,12 @@ public class HDFSFileHandler extends AbstractFileHandler {
 		
 	}
 
-
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("fs.default.name", this.dfs.getConf().get("fs.default.name"));
+		options.put("filename", this.filename);
+		options.put("append", Boolean.toString(this.append));
+		return options;
+	}
 }

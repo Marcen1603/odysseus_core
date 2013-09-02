@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.urg.transport;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -91,4 +92,11 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
 			fireProcess(buffer);
 		}
 	};
+
+	@Override
+	public Map<String, String> getOptions() {
+		Map<String, String> options = new HashMap<String,String>();
+		options.put("port", this.comPort);
+		return options;
+	}
 }
