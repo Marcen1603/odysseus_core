@@ -131,6 +131,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			FixedSetAccessAO newPO = new FixedSetAccessAO(name, "FixedSetAccessAO", node.getTuples(attributes));
 			SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attributes);
 			newPO.setOutputSchema(outputSchema);
+			newPO.setName(name);
 			cmd = new CreateStreamCommand(name, newPO, caller);
 			commands.add(cmd);
 		} catch (Exception e) {
@@ -146,7 +147,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		parser.setDataDictionary(dd);
 		operator = ((List<ILogicalQuery>) parser.visit(node, null)).get(0).getLogicalPlan();
 		SDFSchema otherAttributes = operator.getOutputSchema();
-
+		
 		if (otherAttributes.size() != this.attributes.size()) {
 			throw new QueryParseException("Query output does not match specified schema for: " + name);
 		}
@@ -317,6 +318,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
+		source.setName(name);
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
