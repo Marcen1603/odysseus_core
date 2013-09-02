@@ -111,6 +111,9 @@ abstract public class AbstractUserManagement<USER extends IUser, ROLE extends IR
 	public IUser createUser(final String name, final ISession caller) {
 		if (this.hasPermission(caller, UserManagementPermission.CREATE_USER,
 				UserManagementPermission.objectUri)) {
+			if (name.contains(".")){
+				throw new UsernameNotAllowedException("Username is not allowed to contain '.'");
+			}
 			if (getUserDAO(caller.getTenant()).findByName(name) == null) {
 				final USER user = createEmptyUser();
 				user.setName(name);
