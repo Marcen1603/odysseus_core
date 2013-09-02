@@ -94,6 +94,9 @@ public class OdysseusApplication implements IApplication {
 			
 			URL url = new URL("file", null, path); 
 			ChooseWorkspaceData data = new ChooseWorkspaceData(url);
+			
+			// TODO: use setRecentWorkspaces() to load recent workspaces from odysseus config file
+			
 
 			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
 			dialog.prompt(false);
