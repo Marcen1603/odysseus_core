@@ -7,23 +7,26 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.Abst
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand{
+public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand {
 
 	private String name;
 	private boolean ifExits;
-	
+
 	public AbstractDropStreamOrViewCommand(String name, boolean ifExits,
 			ISession caller) {
 		super(caller);
 		this.name = name;
 		this.ifExits = ifExits;
 	}
-	
+
 	@Override
-	public Collection<Integer> execute(IDataDictionaryWritable dd, IUserManagementWritable um) {
-		if (ifExits){
-			dropViewOrStream(dd);
-		}else{
+	public Collection<Integer> execute(IDataDictionaryWritable dd,
+			IUserManagementWritable um) {
+		if (ifExits) {
+			if (dd.containsViewOrStream(name, getCaller())) {
+				dropViewOrStream(dd);
+			}
+		} else {
 			dropViewOrStream(dd);
 		}
 		return null;
@@ -33,8 +36,4 @@ public class AbstractDropStreamOrViewCommand extends AbstractExecutorCommand{
 		dd.removeViewOrStream(name, getCaller());
 	}
 
-	
-	
-
-	
 }

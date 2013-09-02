@@ -45,6 +45,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -97,7 +98,7 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 			public void run() {
 				try {
 					if (!getTreeViewer().getTree().isDisposed()) {
-						Set<Entry<String, ILogicalOperator>> sinks = OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession());
+						Set<Entry<Resource, ILogicalOperator>> sinks = OdysseusRCPPlugIn.getExecutor().getSinks(OdysseusRCPPlugIn.getActiveSession());
 						getTreeViewer().setInput(sinks);
 						
 						if( !sinks.isEmpty() ) {

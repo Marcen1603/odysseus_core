@@ -454,7 +454,7 @@ public class DistributionHelper {
 		for(ILogicalOperator operator : operators) {
 		
 			if(operator instanceof StreamAO)
-				sourceNames.add(((StreamAO) operator).getStreamname());
+				sourceNames.add(((StreamAO) operator).getStreamname().toString());
 			else if(operator instanceof AccessAO)
 				sourceNames.add(((AccessAO) operator).getName());
 			
@@ -469,8 +469,9 @@ public class DistributionHelper {
 	 */	
 	public static Optional<String> getSourceName(ILogicalOperator operator) {
 		
+		// FIXME: Use Resource instead of String!
 		if(operator instanceof StreamAO)
-			return Optional.of(((StreamAO) operator).getStreamname());
+			return Optional.of(((StreamAO) operator).getStreamname().toString());
 		else if(operator instanceof AccessAO)
 			return Optional.of(((AccessAO) operator).getName());
 		else {

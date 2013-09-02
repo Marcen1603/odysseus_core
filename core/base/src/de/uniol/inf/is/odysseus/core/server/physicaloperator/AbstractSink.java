@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -62,7 +63,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	private Map<String, String> infos = new TreeMap<>();
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
 
-	private Map<IOperatorOwner, String> uniqueIds = new TreeMap<>();
+	private Map<IOperatorOwner, Resource> uniqueIds = new TreeMap<>();
 
 	private boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
@@ -507,7 +508,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void addUniqueId(IOperatorOwner owner, String id) {
+	public void addUniqueId(IOperatorOwner owner, Resource id) {
 		if (this.uniqueIds.containsKey(owner)) {
 			throw new IllegalArgumentException("Id already set exception!");
 		}
@@ -520,7 +521,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public Map<IOperatorOwner, String> getUniqueIds() {
+	public Map<IOperatorOwner, Resource> getUniqueIds() {
 		return uniqueIds;
 	}
 

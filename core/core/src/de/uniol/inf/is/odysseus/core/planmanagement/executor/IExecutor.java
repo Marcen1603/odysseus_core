@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
@@ -209,9 +210,11 @@ public interface IExecutor extends IClientPlanManager{
 	
 	// Facade for DataDictionary
 	public ILogicalOperator removeSink(String name, ISession caller);
+	public ILogicalOperator removeSink(Resource name, ISession caller);
 	public void removeViewOrStream(String name, ISession caller);
-	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller);
-	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
+	public void removeViewOrStream(Resource name, ISession caller);
+	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
+	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
 
 	void reloadStoredQueries(ISession caller);
 	

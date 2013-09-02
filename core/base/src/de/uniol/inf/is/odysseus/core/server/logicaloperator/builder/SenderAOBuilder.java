@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.HashMap;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -118,7 +119,7 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 		if (this.getDataDictionary().containsSink(sinkName, getCaller())) {
 			return this.getDataDictionary().getSinkInput(sinkName, getCaller());
 		}
-		final ILogicalOperator ao = this.createNewSenderAO(sinkName);
+		final ILogicalOperator ao = this.createNewSenderAO(new Resource(getCaller().getUser(), sinkName));
 
 		// Moved to Transformation Rule
 //		// TODO: Was genau bedeutet das?
@@ -132,7 +133,7 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 	/**
 	 * @return A new instance of {@link SenderAO} with the defined parameter
 	 */
-	private ILogicalOperator createNewSenderAO(final String sinkName) {
+	private ILogicalOperator createNewSenderAO(final Resource sinkName) {
 		final HashMap<String, String> optionsMap = new HashMap<String, String>();
 		if (this.options.hasValue()) {
 			for (final Option option : this.options.getValue()) {
@@ -157,7 +158,7 @@ public class SenderAOBuilder extends AbstractOperatorBuilder {
 			if (type == null){
 				type = Tuple.class;
 			}
-			ao.setOutputSchema(new SDFSchema(sinkName, type, this.schema.getValue()));
+			ao.setOutputSchema(new SDFSchema(sinkName.toString(), type, this.schema.getValue()));
 		}		
 		return ao;
 	}

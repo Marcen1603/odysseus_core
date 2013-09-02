@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
@@ -69,7 +70,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 	}
 
 	protected void handleOperatorID(ILogicalOperator logical, IPhysicalOperator physical) {
-		String id = logical.getUniqueIdentifier() == null ? null : getDataDictionary().createUserUri(logical.getUniqueIdentifier(), getCaller());
+		Resource id = logical.getUniqueIdentifier() == null ? null : new Resource(getCaller().getUser(),logical.getUniqueIdentifier());
 
 		if (id != null) {
 			if (getDataDictionary().containsOperator(id)) {

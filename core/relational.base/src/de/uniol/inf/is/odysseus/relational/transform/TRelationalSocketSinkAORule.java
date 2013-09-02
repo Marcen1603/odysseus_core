@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.relational.transform;
 
 import java.util.Collection;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
@@ -47,8 +48,8 @@ public class TRelationalSocketSinkAORule extends
 			TransformationConfiguration config) {
 
 		// Is this sink already translated?
-		ISink<?> socketSinkPO = getDataDictionary().getSinkplan(operator
-				.getSinkName());
+		ISink<?> socketSinkPO = getDataDictionary().getSinkplan(new Resource(getCaller().getUser(), operator
+				.getSinkName()));
 
 		if (socketSinkPO == null) {
 
@@ -60,7 +61,7 @@ public class TRelationalSocketSinkAORule extends
 					objectHandler, operator.getConnectToServer());
 
 			socketSinkPO.setOutputSchema(operator.getOutputSchema());
-			getDataDictionary().putSinkplan(operator.getName(), socketSinkPO);
+			getDataDictionary().putSinkplan(new Resource(getCaller().getUser(), operator.getSinkName()), socketSinkPO);
 		}
 		Collection<ILogicalOperator> toUpdate = config
 				.getTransformationHelper().replace(operator, socketSinkPO,true);

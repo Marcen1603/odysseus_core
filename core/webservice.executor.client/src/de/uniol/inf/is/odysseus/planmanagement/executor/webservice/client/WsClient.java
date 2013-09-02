@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.connection.NioConnectionHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -480,21 +481,32 @@ public class WsClient implements IExecutor, IClientExecutor {
 		// TODO not implemented by server yet
 		return null;
 	}
+	
+	@Override
+	public ILogicalOperator removeSink(Resource name, ISession caller) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void removeViewOrStream(String name, ISession caller) {
 		// TODO not implemented by server yet
-
+	}
+	
+	@Override
+	public void removeViewOrStream(Resource name, ISession caller) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller) {
+	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller) {
 		// TODO not implemented by server yet
 		return null;
 	}
 
 	@Override
-	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
+	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
 		// TODO not implemented by server yet
 		return null;
 	}

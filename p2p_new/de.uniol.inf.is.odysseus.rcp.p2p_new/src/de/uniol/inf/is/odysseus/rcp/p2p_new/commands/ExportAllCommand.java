@@ -10,6 +10,7 @@ import org.eclipse.core.commands.IHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -23,10 +24,12 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
 		int okCount = 0;
-		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
-			String sourceName = streamOrView.getKey();
+		for( Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews ) {
+			// FIXME: Use Resources
+			//Resource sourceName = streamOrView.getKey();
+			String sourceName = streamOrView.getKey().toString();
 			
 			// TODO: Transcfg wählen lassen
 			try {

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AppendToPhysicalAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -19,11 +20,11 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 	public void execute(AppendToPhysicalAO operator,
 			TransformationConfiguration config) {
 		String appendTo = operator.getAppendTo();
-		// FIXME: Potential security risk! We can add our source to
-		// other queries --> Need a concept!!
-		IPhysicalOperator po = getDataDictionary().getOperator(appendTo);
+		// To avoid potential security risk! We can add our source 
+		// only to own operators!
+		IPhysicalOperator po = getDataDictionary().getOperator(new Resource(getCaller().getUser(), appendTo), getCaller());
 		if (po == null){
-			po = getDataDictionary().getOperator(getDataDictionary().createUserUri(appendTo, getCaller()));
+			po = getDataDictionary().getOperator(getDataDictionary().createUserUri(appendTo, getCaller()), getCaller());
 		}
 		
 		if (po == null){

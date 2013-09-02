@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SocketSinkAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
@@ -39,8 +40,8 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 		try {
 
 			// Is this sink already translated?
-			ISink<?> socketSinkPO = getDataDictionary().getSinkplan(operator
-					.getSinkName());
+			ISink<?> socketSinkPO = getDataDictionary().getSinkplan(new Resource(getCaller().getUser(), operator
+					.getSinkName()));
 
 			if (socketSinkPO == null) {
 				
@@ -55,7 +56,8 @@ public class TSocketSinkAORule extends AbstractTransformationRule<SocketSinkAO> 
 						operator.isLoginNeeded(), null, operator.getConnectToServer());
 
 				socketSinkPO.setOutputSchema(operator.getOutputSchema());
-				getDataDictionary().putSinkplan(operator.getName(), socketSinkPO);
+				getDataDictionary().putSinkplan(new Resource(getCaller().getUser(), operator
+						.getSinkName()), socketSinkPO);
 			}
 			defaultExecute(operator, socketSinkPO, config, true, true);
 		} catch (Exception e) {

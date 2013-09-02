@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public interface IDataDictionary {
 
-	String createUserUri(String resource, ISession caller);
+	Resource createUserUri(String resource, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// View and Stream Management
@@ -42,16 +43,19 @@ public interface IDataDictionary {
 
 	ILogicalOperator getViewOrStream(String viewname, ISession caller)
 			throws DataDictionaryException;
+	
+	Resource getViewOrStreamName(String sourceName, ISession caller);
 
 	boolean containsViewOrStream(String viewName, ISession user);
-
-	Set<Entry<String, ILogicalOperator>> getStreamsAndViews(ISession caller);
+	boolean containsViewOrStream(Resource viewName, ISession user);
+	
+	Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
 
 	// -------------------------------------------------------------------------
 	// View Management
 	// -------------------------------------------------------------------------
 
-	Set<Entry<String, ILogicalOperator>> getViews(ISession caller);
+	Set<Entry<Resource, ILogicalOperator>> getViews(ISession caller);
 
 	ILogicalOperator getView(String viewname, ISession caller);
 
@@ -59,18 +63,22 @@ public interface IDataDictionary {
 	// Stream Management
 	// -------------------------------------------------------------------------
 
-	Set<Entry<String, ILogicalOperator>> getStreams(ISession caller);
-
-	ILogicalOperator getStreamForTransformation(String name, ISession caller);
+	Set<Entry<Resource, ILogicalOperator>> getStreams(ISession caller);
 
 	StreamAO getStream(String viewname, ISession caller)
 			throws DataDictionaryException;
+
+	ILogicalOperator getStreamForTransformation(Resource name, ISession caller);
+
+	ILogicalOperator getStreamForTransformation(String streamName,
+			ISession caller);
+
 
 	// -------------------------------------------------------------------------
 	// Sink Management
 	// -------------------------------------------------------------------------
 
-	Set<Entry<String, ILogicalOperator>> getSinks(ISession caller);
+	Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
 
 	ILogicalOperator getSinkTop(String sinkname, ISession caller)
 			throws DataDictionaryException;
@@ -78,9 +86,12 @@ public interface IDataDictionary {
 	ILogicalOperator getSinkInput(String sinkname, ISession caller)
 			throws DataDictionaryException;
 
+	ILogicalOperator getSinkForTransformation(Resource name, ISession caller);
 	ILogicalOperator getSinkForTransformation(String name, ISession caller);
 
-	boolean containsSink(String sinkname, ISession caller);
+	boolean containsSink(Resource sinkname, ISession caller);
+		boolean containsSink(String sinkname, ISession caller);
+
 
 	// -------------------------------------------------------------------------
 	// Datatype Management
@@ -101,12 +112,9 @@ public interface IDataDictionary {
 
 	List<ILogicalQuery> getQueries(IUser user, ISession caller);
 
-
 	// -------------------------------------------------------------------------
 	// Rights Management
 	// -------------------------------------------------------------------------
-
-	IUser getCreator(String resource);
 
 	/**
 	 * checks if the given user has higher permission as the given action. Calls
@@ -125,18 +133,20 @@ public interface IDataDictionary {
 	// Operatormanagement
 	// ----------------------------------------------------------
 
-	boolean containsOperator(String id);
+	boolean containsOperator(Resource id);
 
-	IPhysicalOperator getOperator(String id);
+	IPhysicalOperator getOperator(Resource id, ISession caller);
 
 	// ------------------------------------------
 	// Physical sinks and sources (from WrapperPlanFactory)
 	// ------------------------------------------
-	ISource<?> getAccessPlan(String uri);
+	//ISource<?> getAccessPlan(String uri);
 
-	Map<String, ISource<?>> getSources();
+	ISource<?> getAccessPlan(Resource streamname);
 
-	ISink<?> getSinkplan(String sinkName);
+	Map<Resource, ISource<?>> getSources();
+
+	ISink<?> getSinkplan(Resource sinkName);
 
 	// ----------------------------------------------------------
 	// DD Listener
@@ -149,7 +159,7 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 	// Stored Procedure Management
 	// -------------------------------------------------------------------------
-	
+
 	boolean containsStoredProcedure(String name, ISession user);
 
 	StoredProcedure getStoredProcedure(String name, ISession user);
@@ -157,8 +167,11 @@ public interface IDataDictionary {
 	List<StoredProcedure> getStoredProcedures(ISession caller);
 
 	// -------------------------------------------------------------------------
-	// Init 
+	// Init
 	// -------------------------------------------------------------------------
-	
+
 	IDataDictionary createInstance(ITenant t);
+
+
+
 }

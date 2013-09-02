@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.ws.Endpoint;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
@@ -189,9 +190,9 @@ public class WebserviceServer {
 			throws InvalidUserDataException {
 		StringListResponse response = new StringListResponse(true);
 		ISession user = loginWithSecurityToken(securityToken);
-		for (Entry<String, ILogicalOperator> e : getExecutor()
+		for (Entry<Resource, ILogicalOperator> e : getExecutor()
 				.getStreamsAndViews(user)) {
-			response.addResponseValue(e.getKey());
+			response.addResponseValue(e.getKey().toString());
 		}
 		return response;
 
@@ -600,10 +601,10 @@ public class WebserviceServer {
 			@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<Entry<String, ILogicalOperator>> sources = ExecutorServiceBinding
+		Set<Entry<Resource, ILogicalOperator>> sources = ExecutorServiceBinding
 				.getExecutor().getDataDictionary(user.getTenant()).getStreamsAndViews(user);
 		List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
-		for (Entry<String, ILogicalOperator> source : sources) {
+		for (Entry<Resource, ILogicalOperator> source : sources) {
 			SDFSchema schema = source.getValue().getOutputSchema();
 			Collection<SDFAttribute> attributes = schema.getAttributes();
 			Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
@@ -615,7 +616,8 @@ public class WebserviceServer {
 			}
 			SDFSchemaInformation schemaInfo = new SDFSchemaInformation(
 					schema.getURI(), attributeInfos);
-			sourceInfos.add(new SourceInformation(schemaInfo, source.getKey(),
+			// FIXME: Use Resource
+			sourceInfos.add(new SourceInformation(schemaInfo, source.getKey().toString(),
 					source.getValue().getOwnerIDs()));
 		}
 		return new SourceListResponse(sourceInfos, true);

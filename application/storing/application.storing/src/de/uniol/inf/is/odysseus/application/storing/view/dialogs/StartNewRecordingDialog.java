@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.application.storing.controller.RecordingController;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -130,8 +131,8 @@ public class StartNewRecordingDialog extends TitleAreaDialog {
 		label2.setText("From stream:");
 
 		comboDropDownStreams = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		for (Entry<String, ILogicalOperator> e : this.executor.getStreamsAndViews(user)) {
-			comboDropDownStreams.add(e.getKey());
+		for (Entry<Resource, ILogicalOperator> e : this.executor.getStreamsAndViews(user)) {
+			comboDropDownStreams.add(e.getKey().toString());
 		}
 
 		Label label3 = new Label(parent, SWT.NONE);

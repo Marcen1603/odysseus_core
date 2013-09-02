@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.REQUIREMENT;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter.USAGE;
@@ -147,6 +148,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		AccessAO ao = new AccessAO(wrapperName, optionsMap);
 		ao.setName(sourcename);
+		ao.setAccessAOName(new Resource(getCaller().getUser(), sourcename));
 
 		String dhandlerText =  dataHandler.hasValue()? dataHandler.getValue():null;
 		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dhandlerText);

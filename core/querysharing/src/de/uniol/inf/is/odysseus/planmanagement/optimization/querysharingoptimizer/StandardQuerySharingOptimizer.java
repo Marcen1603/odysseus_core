@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -267,9 +268,9 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Update the data dictionary
 		List<IOperatorOwner> toRemove = new ArrayList<>();
-		for (Entry<IOperatorOwner, String> id : toReplace.getUniqueIds()
+		for (Entry<IOperatorOwner, Resource> id : toReplace.getUniqueIds()
 				.entrySet()) {
-			dd.getOperator(id.getValue());
+			//dd.getOperator(id.getValue());
 			dd.removeOperator(id.getValue());
 			toRemove.add(id.getKey());
 			replacement.addUniqueId(id.getKey(), id.getValue());

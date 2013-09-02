@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
@@ -69,7 +70,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	protected AtomicBoolean open = new AtomicBoolean(false);
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
-	private Map<IOperatorOwner, String> uniqueIds = new TreeMap<>();
+	private Map<IOperatorOwner, Resource> uniqueIds = new TreeMap<>();
 
 	final private OwnerHandler ownerHandler;
 
@@ -787,7 +788,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void addUniqueId(IOperatorOwner owner, String id) {
+	public void addUniqueId(IOperatorOwner owner, Resource id) {
 		if (this.uniqueIds.containsKey(owner)) {
 			throw new IllegalArgumentException("Id already set exception!");
 		}
@@ -800,7 +801,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	@Override
-	public Map<IOperatorOwner, String> getUniqueIds() {
+	public Map<IOperatorOwner, Resource> getUniqueIds() {
 		return uniqueIds;
 	}
 

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
@@ -61,27 +62,27 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 	
 	@Override
-	protected IStore<String, ILogicalOperator> createStreamDefinitionsStore() {
+	protected IStore<Resource, ILogicalOperator> createStreamDefinitionsStore() {
 		return createStore("streamDefinitionsFilename", tenant);
 	}
 
 	@Override
-	protected IStore<String, IUser> createViewOrStreamFromUserStore() {
+	protected IStore<Resource, IUser> createViewOrStreamFromUserStore() {
 		return createStore("streamOrViewFromUserFilename", tenant);
 	}
 
 	@Override
-	protected IStore<String, ILogicalOperator> createViewDefinitionsStore() {
+	protected IStore<Resource, ILogicalOperator> createViewDefinitionsStore() {
 		return createStore("viewDefinitionsFilename", tenant);
 	}
 
 	@Override
-	protected IStore<String, HashMap<String, ArrayList<String>>> createEntityUsedByStore() {
+	protected IStore<Resource, HashMap<String, ArrayList<Resource>>> createEntityUsedByStore() {
 		return createStore("entityUsedByFileName", tenant);
 	}
 
 	@Override
-	protected IStore<String, IUser> createEntityFromUserStore() {
+	protected IStore<Resource, IUser> createEntityFromUserStore() {
 		return createStore("entityFromUserFilename", tenant);
 	}
 
@@ -106,23 +107,23 @@ public class DataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<String, ILogicalOperator> createSinkDefinitionsStore() {
+	protected IStore<Resource, ILogicalOperator> createSinkDefinitionsStore() {
 		return createStore("sinkDefinitionsFilename", tenant);
 	}
 
 	@Override
-	protected IStore<String, IUser> createSinkFromUserStore() {
+	protected IStore<Resource, IUser> createSinkFromUserStore() {
 		return createStore("sinkDefinitionsUserFilename", tenant);
 	}
 
 
 	@Override
-	protected IStore<String, StoredProcedure> createStoredProceduresStore() {
+	protected IStore<Resource, StoredProcedure> createStoredProceduresStore() {
 		return createStore("storedProceduresFilename", tenant);
 	}
 
 	@Override
-	protected IStore<String, IUser> createStoredProceduresFromUserStore() {
+	protected IStore<Resource, IUser> createStoredProceduresFromUserStore() {
 		return createStore("storedProceduresFromUserFilename", tenant);
 	}
 	

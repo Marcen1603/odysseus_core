@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -70,7 +71,7 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 
 	@Override
 	public boolean isExecutable(StreamAO operator, TransformationConfiguration transformConfig) {
-		String name = operator.getStreamname();
+		Resource name = operator.getStreamname();
 		return getDataDictionary().containsViewOrStream(name, getCaller());			
 	}
 

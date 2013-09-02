@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
@@ -999,20 +1000,30 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	public ILogicalOperator removeSink(String name, ISession caller) {
 		return getDataDictionary(caller.getTenant()).removeSink(name, caller);
 	}
+	
+	@Override
+	public ILogicalOperator removeSink(Resource name, ISession caller) {
+		return getDataDictionary(caller.getTenant()).removeSink(name, caller);
+	}
 
 	@Override
 	public void removeViewOrStream(String name, ISession caller) {
 		getDataDictionary(caller.getTenant()).removeViewOrStream(name, caller);
 	}
+	
+	@Override
+	public void removeViewOrStream(Resource name, ISession caller) {
+		getDataDictionary(caller.getTenant()).removeViewOrStream(name, caller);		
+	}
 
 	@Override
-	public Set<Entry<String, ILogicalOperator>> getStreamsAndViews(
+	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(
 			ISession caller) {
 		return getDataDictionary(caller.getTenant()).getStreamsAndViews(caller);
 	}
 
 	@Override
-	public Set<Entry<String, ILogicalOperator>> getSinks(ISession caller) {
+	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
 		return getDataDictionary(caller.getTenant()).getSinks(caller);
 	}
 }

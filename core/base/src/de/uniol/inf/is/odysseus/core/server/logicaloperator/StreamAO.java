@@ -1,18 +1,19 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 public class StreamAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;
-	private String streamname;
+	private Resource streamname;
 
 	public StreamAO(){
 		// we need this
 	}
 	
-	public StreamAO(String name){
+	public StreamAO(Resource name){
 		super();
 		this.streamname = name;
 	}
@@ -28,15 +29,19 @@ public class StreamAO extends AbstractLogicalOperator {
 	}
 
 	
-	public String getStreamname() {
+	public Resource getStreamname() {
 		return streamname;
 	}
 
 	@Parameter(name="source", type=StringParameter.class)
 	public void setStreamname(String streamname) {
-		this.streamname = streamname;
+		this.streamname = new Resource(streamname);
 	}
 
+	@Override
+	public String toString() {
+		return "StreamAO@"+hashCode()+" "+streamname;
+	}
 	
 
 }

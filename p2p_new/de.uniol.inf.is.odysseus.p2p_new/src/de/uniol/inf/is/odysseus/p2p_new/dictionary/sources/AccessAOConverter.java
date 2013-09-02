@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -143,7 +144,8 @@ public final class AccessAOConverter {
 
 		} else if (elem.getName().equals(SOURCE_TAG)) {
 			accessAO.setName(elem.getTextValue());
-
+			// TODO: Test, if tag always contains username.sourcename
+			accessAO.setAccessAOName(new Resource(elem.getTextValue()));
 		} else if (elem.getName().equals(LOGIN_TAG)) {
 			accessAO.setLogin(elem.getTextValue());
 

@@ -33,6 +33,7 @@ package de.uniol.inf.is.odysseus.script.keyword;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -58,7 +59,7 @@ public class DropAllSinksPreParserKeyword extends AbstractPreParserExecutorKeywo
 		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
-		for(Entry<String, ILogicalOperator> s : executor.getSinks(caller)){		
+		for(Entry<Resource, ILogicalOperator> s : executor.getSinks(caller)){		
 			executor.removeSink(s.getKey(), caller);
 		}	
 		return null;

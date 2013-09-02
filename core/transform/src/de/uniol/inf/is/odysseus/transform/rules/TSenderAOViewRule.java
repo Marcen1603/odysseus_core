@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -38,7 +39,7 @@ public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
 
 	@Override
 	public void execute(SenderAO senderAO, TransformationConfiguration transformConfig) {
-		String sinkName = senderAO.getSinkname();
+		Resource sinkName = senderAO.getSinkname();
 		ILogicalOperator view = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
 		ILogicalOperator cPlan = view;
 

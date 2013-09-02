@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -1099,7 +1100,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		ILogicalOperator top = (ILogicalOperator) visit(statement, data);
 
 		SenderAO sender = new SenderAO();
-		sender.setSink(sinkName);		
+		sender.setSink(new Resource(caller.getUser(), sinkName));		
 		sender.subscribeToSource(top, 0, 0, top.getOutputSchema());		
 		LogicalQuery query = new LogicalQuery();
 		query.setParserId(getLanguage());
@@ -1292,7 +1293,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sender.setName(name);
 		sender.setOutputSchema(outputSchema);
 		sender.setOptions(options);
-		sender.setSink(name);
+		sender.setSink(new Resource(getCaller().getUser(), name));
 		
 		CreateSinkCommand cmd = new CreateSinkCommand(name, sender, getCaller());
 		commands.add(cmd);
@@ -1360,6 +1361,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		
 		AccessAO access = new AccessAO(wrapper, options);
 		access.setName(sourceName);
+		access.setAccessAOName(new Resource(getCaller().getUser(),sourceName));
 		access.setProtocolHandler(protocol);
 		access.setDataHandler(datahandler);
 		access.setTransportHandler(transport);

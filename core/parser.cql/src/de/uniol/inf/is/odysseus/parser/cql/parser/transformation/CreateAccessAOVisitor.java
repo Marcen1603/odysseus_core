@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -75,11 +76,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 	}
 
-	private void relationalStreamingSource(ASTSimpleSource node, String sourceName) {
+	private void relationalStreamingSource(ASTSimpleSource node, String srcName) {
 		ILogicalOperator access;
-		String originalName = sourceName;
+		Resource originalName = dd.getViewOrStreamName(srcName, caller);
+		String sourceName = srcName;
 		try {
-			access = dd.getViewOrStream(sourceName, caller);
+			access = dd.getViewOrStream(srcName, caller);
 			if (access instanceof AccessAO) {
 				((AccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));				
 			}
@@ -99,8 +101,9 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 			WindowAO window = createWindow(node.getWindow(), inputOp);
 			inputOp = window;
 		}
-		this.attributeResolver.addSourceOriginal(originalName, inputOp);		
-		this.attributeResolver.addSource(sourceName, inputOp);		
+		this.attributeResolver.addSourceOriginal(originalName.toString(), inputOp);
+		this.attributeResolver.addSource(originalName, inputOp);
+		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
 	private static WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {

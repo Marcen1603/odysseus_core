@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -269,7 +270,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@Override
-	public void addUniqueId(IOperatorOwner owner, String id) {
+	public void addUniqueId(IOperatorOwner owner, Resource id) {
 	}
 
 	@Override
@@ -277,7 +278,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 	}
 
 	@Override
-	public Map<IOperatorOwner, String> getUniqueIds() {
+	public Map<IOperatorOwner, Resource> getUniqueIds() {
 		return null;
 	}
 

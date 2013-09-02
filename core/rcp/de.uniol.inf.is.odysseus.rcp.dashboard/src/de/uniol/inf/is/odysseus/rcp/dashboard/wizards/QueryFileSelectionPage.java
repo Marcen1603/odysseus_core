@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
@@ -172,10 +173,11 @@ public class QueryFileSelectionPage extends WizardPage {
 	}
 
 	private static String[] determineAvailableSources() {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = DashboardPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = DashboardPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
 		List<String> names = Lists.newArrayList();
-		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
-			names.add(getPlainSourceName(streamOrView.getKey()));
+		for( Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews ) {
+			// FIXME: Use Resource
+			names.add(getPlainSourceName(streamOrView.getKey().toString()));
 		}
 		return names.toArray(new String[names.size()]);
 	}

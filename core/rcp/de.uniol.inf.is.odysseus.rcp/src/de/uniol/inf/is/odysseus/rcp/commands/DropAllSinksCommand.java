@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
@@ -57,7 +58,7 @@ public class DropAllSinksCommand extends AbstractHandler {
 		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
 		
 		if (executor != null ) {
-			final Set<Entry<String, ILogicalOperator>> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());
+			final Set<Entry<Resource, ILogicalOperator>> sinks = executor.getSinks(OdysseusRCPPlugIn.getActiveSession());
 			if( sinks == null || sinks.isEmpty() ) {
 				LOG.debug("Nothing to drop");
 				StatusBarManager.getInstance().setMessage("No sinks to drop");
@@ -75,8 +76,8 @@ public class DropAllSinksCommand extends AbstractHandler {
 					try {
 						monitor.beginTask("Dropping sinks", sinks.size());
 						
-						ImmutableList<String> ids = determineIds(sinks);
-						for( String id: ids) {
+						ImmutableList<Resource> ids = determineIds(sinks);
+						for( Resource id: ids) {
 							LOG.debug("Dropping sink " + id);
 							monitor.subTask("Dropping " + id);
 							executor.removeSink(id, OdysseusRCPPlugIn.getActiveSession());
@@ -107,9 +108,9 @@ public class DropAllSinksCommand extends AbstractHandler {
 		return box.open() == SWT.OK;
 	}
 
-	private static ImmutableList<String> determineIds(Set<Entry<String, ILogicalOperator>> sinks) {
-		ImmutableList.Builder<String> builder = ImmutableList.builder();
-		for( Entry<String, ILogicalOperator> sink : sinks ) {
+	private static ImmutableList<Resource> determineIds(Set<Entry<Resource, ILogicalOperator>> sinks) {
+		ImmutableList.Builder<Resource> builder = ImmutableList.builder();
+		for( Entry<Resource, ILogicalOperator> sink : sinks ) {
 			builder.add(sink.getKey());
 		}
 		return builder.build();

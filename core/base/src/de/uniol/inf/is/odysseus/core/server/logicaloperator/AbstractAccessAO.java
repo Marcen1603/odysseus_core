@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
+
 abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	private static final long serialVersionUID = -5423444612698319659L;
@@ -45,6 +47,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	private String transportHandler;
 	
 	private String dateFormat;
+
+	private Resource accessAOName;
 
 //	/**
 //	 * This variable will be used to generate an ID for every new input tuple
@@ -103,18 +107,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public List<String> getInputSchema() {
 		return inputSchema;
 	}
-
-	
-
-//	private static long genID() {
-//		return ++ID;
-//	}
-//
-//	public static List<Long> nextID() {
-//		ArrayList<Long> idList = new ArrayList<Long>();
-//		idList.add(Long.valueOf(genID()));
-//		return idList;
-//	}
 
 	public static Long getWildcard() {
 		return wildcard;
@@ -263,5 +255,18 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		this.dateFormat = dateFormat;
 	}
 	
+	public void setAccessAOName(Resource name) {
+		super.setName(name.getResourceName());
+		this.accessAOName = name;
+	}
+	
+	public Resource getAccessAOName() {
+		return accessAOName;
+	}
+	
+	@Override
+	public void setName(String name) {
+		super.setName(name);
+	}
 }
 

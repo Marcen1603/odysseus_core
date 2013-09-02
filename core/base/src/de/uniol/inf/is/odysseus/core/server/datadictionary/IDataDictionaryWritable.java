@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -17,7 +18,8 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	// -------------------------------------------------------------------------
 
 	ILogicalOperator removeViewOrStream(String viewname, ISession caller);
-
+	ILogicalOperator removeViewOrStream(Resource viewname, ISession caller);
+	
 	// -------------------------------------------------------------------------
 	// View Management
 	// -------------------------------------------------------------------------
@@ -38,8 +40,13 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 
 	void addSink(String sinkname, ILogicalOperator sink, ISession caller)
 			throws DataDictionaryException;
+	
+	void addSink(Resource sinkname, ILogicalOperator sink, ISession caller)
+			throws DataDictionaryException;
 
 	ILogicalOperator removeSink(String name, ISession caller);
+	
+	ILogicalOperator removeSink(Resource name, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Query Management
@@ -57,17 +64,17 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	// Operatormanagement
 	// ----------------------------------------------------------
 
-	void setOperator(String id, IPhysicalOperator physical);
+	void setOperator(Resource id, IPhysicalOperator physical);
 
-	void removeOperator(String id);
+	void removeOperator(Resource id);
 
 	// ------------------------------------------
 	// Physical sinks and sources (from WrapperPlanFactory)
 	// ------------------------------------------
 
-	void putAccessPlan(String uri, ISource<?> s);
+	void putAccessPlan(Resource uri, ISource<?> s);
 
-	void removeAccessPlan(String uri);
+	void removeAccessPlan(Resource uri);
 
 	void clearSources();
 
@@ -75,11 +82,12 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 
 	void removeClosedSinks();
 
-	void putSinkplan(String name, ISink<?> sinkPO);
+	void putSinkplan(Resource name, ISink<?> sinkPO);
 	
-	ISource<?> getAccessAO(String name);
+	ISource<?> getAccessAO(Resource name);
 
-	void putAccessAO(String name, ISource<?> access);
+	void putAccessAO(Resource name, ISource<?> access);
+
 
 	// -------------------------------------------------------------------------
 	// Stored Procedure Management
@@ -95,5 +103,8 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	public void addDatatype(SDFDatatype dt);
 
 	void removeDatatype(SDFDatatype dt) throws DataDictionaryException;
+
+
+
 
 }

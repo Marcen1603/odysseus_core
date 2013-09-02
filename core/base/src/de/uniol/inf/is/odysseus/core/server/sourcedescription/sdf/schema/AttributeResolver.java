@@ -14,19 +14,19 @@
  * limitations under the License.
  ******************************************************************************/
 /** Copyright 2011 The Odysseus Team
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
 
@@ -34,8 +34,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -43,35 +45,41 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
- * @author Jonas Jacobi
+ * @author Jonas Jacobi, Marco Grawunder
  */
 public class AttributeResolver implements IAttributeResolver {
 	private static final long serialVersionUID = -6960117786021105217L;
 
-	private Map<String, ILogicalOperator> sources;
-	private Map<String, ILogicalOperator> originalSourceNames;
-	private Set<SDFAttribute> attributes;
+	final private Map<Resource, ILogicalOperator> resources;
+	final private Map<String, ILogicalOperator> sources;
+	final private Map<String, ILogicalOperator> originalSourceNames;
+	final private Set<SDFAttribute> attributes;
 
 	public AttributeResolver() {
-		this.sources = new HashMap<String, ILogicalOperator>();
-		this.originalSourceNames = new HashMap<String, ILogicalOperator>();
-		this.attributes = new HashSet<SDFAttribute>();
+		this.sources = new HashMap<>();
+		this.originalSourceNames = new HashMap<>();
+		this.resources = new HashMap<>();
+		this.attributes = new HashSet<>();
 	}
 
 	public AttributeResolver(AttributeResolver attributeResolver) {
-		this.sources = new HashMap<String, ILogicalOperator>(attributeResolver.sources);
-		this.originalSourceNames = new HashMap<String, ILogicalOperator>(attributeResolver.originalSourceNames);
-		this.attributes = new HashSet<SDFAttribute>(attributeResolver.attributes);
+		this.sources = new HashMap<String, ILogicalOperator>(
+				attributeResolver.sources);
+		this.originalSourceNames = new HashMap<String, ILogicalOperator>(
+				attributeResolver.originalSourceNames);
+		this.attributes = new HashSet<SDFAttribute>(
+				attributeResolver.attributes);
+		this.resources = new HashMap<>(attributeResolver.resources);
 	}
 
-    @Override
-    public SDFSchema getSchema() {
-        SDFSchema schema = new SDFSchema("",Tuple.class,this.attributes);
-        return schema;
-    }
-    
+	@Override
+	public SDFSchema getSchema() {
+		SDFSchema schema = new SDFSchema("", Tuple.class, this.attributes);
+		return schema;
+	}
+
 	public ILogicalOperator getSource(String name) {
-		return this.sources.get(name);
+		return findSource(name);
 	}
 
 	public void addSource(String name, ILogicalOperator op) {
@@ -83,17 +91,18 @@ public class AttributeResolver implements IAttributeResolver {
 
 	public void addAttribute(SDFAttribute attribute) {
 		if (this.attributes.contains(attribute)) {
-			throw new IllegalArgumentException("ambigiuous identifier: " + attribute);
+			throw new IllegalArgumentException("ambigiuous identifier: "
+					+ attribute);
 		}
 		this.attributes.add(attribute);
 	}
 
-	public void addAttributes(SDFSchema list){
-		for(SDFAttribute attribute : list){
+	public void addAttributes(SDFSchema list) {
+		for (SDFAttribute attribute : list) {
 			addAttribute(attribute);
 		}
 	}
-	
+
 	public void addAttributes(Collection<SDFAttribute> attributes) {
 		for (SDFAttribute attribute : attributes) {
 			addAttribute(attribute);
@@ -103,8 +112,9 @@ public class AttributeResolver implements IAttributeResolver {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.querytranslation.parser.transformation.
-	 * IAttributeResolver#getAttribute(java.lang.String)
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.querytranslation.parser.transformation
+	 * . IAttributeResolver#getAttribute(java.lang.String)
 	 */
 	@Override
 	public SDFAttribute getAttribute(String name) {
@@ -115,57 +125,107 @@ public class AttributeResolver implements IAttributeResolver {
 				for (SDFAttribute curAttribute : source.getOutputSchema()) {
 					if (curAttribute.getAttributeName().equals(name)) {
 						if (result != null) {
-							throw new IllegalArgumentException("ambigiuous identifier: " + name);
+							throw new IllegalArgumentException(
+									"ambigiuous identifier: " + name);
 						}
-                        result = curAttribute;
+						result = curAttribute;
 					}
 				}
 			}
 			for (SDFAttribute curAttribute : this.attributes) {
 				if (curAttribute.getAttributeName().equals(name)) {
 					if (result != null) {
-						throw new IllegalArgumentException("ambigiuous identifier: " + name);
+						throw new IllegalArgumentException(
+								"ambigiuous identifier: " + name);
 					}
-                    result = curAttribute;
+					result = curAttribute;
 				}
 			}
 		} else {
-			result = getAttribute(parts[0], parts[1]);
+			Exception e1 = null;
+			Exception e2 = null;
+			try {
+				result = getAttribute(parts[0], parts[1]);
+			} catch (IllegalArgumentException exp) {
+				e1 = exp;
+			}
+
+			if (result == null) {
+				parts = name.split("\\.", 3);
+				if (parts.length == 3)
+					try{
+					result = getAttribute(new StringBuffer(parts[0])
+							.append(".").append(parts[1]).toString(), parts[2]);
+					}catch(Exception exp){
+						e2 = exp;
+					}
+			} 
+			
+			if (result == null){
+				StringBuffer msg = new StringBuffer();
+				if (e1 != null){
+					msg.append(e1.getMessage()+"\n");
+				}
+				if (e2 != null){
+					msg.append(e2.getMessage()+"\n");
+				}
+				throw new IllegalArgumentException(msg.toString());
+			}
 		}
 
 		return result;
 	}
 
 	private SDFAttribute getAttribute(String sourceName, String attributeName) {
-		ILogicalOperator source = this.sources.get(sourceName);
+		ILogicalOperator source = findSource(sourceName);
 		if (source == null) {
 			throw new IllegalArgumentException("no such source: " + sourceName);
 		}
 
 		String[] path = attributeName.split("\\:");
-		SDFAttribute attribute = findORAttribute(source.getOutputSchema(), path, 0);
+		SDFAttribute attribute = findORAttribute(source.getOutputSchema(),
+				path, 0);
 
 		if (attribute != null)
 			return attribute;
 
-		throw new IllegalArgumentException("no such attribute: " + sourceName + "." + attributeName);
+		throw new IllegalArgumentException("no such attribute: " + sourceName
+				+ "." + attributeName);
 	}
 
-	private SDFAttribute findORAttribute(SDFSchema list, String[] path, int index) {
+	private ILogicalOperator findSource(String sourceName) {
+		ILogicalOperator ret = this.sources.get(sourceName);
+		if (ret == null) {
+			for (Entry<Resource, ILogicalOperator> e : this.resources
+					.entrySet()) {
+				if (e.getKey().getResourceName().equalsIgnoreCase(sourceName)
+						|| e.getKey().toString().equalsIgnoreCase(sourceName)) {
+					ret = e.getValue();
+					break;
+				}
+			}
+		}
+		return ret;
+	}
+
+	private SDFAttribute findORAttribute(SDFSchema list, String[] path,
+			int index) {
 		String toFind = path[index];
 		for (SDFAttribute attr : list) {
 			if (attr.getAttributeName().equals(toFind)) {
 				if (index == path.length - 1) {
 					return attr;
 				} else if (attr.getDatatype().hasSchema()) {
-					return findORAttribute(attr.getDatatype().getSchema(), path, index + 1);
+					return findORAttribute(attr.getDatatype().getSchema(),
+							path, index + 1);
 				}
 			}
 		}
 		return null;
 	}
 
-	public SDFAttribute getAggregateAttribute(String attributeName, String aggregateName) {
+	public SDFAttribute getAggregateAttribute(String attributeName,
+			String aggregateName) {
 		SDFAttribute attribute = getAttribute(attributeName);
 		aggregateName = aggregateName + "(" + attribute.getURI() + ")";
 		for (SDFAttribute curAttribute : this.attributes) {
@@ -173,20 +233,24 @@ public class AttributeResolver implements IAttributeResolver {
 				return curAttribute;
 			}
 		}
-		throw new IllegalArgumentException("no such attribute: " + attributeName +" "+ aggregateName);
+		throw new IllegalArgumentException("no such attribute: "
+				+ attributeName + " " + aggregateName);
 	}
 
-//	public SDFAttribute getAggregateAttributeOFF(ASTAggregateExpression expression) {
-//		String name = expression.jjtGetChild(1).toString();
-//		SDFAttribute attribute = getAttribute(name);
-//		String aggregateName = expression.jjtGetChild(0).toString() + "(" + attribute.getPointURI() + ")";
-//		for (SDFAttribute curAttribute : this.attributes) {
-//			if (curAttribute.getAttributeName().equals(aggregateName)) {
-//				return curAttribute;
-//			}
-//		}
-//		throw new IllegalArgumentException("no such attribute: " + expression.toString());
-//	}
+	// public SDFAttribute getAggregateAttributeOFF(ASTAggregateExpression
+	// expression) {
+	// String name = expression.jjtGetChild(1).toString();
+	// SDFAttribute attribute = getAttribute(name);
+	// String aggregateName = expression.jjtGetChild(0).toString() + "(" +
+	// attribute.getPointURI() + ")";
+	// for (SDFAttribute curAttribute : this.attributes) {
+	// if (curAttribute.getAttributeName().equals(aggregateName)) {
+	// return curAttribute;
+	// }
+	// }
+	// throw new IllegalArgumentException("no such attribute: " +
+	// expression.toString());
+	// }
 
 	public boolean isAttributeValid(String name) {
 		return getAttribute(name) != null;
@@ -202,15 +266,20 @@ public class AttributeResolver implements IAttributeResolver {
 		return new AttributeResolver(this);
 	}
 
-	public ILogicalOperator getOriginalSource(String name){
+	public ILogicalOperator getOriginalSource(String name) {
 		return this.originalSourceNames.get(name);
 	}
-	
+
 	public void addSourceOriginal(String name, ILogicalOperator op) {
-		if (!this.originalSourceNames.containsKey(name)) { 		
+		if (!this.originalSourceNames.containsKey(name)) {
 			this.originalSourceNames.put(name, op);
 		}
 	}
 
-}
+	public void addSource(Resource originalName, ILogicalOperator inputOp) {
+		if (!this.resources.containsKey(originalName)) {
+			this.resources.put(originalName, inputOp);
+		}
+	}
 
+}

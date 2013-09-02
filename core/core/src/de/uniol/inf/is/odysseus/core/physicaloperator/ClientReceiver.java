@@ -42,6 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
 import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
@@ -713,7 +714,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 	@Override
-	public void addUniqueId(IOperatorOwner owner, String id) {
+	public void addUniqueId(IOperatorOwner owner, Resource id) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -724,7 +725,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	}
 
 	@Override
-	public Map<IOperatorOwner,String> getUniqueIds() {
+	public Map<IOperatorOwner,Resource> getUniqueIds() {
 		// TODO Auto-generated method stub
 		return null;
 	}

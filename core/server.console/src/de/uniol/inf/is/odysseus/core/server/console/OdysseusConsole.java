@@ -45,6 +45,7 @@ import org.osgi.service.prefs.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -1202,7 +1203,7 @@ public class OdysseusConsole implements CommandProvider,
 	public void _lssources(CommandInterpreter ci) {
 		addCommand();
 		System.out.println("Current registered sources");
-		for (Entry<String, ILogicalOperator> e : this.executor
+		for (Entry<Resource, ILogicalOperator> e : this.executor
 				.getStreamsAndViews(currentUser)) {
 			ci.println(e.getKey() + " | " + e.getValue());
 		}
@@ -1901,12 +1902,12 @@ public class OdysseusConsole implements CommandProvider,
 
 			ci.println("starting clean up");
 			// clear sources
-			List<String> sourceNames = new ArrayList<String>();
-			for (Entry<String, ILogicalOperator> sourceDef : this.executor
+			List<Resource> sourceNames = new ArrayList<>();
+			for (Entry<Resource, ILogicalOperator> sourceDef : this.executor
 					.getStreamsAndViews(user)) {
 				sourceNames.add(sourceDef.getKey());
 			}
-			for (String name : sourceNames) {
+			for (Resource name : sourceNames) {
 				System.out.println("removing source: " + name);
 				this.executor.removeViewOrStream(name, user);
 			}

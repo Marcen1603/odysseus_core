@@ -31,6 +31,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -130,7 +131,7 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 					try {
 						isRefreshing = false;
 						if( !getTreeViewer().getTree().isDisposed() ) {
-							Set<Entry<String, ILogicalOperator>> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
+							Set<Entry<Resource, ILogicalOperator>> streamsAndViews = OdysseusRCPPlugIn.getExecutor().getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession());
 							getTreeViewer().setInput(streamsAndViews);
 							
 							if( !streamsAndViews.isEmpty() ) {

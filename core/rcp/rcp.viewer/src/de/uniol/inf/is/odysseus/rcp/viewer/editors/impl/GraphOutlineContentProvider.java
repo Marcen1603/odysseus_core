@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -86,7 +87,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 			if (node.getModelNode().getContent().getUniqueIds().size() > 0) {
 				StringBuffer ids = new StringBuffer("UIDs: ");
-				for (Entry<IOperatorOwner, String> id : node.getModelNode().getContent().getUniqueIds().entrySet()) {
+				for (Entry<IOperatorOwner, Resource> id : node.getModelNode().getContent().getUniqueIds().entrySet()) {
 					ids.append(id.getKey() + "-->" + id.getValue()).append(" ");
 				}
 				children.add(new StringWrapper(ids.toString()));

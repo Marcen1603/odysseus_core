@@ -33,7 +33,7 @@ public class TSenderAOExistsRule extends AbstractTransformationRule<SenderAO> {
 	public void execute(SenderAO senderAO, TransformationConfiguration trafo) {		
 		ISink<?> sinkPO = getDataDictionary().getSinkplan(senderAO.getSinkname());		
 		defaultExecute(senderAO, sinkPO, trafo, true, true);
-		sinkPO.setName(senderAO.getSinkname());
+		sinkPO.setName(senderAO.getSinkname().getResourceName());
 	}
 
 	@Override

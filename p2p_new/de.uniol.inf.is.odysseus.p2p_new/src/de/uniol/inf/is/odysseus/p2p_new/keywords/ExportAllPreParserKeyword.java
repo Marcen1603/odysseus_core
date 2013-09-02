@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
@@ -58,10 +59,11 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	private static List<String> determineCurrentSourceNames() {
-		Set<Entry<String, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
 		List<String> sourceNames = Lists.newArrayList();
-		for( Entry<String, ILogicalOperator> streamOrView : streamsAndViews ) {
-			sourceNames.add(streamOrView.getKey());
+		for( Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews ) {
+			// FIXME: Use Resources
+			sourceNames.add(streamOrView.getKey().toString());
 		}
 		return sourceNames;
 	}

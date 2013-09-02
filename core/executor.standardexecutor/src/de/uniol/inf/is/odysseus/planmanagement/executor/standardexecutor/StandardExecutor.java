@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -711,14 +712,14 @@ public class StandardExecutor extends AbstractExecutor implements
 						if (p.isSource()) {
 							((ISource<?>) p).unsubscribeFromAllSinks();
 						}
-						for (Entry<IOperatorOwner, String> id : p
+						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
 							getDataDictionary(caller.getTenant()).removeOperator(id.getValue());
 							toRemove.add(id.getKey());
 						}
 					} else { // Remove ids from query sharing with this removed
 								// query
-						for (Entry<IOperatorOwner, String> id : p
+						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
 							if (id.getKey().getID() == queryToRemove.getID()) {
 								getDataDictionary(caller.getTenant()).removeOperator(

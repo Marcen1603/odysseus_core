@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
@@ -51,7 +52,7 @@ public class DropAllSourcesCommand extends AbstractHandler {
 		LOG.debug("Dropping all sources");
 
 		final IExecutor executor = Preconditions.checkNotNull(OdysseusRCPPlugIn.getExecutor(), "Executor must not be null!");
-		final ImmutableList<String> sources = determineSourceIds(executor.getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
+		final ImmutableList<Resource> sources = determineSourceIds(executor.getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession()));
 				
 		if( sources.isEmpty() ) {
 			LOG.debug("Nothing to drop.");
@@ -70,10 +71,11 @@ public class DropAllSourcesCommand extends AbstractHandler {
 				monitor.beginTask("Dropping sources", sources.size());
 				ISession user = OdysseusRCPPlugIn.getActiveSession();
 				try {
-					for( String source : sources ) {
+					for( Resource source : sources ) {
 						LOG.debug("Dropping " + source);
 						monitor.subTask("Dropping " + source);
-						executor.addQuery("DROP STREAM " + source, "CQL", user, "Standard");
+						executor.removeViewOrStream(source, user);
+						//executor.addQuery("DROP STREAM " + source, "CQL", user, "Standard");
 						monitor.worked(1);
 					}
 					StatusBarManager.getInstance().setMessage("All sources dropped");
@@ -96,13 +98,13 @@ public class DropAllSourcesCommand extends AbstractHandler {
 		return null;
 	}
 
-	private static ImmutableList<String> determineSourceIds(Set<Entry<String, ILogicalOperator>> sources) {
+	private static ImmutableList<Resource> determineSourceIds(Set<Entry<Resource, ILogicalOperator>> sources) {
 		if( sources == null || sources.isEmpty() ) {
 			return ImmutableList.of();
 		}
 		
-		ImmutableList.Builder<String> builder = ImmutableList.builder();
-		for( Entry<String, ILogicalOperator> source : sources ) {
+		ImmutableList.Builder<Resource> builder = ImmutableList.builder();
+		for( Entry<Resource, ILogicalOperator> source : sources ) {
 			builder.add(source.getKey());
 		}
 		return builder.build();

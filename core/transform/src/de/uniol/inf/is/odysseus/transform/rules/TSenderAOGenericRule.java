@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -63,7 +64,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 */
 	@Override
 	public void execute(SenderAO operator, TransformationConfiguration config) {
-		String senderPOName = operator.getSinkname();
+		Resource senderPOName = operator.getSinkname();
 
 		IDataHandler<?> dataHandler = getDataHandler(operator);
 		if (dataHandler == null) {

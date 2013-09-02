@@ -19,10 +19,11 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
+
 /**
  * Generic sender operator to transfer processing results to arbitrary targets
- * using existing transport, protocol, and data handler.
- * Example: <code>
+ * using existing transport, protocol, and data handler. Example: <code>
  * Sender({wrapper='GenericPush', transport='File',protocol='SimpleCSV',
  * dataHandler='Tuple',options=[['filename','outfile.txt']]}, result)
  * </code>
@@ -32,232 +33,235 @@ import com.google.common.base.Strings;
 // @LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name =
 // "Sender")
 public class SenderAO extends AbstractLogicalOperator {
-    /**
+	/**
      * 
      */
-    private static final long   serialVersionUID = -6830784739913623456L;
-    private String              sink             = null;
-    private String              dataHandler      = "Tuple";
-    private String              protocolHandler;
-    private String              transportHandler;
-    private Map<String, String> optionsMap;
-    private String              wrapper;
+	private static final long serialVersionUID = -6830784739913623456L;
+	private Resource sink = null;
+	private String dataHandler = "Tuple";
+	private String protocolHandler;
+	private String transportHandler;
+	private Map<String, String> optionsMap;
+	private String wrapper;
 
+	/**
+	 * Default constructor
+	 */
+	public SenderAO() {
+		super();
+	}
 
-    /**
-     * Default constructor
-     */
-    public SenderAO() {
-        super();
-    }
+	/**
+	 * Creates a new {@link SenderAO} with the given wrapper and options
+	 * 
+	 * @param sink
+	 *            The sink name
+	 * @param wrapper
+	 *            The wrapper name
+	 * @param optionsMap
+	 *            The options
+	 */
+	public SenderAO(Resource sink, String wrapper, Map<String, String> optionsMap) {
+		this.sink = sink;
+		this.wrapper = wrapper;
+		this.optionsMap = optionsMap;
+	}
 
-    /**
-     * Creates a new {@link SenderAO} with the given wrapper and options
-     * 
-     * @param sink
-     *            The sink name
-     * @param wrapper
-     *            The wrapper name
-     * @param optionsMap
-     *            The options
-     */
-    public SenderAO(String sink, String wrapper, Map<String, String> optionsMap) {
-        this.sink = sink;
-        this.wrapper = wrapper;
-        this.optionsMap = optionsMap;
-    }
+	/**
+	 * Creates a new {@link SenderAO} with the given wrapper, data handler, and
+	 * options
+	 * 
+	 * @param sink
+	 *            The sink name
+	 * @param wrapper
+	 *            The wrapper name
+	 * @param dataHandler
+	 *            The name of the data handler
+	 * @param optionsMap
+	 *            The options
+	 */
+	public SenderAO(Resource sink, String wrapper, String dataHandler,
+			Map<String, String> optionsMap) {
+		this.sink = sink;
+		this.wrapper = wrapper;
+		this.dataHandler = dataHandler;
+		this.optionsMap = optionsMap;
+	}
 
-    /**
-     * Creates a new {@link SenderAO} with the given wrapper, data handler, and
-     * options
-     * 
-     * @param sink
-     *            The sink name
-     * @param wrapper
-     *            The wrapper name
-     * @param dataHandler
-     *            The name of the data handler
-     * @param optionsMap
-     *            The options
-     */
-    public SenderAO(String sink, String wrapper, String dataHandler, Map<String, String> optionsMap) {
-        this.sink = sink;
-        this.wrapper = wrapper;
-        this.dataHandler = dataHandler;
-        this.optionsMap = optionsMap;
-    }
+	/**
+	 * Clone constructor
+	 * 
+	 * @param senderAO
+	 *            The {@link SenderAO} instance
+	 */
+	public SenderAO(SenderAO senderAO) {
+		super(senderAO);
+		this.sink = senderAO.sink;
+		this.wrapper = senderAO.wrapper;
+		this.dataHandler = senderAO.dataHandler;
+		this.optionsMap = senderAO.optionsMap;
+		this.protocolHandler = senderAO.protocolHandler;
+		this.transportHandler = senderAO.transportHandler;
+	}
 
-    /**
-     * Clone constructor
-     * 
-     * @param senderAO
-     *            The {@link SenderAO} instance
-     */
-    public SenderAO(SenderAO senderAO) {
-    	super(senderAO);
-        this.sink = senderAO.sink;
-        this.wrapper = senderAO.wrapper;
-        this.dataHandler = senderAO.dataHandler;
-        this.optionsMap = senderAO.optionsMap;
-        this.protocolHandler = senderAO.protocolHandler;
-        this.transportHandler = senderAO.transportHandler;
-    }
+	/**
+	 * @return The sink name
+	 */
+	public Resource getSinkname() {
+		return sink;
+	}
 
-    /**
-     * @return The sink name
-     */
-    public String getSinkname() {
-        return sink;
-    }
+	/**
+	 * Set the sink name
+	 * 
+	 * @param sink
+	 *            The sink name
+	 */
+	public void setSink(Resource sink) {
+		this.sink = sink;
+	}
 
-    /**
-     * Set the sink name
-     * 
-     * @param sink
-     *            The sink name
-     */
-    public void setSink(String sink) {
-        this.sink = sink;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #getName()
+	 */
+	@Override
+	public String getName() {
+		String name = getSinkname().getResourceName();
+		if (Strings.isNullOrEmpty(name)) {
+			return super.getName();
+		}
+		return name;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-     * #getName()
-     */
-    @Override
-    public String getName() {
-    	String name = getSinkname();
-    	if( Strings.isNullOrEmpty(name)) {
-    		return super.getName();
-    	} 
-    	return name;
-    }
+	/**
+	 * Set the options of the sender operator for transport and prrotocol
+	 * handler
+	 * 
+	 * @param value
+	 *            A {@link Map} of options
+	 */
+	// @Parameter(name = "options", type = StringParameter.class, optional =
+	// true, isMap = true)
+	public void setOptions(Map<String, String> value) {
+		this.optionsMap = value;
+	}
 
-    /**
-     * Set the options of the sender operator for transport and prrotocol
-     * handler
-     * 
-     * @param value
-     *            A {@link Map} of options
-     */
-    // @Parameter(name = "options", type = StringParameter.class, optional =
-    // true, isMap = true)
-    public void setOptions(Map<String, String> value) {
-        this.optionsMap = value;
-    }
+	/**
+	 * @return The options
+	 */
+	public Map<String, String> getOptionsMap() {
+		return optionsMap;
+	}
 
-    /**
-     * @return The options
-     */
-    public Map<String, String> getOptionsMap() {
-        return optionsMap;
-    }
+	/**
+	 * Set the wrapper type
+	 * 
+	 * @param wrapper
+	 *            The wrapper type
+	 */
+	// @Parameter(name = "wrapper", type = StringParameter.class, optional =
+	// false)
+	public void setWrapper(String wrapper) {
+		this.wrapper = wrapper;
+	}
 
-    /**
-     * Set the wrapper type
-     * 
-     * @param wrapper
-     *            The wrapper type
-     */
-    // @Parameter(name = "wrapper", type = StringParameter.class, optional =
-    // false)
-    public void setWrapper(String wrapper) {
-        this.wrapper = wrapper;
-    }
+	/**
+	 * @return The wrapper type
+	 */
+	public String getWrapper() {
+		return wrapper;
+	}
 
-    /**
-     * @return The wrapper type
-     */
-    public String getWrapper() {
-        return wrapper;
-    }
+	/**
+	 * @return The name of the data handler
+	 */
+	public String getDataHandler() {
+		return dataHandler;
+	}
 
-    /**
-     * @return The name of the data handler
-     */
-    public String getDataHandler() {
-        return dataHandler;
-    }
+	/**
+	 * Set the name of the data handler ie.: Tuple
+	 * 
+	 * @param dataHandler
+	 *            The name of the data handler
+	 */
+	// @Parameter(name = "dataHandler", type = StringParameter.class, optional =
+	// false)
+	public void setDataHandler(String dataHandler) {
+		this.dataHandler = dataHandler;
+	}
 
-    /**
-     * Set the name of the data handler ie.: Tuple
-     * 
-     * @param dataHandler
-     *            The name of the data handler
-     */
-    // @Parameter(name = "dataHandler", type = StringParameter.class, optional =
-    // false)
-    public void setDataHandler(String dataHandler) {
-        this.dataHandler = dataHandler;
-    }
+	/**
+	 * @return The name of the protocol handler
+	 */
+	public String getProtocolHandler() {
+		return protocolHandler;
+	}
 
-    /**
-     * @return The name of the protocol handler
-     */
-    public String getProtocolHandler() {
-        return protocolHandler;
-    }
+	/**
+	 * Set the name of the protocol handler ie.: CSV
+	 * 
+	 * @param protocolHandler
+	 *            The name of the protocol handler
+	 */
+	// @Parameter(name = "protocol", type = StringParameter.class, optional =
+	// false)
+	public void setProtocolHandler(String protocolHandler) {
+		this.protocolHandler = protocolHandler;
+	}
 
-    /**
-     * Set the name of the protocol handler ie.: CSV
-     * 
-     * @param protocolHandler
-     *            The name of the protocol handler
-     */
-    // @Parameter(name = "protocol", type = StringParameter.class, optional =
-    // false)
-    public void setProtocolHandler(String protocolHandler) {
-        this.protocolHandler = protocolHandler;
-    }
+	/**
+	 * @return The name of the transport handler
+	 */
+	public String getTransportHandler() {
+		return transportHandler;
+	}
 
-    /**
-     * @return The name of the transport handler
-     */
-    public String getTransportHandler() {
-        return transportHandler;
-    }
+	/**
+	 * Set the name of the transport handler ie.: TCPClient
+	 * 
+	 * @param transportHandler
+	 *            The name of the transport handler
+	 */
+	// @Parameter(name = "transport", type = StringParameter.class, optional =
+	// false)
+	public void setTransportHandler(String transportHandler) {
+		this.transportHandler = transportHandler;
+	}
 
-    /**
-     * Set the name of the transport handler ie.: TCPClient
-     * 
-     * @param transportHandler
-     *            The name of the transport handler
-     */
-    // @Parameter(name = "transport", type = StringParameter.class, optional =
-    // false)
-    public void setTransportHandler(String transportHandler) {
-        this.transportHandler = transportHandler;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #clone()
+	 */
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new SenderAO(this);
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-     * #clone()
-     */
-    @Override
-    public AbstractLogicalOperator clone() {
-        return new SenderAO(this);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #toString()
+	 */
+	@Override
+	public String toString() {
+		return getName() + " (" + this.wrapper + ")";
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-     * #toString()
-     */
-    @Override
-    public String toString() {
-        return getName() + " (" + this.wrapper + ")";
-    }
-    
-    @Override
-    public boolean needsLocalResources() {
-    	
-    	return true;
-    	
-    }
-    
+	@Override
+	public boolean needsLocalResources() {
+
+		return true;
+
+	}
+
 }

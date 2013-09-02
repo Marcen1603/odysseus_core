@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -131,7 +132,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			FixedSetAccessAO newPO = new FixedSetAccessAO(name, "FixedSetAccessAO", node.getTuples(attributes));
 			SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attributes);
 			newPO.setOutputSchema(outputSchema);
-			newPO.setName(name);
+			newPO.setAccessAOName(new Resource(caller.getUser(), name));
 			cmd = new CreateStreamCommand(name, newPO, caller);
 			commands.add(cmd);
 		} catch (Exception e) {
@@ -292,7 +293,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		options.put("autoconnect", autoReconnect + "");
 		source.setProtocolHandler("SizeByteBuffer");
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
-		source.setName(name);
+		source.setAccessAOName(new Resource(caller.getUser(), name));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
@@ -318,7 +319,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
-		source.setName(name);
+		source.setAccessAOName(new Resource(caller.getUser(), name));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
