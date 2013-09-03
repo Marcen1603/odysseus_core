@@ -35,8 +35,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 public interface IDataDictionary {
 
-	Resource createUserUri(String resource, ISession caller);
-
 	// -------------------------------------------------------------------------
 	// View and Stream Management
 	// -------------------------------------------------------------------------

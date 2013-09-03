@@ -149,52 +149,56 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				"Store for storedProceduresFromUser must not be null.");
 	}
 
+	// Methods that must be overwritten to create stores
 	protected abstract IStore<Resource, ILogicalOperator> createStreamDefinitionsStore();
-
 	protected abstract IStore<Resource, IUser> createViewOrStreamFromUserStore();
-
 	protected abstract IStore<Resource, ILogicalOperator> createViewDefinitionsStore();
-
 	protected abstract IStore<Resource, HashMap<String, ArrayList<Resource>>> createEntityUsedByStore();
-
 	protected abstract IStore<Resource, IUser> createEntityFromUserStore();
-
 	protected abstract IStore<String, SDFDatatype> createDatatypesStore();
-
 	protected abstract IStore<Integer, ILogicalQuery> createSavedQueriesStore();
-
 	protected abstract IStore<Integer, IUser> createSavedQueriesForUserStore();
-
 	protected abstract IStore<Integer, String> createSavedQueriesBuildParameterNameStore();
-
 	protected abstract IStore<Resource, ILogicalOperator> createSinkDefinitionsStore();
-
 	protected abstract IStore<Resource, IUser> createSinkFromUserStore();
-
 	protected abstract IStore<Resource, StoredProcedure> createStoredProceduresStore();
-
 	protected abstract IStore<Resource, IUser> createStoredProceduresFromUserStore();
 
 	// -----------------------------------------------------------------
-
+	// Help method
+	// -----------------------------------------------------------------
+	
 	@Override
 	public Resource createUserUri(String resource, ISession caller) {
 		return new Resource(caller.getUser(), resource);
 	}
 
+	/**
+	 * Retrieves a user name for an entity
+	 * @param entityuri
+	 * @return
+	 */
 	private String getUserForEntity(Resource entityuri) {
 		IUser user = this.entityFromUser.get(entityuri);
 		return user != null ? user.getName() : null;
 	}
 
-	private Resource getResourceName(String stream, ISession caller,
+	/**
+	 * This method return the full name for a registered source if it exists (e.g. System.nexmark:bid
+	 * 
+	 * @param resourceName The name of the resource to be search (e.g. System.nexmark:bid or nexmark:bid)
+	 * @param caller Who tries to retrieve the information. If resource has no user, this users name will be used
+	 * @param store In which store to look for the resource 
+	 * @return
+	 */
+	private Resource getResourceName(String resourceName, ISession caller,
 			IStore<Resource, ?> store) {
 		Resource name = null;
-		if (stream.contains(".")) {
-			name = new Resource(stream);
+		if (resourceName.contains(".")) {
+			name = new Resource(resourceName);
 		}
 		if (name == null || !store.containsKey(name)) {
-			name = createUserUri(stream, caller);
+			name = createUserUri(resourceName, caller);
 		}
 		if (store.containsKey(name)) {
 			return name;
@@ -207,6 +211,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	// Entity Management
 	// ----------------------------------------------------------------------------
 
+	/**
+	 * 
+	 * @param plan
+	 * @param identifier
+	 * @param entityType
+	 * @param caller
+	 */
 	@SuppressWarnings("unchecked")
 	private void addEntityForPlan(ILogicalOperator plan, Resource identifier,
 			EntityType entityType, ISession caller) {
@@ -244,6 +255,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		fireDataDictionaryChangedEvent();
 	}
 
+	/**
+	 * 
+	 * @param uri
+	 * @param caller
+	 * @param type
+	 * @param identifier
+	 */
 	private void createEntity(Resource uri, ISession caller, String type,
 			Resource identifier) {
 		if (this.entityFromUser.containsKey(uri)) {
@@ -258,6 +276,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		this.entityUsedBy.get(uri).put(type, list);
 	}
 
+	/**
+	 * 
+	 * @param plan
+	 * @param identifier
+	 * @param entityType
+	 * @param caller
+	 */
 	@SuppressWarnings("unchecked")
 	private void removeEntityForPlan(ILogicalOperator plan,
 			Resource identifier, EntityType entityType, ISession caller) {
@@ -400,13 +425,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			}
 		}
 		return op;
-	}
-
-	@SuppressWarnings("unused")
-	private void dump(IStore<?, ?> viewDefinitions2) {
-		for (Entry<?, ?> e : viewDefinitions2.entrySet()) {
-			System.out.println(e.getKey() + " " + e.getValue());
-		}
 	}
 
 	@Override

@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.util;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -63,7 +64,7 @@ public class RemoveIdLogicalGraphVisitor<T extends ILogicalOperator>
 	@Override
 	public void nodeAction(T op) {
 		if (op.getUniqueIdentifier() != null) {
-			dd.removeOperator(dd.createUserUri(op.getUniqueIdentifier(), caller));
+			dd.removeOperator(new Resource(caller.getUser(), op.getUniqueIdentifier()));
 		}	
 	}
 

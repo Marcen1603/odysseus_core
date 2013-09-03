@@ -24,7 +24,7 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 		// only to own operators!
 		IPhysicalOperator po = getDataDictionary().getOperator(new Resource(getCaller().getUser(), appendTo), getCaller());
 		if (po == null){
-			po = getDataDictionary().getOperator(getDataDictionary().createUserUri(appendTo, getCaller()), getCaller());
+			po = getDataDictionary().getOperator(new Resource(getCaller().getUser(),appendTo), getCaller());
 		}
 		
 		if (po == null){
