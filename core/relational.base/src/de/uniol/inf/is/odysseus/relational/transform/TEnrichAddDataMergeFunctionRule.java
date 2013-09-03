@@ -61,8 +61,7 @@ public class TEnrichAddDataMergeFunctionRule extends AbstractTransformationRule<
 
 	@Override
 	public boolean isExecutable(EnrichPO<Tuple<IMetaAttribute>, IMetaAttribute> operator, TransformationConfiguration config) {
-
-		if (config.getDataTypes().contains("relational")) {
+		if (operator.getOutputSchema().getType() == Tuple.class) {
 			if (operator.getDataMergeFunction() == null) {
 				return true;
 			}

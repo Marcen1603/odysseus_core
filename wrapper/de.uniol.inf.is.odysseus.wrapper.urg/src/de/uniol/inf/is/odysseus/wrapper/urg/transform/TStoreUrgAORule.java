@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -44,7 +45,7 @@ public class TStoreUrgAORule extends
     @Override
     public boolean isExecutable(StoreUrgAO operator,
             TransformationConfiguration transformConfig) {
-        if (transformConfig.getDataTypes().contains("relational")) {
+        if (operator.getInputSchema(0).getType() == Tuple.class) {
             if (operator.isAllPhysicalInputSet()) {
                 return true;
             }

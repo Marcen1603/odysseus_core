@@ -105,6 +105,7 @@ public class TransformationConfiguration {
 				.asList(strings)));
 	}
 
+	@Deprecated
 	public Set<String> getDataTypes() {
 		return dataTypes;
 	}

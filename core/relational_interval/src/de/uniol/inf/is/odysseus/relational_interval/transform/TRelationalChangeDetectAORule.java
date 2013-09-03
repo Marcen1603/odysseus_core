@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
@@ -66,7 +67,7 @@ public class TRelationalChangeDetectAORule extends
 	@Override
 	public boolean isExecutable(ChangeDetectAO operator,
 			TransformationConfiguration config) {
-		return config.getDataTypes().contains("relational")
+		return operator.getInputSchema().getType() == Tuple.class
 				&& operator.isAllPhysicalInputSet() && operator.hasAttributes();
 	}
 

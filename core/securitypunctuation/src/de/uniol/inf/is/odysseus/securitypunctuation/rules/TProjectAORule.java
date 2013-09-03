@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.securitypunctuation.rules;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -42,7 +43,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public boolean isExecutable(ProjectAO operator,
 			TransformationConfiguration transformConfig) {
-		if (transformConfig.getDataTypes().contains("relational")) {
+		if (operator.getInputSchema().getType() == Tuple.class) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (transformConfig.getOption("isSecurityAware") != null) {
 					if (transformConfig.getOption("isSecurityAware")) {

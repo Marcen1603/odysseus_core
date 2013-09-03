@@ -15,9 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalSlidingElementWindowTIPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -48,7 +49,7 @@ public class TRelationalSlidingElementWindowTIPORule extends
 			if (operator.getWindowType() == WindowType.TUPLE
 					&& operator.getWindowSlide() == -1) {
 				if (operator.isPartitioned()) {
-		if (transformConfig.getDataTypes().contains("relational") && transformConfig.getMetaTypes().contains(
+		if (operator.getOutputSchema().getType() == Tuple.class && transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
 			
 						return true;

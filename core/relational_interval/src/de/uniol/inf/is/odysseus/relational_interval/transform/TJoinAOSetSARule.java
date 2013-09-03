@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -103,8 +104,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataTypes().contains("relational") && 
-				transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
+		if(operator.getOutputSchema().getType() == Tuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 			if(operator.getAreas()==null){
 				return true;
 			}

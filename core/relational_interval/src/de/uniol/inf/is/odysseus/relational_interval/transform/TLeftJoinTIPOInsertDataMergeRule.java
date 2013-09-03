@@ -39,7 +39,7 @@ public class TLeftJoinTIPOInsertDataMergeRule extends AbstractTransformationRule
 
 	@Override
 	public boolean isExecutable(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataTypes().contains("relational")){
+		if(operator.getOutputSchema().getType() == Tuple.class){
 			if(operator.getDataMerge()==null){
 				return true;
 			}

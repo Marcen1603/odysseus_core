@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -60,9 +59,6 @@ public class RSwitchSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
 		if (join.getSubscriptions().size() > 1) {
-			return false;
-		}
-		if (!config.getQueryBuildConfiguration().getTransformationConfiguration().getDataTypes().contains(Relational.RELATIONAL)){
 			return false;
 		}
 		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {

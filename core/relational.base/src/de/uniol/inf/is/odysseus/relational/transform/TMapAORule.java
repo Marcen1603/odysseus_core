@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.relational.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
@@ -22,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalThreadedMapPO;
-import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -47,7 +47,7 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration transformConfig) {
-		if(transformConfig.getDataTypes().contains(Relational.RELATIONAL)){
+		if(operator.getInputSchema().getType() == Tuple.class){
 			if(operator.getPhysSubscriptionTo()!=null){
 				return true;
 			}

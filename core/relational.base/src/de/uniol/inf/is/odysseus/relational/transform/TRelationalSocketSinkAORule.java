@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ByteBufferSink
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.ISinkStreamHandlerBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -83,7 +82,7 @@ public class TRelationalSocketSinkAORule extends
 	@Override
 	public boolean isExecutable(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		return config.getDataTypes().contains(Relational.RELATIONAL) &&  operator.isAllPhysicalInputSet()
+		return operator.getInputSchema(0).getType() == Tuple.class &&  operator.isAllPhysicalInputSet()
 				&& operator.getSinkType().equalsIgnoreCase("bytebuffer");
 	}
 

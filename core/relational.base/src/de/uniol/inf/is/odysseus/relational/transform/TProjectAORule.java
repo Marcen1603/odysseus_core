@@ -15,11 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.relational.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
-import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -40,7 +40,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 	@Override
 	public boolean isExecutable(ProjectAO operator, TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet()) {
-			if (transformConfig.getDataTypes().contains(Relational.RELATIONAL)) {
+			if (operator.getInputSchema().getType() == Tuple.class) {
 				return true;
 			}
 		}
