@@ -89,14 +89,6 @@ public class PQLGenerator implements IPQLGenerator {
 		}
 	}
 
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	private static ILogicalOperator copy(ILogicalOperator startOperator) {
-//		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(null);
-//		GenericGraphWalker walker = new GenericGraphWalker();
-//		walker.prefixWalk(startOperator, copyVisitor);
-//		return copyVisitor.getResult();
-//	}
-
 	private static List<String> generateStatements(List<ILogicalOperator> sourceOperators, Map<ILogicalOperator, String> names) {
 		List<String> statements = Lists.newArrayList();
 
@@ -106,18 +98,17 @@ public class PQLGenerator implements IPQLGenerator {
 
 		while (!operatorsToVisit.isEmpty()) {
 			ILogicalOperator operator = operatorsToVisit.remove(0);
-			if( operator instanceof TopAO ) {
-				continue;
+
+			if( !(operator instanceof TopAO ) ) {
+				IPQLStatementGenerator<ILogicalOperator> generator = PQLStatementGeneratorManager.getInstance().getPQLStatementGenerator(operator);
+				String statement = generator.generateStatement(operator, names);
+				if( statement == null ) {
+					LOG.error("Returned PQL-Statement for {} is null!", operator);
+				} else if( !statement.isEmpty() ) {
+					statements.add(statement);
+				}
 			}
 			
-			IPQLStatementGenerator<ILogicalOperator> generator = PQLStatementGeneratorManager.getInstance().getPQLStatementGenerator(operator);
-			String statement = generator.generateStatement(operator, names);
-			if( statement == null ) {
-				LOG.error("Returned PQL-Statement for {} is null!", operator);
-			} else if( !statement.isEmpty() ) {
-				statements.add(statement);
-			}
-
 			visitedOperators.add(operator);
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
 				ILogicalOperator target = subscription.getTarget();
@@ -154,9 +145,11 @@ public class PQLGenerator implements IPQLGenerator {
 	}
 
 	private static void collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator) && !(currentOperator instanceof TopAO)) {
-			list.add(currentOperator);
-
+		if (!list.contains(currentOperator) ) {
+			if( !(currentOperator instanceof TopAO )) {
+				list.add(currentOperator);
+			}
+			
 			for (LogicalSubscription subscription : currentOperator.getSubscriptions()) {
 				collectOperators(subscription.getTarget(), list);
 			}
