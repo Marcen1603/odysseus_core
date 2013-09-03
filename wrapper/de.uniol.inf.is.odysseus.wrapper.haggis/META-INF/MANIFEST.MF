@@ -11,6 +11,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Bundle-ClassPath: lib/zeroc-ice-3.4.jar,
- lib/haggis.jar,
  .
 Service-Component: OSGI-INF/HaggisTransportHandler.xml
