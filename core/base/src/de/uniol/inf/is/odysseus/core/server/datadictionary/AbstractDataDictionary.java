@@ -168,8 +168,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	// Help method
 	// -----------------------------------------------------------------
 	
-	@Override
-	public Resource createUserUri(String resource, ISession caller) {
+	/**
+	 * Creates a new Resource object
+	 * @param resource
+	 * @param caller
+	 * @return
+	 */
+	private Resource createResource(String resource, ISession caller) {
 		return new Resource(caller.getUser(), resource);
 	}
 
@@ -198,7 +203,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			name = new Resource(resourceName);
 		}
 		if (name == null || !store.containsKey(name)) {
-			name = createUserUri(resourceName, caller);
+			name = createResource(resourceName, caller);
 		}
 		if (store.containsKey(name)) {
 			return name;
@@ -229,7 +234,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		collectWalker.prefixWalk(plan, collVisitor);
 		for (ILogicalOperator acc : collVisitor.getResult()) {
 			String name = acc.getName();
-			Resource uri = createUserUri(name, caller);
+			Resource uri = createResource(name, caller);
 			if (!entityType.equals(EntityType.QUERY)) {
 				// in a stream or view definition, the entity may not be defined
 				// before!
@@ -294,7 +299,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		collectWalker.prefixWalk(plan, collVisitor);
 		for (ILogicalOperator acc : collVisitor.getResult()) {
 			String name = acc.getName();
-			Resource uri = createUserUri(name, caller);
+			Resource uri = createResource(name, caller);
 			if (this.entityUsedBy.containsKey(uri)) {
 				if (this.entityUsedBy.get(uri).containsKey(type)) {
 					this.entityUsedBy.get(uri).get(type).remove(identifier);
@@ -341,7 +346,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			ISession caller) throws DataDictionaryException {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_VIEW)) {
 
-			Resource viewname = createUserUri(view, caller);
+			Resource viewname = createResource(view, caller);
 			if (viewDefinitions.containsKey(viewname)) {
 				throw new DataDictionaryException("View " + viewname
 						+ " already exists. Drop First");
@@ -442,7 +447,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STREAM)) {
 
-			Resource streamname = createUserUri(strname, caller);
+			Resource streamname = createResource(strname, caller);
 
 			if (streamDefinitions.containsKey(streamname)) {
 				throw new DataDictionaryException("Stream " + streamname
@@ -721,7 +726,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	@Override
 	public void addSink(String sinkname, ILogicalOperator sink, ISession caller)
 			throws DataDictionaryException {
-		addSink(createUserUri(sinkname, caller), sink, caller);
+		addSink(createResource(sinkname, caller), sink, caller);
 
 	}
 
@@ -819,7 +824,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		this.savedQueriesForUser.put(q.getID(), caller.getUser());
 		this.savedQueriesBuildParameterName.put(q.getID(), buildParameterName);
 		addEntityForPlan(q.getLogicalPlan(),
-				createUserUri(Integer.toString(q.getID()), caller),
+				createResource(Integer.toString(q.getID()), caller),
 				EntityType.QUERY, caller);
 	}
 
@@ -858,7 +863,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		this.savedQueriesForUser.remove(q.getID());
 		this.savedQueriesBuildParameterName.remove(q.getID());
 		removeEntityForPlan(q.getLogicalPlan(),
-				createUserUri(Integer.toString(q.getID()), caller),
+				createResource(Integer.toString(q.getID()), caller),
 				EntityType.QUERY, caller);
 	}
 
@@ -1178,7 +1183,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	@Override
 	public void addStoredProcedure(StoredProcedure procedure, ISession caller) {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STORED_PROCEDURE)) {
-			Resource nameNormalized = createUserUri(procedure.getName(), caller);
+			Resource nameNormalized = createResource(procedure.getName(), caller);
 			if (!this.storedProcedures.containsKey(nameNormalized)) {
 				this.storedProcedures.put(nameNormalized, procedure);
 				this.storedProceduresFromUser.put(nameNormalized,
