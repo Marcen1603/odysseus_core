@@ -140,7 +140,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			// Find Attribute
 			if (splitted.size() > 2) {
 				for (SDFAttribute a : elems) {
-					if (a.getSourceName().equals(splitted.get(0))) {
+					if (a.getSourceName() != null && a.getSourceName().equals(splitted.get(0))) {
 						return findAttribute(splitted, a.getDatatype()
 								.getSchema().getAttributes(), position + 1);
 					}

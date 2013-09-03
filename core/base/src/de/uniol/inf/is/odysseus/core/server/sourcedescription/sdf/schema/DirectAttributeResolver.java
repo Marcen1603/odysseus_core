@@ -60,7 +60,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 			throws AmbiguousAttributeException, NoSuchAttributeException {
 		String[] parts = name.split("\\.", 2); // the attribute can have the
 												// form a.b.c.d
-		
+
 		// source name available
 		String path[] = null;
 		String source = null;
@@ -76,16 +76,31 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 		// Test if special attribute, starting with %
 		if (source != null && source.startsWith("__") && parts.length == 2) {
 			SDFAttribute attribute = getAttribute(parts[1]);
-			if (attribute != null){
-				return new SDFAttribute(source+"."+attribute.getSourceName(),attribute.getAttributeName(), attribute);
+			if (attribute != null) {
+				return new SDFAttribute(source + "."
+						+ attribute.getSourceName(),
+						attribute.getAttributeName(), attribute);
 			}
-			
+
 		} else {
 
 			SDFAttribute attribute = findORAttribute(this.schema, source, path,
 					0);
 			if (attribute != null)
 				return attribute;
+		}
+
+		// final case: UserName.SourceName.Attribute
+		for (SDFAttribute attr : this.schema) {
+			// Remove UserName
+			String attrName = attr.toString();
+			int pos = attrName.indexOf('.');
+			if (pos > 0) {
+				attrName = attrName.substring(pos+1);
+				if (attrName.equalsIgnoreCase(name)) {
+					return attr;
+				}
+			}
 		}
 
 		throw new IllegalArgumentException("no such attribute: " + name);
