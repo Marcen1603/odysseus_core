@@ -80,7 +80,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	private IStore<Integer, String> savedQueriesBuildParameterName;
 
 	private IStore<Resource, ILogicalOperator> sinkDefinitions;
-	private IStore<Resource, IUser> sinkFromUser;
+	//private IStore<Resource, IUser> sinkFromUser;
 
 	private IStore<Resource, StoredProcedure> storedProcedures;
 	private IStore<Resource, IUser> storedProceduresFromUser;
@@ -138,8 +138,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		sinkDefinitions = Preconditions.checkNotNull(
 				createSinkDefinitionsStore(),
 				"Store for sinkDefinitions must not be null.");
-		sinkFromUser = Preconditions.checkNotNull(createSinkFromUserStore(),
-				"Store for sinkFromUser must not be null.");
+//		sinkFromUser = Preconditions.checkNotNull(createSinkFromUserStore(),
+//				"Store for sinkFromUser must not be null.");
 
 		storedProcedures = Preconditions.checkNotNull(
 				createStoredProceduresStore(),
@@ -760,7 +760,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			ISession caller) throws DataDictionaryException {
 		if (!this.sinkDefinitions.containsKey(sinkname)) {
 			this.sinkDefinitions.put(sinkname, sink);
-			this.sinkFromUser.put(sinkname, caller.getUser());
+//			this.sinkFromUser.put(sinkname, caller.getUser());
 			fireDataDictionaryChangedEvent();
 		} else {
 			throw new DataDictionaryException("Sink name already used");
@@ -827,11 +827,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		return op;
 	}
 
-	protected IUser getUserForSink(String name, ISession caller) {
-		Resource sink = getResourceName(name, caller, sinkDefinitions);
-		IUser user = this.sinkFromUser.get(sink);
-		return user;
-	}
+//	protected IUser getUserForSink(String name, ISession caller) {
+//		Resource sink = getResourceName(name, caller, sinkDefinitions);
+//		IUser user = this.sinkFromUser.get(sink);
+//		return user;
+//	}
 
 	@Override
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
