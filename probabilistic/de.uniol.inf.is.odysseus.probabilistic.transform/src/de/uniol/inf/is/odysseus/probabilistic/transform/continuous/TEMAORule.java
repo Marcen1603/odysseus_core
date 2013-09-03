@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.EMAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.EMPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;

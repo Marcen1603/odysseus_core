@@ -403,6 +403,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * 
 	 * @return <code>true</code> iff enough data are collected to estimate the result
 	 */
+	@SuppressWarnings("unused")
 	private boolean isEstimateable() {
 		final double v = this.getMixtures() + (this.getDimension() + ((this.getDimension() * (this.getDimension() + 1.0)) / 2.0)) + 1.0;
 		return v < this.size();

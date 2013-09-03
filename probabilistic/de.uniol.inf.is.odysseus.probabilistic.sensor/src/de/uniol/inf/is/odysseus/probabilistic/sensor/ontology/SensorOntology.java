@@ -42,7 +42,8 @@ public class SensorOntology {
     public static void main(String[] args) throws MalformedURLException {
         OntModel m = ModelFactory.createOntologyModel();
 
-        Model base = m.getBaseModel();
+        @SuppressWarnings("unused")
+		Model base = m.getBaseModel();
         OntDocumentManager dm = m.getDocumentManager();
         URL file;
         if (Activator.getContext() != null) {
