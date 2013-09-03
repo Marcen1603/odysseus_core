@@ -70,7 +70,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	private final List<IDataDictionaryListener> listeners = Lists
 			.newArrayList();
 	private IStore<Resource, ILogicalOperator> streamDefinitions;
-	private IStore<Resource, IUser> viewOrStreamFromUser;
+	//private IStore<Resource, IUser> viewOrStreamFromUser;
 	private IStore<Resource, ILogicalOperator> viewDefinitions;
 	private IStore<Resource, IUser> entityFromUser;
 	private IStore<Resource, HashMap<String, ArrayList<Resource>>> entityUsedBy;
@@ -114,9 +114,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		streamDefinitions = Preconditions.checkNotNull(
 				createStreamDefinitionsStore(),
 				"Store for streamDefinitions must not be null.");
-		viewOrStreamFromUser = Preconditions.checkNotNull(
-				createViewOrStreamFromUserStore(),
-				"Store for viewOrStreamFromUser must not be null.");
+//		viewOrStreamFromUser = Preconditions.checkNotNull(
+//				createViewOrStreamFromUserStore(),
+//				"Store for viewOrStreamFromUser must not be null.");
 		viewDefinitions = Preconditions.checkNotNull(
 				createViewDefinitionsStore(),
 				"Store for viewDefinitions must not be null.");
@@ -151,25 +151,38 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 	// Methods that must be overwritten to create stores
 	protected abstract IStore<Resource, ILogicalOperator> createStreamDefinitionsStore();
+
 	protected abstract IStore<Resource, IUser> createViewOrStreamFromUserStore();
+
 	protected abstract IStore<Resource, ILogicalOperator> createViewDefinitionsStore();
+
 	protected abstract IStore<Resource, HashMap<String, ArrayList<Resource>>> createEntityUsedByStore();
+
 	protected abstract IStore<Resource, IUser> createEntityFromUserStore();
+
 	protected abstract IStore<String, SDFDatatype> createDatatypesStore();
+
 	protected abstract IStore<Integer, ILogicalQuery> createSavedQueriesStore();
+
 	protected abstract IStore<Integer, IUser> createSavedQueriesForUserStore();
+
 	protected abstract IStore<Integer, String> createSavedQueriesBuildParameterNameStore();
+
 	protected abstract IStore<Resource, ILogicalOperator> createSinkDefinitionsStore();
+
 	protected abstract IStore<Resource, IUser> createSinkFromUserStore();
+
 	protected abstract IStore<Resource, StoredProcedure> createStoredProceduresStore();
+
 	protected abstract IStore<Resource, IUser> createStoredProceduresFromUserStore();
 
 	// -----------------------------------------------------------------
 	// Help method
 	// -----------------------------------------------------------------
-	
+
 	/**
 	 * Creates a new Resource object
+	 * 
 	 * @param resource
 	 * @param caller
 	 * @return
@@ -180,6 +193,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 	/**
 	 * Retrieves a user name for an entity
+	 * 
 	 * @param entityuri
 	 * @return
 	 */
@@ -189,11 +203,17 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	}
 
 	/**
-	 * This method return the full name for a registered source if it exists (e.g. System.nexmark:bid
+	 * This method return the full name for a registered source if it exists
+	 * (e.g. System.nexmark:bid
 	 * 
-	 * @param resourceName The name of the resource to be search (e.g. System.nexmark:bid or nexmark:bid)
-	 * @param caller Who tries to retrieve the information. If resource has no user, this users name will be used
-	 * @param store In which store to look for the resource 
+	 * @param resourceName
+	 *            The name of the resource to be search (e.g. System.nexmark:bid
+	 *            or nexmark:bid)
+	 * @param caller
+	 *            Who tries to retrieve the information. If resource has no
+	 *            user, this users name will be used
+	 * @param store
+	 *            In which store to look for the resource
 	 * @return
 	 */
 	private Resource getResourceName(String resourceName, ISession caller,
@@ -359,7 +379,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				walker.prefixWalk(topOperator, visitor);
 				synchronized (viewDefinitions) {
 					this.viewDefinitions.put(viewname, topOperator);
-					viewOrStreamFromUser.put(viewname, caller.getUser());
+//					viewOrStreamFromUser.put(viewname, caller.getUser());
 					addEntityForPlan(topOperator, viewname, EntityType.VIEW,
 							caller);
 				}
@@ -412,7 +432,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			try {
 				synchronized (viewDefinitions) {
 					op = viewDefinitions.remove(viewname);
-					viewOrStreamFromUser.remove(viewname);
+//					viewOrStreamFromUser.remove(viewname);
 				}
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
@@ -456,7 +476,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			synchronized (streamDefinitions) {
 				try {
 					streamDefinitions.put(streamname, plan);
-					viewOrStreamFromUser.put(streamname, caller.getUser());
+//					viewOrStreamFromUser.put(streamname, caller.getUser());
 					addEntityForPlan(plan, streamname, EntityType.STREAM,
 							caller);
 				} catch (StoreException e) {
@@ -529,12 +549,21 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 	@SuppressWarnings("unchecked")
 	private ILogicalOperator removeStream(Resource stream, ISession caller) {
+		LOG.debug("Try to remove Stream "+stream+" for "+caller);
+		if (LOG.isDebugEnabled()){
+			StringBuffer buffer = new StringBuffer();
+			streamDefinitions.dumpTo(buffer);
+//			buffer.append("--------------------------------------");
+//			viewOrStreamFromUser.dumpTo(buffer);
+			LOG.debug(buffer.toString());
+			
+		}
 		ILogicalOperator op = null;
 		if (stream != null) {
 			checkAccessRights(stream, caller,
 					DataDictionaryPermission.REMOVE_STREAM);
 			op = streamDefinitions.remove(stream);
-			viewOrStreamFromUser.remove(stream);
+//			viewOrStreamFromUser.remove(stream);
 
 			// Remove plan from wrapper plan factory
 			removeAccessPlan(stream);
@@ -624,8 +653,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		if (ret == null) {
 			ret = removeStream(viewname, caller);
 		}
-		if (ret == null){
-			LOG.warn("Trying to remove not registered view/stream "+viewname);
+		if (ret == null) {
+			LOG.warn("Trying to remove not registered view/stream " + viewname);
 		}
 		return ret;
 	}
@@ -656,12 +685,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 				|| streamDefinitions.containsKey(viewName);
 	}
 
-	private IUser getCreator(Resource resource) {
-		IUser ret = viewOrStreamFromUser.get(resource);
-		if (ret == null) {
-			ret = sinkFromUser.get(resource);
-		}
-		return ret;
+	private String getCreator(Resource resource) {
+		return resource.getUser();
 
 	}
 
@@ -1017,9 +1042,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		if (username != null && !username.isEmpty()) {
 			String user = getUserForEntity(objecturi);
 			if (user == null || user.isEmpty()) {
-				IUser userObj = getCreator(objecturi);
+				String userObj = getCreator(objecturi);
 
-				user = userObj != null ? userObj.getName() : null;
+				user = userObj != null ? userObj : null;
 			}
 			if (user != null && !user.isEmpty()) {
 				if (user.equals(username)) {
@@ -1044,9 +1069,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			return false;
 		}
 		if (!username.isEmpty()) {
-			IUser user = getCreator(viewname);
+			String user = getCreator(viewname);
 			if (user != null) {
-				if (user.getName().equals(username)) {
+				if (user.equals(username)) {
 					return true;
 				}
 			}
@@ -1183,7 +1208,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	@Override
 	public void addStoredProcedure(StoredProcedure procedure, ISession caller) {
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STORED_PROCEDURE)) {
-			Resource nameNormalized = createResource(procedure.getName(), caller);
+			Resource nameNormalized = createResource(procedure.getName(),
+					caller);
 			if (!this.storedProcedures.containsKey(nameNormalized)) {
 				this.storedProcedures.put(nameNormalized, procedure);
 				this.storedProceduresFromUser.put(nameNormalized,
