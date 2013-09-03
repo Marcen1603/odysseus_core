@@ -22,7 +22,10 @@ package TelemetriePublishSubscribe;
 
 public class Pose implements java.lang.Cloneable, java.io.Serializable
 {
-    public long timestamp;
+
+	private static final long serialVersionUID = -8060296022195838238L;
+
+	public long timestamp;
 
     public int X;
 
