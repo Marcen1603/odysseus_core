@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 
 public class FileStore<IDType extends Serializable & Comparable<? extends IDType>, STORETYPE extends Serializable>
-		implements IStore<IDType, STORETYPE> {
+		extends AbstractStore<IDType, STORETYPE> {
 
 	Logger logger = LoggerFactory.getLogger(FileStore.class);
 

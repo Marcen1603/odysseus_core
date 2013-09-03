@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-public class MemoryStore<IDType extends Comparable<?>,STORETYPE> implements IStore<IDType ,STORETYPE>{
+public class MemoryStore<IDType extends Comparable<?>,STORETYPE> extends AbstractStore<IDType ,STORETYPE>{
 
 	private Map<IDType, STORETYPE> elements = new TreeMap<IDType, STORETYPE>();
 	

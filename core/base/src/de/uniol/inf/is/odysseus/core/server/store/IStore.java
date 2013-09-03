@@ -31,4 +31,5 @@ public interface IStore<IDType extends Comparable<?>, STORETYPE> {
 	void clear() throws StoreException;
 	public void commit();
 	public int size();
+	public void dumpTo(StringBuffer buffer);
 }
