@@ -123,7 +123,8 @@ public class WebserviceServer {
 
 	public static void startServer() {
 		WebserviceServer server = new WebserviceServer();
-		Endpoint endpoint = Endpoint.publish("http://127.0.0.1:9669/odysseus",
+		String webServiceEndpoint = OdysseusConfiguration.get("WebService.Endpoint");
+		Endpoint endpoint = Endpoint.publish(webServiceEndpoint,
 				server);
 		if (endpoint.isPublished()) {
 			Logger.getAnonymousLogger()
