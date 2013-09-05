@@ -364,6 +364,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	@SuppressWarnings("unchecked")
 	public void setView(String view, ILogicalOperator topOperator,
 			ISession caller) throws DataDictionaryException {
+		if (view.contains(".")){
+			throw new IllegalArgumentException("A '.' is not allowed in view names!");
+		}
+		
 		if (hasPermission(caller, DataDictionaryPermission.ADD_VIEW)) {
 
 			Resource viewname = createResource(view, caller);
@@ -464,7 +468,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	@Override
 	public void setStream(String strname, ILogicalOperator plan, ISession caller)
 			throws DataDictionaryException {
-
+		if (strname.contains(".")){
+			throw new IllegalArgumentException("A '.' is not allowed in stream names!");
+		}
 		if (hasPermission(caller, DataDictionaryPermission.ADD_STREAM)) {
 
 			Resource streamname = createResource(strname, caller);
@@ -752,12 +758,15 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	public void addSink(String sinkname, ILogicalOperator sink, ISession caller)
 			throws DataDictionaryException {
 		addSink(createResource(sinkname, caller), sink, caller);
-
 	}
 
 	@Override
 	public void addSink(Resource sinkname, ILogicalOperator sink,
 			ISession caller) throws DataDictionaryException {
+		if (sinkname.getResourceName().contains(".")){
+			throw new IllegalArgumentException("A '.' is not allowed in sink names!");
+		}
+
 		if (!this.sinkDefinitions.containsKey(sinkname)) {
 			this.sinkDefinitions.put(sinkname, sink);
 //			this.sinkFromUser.put(sinkname, caller.getUser());
