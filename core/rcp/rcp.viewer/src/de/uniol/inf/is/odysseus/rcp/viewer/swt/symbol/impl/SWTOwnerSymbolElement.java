@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
@@ -45,10 +46,10 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		List<Integer> ownerIDs = determineOwnerIDs(getNodeView().getModelNode().getContent());
 
 		if (!ownerIDs.isEmpty()) {
-			drawOwnerRectangle(position, width, height, zoomFactor, ownerIDs.get(0));
-
-			ownerIDs.remove(0);
-			drawOwnerCircles(position, width, zoomFactor, ownerIDs);
+			Integer firstOwner = ownerIDs.remove(0);
+			
+			drawOwnerRectangle(position, width, height, zoomFactor, firstOwner);
+			drawOwnerCircles(position, width, zoomFactor, ownerIDs, firstOwner);
 		} else {
 			drawOwnerlessRectangle(position, width, height, zoomFactor);
 		}
@@ -72,7 +73,7 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		gc.fillRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
 	}
 
-	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs) {
+	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs, Integer firstOwner) {
 		if (ownerIDs.isEmpty()) {
 			return;
 		}
@@ -81,15 +82,25 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		int y = (int) position.getY();
 
 		int realStepPixels = (int) (OWNER_CIRCLE_STEP_PIXELS * zoomFactor);
+		GC actualGC = getActualGC();
+		
 		for (Integer ownerID : ownerIDs) {
-			drawOwnerCicle(getActualGC(), x, y, zoomFactor, ownerID);
-
-			if (x + realStepPixels > x + width) {
-				x = (int) position.getX();
-				y += realStepPixels;
-			} else {
-				x += realStepPixels;
-			}
+			if (x + realStepPixels > position.getX() + width) {
+				
+				int realRadius = (int) (OWNER_CIRCLE_RADIUS_PIXELS * zoomFactor * 0.3f);
+				
+				actualGC.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				actualGC.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+				
+				drawBorderedCircle(actualGC, x, y + (realStepPixels / 3), realRadius);
+				drawBorderedCircle(actualGC, x + (realStepPixels / 3), y + (realStepPixels / 3), realRadius);
+				drawBorderedCircle(actualGC, x + realStepPixels / 3 * 2, y + (realStepPixels / 3), realRadius);
+				
+				break;
+			} 
+			
+			drawOwnerCicle(actualGC, x, y, zoomFactor, ownerID);
+			x += realStepPixels;
 		}
 	}
 
@@ -98,8 +109,13 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		actualGC.setForeground(OWNER_BORDER_COLOR);
 
 		int realRadius = (int) (OWNER_CIRCLE_RADIUS_PIXELS * zoomFactor);
-		actualGC.fillOval(x, y, realRadius, realRadius);
-		actualGC.drawOval(x, y, realRadius, realRadius);
+		
+		drawBorderedCircle(actualGC, x, y, realRadius);
+	}
+
+	private static void drawBorderedCircle(GC actualGC, int x, int y, int radius) {
+		actualGC.fillOval(x, y, radius, radius);
+		actualGC.drawOval(x, y, radius, radius);
 	}
 
 	private static List<Integer> determineOwnerIDs(Object content) {
