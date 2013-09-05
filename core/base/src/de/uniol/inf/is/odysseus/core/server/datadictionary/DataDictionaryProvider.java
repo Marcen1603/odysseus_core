@@ -78,12 +78,12 @@ public class DataDictionaryProvider {
 		return Collections.unmodifiableList(allDatatypeNames);
 	}
 
-	public void subscribe(ITenant forTenant,
+	static public void subscribe(ITenant forTenant,
 			IDatadictionaryProviderListener listener) {
 		ddPlistener.put(listener, forTenant);
 	}
 
-	public void unsubscribe(IDatadictionaryProviderListener listener) {
+	static public void unsubscribe(IDatadictionaryProviderListener listener) {
 		ddPlistener.remove(listener);
 	}
 
