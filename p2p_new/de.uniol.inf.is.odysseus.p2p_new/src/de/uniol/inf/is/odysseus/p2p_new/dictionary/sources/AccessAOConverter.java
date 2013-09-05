@@ -17,9 +17,11 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -47,6 +49,7 @@ public final class AccessAOConverter {
 	private static final String PROTOCOLHANDLER_TAG = "protocolHandler";
 	private static final String TRANSPORTHANDLER_TAG = "transportHandler";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
+	private static final String OUTPUTSCHEMA_TYPE_TAG = "___type___";
 
 	public static AccessAO toAccessAO(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
@@ -99,6 +102,9 @@ public final class AccessAOConverter {
 		final SDFSchema outputSchema = accessOperator.getOutputSchema();
 		if (outputSchema != null && !outputSchema.isEmpty()) {
 			final Element<?> outSchemaElement = appendElement(root, OUTPUTSCHEMA_TAG, outputSchema.getURI());
+			
+			appendElement(outSchemaElement, OUTPUTSCHEMA_TYPE_TAG, outputSchema.getType().getName());
+			
 			for (final SDFAttribute attr : outputSchema) {
 				appendElement(outSchemaElement, attr.getAttributeName(), attr.getDatatype().getURI());
 			}
@@ -144,8 +150,7 @@ public final class AccessAOConverter {
 
 		} else if (elem.getName().equals(SOURCE_TAG)) {
 			accessAO.setName(elem.getTextValue());
-			// TODO: Test, if tag always contains username.sourcename
-			accessAO.setAccessAOName(new Resource(elem.getTextValue()));
+			accessAO.setAccessAOName(new Resource(SessionManagementService.getActiveSession().getUser().getName() + "." + elem.getTextValue()));
 		} else if (elem.getName().equals(LOGIN_TAG)) {
 			accessAO.setLogin(elem.getTextValue());
 
@@ -219,18 +224,41 @@ public final class AccessAOConverter {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void handleOutputSchemaTag(AccessAO accessAO, TextElement<?> root) {
-		final Enumeration<?> children = root.getChildren();
-		final List<SDFAttribute> attributes = Lists.newArrayList();
+		Enumeration<?> children = root.getChildren();
+		List<SDFAttribute> attributes = Lists.newArrayList();
+		
+		Class<? extends IStreamObject<?>> schemaType = null;
+		
 		while (children.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) children.nextElement();
-			final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()));
-			attributes.add(attr);
+			
+			if( elem.getKey().equals(OUTPUTSCHEMA_TYPE_TAG) ) {
+				schemaType = tryGetSchemaType(elem);
+			} else {
+				final SDFAttribute attr = new SDFAttribute("", elem.getKey(), ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getDatatype(elem.getTextValue()));
+				attributes.add(attr);
+			}
 		}
-
 		if (!attributes.isEmpty()) {
-			final SDFSchema schema = new SDFSchema(root.getTextValue(),accessAO.getOutputSchema().getType(), attributes);
+			if( schemaType == null ) {
+				LOG.error("Schematype not set! Use Tuple-class as default!");
+				schemaType = (Class<? extends IStreamObject<?>>) Tuple.class;
+			}
+			
+			final SDFSchema schema = new SDFSchema(root.getTextValue(), schemaType, attributes);
 			accessAO.setOutputSchema(schema);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Class<? extends IStreamObject<?>> tryGetSchemaType(final TextElement<?> elem) {
+		try {
+			return (Class<? extends IStreamObject<?>>) Class.forName(elem.getValue());
+		} catch (ClassNotFoundException ex) {
+			LOG.error("Could not get schematype");
+			return null;
 		}
 	}
 	

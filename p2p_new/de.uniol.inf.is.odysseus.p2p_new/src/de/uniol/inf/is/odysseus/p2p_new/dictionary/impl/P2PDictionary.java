@@ -95,6 +95,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public void activate() {
 		instance = this;
 		
+		DataDictionaryProvider.subscribe(SessionManagementService.getTenant(), this);
 		viewExporterThread.start();
 		sourceChecker.start();
 		
@@ -106,14 +107,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		
 		sourceChecker.stopRunning();
 		viewExporterThread.stopRunning();
+		
+		DataDictionaryProvider.unsubscribe(this);
 	}
-	
-//	// called by OSGi-DS
-//	public void bindDataDictionary( IDataDictionary dd ) {
-//		
-//		IDataDictionary dataDictionary = DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());;
-//		newDatadictionary(dataDictionary);
-//	}
 	
 	@Override
 	public void newDatadictionary(IDataDictionary dataDictionary) {
@@ -137,24 +133,10 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		LOG.debug("DataDictionary unbound {}", dd);
 	}
 	
-//	// called by OSGi-DS
-//	public void unbindDataDictionary( IDataDictionary dd ) {
-//				
-//		if( getDataDictionary() == null ||  getDataDictionary() == dd ) {
-//			dd.removeListener(this);
-//			if( autoExporter != null ) {
-//				dd.removeListener(autoExporter);
-//				autoExporter = null;
-//			}
-//						
-//			LOG.debug("DataDictionary unbound {}", dd);
-//		}
-//	}
-	
-	
 	private IDataDictionaryWritable getDataDictionary(){
 		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
 	}
+	
 	public static P2PDictionary getInstance() {
 		return instance;
 	}
@@ -318,6 +300,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		// einen)
 		SourceAdvertisement advertisement = nonLocalSrcAdvs.get(0);
 
+		importedSources.put(advertisement, realSrcNameToUse);
 		if (advertisement.isStream()) {
 			final AccessAO accessAO = advertisement.getAccessAO();
 
@@ -341,7 +324,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			getDataDictionary().setView(realSrcNameToUse, renameNoOp, SessionManagementService.getActiveSession());
 		}
 
-		importedSources.put(advertisement, realSrcNameToUse);
 
 		fireSourceImportEvent(advertisement, realSrcNameToUse);
 	}

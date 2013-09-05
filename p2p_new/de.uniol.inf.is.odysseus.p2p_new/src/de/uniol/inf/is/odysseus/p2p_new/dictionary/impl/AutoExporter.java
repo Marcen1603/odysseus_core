@@ -24,7 +24,7 @@ public class AutoExporter implements IDataDictionaryListener {
 	
 	@Override
 	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-		if( !dictionary.isExported(name)) {
+		if( !dictionary.isExported(name) && !dictionary.isImported(name)) {
 			try {
 				dictionary.exportSource(name, "Standard");
 			} catch (PeerException e) {

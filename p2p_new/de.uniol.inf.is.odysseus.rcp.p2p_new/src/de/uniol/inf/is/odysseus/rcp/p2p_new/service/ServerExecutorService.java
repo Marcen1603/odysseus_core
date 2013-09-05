@@ -37,7 +37,7 @@ public class ServerExecutorService {
 	}
 	
 	public static IDataDictionary getDataDictionary(ITenant tenant) {
-		return getDataDictionary(tenant);
+		return serverExecutor.getDataDictionary(tenant);
 	}
 	
 	public static boolean isBound() {

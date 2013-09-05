@@ -10,6 +10,7 @@ import org.eclipse.core.commands.IHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
@@ -26,7 +27,7 @@ public class ExportCommand extends AbstractHandler implements IHandler {
 		for (Entry<?, ?> selectedObject : selections) {
 
 			// TODO: Transformationscfg wählen lassen
-			String sourceName = (String) selectedObject.getKey();
+			String sourceName = ((Resource) selectedObject.getKey()).getResourceName();
 			try {
 				if (!P2PDictionaryService.get().isExported(sourceName) && !P2PDictionaryService.get().isImported(sourceName)) {
 					P2PDictionaryService.get().exportSource(sourceName, "Standard");
