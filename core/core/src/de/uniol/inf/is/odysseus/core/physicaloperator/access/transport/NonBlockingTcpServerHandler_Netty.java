@@ -12,6 +12,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.ReferenceCountUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -234,7 +235,11 @@ class MyServerHandler extends ChannelInboundHandlerAdapter {
 		@Override
 		public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
-			caller.process(((UnpooledUnsafeDirectByteBuf) msg).nioBuffer());
+			try{
+				caller.process(((UnpooledUnsafeDirectByteBuf) msg).nioBuffer());
+			}finally{
+				ReferenceCountUtil.release(msg);
+			}
 		}
 				
 
