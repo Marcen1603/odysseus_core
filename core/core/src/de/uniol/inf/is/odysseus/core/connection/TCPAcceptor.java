@@ -27,8 +27,10 @@ public class TCPAcceptor implements AcceptorSelectorHandler {
 	public void open() throws IOException {
 		this.serverSocketChannel = ServerSocketChannel.open();
 		final InetSocketAddress address = new InetSocketAddress(this.port);
-		this.serverSocketChannel.socket().bind(address, 100);
-
+		serverSocketChannel.bind(address, 100);
+		serverSocketChannel.socket().setReuseAddress(true);
+				
+		
 		this.ioThread.registerChannel(this.serverSocketChannel,
 				SelectionKey.OP_ACCEPT, this, new CallbackErrorHandler() {
 					@SuppressWarnings("unused")
@@ -55,14 +57,26 @@ public class TCPAcceptor implements AcceptorSelectorHandler {
 	}
 
 	public void close() {
+		
+		
+		
 		try {
 			this.ioThread.blockingInvoke(new Runnable() {
 				@Override
 				public void run() {
 					if (TCPAcceptor.this.serverSocketChannel != null) {
 						try {
+							ioThread.removeChannelInterestNow(serverSocketChannel,
+									SelectionKey.OP_ACCEPT);
+							ioThread.unregisterChannelNow(serverSocketChannel);
 							TCPAcceptor.this.serverSocketChannel.close();
-						} catch (final IOException e) {
+							TCPAcceptor.this.serverSocketChannel.socket()
+									.close();
+							
+							
+
+							ioThread.close();
+						} catch (final Exception e) {
 							TCPAcceptor.this.listener.socketError(
 									TCPAcceptor.this, e);
 						}

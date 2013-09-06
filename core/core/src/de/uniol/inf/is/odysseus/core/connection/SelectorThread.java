@@ -110,18 +110,14 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 		if (Thread.currentThread() == this.selectorThread) {
 			task.run();
 		} else {
-			final Object latch = new Object();
-			synchronized (latch) {
-				this.invoke(new Runnable() {
-					@Override
-					public void run() {
-						task.run();
-						latch.notify();
-					}
-				});
-				latch.wait();
-			}
+			this.invoke(new Runnable() {
+				@Override
+				public void run() {
+					task.run();
+				}
+			});
 		}
+
 	}
 
 	void addChannelInterestNow(final SelectableChannel channel,
@@ -185,7 +181,7 @@ public class SelectorThread implements Runnable, UncaughtExceptionHandler {
 		}
 
 		if (!channel.isOpen()) {
-			throw new IOException("Channel is not open.");
+	//		throw new IOException("Channel is not open.");
 		}
 
 		try {

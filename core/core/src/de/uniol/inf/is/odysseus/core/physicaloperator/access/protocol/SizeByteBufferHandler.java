@@ -54,7 +54,11 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		sizeBuffer.clear();
 		size = -1;
 		currentSize = 0;
-		getTransportHandler().open();
+		if (getTransportHandler() != null){
+			getTransportHandler().open();
+		}else{
+			throw new RuntimeException("No Transport handler set!");
+		}
 	}
 
 	@Override
