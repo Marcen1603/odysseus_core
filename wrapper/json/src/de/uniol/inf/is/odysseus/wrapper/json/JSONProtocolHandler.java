@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -152,6 +151,7 @@ public class JSONProtocolHandler extends
 			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
 			ITransferHandler<KeyValueObject<? extends IMetaAttribute>> transfer) {
 		JSONProtocolHandler instance = new JSONProtocolHandler();
+		instance.setOptionsMap(options);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
 		return instance;
@@ -1189,8 +1189,12 @@ public class JSONProtocolHandler extends
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		// No options are used by this ProtocolHandler, return an empty map
-		return new HashMap<String,String>();
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof JSONProtocolHandler)) {
+			return false;
+		} else {
+			// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+			return true;
+		}
 	}
 }

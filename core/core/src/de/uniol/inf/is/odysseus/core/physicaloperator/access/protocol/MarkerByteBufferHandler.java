@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -80,6 +79,7 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
         MarkerByteBufferHandler<T> instance = new MarkerByteBufferHandler<T>(direction, access);
         instance.setDataHandler(dataHandler);
         instance.setTransfer(transfer);
+        instance.setOptionsMap(options);
         instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
         instance.start = Byte.parseByte(options.get("start"));
         instance.end = Byte.parseByte(options.get("end"));
@@ -176,11 +176,24 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("start", Byte.toString(this.start));
-		options.put("end", Byte.toString(this.end));
-		options.put("byteorder", this.byteOrder.toString());
-		return options;
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof MarkerByteBufferHandler)) {
+			return false;
+		}
+		MarkerByteBufferHandler<?> other = (MarkerByteBufferHandler<?>)o;
+		if(this.start != other.getStart() ||
+				this.end != other.getEnd() ||
+				!this.byteOrder.toString().equals(other.getByteOrder().toString())) {
+			return false;
+		}
+		return true;
+	}
+
+	public byte getStart() {
+		return start;
+	}
+
+	public byte getEnd() {
+		return end;
 	}
 }

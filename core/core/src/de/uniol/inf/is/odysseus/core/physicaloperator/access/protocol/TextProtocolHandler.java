@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -38,6 +37,8 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     private Scanner scanner;
     private boolean keepDelimiter;
     private BufferedWriter writer;
+    
+    private Map<String,String> optionsMap;
     
     public TextProtocolHandler() {
         super();
@@ -103,6 +104,7 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
         TextProtocolHandler<T> instance = new TextProtocolHandler<T>(direction, access);
         instance.setDataHandler(dataHandler);
         instance.setTransfer(transfer);
+        instance.setOptionsMap(options);
 
 		if (options.containsKey("charset")) {
 			instance.charset = options.get("charset");
@@ -187,15 +189,39 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void process(String[] message) {
 		throw new RuntimeException("Not implemented yet");
 	}
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("charset", this.charset);
-		options.put("delimiter", this.objectDelimiter);
-		options.put("keepdelimiter", Boolean.toString(this.keepDelimiter));		
-		return options;
+	
+	public void setOptionsMap(Map<String, String> optionsMap) {
+		this.optionsMap = optionsMap;
+	}
+	
+	public Map<String, String> getOptionsMap() {
+		return this.optionsMap;
 	}
 
+	@Override
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof TextProtocolHandler)) {
+			return false;
+		}
+		TextProtocolHandler<?> other = (TextProtocolHandler<?>)o;
+		if(!this.charset.equals(other.getCharset()) ||
+				!this.objectDelimiter.equals(other.getObjectDelimiter()) ||
+				this.keepDelimiter != other.isKeepDelimiter()) {
+			return false;
+		}
+		return true;
+	}
+
+	public String getCharset() {
+		return charset;
+	}
+
+	public String getObjectDelimiter() {
+		return objectDelimiter;
+	}
+
+	public boolean isKeepDelimiter() {
+		return keepDelimiter;
+	}
 
 }

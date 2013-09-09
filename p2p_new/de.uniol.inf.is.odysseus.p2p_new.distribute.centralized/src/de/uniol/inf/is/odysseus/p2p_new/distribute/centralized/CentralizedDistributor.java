@@ -19,7 +19,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.QSSimulator;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private static CentralizedDistributor instance;
@@ -61,6 +64,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					new OptimizationConfiguration(parameters),
 					this.getExecutor().getDataDictionary(null)).getAllOperators());
 		}
+		Map<Integer,IPhysicalOperator> newOperatorsMap = new HashMap<Integer,IPhysicalOperator>();
+		for(IPhysicalOperator o : newOperators) {
+			newOperatorsMap.put(o.hashCode(), o);
+		}
 
 		
 		
@@ -70,16 +77,14 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				LOG.debug("Centralized distribution not possible without a bound costmodel");
 				return null;
 			}
-			List<IPhysicalOperator> mergedOps = simulateQS(operatorsOnPeer,newOperators);
-			costModel.estimateCost(mergedOps, false);
+			// this is the graph representing the plans and there connections "as is",
+			// we'll work on clones in order to simulate the query-sharing
+			Graph baseGraph = new Graph(operatorsOnPeer, newOperatorsMap);
+			
+			SimulationResult res = this.getQuerySharingSimulator().simulateQuerySharing(baseGraph.clone(), new OptimizationConfiguration(parameters));
+			Map<Integer,IPhysicalOperator> mergedOps = res.getPlan();
+			res.setCost(costModel.estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
 		}
-		return null;
-	}
-
-	private List<IPhysicalOperator> simulateQS(
-			Map<Integer, IPhysicalOperator> operatorsOnPeer,
-			List<IPhysicalOperator> newOperators) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -134,6 +139,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	
 	private IQueryOptimizer getQueryOptimizer() {
 		return this.queryOptimizer;
+	}
+	
+	private QSSimulator getQuerySharingSimulator() {
+		return QSSimulator.getInstance();
 	}
 
 }

@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.p2p_new.handler;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -199,6 +198,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
 		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access);
 		instance.setDataHandler(dataHandler);
+		instance.setOptionsMap(options);
 		instance.setTransfer(transfer);
 		instance.jxtaBufferHandler = new JxtaByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
@@ -227,9 +227,14 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("byteorder",this.byteOrder.toString());
-		return result;
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof JxtaProtocolHandler)) {
+			return false;
+		}
+		JxtaProtocolHandler<?> other = (JxtaProtocolHandler<?>)o;
+		if(!this.byteOrder.toString().equals(other.getByteOrder().toString())) {
+			return false;
+		}
+		return true;
 	}
 }

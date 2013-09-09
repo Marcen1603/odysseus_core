@@ -46,4 +46,6 @@ public interface ITransportHandler {
     String getName();
 
 	public boolean isDone();
+	
+	public boolean isSemanticallyEqual(ITransportHandler other);
 }

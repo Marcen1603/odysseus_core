@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -57,6 +56,8 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private long measureEachLine = -1;
 	private long lastDumpTime = 0;
 	private long basetime;
+	
+	private Map<String,String> optionsMap;
 
 	public LineProtocolHandler() {
 		super();
@@ -252,6 +253,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		LineProtocolHandler<T> instance = new LineProtocolHandler<T>(direction, access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
+		instance.setOptionsMap(options);
 		instance.init(options);		
 		return instance;
 	}
@@ -322,19 +324,50 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> result = new HashMap<String, String>();
-		result.put("debug", Boolean.toString(this.debug));
-		result.put("lastlines", Long.toString(this.lastLine));
-		// setting lastlines in addition to maxlines doesn't seem to have any impact,
-		// we only have to set one of them to the lastLine-value
-		result.put("measureeachline", Long.toString(this.measureEachLine));
-		result.put("dumpeachline", Long.toString(this.dumpEachLine));
-		result.put("readfirstline", Boolean.toString(this.readFirstLine));
-		result.put("delayeach", Integer.toString(this.delayeach));
-		result.put("nanodelay", Integer.toString(this.nanodelay));
-		result.put("delay", Long.toString(this.delay));
-		
-		return result;
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof LineProtocolHandler)) {
+			return false;
+		}
+		LineProtocolHandler<?> other = (LineProtocolHandler<?>)o;
+		if(this.nanodelay != other.getNanodelay() ||
+				this.delay != other.getDelay() ||
+				this.delayeach != other.getDelayeach() ||
+				this.dumpEachLine != other.getDumpEachLine() ||
+				this.measureEachLine != other.getMeasureEachLine() ||
+				this.lastLine != other.getLastLine() ||
+				this.debug != other.isDebug() ||
+				this.readFirstLine != other.isReadFirstLine()) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public Map<String, String> getOptionsMap() {
+		return optionsMap;
+	}
+
+	public void setOptionsMap(Map<String, String> optionsMap) {
+		this.optionsMap = optionsMap;
+	}
+
+	public boolean isReadFirstLine() {
+		return readFirstLine;
+	}
+
+	public long getDumpEachLine() {
+		return dumpEachLine;
+	}
+
+	public long getLastLine() {
+		return lastLine;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public long getMeasureEachLine() {
+		return measureEachLine;
 	}
 }

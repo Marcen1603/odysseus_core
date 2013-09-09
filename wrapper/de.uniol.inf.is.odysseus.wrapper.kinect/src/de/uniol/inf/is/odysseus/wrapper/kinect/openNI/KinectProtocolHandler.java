@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.wrapper.kinect.openNI;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -57,6 +56,7 @@ public class KinectProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
             ITransferHandler<Tuple<?>> transfer) {
         KinectProtocolHandler instance = new KinectProtocolHandler(direction,
                 access);
+        instance.setOptionsMap(options);
         instance.setDataHandler(dataHandler);
         instance.setTransfer(transfer);
         return instance;
@@ -91,9 +91,13 @@ public class KinectProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
     public void process(String[] message) {
     }
 
-	@Override
-	public Map<String, String> getOptions() {
-		// No options are used by this ProtocolHandler, return an empty map
-		return new HashMap<String,String>();
-	}
+    @Override
+    public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+    	if(!(o instanceof KinectProtocolHandler)) {
+    		return false;
+    	} else {
+    		// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+    		return true;
+    	}
+    }
 }

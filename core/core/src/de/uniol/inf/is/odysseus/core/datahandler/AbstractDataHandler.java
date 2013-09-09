@@ -108,4 +108,17 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 	@Override
 	abstract public List<String> getSupportedDataTypes();
 	
+	@Override
+	public boolean isSemanticallyEqual(IDataHandler<?> other) {
+		if(this.isPrototype() != other.isPrototype()) {
+			return false;
+		} else if(!this.schema.equals(other.getSchema())) {
+			return false;
+		} else if(!this.getSupportedDataTypes().containsAll(other.getSupportedDataTypes())) {
+			return false;
+		}
+		// TODO: implement in child classes
+		return false;
+	}
+	
 }

@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
 	private ByteBufferHandler<T> objectHandler;
-
+	
 	public SizeByteBufferHandler() {
 		super();
 	}
@@ -179,6 +178,7 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		SizeByteBufferHandler<T> instance = new SizeByteBufferHandler<T>(direction, access);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
+		instance.setOptionsMap(options);
 		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
 		return instance;
@@ -206,10 +206,14 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("byteorder", this.byteOrder.toString());
-		return options;
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof SizeByteBufferHandler)) {
+			return false;
+		}
+		SizeByteBufferHandler<?> other = (SizeByteBufferHandler<?>)o;
+		if(!this.byteOrder.toString().equals(other.getByteOrder().toString())) {
+			return false;
+		}
+		return true;
 	}
-
 }

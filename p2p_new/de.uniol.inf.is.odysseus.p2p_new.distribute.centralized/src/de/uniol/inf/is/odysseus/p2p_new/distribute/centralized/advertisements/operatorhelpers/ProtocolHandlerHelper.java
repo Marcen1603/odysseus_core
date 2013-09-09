@@ -43,7 +43,7 @@ public class ProtocolHandlerHelper {
 			String supportedDataTypesAsString = Arrays.toString(supportedDataTypes.toArray(new String[0]));
 			result.appendChild(result.createElement(DATAHANDLER_SUPPORTEDTYPES_TAG,supportedDataTypesAsString));
 			result.appendChild(result.createElement(DATAHANDLER_SCHEMA_TAG,SchemaHelper.createOutputSchemaStatement(dataHandlerSchema, mimeType)));
-			result.appendChild(result.createElement(OPTIONS_TAG,ph.getOptions().toString()));
+			result.appendChild(result.createElement(OPTIONS_TAG,ph.getOptionsMap().toString()));
 		}
 		return result;
 	}

@@ -24,7 +24,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +72,6 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 	private long delay;
 	private int nanodelay;
 	private final List<String> xpaths = new ArrayList<String>();
-	private Map<String,String> options =  new HashMap<String,String>();
 
 	/**
  * 
@@ -226,9 +224,7 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
 		instance.init(options);
-		
-		// save the options (for serialisation-/comparison-purposes)
-		instance.setOptions(options);
+		instance.setOptionsMap(options);
 
 		final SDFSchema schema = dataHandler.getSchema();
 		final List<String> xpaths = new ArrayList<String>();
@@ -309,12 +305,25 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 		this.getTransfer().transfer(this.getDataHandler().readData(message));
 	}
 
-	public void setOptions(Map<String, String> options) {
-		this.options = options;
-	}
-	
 	@Override
-	public Map<String, String> getOptions() {
-		return this.options;
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof HTMLProtocolHandler)) {
+			return false;
+		}
+		HTMLProtocolHandler<?> other = (HTMLProtocolHandler<?>)o;
+		if(this.nanodelay != other.getNanodelay() ||
+				this.delay != other.getDelay()) {
+			return false;
+		}
+		List<String> otherXPaths = other.getXPaths();
+		if(otherXPaths.size() != this.getXPaths().size()) {
+			return false;
+		}
+		for(String s : this.getXPaths()) {
+			if(!otherXPaths.contains(s)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

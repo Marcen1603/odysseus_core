@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.inertiacube.protocol;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -52,6 +51,7 @@ public class InertiaCubeProtocolHandler extends AbstractByteBufferHandler<Tuple<
 			Map<String, String> options, IDataHandler<Tuple<?>> dataHandler,
 			ITransferHandler<Tuple<?>> transfer) {
 		InertiaCubeProtocolHandler instance = new InertiaCubeProtocolHandler(direction, access);
+		instance.setOptionsMap(options);
 		instance.setDataHandler(dataHandler);
 		instance.setTransfer(transfer);
 		return instance;
@@ -87,9 +87,13 @@ public class InertiaCubeProtocolHandler extends AbstractByteBufferHandler<Tuple<
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		// No options are used by this ProtocolHandler, return an empty map
-		return new HashMap<String,String>();
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
+		if(!(o instanceof InertiaCubeProtocolHandler)) {
+			return false;
+		} else {
+			// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+			return true;
+		}
 	}
 
 }

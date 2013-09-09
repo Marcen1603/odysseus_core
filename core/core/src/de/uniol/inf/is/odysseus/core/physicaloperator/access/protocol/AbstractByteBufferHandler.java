@@ -44,4 +44,8 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
             byteOrder = ByteOrder.BIG_ENDIAN;
         }
     }
+
+	public ByteOrder getByteOrder() {
+		return byteOrder;
+	}
 }

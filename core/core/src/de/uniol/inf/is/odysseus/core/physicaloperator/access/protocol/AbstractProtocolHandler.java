@@ -32,6 +32,8 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     private ITransportHandler         transportHandler;
     private IDataHandler<T>           dataHandler;
     private ITransferHandler<T>       transfer;
+    
+    private Map<String, String> optionsMap;
 
     public AbstractProtocolHandler() {
         direction = null;
@@ -110,9 +112,39 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     }
     
     /**
-     * This method is supposed to retrieve the options for an instance, which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, Map, IDataHandler, ITransferHandler)}
-     * based on the current configuration. This is useful for comparing and serialising different ProtocolHandler-instances.
-     * @return
+     * This method is supposed to retrieve the options for an instance,
+     * which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, Map, IDataHandler, ITransferHandler)}
+     * based on the current configuration. This is useful serialising different ProtocolHandler-instances.
+     * CANNOT be used for comparisons to check if two AbstractProtocolHandler-instances are semantically equivalent.
      */
-    public abstract Map<String, String> getOptions();
+    public Map<String, String> getOptionsMap() {
+    	return optionsMap;
+    }
+    
+	public void setOptionsMap(Map<String, String> options) {
+		this.optionsMap = options;
+	}
+    
+    /**
+     * checks if another IProtocolHandler-instance is semantically equivalent to this one
+     */
+    @Override
+    public boolean isSemanticallyEqual(IProtocolHandler<?> o) {
+    	if(!(o instanceof AbstractProtocolHandler)) {
+    		return false;
+    	}
+    	AbstractProtocolHandler<?> other = (AbstractProtocolHandler<?>)o;
+    	if(!this.direction.equals(other.getDirection())) {
+    		return false;
+    	} else if(!this.access.equals(other.getAccess())) {
+    		return false;
+    	} else if(!this.dataHandler.isSemanticallyEqual(other.getDataHandler())) {
+    		return false;
+    	} else if(!this.transportHandler.isSemanticallyEqual(other.getTransportHandler())) {
+    		return false;
+    	}
+    	return isSemanticallyEqualImpl(other);
+    }
+    
+    public abstract boolean isSemanticallyEqualImpl(IProtocolHandler<?> other);
 }

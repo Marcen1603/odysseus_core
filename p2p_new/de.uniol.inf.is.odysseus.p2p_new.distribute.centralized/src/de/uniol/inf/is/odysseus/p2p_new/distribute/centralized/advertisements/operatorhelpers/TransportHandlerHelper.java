@@ -23,7 +23,7 @@ public class TransportHandlerHelper {
 		if(transportHandler instanceof AbstractTransportHandler) {
 			AbstractTransportHandler th = (AbstractTransportHandler)transportHandler;
 			result.appendChild(result.createElement(TRANSPORT_HANDLER_NAME_TAG,th.getName()));
-			result.appendChild(result.createElement(OPTIONS_TAG,th.getOptions().toString()));
+			result.appendChild(result.createElement(OPTIONS_TAG,th.getOptionsMap().toString()));
 		}
 		return result;
 	}

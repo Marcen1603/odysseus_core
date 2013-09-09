@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -90,6 +89,7 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		FS20ProtocolHandler<T> instance = new FS20ProtocolHandler<T>(direction,
 				access);
 		instance.setDataHandler(dataHandler);
+		instance.setOptionsMap(options);
 		instance.setTransfer(transfer);
 		throw new RuntimeException("Not implemented yet");
 		// return instance;
@@ -162,8 +162,12 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public Map<String, String> getOptions() {
-		// No options are used by this ProtocolHandler, return an empty map
-		return new HashMap<String,String>();
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
+		if(!(other instanceof FS20ProtocolHandler)) {
+			return false;
+		} else {
+			// the datahandler was already checked in the isSemanticallyEqual-Method of AbstracProtocolHandler
+			return true;
+		}
 	}
 }

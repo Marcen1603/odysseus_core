@@ -42,4 +42,5 @@ public interface IDataHandler<T> {
 	public SDFSchema getSchema();
 	public void setSchema(SDFSchema schema);
 	public Class<?> createsType();
+	public boolean isSemanticallyEqual(IDataHandler<?> other);
 }

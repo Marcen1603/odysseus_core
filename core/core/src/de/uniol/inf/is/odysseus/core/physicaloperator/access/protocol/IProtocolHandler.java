@@ -58,6 +58,6 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener {
     String getName();
 
 	public boolean isDone();
-
-
+	
+	public boolean isSemanticallyEqual(IProtocolHandler<?> other);
 }

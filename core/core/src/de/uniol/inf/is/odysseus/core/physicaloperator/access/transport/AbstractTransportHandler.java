@@ -153,6 +153,30 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
      * based on the current configuration. This is useful for comparing and serialising different TransportHandler-instances.
      * @return
      */
-	abstract public Map<String, String> getOptions();
+	public Map<String, String> getOptionsMap() {
+		//return optionsMap;
+		// TODO: change the handling of the options to be the same as for the ProtocolHandlers, cleanup child classes
+		return getOptions();
+	}
+	
+	public abstract Map<String, String> getOptions();
+	
+	public void setOptionsMap(Map<String, String> options) {
+		//this.optionsMap = options;
+	}
+	
+	@Override
+	public boolean isSemanticallyEqual(ITransportHandler other) {
+		if(!this.exchangePattern.equals(other.getExchangePattern())) {
+			return false;
+		} else if(!this.getName().equals(other.getName())) {
+			return false;
+		}
+		return false;
+		// TODO: Implement in child classes
+		//return isSemanticallyEqualImpl(other);
+	}
+	
+	//abstract boolean isSemanticallyEqualImpl(ITransportHandler other);
 
 }
