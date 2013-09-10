@@ -204,13 +204,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		synchronized (minTs) {
 			minimum = getMinTs();
 		}
-		System.err.println(minimum);
 		sendData(minimum);
 	}
 
 	@SuppressWarnings("unchecked")
 	protected void sendData(PointInTime minimum) {
-		if (minimum != null) {
+		if (minimum != null && outputQueue.size() > 0) {
 			synchronized (this.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
