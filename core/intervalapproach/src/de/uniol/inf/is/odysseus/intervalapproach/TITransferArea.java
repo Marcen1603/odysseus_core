@@ -204,6 +204,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		synchronized (minTs) {
 			minimum = getMinTs();
 		}
+		System.err.println(minimum);
 		sendData(minimum);
 	}
 

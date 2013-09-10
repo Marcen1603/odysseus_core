@@ -45,25 +45,27 @@ public class TLeftJoinAORule extends AbstractTransformationRule<LeftJoinAO> {
 		LeftJoinTIPO joinPO = new LeftJoinTIPO(joinAO.getInputSchema(0), joinAO.getInputSchema(1), joinAO.getOutputSchema());
 		IPredicate pred = joinAO.getPredicate();
 		joinPO.setJoinPredicate(pred == null ? new TruePredicate() : pred.clone());
+	
+		// see TJoinAORule
 		
 		// if in both input paths there is no window, we
 		// use a persistent sweep area
 		// check the paths
-		boolean windowFound=false;
-		for(int port = 0; port<2; port++){
-			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
-				windowFound = true;
-				break;
-			}
-		}
-		
-		if(!windowFound){
-			joinPO.setTransferFunction(new PersistentTransferArea());
-		}
-		// otherwise we use a LeftJoinTISweepArea
-		else{
+//		boolean windowFound=false;
+//		for(int port = 0; port<2; port++){
+//			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
+//				windowFound = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!windowFound){
+//			joinPO.setTransferFunction(new PersistentTransferArea());
+//		}
+//		// otherwise we use a LeftJoinTISweepArea
+//		else{
 			joinPO.setTransferFunction(new LeftJoinTITransferArea());	
-		}
+//		}
 		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());

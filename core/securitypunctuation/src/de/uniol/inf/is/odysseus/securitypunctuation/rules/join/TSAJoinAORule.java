@@ -55,24 +55,25 @@ public class TSAJoinAORule extends AbstractTransformationRule<JoinAO> {
 		SDFSchema tmpSchema = new SDFSchema(newOutputSchemaName, joinAO.getOutputSchema());
 		joinAO.setOutputSchema(tmpSchema);	
 		
-		// if in both input paths there is no window, we
-		// use a persistent sweep area
-		// check the paths
-		boolean windowFound=false;		
-		for(int port = 0; port<2; port++){
-			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
-				windowFound = true;
-				break;
-			}
-		}
-		
-		if(!windowFound){
-			joinPO.setTransferFunction(new PersistentTransferArea());
-		}
-		// otherwise we use a LeftJoinTISweepArea
-		else{
+		// see TJoinAORule
+//		// if in both input paths there is no window, we
+//		// use a persistent sweep area
+//		// check the paths
+//		boolean windowFound=false;		
+//		for(int port = 0; port<2; port++){
+//			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
+//				windowFound = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!windowFound){
+//			joinPO.setTransferFunction(new PersistentTransferArea());
+//		}
+//		// otherwise we use a LeftJoinTISweepArea
+//		else{
 			joinPO.setTransferFunction(new TITransferArea());
-		}
+//		}
 		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());

@@ -15,17 +15,16 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform.join;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -50,25 +49,29 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 			joinPO.setJoinPredicate(pred.clone());
 		}
 		
-		
+
+		// This is "bullsh*" The is no need for a window. The elements could already have start and end timestamps! 
+
 		// if in both input paths there is no window, we
 		// use a persistent sweep area
 		// check the paths
-		boolean windowFound=false;
-		for(int port = 0; port<2; port++){
-			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
-				windowFound = true;
-				break;
-			}
-		}
+//		boolean windowFound=false;
+//		for(int port = 0; port<2; port++){
+//			if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
+//				windowFound = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!windowFound){
+//			joinPO.setTransferFunction(new PersistentTransferArea());
+//		}
+//		// otherwise we use a LeftJoinTISweepArea
+//		else{
 		
-		if(!windowFound){
-			joinPO.setTransferFunction(new PersistentTransferArea());
-		}
-		// otherwise we use a LeftJoinTISweepArea
-		else{
-			joinPO.setTransferFunction(new TITransferArea());
-		}
+		
+		joinPO.setTransferFunction(new TITransferArea());
+//		}
 		
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());

@@ -60,23 +60,25 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 		final ProbabilisticDiscreteJoinTIPO joinPO = new ProbabilisticDiscreteJoinTIPO();
 		final IPredicate<?> pred = operator.getPredicate();
 		joinPO.setJoinPredicate(pred.clone());
+	
+		// see TJoinAORule!
 		// if in both input paths there is no window, we
 		// use a persistent sweep area
 		// check the paths
-		boolean windowFound = false;
-		for (int port = 0; port < 2; port++) {
-			if (!JoinTransformationHelper.checkLogicalPath(operator.getSubscribedToSource(port).getTarget())) {
-				windowFound = true;
-				break;
-			}
-		}
-
-		if (!windowFound) {
-			joinPO.setTransferFunction(new PersistentTransferArea());
-		} else {
-			// otherwise we use a LeftJoinTISweepArea
+//		boolean windowFound = false;
+//		for (int port = 0; port < 2; port++) {
+//			if (!JoinTransformationHelper.checkLogicalPath(operator.getSubscribedToSource(port).getTarget())) {
+//				windowFound = true;
+//				break;
+//			}
+//		}
+//
+//		if (!windowFound) {
+//			joinPO.setTransferFunction(new PersistentTransferArea());
+//		} else {
+//			// otherwise we use a LeftJoinTISweepArea
 			joinPO.setTransferFunction(new TITransferArea());
-		}
+//		}
 
 		joinPO.setMetadataMerge(new CombinedMergeFunction());
 		joinPO.setCreationFunction(new DefaultProbabilisticTIDummyDataCreation());
