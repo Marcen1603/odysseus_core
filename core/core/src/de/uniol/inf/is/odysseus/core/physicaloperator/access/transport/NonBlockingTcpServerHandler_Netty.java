@@ -17,8 +17,10 @@ import io.netty.util.ReferenceCountUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -34,6 +36,32 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	private int port;
 	List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
+	private MyTCPServer tcpServer = null;
+	static private MyTCPServer tcpServerStatic = null;
+	boolean shareTCPServer = true;
+
+	/**
+	 * @return the tcpServer
+	 */
+	public MyTCPServer getTcpServer() {
+		MyTCPServer ret = null;
+		if (shareTCPServer) {
+			synchronized (MyTCPServer.class) {
+				if (tcpServerStatic == null) {
+					tcpServerStatic = new MyTCPServer();
+				}
+			}
+			ret = tcpServerStatic;
+		} else {
+			synchronized (this) {
+				if (tcpServer == null) {
+					tcpServer = new MyTCPServer();
+				}
+			}
+			ret = tcpServer;
+		}
+		return ret;
+	}
 
 	public NonBlockingTcpServerHandler_Netty(
 			IProtocolHandler<?> protocolHandler, int port) {
@@ -47,6 +75,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	@Override
 	public void send(byte[] message) throws IOException {
 		for (ChannelHandlerContext ctx : channels) {
+//			System.err.println(this + " Sending to "
+//					+ ctx.channel().remoteAddress());
 			final ByteBuf send = ctx.alloc().buffer(message.length);
 			send.writeBytes(message);
 			ctx.writeAndFlush(send);
@@ -111,7 +141,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	private void processInOutOpen() throws IOException {
 		try {
-			MyTCPServer.getInstance().add(port, this);
+			getTcpServer().add(port, this);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -129,7 +159,14 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	private void processInOutClose() throws IOException {
 		try {
-			MyTCPServer.getInstance().shutdown(port);
+			Iterator<ChannelHandlerContext> channelIter = this.channels
+					.iterator();
+			while (channelIter.hasNext()) {
+				ChannelHandlerContext e = channelIter.next();
+				e.close();
+			}
+			channels.clear();
+			getTcpServer().shutdown(port);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -164,15 +201,15 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 }
 
-class MyTCPServer {
+class MyTCPServer extends ChannelInboundHandlerAdapter {
 
-	private static MyTCPServer instance = new MyTCPServer();
+	// private static MyTCPServer instance = new MyTCPServer();
+	//
+	// static synchronized MyTCPServer getInstance() {
+	// return instance;
+	// }
 
-	static synchronized MyTCPServer getInstance() {
-		return instance;
-	}
-
-	private MyTCPServer() {
+	public MyTCPServer() {
 	}
 
 	private ServerBootstrap b = null;
@@ -180,6 +217,7 @@ class MyTCPServer {
 	private EventLoopGroup workerGroup = new NioEventLoopGroup();
 
 	Map<Integer, ChannelFuture> portMapping = new HashMap<Integer, ChannelFuture>();
+	Map<Integer, NonBlockingTcpServerHandler_Netty> handlerMapping = new HashMap<>();
 
 	public void shutdown() {
 		workerGroup.shutdownGracefully();
@@ -187,12 +225,13 @@ class MyTCPServer {
 		b = null;
 	}
 
-	public void shutdown(int port) throws InterruptedException{
+	public void shutdown(int port) throws InterruptedException {
 		ChannelFuture f = portMapping.get(port);
 		f.channel().close();
-		//f.channel().closeFuture().sync();
+		// f.channel().closeFuture().sync();
 		portMapping.remove(port);
-		if (portMapping.size() == 0){
+		handlerMapping.remove(port);
+		if (portMapping.size() == 0) {
 			shutdown();
 		}
 	}
@@ -205,68 +244,117 @@ class MyTCPServer {
 					+ " already bound!");
 		}
 
-		if (b == null){
+		if (b == null) {
 			b = new ServerBootstrap();
 			bossGroup = new NioEventLoopGroup();
 			workerGroup = new NioEventLoopGroup();
+			b.group(bossGroup, workerGroup)
+					.channel(NioServerSocketChannel.class)
+					.childHandler(new ChannelInitializer<SocketChannel>() {
+						@Override
+						protected void initChannel(SocketChannel ch)
+								throws Exception {
+							ServerHandler handler = new ServerHandler(
+									MyTCPServer.this);
+							ch.pipeline().addLast(handler);
+						}
+					}).option(ChannelOption.SO_BACKLOG, 128)
+					.childOption(ChannelOption.SO_KEEPALIVE, true);
 		}
-		
-		b.group(bossGroup, workerGroup)
-				.channel(NioServerSocketChannel.class)
-				.childHandler(new ChannelInitializer<SocketChannel>() {
-					@Override
-					protected void initChannel(SocketChannel ch)
-							throws Exception {
-						ch.pipeline().addLast(new MyServerHandler(caller));
-					}
-				}).option(ChannelOption.SO_BACKLOG, 128)
-				.childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		ChannelFuture f = null;
 		f = b.bind(port).sync();
 		portMapping.put(port, f);
-
-	}
-	
-	
-}
-
-class MyServerHandler extends ChannelInboundHandlerAdapter {
-
-	final NonBlockingTcpServerHandler_Netty caller;
-	ChannelHandlerContext ctx;
-
-	MyServerHandler(NonBlockingTcpServerHandler_Netty caller) {
-		this.caller = caller;
+		handlerMapping.put(port, caller);
 	}
 
+	private int getPort(ChannelHandlerContext ctx) {
+		return ((InetSocketAddress) ctx.channel().localAddress()).getPort();
+	}
+
+	private NonBlockingTcpServerHandler_Netty getHandler(
+			ChannelHandlerContext ctx) {
+		return handlerMapping.get(getPort(ctx));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.netty.channel.ChannelInboundHandlerAdapter#channelActive(io.netty.
+	 * channel.ChannelHandlerContext)
+	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		//System.err.println("Channel active " + ctx.name());
-		caller.channels.add(ctx);
-		this.ctx = ctx;
+// 		System.err.println("Channel active " + ctx.channel().localAddress());
+		getHandler(ctx).channels.add(ctx);
 	}
 
-	@Override
-	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		caller.channels.remove(ctx);
-		this.ctx = null;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.netty.channel.ChannelInboundHandlerAdapter#channelInactive(io.netty
+	 * .channel.ChannelHandlerContext)
+	 */
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		caller.channels.remove(ctx);
-		this.ctx = null;
+//		System.err.println("Channel inactive " + ctx.channel().localAddress());
+		getHandler(ctx).channels.remove(ctx);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * io.netty.channel.ChannelInboundHandlerAdapter#channelRead(io.netty.channel
+	 * .ChannelHandlerContext, java.lang.Object)
+	 */
+	@Override
+	public void channelRead(ChannelHandlerContext ctx, Object msg)
+			throws Exception {
+		try {
+			getHandler(ctx).process(
+					((UnpooledUnsafeDirectByteBuf) msg).nioBuffer());
+		} finally {
+			ReferenceCountUtil.release(msg);
+		}
+	}
+
+}
+
+/**
+ * For each Connection there must be a handler class
+ * 
+ * @author Marco Grawunder
+ * 
+ */
+class ServerHandler extends ChannelInboundHandlerAdapter {
+
+	private MyTCPServer instance;
+
+	/**
+	 * @param instance
+	 */
+	public ServerHandler(MyTCPServer instance) {
+		this.instance = instance;
+		//System.err.println("New Server Handler created for " + instance);
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg)
 			throws Exception {
-		try {
-			caller.process(((UnpooledUnsafeDirectByteBuf) msg).nioBuffer());
-		} finally {
-			ReferenceCountUtil.release(msg);
-		}
+		instance.channelRead(ctx, msg);
+	}
+
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		instance.channelActive(ctx);
+	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		instance.channelInactive(ctx);
 	}
 
 }
