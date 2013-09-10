@@ -185,4 +185,32 @@ public class GraphNode {
 		}
 		return true;
 	}
+
+	// retrieves length of the path from this node to a the farthest away Source-node
+	public int getDepths() {
+		if(this.getSubscribedToSource().isEmpty()) {
+			return 0;
+		} else {
+			int highestDepth = -1;
+			for(Subscription<GraphNode> sub : this.getSubscribedToSource()) {
+				int depth = sub.getTarget().getDepths();
+				if(depth > highestDepth) {
+					highestDepth = depth;
+				}
+			}
+			return highestDepth + 1;
+		}
+	}
+	
+	// returns a List of the IDs of every operator leading to this operator
+	public List<Integer> getSourceIDs() {
+		List<Integer> result = new ArrayList<Integer>();
+		result.add(this.getOperatorID());
+		if(!this.getSubscribedToSource().isEmpty()) {
+			for(Subscription<GraphNode> sub : this.getSubscribedToSource()) {
+				result.addAll(sub.getTarget().getSourceIDs());
+			}
+		}
+		return result;
+	}
 }

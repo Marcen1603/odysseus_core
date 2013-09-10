@@ -1,7 +1,11 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;
@@ -16,10 +20,11 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	private static final String ID_TAG = "id";
 	private static final String PEER_ID_TAG = "peerid";
 	private static final String MASTER_PEER_ID_TAG = "masterpeerid";
-	private static final String ADVERTISEMENT_TYPE = "jxta:PhysicalQueryPlanAdvertisement";
+	private static final String ADVERTISEMENT_TYPE = "jxta:PhysicalQueryPartAdvertisement";
 	private ID id;
 	private PeerID masterPeerID;
 	private PeerID peerID;
+	private Map<Integer, IPhysicalOperator> queryPartOperators;
 
 	
 	public PhysicalQueryPartAdvertisement(Element<?> root) {

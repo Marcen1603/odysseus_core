@@ -2,7 +2,10 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -21,6 +24,10 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
  */
 public class QSSimulator implements IQuerySharingSimulator {
 	private static QSSimulator instance;
+	// Map of the form: replacedNode of the new plan as key, replacementNode of the old plan as value
+	private Map<Integer, Integer> shareableIdenticalNodes = new HashMap<Integer,Integer>();
+	// Map of the form: Node of the new plan, which had its input changed as key, sourceNode of the old plan as value
+	private Map<Integer, Integer> shareableSimilarNodes = new HashMap<Integer,Integer>();
 	
 	private QSSimulator() {
 		
@@ -47,7 +54,10 @@ public class QSSimulator implements IQuerySharingSimulator {
 				|| (parameterShareSimilarOperators && reconnectSimilarGraphNodes(graph, restructuringAllowed))) {
 
 		}
-		return new SimulationResult(graph);
+		SimulationResult simRes = new SimulationResult(graph);
+		simRes.setShareableIdenticalNodes(shareableIdenticalNodes);
+		simRes.setShareableSimilarNodes(shareableSimilarNodes);
+		return simRes;
 	}
 	
 	private boolean removeIdenticalGraphNodes(Graph graph, boolean restructuringAllowed) {
@@ -77,7 +87,27 @@ public class QSSimulator implements IQuerySharingSimulator {
 								gn1 = gn2;
 								gn2 = temp;
 							}
-
+							// put the if of the to-be-removed node in a list along with the id of the operator which replaces it.
+							shareableIdenticalNodes.put(gn1.getOperatorID(),gn2.getOperatorID());
+							
+							// Weed out the unnecessary shares later, when assembling the Physical-Query-Part
+							// If an operator is truly dismissible can be told by looking at its dependant sinks
+							// so operators may be below this shareable one, but if they fed into another branch of the tree as well,
+							// we have to retain this information and can't throw it away,
+							// just because one branch has a shareable point somewhere higher up
+							
+//							// check, if this new shareable node subsumes any already saved node (those superfluous when sharing this one)
+//							List<Integer> keysToRemove = new ArrayList<Integer>();
+//							for(Entry<Integer,Integer> e : shareableIdenticalNodes.entrySet()) {
+//								// this operator was previously shared but is one of the sources of this currently shared operator,
+//								// thus this one is higher up so that we may remove the other one
+//								if(e.getValue() != gn2.getOperatorID() && gn2.getSourceIDs().contains(e.getValue())) {
+//									keysToRemove.add(e.getKey());
+//								}
+//							}
+//							for(int key : keysToRemove) {
+//								shareableIdenticalNodes.remove(key);
+//							}
 							replaceNode(gn1, gn2);
 							// Remove the replaced GraphNode from the Graph
 							graph.removeNode(gn1);
@@ -160,7 +190,10 @@ public class QSSimulator implements IQuerySharingSimulator {
 	}
 	
 	private void replaceInput(GraphNode gn1, GraphNode gn2) {
-		// replace the old source of op1 with op2
+		// putting a node of the new plan in this map means, that all of its old sources could be discarded
+		// EXCEPT if one of those fed into other new operators, in which case it was placed in the map of shareable identical operators
+		shareableSimilarNodes.put(gn1.getOperatorID(),gn2.getOperatorID());
+		// replace the old source of gn1 with gn2
 		Collection<Subscription<GraphNode>> sources = new ArrayList<Subscription<GraphNode>>(gn1.getSubscribedToSource());
 		for (Subscription<GraphNode> sub : sources) {
 			GraphNode sourceNode = sub.getTarget();
