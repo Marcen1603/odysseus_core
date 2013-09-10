@@ -83,7 +83,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		transformer = po.transformer;
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
-		
+		accessAOName = po.accessAOName;
 	}
 
 	public AbstractAccessAO(String wrapper, Map<String, String> optionsMap) {		
