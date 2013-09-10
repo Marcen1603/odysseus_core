@@ -83,7 +83,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void init(AbstractPipe<R, W> po) {
-		
+
 		synchronized (outputQueue) {
 			this.watermark = null;
 			this.po = po;
@@ -125,7 +125,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void transfer(W object) {
-		synchronized (this.outputQueue) {			
+		synchronized (this.outputQueue) {
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
@@ -145,7 +145,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		synchronized (this.outputQueue) {			
+		synchronized (this.outputQueue) {
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
 			// phase
@@ -183,13 +183,23 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void newHeartbeat(PointInTime heartbeat, int inPort) {
-		synchronized (minTs) {
-			minTs.put(inPort, heartbeat);
+
+		// watermark is needed if new sources are connected at runtime
+		// if watermark == null no object has ever been transferred --> init
+		// phase
+		// else treat only objects that are at least from time watermark
+		if (watermark == null || heartbeat.afterOrEquals(watermark)) {
+
+			synchronized (minTs) {
+				minTs.put(inPort, heartbeat);
+			}
+			sendData();
+		}else{
+			logger.warn("Out of order element read "+heartbeat+" before last send element "+watermark+" ! Ignoring");
 		}
-		sendData();
 	}
 
-	private void sendData() {		
+	private void sendData() {
 		PointInTime minimum = null;
 		synchronized (minTs) {
 			minimum = getMinTs();
@@ -211,19 +221,19 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 								minimum)) {
 							this.outputQueue.poll();
 							// FIXME: This will not work!
-//							// Avoid sending "outdated" heartbeats
-//							while (((IPunctuation) elem).isHeartbeat()) {
-//								IStreamable nextElem = outputQueue.peek();
-//								if (nextElem != null
-//										&& nextElem.isPunctuation()
-//										&& ((IPunctuation) elem).isHeartbeat()
-//										&& ((IPunctuation) elem).getTime()
-//												.afterOrEquals(minimum)) {
-//									elem = nextElem;
-//								} else {
-//									break;
-//								}
-//							}
+							// // Avoid sending "outdated" heartbeats
+							// while (((IPunctuation) elem).isHeartbeat()) {
+							// IStreamable nextElem = outputQueue.peek();
+							// if (nextElem != null
+							// && nextElem.isPunctuation()
+							// && ((IPunctuation) elem).isHeartbeat()
+							// && ((IPunctuation) elem).getTime()
+							// .afterOrEquals(minimum)) {
+							// elem = nextElem;
+							// } else {
+							// break;
+							// }
+							// }
 							po.sendPunctuation((IPunctuation) elem);
 							elem = this.outputQueue.peek();
 						} else {
@@ -242,14 +252,14 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						}
 					}
 				}
-//				// Avoid unnecessary punctuations
-//				if (!elementsSend
-//						&& isInOrder()
-//						&& (watermark == null || (watermark != null && !watermark
-//								.equals(minimum)))) {
-//					po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum),
-//							outputPort);
-//				}
+				// // Avoid unnecessary punctuations
+				// if (!elementsSend
+				// && isInOrder()
+				// && (watermark == null || (watermark != null && !watermark
+				// .equals(minimum)))) {
+				// po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum),
+				// outputPort);
+				// }
 				if (elementsSend) {
 					// Set marker to time stamp of the last send object
 					watermark = minimum;
@@ -279,7 +289,6 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		return minTs.get(inPort);
 	}
 
-	
 	@Override
 	public boolean isInOrder() {
 		return inOrder;
@@ -289,13 +298,16 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	public void setInOrder(boolean isInOrder) {
 		this.inOrder = isInOrder;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return getClass().getSimpleName()+"@"+hashCode()+" "+po.getName();
+		return getClass().getSimpleName() + "@" + hashCode() + " "
+				+ po.getName();
 	}
 
 }
