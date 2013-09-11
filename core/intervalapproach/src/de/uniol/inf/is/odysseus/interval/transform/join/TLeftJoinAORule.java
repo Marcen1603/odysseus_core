@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.LeftJoinTITransferArea;
-import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
