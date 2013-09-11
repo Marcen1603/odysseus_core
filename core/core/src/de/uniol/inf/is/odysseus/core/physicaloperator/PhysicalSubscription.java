@@ -52,5 +52,10 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 		return openCalls;
 	}
 	
+	@Override
+	public String toString() {
+		return super.toString()+" openCalls="+openCalls;
+	}
+	
 	
 }
