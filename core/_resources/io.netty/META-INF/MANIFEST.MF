@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Netty 4
+Bundle-Name: Netty
 Bundle-SymbolicName: io.netty
-Bundle-Version: 4.0.7
-Bundle-ClassPath: netty-all-4.0.7.Final.jar,
- netty-all-4.0.7.Final-sources.jar
+Bundle-Version: 1.0.0
+Bundle-ClassPath: netty-all.jar,
+ netty-all-sources.jar
 Export-Package: io.netty.bootstrap,
  io.netty.buffer,
  io.netty.channel,
