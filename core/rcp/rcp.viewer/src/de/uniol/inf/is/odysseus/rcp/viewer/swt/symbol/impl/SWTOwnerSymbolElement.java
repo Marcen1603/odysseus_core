@@ -70,19 +70,12 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		GC gc = getActualGC();
 		int round = (int)(RECT_ROUND_SIZE_PIXELS * zoomFactor);
 
-		gc.setBackground(OwnerColorManager.getOwnerBackgroundColor(ownerID));
+		if( isNodeContentOpen() ) {
+			gc.setBackground(OwnerColorManager.getOwnerBackgroundColor(ownerID));
+		} else {
+			gc.setBackground(OwnerColorManager.getInactiveOwnerBackgroundColor(ownerID));
+		}
 		gc.fillRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
-		
-		
-		if( !isNodeContentOpen() ) {
-			gc.setLineStyle(SWT.LINE_DOT);
-			gc.setLineWidth(3);
-			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
-			
-			gc.drawRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
-			
-			gc.setLineWidth(1);
-		} 
 	}
 	
 	private boolean isNodeContentOpen() {

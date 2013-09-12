@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.resource.XMLResourceLoader;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.OwnerColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.impl.XMLSymbolConfiguration;
 
@@ -87,6 +88,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 
 		Platform.getExtensionRegistry().removeListener(StreamEditorRegistry.getInstance());
 		imageManager.disposeAll();
+		OwnerColorManager.disposeColors();
 
 		context = null;
 	}

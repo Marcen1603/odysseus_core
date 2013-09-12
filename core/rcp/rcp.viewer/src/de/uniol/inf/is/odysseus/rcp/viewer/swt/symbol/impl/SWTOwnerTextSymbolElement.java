@@ -88,9 +88,25 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			final int ownerID = determineFirstOwnerID(getNodeView().getModelNode().getContent());
 
 			gc.setFont(font);
-			gc.setForeground(OwnerColorManager.getOwnerTextColor(ownerID));
+			if( isNodeContentOpen() ) {
+				gc.setForeground(OwnerColorManager.getOwnerTextColor(ownerID));
+			} else {
+				gc.setForeground(OwnerColorManager.getInactiveOwnerTextColor(ownerID));
+			}
+			
 			gc.drawText(name, x, y, true);
 		}
+	}
+	
+	private boolean isNodeContentOpen() {
+		C content = getNodeView().getModelNode().getContent();
+		if( content instanceof IPhysicalOperator ) {
+			IPhysicalOperator operator = (IPhysicalOperator)content;
+			if( operator.isOpen() ) {
+				return true;
+			} 
+		} 
+		return false;
 	}
 
 	private static int determineTextLength(GC gc, String text) {
