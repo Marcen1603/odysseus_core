@@ -45,13 +45,13 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			List<IPhysicalQuery> newQueries, OptimizationConfiguration conf,
 			IDataDictionaryWritable dd) {
 		boolean restructuringAllowed;
-//		if (conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
-//			restructuringAllowed = conf
-//					.getParameterAllowRestructuringOfCurrentPlan().getValue();
-//		} else {
-//			restructuringAllowed = false;
-//		}
-		restructuringAllowed = false;
+		if (conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
+			restructuringAllowed = conf
+					.getParameterAllowRestructuringOfCurrentPlan().getValue();
+		} else {
+			restructuringAllowed = false;
+		}
+		//restructuringAllowed = false;
 		// Weder neue Queries vorhanden, noch die Erlaubnis den alten Plan
 		// umzustrukturieren
 		if (newQueries == null && !restructuringAllowed) {
@@ -136,7 +136,8 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 						// Der erste Operator ist nicht neu, der zweite
 						// allerdings schon und eine Umstrukturierung des alten
 						// Plans ist untersagt
-						if (!restructuringAllowed && !newOps.contains(op1)) {
+						// Do not replace, when operator is running!
+						if ((!restructuringAllowed && !newOps.contains(op1)) || op1.isOpen()) {
 							IPhysicalOperator temp = op1;
 							op1 = op2;
 							op2 = temp;
