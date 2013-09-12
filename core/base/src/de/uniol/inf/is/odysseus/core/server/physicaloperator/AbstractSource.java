@@ -496,7 +496,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// call close) kept in list connectedSinks
 			// If all by open connected subscriptions are removed, close
 			// operator
-			if ((activeSinkSubscriptions.size() - 1) == connectedSinks.size()) {
+			if ((activeSinkSubscriptions.size()-1)  == connectedSinks.size()) {
 				getLogger().debug("Closing " + toString());
 				fire(this.closeInitEvent);
 				this.process_close();
@@ -599,9 +599,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema, boolean asActive) {
+			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
+		sub.setOpenCalls(openCount);
 		if (!this.sinkSubscriptions.contains(sub)) {
 			// getLogger().debug(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
@@ -617,7 +618,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false);
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false,0);
 	}
 
 	@Override

@@ -89,9 +89,14 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 			if (isOpen()) {
 				callCloseOnChildren(callPath, forOwners);
 			}
-			sinkOpen.set(false);
+			// Do not close sink part here, there could be other sources
+			//	sinkOpen.set(false);
 		}
 
+		protected void setOpen(boolean state){
+			sinkOpen.set(state);
+		}
+		
 		@Override
 		public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 			return AbstractPipe.this.delegatedIsSemanticallyEqual(ipo);
@@ -172,20 +177,21 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// OPEN
 	// ------------------------------------------------------------------------
 
-//	@Override
-//	final public void open() throws OpenFailedException {
-//		reconnectSinks();
-//		this.delegateSink.open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-//	}
+	// @Override
+	// final public void open() throws OpenFailedException {
+	// reconnectSinks();
+	// this.delegateSink.open(new ArrayList<PhysicalSubscription<ISink<?>>>(),
+	// getOwner());
+	// }
 
 	@Override
-	final public void open(IOperatorOwner owner) throws OpenFailedException {
+	final synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
 		reconnectSinks();
 		this.delegateSink.open(owner);
 	}
 
 	@Override
-	final public void open(ISink<? super W> caller, int sourcePort,
+	final synchronized public void open(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		// First: Call open for the source part. Activate subscribers and call
@@ -209,7 +215,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	protected void process_open() throws OpenFailedException {
 	}
-	
+
 	// ------------------------------------------------------------------------
 	// PROCESS
 	// ------------------------------------------------------------------------
@@ -244,19 +250,23 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void close(ISink<? super W> caller, int sourcePort,
+	final synchronized public void close(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		this.delegateSink.close(callPath, forOwners);
 		super.close(caller, sourcePort, sinkPort, callPath, forOwners);
+		// set sink part to close, if source part is closed
+		if (!this.isOpen()){
+			this.delegateSink.setOpen(false);
+		}
 	}
 
 	@Override
-	final public void close(IOperatorOwner owner) {
-		// Hint: This method can only be called 
+	final synchronized public void close(IOperatorOwner owner) {
+		// Hint: This method can only be called
 		// from a query
 		this.delegateSink.close(owner);
-		
+
 		if (!hasOpenSinkSubscriptions()) {
 			// is this process_close correct?
 			process_close();
@@ -291,20 +301,17 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 			propagateDone();
 		}
 	}
-	
+
 	@Override
 	final protected void propagateDone() {
 		super.propagateDone();
-		if (isRoot()){
-			for (IOperatorOwner owner: getOwner()){
+		if (isRoot()) {
+			for (IOperatorOwner owner : getOwner()) {
 				owner.done(this);
 			}
-		}		
+		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * Every ISink can have additional conditions, if it is done (e.g. in a
 	 * buffer every item must be processed) by overriding this Method these

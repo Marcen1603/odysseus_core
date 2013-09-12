@@ -425,9 +425,10 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	
 	@Override
 	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema, boolean asActive) {
+			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
 		PhysicalSubscription<ISink<? super W>> sub = new PhysicalSubscription<ISink<? super W>>(
 				sink, sinkInPort, sourceOutPort, schema);
+		sub.setOpenCalls(openCount);
 		if (!this.sinkSubscriptions.contains(sub)) {
 			// getLogger().debug(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
@@ -443,7 +444,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false);
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
 	
 	

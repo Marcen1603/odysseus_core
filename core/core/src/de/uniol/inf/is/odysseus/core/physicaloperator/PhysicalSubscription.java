@@ -56,6 +56,10 @@ public class PhysicalSubscription<K> extends Subscription<K> {
 	public String toString() {
 		return super.toString()+" openCalls="+openCalls;
 	}
+
+	public void setOpenCalls(int openCalls) {
+		this.openCalls = openCalls;
+	}
 	
 	
 }

@@ -438,7 +438,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 				this.recalcAllPhyInputSet = true;
 			}
 		}
-
 	}
 
 	private int getNextFreeSinkInPort() {
@@ -526,12 +525,12 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			this.recalcAllPhyInputSet = true;
 		}
 	}
-
+	
 	@Override
 	public void subscribeSink(ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema, boolean asActive) {
+			int sourceOutPort, SDFSchema schema, boolean asActive, int openCalls) {
 		throw new IllegalArgumentException(
-				"This method cannot be called on Logical Operators");
+				"This method cannot be called on Logical Operators");		
 	}
 
 	@Override
