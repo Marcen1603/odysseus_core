@@ -28,6 +28,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -75,7 +76,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			NamedList e = (NamedList) element;
 			if (e.getValues().isEmpty()) {
 				return getImage(((NamedList) element).getKey());
-			} 
+			}
 			return getImage(e.getValues().get(0));
 		}
 
@@ -84,7 +85,8 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 		}
 
 		if (element instanceof ISubscription) {
-			return OdysseusRCPViewerPlugIn.getImageManager().get("subscription");
+			return OdysseusRCPViewerPlugIn.getImageManager()
+					.get("subscription");
 		}
 
 		if (element instanceof Map) {
@@ -100,10 +102,12 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			IPhysicalOperator op = node.getModelNode().getContent();
 
 			if (op.isSink() && !op.isSource()) {
-				return OdysseusRCPViewerPlugIn.getImageManager().get("sink_icon");
+				return OdysseusRCPViewerPlugIn.getImageManager().get(
+						"sink_icon");
 			}
 			if (!op.isSink() && op.isSource()) {
-				return OdysseusRCPViewerPlugIn.getImageManager().get("source_icon");
+				return OdysseusRCPViewerPlugIn.getImageManager().get(
+						"source_icon");
 			}
 			return OdysseusRCPViewerPlugIn.getImageManager().get("pipe_icon");
 		}
@@ -124,13 +128,25 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 		if (element instanceof ISubscription) {
 			ISubscription<?> s = (ISubscription<?>) element;
 			if (s.getTarget() instanceof IPhysicalOperator) {
-				return styledString.append(" In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + ((IPhysicalOperator) s.getTarget()).getName());
+				styledString.append(((IPhysicalOperator) s.getTarget()).getName());
+			} else{
+				styledString.append(""+s.getTarget());
 			}
-
-			return styledString.append(" In(" + s.getSinkInPort() + ") " + " out(" + s.getSourceOutPort() + ") " + s.getTarget());
+			styledString.append(" In("+s.getSinkInPort()).append(") out ("+s.getSourceOutPort()).append(")");
+			
+			if (s.getTarget() instanceof IPhysicalOperator){
+				int open = ((PhysicalSubscription<?>) s).getOpenCalls();
+				if (open > 0){
+					styledString.append(" #Open: "+open);
+				}
+			}
+			
+			return styledString;
 		}
 		if (element instanceof SDFSchema) {
-			return styledString.append("OutputSchema (" + ((SDFSchema) element).getURI() +":"+((SDFSchema) element).getType().getSimpleName() +")");
+			return styledString.append("OutputSchema ("
+					+ ((SDFSchema) element).getURI() + ":"
+					+ ((SDFSchema) element).getType().getSimpleName() + ")");
 		}
 
 		if (element instanceof IPredicate) {
@@ -144,17 +160,20 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 		if (element instanceof IOperatorOwner) {
 			IOperatorOwner owner = (IOperatorOwner) element;
 			styledString.append("Query " + owner.getID());
-			return styledString.append(" " + owner.hashCode(), StyledString.QUALIFIER_STYLER);
+			return styledString.append(" " + owner.hashCode(),
+					StyledString.QUALIFIER_STYLER);
 		}
 
 		if (element instanceof SDFAttribute) {
 			SDFAttribute attribute = (SDFAttribute) element;
-			if( !Strings.isNullOrEmpty(attribute.getSourceName())) {
-				styledString.append(attribute.getSourceName() + "." + attribute.getAttributeName());
+			if (!Strings.isNullOrEmpty(attribute.getSourceName())) {
+				styledString.append(attribute.getSourceName() + "."
+						+ attribute.getAttributeName());
 			} else {
 				styledString.append(attribute.getAttributeName());
 			}
-			styledString.append("  " + attribute.getDatatype().toString(), StyledString.QUALIFIER_STYLER);
+			styledString.append("  " + attribute.getDatatype().toString(),
+					StyledString.QUALIFIER_STYLER);
 			return styledString;
 		}
 		if (element instanceof IMonitoringData<?>) {

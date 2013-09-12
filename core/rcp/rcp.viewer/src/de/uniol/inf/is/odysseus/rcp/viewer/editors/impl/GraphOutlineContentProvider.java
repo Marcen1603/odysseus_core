@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -103,7 +104,16 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 				Collection<? extends ISubscription<?>> subs = sink.getSubscribedToSource();
 				children.addAll(subs);
 			}
+			
+			// Add Subscriptions to sources
+			if (node.getModelNode().getContent().isSource()) {
+				ISource<?> source = (ISource<?>) node.getModelNode().getContent();
+				Collection<? extends ISubscription<?>> subs = source.getSubscriptions();
+				children.addAll(subs);
+			}
 
+			
+			
 			// toString-Representation
 			children.add(new StringNode(node.getModelNode().getContent().toString()));
 
