@@ -111,7 +111,7 @@ public class OwnerColorManager {
 			}
 		}
 		
-		Color newColor = new Color(Display.getDefault(), r, g, b);
+		Color newColor = new Color(PlatformUI.getWorkbench().getDisplay(), r, g, b);
 		LOADED_COLORS.add(newColor);
 		return newColor;
 	}
