@@ -16,14 +16,16 @@
 
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.RGB.X11Col;
 
 public class OwnerColorManager {
 	
@@ -41,6 +43,13 @@ public class OwnerColorManager {
 			inactiveTextColor = getSystemColor(inactiveTxtColor);
 		}
 		
+		public OwnerColor( X11Col bgColorID, X11Col txtColorID, X11Col inactiveBGColor, X11Col inactiveTxtColor ) {
+			textColor = getColor(txtColorID);
+			backgroundColor = getColor(bgColorID);
+			inactiveBackgroundColor = getColor(inactiveBGColor);
+			inactiveTextColor = getColor(inactiveTxtColor);
+		}
+		
 		public OwnerColor( int bgColorID, int txtColorID) {
 			this(bgColorID, txtColorID, bgColorID, txtColorID);
 		}
@@ -52,13 +61,34 @@ public class OwnerColorManager {
 			inactiveTextColor = inactiveTxtColor;
 		}
 		
+		@SuppressWarnings("unused")
 		public OwnerColor( Color bgColor, Color txtColor) {
 			this(bgColor, txtColor, bgColor, txtColor);
 		}
 	}
+
+	private static final List<Color> LOADED_COLORS = Lists.newArrayList();
 	
 	private static final OwnerColor[] OWNER_COLORS = new OwnerColor[] {
-		new OwnerColor( SWT.COLOR_DARK_BLUE, SWT.COLOR_WHITE),
+		new OwnerColor( X11Col.CornflowerBlue,  X11Col.gray100,X11Col.CornflowerBlue, X11Col.gray70 ),
+		new OwnerColor( X11Col.DodgerBlue,  X11Col.gray100,X11Col.DodgerBlue, X11Col.gray70 ),
+		new OwnerColor( X11Col.DodgerBlue3,  X11Col.gray100,X11Col.DodgerBlue3, X11Col.gray70 ),
+		new OwnerColor( X11Col.DarkOliveGreen3,  X11Col.gray100,X11Col.DarkOliveGreen3, X11Col.gray70 ),
+		new OwnerColor( X11Col.LightSeaGreen,  X11Col.gray100,X11Col.LightSeaGreen, X11Col.gray70 ),
+		new OwnerColor( X11Col.LimeGreen,  X11Col.gray100,X11Col.LimeGreen, X11Col.gray70 ),
+		new OwnerColor( X11Col.OliveDrab3,  X11Col.gray100,X11Col.OliveDrab3, X11Col.gray70 ),
+		new OwnerColor( X11Col.chartreuse3,  X11Col.gray100,X11Col.chartreuse3, X11Col.gray70 ),
+		new OwnerColor( X11Col.green4,  X11Col.gray100,X11Col.green4, X11Col.gray70 ),
+		new OwnerColor( X11Col.brown3,  X11Col.gray100,X11Col.brown3, X11Col.gray70 ),
+		new OwnerColor( X11Col.chocolate3,  X11Col.gray100,X11Col.chocolate3, X11Col.gray70 ),
+		new OwnerColor( X11Col.tan3,  X11Col.gray100,X11Col.tan3, X11Col.gray70 ),
+		new OwnerColor( X11Col.DarkGoldenrod3,  X11Col.gray100,X11Col.DarkGoldenrod3, X11Col.gray70 ),
+		new OwnerColor( X11Col.LemonChiffon3,  X11Col.gray100,X11Col.LemonChiffon3, X11Col.gray70 ),
+		new OwnerColor( X11Col.LightGoldenrod3,  X11Col.gray100,X11Col.LightGoldenrod3, X11Col.gray70 ),
+		new OwnerColor( X11Col.gold3,  X11Col.gray100,X11Col.gold3, X11Col.gray70 ),
+		new OwnerColor( X11Col.goldenrod3,  X11Col.gray100,X11Col.goldenrod3, X11Col.gray70 ),
+		new OwnerColor( X11Col.yellow3,  X11Col.gray100,X11Col.yellow3, X11Col.gray70 ),		
+		new OwnerColor( SWT.COLOR_DARK_BLUE, SWT.COLOR_WHITE, SWT.COLOR_DARK_BLUE, SWT.COLOR_GRAY),
 		new OwnerColor( SWT.COLOR_DARK_CYAN, SWT.COLOR_WHITE),
 		new OwnerColor( SWT.COLOR_DARK_GRAY, SWT.COLOR_WHITE),
 		new OwnerColor( SWT.COLOR_DARK_GREEN, SWT.COLOR_WHITE),
@@ -71,11 +101,10 @@ public class OwnerColorManager {
 		new OwnerColor( SWT.COLOR_YELLOW, SWT.COLOR_BLACK),
 		new OwnerColor( SWT.COLOR_GRAY, SWT.COLOR_BLACK),
 		new OwnerColor( SWT.COLOR_MAGENTA, SWT.COLOR_BLACK),
-		new OwnerColor( SWT.COLOR_CYAN, SWT.COLOR_BLACK),
+		new OwnerColor( SWT.COLOR_CYAN, SWT.COLOR_BLACK)
 	};
 	
-	private static final List<Color> LOADED_COLORS = Lists.newArrayList();
-
+			
 	private OwnerColorManager() {
 		
 	}
@@ -102,6 +131,16 @@ public class OwnerColorManager {
 
 	private static Color getSystemColor(int color) {
 		return PlatformUI.getWorkbench().getDisplay().getSystemColor(color);
+	}
+	
+	private static Color getColor(X11Col color){
+		RGB rgb = RGB.getRGB(color);
+		return getColor(rgb.red, rgb.green, rgb.blue);
+	}
+	
+	@SuppressWarnings("unused")
+	private static Color getColor(RGB rgb){
+		return getColor(rgb.red, rgb.green, rgb.blue);
 	}
 	
 	private static Color getColor( int r, int g, int b ) {
