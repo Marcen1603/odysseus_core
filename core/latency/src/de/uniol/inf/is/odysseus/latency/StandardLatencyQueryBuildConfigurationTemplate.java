@@ -55,7 +55,6 @@ public class StandardLatencyQueryBuildConfigurationTemplate extends
 						ITimeInterval.class, ILatency.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);
-		settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 	

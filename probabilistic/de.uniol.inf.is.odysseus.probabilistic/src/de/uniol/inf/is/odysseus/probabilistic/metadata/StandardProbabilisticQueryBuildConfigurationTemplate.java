@@ -46,7 +46,6 @@ public class StandardProbabilisticQueryBuildConfigurationTemplate extends Abstra
 		this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration(dataTypes, ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class)));
 		this.settings.add(ParameterDoRewrite.TRUE);
 		this.settings.add(ParameterPerformQuerySharing.TRUE);
-		this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
 		this.settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 

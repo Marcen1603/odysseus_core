@@ -41,7 +41,6 @@ public class SecurityPunctuationBenchmarkQueryBuildConfigurationTemplate extends
 		
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);
-		settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
 		settings.add(ParameterShareSimilarOperators.FALSE);
 	}
 	
