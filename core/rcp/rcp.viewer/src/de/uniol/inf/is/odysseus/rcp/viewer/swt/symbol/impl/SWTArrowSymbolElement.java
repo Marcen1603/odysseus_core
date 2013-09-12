@@ -17,13 +17,14 @@ package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
-import com.google.common.base.Preconditions;
-
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IConnectionView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
@@ -41,11 +42,17 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 	@Override
 	public void draw( Vector start, Vector end, Vector screenShift, float zoomFactor ) {
-		Preconditions.checkState(getActualGC() != null, "GC for drawing arrows must not be null!");
-		Preconditions.checkState(getConnectionView() != null, "Connection to draw arrows for must not be null!");
+		GC actualGC = getActualGC();
 	
-		getActualGC().setForeground( color );
-		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
+		if( isConnectionOpened() ) {
+			actualGC.setLineStyle(SWT.LINE_SOLID);
+		} else {
+			actualGC.setLineStyle(SWT.LINE_DOT);
+		}
+		actualGC.setForeground( color );
+		actualGC.setLineWidth(2);
+		actualGC.drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
+		actualGC.setLineWidth(1);
 		
 		final INodeView<C> node = getConnectionView().getViewedEndNode();
 		if( node == null )
@@ -54,8 +61,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		if( getConnectionView().getViewedStartNode().getConnectionsAsStart().size() > 1 ) {
 			int port = getPortNumber(getConnectionView());
 			if( port != -1 ) {
-				getActualGC().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-				getActualGC().drawString("" + port, (int)(start.getX() + end.getX()) / 2, (int)(start.getY() + end.getY()) / 2);
+				actualGC.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+				actualGC.drawString("" + port, (int)(start.getX() + end.getX()) / 2, (int)(start.getY() + end.getY()) / 2);
 			}
 		}
 		
@@ -106,8 +113,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 					cross.x, cross.y, px, py, qx, qy
 			};
 			
-			getActualGC().setBackground( color );
-			getActualGC().fillPolygon( poly );
+			actualGC.setBackground( color );
+			actualGC.fillPolygon( poly );
 			
 //			// DEBUG
 //			getActualGC().setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
@@ -115,6 +122,16 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		}
 	}
 	
+	private boolean isConnectionOpened() {
+		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
+		if( modelConnection instanceof OdysseusConnectionModel ) {
+			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
+			return odyCon.getSubscriptionToSink().getOpenCalls() > 0;
+		}
+		System.out.println("Meh");
+		return false;
+	}
+
 	@Override
 	public void update(  ) {}
 

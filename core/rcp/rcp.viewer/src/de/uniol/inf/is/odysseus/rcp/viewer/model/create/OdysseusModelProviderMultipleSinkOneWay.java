@@ -112,7 +112,7 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 		// Ist ein Quellknoten angegeben, wovon wir gerade kommen, dann bedeutet dies, 
 		// dass eine Verbindung vorhanden ist. srcNode ist null, wenn wir an der obersten Senke sind.
 		if( srcNode != null ) {
-			final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode, fromSub);
+			final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode);
 			graphModel.addConnection( conn );
 		}
 		
@@ -161,7 +161,7 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 		// Ist ein Quellknoten angegeben, wovon wir gerade kommen, dann bedeutet dies, 
 		// dass eine Verbindung vorhanden ist. srcNode ist null, wenn wir an der obersten Senke sind.
 		if( srcNode != null ) {
-			final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode, fromSub);
+			final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode);
 			graphModel.addConnection( conn );
 		}
 		

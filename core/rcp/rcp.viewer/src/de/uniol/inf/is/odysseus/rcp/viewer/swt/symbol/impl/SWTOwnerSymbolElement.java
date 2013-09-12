@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
@@ -71,6 +72,28 @@ public class SWTOwnerSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 		gc.setBackground(OwnerColorManager.getOwnerBackgroundColor(ownerID));
 		gc.fillRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
+		
+		gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+		if( isNodeContentOpen() ) {
+			gc.setLineStyle(SWT.LINE_SOLID);
+		} else {
+			gc.setLineStyle(SWT.LINE_DOT);
+		}
+		
+		gc.setLineWidth(4);
+		gc.drawRoundRectangle((int) pos.getX(), (int) pos.getY(), width, height, round, round);
+		gc.setLineWidth(1);
+	}
+	
+	private boolean isNodeContentOpen() {
+		C content = getNodeView().getModelNode().getContent();
+		if( content instanceof IPhysicalOperator ) {
+			IPhysicalOperator operator = (IPhysicalOperator)content;
+			if( operator.isOpen() ) {
+				return true;
+			} 
+		} 
+		return false;
 	}
 
 	private void drawOwnerCircles(Vector position, int width, float zoomFactor, List<Integer> ownerIDs, Integer firstOwner) {

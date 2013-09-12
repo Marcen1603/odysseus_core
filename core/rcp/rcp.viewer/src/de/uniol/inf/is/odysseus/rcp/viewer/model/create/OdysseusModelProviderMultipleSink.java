@@ -109,11 +109,11 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		// dass eine Verbindung vorhanden ist. srcNode ist null, wenn wir an der obersten Senke sind.
 		if( srcNode != null && !traversedObjects.contains(fromSub)) {
 			if( back == false ) {
-				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode, fromSub);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode);
 				graphModel.addConnection( conn );
 			} else {
 				// Wir gehen Rückwärts...
-				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(srcNode, node, fromSub);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(srcNode, node);
 				graphModel.addConnection( conn );
 			}
 			traversedObjects.add(fromSub);
@@ -171,11 +171,11 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		// dass eine Verbindung vorhanden ist. srcNode ist null, wenn wir an der obersten Senke sind.
 		if( srcNode != null && !traversedObjects.contains(fromSub)) {
 			if( back == false ) {
-				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode, fromSub);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(node, srcNode);
 				graphModel.addConnection( conn );
 			} else {
 				// Wir gehen Rückwärts...
-				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(srcNode, node, fromSub);
+				final IConnectionModel<IPhysicalOperator> conn = new OdysseusConnectionModel(srcNode, node);
 				graphModel.addConnection( conn );
 			}
 			traversedObjects.add(fromSub);
