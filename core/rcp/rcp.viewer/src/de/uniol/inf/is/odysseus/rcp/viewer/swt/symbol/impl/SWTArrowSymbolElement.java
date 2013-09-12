@@ -34,10 +34,12 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
 	private static final int ARROW_SIZE = 20;
 	
-	private final Color color;
+	private final Color activeLineColor;
+	private final Color inactiveLineColor;
 	
-	public SWTArrowSymbolElement( Color lineColor ) {
-		color = lineColor;
+	public SWTArrowSymbolElement( Color activeLineColor, Color inactiveLineColor ) {
+		this.activeLineColor = activeLineColor;
+		this.inactiveLineColor = inactiveLineColor;
 	}
 
 	@Override
@@ -46,10 +48,11 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 	
 		if( isConnectionOpened() ) {
 			actualGC.setLineStyle(SWT.LINE_SOLID);
+			actualGC.setForeground( activeLineColor );
 		} else {
 			actualGC.setLineStyle(SWT.LINE_DOT);
+			actualGC.setForeground( inactiveLineColor );
 		}
-		actualGC.setForeground( color );
 		actualGC.setLineWidth(2);
 		actualGC.drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 		actualGC.setLineWidth(1);
@@ -113,7 +116,11 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 					cross.x, cross.y, px, py, qx, qy
 			};
 			
-			actualGC.setBackground( color );
+			if( isConnectionOpened() ) {
+				actualGC.setBackground( activeLineColor );
+			}else{
+				actualGC.setBackground( inactiveLineColor );				
+			}
 			actualGC.fillPolygon( poly );
 			
 //			// DEBUG
