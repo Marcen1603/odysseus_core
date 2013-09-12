@@ -83,14 +83,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		@Override
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 				List<IOperatorOwner> forOwners) {
-			// Do not (!) call close on AbstractSink! It would immediately
-			// call process_close (this should only be done by the
-			// source-Part of AbstractPipe)
-			if (isOpen()) {
-				callCloseOnChildren(callPath, forOwners);
-			}
-			// Do not close sink part here, there could be other sources
-			//	sinkOpen.set(false);
+			internal_close(callPath, forOwners, false);
 		}
 
 		protected void setOpen(boolean state){
@@ -255,10 +248,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 			List<IOperatorOwner> forOwners) {
 		this.delegateSink.close(callPath, forOwners);
 		super.close(caller, sourcePort, sinkPort, callPath, forOwners);
-		// set sink part to close, if source part is closed
-		if (!this.isOpen()){
-			this.delegateSink.setOpen(false);
-		}
 	}
 
 	@Override

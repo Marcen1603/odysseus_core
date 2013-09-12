@@ -67,7 +67,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	private boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
-	final private List<IOperatorOwner> openFor = new ArrayList<>();
+	private final List<IOperatorOwner> openFor = new ArrayList<>();
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -194,10 +194,10 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// ------------------------------------------------------------------------
 	// OPEN
 	// ------------------------------------------------------------------------
-//	@Override
-//	public void open() throws OpenFailedException {
-//		open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-//	}
+	// @Override
+	// public void open() throws OpenFailedException {
+	// open(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
+	// }
 
 	@Override
 	public void open(IOperatorOwner owner) throws OpenFailedException {
@@ -296,10 +296,10 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	// CLOSE and DONE
 	// ------------------------------------------------------------------------
 
-//	@Override
-//	public void close() {
-//		close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
-//	}
+	// @Override
+	// public void close() {
+	// close(new ArrayList<PhysicalSubscription<ISink<?>>>(), getOwner());
+	// }
 
 	@Override
 	public void close(IOperatorOwner id) {
@@ -315,12 +315,20 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
+		internal_close(callPath, forOwners, true);
+	}
+
+	protected void internal_close(
+			List<PhysicalSubscription<ISink<?>>> callPath,
+			List<IOperatorOwner> forOwners, boolean doProcessClose) {
 		openFor.removeAll(forOwners);
 		if (this.sinkOpen.get()) {
 			try {
 				callCloseOnChildren(callPath, forOwners);
 				if (openFor.size() == 0) {
-					process_close();
+					if (doProcessClose) {
+						process_close();
+					}
 					stopMonitoring();
 				}
 			} catch (Exception e) {
@@ -370,8 +378,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 				doneset = true;
 			}
 			if (!sub.isDone()) {
-				this.allInputsDone = false;			
-				if(doneset){
+				this.allInputsDone = false;
+				if (doneset) {
 					break;
 				}
 			}
@@ -380,7 +388,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 			for (IOperatorOwner owner : getOwner()) {
 				owner.done(this);
 			}
-		}	
+		}
 	}
 
 	final synchronized public boolean isDone() {
@@ -487,7 +495,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAll(owners);
 	}
-	
+
 	@Override
 	public boolean hasOwner() {
 		return ownerHandler.hasOwner();
