@@ -45,12 +45,13 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			List<IPhysicalQuery> newQueries, OptimizationConfiguration conf,
 			IDataDictionaryWritable dd) {
 		boolean restructuringAllowed;
-		if (conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
-			restructuringAllowed = conf
-					.getParameterAllowRestructuringOfCurrentPlan().getValue();
-		} else {
-			restructuringAllowed = false;
-		}
+//		if (conf.getParameterAllowRestructuringOfCurrentPlan() != null) {
+//			restructuringAllowed = conf
+//					.getParameterAllowRestructuringOfCurrentPlan().getValue();
+//		} else {
+//			restructuringAllowed = false;
+//		}
+		restructuringAllowed = false;
 		// Weder neue Queries vorhanden, noch die Erlaubnis den alten Plan
 		// umzustrukturieren
 		if (newQueries == null && !restructuringAllowed) {
@@ -229,6 +230,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 			boolean isActive = ((AbstractSource) toReplace)
 					.isActive((PhysicalSubscription) sub);
+			int oc = ((PhysicalSubscription)sub).getOpenCalls();
 			// Subscription l�schen
 			((IPipe) toReplace).unsubscribeSink(sub);
 
@@ -239,7 +241,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 			// beim Sink anmelden
 			// s.subscribeToSource(op2, sinkInPort, sourceOutPort, schema);
 			((ISource) replacement).subscribeSink(s, sinkInPort, sourceOutPort,
-					schema, isActive);
+					schema, isActive, oc);
 
 		}
 
