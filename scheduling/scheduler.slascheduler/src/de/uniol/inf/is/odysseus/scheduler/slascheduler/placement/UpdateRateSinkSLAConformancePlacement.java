@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
-import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
+//import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -50,17 +50,17 @@ public class UpdateRateSinkSLAConformancePlacement implements
 		IPhysicalOperator root = query.getRoots().get(0);
 		if (root.isSource()) {
 			ISubscribable subscribable;
-			if (calculateTupleCosts) {
-				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
-				subscribable = costCalc;
-				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-
+//			if (calculateTupleCosts) {
+//				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
+//				subscribable = costCalc;
+//				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+//
+//				subscribable = (ISubscribable) root;
+//				subscribable.connectSink(costCalc, 0, 0, root.getOutputSchema());
+//			} else {
 				subscribable = (ISubscribable) root;
-				subscribable.connectSink(costCalc, 0, 0, root.getOutputSchema());
-			} else {
-				subscribable = (ISubscribable) root;
 				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-			}
+//			}
 
 			return subscribable;
 		}
