@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IWorkbenchPart;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -46,4 +47,9 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	
 	public void addListener(IDashboardPartListener listener);
 	public void removeListener(IDashboardPartListener listener);
+	
+	public void setWorkbenchPart(IWorkbenchPart workbenchpark);
+	public IWorkbenchPart getWorkbenchPart();
+	
+	public Object getAdapter(Class<?> adapter);
 }

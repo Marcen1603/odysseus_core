@@ -59,7 +59,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 	private IDashboardPart dashboardPart;
 	private DashboardPartController dashboardPartController;
 	private boolean dirty;
-
+	
 	private TabFolder tabFolder;
 
 	private DashboardPartEditorToolBar dashboardPartToolBar;
@@ -114,6 +114,18 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		return dashboardPartController;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(java.lang.Class)
+	 */
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {	
+		Object dbAdapter = dashboardPart.getAdapter(adapter);
+		if(dbAdapter!=null){
+			return dbAdapter;
+		}
+		return super.getAdapter(adapter);
+	}
+	
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		if (!(input instanceof FileEditorInput)) {
@@ -128,6 +140,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 		try {
 			dashboardPart = DASHBOARD_PART_HANDLER.load(FileUtil.read(this.input.getFile()));
+			dashboardPart.setWorkbenchPart(this);
 			dashboardPart.addListener(this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
 		} catch (final DashboardHandlerException e) {
@@ -189,12 +202,13 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 		try {
 			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());
+			dashboardPart.setWorkbenchPart(this);
 			dashboardPartController.start();
 		} catch (final Exception ex) {
 			dashboardPartToolBar.setStatusToStopped();
 			throw new RuntimeException(ex);
 		}
-	}
+	}	
 
 	@SuppressWarnings("unchecked")
 	private void createSettingsTabContent(Composite settingsTab) {
@@ -240,4 +254,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 	public void configChanged(IDashboardPartConfigurer<?> sender) {
 		setDirty(true);
 	}
+
+	
+	
 }

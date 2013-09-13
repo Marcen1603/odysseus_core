@@ -78,8 +78,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 		parent.setLayout(new GridLayout());
 		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 
-		initToolBar(toolBar);
-
+		initToolBar(toolBar);		
 		dashboard.createPartControl(parent, toolBar, getSite());
 		
 		try {
@@ -163,7 +162,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 				outlinePage = new DashboardOutlineContentPage(dashboard);
 			}
 			return outlinePage;
-		}
+		}		
 		return super.getAdapter(adapter);
 	}
 

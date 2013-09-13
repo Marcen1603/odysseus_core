@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,8 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private List<IDashboardPartListener> listeners = new ArrayList<>();
 	private String sinkNames;
+
+	private IWorkbenchPart workbenchpart;
 
 	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
@@ -109,5 +112,23 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public void setSinkNames(String sinkNames) {
 		this.sinkNames = sinkNames;
+	}
+	
+	@Override
+	public void setWorkbenchPart(IWorkbenchPart workbenchpart){
+		this.workbenchpart = workbenchpart;
+	}
+	
+	@Override
+	public IWorkbenchPart getWorkbenchPart(){
+		return this.workbenchpart;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getAdapter(java.lang.Class)
+	 */
+	@Override
+	public Object getAdapter(Class<?> adapter) {	
+		return null;
 	}
 }
