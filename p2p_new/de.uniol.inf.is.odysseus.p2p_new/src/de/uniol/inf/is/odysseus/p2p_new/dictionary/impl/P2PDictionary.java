@@ -776,7 +776,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, EXPORT_LIFETIME_MILLIS, EXPORT_LIFETIME_MILLIS);
 			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, EXPORT_LIFETIME_MILLIS);
-			addSource(viewAdvertisement, false);
+			
 
 			final JxtaSenderAO jxtaSender = new JxtaSenderAO();
 			jxtaSender.setName(viewName + "_Send");
@@ -793,6 +793,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			logicalQuery.setQueryText("Exporting " + viewName);
 
 			exportedSourcesQueryMap.put(viewAdvertisement, queryID);
+			addSource(viewAdvertisement, false);
 
 			fireSourceExportEvent(viewAdvertisement, viewName);
 
