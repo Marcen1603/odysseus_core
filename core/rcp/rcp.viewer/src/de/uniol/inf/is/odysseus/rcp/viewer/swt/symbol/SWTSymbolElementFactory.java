@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.OwnerColorManager;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTArrowSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTCircleSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTFillCircleSymbolElement;
@@ -37,6 +38,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTRectSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTSelectivitySymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.SWTTextSymbolElement;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl.RGB.X11Col;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;
@@ -144,7 +146,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 	public IConnectionSymbolElement<C> createForConnection( String type ) {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		if( "Arrow".equals(type))
-			return new SWTArrowSymbolElement< C >( display.getSystemColor( SWT.COLOR_BLACK) , display.getSystemColor(SWT.COLOR_GRAY));
+			return new SWTArrowSymbolElement< C >( OwnerColorManager.getColor(X11Col.gray10) , OwnerColorManager.getColor(X11Col.gray70));
 		
 		return new SWTLineConnectionSymbolElement<C>( display.getSystemColor( SWT.COLOR_BLACK ) );
 	}

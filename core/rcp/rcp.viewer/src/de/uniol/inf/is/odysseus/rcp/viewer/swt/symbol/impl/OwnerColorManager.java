@@ -102,7 +102,7 @@ public class OwnerColorManager {
 		return PlatformUI.getWorkbench().getDisplay().getSystemColor(color);
 	}
 	
-	private static Color getColor(X11Col color){
+	public static Color getColor(X11Col color){
 		RGB rgb = RGB.getRGB(color);
 		return getColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue());
 	}

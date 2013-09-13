@@ -113,13 +113,15 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 			final int qy = (int)(cross.y + ( oy - ox * 0.3f ) * zoomFactor );
 			
 			int[] poly = new int[] {
-					cross.x, cross.y, px, py, qx, qy
+					cross.x-1, cross.y, px, py, qx, qy
 			};
 			
 			if( isConnectionOpened() ) {
 				actualGC.setBackground( activeLineColor );
+				actualGC.setForeground( inactiveLineColor );
 			}else{
-				actualGC.setBackground( inactiveLineColor );				
+				actualGC.setBackground( inactiveLineColor );
+				actualGC.setForeground( inactiveLineColor );
 			}
 			actualGC.fillPolygon( poly );
 			
