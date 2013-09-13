@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
@@ -258,6 +259,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private boolean opened = false;
 	private String sinkNames;
+	private IWorkbenchPart workbenchpart;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -384,6 +386,22 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void removeListener(IDashboardPartListener listener) {
 		this.listener.remove(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getWorkbenchPart()
+	 */
+	@Override
+	public IWorkbenchPart getWorkbenchPart() {
+		return this.workbenchpart;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#setWorkbenchPart(org.eclipse.ui.IWorkbenchPart)
+	 */
+	@Override
+	public void setWorkbenchPart(IWorkbenchPart workbenchpark) {
+		this.workbenchpart = workbenchpark;		
 	}
 
 }
