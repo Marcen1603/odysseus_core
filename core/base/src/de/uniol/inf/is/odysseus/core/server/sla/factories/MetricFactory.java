@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.server.sla.Metric;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Accuracy;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Throughput;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSource;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.RatioUnit;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.ThroughputUnit;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
@@ -28,6 +30,8 @@ public class MetricFactory {
 	public static final String METRIC_LATENCY = "latency";
 	public static final String METRIC_THROUGHPUT = "throughput";
 	public static final String METRIC_ACCURACY = "accuracy";
+	public static final String METRIC_UPDATERATESOURCE = "updaterate-source";
+	public static final String METRIC_UPDATERATESINK = "updaterate-sink";
 
 	public Metric<?> buildMetric(String metricID, double value, Enum<?> unit) {
 		try {
@@ -37,6 +41,10 @@ public class MetricFactory {
 				return new Latency(value, (TimeUnit)unit); 
 			} else if (METRIC_THROUGHPUT.equals(metricID)) {
 				return new Throughput(value, (ThroughputUnit)unit);
+			} else if (METRIC_UPDATERATESOURCE.equals(metricID)) {
+				return new UpdateRateSource(value, (TimeUnit)unit);
+			} else if (METRIC_UPDATERATESINK.equals(metricID)) {
+				return new UpdateRateSink(value, (TimeUnit)unit);
 			} else {
 				throw new RuntimeException("Unknown metric id");
 			}
