@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.table;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -25,6 +26,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -247,6 +249,16 @@ public class StreamTableEditor implements IStreamEditorType {
 				}
 			}
 		});
+		TupleColumnViewerSorter sorter = new TupleColumnViewerSorter(tableViewer, col) {
+			@Override
+			protected int doCompare(Viewer viewer, Tuple<?> e1, Tuple<?> e2) {
+				Object attr1 = e1.getAttribute(attributeIndex);
+				Object attr2 = e2.getAttribute(attributeIndex);
+				return Objects.compare(attr1, attr2, new ObjectComparator());
+			}
+		};
+		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
+		
 		return col;
 	}
 
