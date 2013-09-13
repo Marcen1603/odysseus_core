@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.prictogram.group.PictogramGroupRegistry;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.prictogram.group.SinglePictogramGroup;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.prictogram.group.SwitchPictogramGroup;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -30,12 +27,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		plugin = this;
-		SwitchPictogramGroup switchPG = new SwitchPictogramGroup();
-		PictogramGroupRegistry.addGroup(switchPG);
-		
-		SinglePictogramGroup singlePG = new SinglePictogramGroup();
-		PictogramGroupRegistry.addGroup(singlePG);
+		plugin = this;		
 	}
 
 	/*
@@ -54,6 +46,11 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public static Activator getDefault() {
 		return plugin;
+	}
+	
+	
+	public static ImageDescriptor getImage(String name){
+		return ImageDescriptor.createFromURL(plugin.getBundle().getResource("icons/"+name));
 	}
 
 }

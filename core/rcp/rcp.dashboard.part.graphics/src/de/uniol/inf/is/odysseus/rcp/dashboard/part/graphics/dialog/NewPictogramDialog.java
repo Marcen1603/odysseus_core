@@ -10,16 +10,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.prictogram.IPictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.prictogram.ImagePictogram;
-import org.eclipse.swt.widgets.Label;
-
 public class NewPictogramDialog extends TitleAreaDialog {
 
-	private IPictogram pictogram;
+	private String location;
 	private Text imgText;
 
 
@@ -74,13 +71,13 @@ public class NewPictogramDialog extends TitleAreaDialog {
 	
 	@Override
 	protected void okPressed() {
-		this.pictogram = new ImagePictogram(imgText.getText());		
+		this.location = imgText.getText();		
 		super.okPressed();		
 	}
 	
 	
-	public IPictogram getPictogram(){
-		return this.pictogram;
+	public String getLocation(){
+		return this.location;
 	}
 
 }
