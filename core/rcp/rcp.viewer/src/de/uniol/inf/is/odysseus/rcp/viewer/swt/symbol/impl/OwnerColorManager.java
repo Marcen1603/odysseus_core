@@ -16,7 +16,6 @@
 
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -135,12 +134,12 @@ public class OwnerColorManager {
 	
 	private static Color getColor(X11Col color){
 		RGB rgb = RGB.getRGB(color);
-		return getColor(rgb.red, rgb.green, rgb.blue);
+		return getColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue());
 	}
 	
 	@SuppressWarnings("unused")
 	private static Color getColor(RGB rgb){
-		return getColor(rgb.red, rgb.green, rgb.blue);
+		return getColor(rgb.getRed(), rgb.getGreen(), rgb.getBlue());
 	}
 	
 	private static Color getColor( int r, int g, int b ) {

@@ -380,15 +380,27 @@ public class RGB {
 
 	}
 
-	int red;
-	int green;
-	int blue;
+	private final int red;
+	private final int green;
+	private final int blue;
 
 	public RGB(int red, int green, int blue) {
 		super();
 		this.red = red;
 		this.green = green;
 		this.blue = blue;
+	}
+	
+	public int getBlue() {
+		return blue;
+	}
+	
+	public int getGreen() {
+		return green;
+	}
+	
+	public int getRed() {
+		return red;
 	}
 
 	static public RGB getRGB(X11Col color) {
