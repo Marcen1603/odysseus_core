@@ -51,13 +51,14 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
-public class DashboardEditor extends EditorPart implements IDashboardListener {
+public class DashboardEditor extends EditorPart implements IDashboardListener, IDashboardPartListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardEditor.class);
 
@@ -96,6 +97,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 	@Override
 	public void dashboardPartAdded(Dashboard sender, IDashboardPart addedPart) {
 		if (!controllers.containsKey(addedPart)) {
+			addedPart.addListener(this);
 			final DashboardPartController ctrl = new DashboardPartController(addedPart);
 			try {
 				ctrl.start();
@@ -110,6 +112,8 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 
 	@Override
 	public void dashboardPartRemoved(Dashboard sender, IDashboardPart removedPart) {
+		removedPart.removeListener(this);
+		
 		final DashboardPartController ctrl = controllers.get(removedPart);
 		if (ctrl != null) {
 			try {
@@ -390,5 +394,10 @@ public class DashboardEditor extends EditorPart implements IDashboardListener {
 		} catch (final ControllerException e1) {
 			LOG.error("Could not start dashboardpart", e1);
 		}
+	}
+
+	@Override
+	public void dashboardPartChanged(IDashboardPart changedPart) {
+		setDirty(true);
 	}
 }

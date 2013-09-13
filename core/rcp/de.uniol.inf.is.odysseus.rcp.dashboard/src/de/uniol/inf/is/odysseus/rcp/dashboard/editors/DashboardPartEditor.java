@@ -232,7 +232,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 	}
 
 	@Override
-	public void dashboardPartChanged() {
+	public void dashboardPartChanged(IDashboardPart changedPart) {
 		setDirty(true);
 	}
 

@@ -138,7 +138,7 @@ public final class DashboardPartController implements IDashboardPartListener {
 	}
 
 	@Override
-	public void dashboardPartChanged() {
+	public void dashboardPartChanged(IDashboardPart changedPart) {
 		removeAsListener();
 		addAsListener();
 	}

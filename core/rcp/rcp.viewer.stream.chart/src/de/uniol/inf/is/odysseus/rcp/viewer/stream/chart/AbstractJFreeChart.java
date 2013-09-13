@@ -166,7 +166,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	private void fireDashboardChangedEvent() {
 		for(IDashboardPartListener l : this.listener){
-			l.dashboardPartChanged();
+			l.dashboardPartChanged(this);
 		}		
 	}	
 

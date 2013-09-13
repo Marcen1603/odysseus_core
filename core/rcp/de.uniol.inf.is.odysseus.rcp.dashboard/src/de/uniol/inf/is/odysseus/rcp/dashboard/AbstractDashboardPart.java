@@ -20,6 +20,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -27,8 +30,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public abstract class AbstractDashboardPart implements IDashboardPart {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractDashboardPart.class);
+	
 	private IDashboardPartQueryTextProvider queryTextProvider;
-	private List<IDashboardPartListener> listener = new ArrayList<>();
+	private List<IDashboardPartListener> listeners = new ArrayList<>();
 	private String sinkNames;
 
 	@Override
@@ -72,12 +77,28 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	
 	@Override
 	public void addListener(IDashboardPartListener listener) {
-		this.listener.add(listener);
+		synchronized(listeners) {
+			this.listeners.add(listener);
+		}
 	}
 	
 	@Override
 	public void removeListener(IDashboardPartListener listener) {
-		this.listener.remove(listener);
+		synchronized(listeners) {
+			this.listeners.remove(listener);
+		}
+	}
+	
+	protected final void fireChangeEvent() {
+		synchronized( listeners ) {
+			for( IDashboardPartListener listener : listeners ) {
+				try {
+					listener.dashboardPartChanged(this);
+				} catch( Throwable t ) {
+					LOG.error("Exception during invoking dashboard part listener");
+				}
+			}
+		}
 	}
 	
 	@Override
