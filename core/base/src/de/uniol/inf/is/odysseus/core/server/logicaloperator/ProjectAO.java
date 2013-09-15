@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
 	private List<SDFAttribute> attributes;
+	private List<SDFAttribute> paths;
 
 	public ProjectAO() {
 		super();
@@ -42,6 +43,7 @@ public class ProjectAO extends UnaryLogicalOp {
 
 	public ProjectAO(ProjectAO ao) {
 		super(ao);
+		this.paths = ao.getPaths();
 	}
 
 	public @Override
@@ -66,6 +68,16 @@ public class ProjectAO extends UnaryLogicalOp {
 	@GetParameter(name ="ATTRIBUTES")
 	public SDFSchema getOutputSchemaIntern() {
 		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
+	}
+	
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true)
+	public void setPaths(List<SDFAttribute> paths) {
+		this.paths = paths;
+	}
+
+	@GetParameter(name ="PATHS")
+	public List<SDFAttribute> getPaths() {
+		return this.paths;
 	}
 	
 	/* (non-Javadoc)

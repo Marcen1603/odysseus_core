@@ -1,0 +1,46 @@
+package de.uniol.inf.is.odysseus.keyvalue.physicaloperator;
+
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+
+public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe<T, T> {
+	private List<SDFAttribute> paths;
+
+	public KeyValueProjectPO(List<SDFAttribute> paths) {
+		super();
+		this.paths = paths;
+	}
+	
+	public KeyValueProjectPO(KeyValueProjectPO<T> po) {
+		super(po);
+		this.paths = po.paths;
+	}
+	
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void process_next(T object, int port) {
+		KeyValueObject<IMetaAttribute> newObject = new KeyValueObject<IMetaAttribute>();
+		for(SDFAttribute path: this.paths) {
+			newObject.addAttributeValue(path.getURI(), object.getAttribute(path.getURI()));
+		}
+		transfer((T) newObject);
+		//Problem, wenn Projektionsattribut nicht in beiden InputSchemata vorkommt...
+		//de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl.createOperator(PQLParserImpl.java:56)
+		//--> neues "paths" attribut anstelle von "attributes"
+	}
+
+	@Override
+	public AbstractPipe<T, T> clone() {
+		return new KeyValueProjectPO<T>(this);
+	}
+
+}

@@ -28,6 +28,9 @@ public class RuleProvider implements ITransformRuleProvider{
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		
 		rules.add(new TKeyValueToTupleRule());
+		rules.add(new TTupleToKeyValueRule());
+		rules.add(new TKeyValueSelectRule());
+		rules.add(new TKeyValueProjectRule());
 		return rules;
 	}
 
