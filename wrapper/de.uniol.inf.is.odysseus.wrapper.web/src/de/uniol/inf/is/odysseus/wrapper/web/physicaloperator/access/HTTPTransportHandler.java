@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
@@ -130,6 +129,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         final HTTPTransportHandler handler = new HTTPTransportHandler(protocolHandler);
+        handler.setOptionsMap(options);
         handler.init(options);
         return handler;
     }
@@ -412,14 +412,23 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
         }
     }
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		if(this.uri != null) {
-			options.put("uri", this.uri);
-		}
-		options.put("method",this.getMethod().name());
-		options.put("body", this.getBody());
-		return options;
-	}
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof HTTPTransportHandler)) {
+    		return false;
+    	}
+    	HTTPTransportHandler other = (HTTPTransportHandler)o;
+    	if(this.getURI() == null && other.getURI() != null ||
+    			this.getURI() != null && other.getURI() == null) {
+    		return false;
+    	} else if(this.getURI() != null && other.getURI() != null &&
+    			!this.getURI().equals(other.getURI())) {
+    		return false;
+    	} else if(!this.getMethod().equals(other.getMethod())) {
+    		return false;
+    	} else if(!this.getBody().equals(other.getBody())) {
+    		return false;
+    	}
+    	return true;
+    }
 }

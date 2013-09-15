@@ -187,13 +187,13 @@ public class GraphNode {
 	}
 
 	// retrieves length of the path from this node to a the farthest away Source-node
-	public int getDepths() {
+	public int getDepth() {
 		if(this.getSubscribedToSource().isEmpty()) {
 			return 0;
 		} else {
 			int highestDepth = -1;
 			for(Subscription<GraphNode> sub : this.getSubscribedToSource()) {
-				int depth = sub.getTarget().getDepths();
+				int depth = sub.getTarget().getDepth();
 				if(depth > highestDepth) {
 					highestDepth = depth;
 				}
@@ -203,12 +203,12 @@ public class GraphNode {
 	}
 	
 	// returns a List of the IDs of every operator leading to this operator
-	public List<Integer> getSourceIDs() {
+	public List<Integer> getIDsOfAllSources() {
 		List<Integer> result = new ArrayList<Integer>();
 		result.add(this.getOperatorID());
 		if(!this.getSubscribedToSource().isEmpty()) {
 			for(Subscription<GraphNode> sub : this.getSubscribedToSource()) {
-				result.addAll(sub.getTarget().getSourceIDs());
+				result.addAll(sub.getTarget().getIDsOfAllSources());
 			}
 		}
 		return result;

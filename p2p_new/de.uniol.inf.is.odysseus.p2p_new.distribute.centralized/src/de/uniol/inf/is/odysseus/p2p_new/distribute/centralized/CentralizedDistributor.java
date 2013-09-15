@@ -110,17 +110,23 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	public SimulationResult getMostPromisingPlacement(Map<Integer, IPhysicalOperator> newOperatorsMap, QueryBuildConfiguration parameters) {
 		SimulationResult bestResult = null;
 		ICost<IPhysicalOperator> bestCost = this.costModel.getMaximumCost();
+		
+		// this is the graph representing the new Plan and its connections "as is",
+		// we'll work on clones in order to simulate the query-sharing
+		Graph baseGraph = new Graph(null, newOperatorsMap);
+		
 		for(PeerID peer : operatorPlans.keySet()) {
 			Map<Integer,IPhysicalOperator> operatorsOnPeer = operatorPlans.get(peer);
 			if(this.getCostModel() == null) {
 				LOG.debug("Centralized distribution not possible without a bound costmodel");
 				return null;
 			}
-			// this is the graph representing the plans and their connections "as is",
-			// we'll work on clones in order to simulate the query-sharing
-			Graph baseGraph = new Graph(operatorsOnPeer, newOperatorsMap);
+			// this is the graph representing BOTH the old plan, the plan of the new query and their connections "as is",
+			// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
+			Graph graphCopy = baseGraph.clone();
+			graphCopy.addPlan(operatorsOnPeer, false);
 			
-			SimulationResult res = this.getQuerySharingSimulator().simulateQuerySharing(baseGraph.clone(), new OptimizationConfiguration(parameters));
+			SimulationResult res = this.getQuerySharingSimulator().simulateQuerySharing(graphCopy, new OptimizationConfiguration(parameters));
 			res.setPeer(peer);
 			Map<Integer,IPhysicalOperator> mergedOps = res.getPlan(true);
 			res.setCost(costModel.estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));

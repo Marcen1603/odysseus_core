@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -48,6 +47,7 @@ public class TcpSocketHandler extends AbstractTransportHandler {
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		TcpSocketHandler th = new TcpSocketHandler(protocolHandler);
+		th.setOptionsMap(options);
 		th.hostname = options.get("host");
 		th.port = Integer.parseInt(options.get("port"));
 		return th;
@@ -101,12 +101,20 @@ public class TcpSocketHandler extends AbstractTransportHandler {
             socket.close();
         }
     }
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("port", Integer.toString(this.port));
-		options.put("host", this.hostname);
-		return options;
-	}
+    
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof TcpSocketHandler)) {
+    		return false;
+    	}
+    	TcpSocketHandler other = (TcpSocketHandler)o;
+    	if(!this.hostname.equals(other.hostname)) {
+    		return false;
+    	} else if(this.port != other.port) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 	
 }

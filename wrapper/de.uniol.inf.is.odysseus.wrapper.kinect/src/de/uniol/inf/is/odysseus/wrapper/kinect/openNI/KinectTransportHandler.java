@@ -65,6 +65,7 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
             IProtocolHandler<?> protocolHandler, Map<String, String> options) {
         KinectTransportHandler handler = new KinectTransportHandler(
                 protocolHandler);
+        handler.setOptionsMap(options);
         if (options.containsKey("color")) {
             handler.recordColorMap = Boolean.parseBoolean(options.get("color"));
         }
@@ -224,13 +225,21 @@ public class KinectTransportHandler extends AbstractPushTransportHandler
     public ITransportExchangePattern getExchangePattern() {
         return ITransportExchangePattern.InOnly;
     }
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("color", Boolean.toString(this.recordColorMap));
-		options.put("depth", Boolean.toString(this.recordDepthMap));
-		options.put("skeleton", Boolean.toString(this.recordSkeletonMap));
-		return options;
-	}
+    
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof KinectTransportHandler)) {
+    		return false;
+    	}
+    	KinectTransportHandler other = (KinectTransportHandler)o;
+    	if(this.recordColorMap != other.recordColorMap) {
+    		return false;
+    	} else if(this.recordDepthMap != other.recordDepthMap) {
+    		return false;
+    	} else if(this.recordSkeletonMap != other.recordSkeletonMap) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

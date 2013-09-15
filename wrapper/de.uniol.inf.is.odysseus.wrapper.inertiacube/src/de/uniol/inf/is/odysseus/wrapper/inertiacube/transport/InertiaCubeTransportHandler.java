@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.wrapper.inertiacube.transport;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -82,6 +81,7 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		InertiaCubeTransportHandler handler = new InertiaCubeTransportHandler(protocolHandler);
+		handler.setOptionsMap(options);
 		// handle options here
 		return handler;
 	}
@@ -163,10 +163,13 @@ public class InertiaCubeTransportHandler extends AbstractPushTransportHandler  {
 			fireProcess(res);
 		}
 	}
-
-	@Override
-	public Map<String, String> getOptions() {
-		// No options are used by this TransportHandler, return an empty map
-		return new HashMap<String,String>();
-	};
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof InertiaCubeTransportHandler)) {
+    		return false;
+    	} else {    	
+    		return true;
+    	}
+    }
 }

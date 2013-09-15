@@ -34,7 +34,8 @@ public class QSSimulator implements IQuerySharingSimulator {
 	}
 	
 	public SimulationResult simulateQuerySharing(Graph graph, OptimizationConfiguration conf) {
-
+		shareableIdenticalNodes.clear();
+		shareableSimilarNodes.clear();
 		
 		boolean restructuringAllowed;
 		if (conf.getParameterAllowRestructuringOfCurrentPlan() != null) {

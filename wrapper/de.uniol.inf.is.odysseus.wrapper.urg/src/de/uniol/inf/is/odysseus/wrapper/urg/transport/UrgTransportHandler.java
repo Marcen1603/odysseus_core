@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.wrapper.urg.transport;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -43,6 +42,7 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		UrgTransportHandler handler = new UrgTransportHandler(protocolHandler);
+		handler.setOptionsMap(options);
 		if (options.containsKey("port")) handler.comPort = options.get("port");
 		return handler;
 	}
@@ -92,11 +92,17 @@ public class UrgTransportHandler extends AbstractPushTransportHandler {
 			fireProcess(buffer);
 		}
 	};
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("port", this.comPort);
-		return options;
-	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof UrgTransportHandler)) {
+    		return false;
+    	}
+    	UrgTransportHandler other = (UrgTransportHandler)o;
+    	if(!this.comPort.equals(other.comPort)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

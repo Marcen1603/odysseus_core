@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.wrapper.speech.physicaloperator.access;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -39,7 +38,6 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 	private Logger LOG = LoggerFactory
 			.getLogger(NumericSpeechTransportHandler.class);
 	private NumericRecognizerThread recognizer;
-	private Map<String, String> options = new HashMap<String,String>();
 
 	public NumericSpeechTransportHandler() {
 		super();
@@ -59,6 +57,7 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		NumericSpeechTransportHandler handler = new NumericSpeechTransportHandler(
 				protocolHandler);
+		handler.setOptionsMap(options);
 		handler.init(options);
 		return handler;
 	}
@@ -67,10 +66,6 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 		URL configuration = SpeechTransportHandler.class
 				.getResource("numeric.config.xml");
 		if (options.containsKey("config")) {
-			// it's easier to safe the config-option in a new field, because there doesn't seem to be a way
-			// of deriving the URI/config-value from the NumericRecognizerThread in retrospect
-			this.options.put("config", options.get("config"));
-			
 			try {
 				configuration = new URL(options.get("config"));
 			} catch (MalformedURLException e) {
@@ -130,9 +125,17 @@ public class NumericSpeechTransportHandler extends AbstractPushTransportHandler 
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public Map<String, String> getOptions() {
-		return this.options;
-	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof NumericSpeechTransportHandler)) {
+    		return false;
+    	}
+    	NumericSpeechTransportHandler other = (NumericSpeechTransportHandler)o;
+    	if(!this.getOptionsMap().get("config").equals(other.getOptionsMap().get("config"))) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

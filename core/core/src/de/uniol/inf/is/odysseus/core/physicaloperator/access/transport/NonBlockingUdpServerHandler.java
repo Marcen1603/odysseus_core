@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +83,7 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 			final Map<String, String> options) {
 		final NonBlockingUdpServerHandler handler = new NonBlockingUdpServerHandler(
 				protocolHandler, options);
+		handler.setOptionsMap(options);
 		handler.readBufferSize = options.containsKey("read") ? Integer
 				.parseInt(options.get("read")) : 10240;
 		handler.writeBufferSize = options.containsKey("write") ? Integer
@@ -223,12 +223,20 @@ public class NonBlockingUdpServerHandler extends AbstractTransportHandler
 
 	}
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("port", Integer.toString(this.port));
-		options.put("read", Integer.toString(this.readBufferSize));
-		options.put("write", Integer.toString(this.writeBufferSize));
-		return options;
-	}
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof NonBlockingUdpServerHandler)) {
+    		return false;
+    	}
+    	NonBlockingUdpServerHandler other = (NonBlockingUdpServerHandler)o;
+    	if(this.port != other.port) {
+    		return false;
+    	} else if(this.readBufferSize != other.readBufferSize) {
+    		return false;
+    	} else if(this.writeBufferSize != other.writeBufferSize) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

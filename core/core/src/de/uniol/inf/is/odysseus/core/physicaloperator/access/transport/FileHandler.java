@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -138,6 +137,7 @@ public class FileHandler extends AbstractFileHandler {
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		FileHandler fh = new FileHandler(protocolHandler);
+		fh.setOptionsMap(options);
 		fh.filename = options.get("filename");
 		fh.append = (options.containsKey("append")) ? Boolean
 				.parseBoolean(options.get("append")) : false;
@@ -151,13 +151,20 @@ public class FileHandler extends AbstractFileHandler {
 		return "File";
 	}
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("filename", this.filename);
-		options.put("append", Boolean.toString(this.append));
-		options.put("preload", Boolean.toString(this.preload));
-		return options;
-	}
-
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof FileHandler)) {
+    		return false;
+    	}
+    	FileHandler other = (FileHandler)o;
+    	if(this.append != other.append) {
+    		return false;
+    	} else if(this.preload != other.preload) {
+    		return false;
+    	} else if(!this.filename.equals(other.filename)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

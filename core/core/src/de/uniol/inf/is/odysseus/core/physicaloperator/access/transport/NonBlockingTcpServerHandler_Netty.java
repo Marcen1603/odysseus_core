@@ -89,8 +89,9 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		int port = options.containsKey("port") ? Integer.parseInt(options
 				.get("port")) : 8080;
-
-		return new NonBlockingTcpServerHandler_Netty(protocolHandler, port);
+		NonBlockingTcpServerHandler_Netty result = new NonBlockingTcpServerHandler_Netty(protocolHandler, port);
+		result.setOptionsMap(options);
+		return result;
 	}
 
 	@Override
@@ -171,11 +172,19 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public Map<String, String> getOptions() {
-		return null;
-	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof NonBlockingTcpServerHandler_Netty)) {
+    		return false;
+    	}
+    	NonBlockingTcpServerHandler_Netty other = (NonBlockingTcpServerHandler_Netty)o;
+    	if(this.port != other.port) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 
 	@Override
 	public void process(ByteBuffer buffer) throws ClassNotFoundException {

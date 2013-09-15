@@ -16,16 +16,22 @@ public class Graph {
 	Map<String,List<GraphNode>> nodesGroupedByOpType = new HashMap<String, List<GraphNode>>();
 	
 	public Graph(Map<Integer, IPhysicalOperator> oldPlan, Map<Integer, IPhysicalOperator> newPlan) {
+		if(oldPlan == null && newPlan == null) {
+			return;
+		}
 		List<GraphNode> temp = new ArrayList<GraphNode>();
-		for(Entry<Integer, IPhysicalOperator> e : oldPlan.entrySet()) {
-			GraphNode gn = new GraphNode(e.getValue(), e.getKey(), true);
-			temp.add(gn);
+		if(oldPlan != null) {
+			for(Entry<Integer, IPhysicalOperator> e : oldPlan.entrySet()) {
+				GraphNode gn = new GraphNode(e.getValue(), e.getKey(), true);
+				temp.add(gn);
+			}
 		}
-		for(Entry<Integer, IPhysicalOperator> e : newPlan.entrySet()) {
-			GraphNode gn = new GraphNode(e.getValue(), e.getKey(), false);
-			temp.add(gn);
+		if(newPlan != null) {
+			for(Entry<Integer, IPhysicalOperator> e : newPlan.entrySet()) {
+				GraphNode gn = new GraphNode(e.getValue(), e.getKey(), false);
+				temp.add(gn);
+			}
 		}
-		
 		for(GraphNode gn : temp) {
 			if(nodesGroupedByOpType.containsKey(gn.getOperatorType())) {
 				nodesGroupedByOpType.get(gn.getOperatorType()).add(gn);
@@ -35,7 +41,7 @@ public class Graph {
 				nodesGroupedByOpType.put(gn.getOperatorType(), list);
 			}
 		}
-		this.createConnections();
+		this.createConnections(nodesGroupedByOpType);
 	}
 	
 	public Graph(Graph graph) {
@@ -77,11 +83,41 @@ public class Graph {
 			}
 		}
 	}
+	
+	// adds 
+	public Graph addPlan(Map<Integer,IPhysicalOperator> ops, boolean opsAreNew) {
+		List<GraphNode> temp = new ArrayList<GraphNode>();
+		for(Entry<Integer, IPhysicalOperator> e : ops.entrySet()) {
+			GraphNode gn = new GraphNode(e.getValue(), e.getKey(), opsAreNew);
+			temp.add(gn);
+		}
+		Map<String,List<GraphNode>> tempMap = new HashMap<String,List<GraphNode>>();
+		for(GraphNode gn : temp) {
+			if(tempMap.containsKey(gn.getOperatorType())) {
+				tempMap.get(gn.getOperatorType()).add(gn);
+			} else {
+				ArrayList<GraphNode> list = new ArrayList<GraphNode>();
+				list.add(gn);
+				tempMap.put(gn.getOperatorType(), list);
+			}
+		}
+		// only create the connections of the new nodes
+		this.createConnections(tempMap);
+		// then merge the results with this graph, and we should have new set of interconnected graphnodes
+		for(String s : tempMap.keySet()) {
+			if(this.nodesGroupedByOpType.containsKey(s)) {
+				this.nodesGroupedByOpType.get(s).addAll(tempMap.get(s));
+			} else {
+				this.nodesGroupedByOpType.put(s, tempMap.get(s));
+			}
+		}
+		return this;
+	}
 
 	@SuppressWarnings("unchecked")
-	private void createConnections() {
-		for(String opType : nodesGroupedByOpType.keySet()) {
-			for(GraphNode gn : nodesGroupedByOpType.get(opType)) {
+	private void createConnections(Map<String,List<GraphNode>> nodes) {
+		for(String opType : nodes.keySet()) {
+			for(GraphNode gn : nodes.get(opType)) {
 				// collect all the connections between the operators and connect their respective GraphNodes the same way
 				IPhysicalOperator o = gn.getOperator();
 				if(gn.isSink()) {

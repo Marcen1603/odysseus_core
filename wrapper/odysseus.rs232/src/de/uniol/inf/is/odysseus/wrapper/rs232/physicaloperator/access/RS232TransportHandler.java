@@ -32,7 +32,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TooManyListenersException;
 
@@ -144,6 +143,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		RS232TransportHandler handler = new RS232TransportHandler(protocolHandler);
+		handler.setOptionsMap(options);
 		handler.portName = options.get("port");
 		handler.baud = options.containsKey("baud") ? Integer.parseInt(options.get("baud")) : 9600;
 		handler.parity = options.containsKey("parity") ? Integer.parseInt(options.get("parity")) : SerialPort.PARITY_NONE;
@@ -233,15 +233,45 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 		}
 
 	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof RS232TransportHandler)) {
+    		return false;
+    	}
+    	RS232TransportHandler other = (RS232TransportHandler)o;
+    	if(!this.getPortName().equals(other.getPortName())) {
+    		return false;
+    	} else if(this.getBaud() != other.getBaud()) {
+    		return false;
+    	} else if(this.getParity() != other.getParity()) {
+    		return false;
+    	} else if(this.getDatabits() != other.getDatabits()) {
+    		return false;
+    	} else if(this.getStopbits() != other.getStopbits()) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("port", this.portName);
-		options.put("baud", Integer.toString(this.baud));
-		options.put("parity", Integer.toString(this.parity));
-		options.put("databits", Integer.toString(this.databits));
-		options.put("stopbits", Integer.toString(this.stopbits));
-		return options;
+	public String getPortName() {
+		return portName;
+	}
+
+	public int getBaud() {
+		return baud;
+	}
+
+	public int getStopbits() {
+		return stopbits;
+	}
+
+	public int getParity() {
+		return parity;
+	}
+
+	public int getDatabits() {
+		return databits;
 	}
 }

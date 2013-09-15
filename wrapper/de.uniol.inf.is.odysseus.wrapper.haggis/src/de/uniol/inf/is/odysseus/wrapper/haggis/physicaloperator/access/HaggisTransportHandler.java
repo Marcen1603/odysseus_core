@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -85,6 +84,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         final HaggisTransportHandler handler = new HaggisTransportHandler(protocolHandler);
+        handler.setOptionsMap(options);
         handler.init(options);
         return handler;
     }
@@ -392,16 +392,28 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
         }
     }
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("port", Integer.toString(this.port));
-		options.put("password", this.getPassword());
-		options.put("username", this.getUsername());
-		options.put("agent", this.getAgent());
-		options.put("service", this.getService());
-		options.put("host", this.getHost());
-		options.put("listen", this.getListen());
-		return options;
-	}
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof HaggisTransportHandler)) {
+    		return false;
+    	}
+    	HaggisTransportHandler other = (HaggisTransportHandler)o;
+    	if(!this.host.equals(other.host)) {
+    		return false;
+    	} else if(!this.getUsername().equals(other.getUsername())) {
+    		return false;
+    	} else if(!this.getPassword().equals(other.getPassword())) {
+    		return false;
+    	} else if(this.port != other.port) {
+    		return false;
+    	} else if(!this.getAgent().equals(other.getAgent())) {
+    		return false;
+    	} else if(!this.getService().equals(other.getService())) {
+    		return false;
+    	} else if(!this.getListen().equals(other.getListen())) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

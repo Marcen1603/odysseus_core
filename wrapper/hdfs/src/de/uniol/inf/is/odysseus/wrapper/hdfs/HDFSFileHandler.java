@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.hdfs;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
@@ -30,6 +29,7 @@ public class HDFSFileHandler extends AbstractFileHandler {
 		String paramName = "fs.default.name";
 		config.set(paramName, options.get(paramName));
 		HDFSFileHandler fileHandler = new HDFSFileHandler(protocolHandler);
+		fileHandler.setOptionsMap(options);
 		try {
 			fileHandler.dfs = FileSystem.get(config);
 		} catch (IOException e) {
@@ -73,13 +73,21 @@ public class HDFSFileHandler extends AbstractFileHandler {
 		}
 		
 	}
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("fs.default.name", this.dfs.getConf().get("fs.default.name"));
-		options.put("filename", this.filename);
-		options.put("append", Boolean.toString(this.append));
-		return options;
-	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof HDFSFileHandler)) {
+    		return false;
+    	}
+    	HDFSFileHandler other = (HDFSFileHandler)o;
+    	if(!this.filename.equals(other.filename)) {
+    		return false;
+    	} else if(this.append != other.append) {
+    		return false;
+    	} else if(!this.dfs.getConf().get("fs.default.name").equals(other.dfs.getConf().get("fs.default.name"))) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

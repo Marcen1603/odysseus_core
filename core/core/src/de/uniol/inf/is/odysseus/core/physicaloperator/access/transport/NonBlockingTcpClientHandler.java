@@ -22,7 +22,6 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -80,6 +79,7 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         final NonBlockingTcpClientHandler handler = new NonBlockingTcpClientHandler(protocolHandler);
+        handler.setOptionsMap(options);
         handler.readBufferSize = options.containsKey("read") ? Integer.parseInt(options.get("read")) : 10240;
         handler.writeBufferSize = options.containsKey("write") ? Integer.parseInt(options.get("write")) : 10240;
         handler.host = options.containsKey("host") ? options.get("host") : "127.0.0.1";
@@ -240,14 +240,23 @@ public class NonBlockingTcpClientHandler extends AbstractTransportHandler implem
             this.buffer.clear();
         }
     }
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("read", Integer.toString(this.readBufferSize));
-		options.put("write", Integer.toString(this.writeBufferSize));
-		options.put("host", this.host);
-		options.put("port", Integer.toString(this.port));
-		return options;
-	}
+    
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof NonBlockingTcpClientHandler)) {
+    		return false;
+    	}
+    	NonBlockingTcpClientHandler other = (NonBlockingTcpClientHandler)o;
+    	if(!this.host.equals(other.host)) {
+    		return false;
+    	} else if(this.port != other.port) {
+    		return false;
+    	} else if(this.readBufferSize != other.readBufferSize) {
+    		return false;
+    	} else if(this.writeBufferSize != other.writeBufferSize) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

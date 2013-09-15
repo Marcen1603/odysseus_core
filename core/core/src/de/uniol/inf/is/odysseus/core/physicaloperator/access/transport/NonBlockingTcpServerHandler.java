@@ -22,7 +22,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +79,7 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 			final Map<String, String> options) {
 		final NonBlockingTcpServerHandler handler = new NonBlockingTcpServerHandler(
 				protocolHandler);
+		handler.setOptionsMap(options);
 		handler.readBufferSize = options.containsKey("read") ? Integer
 				.parseInt(options.get("read")) : 10240;
 		handler.writeBufferSize = options.containsKey("write") ? Integer
@@ -211,13 +211,20 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 		NonBlockingTcpServerHandler.LOG.error(ex.getMessage(), ex);
 	}
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("read", Integer.toString(this.readBufferSize));
-		options.put("write", Integer.toString(this.writeBufferSize));
-		options.put("port", Integer.toString(this.port));
-		return options;
-	}
-
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof NonBlockingTcpServerHandler)) {
+    		return false;
+    	}
+    	NonBlockingTcpServerHandler other = (NonBlockingTcpServerHandler)o;
+    	if(this.port != other.port) {
+    		return false;
+    	} else if(this.readBufferSize != other.readBufferSize) {
+    		return false;
+    	} else if(this.writeBufferSize != other.writeBufferSize) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

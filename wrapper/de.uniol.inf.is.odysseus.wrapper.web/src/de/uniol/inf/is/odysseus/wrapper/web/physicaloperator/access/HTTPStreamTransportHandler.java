@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -58,6 +57,7 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     @Override
     public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final Map<String, String> options) {
         final HTTPStreamTransportHandler handler = new HTTPStreamTransportHandler(protocolHandler);
+        handler.setOptionsMap(options);
         handler.init(options);
         return handler;
     }
@@ -119,14 +119,21 @@ public class HTTPStreamTransportHandler extends AbstractPullTransportHandler {
     public String getURI() {
         return this.uri;
     }
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		if(this.uri != null) {
-			options.put("uri", this.uri);
-		}
-		return options;
-	}
+    
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof HTTPStreamTransportHandler)) {
+    		return false;
+    	}
+    	HTTPStreamTransportHandler other = (HTTPStreamTransportHandler)o;
+    	if(this.getURI() == null && other.getURI() == null) {
+    		return true;
+    	} else if(this.getURI() != null && other.getURI() != null &&
+    			this.getURI().equals(other.getURI())) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
   
 }

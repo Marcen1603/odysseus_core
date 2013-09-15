@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
@@ -54,7 +53,9 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		return new JxtaTransportHandler(protocolHandler, options);
+		JxtaTransportHandler handler = new JxtaTransportHandler(protocolHandler, options);
+		handler.setOptionsMap(options);
+		return handler;
 	}
 
 	@Override
@@ -186,10 +187,16 @@ public class JxtaTransportHandler extends AbstractTransportHandler implements IJ
 		return advertisement;
 	}
 
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put(PIPEID_TAG, this.pipeID.toString());
-		return options;
-	}
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof JxtaTransportHandler)) {
+    		return false;
+    	}
+    	JxtaTransportHandler other = (JxtaTransportHandler)o;
+    	if(!this.pipeID.toString().equals(other.pipeID.toString())) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

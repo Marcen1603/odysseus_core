@@ -29,6 +29,8 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	private final List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
 	private int openCounter = 0;
 	private final ITransportExchangePattern exchangePattern;
+	
+	private Map<String, String> optionsMap;
 
 	public AbstractTransportHandler() {
 		this.exchangePattern = null;
@@ -154,15 +156,11 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
      * @return
      */
 	public Map<String, String> getOptionsMap() {
-		//return optionsMap;
-		// TODO: change the handling of the options to be the same as for the ProtocolHandlers, cleanup child classes
-		return getOptions();
+		return optionsMap;
 	}
 	
-	public abstract Map<String, String> getOptions();
-	
 	public void setOptionsMap(Map<String, String> options) {
-		//this.optionsMap = options;
+		this.optionsMap = options;
 	}
 	
 	@Override
@@ -172,11 +170,9 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		} else if(!this.getName().equals(other.getName())) {
 			return false;
 		}
-		return false;
-		// TODO: Implement in child classes
-		//return isSemanticallyEqualImpl(other);
+		return isSemanticallyEqualImpl(other);
 	}
 	
-	//abstract boolean isSemanticallyEqualImpl(ITransportHandler other);
+	public abstract boolean isSemanticallyEqualImpl(ITransportHandler other);
 
 }

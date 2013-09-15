@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
@@ -59,6 +58,7 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
     @Override
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
         NonBlockingTcpHandler handler = new NonBlockingTcpHandler(protocolHandler);
+        handler.setOptionsMap(options);
         try {
             NonBlockingTcpHandler.nioConnection = NioConnection.getInstance();
         }
@@ -152,16 +152,26 @@ public class NonBlockingTcpHandler extends AbstractTransportHandler implements I
         // TODO Auto-generated method stub
         
     }
-
-	@Override
-	public Map<String, String> getOptions() {
-		Map<String, String> options = new HashMap<String,String>();
-		options.put("host", this.host);
-		options.put("port", Integer.toString(this.port));
-		options.put("autoconnect", Boolean.toString(this.autoconnect));
-		options.put("user", this.user);
-		options.put("password", this.password);
-		return options;
-	}
+    
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof NonBlockingTcpHandler)) {
+    		return false;
+    	}
+    	NonBlockingTcpHandler other = (NonBlockingTcpHandler)o;
+    	if(!this.host.equals(other.host)) {
+    		return false;
+    	} else if(this.port != other.port) {
+    		return false;
+    	} else if(this.autoconnect != other.autoconnect) {
+    		return false;
+    	} else if(!this.user.equals(other.user)) {
+    		return false;
+    	} else if(!this.password.equals(other.password)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 
 }

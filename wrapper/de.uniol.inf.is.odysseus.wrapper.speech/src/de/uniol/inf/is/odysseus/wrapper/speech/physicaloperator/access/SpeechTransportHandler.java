@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.wrapper.speech.physicaloperator.access;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -35,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * 
  */
 public class SpeechTransportHandler extends AbstractPushTransportHandler {
-	private Map<String, String> options = new HashMap<String,String>();
 	
 	/** Logger */
 	private Logger LOG = LoggerFactory.getLogger(SpeechTransportHandler.class);
@@ -60,6 +58,7 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		SpeechTransportHandler handler = new SpeechTransportHandler(
 				protocolHandler);
+		handler.setOptionsMap(options);
 		handler.init(options);
 		return handler;
 	}
@@ -68,10 +67,6 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 		URL configuration = SpeechTransportHandler.class
 				.getResource("default.config.xml");
 		if (options.containsKey("config")) {
-			// it's easier to safe the config-option in a new field, because there doesn't seem to be a way
-			// of deriving the URI/config-value from the RecognizerThread in retrospect
-			this.options.put("config", options.get("config"));
-			
 			try {
 				configuration = new URL(options.get("config"));
 			} catch (MalformedURLException e) {
@@ -130,9 +125,17 @@ public class SpeechTransportHandler extends AbstractPushTransportHandler {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public Map<String, String> getOptions() {
-		return this.options;
-	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof SpeechTransportHandler)) {
+    		return false;
+    	}
+    	SpeechTransportHandler other = (SpeechTransportHandler)o;
+    	if(!this.getOptionsMap().get("config").equals(other.getOptionsMap().get("config"))) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
 }

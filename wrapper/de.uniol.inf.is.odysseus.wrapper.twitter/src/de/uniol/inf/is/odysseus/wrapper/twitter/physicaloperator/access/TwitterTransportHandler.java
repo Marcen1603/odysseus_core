@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -49,8 +48,6 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	private String accessTokenSecret;
 	private String[] searchKeys;
 	private double[][] locations;
-	
-	private Map<String, String> optionMap = new HashMap<String, String>();
 
 	public TwitterTransportHandler() {
 		super();
@@ -80,36 +77,29 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 			final Map<String, String> options) {
 		final TwitterTransportHandler handler = new TwitterTransportHandler(
 				protocolHandler);
+		handler.setOptionsMap(options);
 		handler.init(options);
 		return handler;
 	}
 
 	private void init(final Map<String, String> options) {
-		// saving the options in a field is preferable to a complete rebuild of the locations-String for this Handler,
-		// so the settings are retrieved directly from the initial options-map
 		if (options.containsKey("consumerkey")) {
 			setConsumerKey(options.get("consumerkey"));
-			this.optionMap.put("consumerkey", options.get("consumerkey"));
 		}
 		if (options.containsKey("consumersecret")) {
 			setConsumerSecret(options.get("consumersecret"));
-			this.optionMap.put("consumersecret", options.get("consumersecret"));
 		}
 		if (options.containsKey("accesstoken")) {
 			setAccessToken(options.get("accesstoken"));
-			this.optionMap.put("accesstoken", options.get("accesstoken"));
 		}
 		if (options.containsKey("accesstokensecret")) {
 			setAccessTokenSecret(options.get("accesstokensecret"));
-			this.optionMap.put("accesstokensecret", options.get("accesstokensecret"));
 		}
 		if (options.containsKey("searchkeys")){
 			setSearchKeys(options.get("searchkeys"));
-			this.optionMap.put("searchkeys", options.get("searchkeys"));
 		}
 		if (options.containsKey("locations")){
 			setLocations(options.get("locations"));
-			this.optionMap.put("searchkeys", options.get("searchkeys"));
 		}
 	}
 
@@ -282,10 +272,45 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		   
 		return matrix;    
 	}
+	
+    @Override
+    public boolean isSemanticallyEqualImpl(ITransportHandler o) {
+    	if(!(o instanceof TwitterTransportHandler)) {
+    		return false;
+    	}
+    	TwitterTransportHandler other = (TwitterTransportHandler)o;
+    	if(!this.consumerKey.equals(other.consumerKey)) {
+    		return false;
+    	} else if(!this.consumerSecret.equals(other.consumerSecret)) {
+    		return false;
+    	} else if(!this.accessToken.equals(other.accessToken)) {
+    		return false;
+    	} else if(!this.accessTokenSecret.equals(other.accessTokenSecret)) {
+    		return false;
+    	} else if((this.searchKeys == null && other.searchKeys != null) ||
+    			(this.searchKeys != null && other.searchKeys == null)) {
+    		return false;
+    	} else if((this.locations == null && other.locations != null) ||
+    			(this.locations != null && other.locations == null)) {
+    		return false;
+    	} 
+    	if(this.searchKeys != null) {
+    		for(int i = 0; i < this.searchKeys.length; i++) {
+    			if(!searchKeys[i].equals(other.searchKeys[i])) {
+    				return false;
+    			}
+    		}
+    	}
+    	if(this.locations != null) {
+    		for(int i = 0; i < this.locations.length; i++) {
+    			for(int j = 0; i < this.locations[i].length; j++) {
+        			if(locations[i][j] != other.locations[i][j]) {
+        				return false;
+        			}
+    			}
 
-	@Override
-	public Map<String, String> getOptions() {
-		return optionMap;
-	}
-
+    		}
+    	}
+    	return true;
+    }
 }
