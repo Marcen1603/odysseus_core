@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -43,6 +44,7 @@ public class ProjectAO extends UnaryLogicalOp {
 
 	public ProjectAO(ProjectAO ao) {
 		super(ao);
+		this.attributes = new ArrayList<>(ao.attributes);
 		this.paths = ao.getPaths();
 	}
 
