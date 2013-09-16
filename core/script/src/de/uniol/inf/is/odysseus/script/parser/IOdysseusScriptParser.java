@@ -29,6 +29,8 @@ public interface IOdysseusScriptParser {
 
 	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
+	public List<?> parseAndExecute(String[] textlines, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
+
 	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException;
@@ -52,4 +54,6 @@ public interface IOdysseusScriptParser {
 	public Set<String> getStaticWords();
 	
 	public PreParserKeywordRegistry getPreParserKeywordRegistry();
+
+	public void setReplacement(String key, String value);
 }

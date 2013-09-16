@@ -109,6 +109,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		return ISaveablePart2.CANCEL;
 	}
 
+	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 			IResourceDelta delta = event.getDelta();
@@ -145,6 +146,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	private void closeEditor(final IResource resource) {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 				for (int i = 0; i < pages.length; i++) {

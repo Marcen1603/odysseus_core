@@ -140,6 +140,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 			ISink<?> defaultSink) throws OdysseusScriptException {
 		return execute(parseScript(completeText, caller), caller, defaultSink);
 	}
+	
+	@Override
+	public List<?> parseAndExecute(String[] textLines, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
+		return execute(parseScript(textLines, caller), caller, defaultSink);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -430,8 +435,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser,
 	}
 
 	private void resetDefaultReplacements() {
-		this.defaultReplacements.put("NOW", System.currentTimeMillis() + "");
-
+		setReplacement("NOW", System.currentTimeMillis() + "");
+	}
+	
+	@Override
+	public void setReplacement(String key, String value) {
+		defaultReplacements.put(key, value);
 	}
 
 	private String[] runProcedures(String[] text, ISession caller)

@@ -27,6 +27,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -43,14 +44,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptDocumentProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
+import de.uniol.inf.is.odysseus.rcp.editor.text.services.OdysseusScriptParserService;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
+import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 
 public class RunQueryCommand extends AbstractHandler implements IHandler {
 
@@ -155,10 +157,12 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
+				IOdysseusScriptParser scriptParser = OdysseusScriptParserService.get();
+				
 				try {
-					executor.addQuery(concatLines(text), "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard");
-				} catch (QueryParseException ex) {
+					prepareParserReplacements(scriptParser);
+					scriptParser.parseAndExecute(text, OdysseusRCPPlugIn.getActiveSession(), null);
+				} catch (OdysseusScriptException ex) {
 									
 					if (ex.getCause() instanceof QueryParseException) {
 						QueryParseException qpe = (QueryParseException) ex.getCause();
@@ -168,25 +172,20 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					while ((cause instanceof OdysseusScriptException || cause instanceof QueryParseException) && cause.getCause() != null) {
 						cause = cause.getCause();							
 					}
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed in line " + ex.getLine() + " at column " + ex.getColumn(), cause);
+					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Parsing of Odysseus script failed", cause);
 										
 				} catch (Throwable ex) {
 					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}
 				return Status.OK_STATUS;
 			}
-
 		};
 		job.setUser(true);
 		job.schedule();
 	}
 
-	private static String concatLines(String[] text) {
-		StringBuilder sb = new StringBuilder();
-		for (String line : text) {
-			sb.append(line).append("\n");
-		}
-		return sb.toString();
+	private static void prepareParserReplacements(IOdysseusScriptParser scriptParser) {
+		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
+		scriptParser.setReplacement("WORKSPACE", localRootLocation);
 	}
-
 }
