@@ -70,6 +70,9 @@ public class StreamTableEditor implements IStreamEditorType {
 	
 	private boolean isDesync;
 	private RefreshTableThread desyncThread;
+	private boolean isShowingMetadata = true;
+
+	private TableViewerColumn metadataColumn;
 
 	public StreamTableEditor(int maxTuples) {
 		setMaxTuplesCount(maxTuples);
@@ -186,6 +189,18 @@ public class StreamTableEditor implements IStreamEditorType {
 					stopRefreshThread();
 				}
 			}
+		});
+		
+		final ToolItem metadataButton = new ToolItem(toolbar, SWT.CHECK);
+		metadataButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("metadata"));
+		metadataButton.setToolTipText("Show metadata");
+		metadataButton.setSelection(isShowingMetadata);
+		metadataButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				isShowingMetadata = metadataButton.getSelection();
+				createAllColumns(getTableViewer());
+			}
 
 		});
 
@@ -244,6 +259,7 @@ public class StreamTableEditor implements IStreamEditorType {
 					} else {
 						cell.setText("<null>");
 					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 				} catch (Throwable t) {
 					LOG.error("Could not retrieve attributeValue", t);
 					cell.setText("<Error>");
@@ -315,6 +331,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		while (tableViewer.getTable().getColumnCount() > 0) {
 			disposeColumn(tableViewer.getTable().getColumn(0));
 		}
+		metadataColumn = null;
 	}
 
 	private void setMaxTuplesCount(int maxTuples) {
@@ -354,17 +371,21 @@ public class StreamTableEditor implements IStreamEditorType {
 			disposeAllColumns(tableViewer);
 			setSelectedAttributeIndexes(attributeIndexes);
 
-			int weight = 1000 / ( attributeIndexes.size() + 1);
+			int weight = 1000 / ( attributeIndexes.size() +  (isShowingMetadata ? 1 : 0) );
 			for (Integer attributeIndex : attributeIndexes) {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));
 				layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
 			
-			TableViewerColumn col = createMetadataColumn(tableViewer);
-			layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
+			if( isShowingMetadata ) {
+				metadataColumn = createMetadataColumn(tableViewer);
+				layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
+			}
 			
 		} finally {
+			getParent().layout();
 			tableViewer.getTable().setRedraw(true);
+			tableViewer.refresh();
 		}
 	}
 
