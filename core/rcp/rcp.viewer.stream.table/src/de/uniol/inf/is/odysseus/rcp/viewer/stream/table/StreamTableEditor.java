@@ -32,6 +32,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolBar;
@@ -261,7 +262,43 @@ public class StreamTableEditor implements IStreamEditorType {
 		
 		return col;
 	}
+	
+	private TableViewerColumn createMetadataColumn(TableViewer tableViewer) {
+		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
+		col.getColumn().setText("Metadata");
+		col.getColumn().setAlignment(SWT.CENTER);
 
+		col.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				try {
+					Object metadata = ((Tuple<?>) cell.getElement()).getMetadata();
+					if (metadata != null) {
+						cell.setText(metadata.toString());
+					} else {
+						cell.setText("<null>");
+					}
+					cell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					
+				} catch (Throwable t) {
+					LOG.error("Could not retrieve metadata", t);
+					cell.setText("<Error>");
+				}
+			}
+		});
+		TupleColumnViewerSorter sorter = new TupleColumnViewerSorter(tableViewer, col) {
+			@Override
+			protected int doCompare(Viewer viewer, Tuple<?> e1, Tuple<?> e2) {
+				Object attr1 = e1.getMetadata();
+				Object attr2 = e2.getMetadata();
+				return Objects.compare(attr1, attr2, new ObjectComparator());
+			}
+		};
+		sorter.setSorter(sorter, TupleColumnViewerSorter.NONE);
+		
+		return col;
+	}
+	
 	protected final TableViewer getTableViewer() {
 		return viewer;
 	}
@@ -317,16 +354,21 @@ public class StreamTableEditor implements IStreamEditorType {
 			disposeAllColumns(tableViewer);
 			setSelectedAttributeIndexes(attributeIndexes);
 
-			int weight = 1000 / attributeIndexes.size();
+			int weight = 1000 / ( attributeIndexes.size() + 1);
 			for (Integer attributeIndex : attributeIndexes) {
 				TableViewerColumn col = createColumn(tableViewer, getSchema().get(attributeIndex));
 				layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
 			}
+			
+			TableViewerColumn col = createMetadataColumn(tableViewer);
+			layout.setColumnData(col.getColumn(), new ColumnWeightData(weight, 25, true));
+			
 		} finally {
 			tableViewer.getTable().setRedraw(true);
 		}
 	}
-	
+
+
 	private void stopRefreshThread() {
 		if( desyncThread != null ) {
 			desyncThread.stopRunning();
