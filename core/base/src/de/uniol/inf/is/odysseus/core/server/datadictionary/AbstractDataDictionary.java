@@ -655,6 +655,15 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 		return viewname;
 	}
+	
+	@Override
+	public Resource getResource(String resourceName, ISession caller){
+		Resource resource = getViewOrStreamName(resourceName, caller);
+		if (resource == null){
+			resource = getResourceName(resourceName, caller, sinkDefinitions);
+		}
+		return resource;
+	}
 
 	@Override
 	public ILogicalOperator removeViewOrStream(String viewname, ISession caller) {

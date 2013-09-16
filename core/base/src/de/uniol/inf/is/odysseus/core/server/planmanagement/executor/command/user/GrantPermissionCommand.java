@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
@@ -29,6 +31,17 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 	@Override
 	public Collection<Integer> execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um) {
+		
+		List<Resource> resources = new ArrayList<>();
+		// Validate object names
+		for (String name: objects){
+			Resource r = dd.getResource(name, getCaller());
+			if (r != null){
+				resources.add(r);
+			}
+		}
+		
+		
 		IUser user = um.findUser(userName, getCaller());
 		if (user != null) {
 			for (IPermission action : operations) {
@@ -36,8 +49,8 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 				if (PermissionFactory.needsNoObject(action)) {
 					um.grantPermission(user, action, null, getCaller());
 				} else {
-					for (String entityname : objects) {
-						um.grantPermission(user, action, entityname, getCaller());
+					for (Resource entityname : resources) {
+						um.grantPermission(user, action, entityname.toString(), getCaller());
 					}
 				}
 
@@ -50,8 +63,8 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 				if (PermissionFactory.needsNoObject(action)) {
 					um.grantPermission(role, action, null, getCaller());
 				} else {
-					for (String entityname : objects) {
-						um.grantPermission(role, action, entityname, getCaller());
+					for (Resource entityname : resources) {
+						um.grantPermission(role, action, entityname.toString(), getCaller());
 					}
 				}
 
