@@ -75,8 +75,8 @@ public class LoginWindow {
 	public LoginWindow(Display parent, String userName, String tenantName, boolean cancelOK) {
 		Assert.isNotNull(userName);
 		Assert.isNotNull(parent);
-		startUserName = userName;
-		startTenantName = tenantName;
+		startUserName = userName != null ? userName : "";
+		startTenantName = tenantName != null ? tenantName : "";
 		this.cancelOK = cancelOK;
 		this.display = parent;
 	}
@@ -101,11 +101,13 @@ public class LoginWindow {
 
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				if (loginOK)
+				if (loginOK) {
 					return;
+				}
 
-				if (!cancelOK)
+				if (!cancelOK) {
 					System.exit(0);
+				}
 			}
 
 		});
@@ -197,7 +199,11 @@ public class LoginWindow {
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.exit(0);
+				if( !cancelOK ) {
+					System.exit(0);
+				} else {
+					wnd.close();
+				}
 			}
 		});
 	}
@@ -213,14 +219,11 @@ public class LoginWindow {
 
 			// Nutzerdaten nur speichern, wenn AutoLogin gew�hlt
 			if (autoLoginCheck.getSelection()) {
-				LoginPreferencesManager.getInstance().setUsername(
-						user.getUser().getName());
-				LoginPreferencesManager.getInstance().setPassword(
-						passwordInput.getText());
+				LoginPreferencesManager.getInstance().setUsername(user.getUser().getName());
+				LoginPreferencesManager.getInstance().setPassword(passwordInput.getText());
 				LoginPreferencesManager.getInstance().setTenant(tenantInput.getText());
 			}
-			LoginPreferencesManager.getInstance().setAutoLogin(
-					autoLoginCheck.getSelection());
+			LoginPreferencesManager.getInstance().setAutoLogin(autoLoginCheck.getSelection());
 			LoginPreferencesManager.getInstance().save();
 
 			wnd.dispose();

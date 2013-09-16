@@ -74,7 +74,7 @@ public final class OdysseusRCPConfiguration {
 		}
 	}
 
-	private static void saveConfiguration() {
+	public static void save() {
 		try {
 			FileOutputStream out = new FileOutputStream(ODYSSEUS_RCP_CONFIGURATION_FILE);
 			try {
@@ -118,7 +118,7 @@ public final class OdysseusRCPConfiguration {
 		String oldValue = (String)properties.get(key);
 		if (oldValue == null || !oldValue.equals(value)) {
 			properties.put(key, value);
-			saveConfiguration();
+			save();
 		}
 	}
 

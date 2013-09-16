@@ -15,23 +15,13 @@
   */
 package de.uniol.inf.is.odysseus.rcp.util;
 
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
-
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 
 public class LoginPreferencesManager {
 
 	private static LoginPreferencesManager instance;
 	
-	private Preferences prefs;
-	private Preferences loginPrefs;
-	
-	@SuppressWarnings("deprecation")
 	private LoginPreferencesManager() {
-		prefs = new ConfigurationScope().getNode(OdysseusRCPPlugIn.PLUGIN_ID);
-		loginPrefs = prefs.node("login");
 	}
 	
 	public static LoginPreferencesManager getInstance() {
@@ -41,48 +31,42 @@ public class LoginPreferencesManager {
 	}
 	
 	public String getUsername() {
-		return loginPrefs.get("username", "");
+		return OdysseusRCPConfiguration.get("username", "");
 	}
 	
 	public String getPassword() {
-		return loginPrefs.get("password", "");
+		return OdysseusRCPConfiguration.get("password", "");
 	}
 	
 	public String getTenant(){
-		return loginPrefs.get("tenant", "");
+		return OdysseusRCPConfiguration.get("tenant", "");
 	}
 	
 	public void setUsername( String username ) {
-		loginPrefs.put("username", username);
+		OdysseusRCPConfiguration.set("username", username);
 	}
 	
 	public void setPassword( String password ) {
-		// TODO: Verschlüsselung für das Passwort
-		loginPrefs.put("password", password);
+		OdysseusRCPConfiguration.set("password", password);
 	}
 	
 	public void setTenant(String tenant){
-		loginPrefs.put("tenant", tenant);
+		OdysseusRCPConfiguration.set("tenant", tenant);
 	}
 
 	public boolean getAutoLogin() {
 		try {
-			return Boolean.valueOf(loginPrefs.get("autologin", "false"));
+			return Boolean.valueOf(OdysseusRCPConfiguration.get("autologin", "false"));
 		} catch( Exception ex ) {
 			return false;
 		}
 	}
 	
 	public void setAutoLogin( boolean autoLogin ) {
-		loginPrefs.put("autologin", String.valueOf(autoLogin));
+		OdysseusRCPConfiguration.set("autologin", String.valueOf(autoLogin));
 	}
 	
 	public void save() {
-		try {
-			// Forces the application to save the preferences
-			prefs.flush();
-		} catch (BackingStoreException e) {
-			e.printStackTrace();
-		}
+		OdysseusRCPConfiguration.save();
 	}
 }

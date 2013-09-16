@@ -63,7 +63,7 @@ public class Login {
 			}
 		} else {
 			// Leeres Loginfenster
-			LoginWindow wnd = new LoginWindow(parent, cancelOK);
+			LoginWindow wnd = new LoginWindow(parent, username, tenant, cancelOK);
 			wnd.show();
 		}
 
