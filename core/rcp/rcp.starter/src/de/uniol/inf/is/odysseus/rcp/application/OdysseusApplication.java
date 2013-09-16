@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.application;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
@@ -31,12 +32,19 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguartionException;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
+
 /**
  * This class controls all aspects of the application's execution
  */
 @SuppressWarnings("restriction")
 public class OdysseusApplication implements IApplication {
 
+	private static final String RECENT_WORKSPACES_CONFIG_KEY = "recentWorkspaces";
 	private static Logger LOG = LoggerFactory.getLogger(OdysseusApplication.class);	
 	private static final String DEBUG_SWT_SYS_PROPERTY = "debug.swt";
 	
@@ -59,8 +67,6 @@ public class OdysseusApplication implements IApplication {
 			if( !chooseWorkspace(display) ) {
 				return IApplication.EXIT_OK;
 			}
-
-			
 
 			return PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor()) 
 					== PlatformUI.RETURN_RESTART ? IApplication.EXIT_RESTART : IApplication.EXIT_OK; 
@@ -95,22 +101,23 @@ public class OdysseusApplication implements IApplication {
 			URL url = new URL("file", null, path); 
 			ChooseWorkspaceData data = new ChooseWorkspaceData(url);
 			
-			// TODO: use setRecentWorkspaces() to load recent workspaces from odysseus config file
+			List<String> recentWorkspaces = toStringList(data.getRecentWorkspaces());
+			loadRecentOdysseusWorkspaces(recentWorkspaces);
+			data.setRecentWorkspaces(recentWorkspaces.toArray(new String[0]));
 			
-
 			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
 			dialog.prompt(false);
 			
-			
-			// in case that the workspace was automatically selected
 			if( data.getSelection() != null && !Platform.getInstanceLocation().isSet() ) {
 				if( !releaseAndSetLocation(data.getSelection()) ) {
 					
-					// force showing dialog
 					dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
-//					dialog.setErrorMessage("Could not set workspace.\nPlease choose a different one.");
 					dialog.prompt(true);
 				}
+			}
+			
+			if( dialog.getReturnCode() == Window.OK) { 
+				saveNewSelectedRecentOdysseusWorkspace(recentWorkspaces, data.getSelection());
 			}
 			
 			return dialog.getReturnCode() == Window.OK;
@@ -120,7 +127,54 @@ public class OdysseusApplication implements IApplication {
 			return false;
 		}
 	}
+
+	private static void saveNewSelectedRecentOdysseusWorkspace(List<String> recentWorkspaces, String selection) {
+		if( !recentWorkspaces.contains(selection)) {
+			recentWorkspaces = Lists.newArrayList(recentWorkspaces); // to avoid side effects for caller
+			recentWorkspaces.add(selection);
+		}
+			
+		OdysseusRCPConfiguration.set(RECENT_WORKSPACES_CONFIG_KEY, fromListToString(recentWorkspaces));
+	}
+
+	private static void loadRecentOdysseusWorkspaces(List<String> recentWorkspaces) throws OdysseusRCPConfiguartionException {
+		if (OdysseusRCPConfiguration.exists(RECENT_WORKSPACES_CONFIG_KEY)) {
+			List<String> recentOdysseusWorkspaces = fromStringToList(OdysseusRCPConfiguration.get(RECENT_WORKSPACES_CONFIG_KEY));
+			recentWorkspaces.addAll(recentOdysseusWorkspaces);
+		} else {
+			LOG.error("Odysseus RCP configuration does not contain key for recent workspaces");
+		}
+	}
 	
+	private static List<String> fromStringToList(String string) {
+		String[] splitted = string.split(";");
+		List<String> recentWorkspaces = Lists.newArrayList();
+		for( String splitt : splitted ) {
+			if( !Strings.isNullOrEmpty(splitt)) {
+				recentWorkspaces.add(splitt);
+			}
+		}
+		return recentWorkspaces;
+	}
+
+	private static String fromListToString(List<String> recentWorkspaces) {
+		StringBuilder sb = new StringBuilder();
+		for( String recentWorkspace : recentWorkspaces ) {
+			if(!Strings.isNullOrEmpty(recentWorkspace)) {
+				sb.append(recentWorkspace).append(";");
+			}
+		}
+		return sb.toString();
+	}
+
+	private static List<String> toStringList(String[] recentWorkspaces) {
+		List<String> list = Lists.newArrayList();
+		for( String recentWorkspace : recentWorkspaces ) {
+			list.add(recentWorkspace);
+		}
+		return list;
+	}
+
 	private static boolean releaseAndSetLocation(String selection) {
 		try {
 			Location instanceLoc = Platform.getInstanceLocation();
