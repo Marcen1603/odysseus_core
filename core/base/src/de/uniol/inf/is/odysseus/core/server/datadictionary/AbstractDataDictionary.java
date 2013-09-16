@@ -637,6 +637,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		if (op == null) {
 			op = getStream(viewname, caller);
 		}
+		
+		if( op == null ) {
+			throw new DataDictionaryException("Could not find view or stream " + viewname);
+		}
 
 		return op;
 	}
