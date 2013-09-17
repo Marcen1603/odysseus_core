@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
+
 public class AccessAO extends AbstractAccessAO {
 
 	private static final long serialVersionUID = -7775291864972173030L;
@@ -33,8 +35,8 @@ public class AccessAO extends AbstractAccessAO {
 		super(po);
 	}
 
-	public AccessAO(String wrapper, Map<String, String> optionsMap) {
-		super(wrapper, optionsMap);
+	public AccessAO(Resource name, String wrapper, Map<String, String> optionsMap) {
+		super(name, wrapper, optionsMap);
 	}
 	
 	@Override

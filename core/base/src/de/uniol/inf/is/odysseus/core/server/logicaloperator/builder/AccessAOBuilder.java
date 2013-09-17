@@ -56,9 +56,9 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			"DATAHANDLER", REQUIREMENT.OPTIONAL);
 
 	private final StringParameter transportHandler = new StringParameter(
-			"transport", REQUIREMENT.OPTIONAL);
+			"transport", REQUIREMENT.MANDATORY);
 	private final StringParameter protocolHandler = new StringParameter(
-			"protocol", REQUIREMENT.OPTIONAL);
+			"protocol", REQUIREMENT.MANDATORY);
 	private final ListParameter<String> options = new ListParameter<String>(
 			"OPTIONS_OLD", REQUIREMENT.OPTIONAL, new StringParameter());
 	private final ListParameter<Option> options2 = new ListParameter<Option>(
@@ -116,9 +116,8 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			}
 		}
 
-		AccessAO ao = new AccessAO(wrapperName, optionsMap);
+		AccessAO ao = new AccessAO(new Resource(getCaller().getUser(), sourcename), wrapperName, optionsMap);
 		ao.setName(sourcename);
-		ao.setAccessAOName(new Resource(getCaller().getUser(), sourcename));
 
 		String dhandlerText =  dataHandler.hasValue()? dataHandler.getValue():null;
 		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dhandlerText);

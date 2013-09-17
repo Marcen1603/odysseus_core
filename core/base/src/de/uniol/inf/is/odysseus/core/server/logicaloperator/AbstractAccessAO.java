@@ -66,7 +66,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		accessAOName = po.accessAOName;
 	}
 
-	public AbstractAccessAO(String wrapper, Map<String, String> optionsMap) {		
+	public AbstractAccessAO(Resource name, String wrapper, Map<String, String> optionsMap) {		
 		this.wrapper = wrapper;
 		this.optionsMap = optionsMap;
 	}

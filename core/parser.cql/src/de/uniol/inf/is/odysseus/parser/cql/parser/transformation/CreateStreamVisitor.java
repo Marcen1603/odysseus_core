@@ -129,10 +129,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
 		CreateStreamCommand cmd = null;
 		try {
-			FixedSetAccessAO newPO = new FixedSetAccessAO(name, "FixedSetAccessAO", node.getTuples(attributes));
+			FixedSetAccessAO newPO = new FixedSetAccessAO(new Resource(caller.getUser(), name), "FixedSetAccessAO", node.getTuples(attributes));
 			SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attributes);
 			newPO.setOutputSchema(outputSchema);
-			newPO.setAccessAOName(new Resource(caller.getUser(), name));
 			cmd = new CreateStreamCommand(name, newPO, caller);
 			commands.add(cmd);
 		} catch (Exception e) {
@@ -284,7 +283,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		String wrapperName = Constants.GENERIC_PUSH;
 		Map<String, String> options = new HashMap<String, String>();
-		AccessAO source = new AccessAO(wrapperName, options);
+		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, options);
 
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		source.setTransportHandler("NonBlockingTcp");
@@ -293,7 +292,6 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		options.put("autoconnect", autoReconnect + "");
 		source.setProtocolHandler("SizeByteBuffer");
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
-		source.setAccessAOName(new Resource(caller.getUser(), name));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
@@ -313,13 +311,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		// TODO: read delimiter
 		options.put("delimiter", ";");
 
-		AccessAO source = new AccessAO(wrapperName, options);
+		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, options);
 		source.setTransportHandler("File");
 		source.setProtocolHandler(type);
 		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
-		source.setAccessAOName(new Resource(caller.getUser(), name));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;

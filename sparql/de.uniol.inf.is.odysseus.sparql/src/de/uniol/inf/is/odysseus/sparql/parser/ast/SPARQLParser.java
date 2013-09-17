@@ -8,7 +8,7 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import de.uniol.inf.is.odysseus.core.collection.*;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
@@ -993,7 +993,7 @@ import de.uniol.inf.is.odysseus.sparql.*;
         }
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-        access = new AccessAO(SPARQLAccessSourceTypes.RDF, null);
+        access = new AccessAO(new Resource(streamName.getName()),SPARQLAccessSourceTypes.RDF, null);
 
         SourceInfo si = new SourceInfo(streamName.getName(), access, window);
         si.setDefaultStream(!named);

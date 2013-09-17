@@ -1359,9 +1359,8 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new QueryParseException("Wrapper "+wrapper+" is unknown.");
 		}
 		
-		AccessAO access = new AccessAO(wrapper, options);
+		AccessAO access = new AccessAO(new Resource(getCaller().getUser(),sourceName), wrapper, options);
 		access.setName(sourceName);
-		access.setAccessAOName(new Resource(getCaller().getUser(),sourceName));
 		access.setProtocolHandler(protocol);
 		access.setDataHandler(datahandler);
 		access.setTransportHandler(transport);

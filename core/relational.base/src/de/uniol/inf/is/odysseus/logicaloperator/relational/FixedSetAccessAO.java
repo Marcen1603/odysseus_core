@@ -16,8 +16,9 @@
 package de.uniol.inf.is.odysseus.logicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 
 public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends AccessAO {
 
@@ -25,8 +26,8 @@ public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends
 	private final T[] tuples;
 	
 	@SafeVarargs
-	public FixedSetAccessAO(String name, String type, T... tuples) {
-		super(type, null);
+	public FixedSetAccessAO(Resource name, String type, T... tuples) {
+		super(name, type, null);
 		this.tuples = tuples;
 	}
 	
