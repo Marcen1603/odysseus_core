@@ -19,24 +19,22 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 
+
 public class AccessAO extends AbstractAccessAO {
 
 	private static final long serialVersionUID = -7775291864972173030L;
 
-	public AccessAO(AbstractLogicalOperator po) {
-		super(po);
-	}
 
 	public AccessAO() {
 		super();
 	}
 
+	public AccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler, String dataHandler, Map<String, String> optionsMap) {		
+		super(name, wrapper, transportHandler, protocolHandler, dataHandler, optionsMap);
+	}
+	
 	public AccessAO(AccessAO po) {
 		super(po);
-	}
-
-	public AccessAO(Resource name, String wrapper, Map<String, String> optionsMap) {
-		super(name, wrapper, optionsMap);
 	}
 	
 	@Override

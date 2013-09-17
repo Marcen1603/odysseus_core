@@ -66,8 +66,12 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		accessAOName = po.accessAOName;
 	}
 
-	public AbstractAccessAO(Resource name, String wrapper, Map<String, String> optionsMap) {		
+	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler, String dataHandler, Map<String, String> optionsMap) {		
+		setAccessAOName(name);
 		this.wrapper = wrapper;
+		this.transportHandler = transportHandler;
+		this.protocolHandler = protocolHandler;
+		this.dataHandler = dataHandler;
 		this.optionsMap = optionsMap;
 	}
 

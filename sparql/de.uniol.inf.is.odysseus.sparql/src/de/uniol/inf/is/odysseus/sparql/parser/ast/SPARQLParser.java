@@ -993,7 +993,7 @@ import de.uniol.inf.is.odysseus.sparql.*;
         }
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-        access = new AccessAO(new Resource(streamName.getName()),SPARQLAccessSourceTypes.RDF, null);
+        access = new AccessAO(new Resource(streamName.getName()),SPARQLAccessSourceTypes.RDF, null, null, null, null);
 
         SourceInfo si = new SourceInfo(streamName.getName(), access, window);
         si.setDefaultStream(!named);

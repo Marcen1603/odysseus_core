@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,10 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		String sourcename = source.getValue();
 
+		String dataHandlerString = dataHandler.hasValue()?dataHandler.getValue():null;
+		String transportHandlerString = transportHandler.hasValue()?transportHandler.getValue():null;
+		String protocolHandlerString = protocolHandler.hasValue()?protocolHandler.getValue():null;
+				
 		if (options.hasValue()) {
 			for (final String item : options.getValue()) {
 				final String[] option = item.split(":");
@@ -116,8 +121,7 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 			}
 		}
 
-		AccessAO ao = new AccessAO(new Resource(getCaller().getUser(), sourcename), wrapperName, optionsMap);
-
+		AccessAO ao = new AccessAO(new Resource(getCaller().getUser(), sourcename), wrapperName, transportHandlerString, protocolHandlerString, dataHandlerString, optionsMap);
 		String dhandlerText =  dataHandler.hasValue()? dataHandler.getValue():null;
 		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dhandlerText);
 		if (type == null){
@@ -139,17 +143,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 
 		if (inputSchema.hasValue()) {
 			ao.setInputSchema(inputSchema.getValue());
-		}
-		if (dataHandler.hasValue()) {
-			ao.setDataHandler(dataHandler.getValue());
-		} else {
-			ao.setDataHandler(null);
-		}
-		if (transportHandler.hasValue()) {
-			ao.setTransportHandler(transportHandler.getValue());
-		}
-		if (protocolHandler.hasValue()) {
-			ao.setProtocolHandler(protocolHandler.getValue());
 		}
 
 		String df = dateFormat.hasValue() ? dateFormat.getValue() : null;

@@ -283,14 +283,10 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		String wrapperName = Constants.GENERIC_PUSH;
 		Map<String, String> options = new HashMap<String, String>();
-		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, options);
-
-		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
-		source.setTransportHandler("NonBlockingTcp");
+		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
 		options.put("host", host);
 		options.put("port", port + "");
 		options.put("autoconnect", autoReconnect + "");
-		source.setProtocolHandler("SizeByteBuffer");
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
@@ -311,10 +307,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		// TODO: read delimiter
 		options.put("delimiter", ";");
 
-		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, options);
-		source.setTransportHandler("File");
-		source.setProtocolHandler(type);
-		source.setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
+		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "File", type, new TupleDataHandler().getSupportedDataTypes().get(0), options);
 
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);

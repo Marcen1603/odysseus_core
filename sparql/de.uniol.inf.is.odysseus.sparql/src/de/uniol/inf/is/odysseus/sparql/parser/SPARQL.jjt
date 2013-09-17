@@ -311,7 +311,7 @@ SourceInfo StreamClause() :
   streamName = SourceSelector()
   (window = Window())?
   {
-	access = new AccessAO(new Resource(streamName.getName()), SPARQLAccessSourceTypes.RDF, null);
+        access = new AccessAO(new Resource(streamName.getName()),SPARQLAccessSourceTypes.RDF, null, null, null, null);
 
 	SourceInfo si = new SourceInfo(streamName.getName(), access, window);
 	si.setDefaultStream(!named);
