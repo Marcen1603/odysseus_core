@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.monitoring.IDescriptiveStatistics;
 /**
  * @author Jonas Jacobi
  */
+@SuppressWarnings("all")
 @Root(name = "result")
 public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<ITimeInterval> implements IBenchmarkResult<T> {
 	private static final long serialVersionUID = -3620110146842722398L;
@@ -37,7 +38,6 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	protected int size = 0;
 	@Element
 	private int queryId;
-	@SuppressWarnings("unused")
 	@Element
 	private long duration;
 	@Element(name = "statistics")
@@ -54,7 +54,6 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 		this.endTime = end;
 	}
 	
-	@SuppressWarnings("unused")
 	@Persist
 	private void setDuration() {
 		this.duration = this.getDuration();
