@@ -102,4 +102,9 @@ public class Session implements ISession {
 		SecureRandom random = new SecureRandom();
 		return new BigInteger(130, random).toString(32);
 	}
+	
+	@Override
+	public String toString() {
+		return tenant+" "+user+" "+end;
+	}
 }
