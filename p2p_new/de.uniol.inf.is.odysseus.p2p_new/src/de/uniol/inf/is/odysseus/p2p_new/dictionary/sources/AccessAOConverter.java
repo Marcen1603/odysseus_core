@@ -125,7 +125,6 @@ public final class AccessAOConverter {
 			handleInputSchemaElement(accessAO, elem);
 
 		} else if (elem.getName().equals(SOURCE_TAG)) {
-			accessAO.setName(elem.getTextValue());
 			accessAO.setAccessAOName(new Resource(SessionManagementService.getActiveSession().getUser().getName() + "." + elem.getTextValue()));
 
 		} else if (elem.getName().equals(OPTIONS_TAG)) {

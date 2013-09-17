@@ -117,7 +117,6 @@ public class AccessAOBuilder extends AbstractOperatorBuilder {
 		}
 
 		AccessAO ao = new AccessAO(new Resource(getCaller().getUser(), sourcename), wrapperName, optionsMap);
-		ao.setName(sourcename);
 
 		String dhandlerText =  dataHandler.hasValue()? dataHandler.getValue():null;
 		Class<? extends IStreamObject> type = DataHandlerRegistry.getCreatedType(dhandlerText);
