@@ -33,7 +33,6 @@ public final class AccessAOConverter {
 	private static final String SOURCE_TAG = "source";
 	private static final String INPUT_SCHEMA_TAG = "inputSchema";
 	private static final String INPUT_SCHEMA_ITEM_TAG = "inputSchemaItem";
-	private static final String AUTOCONNECT_TAG = "autoconnect";
 	private static final String OPTIONS_TAG = "options";
 	private static final String WRAPPER_TAG = "wrapper";
 	private static final String DATAHANDLER_TAG = "dataHandler";
@@ -63,7 +62,6 @@ public final class AccessAOConverter {
 		}
 		
 		appendElement(root, SOURCE_TAG, accessOperator.getName());
-		appendElement(root, AUTOCONNECT_TAG, String.valueOf(accessOperator.isAutoReconnectEnabled()));
 
 		final Element<?> optionsElement = appendElement(root, OPTIONS_TAG);
 		final Map<String, String> options = accessOperator.getOptionsMap();
@@ -129,8 +127,6 @@ public final class AccessAOConverter {
 		} else if (elem.getName().equals(SOURCE_TAG)) {
 			accessAO.setName(elem.getTextValue());
 			accessAO.setAccessAOName(new Resource(SessionManagementService.getActiveSession().getUser().getName() + "." + elem.getTextValue()));
-		} else if (elem.getName().equals(AUTOCONNECT_TAG)) {
-			accessAO.setAutoReconnectEnabled(Boolean.valueOf(elem.getTextValue()));
 
 		} else if (elem.getName().equals(OPTIONS_TAG)) {
 			handleOptionsTag(accessAO, elem);

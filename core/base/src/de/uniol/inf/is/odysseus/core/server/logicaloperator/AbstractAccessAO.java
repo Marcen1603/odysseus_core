@@ -27,7 +27,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	
 	private List<String> inputSchema = null;
 
-	private boolean autoreconnect = false;
 	private Map<String, String> optionsMap;
 	private String wrapper;
 	
@@ -58,7 +57,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	public AbstractAccessAO(AbstractAccessAO po) {
 		super(po);		
-		autoreconnect = po.autoreconnect;
 		wrapper = po.wrapper;
 		optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
 		inputSchema = po.inputSchema;		
@@ -95,14 +93,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	@Override
 	public boolean isAllPhysicalInputSet() {
 		return true;
-	}
-	
-	public boolean isAutoReconnectEnabled() {
-		return autoreconnect;
-	}
-	
-	public void setAutoReconnectEnabled(boolean enable){
-		this.autoreconnect = enable;		
 	}
 
 	public void setOptions(Map<String, String> value) {
