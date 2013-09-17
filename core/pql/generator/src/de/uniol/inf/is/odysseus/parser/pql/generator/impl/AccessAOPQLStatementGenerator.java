@@ -35,7 +35,6 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		appendIfNeeded(sb, "transport", operator.getTransportHandler());
 		appendIfNeeded(sb, "protocol", operator.getProtocolHandler());
 		appendIfNeeded(sb, "datahandler", operator.getDataHandler());
-		appendIfNeeded(sb, "objecthandler", operator.getObjectHandler());
 		if (timestampAO != null) {
 			appendIfNeeded(sb, "dateformat", timestampAO.getDateFormat());
 		}

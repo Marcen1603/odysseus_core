@@ -27,21 +27,13 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	
 	private List<String> inputSchema = null;
 
-	private int port = -1;
-	private String host;
-	private String login;
-	private String password;
 	private boolean autoreconnect = false;
 	private Map<String, String> optionsMap;
 	private String wrapper;
 	
-	private String input;
 	private String dataHandler;
-	private String transformer;
 	
-	private String objectHandler;
 	private String inputDataHandler;
-	private String accessConnectionHandler = "nio";
 	
 	private String protocolHandler;
 	private String transportHandler;
@@ -50,10 +42,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	private Resource accessAOName;
 
-//	/**
-//	 * This variable will be used to generate an ID for every new input tuple
-//	 */
-//	private static long ID = 1;
 
 	/**
 	 * this variable will be used, if a wildcard is necessary for an id
@@ -70,17 +58,11 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	public AbstractAccessAO(AbstractAccessAO po) {
 		super(po);		
-		port = po.port;
-		host = po.host;
-		login = po.login;
-		password = po.password;
 		autoreconnect = po.autoreconnect;
 		wrapper = po.wrapper;
 		optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
 		inputSchema = po.inputSchema;		
-		input = po.input;
 		dataHandler = po.dataHandler;
-		transformer = po.transformer;
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
 		accessAOName = po.accessAOName;
@@ -88,14 +70,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 
 	public AbstractAccessAO(String wrapper, Map<String, String> optionsMap) {		
 		this.wrapper = wrapper;
-		this.optionsMap = optionsMap;
-	}
-
-	public AbstractAccessAO(String wrapper, String input, String transformer, String dataHandler, Map<String, String> optionsMap){		
-		this.wrapper = wrapper;
-		this.input = input;
-		this.transformer = transformer;
-		this.dataHandler = dataHandler;
 		this.optionsMap = optionsMap;
 	}
 
@@ -112,21 +86,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		return wildcard;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public String getHost() {
-		return host;
-	}
 
 	@Override
 	public String toString() {
@@ -137,28 +96,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public boolean isAllPhysicalInputSet() {
 		return true;
 	}
-
-	public void setLoginInfo(String login, String password) {
-		this.login = login;
-		this.password = password;
-	}
 	
-	public void setLogin(String login) {
-		this.login = login;
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getLogin() {
-		return login;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
-
 	public boolean isAutoReconnectEnabled() {
 		return autoreconnect;
 	}
@@ -182,23 +120,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	public void setWrapper(String wrapper) {
 		this.wrapper = wrapper;
 	}
-	
-	public String getInput() {
-		return input;
-	}
-	
-	public void setInput(String input) {
-		this.input = input;
-	}
-	
-	public String getTransformer() {
-		return transformer;
-	}
-	
-	public void setTransformer(String transformer) {
-		this.transformer = transformer;
-	}
-	
+		
 	public String getDataHandler() {
 		return dataHandler;
 	}
@@ -207,28 +129,12 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		this.dataHandler = dataHandler;
 	}
 	
-	public String getObjectHandler() {
-		return objectHandler;
-	}
-
-	public void setObjectHandler(String objectHandler) {
-		this.objectHandler = objectHandler;
-	}
-
 	public String getInputDataHandler() {
 		return inputDataHandler;
 	}
 
 	public void setInputDataHandler(String inputDataHandler) {
 		this.inputDataHandler = inputDataHandler;
-	}
-
-	public String getAccessConnectionHandler() {
-		return accessConnectionHandler;
-	}
-
-	public void setAccessConnectionHandler(String accessConnectionHandler) {
-		this.accessConnectionHandler = accessConnectionHandler;
 	}
 
 	public String getProtocolHandler() {
@@ -262,11 +168,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	
 	public Resource getAccessAOName() {
 		return accessAOName;
-	}
-	
-	@Override
-	public void setName(String name) {
-		super.setName(name);
 	}
 }
 
