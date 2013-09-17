@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.metadata;
 
 import de.uniol.inf.is.odysseus.core.Order;
 
+@Deprecated
 public class StreamString<M extends IMetaAttribute> extends AbstractStreamObject<M> {
 
 	private static final long serialVersionUID = -8427379583652445078L;

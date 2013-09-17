@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.benchmark.physical;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.StreamString;
+import de.uniol.inf.is.odysseus.core.collection.Document;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
-public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, StreamString<?>> {
+public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, Document<?>> {
 
 	long updateRate = 1;
 	long elementsRead = 0;
@@ -56,14 +56,14 @@ public class DatarateCalcPO<R extends IStreamObject<?>> extends AbstractPipe<R, 
 			double fullDataRateSecond = fullDataRateNano * 1000000000.0;
 			
 //			System.out.println(String.format("%-10.3f; %-10.3f", lastDataRateSecond, fullDataRateSecond));
-			transfer(new StreamString(String.format("%-10.3f; %-10.3f", lastDataRateSecond, fullDataRateSecond)));
+			transfer(new Document(String.format("%-10.3f; %-10.3f", lastDataRateSecond, fullDataRateSecond)));
 			lastTimestamp = now;
 		}
 	}
 
 
 	@Override
-	public AbstractPipe<R, StreamString<?>> clone() {
+	public AbstractPipe<R, Document<?>> clone() {
 		return new DatarateCalcPO<R>(this);
 	}
 
