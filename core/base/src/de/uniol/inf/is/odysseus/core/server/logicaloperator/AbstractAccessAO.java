@@ -91,7 +91,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return accessAOName;
 	}
 
-	@Parameter(type = StringParameter.class, name = "Wrapper", optional = true, doc = "The name of the wrapper to use, e.g. GenericPush or GenericPull.")
 	public void setWrapper(String wrapper) {
 		this.wrapper = wrapper;
 	}
@@ -109,7 +108,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return dataHandler;
 	}
 
-	@Parameter(type = StringParameter.class, name = "transport", optional = true, doc = "The name of the transport handler to use, e.g. File or TcpServer.")
 	public void setTransportHandler(String transportHandler) {
 		this.transportHandler = transportHandler;
 	}
@@ -118,7 +116,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return transportHandler;
 	}
 
-	@Parameter(type = StringParameter.class, name = "protocol", optional = true, doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
 	public void setProtocolHandler(String protocolHandler) {
 		this.protocolHandler = protocolHandler;
 	}
@@ -127,7 +124,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return protocolHandler;
 	}
 
-	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for different handler.")
 	public void setOptions(List<Option> value) {
 		this.optionsMap.clear();
 		for (Option option : value) {
