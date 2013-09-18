@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
@@ -67,12 +66,14 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
 		accessAOName = po.accessAOName;
-		this.attributes = new ArrayList<>(po.attributes);
+		if (po.attributes != null) {
+			this.attributes = new ArrayList<>(po.attributes);
+		}
 	}
 
-	public AbstractAccessAO(Resource name, String wrapper, String transportHandler,
-			String protocolHandler, String dataHandler,
-			Map<String, String> optionsMap) {
+	public AbstractAccessAO(Resource name, String wrapper,
+			String transportHandler, String protocolHandler,
+			String dataHandler, Map<String, String> optionsMap) {
 		setAccessAOName(name);
 		this.wrapper = wrapper;
 		this.transportHandler = transportHandler;
@@ -130,7 +131,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			optionsMap.put(option.getName().toLowerCase(), option.getValue());
 		}
 	}
-	
+
 	protected void addOption(String key, String value) {
 		optionsMap.put(key, value);
 	}
