@@ -78,19 +78,21 @@ public abstract class AbstractInventory implements IRuleFlow {
 		WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Group added to workflow: " + group + ". New workflow is: " + workFlow.toString());
 	}
 
-	private void addRule(IRule<?, ?> rule, IRuleFlowGroup group) {
-		if (this.ruleBase.containsKey(group)) {
-			if (this.ruleBase.get(group).contains(rule)) {
-				WorkingMemory.LOGGER.warn(this.getInventoryName() + " - Rule \"" + rule + "\" already exists in inventory!");
-			}
+	public void addRule(IRule<?, ?> rule) {
+		IRuleFlowGroup group = rule.getRuleFlowGroup();
+		if (!containsRule(rule)){
 			WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
 			this.ruleBase.get(group).offer(rule);
-		} else {
-			throw new RuntimeException(this.getInventoryName() + " - Group " + group + " for rule " + rule + " doesn't exist");
-		}
+		} 
+	}
+	
+	public boolean containsRule(IRule<?,?> rule){
+		IRuleFlowGroup group = rule.getRuleFlowGroup();
+		return ruleBase.containsKey(group) && ruleBase.get(group).contains(rule);
 	}
 
-	private void removeRule(IRule<?, ?> rule, IRuleFlowGroup group) {
+	public void removeRule(IRule<?, ?> rule) {
+		IRuleFlowGroup group = rule.getRuleFlowGroup();
 		if (this.ruleBase.containsKey(group)) {
 			if (this.ruleBase.get(group).contains(rule)) {
 				if (this.ruleBase.get(group).remove(rule)) {
@@ -163,7 +165,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 		WorkingMemory.LOGGER.debug(getInventoryName() + " - Loading rules for... " + provider);
 		List<IRule<?, ?>> rules = provider.getRules();
 		for (IRule<?, ?> rule : rules) {
-			this.getCurrentInstance().addRule(rule, rule.getRuleFlowGroup());
+			this.getCurrentInstance().addRule(rule);
 		}
 	}
 
@@ -172,7 +174,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 	public void unbindRuleProvider(IRuleProvider provider) {
 		WorkingMemory.LOGGER.debug(getInventoryName() + " - Removing rules for... " + provider);
 		for (IRule<?, ?> rule : provider.getRules()) {
-			this.getCurrentInstance().removeRule(rule, rule.getRuleFlowGroup());
+			this.getCurrentInstance().removeRule(rule);
 		}
 	}
 

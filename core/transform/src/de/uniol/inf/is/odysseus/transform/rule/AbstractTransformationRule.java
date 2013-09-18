@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule;
 
-public abstract class AbstractTransformationRule<T> extends AbstractRule<T, TransformationConfiguration> {
+public abstract class AbstractTransformationRule<T> extends AbstractRule<T, TransformationConfiguration> implements ITransformationRule{
 
 	static Logger logger = LoggerFactory.getLogger(AbstractTransformationRule.class);
 

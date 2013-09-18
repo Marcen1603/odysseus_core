@@ -94,7 +94,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	private void removeBundle(Bundle bundle) {
 		Enumeration<URL> entries = bundle.findEntries(
-				"de.uniol.inf.is.odysseus.server", "*.class", true);
+				"de.uniol.inf.is.odysseus", "*.class", true);
 
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
