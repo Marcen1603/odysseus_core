@@ -18,10 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.draw2d.ImageFigure;
-import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
@@ -35,54 +32,44 @@ import org.eclipse.swt.widgets.Display;
 public class ImagePictogramFigure extends Figure {
 
 	private Image image;
-	private ImageFigure imageFigure;
-	private Label label;
-	private RectangleFigure rectangle;
+
 	private boolean visibile = true;
+	private boolean stretch = true;
 
 	public ImagePictogramFigure() {
 		setLayoutManager(new XYLayout());
 		setOpaque(false);
 		setBorder(new LineBorder(ColorConstants.white));
-		rectangle = new RectangleFigure();		
-		rectangle.setOpaque(false);
-		rectangle.setBorder(new LineBorder(ColorConstants.white));
-		add(rectangle);
-		
-		label = new Label();		
-		label.setOpaque(false);		
-		add(label);
-		
-		imageFigure = new ImageFigure();
-		add(imageFigure);
 	}
 
 	public void setImage(String filename) {
 		this.image = new Image(Display.getDefault(), new ImageData(filename));
-		
+
 	}
 
 	public void setVisibile(boolean visibile) {
 		this.visibile = visibile;
 	}
 	
-	public void refresh(){
-		this.repaint();		
+	public void setStretch(boolean stretch) {
+		this.stretch = stretch;
+	}
+
+	public void refresh() {
+		this.repaint();
 	}
 
 	public void paintFigure(Graphics g) {
-		if (this.visibile) {
-			imageFigure.setImage(image);
-		} else {
-			imageFigure.setImage(null);
-		}
 		Rectangle r = getBounds().getCopy();
-		setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
-		setConstraint(label, new Rectangle(0, 0, r.width, r.height));
-		setConstraint(imageFigure, new Rectangle(0, 0, r.width, r.height));
-		rectangle.invalidate();
-		label.invalidate();
-		imageFigure.invalidate();
+		if (this.visibile) {
+			org.eclipse.swt.graphics.Rectangle imgBox = image.getBounds();
+			if (stretch) {			
+				g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, r.width, r.height);
+			} else {
+				g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, imgBox.width, imgBox.height);
+			}
+
+		}
 	}
 
 }

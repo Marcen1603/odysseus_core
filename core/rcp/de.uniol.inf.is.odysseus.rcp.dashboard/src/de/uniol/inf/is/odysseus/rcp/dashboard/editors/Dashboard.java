@@ -67,7 +67,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	private DashboardKeyHandler keyHandler;
 	private DashboardSettings settings = DashboardSettings.getDefault();
 
-	public void createPartControl(Composite parent, ToolBar toolBar, IWorkbenchPartSite site) {
+	public void createPartControl(Composite parent, ToolBar toolBar, final IWorkbenchPartSite site) {
 		this.toolBar = toolBar;
 
 		dashboardControl = new DashboardControl(parent);
@@ -84,6 +84,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 			@Override
 			protected void dropDashboardPartPlacement(DashboardPartPlacement place) {
+				place.getDashboardPart().setWorkbenchPart(site.getPart());
 				add(place);
 			}
 		};

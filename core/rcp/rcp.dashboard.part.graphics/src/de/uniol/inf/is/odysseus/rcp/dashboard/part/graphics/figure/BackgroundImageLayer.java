@@ -27,11 +27,13 @@ import org.eclipse.ui.PlatformUI;
  * 
  */
 public class BackgroundImageLayer extends FreeformLayer {
-	
-	private Image image;
 
-	public BackgroundImageLayer(String path) {
+	private Image image;
+	private boolean stretch;
+
+	public BackgroundImageLayer(String path, boolean stretch) {
 		super();
+		this.stretch = stretch;
 		try {
 			setImage(new Image(PlatformUI.getWorkbench().getDisplay(), new FileInputStream(path)));
 		} catch (Exception e) {
@@ -44,7 +46,11 @@ public class BackgroundImageLayer extends FreeformLayer {
 		if (getImage() != null) {
 			org.eclipse.draw2d.geometry.Rectangle targetRect = getBounds().getCopy();
 			org.eclipse.swt.graphics.Rectangle imgBox = getImage().getBounds();
-			graphics.drawImage(getImage(), 0, 0, imgBox.width, imgBox.height, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
+			if (stretch) {
+				graphics.drawImage(getImage(), 0, 0, imgBox.width, imgBox.height, targetRect.x, targetRect.y, targetRect.width, targetRect.height);
+			} else {
+				graphics.drawImage(getImage(), 0, 0);
+			}
 		}
 		super.paintFigure(graphics);
 	}

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,8 +122,8 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	}
 	
 	@Override
-	public IWorkbenchPart getWorkbenchPart(){
-		return this.workbenchpart;
+	public IWorkbenchPart getWorkbenchPart(){		
+		return this.workbenchpart;		
 	}
 	
 	/* (non-Javadoc)

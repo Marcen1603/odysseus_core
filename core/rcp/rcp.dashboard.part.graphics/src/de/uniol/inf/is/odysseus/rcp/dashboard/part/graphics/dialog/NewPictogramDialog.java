@@ -16,10 +16,12 @@ import org.eclipse.swt.widgets.Text;
 
 public class NewPictogramDialog extends TitleAreaDialog {
 
-	private String location;
+	private String location = "";
 	private Text imgText;
-	private Text text;
-	private String predicate;
+	private Text predicateText;
+	private String predicate = "";
+	private boolean stretch = false;
+	private Button stretchCheckButton;
 
 
 	public NewPictogramDialog(Shell parentShell) {
@@ -42,9 +44,8 @@ public class NewPictogramDialog extends TitleAreaDialog {
 		imgText = new Text(container, SWT.BORDER);
 		GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);
 		gd_dataFolderText.widthHint = 287;
-		imgText.setLayoutData(gd_dataFolderText);
-		String folder = "";
-		imgText.setText(folder);
+		imgText.setLayoutData(gd_dataFolderText);		
+		imgText.setText(location);
 		
 		Button button = new Button(container, SWT.PUSH);
 		button.setText("Browse...");
@@ -53,8 +54,16 @@ public class NewPictogramDialog extends TitleAreaDialog {
 		lblPredicate.setText("Predicate");
 		new Label(container, SWT.NONE);
 		
-		text = new Text(container, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		predicateText = new Text(container, SWT.BORDER);
+		predicateText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		predicateText.setText(predicate);
+		
+		new Label(container, SWT.NONE);
+		
+		stretchCheckButton = new Button(container, SWT.CHECK);
+		stretchCheckButton.setText("Resize the image to fit the container size");
+		stretchCheckButton.setSelection(stretch);
+		
 		new Label(container, SWT.NONE);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -82,7 +91,8 @@ public class NewPictogramDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		this.location = imgText.getText();		
-		this.predicate = text.getText();
+		this.predicate = predicateText.getText();
+		this.stretch = stretchCheckButton.getSelection();
 		super.okPressed();		
 	}
 	
@@ -92,6 +102,22 @@ public class NewPictogramDialog extends TitleAreaDialog {
 	
 	public String getLocation(){
 		return this.location;
+	}
+	
+	public void setLocation(String location){
+		this.location = location;
+	}
+	
+	public void setPredicate(String predicate){
+		this.predicate = predicate;
+	}
+
+	public boolean isStretch() {
+		return stretch;
+	}
+
+	public void setStretch(boolean stretch) {
+		this.stretch = stretch;
 	}
 
 }

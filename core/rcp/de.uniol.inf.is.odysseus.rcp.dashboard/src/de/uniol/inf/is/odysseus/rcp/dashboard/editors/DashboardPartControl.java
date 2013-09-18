@@ -28,8 +28,7 @@ public class DashboardPartControl {
 
 		outerComposite = createOuterComposite(parent);
 		Composite innerComposite = createInnerComposite();
-
-		dashboardPartPlace.getDashboardPart().createPartControl(innerComposite, toolBar);
+		dashboardPartPlace.getDashboardPart().createPartControl(innerComposite, toolBar);		
 	}
 
 	private Composite createOuterComposite(Composite parent) {

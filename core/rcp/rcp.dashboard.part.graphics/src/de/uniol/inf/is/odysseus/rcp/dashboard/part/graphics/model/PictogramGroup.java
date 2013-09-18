@@ -29,11 +29,15 @@ public class PictogramGroup extends Observable implements Serializable {
 	private static final long serialVersionUID = 3019435887229998016L;
 	
 	private String backgroundImagePath;
+	private boolean backgroundFileStretch;
+
 	
 	List<Pictogram> nodes = new ArrayList<Pictogram>();
 
-	public PictogramGroup(String backgroundImagePath){
+
+	public PictogramGroup(String backgroundImagePath, boolean backgroundFileStretch){
 		this.backgroundImagePath = backgroundImagePath;
+		this.backgroundFileStretch = backgroundFileStretch;
 	}
 
 	public List<Pictogram> getPictograms() {		
@@ -70,5 +74,21 @@ public class PictogramGroup extends Observable implements Serializable {
 
 	public void setBackgroundImagePath(String backgroundImagePath) {
 		this.backgroundImagePath = backgroundImagePath;
+	}
+
+	/**
+	 * @param backgroundFileStretch
+	 */
+	public void setBackgroundImageStretch(boolean backgroundFileStretch) {
+		this.backgroundFileStretch = backgroundFileStretch;
+		
+	}
+
+	public boolean isBackgroundFileStretch() {
+		return backgroundFileStretch;
+	}
+
+	public void setBackgroundFileStretch(boolean backgroundFileStretch) {
+		this.backgroundFileStretch = backgroundFileStretch;
 	}
 }

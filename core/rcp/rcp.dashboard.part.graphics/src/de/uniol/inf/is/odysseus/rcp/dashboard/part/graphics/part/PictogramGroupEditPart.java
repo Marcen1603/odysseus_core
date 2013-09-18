@@ -25,10 +25,12 @@ public class PictogramGroupEditPart extends AbstractGraphicalEditPart implements
 	private static Logger LOGGER = LoggerFactory.getLogger(DashboardGraphicsPart.class);
 	
 	private String imagepath;
+	private boolean stretch;
 
 	public PictogramGroupEditPart(PictogramGroup group) {
 		setModel(group);
 		this.imagepath = group.getBackgroundImagePath();
+		this.stretch = group.isBackgroundFileStretch();
 	}
 
 	protected IFigure createFigure() {
@@ -36,13 +38,12 @@ public class PictogramGroupEditPart extends AbstractGraphicalEditPart implements
 		if(imagepath!=null){
 			File f = new File(imagepath);
 			if(f.exists()){
-				layer = new BackgroundImageLayer(imagepath);				
+				layer = new BackgroundImageLayer(imagepath, stretch);				
 			}else{
 				LOGGER.warn("Background image \""+imagepath+"\" not found, using no background!");
 			}
 		}	
 		layer.setLayoutManager(new FreeformLayout());
-		//layer.setBorder(new LineBorder(0));
 		return layer;
 	}
 

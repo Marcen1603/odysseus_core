@@ -369,11 +369,12 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 
 	}
 
-	private static Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
+	private Map<IDashboardPart, DashboardPartController> createDashboardPartControllers(ImmutableList<DashboardPartPlacement> dashboardPartPlacements) {
 		final Map<IDashboardPart, DashboardPartController> controllers = Maps.newHashMap();
 
 		for (final DashboardPartPlacement place : dashboardPartPlacements) {
 			final IDashboardPart part = place.getDashboardPart();
+			part.setWorkbenchPart(this);
 			final DashboardPartController controller = new DashboardPartController(part);
 			controllers.put(part, controller);
 		}

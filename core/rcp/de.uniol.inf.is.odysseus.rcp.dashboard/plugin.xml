@@ -33,6 +33,7 @@
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor"
+            contributorClass="de.uniol.inf.is.odysseus.rcp.dashboard.commands.DashboardPartEditorActionBarContributor"
             default="true"
             extensions="dsh"
             icon="icons/gears.png"

@@ -201,8 +201,8 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		comp.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		try {
-			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());
 			dashboardPart.setWorkbenchPart(this);
+			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());			
 			dashboardPartController.start();
 		} catch (final Exception ex) {
 			dashboardPartToolBar.setStatusToStopped();
@@ -252,7 +252,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 
 	@Override
 	public void configChanged(IDashboardPartConfigurer<?> sender) {
-		setDirty(true);
+		setDirty(true);		
 	}
 
 	public IDashboardPart getDashboardPart() {

@@ -62,6 +62,7 @@ public class DashboardPartView extends ViewPart {
 			dashboardPartController = new DashboardPartController(dashboardPart);
 
 			dashboardPart.createPartControl(comp, toolBar);
+			dashboardPart.setWorkbenchPart(this);
 			dashboardPartController.start();
 			
 			parent.layout();

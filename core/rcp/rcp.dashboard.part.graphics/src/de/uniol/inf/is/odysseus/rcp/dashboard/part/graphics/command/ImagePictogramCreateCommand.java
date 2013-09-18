@@ -25,6 +25,7 @@ public class ImagePictogramCreateCommand extends Command {
 		if (Window.OK == dialog.open()) {
 			pictogram.setFilename(dialog.getLocation());
 			pictogram.setPredicate(dialog.getPredicate());
+			pictogram.setStretch(dialog.isStretch());
 			setConstraint();
 			parent.addPictogram(pictogram);
 		}				
