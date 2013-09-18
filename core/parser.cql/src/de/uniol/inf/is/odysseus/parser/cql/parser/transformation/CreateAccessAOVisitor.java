@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -82,8 +82,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		String sourceName = srcName;
 		try {
 			access = dd.getViewOrStream(srcName, caller);
-			if (access instanceof AccessAO) {
-				((AccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));				
+			if (access instanceof AbstractAccessAO) {
+				((AbstractAccessAO) access).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));				
 			}
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e.getMessage());

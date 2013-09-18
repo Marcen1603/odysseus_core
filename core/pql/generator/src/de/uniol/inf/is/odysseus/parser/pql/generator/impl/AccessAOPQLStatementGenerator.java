@@ -10,23 +10,23 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
-public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator<AccessAO> {
+public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator<AbstractAccessAO> {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(AccessAOPQLStatementGenerator.class);
 
 	@Override
-	public Class<AccessAO> getOperatorClass() {
-		return AccessAO.class;
+	public Class<AbstractAccessAO> getOperatorClass() {
+		return AbstractAccessAO.class;
 	}
 
 	@Override
-	protected String generateParameters(AccessAO operator) {
+	protected String generateParameters(AbstractAccessAO operator) {
 		final StringBuilder sb = new StringBuilder();
 		final TimestampAO timestampAO = determineTimestampAO(operator);
 		
@@ -132,7 +132,7 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		return element.toString();
 	}
 
-	private static TimestampAO determineTimestampAO(AccessAO operator) {
+	private static TimestampAO determineTimestampAO(AbstractAccessAO operator) {
 		try {
 			return (TimestampAO) operator.getSubscriptions().iterator().next().getTarget();
 		} catch (final Throwable t) {
@@ -140,7 +140,7 @@ public class AccessAOPQLStatementGenerator extends AbstractPQLStatementGenerator
 		}
 	}
 
-	private static String determineWrapper(AccessAO operator) {
+	private static String determineWrapper(AbstractAccessAO operator) {
 		if (!Strings.isNullOrEmpty(operator.getWrapper())) {
 			return operator.getWrapper();
 		}

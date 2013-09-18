@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOConverter;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
@@ -84,7 +84,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	private PeerID peerID;
 	private SDFSchema outputSchema;
 	
-	private AccessAO accessAO;
+	private AbstractAccessAO accessAO;
 
 	public SourceAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
@@ -218,11 +218,11 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 		return sameAs;
 	}
 	
-	public AccessAO getAccessAO() {
+	public AbstractAccessAO getAccessAO() {
 		return accessAO;
 	}
 	
-	public void setAccessAO(AccessAO accessAO) {
+	public void setAccessAO(AbstractAccessAO accessAO) {
 		this.accessAO = accessAO;
 	}
 

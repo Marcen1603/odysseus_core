@@ -20,7 +20,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.benchmark.physical.BenchmarkPO;
 import de.uniol.inf.is.odysseus.benchmark.prio.physical.PriorityBenchmarkPO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -58,7 +58,7 @@ public class TAlgebra2BenchmarkAORule extends
 		if (transformConfig.getMetaTypes().contains(
 						IPriority.class.getName())) {
 			if (operator.isAllPhysicalInputSet() == true) {
-				if (!(operator instanceof AccessAO)) {
+				if (!(operator instanceof AbstractAccessAO)) {
 					return true;
 				}
 			}

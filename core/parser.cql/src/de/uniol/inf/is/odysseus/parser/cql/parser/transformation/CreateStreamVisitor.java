@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -101,7 +102,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 	public void setOperator(ILogicalOperator operator) {
 		this.operator = operator;
-		((AccessAO) operator).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
+		((AbstractAccessAO) operator).setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 	}
 
 	@Override
@@ -124,22 +125,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 
 		return data;
 	}
-
-	@Override
-	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
-		CreateStreamCommand cmd = null;
-		try {
-			FixedSetAccessAO newPO = new FixedSetAccessAO(new Resource(caller.getUser(), name), "FixedSetAccessAO", node.getTuples(attributes));
-			SDFSchema outputSchema = new SDFSchema(name, Tuple.class, attributes);
-			newPO.setOutputSchema(outputSchema);
-			cmd = new CreateStreamCommand(name, newPO, caller);
-			commands.add(cmd);
-		} catch (Exception e) {
-			throw new QueryParseException(e.getMessage());
-		}
-		return cmd;
-	}
-
+	
 	@Override
 	public Object visit(ASTPriorizedStatement node, Object data) throws QueryParseException {
 		CQLParser parser = new CQLParser();

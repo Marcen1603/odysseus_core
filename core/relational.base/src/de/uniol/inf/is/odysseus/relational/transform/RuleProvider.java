@@ -27,7 +27,6 @@ public class RuleProvider implements ITransformRuleProvider{
 	public List<IRule<?, ?>> getRules() {
 		List<IRule<?, ?>> rules = new ArrayList<IRule<?,?>>();
 		rules.add(new TInitPredicateRule());
-		rules.add(new TFixedSetAccessAORule());
 		rules.add(new TAggregatePORule());
 		rules.add(new TStateMapAORule());
 		rules.add(new TMapAORule());

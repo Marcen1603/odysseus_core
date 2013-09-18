@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.wrapper.base.transform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wrapper.base.physicaloperator.SourcePO;
 import de.uniol.inf.is.odysseus.wrapper.base.pool.SourcePool;
 
-public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
+public class TAccessAO2SourceRule extends AbstractTransformationRule<AbstractAccessAO> {
 	private static Logger LOG = LoggerFactory
 			.getLogger(TAccessAO2SourceRule.class);
 
@@ -36,7 +36,7 @@ public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public void execute(final AccessAO operator,
+	public void execute(final AbstractAccessAO operator,
 			final TransformationConfiguration config) {
 		try {
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -52,7 +52,7 @@ public class TAccessAO2SourceRule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public boolean isExecutable(final AccessAO operator,
+	public boolean isExecutable(final AbstractAccessAO operator,
 			final TransformationConfiguration config) {
 		// TODO: Remove hard coded google
 		return (operator.getWrapper() != null && !"GoogleProtoBuf"

@@ -42,8 +42,6 @@ public interface NewSQLParserVisitor
   public Object visit(ASTAttrDefinition node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTAttributeDefinitions node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTAttributeDefinition node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-  public Object visit(ASTTimedTuples node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
-  public Object visit(ASTTimedTuple node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTTimeInterval node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTSocket node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTSilab node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -134,4 +132,4 @@ public interface NewSQLParserVisitor
   public Object visit(ASTIdentifierList node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
   public Object visit(ASTRevokeStatement node, Object data) throws de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 }
-/* JavaCC - OriginalChecksum=69663f0323709bf5d093e07415d555e8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3c4b693f3379a14082a19e5392358018 (do not edit this line) */

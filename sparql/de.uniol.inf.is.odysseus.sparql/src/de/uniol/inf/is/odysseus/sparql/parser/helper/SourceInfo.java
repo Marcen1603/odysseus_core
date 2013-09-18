@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 /**
@@ -54,7 +54,7 @@ public class SourceInfo {
 	/**
 	 * The access operator connecting to the stream.
 	 */
-	private AccessAO sourceOp;
+	private AbstractAccessAO sourceOp;
 	
 	/**
 	 * This window operator specified in the FROM part
@@ -68,7 +68,7 @@ public class SourceInfo {
 		this.windowOp = null;
 	}
 	
-	public SourceInfo(String streamName, AccessAO sourceOp, WindowAO windowOp){
+	public SourceInfo(String streamName, AbstractAccessAO sourceOp, WindowAO windowOp){
 		this.streamName = streamName;
 		this.sourceOp = sourceOp;
 		this.windowOp = windowOp;
@@ -109,11 +109,11 @@ public class SourceInfo {
 		this.streamName = streamName;
 	}
 
-	public AccessAO getSourceOp() {
+	public AbstractAccessAO getSourceOp() {
 		return sourceOp;
 	}
 
-	public void setSourceOp(AccessAO sourceOp) {
+	public void setSourceOp(AbstractAccessAO sourceOp) {
 		this.sourceOp = sourceOp;
 	}
 

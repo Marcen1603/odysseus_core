@@ -26,6 +26,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	
+	public static final String NAME = "CSV";
+	
 	public CSVProtocolHandler() {
 		super();
 	}
@@ -75,7 +77,7 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	
 	@Override
 	public String getName() {
-		return "CSV";
+		return NAME;
 	}
 	
 	@Override

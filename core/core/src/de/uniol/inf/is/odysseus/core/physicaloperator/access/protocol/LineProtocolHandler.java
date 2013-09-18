@@ -59,6 +59,16 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	
 	private Map<String,String> optionsMap;
 
+	public static final String DELAY = "delay"; 
+	public static final String NANODELAY = "delay"; 
+	public static final String DELAYEACH = "delayeach";
+	public static final String READFIRSTLINE = "readfirstline";
+	public static final String DUMP_EACH_LINE = "dumpeachline";
+	public static final String MEASURE_EACH_LINE = "measureeachline";
+	public static final String LAST_LINE = "lastline";
+	public static final String MAX_LINES ="maxlines";
+	public static final String DEBUG = "debug";
+	
 	public LineProtocolHandler() {
 		super();
 	}
@@ -68,38 +78,38 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	protected void init(Map<String, String> options) {
-		if (options.get("delay") != null) {
-			setDelay(Long.parseLong(options.get("delay")));
+		if (options.get(DELAY) != null) {
+			setDelay(Long.parseLong(options.get(DELAY)));
 		}
-		if (options.get("nanodelay") != null) {
-			setNanodelay(Integer.parseInt(options.get("nanodelay")));
+		if (options.get(NANODELAY) != null) {
+			setNanodelay(Integer.parseInt(options.get(NANODELAY)));
 		}
-		if (options.get("delayeach") != null) {
-			setDelayeach(Integer.parseInt(options.get("delayeach")));
+		if (options.get(DELAYEACH) != null) {
+			setDelayeach(Integer.parseInt(options.get(DELAYEACH)));
 		}
 
-		if (options.get("readfirstline") != null) {
-			readFirstLine = Boolean.parseBoolean(options.get("readfirstline"));
+		if (options.get(READFIRSTLINE) != null) {
+			readFirstLine = Boolean.parseBoolean(options.get(READFIRSTLINE));
 		} else {
 			readFirstLine = true;
 		}
-		if (options.get("dumpeachline") != null) {
-			dumpEachLine = Integer.parseInt(options.get("dumpeachline"));
+		if (options.get(DUMP_EACH_LINE) != null) {
+			dumpEachLine = Integer.parseInt(options.get(DUMP_EACH_LINE));
 		}
 
-		if (options.get("measureeachline") != null) {
-			measureEachLine = Integer.parseInt(options.get("measureeachline"));
+		if (options.get(MEASURE_EACH_LINE) != null) {
+			measureEachLine = Integer.parseInt(options.get(MEASURE_EACH_LINE));
 			measurements.setLength(0);
 		}
 
-		if (options.get("lastline") != null) {
-			lastLine = Integer.parseInt(options.get("lastline"));
+		if (options.get(LAST_LINE ) != null) {
+			lastLine = Integer.parseInt(options.get(LAST_LINE ));
 		}
-		if (options.get("maxlines") != null) {
-			lastLine = Integer.parseInt(options.get("maxlines"));
+		if (options.get(MAX_LINES) != null) {
+			lastLine = Integer.parseInt(options.get(MAX_LINES));
 		}
-		if (options.get("debug") != null) {
-			debug = Boolean.parseBoolean(options.get("debug"));
+		if (options.get(DEBUG) != null) {
+			debug = Boolean.parseBoolean(options.get(DEBUG));
 		}
 		lastDumpTime = System.currentTimeMillis();
 

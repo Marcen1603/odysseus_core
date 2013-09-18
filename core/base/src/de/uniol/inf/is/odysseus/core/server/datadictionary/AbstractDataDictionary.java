@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
@@ -248,7 +248,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			EntityType entityType, ISession caller) {
 		String type = entityType.toString();
 		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(
-				AccessAO.class);
+				AbstractAccessAO.class);
 		@SuppressWarnings("rawtypes")
 		GenericGraphWalker collectWalker = new GenericGraphWalker();
 		collectWalker.prefixWalk(plan, collVisitor);
@@ -313,7 +313,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 			Resource identifier, EntityType entityType, ISession caller) {
 		String type = entityType.toString();
 		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(
-				AccessAO.class);
+				AbstractAccessAO.class);
 		@SuppressWarnings("rawtypes")
 		GenericGraphWalker collectWalker = new GenericGraphWalker();
 		collectWalker.prefixWalk(plan, collVisitor);

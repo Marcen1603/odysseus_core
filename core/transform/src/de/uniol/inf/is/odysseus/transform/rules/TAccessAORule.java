@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.AccessPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Marco Grawunder
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
+public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> {
 	static Logger LOG = LoggerFactory.getLogger(TAccessAORule.class);
 
 	@Override
@@ -54,7 +54,7 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(AccessAO operator, TransformationConfiguration config) {
+	public void execute(AbstractAccessAO operator, TransformationConfiguration config) {
 
 		if (!hasTimestampAOAsFather(operator)) {
 			insertTimestampAO(operator, operator.getDateFormat());
@@ -131,7 +131,7 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public boolean isExecutable(AccessAO operator,
+	public boolean isExecutable(AbstractAccessAO operator,
 			TransformationConfiguration config) {
 		if (operator.getWrapper() != null) {
 			if (Constants.GENERIC_PULL.equalsIgnoreCase(operator.getWrapper())) {
@@ -155,11 +155,11 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 	}
 
 	@Override
-	public Class<? super AccessAO> getConditionClass() {
-		return AccessAO.class;
+	public Class<? super AbstractAccessAO> getConditionClass() {
+		return AbstractAccessAO.class;
 	}
 
-	private ITransportHandler getTransportHandler(AccessAO operator,
+	private ITransportHandler getTransportHandler(AbstractAccessAO operator,
 			IProtocolHandler<?> protocolHandler) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
@@ -170,7 +170,7 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 		return transportHandler;
 	}
 
-	private IProtocolHandler<?> getProtocolHandler(AccessAO operator,
+	private IProtocolHandler<?> getProtocolHandler(AbstractAccessAO operator,
 			IDataHandler<?> dataHandler) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
@@ -189,7 +189,7 @@ public class TAccessAORule extends AbstractTransformationRule<AccessAO> {
 		return protocolHandler;
 	}
 
-	private IDataHandler<?> getDataHandler(AccessAO operator) {
+	private IDataHandler<?> getDataHandler(AbstractAccessAO operator) {
 		IDataHandler<?> dataHandler = null;
 		if (operator.getDataHandler() != null) {
 			if (operator.getInputSchema() != null) {

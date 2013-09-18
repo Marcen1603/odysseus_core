@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -105,9 +105,9 @@ public class QueryPartManager implements IAdvertisementListener,
 
 				for (ILogicalOperator operator : operators) {
 
-					if (!(operator instanceof AccessAO))
+					if (!(operator instanceof AbstractAccessAO))
 						continue;
-					String source = ((AccessAO) operator).getName();
+					String source = ((AbstractAccessAO) operator).getName();
 
 					List<String> oldNeededSources;
 					do {

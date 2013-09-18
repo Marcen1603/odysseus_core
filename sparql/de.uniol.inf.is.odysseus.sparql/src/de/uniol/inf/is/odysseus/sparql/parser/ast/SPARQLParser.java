@@ -969,7 +969,7 @@ import de.uniol.inf.is.odysseus.sparql.*;
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);INode streamName;
     WindowAO window = null;
-    AccessAO access;
+    AbstractAccessAO access;
     boolean named = false;
       try {
         jj_consume_token(STREAM);

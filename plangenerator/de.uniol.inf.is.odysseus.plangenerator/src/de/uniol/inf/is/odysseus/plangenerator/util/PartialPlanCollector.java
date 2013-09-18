@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.util.CollectSubPlanTopFirstjoinLogicalGraphVisitor;
@@ -59,7 +59,7 @@ public class PartialPlanCollector {
 
 	private Set<ILogicalOperator> collectPlans(ILogicalOperator op) {
 		Set<ILogicalOperator> plans = new HashSet<ILogicalOperator>();
-		if (op instanceof AccessAO || op instanceof StreamAO) {
+		if (op instanceof AbstractAccessAO || op instanceof StreamAO) {
 			// done
 			return plans;
 		}
@@ -96,7 +96,7 @@ public class PartialPlanCollector {
 		ILogicalOperator next = join.getSubscribedToSource().toArray(inputs)[joinInPort]
 				.getTarget();
 		List<SDFSchema> inputSchemata = new ArrayList<SDFSchema>();
-		while (!(next instanceof JoinAO) && !(next instanceof AccessAO) && !(next instanceof StreamAO)) {
+		while (!(next instanceof JoinAO) && !(next instanceof AbstractAccessAO) && !(next instanceof StreamAO)) {
 			inputs = new LogicalSubscription[2];
 			inputSchemata.add(next.getInputSchema(0));
 			ILogicalOperator clone = PlanGeneratorHelper.cloneOperator(next);

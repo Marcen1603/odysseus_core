@@ -287,17 +287,6 @@ public class NewSQLParserDumpVisitor implements NewSQLParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTTimedTuples node, Object data) throws QueryParseException {
-		return pvisit(node);
-	}
-
-	@Override
-	public Object visit(ASTTimedTuple node, Object data) throws QueryParseException {
-
-		return pvisit(node);
-	}
-
-	@Override
 	public Object visit(ASTTimeInterval node, Object data) throws QueryParseException {
 		return pvisit(node);
 	}

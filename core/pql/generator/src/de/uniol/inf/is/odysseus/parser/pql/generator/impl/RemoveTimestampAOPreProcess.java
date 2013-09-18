@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGeneratorPreProcessor;
@@ -29,8 +29,8 @@ public class RemoveTimestampAOPreProcess implements IPQLGeneratorPreProcessor {
 				TimestampAO timestampAO = (TimestampAO)operator;
 				ILogicalOperator prevOperator = determinePreviousOperator(timestampAO);
 				
-				if (prevOperator instanceof AccessAO) {
-					AccessAO accessAO = (AccessAO) prevOperator;
+				if (prevOperator instanceof AbstractAccessAO) {
+					AbstractAccessAO accessAO = (AbstractAccessAO) prevOperator;
 					SDFSchema outputSchema = accessAO.getOutputSchema();
 	
 					if (!isTimestampAONeeded(timestampAO, outputSchema)) {

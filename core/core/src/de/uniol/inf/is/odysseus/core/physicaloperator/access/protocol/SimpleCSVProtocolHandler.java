@@ -29,7 +29,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	Logger LOG = LoggerFactory.getLogger(SimpleCSVProtocolHandler.class);
-
+	public static final String NAME = "SimpleCSV";
+	
 	public SimpleCSVProtocolHandler() {
 		super();
 	}
@@ -54,7 +55,7 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 
 	@Override
 	public String getName() {
-		return "SimpleCSV";
+		return NAME;
 	}
 
 	@Override

@@ -20,7 +20,7 @@ import java.net.SocketAddress;
 
 import com.google.protobuf.GeneratedMessage;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.ITransformer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> {
+public class TProtobufAccessAORule extends AbstractTransformationRule<AbstractAccessAO> {
 
 	@Override
 	public int getPriority() {
@@ -37,7 +37,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void execute(AccessAO operator, TransformationConfiguration config) {
+	public void execute(AbstractAccessAO operator, TransformationConfiguration config) {
 		
 		ChannelHandlerReceiverPO<?, ?> accessPO = null;
 
@@ -54,7 +54,7 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 	}
 
 	@Override
-	public boolean isExecutable(AccessAO operator,
+	public boolean isExecutable(AbstractAccessAO operator,
 			TransformationConfiguration config) {
 		return (operator.getWrapper() != null && operator.getWrapper()
 				.equalsIgnoreCase(Activator.GOOGLE_PROTOBUF));
@@ -71,8 +71,8 @@ public class TProtobufAccessAORule extends AbstractTransformationRule<AccessAO> 
 	}
 
 	@Override
-	public Class<? super AccessAO> getConditionClass() {
-		return AccessAO.class;
+	public Class<? super AbstractAccessAO> getConditionClass() {
+		return AbstractAccessAO.class;
 	}
 
 }

@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDatadictionaryProviderListener;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -302,7 +302,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		importedSources.put(advertisement, realSrcNameToUse);
 		if (advertisement.isStream()) {
-			final AccessAO accessAO = advertisement.getAccessAO();
+			final AbstractAccessAO accessAO = advertisement.getAccessAO();
 
 			getDataDictionary().setStream(advertisement.getName(), accessAO, SessionManagementService.getActiveSession());
 
@@ -736,7 +736,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 
 	private SourceAdvertisement exportStream(String streamName, String queryBuildConfigurationName, ILogicalOperator stream) throws PeerException {
-		Optional<AccessAO> optAccessAO = determineAccessAO(stream);
+		Optional<AbstractAccessAO> optAccessAO = determineAccessAO(stream);
 		if (optAccessAO.isPresent()) {
 
 			SourceAdvertisement srcAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
@@ -850,13 +850,13 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		return result;
 	}
 
-	private static Optional<AccessAO> determineAccessAO(ILogicalOperator start) {
-		if (start instanceof AccessAO) {
-			return Optional.of((AccessAO) start);
+	private static Optional<AbstractAccessAO> determineAccessAO(ILogicalOperator start) {
+		if (start instanceof AbstractAccessAO) {
+			return Optional.of((AbstractAccessAO) start);
 		}
 
 		for (final LogicalSubscription subscription : start.getSubscribedToSource()) {
-			final Optional<AccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
+			final Optional<AbstractAccessAO> optAcccessAO = determineAccessAO(subscription.getTarget());
 			if (optAcccessAO.isPresent()) {
 				return optAcccessAO;
 			}
@@ -903,7 +903,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	}
 	
 	private static boolean checkStreamAdvertisement(SourceAdvertisement srcAdvertisement) {
-		final AccessAO accessAO = srcAdvertisement.getAccessAO();
+		final AbstractAccessAO accessAO = srcAdvertisement.getAccessAO();
 		final Map<String, String> optionsMap = accessAO.getOptionsMap();
 		
 		String host = optionsMap.get("host");

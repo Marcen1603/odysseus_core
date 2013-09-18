@@ -24,7 +24,18 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
     protected boolean trim = false;
     protected boolean addLineNumber = false;
     protected String delimiterString;
+    
+    public static final String DELIMITER = "delimiter";
+    public static final String CSV_DELIMITER = "csv.delimiter";
+    public static final String TEXT_DELIMITER = "textdelimiter";
+    public static final String CSV_TEXT_DELIMITER = "csv.textdelimiter";
+    public static final String CSV_FLOATING_FORMATTER = "csv.floatingformatter";
+    public static final String CSV_NUMBER_FORMATTER = "csv.numberformatter";
+    public static final String CSV_WRITE_METADATA = "csv.writemetadata";
+    public static final String CSV_TRIM = "csv.trim";
+    public static final String ADDLINENUMBERS = "addlinenumber";
 
+    
     public AbstractCSVHandler(ITransportDirection direction, IAccessPattern access) {
         super(direction, access);
     }
@@ -36,32 +47,32 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
     @Override
     protected void init(Map<String, String> options) {
         super.init(options);
-        if (options.containsKey("delimiter")) {
-            delimiter = options.get("delimiter").toCharArray()[0];
+        if (options.containsKey(DELIMITER)) {
+            delimiter = options.get(DELIMITER).toCharArray()[0];
         } else {
-            delimiter = options.containsKey("csv.delimiter") ? options.get("csv.delimiter").toCharArray()[0] : ",".toCharArray()[0];
+            delimiter = options.containsKey(CSV_DELIMITER) ? options.get(CSV_DELIMITER).toCharArray()[0] : ",".toCharArray()[0];
         }
-        if (options.containsKey("textdelimiter")) {
-            textDelimiter = options.get("textdelimiter").toCharArray()[0];
+        if (options.containsKey(TEXT_DELIMITER)) {
+            textDelimiter = options.get(TEXT_DELIMITER).toCharArray()[0];
         } else {
-            textDelimiter = options.containsKey("csv.textdelimiter") ? options.get("csv.textdelimiter").toCharArray()[0] : "'".toCharArray()[0];
+            textDelimiter = options.containsKey(CSV_TEXT_DELIMITER) ? options.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
         }
         // only calc once
         delimiterString = Character.toString(delimiter);
-        if (options.containsKey("csv.floatingformatter")) {
-            floatingFormatter = new DecimalFormat(options.get("csv.floatingformatter"));
+        if (options.containsKey(CSV_FLOATING_FORMATTER)) {
+            floatingFormatter = new DecimalFormat(options.get(CSV_FLOATING_FORMATTER));
         }
-        if (options.containsKey("csv.numberformatter")) {
-            numberFormatter = new DecimalFormat(options.get("csv.numberformatter"));
+        if (options.containsKey(CSV_NUMBER_FORMATTER)) {
+            numberFormatter = new DecimalFormat(options.get(CSV_NUMBER_FORMATTER));
         }
-        if (options.containsKey("csv.writemetadata")) {
-            writeMetadata = Boolean.parseBoolean(options.get("csv.writemetadata"));
+        if (options.containsKey(CSV_WRITE_METADATA)) {
+            writeMetadata = Boolean.parseBoolean(options.get(CSV_WRITE_METADATA));
         }
-        if (options.containsKey("csv.trim")) {
-            trim = Boolean.parseBoolean(options.get("csv.trim"));
+        if (options.containsKey(CSV_TRIM)) {
+            trim = Boolean.parseBoolean(options.get(CSV_TRIM));
         }
-        if (options.get("addlinenumber") != null) {
-            addLineNumber = Boolean.parseBoolean(options.get("addlinenumber"));
+        if (options.get(ADDLINENUMBERS) != null) {
+            addLineNumber = Boolean.parseBoolean(options.get(ADDLINENUMBERS));
         }
 
     }

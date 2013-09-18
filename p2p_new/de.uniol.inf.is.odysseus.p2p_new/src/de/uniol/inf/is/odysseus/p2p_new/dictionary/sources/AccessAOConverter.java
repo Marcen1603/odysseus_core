@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -36,13 +37,12 @@ public final class AccessAOConverter {
 	private static final String OPTIONS_TAG = "options";
 	private static final String WRAPPER_TAG = "wrapper";
 	private static final String DATAHANDLER_TAG = "dataHandler";
-	private static final String INPUTDATAHANDLER_TAG = "inputDataHandler";
 	private static final String PROTOCOLHANDLER_TAG = "protocolHandler";
 	private static final String TRANSPORTHANDLER_TAG = "transportHandler";
 	private static final String OUTPUTSCHEMA_TAG = "outputSchema";
 	private static final String OUTPUTSCHEMA_TYPE_TAG = "___type___";
 
-	public static AccessAO toAccessAO(TextElement<?> root) {
+	public static AbstractAccessAO toAccessAO(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
 		final AccessAO accessOperator = new AccessAO();
 		while (elements.hasMoreElements()) {
@@ -53,7 +53,7 @@ public final class AccessAOConverter {
 		return accessOperator;
 	}
 
-	public static void toDocument(Element<?> root, AccessAO accessOperator) {
+	public static void toDocument(Element<?> root, AbstractAccessAO accessOperator) {
 		final Element<?> inputSchemaElement = appendElement(root, INPUT_SCHEMA_TAG);
 		if (accessOperator.getInputSchema() != null && !accessOperator.getInputSchema().isEmpty()) {
 			for (final String entry : accessOperator.getInputSchema()) {
@@ -77,7 +77,6 @@ public final class AccessAOConverter {
 
 		appendElement(root, WRAPPER_TAG, accessOperator.getWrapper());
 		appendElement(root, DATAHANDLER_TAG, accessOperator.getDataHandler());
-		appendElement(root, INPUTDATAHANDLER_TAG, accessOperator.getInputDataHandler());
 		appendElement(root, PROTOCOLHANDLER_TAG, accessOperator.getProtocolHandler());
 		appendElement(root, TRANSPORTHANDLER_TAG, accessOperator.getTransportHandler());
 
@@ -120,7 +119,7 @@ public final class AccessAOConverter {
 		return ele;
 	}
 
-	private static void handleElement(AccessAO accessAO, TextElement<?> elem) {
+	private static void handleElement(AbstractAccessAO accessAO, TextElement<?> elem) {
 		if (elem.getName().equals(INPUT_SCHEMA_TAG)) {
 			handleInputSchemaElement(accessAO, elem);
 
@@ -136,9 +135,6 @@ public final class AccessAOConverter {
 		} else if (elem.getName().equals(DATAHANDLER_TAG)) {
 			accessAO.setDataHandler(elem.getTextValue());
 
-		} else if (elem.getName().equals(INPUTDATAHANDLER_TAG)) {
-			accessAO.setInputDataHandler(elem.getTextValue());
-
 		} else if (elem.getName().equals(PROTOCOLHANDLER_TAG)) {
 			accessAO.setProtocolHandler(elem.getTextValue());
 
@@ -153,7 +149,7 @@ public final class AccessAOConverter {
 		}
 	}
 
-	private static void handleInputSchemaElement(AccessAO accessAO, TextElement<?> root) {
+	private static void handleInputSchemaElement(AbstractAccessAO accessAO, TextElement<?> root) {
 		final Enumeration<?> children = root.getChildren();
 		final List<String> inputSchema = Lists.newArrayList();
 		while (children.hasMoreElements()) {
@@ -165,7 +161,7 @@ public final class AccessAOConverter {
 		}
 	}
 
-	private static void handleOptionsTag(AccessAO accessAO, TextElement<?> root) {
+	private static void handleOptionsTag(AbstractAccessAO accessAO, TextElement<?> root) {
 		final Enumeration<?> children = root.getChildren();
 		final Map<String, String> options = Maps.newHashMap();
 
@@ -175,12 +171,12 @@ public final class AccessAOConverter {
 		}
 
 		if (!options.isEmpty()) {
-			accessAO.setOptions(options);
+			accessAO.setOptionMap(options);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void handleOutputSchemaTag(AccessAO accessAO, TextElement<?> root) {
+	private static void handleOutputSchemaTag(AbstractAccessAO accessAO, TextElement<?> root) {
 		Enumeration<?> children = root.getChildren();
 		List<SDFAttribute> attributes = Lists.newArrayList();
 		

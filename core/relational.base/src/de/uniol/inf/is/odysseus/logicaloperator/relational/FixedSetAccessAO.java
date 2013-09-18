@@ -18,9 +18,10 @@ package de.uniol.inf.is.odysseus.logicaloperator.relational;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 
-public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends AccessAO {
+public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends AbstractAccessAO {
 
 	private static final long serialVersionUID = -4026927772571867684L;
 	private final T[] tuples;
@@ -31,8 +32,18 @@ public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends
 		this.tuples = tuples;
 	}
 	
+	public FixedSetAccessAO(FixedSetAccessAO<T> other) {
+		super(other);
+		this.tuples = (T[]) other.tuples;
+	}
+	
 	public T[] getTuples() {
 		return tuples;
+	}
+	
+	@Override
+	public AbstractLogicalOperator clone() {
+		return new FixedSetAccessAO<>(this);
 	}
 
 //	@Override

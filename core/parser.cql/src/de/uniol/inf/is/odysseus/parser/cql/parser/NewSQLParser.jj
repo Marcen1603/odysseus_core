@@ -278,7 +278,7 @@
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}{/*@bgen(jjtree) CreateStatement */
   try {
-/*@egen*/  (    < K_CREATE >  | < K_ATTACH >  | < K_ADD >  )  < K_STREAM > Identifier() "(" AttributeDefinitions() ")" [ IfNotExists() ]  [    (      < K_FROM >    | < K_WITH >    )    "("    (      LOOKAHEAD(2)      TimedTuples()    | PriorizedStatement()    )    ")"  | CreateFromDatabase()  | Socket()  | Channel()  | FileSource()  | Silab()  | AccessSource()  ]  [ LoginPassword() ]/*@bgen(jjtree)*/
+/*@egen*/  (    < K_CREATE >  | < K_ATTACH >  | < K_ADD >  )  < K_STREAM > Identifier() "(" AttributeDefinitions() ")" [ IfNotExists() ]  [    (      < K_FROM >    | < K_WITH >    )    "("    (     PriorizedStatement()    )    ")"  | CreateFromDatabase()  | Socket()  | Channel()  | FileSource()  | Silab()  | AccessSource()  ]  [ LoginPassword() ]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -938,59 +938,7 @@
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}void TimedTuples() :{/*@bgen(jjtree) TimedTuples */
-  ASTTimedTuples jjtn000 = new ASTTimedTuples(JJTTIMEDTUPLES);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) TimedTuples */
-  try {
-/*@egen*/  TimedTuple()  (    "," TimedTuple()  )*/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
-/*@egen*/}void TimedTuple() :{/*@bgen(jjtree) TimedTuple */
-  ASTTimedTuple jjtn000 = new ASTTimedTuple(JJTTIMEDTUPLE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) TimedTuple */
-  try {
-/*@egen*/  "(" TimeInterval() "," SimpleTuple() ")"/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
-/*@egen*/}void TimeInterval() :{/*@bgen(jjtree) TimeInterval */
+/*@egen*/}void TimeInterval() :{/*@bgen(jjtree) TimeInterval */
   ASTTimeInterval jjtn000 = new ASTTimeInterval(JJTTIMEINTERVAL);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);

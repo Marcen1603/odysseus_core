@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
@@ -101,7 +101,7 @@ public class PlanGeneratorHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Set<ILogicalOperator> getAccessOperators(ILogicalOperator plan) {
 		Set<Class<? extends ILogicalOperator>> classes = new HashSet<Class<? extends ILogicalOperator>>();
-		classes.add(AccessAO.class);
+		classes.add(AbstractAccessAO.class);
 		classes.add(StreamAO.class);
 		CollectOperatorLogicalGraphVisitor<ILogicalOperator> visitor = new CollectOperatorLogicalGraphVisitor(classes);
 		GenericGraphWalker walker = new GenericGraphWalker();
@@ -190,7 +190,7 @@ public class PlanGeneratorHelper {
 	 * @return
 	 */
 	public static ILogicalOperator cloneOperator(ILogicalOperator operator) {
-		if(operator instanceof AccessAO || operator instanceof StreamAO) {
+		if(operator instanceof AbstractAccessAO || operator instanceof StreamAO) {
 			// no input schema for sources
 			return operator.clone();
 		}

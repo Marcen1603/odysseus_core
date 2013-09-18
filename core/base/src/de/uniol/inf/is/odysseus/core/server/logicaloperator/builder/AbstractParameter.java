@@ -21,6 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * This is an abstract parameter. In this abstract base class all attributes are defined, that a common for all parameters
@@ -39,11 +40,13 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private T value;
 	private IAttributeResolver resolver;
 	private IDataDictionary dd;
+	private ISession caller;
 	private final List<Exception> errors;
 	private final List<Exception> warnings;
 	protected Object inputValue;
 
 	private List<String> possiblevalues = new ArrayList<String>();
+
 
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
 		this(name, requirement, usage, null);
@@ -209,6 +212,16 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.dd = dd;
 	}
 
+	@Override
+	public void setCaller(ISession caller) {
+		this.caller = caller;
+	}
+	
+	@Override
+	public ISession getCaller() {
+		return caller;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

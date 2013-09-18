@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -455,8 +455,8 @@ public class DistributionHelper {
 		
 			if(operator instanceof StreamAO)
 				sourceNames.add(((StreamAO) operator).getStreamname().toString());
-			else if(operator instanceof AccessAO)
-				sourceNames.add(((AccessAO) operator).getName());
+			else if(operator instanceof AbstractAccessAO)
+				sourceNames.add(((AbstractAccessAO) operator).getName());
 			
 		}
 		
@@ -472,8 +472,8 @@ public class DistributionHelper {
 		// FIXME: Use Resource instead of String!
 		if(operator instanceof StreamAO)
 			return Optional.of(((StreamAO) operator).getStreamname().toString());
-		else if(operator instanceof AccessAO)
-			return Optional.of(((AccessAO) operator).getName());
+		else if(operator instanceof AbstractAccessAO)
+			return Optional.of(((AbstractAccessAO) operator).getName());
 		else {
 			
 			for(LogicalSubscription subToSource : operator.getSubscribedToSource())

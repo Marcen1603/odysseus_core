@@ -28,6 +28,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 public class FileHandler extends AbstractFileHandler {
 
+	public static final String FILENAME = "filename";
+	public static final String APPEND = "append";
+	public static final String PRELOAD = "preload";
+	public static final String NAME = "File";
+
+	
 	private boolean preload = false;
 	private FileInputStream fis;
 
@@ -148,7 +154,7 @@ public class FileHandler extends AbstractFileHandler {
 
 	@Override
 	public String getName() {
-		return "File";
+		return NAME;
 	}
 
     @Override

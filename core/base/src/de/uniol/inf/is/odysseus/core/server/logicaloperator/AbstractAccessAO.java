@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,37 +15,40 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
-abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
+abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5423444612698319659L;
-	
-	private List<String> inputSchema = null;
-
-	private Map<String, String> optionsMap;
-	private String wrapper;
-	
-	private String dataHandler;
-	
-	private String inputDataHandler;
-	
-	private String protocolHandler;
-	private String transportHandler;
-	
-	private String dateFormat;
 
 	private Resource accessAOName;
+	private String wrapper;
+	private String dataHandler;
+	private String protocolHandler;
+	private String transportHandler;
+	final private Map<String, String> optionsMap = new HashMap<>();
 
-
-	/**
-	 * this variable will be used, if a wildcard is necessary for an id
-	 */
-	private static Long wildcard = Long.valueOf(-1);
+	private String dateFormat;
+	private List<SDFAttribute> attributes;
+	private List<String> inputSchema = null;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -56,38 +59,147 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 	}
 
 	public AbstractAccessAO(AbstractAccessAO po) {
-		super(po);		
+		super(po);
 		wrapper = po.wrapper;
-		optionsMap = po.optionsMap != null? new HashMap<String, String>(po.optionsMap):null;
-		inputSchema = po.inputSchema;		
+		optionsMap.putAll(po.optionsMap);
+		inputSchema = po.inputSchema;
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
 		transportHandler = po.transportHandler;
 		accessAOName = po.accessAOName;
+		this.attributes = new ArrayList<>(po.attributes);
 	}
 
-	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler, String dataHandler, Map<String, String> optionsMap) {		
+	public AbstractAccessAO(Resource name, String wrapper, String transportHandler,
+			String protocolHandler, String dataHandler,
+			Map<String, String> optionsMap) {
 		setAccessAOName(name);
 		this.wrapper = wrapper;
 		this.transportHandler = transportHandler;
 		this.protocolHandler = protocolHandler;
 		this.dataHandler = dataHandler;
-		this.optionsMap = optionsMap;
+		this.optionsMap.putAll(optionsMap);
 	}
 
+	@Parameter(type = ResourceParameter.class, name = "source", optional = false, doc = "The name of the sourcetype to create.")
+	public void setAccessAOName(Resource name) {
+		super.setName(name.getResourceName());
+		this.accessAOName = name;
+	}
+
+	public Resource getAccessAOName() {
+		return accessAOName;
+	}
+
+	@Parameter(type = StringParameter.class, name = "Wrapper", optional = true, doc = "The name of the wrapper to use, e.g. GenericPush or GenericPull.")
+	public void setWrapper(String wrapper) {
+		this.wrapper = wrapper;
+	}
+
+	public String getWrapper() {
+		return wrapper;
+	}
+
+	@Parameter(type = StringParameter.class, name = "DataHandler", optional = true, doc = "The name of the datahandler to use, e.g. Tuple or Document.")
+	public void setDataHandler(String dataHandler) {
+		this.dataHandler = dataHandler;
+	}
+
+	public String getDataHandler() {
+		return dataHandler;
+	}
+
+	@Parameter(type = StringParameter.class, name = "transport", optional = true, doc = "The name of the transport handler to use, e.g. File or TcpServer.")
+	public void setTransportHandler(String transportHandler) {
+		this.transportHandler = transportHandler;
+	}
+
+	public String getTransportHandler() {
+		return transportHandler;
+	}
+
+	@Parameter(type = StringParameter.class, name = "protocol", optional = true, doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
+	public void setProtocolHandler(String protocolHandler) {
+		this.protocolHandler = protocolHandler;
+	}
+
+	public String getProtocolHandler() {
+		return protocolHandler;
+	}
+
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for different handler.")
+	public void setOptions(List<Option> value) {
+		this.optionsMap.clear();
+		for (Option option : value) {
+			optionsMap.put(option.getName().toLowerCase(), option.getValue());
+		}
+	}
 	
+	protected void addOption(String key, String value) {
+		optionsMap.put(key, value);
+	}
+
+	public void setOptionMap(Map<String, String> options) {
+		this.optionsMap.clear();
+		this.optionsMap.putAll(options);
+	}
+
+	public Map<String, String> getOptionsMap() {
+		return optionsMap;
+	}
+
+	@Parameter(type = StringParameter.class, name = "inputSchema", isList = true, optional = true, doc = "A list of data types describing the input format. Must be compatible with output schema!")
 	public void setInputSchema(List<String> inputSchema) {
 		this.inputSchema = inputSchema;
 	}
-	
+
 	public List<String> getInputSchema() {
 		return inputSchema;
 	}
 
-	public static Long getWildcard() {
-		return wildcard;
+	@Parameter(type = StringParameter.class, name = "dateFormat", optional = true, doc = "The date format used.")
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
 	}
 
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "Schema", isList = true, optional = true, doc = "The output schema.")
+	public void setAttributes(List<SDFAttribute> attributes) {
+		this.attributes = attributes;
+	}
+
+	public List<SDFAttribute> getAttributes() {
+		return attributes;
+	}
+
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		SDFSchema schema = null;
+
+		@SuppressWarnings("rawtypes")
+		Class<? extends IStreamObject> type = DataHandlerRegistry
+				.getCreatedType(dataHandler);
+		if (type == null) {
+			type = Tuple.class;
+		}
+
+		if (attributes != null && attributes.size() > 0) {
+			List<SDFAttribute> s2 = new ArrayList<>();
+			// Add source name to attributes
+			for (SDFAttribute a : attributes) {
+				s2.add(new SDFAttribute(getName(), a.getAttributeName(), a));
+			}
+
+			schema = new SDFSchema(getName(), type, s2);
+		} else {
+			schema = new SDFSchema(getName(), type, null);
+		}
+
+		return schema;
+	}
 
 	@Override
 	public String toString() {
@@ -99,69 +211,23 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator  {
 		return true;
 	}
 
-	public void setOptions(Map<String, String> value) {
-		this.optionsMap = value;
-	}
-	
-	public Map<String, String> getOptionsMap() {
-		return optionsMap;
-	}
-	
-	public String getWrapper() {
-		return wrapper;
-	}
-	
-	public void setWrapper(String wrapper) {
-		this.wrapper = wrapper;
-	}
-		
-	public String getDataHandler() {
-		return dataHandler;
-	}
-	
-	public void setDataHandler(String dataHandler) {
-		this.dataHandler = dataHandler;
-	}
-	
-	public String getInputDataHandler() {
-		return inputDataHandler;
-	}
+	@Override
+	public boolean isValid() {
 
-	public void setInputDataHandler(String inputDataHandler) {
-		this.inputDataHandler = inputDataHandler;
-	}
+		if (this.inputSchema != null) {
+			if (this.attributes.size() != this.inputSchema.size()) {
+				addError(new IllegalArgumentException(
+						"For each attribute there must be at least one reader in the input schema"));
+				return false;
+			}
+		}
 
-	public String getProtocolHandler() {
-		return protocolHandler;
-	}
+		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
+			addError(new IllegalParameterException("Wrapper " + this.wrapper
+					+ " is unknown"));
+			return false;
+		}
 
-	public void setProtocolHandler(String protocolHandler) {
-		this.protocolHandler = protocolHandler;
-	}
-
-	public String getTransportHandler() {
-		return transportHandler;
-	}
-
-	public void setTransportHandler(String transportHandler) {
-		this.transportHandler = transportHandler;
-	}
-
-	public String getDateFormat() {
-		return dateFormat;
-	}
-
-	public void setDateFormat(String dateFormat){
-		this.dateFormat = dateFormat;
-	}
-	
-	public void setAccessAOName(Resource name) {
-		super.setName(name.getResourceName());
-		this.accessAOName = name;
-	}
-	
-	public Resource getAccessAOName() {
-		return accessAOName;
+		return true;
 	}
 }
-

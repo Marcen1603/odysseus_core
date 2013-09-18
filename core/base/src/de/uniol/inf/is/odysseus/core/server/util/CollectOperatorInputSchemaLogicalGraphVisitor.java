@@ -9,7 +9,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
 /**
@@ -27,7 +27,7 @@ public class CollectOperatorInputSchemaLogicalGraphVisitor<T extends ILogicalOpe
 	
 	@Override
 	public void nodeAction(T node) {
-		if(node instanceof AccessAO) {
+		if(node instanceof AbstractAccessAO) {
 			return;
 		}
 		if(node.getNumberOfInputs() > 1) {

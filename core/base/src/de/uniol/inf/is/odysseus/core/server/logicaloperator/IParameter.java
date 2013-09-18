@@ -23,6 +23,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * @author Jonas Jacobi
@@ -48,8 +49,10 @@ public interface IParameter<T> extends Serializable {
 	public IAttributeResolver getAttributeResolver();
 	public void setDataDictionary(IDataDictionary dd);
 	public IDataDictionary getDataDictionary();
+	public void setCaller(ISession caller); 
+	public ISession getCaller();
 	public void clear();
 	public String getPQLString();
 	public List<String> getPossibleValues();
-	public void setPossibleValues(List<String> possibleValues); 
+	public void setPossibleValues(List<String> possibleValues);
 }
