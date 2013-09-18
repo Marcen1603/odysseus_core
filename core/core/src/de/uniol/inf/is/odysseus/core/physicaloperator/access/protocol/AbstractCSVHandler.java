@@ -52,11 +52,6 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
         } else {
             delimiter = options.containsKey(CSV_DELIMITER) ? options.get(CSV_DELIMITER).toCharArray()[0] : ",".toCharArray()[0];
         }
-        if (options.containsKey(TEXT_DELIMITER)) {
-            textDelimiter = options.get(TEXT_DELIMITER).toCharArray()[0];
-        } else {
-            textDelimiter = options.containsKey(CSV_TEXT_DELIMITER) ? options.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
-        }
         // only calc once
         delimiterString = Character.toString(delimiter);
         if (options.containsKey(CSV_FLOATING_FORMATTER)) {

@@ -36,6 +36,16 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 			IAccessPattern access) {
 		super(direction, access);
 	}
+	
+	@Override
+	protected void init(Map<String, String> options) {
+		super.init(options);
+        if (options.containsKey(TEXT_DELIMITER)) {
+            textDelimiter = options.get(TEXT_DELIMITER).toCharArray()[0];
+        } else {
+            textDelimiter = options.containsKey(CSV_TEXT_DELIMITER) ? options.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
+        }
+	}
 
 	@Override
 	protected T readLine(String line) {
