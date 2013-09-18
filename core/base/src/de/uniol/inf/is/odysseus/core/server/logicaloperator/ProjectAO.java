@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT")
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
-	private List<SDFAttribute> attributes;
+	private List<SDFAttribute> attributes = new ArrayList<>();
 	private List<SDFAttribute> paths;
 
 	public ProjectAO() {
