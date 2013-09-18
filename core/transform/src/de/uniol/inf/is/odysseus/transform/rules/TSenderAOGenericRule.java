@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SenderPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
+public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSenderAO> {
 	static Logger LOG = LoggerFactory.getLogger(TSenderAOGenericRule.class);
 
 	/*
@@ -63,7 +63,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void execute(SenderAO operator, TransformationConfiguration config) {
+	public void execute(AbstractSenderAO operator, TransformationConfiguration config) {
 		Resource senderPOName = operator.getSinkname();
 
 		IDataHandler<?> dataHandler = getDataHandler(operator);
@@ -107,7 +107,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 * .Object, java.lang.Object)
 	 */
 	@Override
-	public boolean isExecutable(SenderAO operator,
+	public boolean isExecutable(AbstractSenderAO operator,
 			TransformationConfiguration config) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (getDataDictionary().getSinkplan(operator.getSinkname()) == null) {
@@ -133,7 +133,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 */
 	@Override
 	public String getName() {
-		return "SenderAO (generic) --> SenderPO";
+		return "AbstractSenderAO (generic) --> SenderPO";
 	}
 
 	/*
@@ -153,20 +153,20 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
 	 */
 	@Override
-	public Class<? super SenderAO> getConditionClass() {
-		return SenderAO.class;
+	public Class<? super AbstractSenderAO> getConditionClass() {
+		return AbstractSenderAO.class;
 	}
 
 	/**
 	 * Get the transport handler based on the configuration of the operator
 	 * 
 	 * @param operator
-	 *            The {@link SenderAO}
+	 *            The {@link AbstractSenderAO}
 	 * @param protocolHandler
 	 *            the current protocol handler
 	 * @return The transport handler
 	 */
-	private ITransportHandler getTransportHandler(SenderAO operator,
+	private ITransportHandler getTransportHandler(AbstractSenderAO operator,
 			IProtocolHandler<?> protocolHandler) {
 		ITransportHandler transportHandler = null;
 		if (operator.getTransportHandler() != null) {
@@ -181,12 +181,12 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 * Get the protocol handler based on the configuration of the operator
 	 * 
 	 * @param operator
-	 *            The {@link SenderAO}
+	 *            The {@link AbstractSenderAO}
 	 * @param dataHandler
 	 *            The current data handler
 	 * @return The protocol handler
 	 */
-	private IProtocolHandler<?> getProtocolHandler(SenderAO operator,
+	private IProtocolHandler<?> getProtocolHandler(AbstractSenderAO operator,
 			IDataHandler<?> dataHandler) {
 		IProtocolHandler<?> protocolHandler = null;
 		if (operator.getProtocolHandler() != null) {
@@ -209,10 +209,10 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<SenderAO> {
 	 * Get the data handler based on the configuration of the operator
 	 * 
 	 * @param operator
-	 *            The {@link SenderAO}
+	 *            The {@link AbstractSenderAO}
 	 * @return The data handler
 	 */
-	private IDataHandler<?> getDataHandler(SenderAO operator) {
+	private IDataHandler<?> getDataHandler(AbstractSenderAO operator) {
 		IDataHandler<?> dataHandler = null;
 		if (operator.getDataHandler() != null) {
 			if (operator.getOutputSchema() != null) {
