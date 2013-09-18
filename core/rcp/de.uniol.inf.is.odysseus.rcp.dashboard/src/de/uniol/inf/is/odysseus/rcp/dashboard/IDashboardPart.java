@@ -52,4 +52,7 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public IWorkbenchPart getWorkbenchPart();
 	
 	public Object getAdapter(Class<?> adapter);
+	
+	public IDashboardActionBarContributor getEditorActionBarContributor();
+	
 }

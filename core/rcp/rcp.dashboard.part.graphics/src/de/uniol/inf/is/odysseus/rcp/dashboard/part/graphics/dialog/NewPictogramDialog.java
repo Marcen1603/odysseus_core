@@ -18,6 +18,8 @@ public class NewPictogramDialog extends TitleAreaDialog {
 
 	private String location;
 	private Text imgText;
+	private Text text;
+	private String predicate;
 
 
 	public NewPictogramDialog(Shell parentShell) {
@@ -46,6 +48,14 @@ public class NewPictogramDialog extends TitleAreaDialog {
 		
 		Button button = new Button(container, SWT.PUSH);
 		button.setText("Browse...");
+		
+		Label lblPredicate = new Label(container, SWT.NONE);
+		lblPredicate.setText("Predicate");
+		new Label(container, SWT.NONE);
+		
+		text = new Text(container, SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(container, SWT.NONE);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog dlg = new FileDialog(parent.getShell());
@@ -72,9 +82,13 @@ public class NewPictogramDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		this.location = imgText.getText();		
+		this.predicate = text.getText();
 		super.okPressed();		
 	}
 	
+	public String getPredicate(){
+		return this.predicate;
+	}
 	
 	public String getLocation(){
 		return this.location;

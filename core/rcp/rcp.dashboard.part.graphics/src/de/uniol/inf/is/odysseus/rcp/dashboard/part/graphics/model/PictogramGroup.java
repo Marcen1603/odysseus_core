@@ -17,16 +17,24 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Observable;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class PictogramGroup extends Observable implements Serializable {
 	
 	private static final long serialVersionUID = 3019435887229998016L;
 	
-	List<Pictogram> nodes = new ArrayList<Pictogram>();;
+	private String backgroundImagePath;
+	
+	List<Pictogram> nodes = new ArrayList<Pictogram>();
+
+	public PictogramGroup(String backgroundImagePath){
+		this.backgroundImagePath = backgroundImagePath;
+	}
 
 	public List<Pictogram> getPictograms() {		
 		return nodes;
@@ -35,6 +43,12 @@ public class PictogramGroup extends Observable implements Serializable {
 	public void processTuple(Tuple<?> tuple){
 		for(Pictogram p : nodes){
 			p.internalProcess(tuple);
+		}
+	}
+	
+	public void init(Collection<IPhysicalOperator> roots){
+		for(Pictogram p : nodes){
+			p.init(roots);
 		}
 	}
 
@@ -48,5 +62,13 @@ public class PictogramGroup extends Observable implements Serializable {
 		getPictograms().remove(pg);
 		setChanged();
 		notifyObservers();
+	}
+
+	public String getBackgroundImagePath() {
+		return backgroundImagePath;
+	}
+
+	public void setBackgroundImagePath(String backgroundImagePath) {
+		this.backgroundImagePath = backgroundImagePath;
 	}
 }

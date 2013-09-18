@@ -24,6 +24,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartEditor"
+            contributorClass="de.uniol.inf.is.odysseus.rcp.dashboard.commands.DashboardPartEditorActionBarContributor"
             default="true"
             extensions="prt"
             icon="icons/gear.png"

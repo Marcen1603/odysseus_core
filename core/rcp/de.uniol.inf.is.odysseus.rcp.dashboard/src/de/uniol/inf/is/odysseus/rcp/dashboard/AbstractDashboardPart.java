@@ -36,7 +36,8 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private List<IDashboardPartListener> listeners = new ArrayList<>();
 	private String sinkNames;
-
+	
+	private IDashboardActionBarContributor editorActionBarContributor;
 	private IWorkbenchPart workbenchpart;
 
 	@Override
@@ -130,5 +131,17 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public Object getAdapter(Class<?> adapter) {	
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getEditorActionBarContributor()
+	 */
+	@Override
+	public IDashboardActionBarContributor getEditorActionBarContributor() {
+		return editorActionBarContributor;
+	}
+	
+	public void setEditorActionBarContributor(IDashboardActionBarContributor editorActionBarContributor){
+		this.editorActionBarContributor = editorActionBarContributor;
 	}
 }

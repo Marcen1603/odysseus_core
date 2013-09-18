@@ -50,6 +50,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardActionBarContributor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
@@ -404,4 +405,12 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		this.workbenchpart = workbenchpark;		
 	}
 
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getEditorActionBarContributor()
+	 */
+	@Override
+	public IDashboardActionBarContributor getEditorActionBarContributor() {
+		return null;
+	}
+	
 }

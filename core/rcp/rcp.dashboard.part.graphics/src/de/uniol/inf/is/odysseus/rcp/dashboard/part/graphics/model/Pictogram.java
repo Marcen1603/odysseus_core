@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,14 +13,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 
 public abstract class Pictogram extends Observable{
 	
 	
 	private Rectangle constraint;	
-	private boolean visibile = true;
-	
+	private boolean visibile = true;	
+	private Collection<IPhysicalOperator> roots;
 
 	public Rectangle getConstraint() {
 		return constraint;
@@ -31,10 +33,12 @@ public abstract class Pictogram extends Observable{
 		notifyObservers();
 	}
 
-	protected abstract void init(Map<String, String> values);
+	protected abstract void load(Map<String, String> values);
 	protected abstract void save(Map<String, String> values);
+	protected abstract void init(Collection<IPhysicalOperator> roots);
 	protected abstract void process(Tuple<?> tuple);
-	protected void internalProcess(Tuple<?> tuple){
+	
+	protected void internalProcess(Tuple<?> tuple){		
 		process(tuple);
 		setChanged();
 		notifyObservers();
@@ -59,7 +63,7 @@ public abstract class Pictogram extends Observable{
 		parent.appendChild(constElement);				
 	}
 	
-	public void initFromXML(Node parent){
+	public void loadFromXML(Node parent){
 		Map<String, String> values = new HashMap<String, String>();
 		NodeList list = parent.getChildNodes();
 		for(int i=0;i<list.getLength();i++){
@@ -78,7 +82,7 @@ public abstract class Pictogram extends Observable{
 				values.put(key, value);
 			}
 		}
-		init(values);
+		load(values);
 		
 		
 		
@@ -90,6 +94,14 @@ public abstract class Pictogram extends Observable{
 
 	public void setVisibile(boolean visibile) {
 		this.visibile = visibile;
+	}
+
+	public Collection<IPhysicalOperator> getRoots() {
+		return roots;
+	}
+
+	public void setRoots(Collection<IPhysicalOperator> roots) {
+		this.roots = roots;
 	}
 	
 

@@ -52,12 +52,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.part.EditorPart;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -84,7 +81,6 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	private Display display;
 	private ActionRegistry actionRegistry;
 //	private Collection<IPhysicalOperator> roots;
-//	private Tuple<?> lastTuple = null;
 	private Canvas mainContainer;
 
 	private EditDomain editDomain;
@@ -100,20 +96,17 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		mainContainer.setLayout(new FillLayout());
 		mainContainer.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
 
-		if (getWorkbenchPart() instanceof IEditorPart) {
-			editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
-		} else {
-			editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
-		}
+		editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
+		
 
 		SashForm form = new SashForm(mainContainer, SWT.HORIZONTAL);
 		createPaletteViewer(form);
 		createGraphViewer(form);
 		form.setWeights(new int[] { 15, 85 });
 		initActionRegistry();
+	//	setEditorActionBarContributor(new GprahicsActionBarContributor());
 		editDomain.getCommandStack().addCommandStackListener(this);
-		getWorkbenchPart().getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-		loadActionBars();
+		getWorkbenchPart().getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);		
 	}
 
 	private void createGraphViewer(Composite parent) {
@@ -184,7 +177,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		super.onLoad(saved);
 		setBackgroundFile(saved.get(BACKGROUND_FILE));
 
-		this.pictogramGroup = new PictogramGroup();
+		this.pictogramGroup = new PictogramGroup(getBackgroundFile());
 		String xmlContent = saved.get(GRAPHICS_CONTENT);
 		try {
 			if (!xmlContent.isEmpty()) {
@@ -197,7 +190,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 					Node pictogramNode = pictogramList.item(i);
 					if (pictogramNode.getNodeType() == Node.ELEMENT_NODE) {
 						Pictogram pictogram = new ImagePictogram();
-						pictogram.initFromXML(pictogramNode);
+						pictogram.loadFromXML(pictogramNode);
 						this.pictogramGroup.addPictogram(pictogram);
 					}
 				}
@@ -224,21 +217,20 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 				p.getXML(picNode, doc);
 				root.appendChild(picNode);
 			}
-			System.out.println("---------------------------");
+			
 			StringWriter sw = new StringWriter();
 			StreamResult result = new StreamResult(sw);
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			transformer.transform(source, result);
-			System.out.println(sw.toString());
-			System.out.println("---------------------------");
+			transformer.transform(source, result);			
 			save.put(GRAPHICS_CONTENT, sw.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		save.put(BACKGROUND_FILE, this.backgroundfile);
+		editDomain.getCommandStack().markSaveLocation();
 		return save;
 	}
 
@@ -250,8 +242,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		this.backgroundfile = backgroundfile;
 	}
 
-	public void setRoots(Collection<IPhysicalOperator> roots) {
-		//this.roots = roots;
+	public void setRoots(Collection<IPhysicalOperator> roots) {		
+		this.pictogramGroup.init(roots);
 	}
 
 	private void initActionRegistry() {
@@ -286,7 +278,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			if (action instanceof UpdateAction)
 				((UpdateAction) action).update();
 		}
-		if (editDomain.getCommandStack().isDirty()) {
+		if (editDomain.getCommandStack().isDirty()) {			
 			fireChangeEvent();
 		}
 		
@@ -295,6 +287,9 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	public Object getAdapter(Class<?> adapter) {
 		if (adapter == CommandStack.class) {
 			return editDomain.getCommandStack();
+		}
+		if (adapter == ActionRegistry.class) {
+			return actionRegistry;
 		}
 		return super.getAdapter(adapter);
 	}
@@ -306,19 +301,6 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {		
 		updateActions();
 	}
-
-	private void loadActionBars() {
-		EditorPart part = (EditorPart) (getWorkbenchPart());		
-		IActionBars actionBars = part.getEditorSite().getActionBars();
-		if (actionBars == null)
-			return;
-		String undoId = ActionFactory.UNDO.getId();
-		String redoId = ActionFactory.REDO.getId();
-		String deleteId = ActionFactory.DELETE.getId();		
-		actionBars.setGlobalActionHandler(undoId, actionRegistry.getAction(undoId));
-		actionBars.setGlobalActionHandler(redoId, actionRegistry.getAction(redoId));
-		actionBars.setGlobalActionHandler(deleteId, actionRegistry.getAction(deleteId));
-		actionBars.updateActionBars();
-	}
+	
 	
 }

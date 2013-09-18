@@ -255,6 +255,8 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		setDirty(true);
 	}
 
-	
+	public IDashboardPart getDashboardPart() {
+		return dashboardPart;
+	}
 	
 }
