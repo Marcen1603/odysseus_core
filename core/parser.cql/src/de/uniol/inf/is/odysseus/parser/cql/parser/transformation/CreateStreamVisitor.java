@@ -266,11 +266,11 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			}
 		}
 		String wrapperName = Constants.GENERIC_PUSH;
-		Map<String, String> options = new HashMap<String, String>();
-		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
+		Map<String, String> options = new HashMap<String, String>();		
 		options.put("host", host);
 		options.put("port", port + "");
 		options.put("autoconnect", autoReconnect + "");
+		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
 		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
