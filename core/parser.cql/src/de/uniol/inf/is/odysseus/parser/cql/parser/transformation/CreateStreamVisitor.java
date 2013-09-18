@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.logicaloperator.relational.FixedSetAccessAO;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
@@ -63,12 +62,11 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTLoginPassword;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTPriorizedStatement;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSilab;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTSocket;
-import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTimedTuples;
 
 /**
  * @author Jonas Jacobi
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked" })
 public class CreateStreamVisitor extends AbstractDefaultVisitor {
 	String name;
 	private ISession caller;

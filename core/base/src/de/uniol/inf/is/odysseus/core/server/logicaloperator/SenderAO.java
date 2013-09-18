@@ -15,11 +15,21 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResourceParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
 /**
  * Generic sender operator to transfer processing results to arbitrary targets
@@ -30,18 +40,18 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-// @LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name =
-// "Sender")
+@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "Sender")
 public class SenderAO extends AbstractLogicalOperator {
 	/**
      * 
      */
 	private static final long serialVersionUID = -6830784739913623456L;
 	private Resource sink = null;
-	private String dataHandler = "Tuple";
+	private String dataHandler = new TupleDataHandler().getSupportedDataTypes()
+			.get(0);
 	private String protocolHandler;
 	private String transportHandler;
-	private Map<String, String> optionsMap;
+	final private Map<String, String> optionsMap = new HashMap<>();
 	private String wrapper;
 
 	/**
@@ -61,10 +71,11 @@ public class SenderAO extends AbstractLogicalOperator {
 	 * @param optionsMap
 	 *            The options
 	 */
-	public SenderAO(Resource sink, String wrapper, Map<String, String> optionsMap) {
+	public SenderAO(Resource sink, String wrapper,
+			Map<String, String> optionsMap) {
 		this.sink = sink;
 		this.wrapper = wrapper;
-		this.optionsMap = optionsMap;
+		this.optionsMap.putAll(optionsMap);
 	}
 
 	/**
@@ -85,7 +96,7 @@ public class SenderAO extends AbstractLogicalOperator {
 		this.sink = sink;
 		this.wrapper = wrapper;
 		this.dataHandler = dataHandler;
-		this.optionsMap = optionsMap;
+		this.optionsMap.putAll(optionsMap);
 	}
 
 	/**
@@ -99,7 +110,7 @@ public class SenderAO extends AbstractLogicalOperator {
 		this.sink = senderAO.sink;
 		this.wrapper = senderAO.wrapper;
 		this.dataHandler = senderAO.dataHandler;
-		this.optionsMap = senderAO.optionsMap;
+		this.optionsMap.putAll(senderAO.optionsMap);
 		this.protocolHandler = senderAO.protocolHandler;
 		this.transportHandler = senderAO.transportHandler;
 	}
@@ -117,6 +128,7 @@ public class SenderAO extends AbstractLogicalOperator {
 	 * @param sink
 	 *            The sink name
 	 */
+	@Parameter(name = "SINK", type = ResourceParameter.class, optional = false, doc = "The name of the sink.")
 	public void setSink(Resource sink) {
 		this.sink = sink;
 	}
@@ -146,8 +158,21 @@ public class SenderAO extends AbstractLogicalOperator {
 	 */
 	// @Parameter(name = "options", type = StringParameter.class, optional =
 	// true, isMap = true)
-	public void setOptions(Map<String, String> value) {
-		this.optionsMap = value;
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for different handler.")
+	public void setOptions(List<Option> value) {
+		this.optionsMap.clear();
+		for (Option option : value) {
+			optionsMap.put(option.getName().toLowerCase(), option.getValue());
+		}
+	}
+	
+	public void setOptionMap(Map<String, String> options) {
+		this.optionsMap.clear();
+		this.optionsMap.putAll(options);
+	}
+	
+	protected void addOption(String key, String value) {
+		optionsMap.put(key, value);
 	}
 
 	/**
@@ -163,8 +188,7 @@ public class SenderAO extends AbstractLogicalOperator {
 	 * @param wrapper
 	 *            The wrapper type
 	 */
-	// @Parameter(name = "wrapper", type = StringParameter.class, optional =
-	// false)
+	@Parameter(name = "wrapper", type = StringParameter.class, optional = false)
 	public void setWrapper(String wrapper) {
 		this.wrapper = wrapper;
 	}
@@ -189,8 +213,7 @@ public class SenderAO extends AbstractLogicalOperator {
 	 * @param dataHandler
 	 *            The name of the data handler
 	 */
-	// @Parameter(name = "dataHandler", type = StringParameter.class, optional =
-	// false)
+	@Parameter(name = "dataHandler", type = StringParameter.class, optional = false)
 	public void setDataHandler(String dataHandler) {
 		this.dataHandler = dataHandler;
 	}
@@ -208,8 +231,7 @@ public class SenderAO extends AbstractLogicalOperator {
 	 * @param protocolHandler
 	 *            The name of the protocol handler
 	 */
-	// @Parameter(name = "protocol", type = StringParameter.class, optional =
-	// false)
+	@Parameter(name = "protocol", type = StringParameter.class, optional = false)
 	public void setProtocolHandler(String protocolHandler) {
 		this.protocolHandler = protocolHandler;
 	}
@@ -227,8 +249,7 @@ public class SenderAO extends AbstractLogicalOperator {
 	 * @param transportHandler
 	 *            The name of the transport handler
 	 */
-	// @Parameter(name = "transport", type = StringParameter.class, optional =
-	// false)
+	@Parameter(name = "transport", type = StringParameter.class, optional = false)
 	public void setTransportHandler(String transportHandler) {
 		this.transportHandler = transportHandler;
 	}
@@ -259,9 +280,18 @@ public class SenderAO extends AbstractLogicalOperator {
 
 	@Override
 	public boolean needsLocalResources() {
-
 		return true;
+	}
 
+	@Override
+	public boolean isValid() {
+		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
+			this.addError(new IllegalArgumentException("Wrapper "
+					+ this.wrapper + " unknown"));
+			return false;
+		}
+
+		return super.isValid();
 	}
 
 }

@@ -1282,7 +1282,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		sender.setTransportHandler(transport);
 		sender.setName(name);
 		sender.setOutputSchema(outputSchema);
-		sender.setOptions(options);
+		sender.setOptionMap(options);
 		sender.setSink(new Resource(getCaller().getUser(), name));
 		
 		CreateSinkCommand cmd = new CreateSinkCommand(name, sender, getCaller());
