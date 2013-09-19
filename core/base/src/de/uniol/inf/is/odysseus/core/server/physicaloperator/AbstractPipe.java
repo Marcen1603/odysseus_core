@@ -490,4 +490,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 		return process_isSemanticallyEqual(ipo);
 	}
+	
+	@Override
+	public boolean hasInput() {
+		return delegateSink.hasInput();
+	}
 }

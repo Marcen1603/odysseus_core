@@ -692,4 +692,9 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 		}
 		return copy;
 	}
+	
+	@Override
+	public boolean hasInput() {
+		return getSubscribedToSource().size() > 0;
+	}
 }

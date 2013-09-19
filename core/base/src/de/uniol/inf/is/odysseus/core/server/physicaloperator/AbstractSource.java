@@ -874,4 +874,8 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		return -1;
 	}
 
+	@Override
+	public boolean hasInput() {
+		return false;
+	}
 }

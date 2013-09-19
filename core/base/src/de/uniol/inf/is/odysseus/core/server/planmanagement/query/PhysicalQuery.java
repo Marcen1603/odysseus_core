@@ -67,12 +67,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * The name of the query
 	 */
 	private String name = "";
-	
+
 	/**
 	 * Priority for the query
 	 */
 	private int basePriority;
-	
+
 	/**
 	 * Current priority, e.g. used by scheduling
 	 */
@@ -107,33 +107,35 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * more, there can be more than one query.
 	 */
 	transient private List<IPhysicalOperator> roots;
-	
+
 	transient private List<IPhysicalOperator> doneRoots = new IdentityArrayList<>();
 
 	/**
 	 * Sources that should be scheduled.
 	 */
-	final private ArrayList<IIterableSource<?>> iterableSources = new ArrayList<IIterableSource<?>>();;
-	
+	final private List<IIterableSource<?>> iterableSources = new ArrayList<IIterableSource<?>>();;
+
 	/**
 	 * Sources that are leafs
 	 */
-	final private ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
+	final private List<IIterableSource<?>> iteratableLeafSources = new ArrayList<IIterableSource<?>>();
+
+	final private List<IPhysicalOperator> leafSources = new ArrayList<>();
 
 	/**
 	 * Cache Ids for Sources to speed up getSourceID
 	 */
 	private Map<IIterableSource<?>, Integer> sourceIds;
-	
+
 	/**
 	 * List of objects which respond to reoptimize requests.
 	 */
-	transient private ArrayList<IQueryReoptimizeListener> queryReoptimizeListener = new ArrayList<IQueryReoptimizeListener>();
+	transient private List<IQueryReoptimizeListener> queryReoptimizeListener = new ArrayList<IQueryReoptimizeListener>();
 
 	/**
 	 * List of rules for reoptimize requests.
 	 */
-	transient private ArrayList<AbstractQueryReoptimizeRule> queryReoptimizeRule = new ArrayList<AbstractQueryReoptimizeRule>();
+	transient private List<AbstractQueryReoptimizeRule> queryReoptimizeRule = new ArrayList<AbstractQueryReoptimizeRule>();
 
 	/**
 	 * EventListener
@@ -150,12 +152,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Is the query running (open is called already)
 	 */
 	private boolean opened = false;
-	
+
 	/**
 	 * Who has send the query
 	 */
 	private ISession user;
-	
+
 	/**
 	 * To avoid dependencies, some values are only set as key value pairs
 	 */
@@ -176,15 +178,18 @@ public class PhysicalQuery implements IPhysicalQuery {
 		// Query created directly from physical plans get a negative query id to
 		// distinct from query created from logical queries (and garantee that
 		// logical and corresponding physical queries have the same id)
-		id = (-1)*idCounter++;
+		id = (-1) * idCounter++;
 		initializePhysicalRoots(physicalPlan);
 		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
 
 	/**
-	 * Create a new physical query 
-	 * @param query The logical query that is the origin of the query
-	 * @param physicalPlan The physical plan
+	 * Create a new physical query
+	 * 
+	 * @param query
+	 *            The logical query that is the origin of the query
+	 * @param physicalPlan
+	 *            The physical plan
 	 */
 	public PhysicalQuery(ILogicalQuery query,
 			ArrayList<IPhysicalOperator> physicalPlan) {
@@ -198,11 +203,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 		initializePhysicalRoots(physicalPlan);
 		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
-	
+
 	/**
-	 * Some operators need to be scheduled typically buffers
-	 * To allow other processing of operators that are sources
-	 * these leafSources are treated different
+	 * Some operators need to be scheduled typically buffers To allow other
+	 * processing of operators that are sources these iteratableleafSources are
+	 * treated different
+	 * 
 	 * @param physicalPlan
 	 */
 	private void determineIteratableSourcesAndLeafs(
@@ -211,8 +217,10 @@ public class PhysicalQuery implements IPhysicalQuery {
 				getPhysicalChilds());
 		queryOps.addAll(getRoots());
 		iterableSources.clear();
+		iteratableLeafSources.clear();
+		leafSources.clear();
 		Set<IOperatorOwner> owners = new HashSet<IOperatorOwner>();
-		
+
 		for (IPhysicalOperator operator : queryOps) {
 			owners.addAll(operator.getOwner());
 			IIterableSource<?> iterableSource = null;
@@ -225,12 +233,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 				} else if (!iterableSource.isSink() // IterableSource
 													// is a
 													// global Source
-						&& !leafSources.contains(iterableSource)) {
-					leafSources.add(iterableSource);
+						&& !iteratableLeafSources.contains(iterableSource)) {
+					iteratableLeafSources.add(iterableSource);
 				}
 			}
+			// Determined leafSources
+			if (!operator.hasInput()) {
+				leafSources.add(operator);
+			}
+
 		}
-		
+
 		this.sourceIds = new HashMap<IIterableSource<?>, Integer>();
 		for (int i = 0; i < iterableSources.size(); i++) {
 			sourceIds.put(iterableSources.get(i), i); // Iterator does not
@@ -242,7 +255,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	@Override
 	public String getName() {
-		if (query != null){
+		if (query != null) {
 			return query.getName();
 		}
 		return name;
@@ -260,7 +273,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		if (roots != null) {
 			return Collections.unmodifiableList(this.roots);
 		}
-        return null;
+		return null;
 
 	}
 
@@ -307,11 +320,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 			addPhysicalChildren(getChildren(root));
 		}
 		determineIteratableSourcesAndLeafs(roots);
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
+	private static ArrayList<IPhysicalOperator> getChildren(
+			IPhysicalOperator root) {
 		ArrayList<IPhysicalOperator> children = new ArrayList<IPhysicalOperator>();
 		Stack<IPhysicalOperator> operators = new Stack<IPhysicalOperator>();
 		Set<IPhysicalOperator> visitedOps = new HashSet<IPhysicalOperator>();
@@ -485,14 +499,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void done(IOwnedOperator op) {
 		IPhysicalOperator po = (IPhysicalOperator) op;
-		if (roots.contains(po) && !doneRoots.contains(po)){
+		if (roots.contains(po) && !doneRoots.contains(po)) {
 			doneRoots.add(po);
-			if (doneRoots.size() == roots.size()){
+			if (doneRoots.size() == roots.size()) {
 				queryListener.done(this);
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isOpened() {
 		return opened;
@@ -658,10 +672,10 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public ISession getSession() {
 		return user;
 	}
-	
+
 	@Override
 	public boolean isOwner(ISession session) {
-		if (session == null || user == null){
+		if (session == null || user == null) {
 			return false;
 		}
 		return user.getUser().getName().equals(session.getUser().getName());
@@ -679,12 +693,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public int getPriority() {
 		return basePriority;
 	}
-	
+
 	@Override
 	public void setCurrentPriority(long newPriority) {
 		this.currentPriority = newPriority;
 	}
-	
+
 	@Override
 	public long getCurrentPriority() {
 		return currentPriority;
@@ -704,7 +718,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public ILogicalQuery getLogicalQuery() {
 		return query;
 	}
-	
+
 	@Override
 	public void setParameter(String key, Object value) {
 		parameters.put(key, value);
@@ -718,20 +732,20 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 		return param;
 	}
-	
-	///-------------------------------------------------------
+
+	// /-------------------------------------------------------
 	// Iteratable Sources for Scheduling
 	// -------------------------------------------------------
 	@Override
 	public boolean hasIteratableSources() {
 		return iterableSources != null && iterableSources.size() > 0;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seede.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IPhysicalQuery#
-	 * getIterableSource()
+	 * @seede.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IPhysicalQuery
+	 * # getIterableSource()
 	 */
 	@Override
 	public List<IIterableSource<?>> getIterableSources() {
@@ -750,13 +764,17 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public List<IIterableSource<?>> getLeafSources() {
+	public List<IIterableSource<?>> getIteratableLeafSources() {
+		return Collections.unmodifiableList(iteratableLeafSources);
+	}
+
+	public List<IPhysicalOperator> getLeafSources() {
 		return Collections.unmodifiableList(leafSources);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "PQuery Id "+getID();
+		return "PQuery Id " + getID();
 	}
 
 	@Override

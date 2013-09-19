@@ -39,7 +39,7 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query,
 			ISLAConformance conformance) {
 		
-		IPhysicalOperator source = query.getLeafSources().get(0);
+		IPhysicalOperator source = query.getIteratableLeafSources().get(0);
 		if (source.isSource()) {
 			ISubscribable subscribable = (ISubscribable) source;
 			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());

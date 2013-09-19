@@ -745,4 +745,9 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	public void setParameterInfos(Map<String, String> infos) {
 		this.infos = infos;		
 	}
+	
+	@Override
+	public boolean hasInput() {
+		return true;
+	}
 }

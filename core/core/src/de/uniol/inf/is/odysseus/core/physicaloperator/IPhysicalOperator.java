@@ -82,5 +82,7 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	void addUniqueId(IOperatorOwner owner, Resource id);
 	void removeUniqueId(IOperatorOwner key);
 	Map<IOperatorOwner,Resource> getUniqueIds();
+	
+	public boolean hasInput();
 
 }

@@ -54,7 +54,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 		// Each query will be one PartialPlan. Duplicated operators will be
 		// ignored.
 		for (IPhysicalQuery query : toOptimize.getQueries()) {
-			leafSources.addAll(query.getLeafSources());
+			leafSources.addAll(query.getIteratableLeafSources());
 		} // for (IQuery query : allQueries)
 
 		// Update ExecutionPlan with the found informations.

@@ -91,7 +91,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	public boolean hasIteratableSources();
 	public IIterableSource<?> getIterableSource(int id);
 	public int getSourceId(IIterableSource<?> source);
-	public List<IIterableSource<?>> getLeafSources();
+	public List<IIterableSource<?>> getIteratableLeafSources();
 
 	/**
 	 * Removes the ownership of this query and the registered child operators.

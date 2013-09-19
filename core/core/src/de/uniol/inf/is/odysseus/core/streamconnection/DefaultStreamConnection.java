@@ -481,4 +481,9 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 		return subs;
 	}
 	
+	@Override
+	public boolean hasInput() {
+		return true;
+	}
+	
 }

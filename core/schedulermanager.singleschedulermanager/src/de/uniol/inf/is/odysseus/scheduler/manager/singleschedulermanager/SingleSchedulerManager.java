@@ -302,12 +302,12 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     public void addQuery(IPhysicalQuery affectedQuery) {
     	logger.debug("AddQuery "+affectedQuery);
     	increaseSourceUsage(affectedQuery);
-    	this.activeScheduler.addLeafSources(affectedQuery.getLeafSources());
+    	this.activeScheduler.addLeafSources(affectedQuery.getIteratableLeafSources());
     	this.activeScheduler.addPartialPlan(affectedQuery);
     }
 
 	private void increaseSourceUsage(IPhysicalQuery affectedQuery) {
-		for (IIterableSource<?> s : affectedQuery.getLeafSources()){
+		for (IIterableSource<?> s : affectedQuery.getIteratableLeafSources()){
     		Integer count = sourceUsage.get(s);
     		if (count == null){
     			sourceUsage.put(s,1);
@@ -319,7 +319,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
 	
 	private List<IIterableSource<?>> decreaseSourceUsage(IPhysicalQuery affectedQuery) {
 		List<IIterableSource<?>> ret = new LinkedList<>();
-		for (IIterableSource<?> s : affectedQuery.getLeafSources()){
+		for (IIterableSource<?> s : affectedQuery.getIteratableLeafSources()){
     		Integer count = sourceUsage.get(s);
     		if (count == null){
     			logger.error("Trying to remove not scheduled source"+s);
@@ -347,7 +347,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements 
     @Override
     public void startedQuery(IPhysicalQuery affectedQuery) {
     	logger.debug("StartedQuery "+affectedQuery);
-    	this.activeScheduler.addLeafSources(affectedQuery.getLeafSources());
+    	this.activeScheduler.addLeafSources(affectedQuery.getIteratableLeafSources());
     	this.activeScheduler.addPartialPlan(affectedQuery);   	
     }
     
