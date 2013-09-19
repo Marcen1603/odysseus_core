@@ -768,6 +768,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return Collections.unmodifiableList(iteratableLeafSources);
 	}
 
+	@Override
 	public List<IPhysicalOperator> getLeafSources() {
 		return Collections.unmodifiableList(leafSources);
 	}
