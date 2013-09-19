@@ -136,7 +136,11 @@ public abstract class AbstractScheduling implements IScheduling,
 					}
 				}
 			} finally {
-				nextSource.unlock();
+				try{
+					nextSource.unlock();
+				}catch(Exception e){
+					// Ignore
+				}
 			}
 
 			nextSource = nextSource();
