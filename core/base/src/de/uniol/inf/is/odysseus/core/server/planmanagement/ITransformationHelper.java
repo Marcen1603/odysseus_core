@@ -27,6 +27,7 @@ public interface ITransformationHelper {
 	
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, IPipe physical, boolean ignoreSocketSinkPort);
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, IPipe physical);
+	public Collection<ILogicalOperator> replace(ILogicalOperator oldLogical, ILogicalOperator newLogical);
 
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, ISink physical, boolean ignoreSocketSinkPort);
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, ISink physical);

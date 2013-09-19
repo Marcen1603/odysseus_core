@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
@@ -38,6 +39,12 @@ public class StandardTransformationHelper implements ITransformationHelper {
 		Collection<ILogicalOperator> ret = replace(logical, (ISink) physical, ignoreSocketSinkPort);
 		ret.addAll(replace(logical, (ISource) physical));
 		return ret;
+	}
+	
+	@Override
+	public Collection<ILogicalOperator> replace(ILogicalOperator oldLogical,
+			ILogicalOperator newLogical) {
+		return RestructHelper.replace(oldLogical, newLogical);
 	}
 
 	@Override

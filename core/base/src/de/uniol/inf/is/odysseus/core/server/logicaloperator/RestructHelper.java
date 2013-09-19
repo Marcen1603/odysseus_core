@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -129,13 +130,40 @@ public class RestructHelper {
 		return toUpdate;
 	}
 	
+	public static Collection<ILogicalOperator> replace(ILogicalOperator oldOP, ILogicalOperator newOp){
+		Collection<ILogicalOperator> touched = new LinkedList<>();
+		
+		Collection<LogicalSubscription> subscriptions = oldOP.getSubscriptions();
+		
+		if (newOp.getSubscriptions().size() > 0 || newOp.getSubscribedToSource().size() > 0){
+			throw new IllegalArgumentException("Replacement operator is not allowed to be connected!");
+		}
+		
+		// Replace subscriptions to sinks
+		for (LogicalSubscription s: subscriptions){
+			oldOP.unsubscribeSink(s);
+			newOp.subscribeSink(s.getTarget(), s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+			touched.add(s.getTarget());
+		}
+		
+		// Replace subscriptions to source
+		subscriptions = oldOP.getSubscribedToSource();
+		for (LogicalSubscription s:subscriptions){
+			oldOP.unsubscribeFromSource(s);
+			newOp.subscribeToSource(s.getTarget(), s.getSinkInPort(), s.getSourceOutPort(), s.getSchema());
+			touched.add(s.getTarget());
+		}
+		
+		return touched;
+	}
+	
 	/**
 	 * Replaces a logical operator by a subplan.
 	 * @param oldOp The logical operator to be replaced.
 	 * @param newOp The subplan to be inserted instead.
 	 */
 	public static void replaceWithSubplan(ILogicalOperator oldOp, ILogicalOperator newOp) {
-		
+
 		Collection<ILogicalOperator> operatorsOfSubplan = Lists.newArrayList();
 		RestructHelper.collectOperators(newOp, operatorsOfSubplan);
 		

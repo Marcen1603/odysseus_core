@@ -95,6 +95,10 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig) {
 		replace(oldOperator, newOperator, transformationConfig, false);
 	}
+	
+	protected void replace(ILogicalOperator oldOperator, ILogicalOperator newOperator, TransformationConfiguration transformationConfig){
+		transformationConfig.getTransformationHelper().replace(oldOperator, newOperator);
+	}
 
 	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator, TransformationConfiguration transformationConfig, boolean ignoreSinkInput) {
 
@@ -144,6 +148,11 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 			}
 		}
 		return hasTimestampAOAsFather;
+	}
+	
+	@Override
+	public int getPriority() {
+		return 0;
 	}
 
 

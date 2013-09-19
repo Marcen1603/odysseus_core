@@ -36,8 +36,10 @@ import de.uniol.inf.is.odysseus.transform.rule.ITransformationRule;
 
 public class TransformationActivator implements BundleActivator, BundleListener {
 
-	private enum Mode {ADD, REMOVE};
-	
+	private enum Mode {
+		ADD, REMOVE
+	};
+
 	Logger logger = LoggerFactory.getLogger(TransformationActivator.class);
 
 	private static BundleContext context;
@@ -67,20 +69,20 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 		WrapperRegistry.registerWrapper(Constants.GENERIC_PULL);
 
 		context.addBundleListener(this);
-		searchBundles(context.getBundles());
+		searchBundles(context.getBundles(), Mode.ADD);
 	}
 
-	private void searchBundles(Bundle[] bundles) {
+	private void searchBundles(Bundle[] bundles, Mode mode) {
 		for (Bundle bundle : bundles) {
 			if (bundle.getState() == Bundle.ACTIVE) {
-				searchBundle(bundle,Mode.ADD);
+				searchBundle(bundle, mode);
 			}
 		}
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		searchBundles(context.getBundles());
+		searchBundles(bundleContext.getBundles(), Mode.REMOVE);
 		TransformationActivator.context = null;
 	}
 
@@ -99,22 +101,22 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 	}
 
 	private void searchBundle(Bundle bundle, Mode mode) {
-		Enumeration<URL> entries = bundle.findEntries(
-				"/bin/de/uniol/inf/is/odysseus", "*.class", true);
+		Enumeration<URL> entries;
+		entries = bundle.findEntries("/bin/de/uniol/inf/is/odysseus",
+				"*.class", true);
 		if (entries == null) {
 			entries = bundle.findEntries("/de/uniol/inf/is/odysseus",
 					"*.class", true);
+
 			if (entries == null) {
-				entries = bundle.findEntries(
-						"de.uniol.inf.is.odysseus", "*.class", true);
-			}
-			if (entries == null){
 				return;
 			}
 		}
+
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
-			if (curURL.toString().contains("/rule")) {
+			if (curURL.toString().contains("/rule") || curURL
+					.toString().contains("/transform")) {
 				Class<? extends ITransformationRule> classObject = loadRuleClass(
 						bundle, curURL);
 				if (classObject != null
@@ -127,10 +129,11 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 						if (mode == Mode.ADD) {
 							TransformationInventory.getInstance().addRule(rule);
 						} else {
-							TransformationInventory.getInstance().removeRule(rule);
+							TransformationInventory.getInstance().removeRule(
+									rule);
 						}
 					} catch (Exception e) {
-						logger.error("Error loading rule " + classObject,e);
+						logger.error("Error loading rule " + classObject, e);
 					}
 			}
 		}
