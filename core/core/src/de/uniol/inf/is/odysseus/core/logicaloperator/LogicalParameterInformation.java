@@ -25,6 +25,7 @@ public class LogicalParameterInformation {
 	private String name;
 	private boolean list;
 	private String doc;
+	private boolean mandatory;
 
 	public Class<?> getParameterClass() {
 		return parameterClass;
@@ -56,6 +57,14 @@ public class LogicalParameterInformation {
 
 	public void setDoc(String doc) {
 		this.doc = doc;
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
 	}
 
 }

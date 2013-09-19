@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphEditor"
+            contributorClass="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphEditorContributor"
+            default="true"
+            extensions="grp"
+            icon="icons/graph.png"
+            id="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphEditor"
+            name="Operator Graph Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            name="Operator Graph Page"
+            icon="icons/graph.png"
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.rcp.editor.graph.wizards.OperatorGraphNewWizard"
+            id="de.uniol.inf.is.odysseus.rcp.editor.graph.wizards.OperatorGraphNewWizard">
+      </wizard>
+   </extension>
+
+</plugin>

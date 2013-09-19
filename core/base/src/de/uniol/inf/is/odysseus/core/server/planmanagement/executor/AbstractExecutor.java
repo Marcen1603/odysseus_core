@@ -1061,6 +1061,7 @@ public abstract class AbstractExecutor implements IServerExecutor,
 			}else{
 				lpi.setList(false);
 			}
+			lpi.setMandatory(param.isMandatory());
 			lpi.setParameterClass(param.getClass());
 			lpi.setDoc(param.getDoc());
 			loi.getParameters().add(lpi);
