@@ -36,6 +36,8 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
@@ -50,6 +52,10 @@ import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
@@ -1025,5 +1031,52 @@ public abstract class AbstractExecutor implements IServerExecutor,
 	@Override
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
 		return getDataDictionary(caller.getTenant()).getSinks(caller);
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getOperatorNames(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public List<String> getOperatorNames(ISession caller) {
+		return new ArrayList<String>(OperatorBuilderFactory.getOperatorBuilderNames());		
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getOperatorInformation(java.lang.String, de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller) {
+		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(name, caller, getDataDictionary(caller.getTenant()));
+		LogicalOperatorInformation loi = new LogicalOperatorInformation();	
+		loi.setOperatorName(builder.getName());
+		loi.setMaxPorts(builder.getMaxInputOperatorCount());
+		loi.setMinPorts(builder.getMinInputOperatorCount());
+		loi.setDoc(builder.getDoc());
+		
+		for(IParameter<?> param : builder.getParameters()){
+			LogicalParameterInformation lpi = new LogicalParameterInformation();
+			lpi.setName(param.getName());
+			if(param instanceof ListParameter<?>){
+				lpi.setList(true);
+			}else{
+				lpi.setList(false);
+			}
+			lpi.setParameterClass(param.getClass());
+			lpi.setDoc(param.getDoc());
+			loi.getParameters().add(lpi);
+		}
+		return loi;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getOperatorInformations(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller) {
+		List<LogicalOperatorInformation> infos = new ArrayList<>();
+		for(String name : getOperatorNames(caller)){
+			infos.add(getOperatorInformation(name, caller));
+		}
+		return infos;
 	}
 }

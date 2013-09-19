@@ -22,6 +22,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -226,5 +227,11 @@ public interface IExecutor extends IClientPlanManager{
 	public StoredProcedure getStoredProcedure(String name, ISession caller);
 	public List<StoredProcedure> getStoredProcedures(ISession caller);
 	public boolean containsStoredProcedures(String name, ISession caller);
+	
+	
+	// available operator informations
+	public List<String> getOperatorNames(ISession caller);
+	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller);
+	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
 
 }
