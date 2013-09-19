@@ -60,6 +60,7 @@ public final class OdysseusRCPConfiguration {
 
 	private static void loadConfiguration() {
 		try {
+			
 			File confFile = openOrCreateFile(ODYSSEUS_RCP_CONFIGURATION_FILE);
 			
 			FileInputStream in = new FileInputStream(confFile);
@@ -70,7 +71,7 @@ public final class OdysseusRCPConfiguration {
 			}
 			
 		} catch (IOException ex) {
-			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		}
 	}
 
