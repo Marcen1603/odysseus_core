@@ -71,31 +71,8 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.scheduling.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.protobuf.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.cep.studio.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.mining.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.dwd.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.spatial.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.spatial.client.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.dbenrich.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.database.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.debs2013.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.pubsub.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.sentimentdetection.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.wsenrich.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.cache.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.p2p_new.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.p2p_new.loadbalancer.feature" version="1.0.0.qualifier"/>
    </features>
