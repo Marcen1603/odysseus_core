@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
@@ -109,7 +110,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void streamElementRecieved(Object element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add(element != null ? element.toString() : "null");
 			if (!isInfinite() && pendingElements.size() > maxElements) {
@@ -119,7 +120,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 		synchronized (pendingElements) {
 			if (!punctuation.isHeartbeat() || showHeartbeats) {
 				pendingElements.add("Punctuation: " + punctuation);
@@ -131,7 +132,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add("Security Punctuation: " + sp);
 			if (!isInfinite() && pendingElements.size() > maxElements) {

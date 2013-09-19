@@ -15,14 +15,15 @@
   */
 package de.uniol.inf.is.odysseus.core.streamconnection;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 
 public interface IStreamElementListener<In> {
 
-	public void streamElementRecieved( In element, int port );
-	public void punctuationElementRecieved(IPunctuation point, int port);
-	public void securityPunctuationElementRecieved( ISecurityPunctuation sp, int port );
+	public void streamElementRecieved(IPhysicalOperator senderOperator, In element, int port );
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port);
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port );
 	
 }

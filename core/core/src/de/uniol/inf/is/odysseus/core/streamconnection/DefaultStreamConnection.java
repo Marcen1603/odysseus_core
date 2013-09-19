@@ -284,10 +284,11 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 	protected final void notifyListeners(In element, int port) {
 		LOG.debug("Receiving element from port {}: {}", port, element);
+		IPhysicalOperator senderOperator = portOperatorMap.get(port);
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
-					l.streamElementRecieved(element, port);
+					l.streamElementRecieved(senderOperator, element, port);
 				} catch (Throwable t) {
 					LOG.error("Exception during invoking listener for DefaultStreamConnection", t);
 				}
@@ -301,7 +302,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				if( l != null ) {
 					for( IStreamElementListener<In> ls : l ) {
 						try {
-							ls.streamElementRecieved(element, port);
+							ls.streamElementRecieved(senderOperator, element, port);
 						} catch( Throwable t ) {
 							LOG.error("Exception during invoking specialized listener for DefaultStreamConnection for sinkname {}", name, t);
 						}
@@ -313,10 +314,11 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 	protected final void notifyListenersPunctuation(IPunctuation point, int port) {
 		LOG.debug("Receiving punctuation from port {}: {}", port, point);
+		IPhysicalOperator senderOperator = portOperatorMap.get(port);
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
-					l.punctuationElementRecieved(point, port);
+					l.punctuationElementRecieved(senderOperator, point, port);
 				} catch (Throwable t) {
 					LOG.error("Exception during invoking punctuation listener for DefaultStreamConnection", t);
 				}
@@ -330,7 +332,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				if( l != null ) {
 					for( IStreamElementListener<In> ls : l ) {
 						try {
-							ls.punctuationElementRecieved(point, port);
+							ls.punctuationElementRecieved(senderOperator, point, port);
 						} catch( Throwable t ) {
 							LOG.error("Exception during invoking specialized punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
 						}
@@ -342,10 +344,11 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 
 	protected final void notifyListenersSecurityPunctuation(ISecurityPunctuation sp, int port) {
 		LOG.debug("Receiving security punctuation from port {}: {}", port, sp);
+		IPhysicalOperator senderOperator = portOperatorMap.get(port);
 		synchronized (listeners) {
 			for (IStreamElementListener<In> l : listeners) {
 				try {
-					l.securityPunctuationElementRecieved(sp, port);
+					l.securityPunctuationElementRecieved(senderOperator, sp, port);
 				} catch (Throwable t) {
 					LOG.error("Exception during invoking security punctuation listener for DefaultStreamConnection", t);
 				}
@@ -359,7 +362,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends Listen
 				if( l != null ) {
 					for( IStreamElementListener<In> ls : l ) {
 						try {
-							ls.securityPunctuationElementRecieved(sp, port);
+							ls.securityPunctuationElementRecieved(senderOperator, sp, port);
 						} catch( Throwable t ) {
 							LOG.error("Exception during invoking specialized security punctuation listener for DefaultStreamConnection for sinkname {}", name, t);
 						}

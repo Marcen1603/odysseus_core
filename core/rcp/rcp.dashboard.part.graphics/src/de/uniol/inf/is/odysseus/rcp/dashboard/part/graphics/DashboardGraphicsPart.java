@@ -180,7 +180,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	@Override
-	public void streamElementRecieved(final IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -196,12 +196,12 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 
 	}
 

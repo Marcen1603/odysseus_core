@@ -137,7 +137,7 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	}
 
 	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			LOG.error("Warning: Soccer is only for relational tuple!");
 			return;
@@ -150,11 +150,11 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override

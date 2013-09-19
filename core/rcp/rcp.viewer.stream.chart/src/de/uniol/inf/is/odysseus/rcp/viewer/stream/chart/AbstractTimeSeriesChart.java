@@ -36,6 +36,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
@@ -120,7 +121,7 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	}
 	
 	@Override
-	public void streamElementRecieved(IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;

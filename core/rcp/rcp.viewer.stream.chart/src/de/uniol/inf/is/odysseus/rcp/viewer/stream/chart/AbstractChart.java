@@ -94,7 +94,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: Stream visualization is only for relational tuple!");
 			return;
@@ -144,12 +144,12 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override

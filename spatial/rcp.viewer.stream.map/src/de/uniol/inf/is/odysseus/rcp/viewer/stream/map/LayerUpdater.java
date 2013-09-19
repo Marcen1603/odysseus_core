@@ -18,6 +18,7 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -72,7 +73,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	@Override
-	public void streamElementRecieved(Object element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			LOG.error("Warning: StreamMap is only for spatial relational tuple!");
 			return;
@@ -218,13 +219,13 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp,
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
 			int port) {
 		// TODO Auto-generated method stub
 	}

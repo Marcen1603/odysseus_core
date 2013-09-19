@@ -56,7 +56,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void punctuationElementRecieved(final IPunctuation punctuation, final int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, final IPunctuation punctuation, final int port) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -68,7 +68,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(final ISecurityPunctuation sp, final int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, final ISecurityPunctuation sp, final int port) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -80,7 +80,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(final IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Lines DashboardPart only applyable for Tuples!");
 			return;

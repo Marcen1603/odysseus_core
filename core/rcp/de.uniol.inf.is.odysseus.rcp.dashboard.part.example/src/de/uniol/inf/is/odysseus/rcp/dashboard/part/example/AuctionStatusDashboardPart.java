@@ -37,6 +37,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
@@ -97,16 +98,16 @@ public class AuctionStatusDashboardPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation punctuation, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp, int port) {
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Could not use stream-objects of class {}. Only {} supported.", element.getClass(), Tuple.class);
 			return;

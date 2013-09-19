@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
@@ -55,7 +56,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 	final int sensorIdToRecognizeTimeProgress = 13;
 	
 	@Override
-	public void streamElementRecieved(Object element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
 			System.out.println("Warning: Soccer is only for relational tuple!");
 			return;
@@ -70,10 +71,10 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 	}
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {}
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp,
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
 			int port) {}
 
 	@Override

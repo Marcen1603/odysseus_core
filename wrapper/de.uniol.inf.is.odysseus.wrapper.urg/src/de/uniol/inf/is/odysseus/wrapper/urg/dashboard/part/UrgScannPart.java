@@ -165,7 +165,7 @@ public class UrgScannPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void streamElementRecieved(IStreamObject<?> element, int port) {
+	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		Tuple<?> tuple = (Tuple<?>) element;
 		if (tuple.size() <= this.urgScannPos) {
 			return;
@@ -192,11 +192,11 @@ public class UrgScannPart extends AbstractDashboardPart implements
 	};
 
 	@Override
-	public void punctuationElementRecieved(IPunctuation point, int port) {
+	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(ISecurityPunctuation sp,
+	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
 			int port) {
 	}
 
