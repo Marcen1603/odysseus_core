@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
  * 
  * @param <T>
  */
-public class UpdateRateSourceRateConformance<T extends IStreamObject<?>> extends AbstractSLaConformance<T> {
+public class UpdateRateSourceRateConformance<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractSLAPipeConformance<R, W> {
 	/**
 	 * counts the number of violating the specified update rate
 	 */
@@ -46,7 +46,7 @@ public class UpdateRateSourceRateConformance<T extends IStreamObject<?>> extends
 	 */
 	private double updateRateThreshold;
 	
-	private T prevObj;
+	private R prevObj;
 	
 	/**
 	 * creates a new sla conformance for metric update rate and scope rate
@@ -72,7 +72,7 @@ public class UpdateRateSourceRateConformance<T extends IStreamObject<?>> extends
 	 * copy constructor, required for clone method
 	 * @param conformance object to copy
 	 */
-	private UpdateRateSourceRateConformance(UpdateRateSourceRateConformance<T> conformance) {
+	private UpdateRateSourceRateConformance(UpdateRateSourceRateConformance<R, W> conformance) {
 		super(conformance);
 		this.numberOfViolations = conformance.numberOfViolations;
 		this.totalNumber = conformance.totalNumber;
@@ -105,7 +105,7 @@ public class UpdateRateSourceRateConformance<T extends IStreamObject<?>> extends
 	 * measures the update rate and counts how often it exceeds the threshold
 	 */
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(R object, int port) {
 		super.process_next(object, port);
 		
 		long diff = 0;
@@ -142,12 +142,17 @@ public class UpdateRateSourceRateConformance<T extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public AbstractSink<T> clone() {
-		return new UpdateRateSourceRateConformance<T>(this);
+	public AbstractPipe<R, W> clone() {
+		return new UpdateRateSourceRateConformance<R, W>(this);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// nothing to do
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 }

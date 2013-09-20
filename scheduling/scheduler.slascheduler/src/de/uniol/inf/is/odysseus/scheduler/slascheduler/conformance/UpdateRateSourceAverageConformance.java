@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
@@ -33,13 +33,13 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
  * 
  * @param <T>
  */
-public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> extends AbstractSLaConformance<T> {
+public class UpdateRateSourceAverageConformance<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractSLAPipeConformance<R, W> {
 	/**
 	 * partial aggregate for calculating the average
 	 */
-	private AvgSumPartialAggregate<T> aggregate;
+	private AvgSumPartialAggregate<R> aggregate;
 	
-	private T prevObj;
+	private R prevObj;
 	
 	/**
 	 * creates a new sla conformance for metric update rate and scope average
@@ -54,14 +54,14 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 	public UpdateRateSourceAverageConformance(ISLAViolationEventDistributor dist,
 			SLA sla, IPhysicalQuery query) {
 		super(dist, sla, query);
-		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
+		this.aggregate = new AvgSumPartialAggregate<R>(0.0, 0);
 	}
 	
 	/**
 	 * copy constructor, required for clone method
 	 * @param conformance object to copy
 	 */
-	private UpdateRateSourceAverageConformance(UpdateRateSourceAverageConformance<T> conformance) {
+	private UpdateRateSourceAverageConformance(UpdateRateSourceAverageConformance<R, W> conformance) {
 		super(conformance);
 		this.aggregate = conformance.aggregate.clone();
 	}
@@ -93,8 +93,8 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(T object, int port) {
-		long diff = 0;
+	protected void process_next(R object, int port) {
+		long diff = -1;
 		if (this.prevObj != null) {
 			IMetaAttribute currMetadata = object.getMetadata();
 			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
@@ -112,7 +112,7 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 		
 		int attributeCount = ((Tuple<?>)object).getAttributes().length;
 		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
-		((Tuple<?>)object).append(diff, false);
+		((Tuple<?>)object).append(nanoToMilli(diff), false);
 		((Tuple<?>)object).append(getConformance() >= this.getSLA().getMetric().getValue(), false);
 		int[] attrList = new int[3];
 		int index = 0;
@@ -122,7 +122,8 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 		}
 		Tuple<?> tuple = ((Tuple<?>)object).restrict(attrList, true);
 		
-		super.process_next((T) tuple, port);
+		transfer((W) tuple);
+		super.process_next((R) tuple, port);
 //		super.process_next(object, port);
 	}
 
@@ -136,12 +137,17 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 	 * copy object
 	 */
 	@Override
-	public AbstractSink<T> clone() {
-		return new UpdateRateSourceAverageConformance<T>(this);
+	public AbstractPipe<R, W> clone() {
+		return new UpdateRateSourceAverageConformance<R, W>(this);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// nothing to do
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 }

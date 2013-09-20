@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
@@ -40,16 +40,16 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
  * 
  * @param <T>
  */
-public class UpdateRateSinkAverageConformance<T extends IStreamObject<?>> extends AbstractSLaConformance<T> {
+public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractSLAPipeConformance<R, W> {
 	/**
 	 * partial aggregate for calculating the average
 	 */
-	private AvgSumPartialAggregate<T> aggregate;
+	private AvgSumPartialAggregate<R> aggregate;
 	
 //	private T prevObj;
 	private long prevTime = -1;
 	private long lastTupleSend;
-	private T lastObjectSend;
+	private R lastObjectSend;
 	private int lastPortSend;
 	
 	private boolean isSelectivityNull = false;
@@ -67,14 +67,14 @@ public class UpdateRateSinkAverageConformance<T extends IStreamObject<?>> extend
 	public UpdateRateSinkAverageConformance(ISLAViolationEventDistributor dist,
 			SLA sla, IPhysicalQuery query) {
 		super(dist, sla, query);
-		this.aggregate = new AvgSumPartialAggregate<T>(0.0, 0);
+		this.aggregate = new AvgSumPartialAggregate<R>(0.0, 0);
 	}
 	
 	/**
 	 * copy constructor, required for clone method
 	 * @param conformance object to copy
 	 */
-	private UpdateRateSinkAverageConformance(UpdateRateSinkAverageConformance<T> conformance) {
+	private UpdateRateSinkAverageConformance(UpdateRateSinkAverageConformance<R, W> conformance) {
 		super(conformance);
 		this.aggregate = conformance.aggregate.clone();
 	}
@@ -106,7 +106,7 @@ public class UpdateRateSinkAverageConformance<T extends IStreamObject<?>> extend
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(R object, int port) {
 //		super.process_next(object, port);
 		
 		long diff = 0;
@@ -126,8 +126,8 @@ public class UpdateRateSinkAverageConformance<T extends IStreamObject<?>> extend
 		tuple.addAttributeValue(1, diff);
 		tuple.addAttributeValue(2, getConformance() >= this.getSLA().getMetric().getValue());
 		
-//		super.process_next((T) tuple, port);
-		super.process_next(object, port);
+		super.process_next((R) tuple, port);
+//		super.process_next(object, port);
 		
 //		if (this.prevObj != null) {
 //			IMetaAttribute currMetadata = object.getMetadata();
@@ -211,10 +211,10 @@ public class UpdateRateSinkAverageConformance<T extends IStreamObject<?>> extend
 	private void parseQuery(IPhysicalOperator operator) {
 		if (operator.isSink()) {
 			@SuppressWarnings("unchecked")
-			ISink<T> sink = (ISink<T>) operator;
-			Collection<PhysicalSubscription<ISource<? extends T>>> sources = sink
+			ISink<R> sink = (ISink<R>) operator;
+			Collection<PhysicalSubscription<ISource<? extends R>>> sources = sink
 					.getSubscribedToSource();
-			for (PhysicalSubscription<ISource<? extends T>> sub : sources) {
+			for (PhysicalSubscription<ISource<? extends R>> sub : sources) {
 				if (sub.getTarget().isSink()) {
 					if (getSelectivityMetadata(sub.getTarget()) == 0.0) {
 						isSelectivityNull = true;
@@ -255,8 +255,13 @@ public class UpdateRateSinkAverageConformance<T extends IStreamObject<?>> extend
 	 * copy object
 	 */
 	@Override
-	public AbstractSink<T> clone() {
-		return new UpdateRateSinkAverageConformance<T>(this);
+	public AbstractPipe<R, W> clone() {
+		return new UpdateRateSinkAverageConformance<R, W>(this);
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 
 }

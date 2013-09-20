@@ -6,12 +6,17 @@
       <dashboardPart
             class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLACostMonitoringDashboardPart"
             configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLACostMonitoringConfigurer"
-            name="SLACostMonitoring">
+            name="SLA Cost Monitoring">
       </dashboardPart>
       <dashboardPart
-            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAViolationsDashboardPart"
-            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAViolationsConfigurer"
-            name="SLAViolationsDashboardPart">
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceVisualizationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceVisualizationConfigurer"
+            name="SLA UpdateRateSource Visualization">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceViolationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceViolationConfigurer"
+            name="SLA UpdateRateSource Violation">
       </dashboardPart>
    </extension>
 

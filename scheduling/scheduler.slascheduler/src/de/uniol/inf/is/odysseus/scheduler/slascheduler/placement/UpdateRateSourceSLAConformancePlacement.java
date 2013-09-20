@@ -20,8 +20,6 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -53,7 +51,7 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 			for (IPhysicalOperator source : sources) {
 				if (source.isSource()) {
 					ISubscribable subscribable = (ISubscribable) source;
-					((IOwnedOperator) conformance).addOwner(source.getOwner());
+//					((IOwnedOperator) conformance).addOwner(source.getOwner());
 					subscribable.connectSink(conformance, 0, 0,
 							source.getOutputSchema());
 					

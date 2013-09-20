@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -32,13 +32,13 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
  * 
  * @param <T>
  */
-public class UpdateRateSourceSingleConformance<T extends IStreamObject<?>> extends AbstractSLaConformance<T> {
+public class UpdateRateSourceSingleConformance<R extends IStreamObject<?>, W extends IStreamObject<?>> extends AbstractSLAPipeConformance<R, W> {
 	/**
 	 * the highest measured update rate
 	 */
 	private double maxUpdateRate;
 	
-	private T prevObj;
+	private R prevObj;
 	
 	/**
 	 * creates a new sla conformance for metric update rate and scope single
@@ -60,7 +60,7 @@ public class UpdateRateSourceSingleConformance<T extends IStreamObject<?>> exten
 	 * copy constructor, required for clone method
 	 * @param conformance object to copy
 	 */
-	private UpdateRateSourceSingleConformance(UpdateRateSourceSingleConformance<T> conformance) {
+	private UpdateRateSourceSingleConformance(UpdateRateSourceSingleConformance<R, W> conformance) {
 		super(conformance);
 		this.maxUpdateRate = conformance.maxUpdateRate;
 	}
@@ -86,7 +86,7 @@ public class UpdateRateSourceSingleConformance<T extends IStreamObject<?>> exten
 	 * measures the update rate and saves it, if it exceeds the current maximum
 	 */
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(R object, int port) {
 		super.process_next(object, port);
 		
 		long diff = 0;
@@ -122,12 +122,17 @@ public class UpdateRateSourceSingleConformance<T extends IStreamObject<?>> exten
 	}
 
 	@Override
-	public AbstractSink<T> clone() {
-		return new UpdateRateSourceSingleConformance<T>(this);
+	public AbstractPipe<R, W> clone() {
+		return new UpdateRateSourceSingleConformance<R, W>(this);
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// nothing to do
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 }

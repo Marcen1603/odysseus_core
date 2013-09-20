@@ -50,7 +50,7 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 			if (root.isSource()) {
 				LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
 				ISubscribable subscribable = latencyCalc;
-				((IOwnedOperator) conformance).addOwner(root.getOwner());
+//				((IOwnedOperator) conformance).addOwner(root.getOwner());
 				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
 				
 				subscribable = (ISubscribable) root;

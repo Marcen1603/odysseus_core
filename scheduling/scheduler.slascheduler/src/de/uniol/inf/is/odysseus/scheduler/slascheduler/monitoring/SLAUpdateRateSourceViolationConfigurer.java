@@ -7,10 +7,10 @@ import org.eclipse.swt.widgets.Composite;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 
-public class SLAViolationsConfigurer extends AbstractDashboardPartConfigurer<SLAViolationsDashboardPart> {
+public class SLAUpdateRateSourceViolationConfigurer extends AbstractDashboardPartConfigurer<SLAUpdateRateSourceViolationDashboardPart> {
 
 	@Override
-	public void init(SLAViolationsDashboardPart dashboardPartToConfigure,
+	public void init(SLAUpdateRateSourceViolationDashboardPart dashboardPartToConfigure,
 			Collection<IPhysicalOperator> roots) {}
 
 	@Override

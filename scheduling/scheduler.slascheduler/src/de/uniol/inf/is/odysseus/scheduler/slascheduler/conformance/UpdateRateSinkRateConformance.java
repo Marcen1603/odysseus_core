@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -38,8 +38,8 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
  * 
  * @param <T>
  */
-public class UpdateRateSinkRateConformance<T extends IStreamObject<?>> extends
-		AbstractSLaConformance<T> {
+public class UpdateRateSinkRateConformance<R extends IStreamObject<?>, W extends IStreamObject<?>> extends
+		AbstractSLAPipeConformance<R, W> {
 	/**
 	 * counts the number of violating the specified update rate
 	 */
@@ -55,7 +55,7 @@ public class UpdateRateSinkRateConformance<T extends IStreamObject<?>> extends
 
 	private long prevTime = -1;
 	private long lastTupleSend;
-	private T lastObjectSend;
+	private R lastObjectSend;
 	private int lastPortSend;
 
 	private boolean isSelectivityNull = false;
@@ -87,7 +87,7 @@ public class UpdateRateSinkRateConformance<T extends IStreamObject<?>> extends
 	 *            object to copy
 	 */
 	private UpdateRateSinkRateConformance(
-			UpdateRateSinkRateConformance<T> conformance) {
+			UpdateRateSinkRateConformance<R, W> conformance) {
 		super(conformance);
 		this.numberOfViolations = conformance.numberOfViolations;
 		this.totalNumber = conformance.totalNumber;
@@ -120,7 +120,7 @@ public class UpdateRateSinkRateConformance<T extends IStreamObject<?>> extends
 	 * measures the update rate and counts how often it exceeds the threshold
 	 */
 	@Override
-	protected void process_next(T object, int port) {
+	protected void process_next(R object, int port) {
 		super.process_next(object, port);
 
 		long diff = 0;
@@ -176,10 +176,10 @@ public class UpdateRateSinkRateConformance<T extends IStreamObject<?>> extends
 	private void parseQuery(IPhysicalOperator operator) {
 		if (operator.isSink()) {
 			@SuppressWarnings("unchecked")
-			ISink<T> sink = (ISink<T>) operator;
-			Collection<PhysicalSubscription<ISource<? extends T>>> sources = sink
+			ISink<R> sink = (ISink<R>) operator;
+			Collection<PhysicalSubscription<ISource<? extends R>>> sources = sink
 					.getSubscribedToSource();
-			for (PhysicalSubscription<ISource<? extends T>> sub : sources) {
+			for (PhysicalSubscription<ISource<? extends R>> sub : sources) {
 				if (sub.getTarget().isSink()) {
 					if (getSelectivityMetadata(sub.getTarget()) == 0.0) {
 						isSelectivityNull = true;
@@ -216,8 +216,13 @@ public class UpdateRateSinkRateConformance<T extends IStreamObject<?>> extends
 	}
 
 	@Override
-	public AbstractSink<T> clone() {
-		return new UpdateRateSinkRateConformance<T>(this);
+	public AbstractPipe<R, W> clone() {
+		return new UpdateRateSinkRateConformance<R, W>(this);
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.NEW_ELEMENT;
 	}
 
 }

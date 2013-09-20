@@ -61,7 +61,7 @@ public class UpdateRateSinkSLAConformancePlacement implements
 				if (calculateTupleCosts) {
 					TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
 					subscribable = costCalc;
-					((IOwnedOperator) conformance).addOwner(root.getOwner());
+//					((IOwnedOperator) conformance).addOwner(root.getOwner());
 					subscribable.connectSink(conformance, 0, 0,
 							root.getOutputSchema());
 
