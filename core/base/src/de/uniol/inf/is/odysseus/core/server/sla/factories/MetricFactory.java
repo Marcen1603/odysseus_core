@@ -34,6 +34,7 @@ public class MetricFactory {
 	public static final String METRIC_UPDATERATESINK = "updaterate-sink";
 
 	public Metric<?> buildMetric(String metricID, double value, Enum<?> unit) {
+		System.out.println("buildMetric reached");
 		try {
 			if (METRIC_ACCURACY.equals(metricID)) {
 				return new Accuracy(value, (RatioUnit)unit);
