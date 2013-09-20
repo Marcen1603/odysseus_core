@@ -52,37 +52,46 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		setMessage("Configure Operator");
-		setTitle("Operator "+operatorInformation.getOperatorName());
+		setTitle("Operator " + operatorInformation.getOperatorName());
 		ParameterWidgetFactory widgetFactory = new ParameterWidgetFactory();
 
 		// sort by name ascending
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
-		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		TreeMap<LogicalParameterInformation, Object> sortedCopy = new TreeMap<LogicalParameterInformation, Object>(new Comparator<LogicalParameterInformation>() {
 
 			@Override
 			public int compare(LogicalParameterInformation o1, LogicalParameterInformation o2) {
-				return o1.getName().compareTo(o2.getName());				
+				return o1.getName().compareTo(o2.getName());
 			}
 		});
 		sortedCopy.putAll(parameterValues);
 		parameterValues = sortedCopy;
-		
+
 		// populate widgets
 		for (final Entry<LogicalParameterInformation, Object> param : parameterValues.entrySet()) {
 			Label label = new Label(container, SWT.NONE);
-			label.setText(param.getKey().getName());			
-			IParameterWidget widget = widgetFactory.createParameterWidget(param.getKey().getParameterClass());			
+			
+			if (param.getKey().isMandatory()) {
+				if (param.getValue() == null || param.getValue().toString().isEmpty()) {
+					label.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+				} else {
+					label.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
+				}
+
+			} else {
+				label.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+			}
+
+			label.setText(param.getKey().getName());
+			IParameterWidget widget = widgetFactory.createParameterWidget(param.getKey().getParameterClass());
 			Control control = widget.createWidget(container, param.getKey(), param.getValue());
 			controls.put(param.getKey(), widget);
-			
+
 			GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);
 			gd_dataFolderText.widthHint = 287;
 			control.setLayoutData(gd_dataFolderText);
-			
-			
-			
 
 		}
 
@@ -90,10 +99,10 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected void okPressed() {		
+	protected void okPressed() {
 		this.parameterValues.clear();
-		for(Entry<LogicalParameterInformation, IParameterWidget> entry : this.controls.entrySet()){			
-			this.parameterValues.put(entry.getKey(), entry.getValue().getValue());			
+		for (Entry<LogicalParameterInformation, IParameterWidget> entry : this.controls.entrySet()) {
+			this.parameterValues.put(entry.getKey(), entry.getValue().getValue());
 		}
 		super.okPressed();
 	}

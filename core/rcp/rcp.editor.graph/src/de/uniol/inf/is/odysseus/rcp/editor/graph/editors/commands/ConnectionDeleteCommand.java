@@ -24,44 +24,28 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  * @author DGeesen
  * 
  */
-public class ConnectionCreateCommand extends Command {
+public class ConnectionDeleteCommand extends Command {
 	private OperatorNode source;
 	private OperatorNode target;
-	private Connection connection;	
-
-	public void setSource(OperatorNode source) {
-		this.source = source;
-	}
-
-	public void setTarget(OperatorNode target) {
-		this.target = target;
-	}
+	private Connection connection;
 
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
 
-	public boolean canExecute() {
-		if(source == null || target == null){
-			return false;
-		}
-		if(source==target){
-			return false;
-		}
-		if(target.getOperatorInformation().getMaxPorts()==target.getTargetConnections().size()){
-			return false;
-		}
-		return true;
-	}
-
 	public void execute() {
-		connection.setSource(source);
-		connection.setTarget(target);
-	}
-
-	public void undo() {
+		if (source == null) {
+			source = connection.getSource();
+		}
+		if (target == null) {
+			target = connection.getTarget();
+		}
 		connection.setSource(null);
 		connection.setTarget(null);
 	}
 
+	public void undo() {
+		connection.setSource(source);
+		connection.setTarget(target);
+	}
 }

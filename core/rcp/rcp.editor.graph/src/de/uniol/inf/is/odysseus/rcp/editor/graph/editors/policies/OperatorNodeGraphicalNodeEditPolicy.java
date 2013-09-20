@@ -21,6 +21,7 @@ import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
 
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands.ConnectionCreateCommand;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands.ConnectionReconnectCommand;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
@@ -28,7 +29,9 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  * @author DGeesen
  * 
  */
-public class OpertorNodeEditPolicy extends GraphicalNodeEditPolicy {
+public class OperatorNodeGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
+	
+	
 	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = new ConnectionCreateCommand();
 		result.setSource((OperatorNode) getHost().getModel());
@@ -36,7 +39,7 @@ public class OpertorNodeEditPolicy extends GraphicalNodeEditPolicy {
 		request.setStartCommand(result);
 		return result;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -56,8 +59,11 @@ public class OpertorNodeEditPolicy extends GraphicalNodeEditPolicy {
 	 */
 	@Override
 	protected Command getReconnectTargetCommand(ReconnectRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection conn = (Connection)request.getConnectionEditPart().getModel();
+        OperatorNode targetNode = (OperatorNode)getHost().getModel();
+        ConnectionReconnectCommand cmd = new ConnectionReconnectCommand(conn);
+        cmd.setNewTargetNode(targetNode);       
+        return cmd;
 	}
 
 	/*
@@ -67,8 +73,11 @@ public class OpertorNodeEditPolicy extends GraphicalNodeEditPolicy {
 	 */
 	@Override
 	protected Command getReconnectSourceCommand(ReconnectRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		Connection conn = (Connection)request.getConnectionEditPart().getModel();
+		OperatorNode sourceNode = (OperatorNode)getHost().getModel();
+        ConnectionReconnectCommand cmd = new ConnectionReconnectCommand(conn);
+        cmd.setNewSourceNode(sourceNode);       
+        return cmd;
 	}
 
 }

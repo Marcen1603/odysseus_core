@@ -5,12 +5,12 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphEditor"
+            class="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.MultiPageGraphEditor"
             contributorClass="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphEditorContributor"
             default="true"
             extensions="grp"
             icon="icons/graph.png"
-            id="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphEditor"
+            id="de.uniol.inf.is.odysseus.rcp.editor.graph.editors.MultiPageGraphEditor"
             name="Operator Graph Editor">
       </editor>
    </extension>

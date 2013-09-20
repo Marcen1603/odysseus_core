@@ -29,7 +29,8 @@ public class Connection {
 	}
 
 	public void setSource(OperatorNode source) {
-		if (source == this.source) return;
+		if (source == this.source)
+			return;
 		if (this.source != null) {
 			this.source.removeSourceConnection(this);
 		}
@@ -38,13 +39,14 @@ public class Connection {
 			source.addSourceConnection(this);
 		}
 	}
-	
+
 	public OperatorNode getTarget() {
 		return target;
 	}
-	
+
 	public void setTarget(OperatorNode target) {
-		if (target == this.target) return;
+		if (target == this.target)
+			return;
 		if (this.target != null) {
 			this.target.removeTargetConnection(this);
 		}
@@ -53,5 +55,10 @@ public class Connection {
 			target.addTargetConnection(this);
 		}
 	}
+
+	public void reconnect(OperatorNode sourceNode, OperatorNode targetNode) {
+		setTarget(targetNode);
+		setSource(sourceNode);
+	}	
 
 }

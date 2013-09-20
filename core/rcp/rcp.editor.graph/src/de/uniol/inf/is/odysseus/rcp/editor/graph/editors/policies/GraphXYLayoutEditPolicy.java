@@ -39,6 +39,7 @@ public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 		return changeConstraintCommand;
 	}
 
+		
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -18,9 +18,12 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
+import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.ConnectionEditPolicy;
 
 /**
  * @author DGeesen
@@ -32,8 +35,10 @@ public class ConnectionEditPart extends AbstractConnectionEditPart {
 	}
 
 	protected void createEditPolicies() {
+		installEditPolicy(EditPolicy.CONNECTION_ROLE, new ConnectionEditPolicy());
+		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());		
 	}
-
+	
 	protected IFigure createFigure() {
 		PolylineConnection con = new PolylineConnection();
 		con.setLineWidth(2);

@@ -39,7 +39,7 @@ public class StringParameterWidget extends AbstractParameterWidget{
 	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
 		String currentStr = "";
 		if(currentValue!=null){
-			currentValue.toString();
+			currentStr = currentValue.toString();
 		}
 		
 		text = new Text(parent, SWT.BORDER);

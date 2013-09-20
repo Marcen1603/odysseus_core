@@ -35,7 +35,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.OperatorSetting
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures.OperatorNodeFigure;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.OpertorNodeEditPolicy;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.OperatorNodeComponentEditPolicy;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.OperatorNodeGraphicalNodeEditPolicy;
 
 /**
  * @author DGeesen
@@ -51,7 +52,8 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 	}
 
 	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new OpertorNodeEditPolicy());
+		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new OperatorNodeGraphicalNodeEditPolicy());
+		installEditPolicy(EditPolicy.COMPONENT_ROLE, new OperatorNodeComponentEditPolicy());
 	}
 
 	public void refreshVisuals() {
@@ -90,14 +92,13 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 		return ((OperatorNode) getModel()).getTargetConnections();
 	}
 
-	
 	@Override
 	public void performRequest(Request req) {
 		OperatorNode operatorNode = ((OperatorNode) getModel());
 		if (req.getType() == RequestConstants.REQ_OPEN) {
 			OperatorSettingsDialog dialog = new OperatorSettingsDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-			dialog.setOperator(operatorNode.getOperatorInformation());	
-			dialog.setParameterValues(operatorNode.getParameterValues());			
+			dialog.setOperator(operatorNode.getOperatorInformation());
+			dialog.setParameterValues(operatorNode.getParameterValues());
 			if (Window.OK == dialog.open()) {
 				operatorNode.setParameterValues(dialog.getParameterValues());
 				refreshVisuals();
@@ -105,37 +106,45 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 		}
 		super.performRequest(req);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef.ConnectionEditPart)
 	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {
-		return ((OperatorNodeFigure)getFigure()).getConnectionAnchor();
+		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef.ConnectionEditPart)
 	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
-		return ((OperatorNodeFigure)getFigure()).getConnectionAnchor();
+		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef.Request)
 	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(Request request) {
-		return ((OperatorNodeFigure)getFigure()).getConnectionAnchor();
+		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef.Request)
 	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {
-		return ((OperatorNodeFigure)getFigure()).getConnectionAnchor();
+		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
 
 }

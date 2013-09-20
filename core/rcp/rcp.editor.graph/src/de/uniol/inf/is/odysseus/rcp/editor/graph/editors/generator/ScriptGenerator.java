@@ -51,6 +51,7 @@ public class ScriptGenerator {
 		for (OperatorNode node : graph.getNodes()) {
 			String name = node.getOperatorInformation().getOperatorName() + i;
 			names.put(node, name);
+			i++;
 		}
 		
 		// the use the names to connect all
