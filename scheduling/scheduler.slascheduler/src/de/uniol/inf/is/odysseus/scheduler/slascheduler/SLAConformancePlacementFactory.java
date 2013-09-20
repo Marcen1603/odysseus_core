@@ -17,7 +17,11 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSource;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.placement.LatencySLAConformancePlacement;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.placement.UpdateRateSinkSLAConformancePlacement;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.placement.UpdateRateSourceSLAConformancePlacement;
 
 /**
  * Factory for building strategies to place sla conformance operators in
@@ -40,6 +44,10 @@ public class SLAConformancePlacementFactory {
 	public ISLAConformancePlacement buildSLAConformancePlacement(SLA sla) {
 		if (sla.getMetric() instanceof Latency) {
 			return new LatencySLAConformancePlacement();
+		} else if (sla.getMetric() instanceof UpdateRateSource) {
+			return new UpdateRateSourceSLAConformancePlacement();
+		} else if (sla.getMetric() instanceof UpdateRateSink) {
+			return new UpdateRateSinkSLAConformancePlacement();
 		}
         throw new RuntimeException(
         		"no placement for sla conformance operator "

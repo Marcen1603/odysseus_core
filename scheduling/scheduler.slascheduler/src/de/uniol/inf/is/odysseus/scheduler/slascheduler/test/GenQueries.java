@@ -365,7 +365,7 @@ public class GenQueries {
 	private static String createBuffer(int number, int subNumber) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("puffer").append(number).append(formatSubnumber(subNumber))
-				.append(" = buffer({type = 'Normal'},testinput").append(number)
+				.append(" = buffer({type = 'Normal'},System.testinput").append(number)
 				.append(formatSubnumber(subNumber)).append(")").append(NEWLINE);
 		statsNumBuffers++;
 		return sb.toString();

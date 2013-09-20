@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSource;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Average;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Number;
 import de.uniol.inf.is.odysseus.core.server.sla.scope.Rate;
@@ -26,6 +28,14 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyAverag
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyNumberConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencyRateConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.LatencySingleConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkSingleConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceSingleConformance;
 
 /**
  * Factory for building sla conformance objects
@@ -46,7 +56,6 @@ public class SLAConformanceFactory {
 	public ISLAConformance createSLAConformance(SLA sla, 
 			ISLAViolationEventDistributor distributor, IPhysicalQuery query) {
 		ISLAConformance conformance = null;
-
 		if (sla.getMetric() instanceof Latency) {
 			if (sla.getScope() instanceof Average) {
 				conformance = new LatencyAverageConformance(distributor, sla, 
@@ -59,6 +68,34 @@ public class SLAConformanceFactory {
 						query);
 			} else if (sla.getScope() instanceof Rate) {
 				conformance = new LatencyRateConformance(distributor, sla, 
+						query, sla.getMetric().getValue());
+			}
+		} else if (sla.getMetric() instanceof UpdateRateSource) {
+			if (sla.getScope() instanceof Average) {
+				conformance = new UpdateRateSourceAverageConformance(distributor, sla, 
+						query);
+			} else if (sla.getScope() instanceof Number) {
+				conformance = new UpdateRateSourceNumberConformance(distributor, sla, 
+						query, sla.getMetric().getValue());
+			} else if (sla.getScope() instanceof Single) {
+				conformance = new UpdateRateSourceSingleConformance(distributor, sla, 
+						query);
+			} else if (sla.getScope() instanceof Rate) {
+				conformance = new UpdateRateSourceRateConformance(distributor, sla, 
+						query, sla.getMetric().getValue());
+			}
+		} else if (sla.getMetric() instanceof UpdateRateSink) {
+			if (sla.getScope() instanceof Average) {
+				conformance = new UpdateRateSinkAverageConformance(distributor, sla, 
+						query);
+			} else if (sla.getScope() instanceof Number) {
+				conformance = new UpdateRateSinkNumberConformance(distributor, sla, 
+						query, sla.getMetric().getValue());
+			} else if (sla.getScope() instanceof Single) {
+				conformance = new UpdateRateSinkSingleConformance(distributor, sla, 
+						query);
+			} else if (sla.getScope() instanceof Rate) {
+				conformance = new UpdateRateSinkRateConformance(distributor, sla, 
 						query, sla.getMetric().getValue());
 			}
 		}

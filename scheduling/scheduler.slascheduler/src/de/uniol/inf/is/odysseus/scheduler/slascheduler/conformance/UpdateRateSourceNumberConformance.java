@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -93,8 +93,10 @@ public class UpdateRateSourceNumberConformance<T extends IStreamObject<?>> exten
 	 * measures the update rate and counts how often it exceeds the threshold
 	 */
 	@Override
-	public void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		super.process_next(object, port);
+		
+		long diff = 0;
 		if (this.prevObj != null) {
 			IMetaAttribute currMetadata = object.getMetadata();
 			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
@@ -102,7 +104,7 @@ public class UpdateRateSourceNumberConformance<T extends IStreamObject<?>> exten
 			if (currMetadata instanceof ILatency && prevMetadata instanceof ILatency) {
 				ILatency currLatency = (ILatency) currMetadata;
 				ILatency prevLatency = (ILatency) prevMetadata;
-				long diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
+				diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
 				if (diff > this.updateRateThreshold) {
 					this.numberOfViolations++;
 				}
@@ -111,17 +113,19 @@ public class UpdateRateSourceNumberConformance<T extends IStreamObject<?>> exten
 			}
 		}
 		this.prevObj = object;
+		
+		Tuple<?> tuple = new Tuple<>(3, false);
+		tuple.addAttributeValue(0, this.getOwner().get(0).getID());
+		tuple.addAttributeValue(1, diff);
+		tuple.addAttributeValue(2, getConformance() >= this.getSLA().getMetric().getValue());
+		
+//		super.process_next((T) tuple, port);
 	}
 
 	@Override
 	public double predictConformance() {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	@Override
-	protected void process_open() throws OpenFailedException {
-		// TODO Auto-generated method stub
 	}
 
 	@Override

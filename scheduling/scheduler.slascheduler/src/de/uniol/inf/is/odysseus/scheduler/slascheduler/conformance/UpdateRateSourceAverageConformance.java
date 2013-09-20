@@ -15,10 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
@@ -91,9 +91,10 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 	/**
 	 * measures the average update rate
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public void process_next(T object, int port) {
-		super.process_next(object, port);
+	protected void process_next(T object, int port) {
+		long diff = 0;
 		if (this.prevObj != null) {
 			IMetaAttribute currMetadata = object.getMetadata();
 			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
@@ -101,24 +102,34 @@ public class UpdateRateSourceAverageConformance<T extends IStreamObject<?>> exte
 			if (currMetadata instanceof ILatency && prevMetadata instanceof ILatency) {
 				ILatency currLatency = (ILatency) currMetadata;
 				ILatency prevLatency = (ILatency) prevMetadata;
-				long diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
+				diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
 				this.aggregate.addAggValue(nanoToMilli(diff));
 			} else {
 				throw new RuntimeException("Latency missing");
 			}
 		}
 		this.prevObj = object;
+		
+		int attributeCount = ((Tuple<?>)object).getAttributes().length;
+		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
+		((Tuple<?>)object).append(diff, false);
+		((Tuple<?>)object).append(getConformance() >= this.getSLA().getMetric().getValue(), false);
+		int[] attrList = new int[3];
+		int index = 0;
+		for (int i = attributeCount; i < attributeCount+3; i++) {
+			attrList[index] = i;
+			index++;
+		}
+		Tuple<?> tuple = ((Tuple<?>)object).restrict(attrList, true);
+		
+		super.process_next((T) tuple, port);
+//		super.process_next(object, port);
 	}
 
 	@Override
 	public double predictConformance() {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	@Override
-	protected void process_open() throws OpenFailedException {
-		// TODO Auto-generated method stub
 	}
 
 	/**

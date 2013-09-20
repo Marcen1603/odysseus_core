@@ -15,8 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -30,49 +35,63 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaCo
  */
 public class UpdateRateSourceSLAConformancePlacement implements ISLAConformancePlacement {
 
+	private List<Integer> conformancePlacedForQuery = new ArrayList<>();
+	
 	/**
-	 * places the given sla conformance operator at the root of the given
+	 * places the given sla conformance operator at the sources of the given
 	 * partial plan, assuming that one partial plan consists only of one query
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query,
+	public List<ISubscribable<?, ?>> placeSLAConformance(IPhysicalQuery query,
 			ISLAConformance conformance) {
 		
-		IPhysicalOperator source = query.getIteratableLeafSources().get(0);
-		if (source.isSource()) {
-			ISubscribable subscribable = (ISubscribable) source;
-			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+		List<ISubscribable<?, ?>> subscribables = new ArrayList<>();
+		if (!conformancePlacedForQuery.contains(query.getID())) {
 
-			return subscribable;
+			List<IPhysicalOperator> sources = query.getLeafSources();
+			for (IPhysicalOperator source : sources) {
+				if (source.isSource()) {
+					ISubscribable subscribable = (ISubscribable) source;
+					((IOwnedOperator) conformance).addOwner(source.getOwner());
+					subscribable.connectSink(conformance, 0, 0,
+							source.getOutputSchema());
+					
+					List<IPhysicalOperator> list = new ArrayList<>(query.getRoots());
+					list.add((IPhysicalOperator)conformance);
+					query.setRoots(list);
+					subscribables.add(subscribable);
+				} else {
+					throw new RuntimeException(
+							"Cannot connect SLA conformance operator to query source: "
+									+ source);
+				}
+			}
+			
+			conformancePlacedForQuery.add(query.getID());
 		}
-		throw new RuntimeException(
-				"Cannot connect SLA conformance operator to query root: " + source);
-	
 		
-//		List<IIterableSource<?>> sources = query.getLeafSources();
-//		ISubscribable subscribable = null;
-//		for (IIterableSource<?> source : sources) {
-//			if (source.isSource()) {
-//				subscribable = (ISubscribable) source;
-//				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
-//			} else
-//				throw new RuntimeException(
-//					"Cannot connect SLA conformance operator to query source: " + source);
-//		}
-//		
-//		if (subscribable != null)
+		return subscribables;
+		
+//		IPhysicalOperator source = query.getLeafSources().get(0);
+//		if (source.isSource()) {
+//			ISubscribable subscribable = (ISubscribable) source;
+//			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+//
 //			return subscribable;
-//		else
-//			throw new RuntimeException("Cannot connect SLA conformance operator to query source operators");
+//		}
+//		throw new RuntimeException(
+//				"Cannot connect SLA conformance operator to query root: " + source);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	@Override
-	public void removeSLAConformance(ISubscribable connectionPoint,
+	public void removeSLAConformance(List<ISubscribable<?, ?>> connectionPoints,
 			ISLAConformance conformance) {
-		connectionPoint.disconnectSink(conformance, 0, 0,
-				((AbstractSLaConformance<?>) conformance).getOutputSchema());
+		for (ISubscribable connectionPoint : connectionPoints) {
+			connectionPoint.disconnectSink(conformance, 0, 0,
+					((AbstractSLaConformance<?>) conformance).getOutputSchema());
+		}
 	}
 
 }

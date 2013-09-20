@@ -15,15 +15,21 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
-//import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+//import de.uniol.inf.is.odysseus.intervalapproach.AssureHeartbeatPO;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
-
-//import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
 
 /**
  * Placement strategy for UpdateRateSink based sla conformance  operators
@@ -42,31 +48,68 @@ public class UpdateRateSinkSLAConformancePlacement implements
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query,
+	public List<ISubscribable<?, ?>> placeSLAConformance(IPhysicalQuery query,
 			ISLAConformance conformance) {
 		calculateTupleCosts = false;
 		// it is expected that there is only one query per partial plan!
+		List<ISubscribable<?, ?>> subscribables = new ArrayList<>();
 		// get sinks of query
-		IPhysicalOperator root = query.getRoots().get(0);
-		if (root.isSource()) {
-			ISubscribable subscribable;
-//			if (calculateTupleCosts) {
-//				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
-//				subscribable = costCalc;
-//				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-//
-//				subscribable = (ISubscribable) root;
-//				subscribable.connectSink(costCalc, 0, 0, root.getOutputSchema());
-//			} else {
-				subscribable = (ISubscribable) root;
-				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-//			}
+		List<IPhysicalOperator> roots = query.getRoots();
+		for (IPhysicalOperator root : roots) {
+			if (root.isSource()) {
+				ISubscribable subscribable;
+				if (calculateTupleCosts) {
+					TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
+					subscribable = costCalc;
+					((IOwnedOperator) conformance).addOwner(root.getOwner());
+					subscribable.connectSink(conformance, 0, 0,
+							root.getOutputSchema());
 
-			return subscribable;
+					subscribable = (ISubscribable) root;
+					((IOwnedOperator) costCalc).addOwner(root.getOwner());
+					subscribable.connectSink(costCalc, 0, 0,
+							root.getOutputSchema());
+				} else {
+					subscribable = (ISubscribable) root;
+					((IOwnedOperator) conformance).addOwner(root.getOwner());
+					subscribable.connectSink(conformance, 0, 0,
+							root.getOutputSchema());
+				}
+				subscribables.add(subscribable);
+			} else if (root.isSink() && !root.isSource()) {
+				// kann eine Senke mehrere Vorgaenger haben??? yes she can!
+				for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) root)
+						.getSubscribedToSource()) {
+					ISource source = s.getTarget();
+					ISubscribable subscribable;
+					if (calculateTupleCosts) { //add AssureHeartBeat
+//						AssureHeartbeatPO<?> heartbeat = new AssureHeartbeat();
+						TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
+						subscribable = costCalc;
+						((IOwnedOperator) conformance).addOwner(source.getOwner());
+						subscribable.connectSink(conformance, 0, 0,
+								source.getOutputSchema());
+						
+						subscribable = (ISubscribable) source;
+						((IOwnedOperator) costCalc).addOwner(source.getOwner());
+						subscribable.connectSink(costCalc, 0, 0,
+								source.getOutputSchema());
+					} else {
+						subscribable = (ISubscribable) source;
+						((IOwnedOperator) conformance).addOwner(source.getOwner());
+//						((ISink)conformance).open(source.getOwner().get(0));
+						subscribable.connectSink(conformance, 0, 0,
+								source.getOutputSchema());
+					}
+					subscribables.add(subscribable);
+				}
+			}
 		}
-		throw new RuntimeException(
-				"Cannot connect SLA conformance operator to query root: "
-						+ root);
+		return subscribables;
+		
+//		throw new RuntimeException(
+//				"Cannot connect SLA conformance operator to query root: "
+//						+ root);
 	}
 
 	/**
@@ -75,10 +118,12 @@ public class UpdateRateSinkSLAConformancePlacement implements
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void removeSLAConformance(ISubscribable connectionPoint,
+	public void removeSLAConformance(List<ISubscribable<?, ?>> connectionPoints,
 			ISLAConformance conformance) {
-		connectionPoint.disconnectSink(conformance, 0, 0,
-				((AbstractSLaConformance<?>) conformance).getOutputSchema());
+		for (ISubscribable connectionPoint : connectionPoints) {
+			connectionPoint.disconnectSink(conformance, 0, 0,
+					((AbstractSLaConformance<?>) conformance).getOutputSchema());
+		}
 	}
 
 }

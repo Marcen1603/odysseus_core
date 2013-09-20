@@ -463,15 +463,15 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>>
 
 	/**
 	 * Liefert das Metadatum "median_processing_time" zum gegebenen physischen
-	 * Operator zurück (in Sekunden). Falls das Metadatum nichr vorhanden ist,
-	 * oder dessen Rückgabewert NaN oder <code>null</code> ist, wird -1
-	 * zurückgegeben.
+	 * Operator zur��ck (in Sekunden). Falls das Metadatum nichr vorhanden ist,
+	 * oder dessen R��ckgabewert NaN oder <code>null</code> ist, wird -1
+	 * zur��ckgegeben.
 	 * 
 	 * @param operator
-	 *            Physischer Operator, dessen Prozessorzeit zurückgegeben
+	 *            Physischer Operator, dessen Prozessorzeit zur��ckgegeben
 	 *            werden soll.
 	 * @return Median der Prozessorzeiten des physischen Operators, oder -1,
-	 *         falls das Metadatum nicht existiert oder (noch) ungültig ist
+	 *         falls das Metadatum nicht existiert oder (noch) ung��ltig ist
 	 */
 
 	public static double getMeanCPUTimeMetadataSeconds(
