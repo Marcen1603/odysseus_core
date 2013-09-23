@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation
  * @author DGeesen
  * 
  */
-public class IntegerParameterWidget extends AbstractParameterWidget {
+public class IntegerParameterPresentation extends AbstractParameterPresentation {
 
 	private Spinner sp;
 
@@ -38,15 +38,17 @@ public class IntegerParameterWidget extends AbstractParameterWidget {
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation)
 	 */
 	@Override
-	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {		
+	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
 		int val = 0;
 		if (currentValue != null) {
-			val = Integer.parseInt(currentValue.toString());			
+			val = Integer.parseInt(currentValue.toString());
 		}
 		sp = new Spinner(parent, SWT.BORDER);
 		sp.setSelection(val);
 		sp.addSelectionListener(new SelectionAdapter() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -54,9 +56,19 @@ public class IntegerParameterWidget extends AbstractParameterWidget {
 				setValue(sp.getSelection());
 				super.widgetSelected(e);
 			}
-		});		
-	
+		});
+
 		return sp;
-	}	
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(java.lang.Object)
+	 */
+	@Override
+	public String getPQLString(LogicalParameterInformation parameterInformation, Object value) {
+		return parameterInformation.getName() + "=" + String.valueOf(value);
+	}
 
 }

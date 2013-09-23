@@ -39,6 +39,12 @@ public class ClusteringAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -4053248940214364499L;
 
+	private static final List<String> CLUSTERER_VALUE_LIST = new ArrayList<>();
+	
+	static{
+		CLUSTERER_VALUE_LIST.add("kmeans");
+	}
+
 	private Map<String, String> options = new HashMap<>();
 
 	private String clustererName;
@@ -59,9 +65,13 @@ public class ClusteringAO extends AbstractLogicalOperator {
 		this.attributes = readingSchema;
 	}
 
-	@Parameter(name = "clusterer", type = StringParameter.class, possibleValues = {"kmeans"})
+	@Parameter(name = "clusterer", type = StringParameter.class, possibleValues = "getClustererValues")
 	public void setAlgorithmus(String clusterer) {
 		this.clustererName = clusterer;
+	}
+	
+	public List<String> getClustererValues(){
+		return CLUSTERER_VALUE_LIST;
 	}
 	
 

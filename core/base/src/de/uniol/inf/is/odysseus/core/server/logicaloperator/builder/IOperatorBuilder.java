@@ -31,6 +31,8 @@ public interface IOperatorBuilder extends Serializable {
 	public Set<IParameter<?>> getParameters();
 
 	public ILogicalOperator createOperator();
+	
+	public Class<? extends ILogicalOperator> getOperatorClass();
 
 	public boolean validate();
 

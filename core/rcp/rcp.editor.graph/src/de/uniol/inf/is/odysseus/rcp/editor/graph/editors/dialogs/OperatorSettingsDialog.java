@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.ParameterWidgetFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPresentationFactory;
 
 /**
  * @author DGeesen
@@ -43,7 +43,7 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 
 	private LogicalOperatorInformation operatorInformation;
 	private Map<LogicalParameterInformation, Object> parameterValues;
-	private Map<LogicalParameterInformation, IParameterWidget> controls = new HashMap<>();
+	private Map<LogicalParameterInformation, IParameterPresentation> controls = new HashMap<>();
 
 	public OperatorSettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -53,7 +53,7 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 	protected Control createDialogArea(final Composite parent) {
 		setMessage("Configure Operator");
 		setTitle("Operator " + operatorInformation.getOperatorName());
-		ParameterWidgetFactory widgetFactory = new ParameterWidgetFactory();
+		ParameterPresentationFactory widgetFactory = new ParameterPresentationFactory();
 
 		// sort by name ascending
 		Composite container = new Composite(parent, SWT.NONE);
@@ -85,7 +85,7 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 			}
 
 			label.setText(param.getKey().getName());
-			IParameterWidget widget = widgetFactory.createParameterWidget(param.getKey().getParameterClass());
+			IParameterPresentation widget = widgetFactory.createPresentation(param.getKey());
 			Control control = widget.createWidget(container, param.getKey(), param.getValue());
 			controls.put(param.getKey(), widget);
 
@@ -101,7 +101,7 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		this.parameterValues.clear();
-		for (Entry<LogicalParameterInformation, IParameterWidget> entry : this.controls.entrySet()) {
+		for (Entry<LogicalParameterInformation, IParameterPresentation> entry : this.controls.entrySet()) {
 			this.parameterValues.put(entry.getKey(), entry.getValue().getValue());
 		}
 		super.okPressed();

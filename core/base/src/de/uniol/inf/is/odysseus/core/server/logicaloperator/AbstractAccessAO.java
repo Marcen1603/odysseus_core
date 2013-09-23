@@ -100,11 +100,15 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return wrapper;
 	}
 
-	@Parameter(type = StringParameter.class, name = "DataHandler", optional = true, doc = "The name of the datahandler to use, e.g. Tuple or Document.")
+	@Parameter(type = StringParameter.class, name = "DataHandler", optional = true, possibleValues="getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
 		this.dataHandler = dataHandler;
 	}
 
+	public List<String> getDataHandlerValues(){
+		return DataHandlerRegistry.getHandlerNames();
+	}
+	
 	public String getDataHandler() {
 		return dataHandler;
 	}

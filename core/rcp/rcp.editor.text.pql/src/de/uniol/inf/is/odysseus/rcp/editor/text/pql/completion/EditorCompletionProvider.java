@@ -278,14 +278,14 @@ public class EditorCompletionProvider implements IEditorLanguagePropertiesProvid
 
 	private List<ICompletionProposal> buildParamValueProposal(IParameter<?> param, int offset, String prefix, String suffix, Point selection) {
 		List<ICompletionProposal> cp = new ArrayList<>();
-		for (String value : param.getPossibleValues()) {
-			if (selection.y > 0) {
-				cp.add(new CompletionProposal(value, selection.x, selection.y, value.length()));
-			} else {
-				String pvalue = getParamValue(param, -1, value);
-				cp.add(new CompletionProposal(pvalue, offset - prefix.length(), prefix.length() + suffix.length(), pvalue.length()));
-			}
-		}
+//		for (String value : param.getPossibleValues()) {
+//			if (selection.y > 0) {
+//				cp.add(new CompletionProposal(value, selection.x, selection.y, value.length()));
+//			} else {
+//				String pvalue = getParamValue(param, -1, value);
+//				cp.add(new CompletionProposal(pvalue, offset - prefix.length(), prefix.length() + suffix.length(), pvalue.length()));
+//			}
+//		}
 		return cp;
 	}
 

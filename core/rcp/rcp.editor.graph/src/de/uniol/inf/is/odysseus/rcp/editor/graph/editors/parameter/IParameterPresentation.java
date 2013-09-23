@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 
 /**
  * @author DGeesen
- * 
+ *
  */
-public class ParameterWidgetFactory {
-
-	public IParameterWidget createParameterWidget(Class<?> clazz) {
-		if (clazz.getName().equalsIgnoreCase("de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter")) {
-			return new IntegerParameterWidget();
-		}
-
-		return new StringParameterWidget();
-	}
-
+public interface IParameterPresentation{
+	
+	public Control createWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue);
+	public Object getValue();
+	public String getPQLString(LogicalParameterInformation parameterInformation, Object value);
 }

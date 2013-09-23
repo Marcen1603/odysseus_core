@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.logicaloperator;
 
+import java.util.List;
+
 /**
  * @author DGeesen
  *
@@ -26,6 +28,7 @@ public class LogicalParameterInformation {
 	private boolean list;
 	private String doc;
 	private boolean mandatory;
+	private List<String> possibleValues;	
 
 	public Class<?> getParameterClass() {
 		return parameterClass;
@@ -65,6 +68,14 @@ public class LogicalParameterInformation {
 
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
+	}
+
+	public List<String> getPossibleValues() {
+		return possibleValues;
+	}
+
+	public void setPossibleValues(List<String> possibleValues) {
+		this.possibleValues = possibleValues;
 	}
 
 }

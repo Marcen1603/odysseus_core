@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Graph;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPresentationFactory;
 
 /**
  * @author DGeesen
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 public class ScriptGenerator {
 
 	private Graph graph;
+	private ParameterPresentationFactory presentations = new ParameterPresentationFactory();
 //	private Map<String, String> properties;
 
 	private Map<OperatorNode, String> names = new HashMap<>();
@@ -88,9 +90,7 @@ public class ScriptGenerator {
 	}
 
 	private String paramToString(LogicalParameterInformation paramInfo, Object value) {
-		
-		
-		return paramInfo.getName() + "='" + value + "'";
+		return presentations.createPresentation(paramInfo).getPQLString(paramInfo, value);		
 	}
 
 }

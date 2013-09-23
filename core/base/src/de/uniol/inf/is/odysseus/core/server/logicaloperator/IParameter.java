@@ -53,6 +53,6 @@ public interface IParameter<T> extends Serializable {
 	public ISession getCaller();
 	public void clear();
 	public String getPQLString();
-	public List<String> getPossibleValues();
-	public void setPossibleValues(List<String> possibleValues);
+	public String getPossibleValueMethod();
+	public void setPossibleValueMethod(String possibleValueMethod);
 }

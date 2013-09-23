@@ -13,46 +13,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 
 /**
  * @author DGeesen
- *
+ * 
  */
-public class StringParameterWidget extends AbstractParameterWidget{
+public class BooleanParameterPresentation extends AbstractParameterPresentation {
 
-	private Text text;	
+	private Combo dropDown;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
 	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
-		String currentStr = "";
-		if(currentValue!=null){
-			currentStr = currentValue.toString();
+		Boolean newValue = null;
+		if (currentValue != null) {
+			newValue = (Boolean) currentValue;
 		}
-		
-		text = new Text(parent, SWT.BORDER);
-		text.setText(currentStr);
-		text.addModifyListener(new ModifyListener() {
-			
+		dropDown = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
+		if (!parameterInformation.isMandatory()) {
+			dropDown.add("");
+
+		}
+		dropDown.add("true");
+		dropDown.add("false");
+		if (newValue != null) {
+			if (newValue.equals(Boolean.TRUE)) {
+				dropDown.select(1);
+			} else if (newValue.equals(Boolean.FALSE)) {
+				dropDown.select(2);
+			}
+		} else {
+			dropDown.select(0);
+		}
+
+		dropDown.addModifyListener(new ModifyListener() {
+
 			@Override
 			public void modifyText(ModifyEvent e) {
-				setValue(text.getText());				
+				if (dropDown.getText().equals("true")) {
+					setValue(Boolean.TRUE);
+				} else if (dropDown.getText().equals("false")) {
+					setValue(Boolean.FALSE);
+				} else {
+					setValue(null);
+				}
 			}
 		});
-		return text;
-		
+		return dropDown;
+
 	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
+	 */
+	@Override
+	public String getPQLString(LogicalParameterInformation parameterInformation, Object value) {
+		return parameterInformation.getName() + "='" + String.valueOf(value)+"'";
+	}
+
+	
 
 }

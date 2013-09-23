@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,13 +64,14 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 
 				String name = parameterAnnotation.name();
 				String doc = parameterAnnotation.doc();
-				String[] possibleValues = parameterAnnotation.possibleValues();
+				String possibleValueMethod = parameterAnnotation.possibleValues();
+				
 				// remove 'set' from set method to get the property name,
 				// if no explicit name was set
 				name = (name.isEmpty() ? method.getName().substring(3) : name).toUpperCase();
 				parameter.setName(name);
 				parameter.setDoc(doc);
-				parameter.setPossibleValues(Arrays.asList(possibleValues));
+				parameter.setPossibleValueMethod(possibleValueMethod);				
 				REQUIREMENT requirement = parameterAnnotation.optional() ? REQUIREMENT.OPTIONAL : REQUIREMENT.MANDATORY;
 
 				parameter.setRequirement(requirement);
@@ -171,5 +171,13 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 	@Override
 	public GenericOperatorBuilder cleanCopy() {
 		return new GenericOperatorBuilder(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder#getOperatorClass()
+	 */
+	@Override
+	public Class<? extends ILogicalOperator> getOperatorClass() {
+		return this.operatorClass;
 	}	
 }

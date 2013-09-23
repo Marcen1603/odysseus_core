@@ -232,6 +232,6 @@ public interface IExecutor extends IClientPlanManager{
 	// available operator informations
 	public List<String> getOperatorNames(ISession caller);
 	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller);
-	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
+	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);	
 
 }

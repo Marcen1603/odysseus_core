@@ -666,8 +666,7 @@ public class WebserviceServer {
 		info.setRequirement(ParameterInfo.REQUIREMENT.valueOf(parameter
 				.getRequirement().name()));
 		info.setDeprecated(parameter.isDeprecated());
-		info.setMandatory(parameter.isMandatory());
-		info.setPossibleValues(parameter.getPossibleValues());
+		info.setMandatory(parameter.isMandatory());		
 		info.setDoc(parameter.getDoc());
 		String dataType = parameter.getClass().getSimpleName();
 		info.setDataType(dataType);
