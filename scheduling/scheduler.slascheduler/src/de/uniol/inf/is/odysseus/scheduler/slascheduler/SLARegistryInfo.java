@@ -46,7 +46,7 @@ public class SLARegistryInfo {
 	/**
 	 * the operator of a partial plan, the conformance object is connected to
 	 */
-	private List<ISubscribable<?, ?>> connectionPoints;
+	private ISubscribable<?, ?> connectionPoint;
 	/**
 	 * list of buffers owned by the query
 	 */
@@ -125,15 +125,15 @@ public class SLARegistryInfo {
 	 * sets the new connection point of the sla conformance object
 	 * @param connectionPoint the new connection point
 	 */
-	public void setConnectionPoint(List<ISubscribable<?, ?>> connectionPoints) {
-		this.connectionPoints = connectionPoints;
+	public void setConnectionPoint(ISubscribable<?, ?> connectionPoint) {
+		this.connectionPoint = connectionPoint;
 	}
 
 	/**
 	 * @return returns the operator the sla conformance object is connected to
 	 */
-	public List<ISubscribable<?, ?>> getConnectionPoint() {
-		return connectionPoints;
+	public ISubscribable<?, ?> getConnectionPoint() {
+		return connectionPoint;
 	}
 	/**
 	 * sets the new list of buffers

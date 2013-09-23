@@ -15,9 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.ISubscribable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -39,7 +38,7 @@ public interface ISLAConformancePlacement {
 	 * @return the operator from the given plan, where the sla conformance
 	 *         operator is appended to
 	 */
-	public List<ISubscribable<?, ?>> placeSLAConformance(IPhysicalQuery query,
+	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator source,
 			ISLAConformance conformance);
 
 	/**
@@ -51,7 +50,7 @@ public interface ISLAConformancePlacement {
 	 *            connected to
 	 * @param conformance the sla conformance operator to remove
 	 */
-	public void removeSLAConformance(List<ISubscribable<?, ?>> connectionPoint,
+	public void removeSLAConformance(ISubscribable<?, ?> connectionPoint,
 			ISLAConformance conformance);
 
 }

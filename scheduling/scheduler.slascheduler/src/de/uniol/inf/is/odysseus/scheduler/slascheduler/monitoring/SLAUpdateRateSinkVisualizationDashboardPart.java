@@ -15,14 +15,14 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
 //import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 
-public class SLAUpdateRateSourceVisualizationDashboardPart extends
+public class SLAUpdateRateSinkVisualizationDashboardPart extends
 		AbstractChartDashboardPart {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SLAUpdateRateSourceVisualizationDashboardPart.class);
+			.getLogger(SLAUpdateRateSinkVisualizationDashboardPart.class);
 
 	private XYSeriesCollection datasetCollection;
 	private Map<IPhysicalOperator, XYSeries> operatorToSerie = new HashMap<IPhysicalOperator, XYSeries>();
@@ -30,7 +30,7 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSourceAverageConformance) {
+		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
 				if (operatorToSerie.size() > 1)
 					return;
@@ -41,7 +41,7 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 			try {
 				final Tuple<?> tuple = (Tuple<?>) element;
 				// final int queryID = tuple.getAttribute(0);
-				final double updaterate = tuple.getAttribute(1);
+				final long updaterate = tuple.getAttribute(1);
 
 				if (updaterate >= 0) {
 					operatorToSerie.get(senderOperator).add(System.currentTimeMillis(), updaterate);
@@ -58,7 +58,7 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 	@Override
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createXYLineChart(
-				"SLA UpdateRateSource Monitoring", "Time", "Updaterate in ms",
+				"SLA Violation Monitoring", "Time", "Updaterate in ms",
 				datasetCollection, PlotOrientation.VERTICAL, true, true, false);
 		
 		return chart;

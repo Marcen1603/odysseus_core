@@ -15,12 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
@@ -41,28 +37,21 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List<ISubscribable<?, ?>> placeSLAConformance(IPhysicalQuery query,
+	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator root,
 			ISLAConformance conformance) {
 		// it is expected that there is only one query per partial plan!
-		List<ISubscribable<?, ?>> subscribables = new ArrayList<>();
-		List<IPhysicalOperator> roots = query.getRoots();
-		for (IPhysicalOperator root : roots) {
-			if (root.isSource()) {
-				LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
-				ISubscribable subscribable = latencyCalc;
-//				((IOwnedOperator) conformance).addOwner(root.getOwner());
-				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-				
-				subscribable = (ISubscribable) root;
-				((IOwnedOperator) latencyCalc).addOwner(root.getOwner());
-				subscribable.connectSink(latencyCalc, 0, 0, root.getOutputSchema());
-				subscribables.add(subscribable);
-			} else {
-				throw new RuntimeException(
-		        		"Cannot connect SLA conformance operator to query root: " + root);
-			}	
+
+		if (root.isSource()) {
+			LatencyCalculationPipe<?> latencyCalc = new LatencyCalculationPipe();
+			ISubscribable subscribable = latencyCalc;
+			subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+
+			subscribable = (ISubscribable) root;
+			subscribable.connectSink(latencyCalc, 0, 0, root.getOutputSchema());
+			return subscribable;
+		} else {
+			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
 		}
-		return subscribables;
 		
 //		IPhysicalOperator root = query.getRoots().get(0);
 //		if (root.isSource()) {
@@ -84,12 +73,10 @@ public class LatencySLAConformancePlacement implements ISLAConformancePlacement 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void removeSLAConformance(List<ISubscribable<?,?>> connectionPoints,
+	public void removeSLAConformance(ISubscribable connectionPoint,
 			ISLAConformance conformance) {
-		for (ISubscribable connectionPoint : connectionPoints) {
-			connectionPoint.disconnectSink(conformance, 0, 0,
-					((AbstractSLaConformance<?>) conformance).getOutputSchema());
-		}
+		connectionPoint.disconnectSink(conformance, 0, 0,
+				((AbstractSLaConformance<?>) conformance).getOutputSchema());
 	}
 	
 }

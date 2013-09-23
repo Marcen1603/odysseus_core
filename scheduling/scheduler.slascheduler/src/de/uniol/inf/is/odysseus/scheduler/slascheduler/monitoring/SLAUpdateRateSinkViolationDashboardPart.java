@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
 //import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 
-public class SLAUpdateRateSourceViolationDashboardPart extends
+public class SLAUpdateRateSinkViolationDashboardPart extends
 		AbstractChartDashboardPart {
 
 	private static final Logger LOG = LoggerFactory
@@ -32,7 +32,7 @@ public class SLAUpdateRateSourceViolationDashboardPart extends
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSourceAverageConformance) {
+		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
 			if (!operatorToViolations.containsKey(senderOperator)) {
 				if (operatorToViolations.size() > 1)
 					return;

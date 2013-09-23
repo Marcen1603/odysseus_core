@@ -18,6 +18,16 @@
             configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSourceViolationConfigurer"
             name="SLA UpdateRateSource Violation">
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkVisualizationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkVisualizationConfigurer"
+            name="SLA UpdateRateSink Visualization">
+      </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkViolationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkViolationConfigurer"
+            name="SLA UpdateRateSink Violation">
+      </dashboardPart>
    </extension>
 
 </plugin>

@@ -15,9 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -32,8 +29,6 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaCo
  * 
  */
 public class UpdateRateSourceSLAConformancePlacement implements ISLAConformancePlacement {
-
-	private List<Integer> conformancePlacedForQuery = new ArrayList<>();
 	
 	/**
 	 * places the given sla conformance operator at the sources of the given
@@ -41,35 +36,16 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List<ISubscribable<?, ?>> placeSLAConformance(IPhysicalQuery query,
+	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator source,
 			ISLAConformance conformance) {
-		
-		List<ISubscribable<?, ?>> subscribables = new ArrayList<>();
-		if (!conformancePlacedForQuery.contains(query.getID())) {
-
-			List<IPhysicalOperator> sources = query.getLeafSources();
-			for (IPhysicalOperator source : sources) {
-				if (source.isSource()) {
-					ISubscribable subscribable = (ISubscribable) source;
-//					((IOwnedOperator) conformance).addOwner(source.getOwner());
-					subscribable.connectSink(conformance, 0, 0,
-							source.getOutputSchema());
-					
-					List<IPhysicalOperator> list = new ArrayList<>(query.getRoots());
-					list.add((IPhysicalOperator)conformance);
-					query.setRoots(list);
-					subscribables.add(subscribable);
-				} else {
-					throw new RuntimeException(
-							"Cannot connect SLA conformance operator to query source: "
-									+ source);
-				}
-			}
+		if (source.isSource()) {
+			ISubscribable subscribable = (ISubscribable) source;
+			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
 			
-			conformancePlacedForQuery.add(query.getID());
+			return subscribable;
+		} else {
+			throw new RuntimeException("Cannot connect SLA conformance operator to query source: " + source);
 		}
-		
-		return subscribables;
 		
 //		IPhysicalOperator source = query.getLeafSources().get(0);
 //		if (source.isSource()) {
@@ -84,12 +60,10 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	@Override
-	public void removeSLAConformance(List<ISubscribable<?, ?>> connectionPoints,
+	public void removeSLAConformance(ISubscribable connectionPoint,
 			ISLAConformance conformance) {
-		for (ISubscribable connectionPoint : connectionPoints) {
-			connectionPoint.disconnectSink(conformance, 0, 0,
-					((AbstractSLaConformance<?>) conformance).getOutputSchema());
-		}
+		connectionPoint.disconnectSink(conformance, 0, 0,
+				((AbstractSLaConformance<?>) conformance).getOutputSchema());
 	}
 
 }

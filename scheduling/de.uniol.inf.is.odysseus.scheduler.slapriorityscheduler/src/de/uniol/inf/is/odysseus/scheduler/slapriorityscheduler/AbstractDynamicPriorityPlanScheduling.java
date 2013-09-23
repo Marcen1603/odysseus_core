@@ -26,11 +26,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.CurrentPlanPriorityComperator;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.IScheduling;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSource;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -40,6 +44,8 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformanceFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformancePlacementFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
 
 abstract public class AbstractDynamicPriorityPlanScheduling implements
 		IPhysicalQueryScheduling, ISLAViolationEventDistributor, ISchedulingEventListener {
@@ -53,7 +59,7 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 
 	private LinkedList<SLAViolationEvent> eventQueue = new LinkedList<SLAViolationEvent>();
 	private List<ISLAViolationEventListener> listeners;
-	private Set<IPhysicalQuery> extendedQueries = new HashSet<IPhysicalQuery>();
+	private static Set<IPhysicalQuery> extendedQueries = new HashSet<IPhysicalQuery>();
 	private List<ISLAConformance> conformances = new ArrayList<ISLAConformance>();
 	
 	final private Set<IScheduling> pausedPlans;
@@ -86,19 +92,36 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			scheduling.getPlan().setCurrentPriority(
 					scheduling.getPlan().getBasePriority());
 			IPhysicalQuery query = scheduling.getPlan();
-			if (!this.extendedQueries.contains(query)) {
+			if (!AbstractDynamicPriorityPlanScheduling.extendedQueries.contains(query)) {
 				// add SLA conformance operator to plan for monitoring
-				this.extendedQueries.add(query);
-				SLA sla = (SLA)query.getParameter(SLA.class.getName());
-				ISLAConformance conformance = new SLAConformanceFactory()
-						.createSLAConformance(sla, this, query);
+				AbstractDynamicPriorityPlanScheduling.extendedQueries.add(query);
+				SLA sla = (SLA) query.getParameter(SLA.class.getName());
+				
+				List<IPhysicalOperator> conformanceOperators = new ArrayList<>();
+				List<IPhysicalOperator> opertors = new ArrayList<>();
+				if (sla.getMetric() instanceof Latency || sla.getMetric() instanceof UpdateRateSink) 
+					opertors = query.getRoots();
+				else if (sla.getMetric() instanceof UpdateRateSource)
+					opertors = query.getLeafSources();
+				
+				for (IPhysicalOperator operator : opertors) {
+					if (!(operator instanceof AbstractSLAPipeConformance || operator instanceof AbstractSLaConformance)) {
+						ISLAConformance conformance = new SLAConformanceFactory()
+								.createSLAConformance(sla, this, query);
 
-				ISLAConformancePlacement placement = new SLAConformancePlacementFactory()
-						.buildSLAConformancePlacement(sla);
-				placement.placeSLAConformance(query, conformance);
-				synchronized (conformances) {
-					this.conformances.add(conformance);
+						ISLAConformancePlacement placement = new SLAConformancePlacementFactory()
+								.buildSLAConformancePlacement(sla);
+						placement.placeSLAConformance(query, operator, conformance);
+						conformanceOperators.add((IPhysicalOperator) conformance);
+
+						synchronized (conformances) {
+							this.conformances.add(conformance);
+						}
+					}
 				}
+				List<IPhysicalOperator> list = new ArrayList<>(query.getRoots());
+				list.addAll(conformanceOperators);
+				query.setRoots(list);
 			}
 			scheduling.addSchedulingEventListener(this);
 		}

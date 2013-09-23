@@ -121,11 +121,19 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 		this.lastObjectSend = object;
 		this.lastPortSend = port;
 		
-		Tuple<?> tuple = new Tuple<>(3, false);
-		tuple.addAttributeValue(0, this.getOwner().get(0).getID());
-		tuple.addAttributeValue(1, diff);
-		tuple.addAttributeValue(2, getConformance() >= this.getSLA().getMetric().getValue());
+		int attributeCount = ((Tuple<?>)object).getAttributes().length;
+		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
+		((Tuple<?>)object).append(diff, false);
+		((Tuple<?>)object).append(getConformance() >= this.getSLA().getMetric().getValue(), false);
+		int[] attrList = new int[3];
+		int index = 0;
+		for (int i = attributeCount; i < attributeCount+3; i++) {
+			attrList[index] = i;
+			index++;
+		}
+		Tuple<?> tuple = ((Tuple<?>)object).restrict(attrList, true);
 		
+		transfer((W) tuple);
 		super.process_next((R) tuple, port);
 //		super.process_next(object, port);
 		

@@ -32,6 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.QueryPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
 
 /**
  * central management of scheduling data
@@ -155,8 +157,9 @@ public class SLARegistry implements IPlanModificationListener {
 	
 	private SLARegistryInfo initRegistryInfo(IPhysicalQuery query) {
 		SLARegistryInfo data = new SLARegistryInfo();
+		SLA sla = (SLA) query.getParameter(SLA.class.getName());
 		ISLAConformance conformance = new SLAConformanceFactory().
-				createSLAConformance((SLA) query.getParameter(SLA.class.getName()), this.scheduler, query);
+				createSLAConformance(sla, this.scheduler, query);
 		data.setConformance(conformance);
 		
 		ICostFunction costFunction = new CostFunctionFactory().createCostFunction(this.scheduler.getCostFunctionName(), (SLA) query.getParameter(SLA.class.getName()));
@@ -168,7 +171,14 @@ public class SLARegistry implements IPlanModificationListener {
 		data.setStarvationFreedom(starvationFreedom);
 		
 		ISLAConformancePlacement placement = new SLAConformancePlacementFactory().buildSLAConformancePlacement((SLA) query.getParameter(SLA.class.getName()));
-		data.setConnectionPoint(placement.placeSLAConformance(query, conformance));
+		
+		// conformance operators will be placed only for one sink or one source operator
+		IPhysicalOperator operator;
+		if (sla.getMetric() instanceof Latency || sla.getMetric() instanceof UpdateRateSink) 
+			operator = query.getRoots().get(0);
+		else // all metrics which should be placed on source operator (in this case: UpdateRateSource)
+			operator = query.getLeafSources().get(0);
+		data.setConnectionPoint(placement.placeSLAConformance(query, operator, conformance));
 		
 		List<IBuffer<?>> buffers = findBuffers(query);
 		data.setBuffers(buffers);
