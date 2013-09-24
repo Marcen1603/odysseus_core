@@ -16,9 +16,12 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -41,6 +44,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private IAttributeResolver resolver;
 	private IDataDictionary dd;
 	private ISession caller;
+	private Map<Integer, SDFSchema> inputSchema = new HashMap<>();
 	private final List<Exception> errors;
 	private final List<Exception> warnings;
 	protected Object inputValue;
@@ -202,6 +206,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.resolver = resolver;
 	}
 
+	@Override
+	public void setInputSchema(int port, SDFSchema schema) {
+		this.inputSchema.put(port,schema);
+	}
+	
+	protected SDFSchema getInputSchema(int port){
+		return inputSchema.get(port);
+	}
+	
 	@Override
 	public IDataDictionary getDataDictionary() {
 		return dd;

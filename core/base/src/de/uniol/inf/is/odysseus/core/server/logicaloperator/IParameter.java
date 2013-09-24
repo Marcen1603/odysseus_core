@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -55,4 +56,5 @@ public interface IParameter<T> extends Serializable {
 	public String getPQLString();
 	public String getPossibleValueMethod();
 	public void setPossibleValueMethod(String possibleValueMethod);
+	public void setInputSchema(int i, SDFSchema outputSchema);
 }
