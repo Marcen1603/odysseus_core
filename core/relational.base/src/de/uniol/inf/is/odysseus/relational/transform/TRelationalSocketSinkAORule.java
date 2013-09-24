@@ -47,23 +47,35 @@ public class TRelationalSocketSinkAORule extends
 			TransformationConfiguration config) {
 
 		// Is this sink already translated?
-		ISink<?> socketSinkPO = getDataDictionary().getSinkplan(new Resource(getCaller().getUser(), operator
-				.getSinkName()));
+		ISink<?> socketSinkPO = null;
+		if (!config.isVirtualTransformation()) {
+			socketSinkPO = getDataDictionary()
+					.getSinkplan(
+							new Resource(getCaller().getUser(), operator
+									.getSinkName()));
+		}
 
 		if (socketSinkPO == null) {
 
-			IDataHandler<?> handler = new TupleDataHandler().getInstance(operator.getOutputSchema());
+			IDataHandler<?> handler = new TupleDataHandler()
+					.getInstance(operator.getOutputSchema());
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
-			socketSinkPO = new SocketSinkPO(operator.getSinkPort(), operator.getHost(),
-					getStreamHandler(operator), true, operator.isLoginNeeded(),
-					objectHandler, operator.getConnectToServer());
+			socketSinkPO = new SocketSinkPO(operator.getSinkPort(),
+					operator.getHost(), getStreamHandler(operator), true,
+					operator.isLoginNeeded(), objectHandler,
+					operator.getConnectToServer());
 
 			socketSinkPO.setOutputSchema(operator.getOutputSchema());
-			getDataDictionary().putSinkplan(new Resource(getCaller().getUser(), operator.getSinkName()), socketSinkPO);
+			if (!config.isVirtualTransformation()) {
+				getDataDictionary().putSinkplan(
+						new Resource(getCaller().getUser(),
+								operator.getSinkName()), socketSinkPO);
+			}
 		}
 		Collection<ILogicalOperator> toUpdate = config
-				.getTransformationHelper().replace(operator, socketSinkPO,true);
+				.getTransformationHelper()
+				.replace(operator, socketSinkPO, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
@@ -82,7 +94,8 @@ public class TRelationalSocketSinkAORule extends
 	@Override
 	public boolean isExecutable(SocketSinkAO operator,
 			TransformationConfiguration config) {
-		return operator.getInputSchema(0).getType() == Tuple.class &&  operator.isAllPhysicalInputSet()
+		return operator.getInputSchema(0).getType() == Tuple.class
+				&& operator.isAllPhysicalInputSet()
 				&& operator.getSinkType().equalsIgnoreCase("bytebuffer");
 	}
 

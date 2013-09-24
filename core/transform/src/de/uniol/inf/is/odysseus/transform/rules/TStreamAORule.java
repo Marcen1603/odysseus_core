@@ -37,42 +37,59 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 	}
 
 	@Override
-	public void execute(StreamAO operator, TransformationConfiguration transformConfig) {
+	public void execute(StreamAO operator,
+			TransformationConfiguration transformConfig) {
+		ISource<?> source = null;
 		// check, if this stream is not transformed yet into a physical or not
-		if(getDataDictionary().getAccessPlan(operator.getStreamname()) == null){			
+		if (getDataDictionary().getAccessPlan(operator.getStreamname()) == null) {
 			// ok, we have to transform the stream operator!
-			ILogicalOperator logicalPlan = getDataDictionary().getStreamForTransformation(operator.getStreamname(), getCaller());	
+			ILogicalOperator logicalPlan = getDataDictionary()
+					.getStreamForTransformation(operator.getStreamname(),
+							getCaller());
 			// start a new sub-transformation
 			ITransformation transformation = new TransformationExecutor();
-			ArrayList<IPhysicalOperator> roots = transformation.transform(logicalPlan, transformConfig, getCaller(), getDataDictionary());
+			ArrayList<IPhysicalOperator> roots = transformation.transform(
+					logicalPlan, transformConfig, getCaller(),
+					getDataDictionary());
 			// we don't need the subscriptions anymore
 			logicalPlan.clearPhysicalSubscriptions();
-			// get the first root, since this is the physical operator for the passed plan
+			// get the first root, since this is the physical operator for the
+			// passed plan
 			// and this will be the connection to the current plan.
 			if (roots.get(0).isSource()) {
-				ISource<?> source = (ISource<?>) roots.get(0);
+				source = (ISource<?>) roots.get(0);
 				// insert the new source for further transformations
 				insert(source);
 				// and add this to the accessplan
-				getDataDictionary().putAccessPlan(operator.getStreamname(), source);	
+				if (!transformConfig.isVirtualTransformation()) {
+					getDataDictionary().putAccessPlan(operator.getStreamname(),
+							source);
+				}
 			} else {
-				throw new RuntimeException("Cannot transform view: Root of view plan is no source. 0="+roots.get(0)+" list="+roots);
+				throw new RuntimeException(
+						"Cannot transform view: Root of view plan is no source. 0="
+								+ roots.get(0) + " list=" + roots);
 			}
 		}
-		// finally, there must be a physical transformed stream in the data dictionary,
+		// finally, there must be a physical transformed stream in the data
+		// dictionary,
 		// so use this and transform the operator!
-		ISource<?> po = getDataDictionary().getAccessPlan(operator.getStreamname());		
+		ISource<?> po = null;
+		if (transformConfig.isVirtualTransformation()) {
+			po = source;
+		} else {
+			po = getDataDictionary().getAccessPlan(operator.getStreamname());
+		}
 		defaultExecute(operator, po, transformConfig, true, true, false);
-		//po.setName(operator.getStreamname());
-
-		
+		// po.setName(operator.getStreamname());
 
 	}
 
 	@Override
-	public boolean isExecutable(StreamAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(StreamAO operator,
+			TransformationConfiguration transformConfig) {
 		Resource name = operator.getStreamname();
-		return getDataDictionary().containsViewOrStream(name, getCaller());			
+		return getDataDictionary().containsViewOrStream(name, getCaller());
 	}
 
 	@Override

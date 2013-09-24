@@ -29,6 +29,7 @@ public class TransformationConfiguration {
 	private final Set<String> dataTypes;
 	private Map<String, Object> options;
 	private ITransformationHelper transformHelper;
+	private boolean virtualTransformation;
 
 	public TransformationConfiguration(ITransformationHelper transformHelper,
 			String dataType, String... metaTypes) {
@@ -112,6 +113,14 @@ public class TransformationConfiguration {
 
 	public Set<String> getMetaTypes() {
 		return metaTypes;
+	}
+	
+	public void setVirtualTransformation(boolean virtualTransformation) {
+		this.virtualTransformation = virtualTransformation;
+	}
+	
+	public boolean isVirtualTransformation() {
+		return virtualTransformation;
 	}
 
 	@Override

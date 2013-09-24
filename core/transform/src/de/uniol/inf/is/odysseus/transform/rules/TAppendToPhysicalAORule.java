@@ -19,6 +19,7 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 	@Override
 	public void execute(AppendToPhysicalAO operator,
 			TransformationConfiguration config) {
+		
 		String appendTo = operator.getAppendTo();
 		// To avoid potential security risk! We can add our source 
 		// only to own operators!
@@ -32,8 +33,7 @@ public class TAppendToPhysicalAORule extends AbstractTransformationRule<AppendTo
 		}
 		
 		//defaultExecute(operator, po, config, true, true, true);
-
-		handleOperatorID(operator, po);
+		handleOperatorID(operator, po, config);		
 		replace(operator, po , config, true);
 		retract(operator);
 		insert(po);

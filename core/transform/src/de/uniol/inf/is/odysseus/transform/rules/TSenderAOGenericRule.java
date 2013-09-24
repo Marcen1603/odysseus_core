@@ -42,7 +42,8 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSenderAO> {
+public class TSenderAOGenericRule extends
+		AbstractTransformationRule<AbstractSenderAO> {
 	static Logger LOG = LoggerFactory.getLogger(TSenderAOGenericRule.class);
 
 	/*
@@ -63,7 +64,8 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 * java.lang.Object)
 	 */
 	@Override
-	public void execute(AbstractSenderAO operator, TransformationConfiguration config) {
+	public void execute(AbstractSenderAO operator,
+			TransformationConfiguration config) {
 		Resource senderPOName = operator.getSinkname();
 
 		IDataHandler<?> dataHandler = getDataHandler(operator);
@@ -92,9 +94,12 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 		}
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		ISink<?> senderPO = new SenderPO(protocolHandler);
-		getDataDictionary().putSinkplan(senderPOName, senderPO);
-		if (!getDataDictionary().containsSink(senderPOName, getCaller())) {
-			getDataDictionary().addSink(senderPOName, operator, getCaller());
+		if (!config.isVirtualTransformation()) {
+			getDataDictionary().putSinkplan(senderPOName, senderPO);
+			if (!getDataDictionary().containsSink(senderPOName, getCaller())) {
+				getDataDictionary()
+						.addSink(senderPOName, operator, getCaller());
+			}
 		}
 		defaultExecute(operator, senderPO, config, true, true);
 	}

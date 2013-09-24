@@ -54,14 +54,19 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void execute(AbstractAccessAO operator, TransformationConfiguration config) {
+	public void execute(AbstractAccessAO operator,
+			TransformationConfiguration config) {
 
 		if (!hasTimestampAOAsFather(operator)) {
 			insertTimestampAO(operator, operator.getDateFormat());
 		}
 
-		ISource accessPO = getDataDictionary()
-				.getAccessAO(operator.getAccessAOName());
+		ISource accessPO = null;
+
+		if (!config.isVirtualTransformation()) {
+			accessPO = getDataDictionary().getAccessAO(
+					operator.getAccessAOName());
+		}
 
 		if (accessPO == null) {
 
@@ -100,7 +105,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 				}
 
 			} else {
-				throw new IllegalArgumentException("This kind of access operator is no longer supported!");
+				throw new IllegalArgumentException(
+						"This kind of access operator is no longer supported!");
 			}
 			if (operator.getOptionsMap().containsKey("scheduler.delay")) {
 				if (accessPO instanceof IIterableSource) {
@@ -123,9 +129,11 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 									"scheduler.yieldnanos")));
 				}
 			}
-			
-			getDataDictionary().putAccessAO(operator.getAccessAOName(), accessPO);
-			
+			if (!config.isVirtualTransformation()) {
+				getDataDictionary().putAccessAO(operator.getAccessAOName(),
+						accessPO);
+			}
+
 		}
 		defaultExecute(operator, accessPO, config, true, true);
 	}
