@@ -117,7 +117,7 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
 
     @Override
     public int hashCode() {
-        return getName().hashCode();
+        return getName().getClass().hashCode();
     }
 
     @Override
