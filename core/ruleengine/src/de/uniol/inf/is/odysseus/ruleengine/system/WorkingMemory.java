@@ -172,16 +172,19 @@ public class WorkingMemory {
 		hasChanged = false;
 		Set<Class<?>> clazzes = new HashSet(objectMap.keySet());
 		Iterator<IRule<?, ?>> iterator = this.env.getRuleFlow().iteratorRules(group, clazzes);
+
 		while (iterator.hasNext()) {
 			IRule rule = iterator.next();
 			Collection<Object> matchingObjects = objectMap.get(rule.getConditionClass());
+			LOGGER.trace("Trying to run rule "+rule+" on "+matchingObjects);
 			if(matchingObjects==null){
 				// no objects for this condition clazz
 				continue;
 			}
 			rule.setCurrentWorkingMemory(this);
-			for(Object matchingObject : matchingObjects){				
+			for(Object matchingObject : matchingObjects){		
 				if(rule.isExecutable(matchingObject, this.env.getConfiguration())){
+					LOGGER.trace("Running rule "+rule+" on "+matchingObject);
 					rule.execute(matchingObject, this.env.getConfiguration());					
 					if(this.hasChanged){
 						// if wm was changed: stop...
