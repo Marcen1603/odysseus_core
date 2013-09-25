@@ -78,15 +78,18 @@ public abstract class AbstractInventory implements IRuleFlow {
 		WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Group added to workflow: " + group + ". New workflow is: " + workFlow.toString());
 	}
 
-	public void addRule(IRule<?, ?> rule) {
+	public synchronized void addRule(IRule<?, ?> rule) {
 		IRuleFlowGroup group = rule.getRuleFlowGroup();
 		if (!containsRule(rule)){
 			WorkingMemory.LOGGER.debug(this.getInventoryName() + " - Loading rule - " + rule.getClass().getSimpleName() + ": \"" + rule.getName() + "\" for group: \"" + group + "\"");
 			this.ruleBase.get(group).offer(rule);
-		} 
+		} else{
+			// For DEBUGGING ONLY
+			int a = 0;
+		}
 	}
 	
-	public boolean containsRule(IRule<?,?> rule){
+	public synchronized boolean containsRule(IRule<?,?> rule){
 		IRuleFlowGroup group = rule.getRuleFlowGroup();
 		return ruleBase.containsKey(group) && ruleBase.get(group).contains(rule);
 	}
