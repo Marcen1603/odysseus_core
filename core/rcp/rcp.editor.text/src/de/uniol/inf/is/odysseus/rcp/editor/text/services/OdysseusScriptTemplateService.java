@@ -5,10 +5,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.templates.OdysseusScriptTemplate
 
 public class OdysseusScriptTemplateService {
 
+	// called by OSGi-DS
 	public void bind( IOdysseusScriptTemplate template ) {
 		OdysseusScriptTemplateRegistry.getInstance().register(template);
 	}
 	
+	// called by OSGi-DS
 	public void unbind( IOdysseusScriptTemplate template ) {
 		OdysseusScriptTemplateRegistry.getInstance().unregister(template);
 	}
