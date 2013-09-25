@@ -25,6 +25,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
+import de.uniol.inf.is.odysseus.rcp.editor.text.templates.OdysseusScriptTemplateRegistry;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
@@ -55,6 +56,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		super.stop(context);
 		
 		Platform.getExtensionRegistry().removeListener(KeywordRegistry.getInstance());
+		OdysseusScriptTemplateRegistry.getInstance().unregisterAll();
 	}
 
 	/**
