@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
-import de.uniol.inf.is.odysseus.transform.flow.ITransformRuleProvider;
 
 /**
  * entry point for transformation (is bound by osgi-service)
@@ -143,11 +142,4 @@ public class TransformationExecutor implements ITransformation {
 		}
 	}
 
-	public void addRuleProvider(ITransformRuleProvider provider) {
-		TransformationInventory.getInstance().bindRuleProvider(provider);
-	}
-
-	public void removeRuleProvider(ITransformRuleProvider provider) {
-		TransformationInventory.getInstance().unbindRuleProvider(provider);
-	}
 }
