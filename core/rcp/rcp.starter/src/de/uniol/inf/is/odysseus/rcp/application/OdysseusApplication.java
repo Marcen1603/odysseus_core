@@ -51,19 +51,9 @@ public class OdysseusApplication implements IApplication {
 	@Override
 	public synchronized Object start(IApplicationContext context) {
 
-		Display display;
-		String doDebug = System.getProperty(DEBUG_SWT_SYS_PROPERTY);
-		if( doDebug != null && doDebug.equalsIgnoreCase("true")) {
-			Policy.DEBUG_SWT_GRAPHICS = true;
-			display = PlatformUI.createDisplay();
-			Sleak sleak = new Sleak();
-		    sleak.open();
-		} else {
-			display = PlatformUI.createDisplay();
-		}
+		Display display = createDisplay();
 	    
 		try {
-			
 			if( !chooseWorkspace(display) ) {
 				return IApplication.EXIT_OK;
 			}
@@ -76,6 +66,19 @@ public class OdysseusApplication implements IApplication {
 		} finally {
 			display.dispose();
 		}
+	}
+
+	private static Display createDisplay() {
+		String doDebug = System.getProperty(DEBUG_SWT_SYS_PROPERTY);
+		if( doDebug != null && doDebug.equalsIgnoreCase("true")) {
+			Policy.DEBUG_SWT_GRAPHICS = true;
+			Display display = PlatformUI.createDisplay();
+			Sleak sleak = new Sleak();
+		    sleak.open();
+		    return display;
+		}
+		
+		return PlatformUI.createDisplay();
 	}
 
 	@Override
