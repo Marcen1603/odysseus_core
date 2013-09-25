@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MedianProcessingTime;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
+import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.PlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -18,6 +19,8 @@ public class SLAPostOptimizationAction implements IPostOptimizationAction {
 				}
 			}
 		}
+		
+		query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, new PlanMonitor(query, false, false, MonitoringDataTypes.SELECTIVITY.name, 10 * 1000));
 
 	}
 
