@@ -241,4 +241,13 @@ public class OperatorDetailView extends ViewPart implements ISelectionListener {
 			return UNKNOWN_PROVIDER_TITLE;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
+	@Override
+	public void dispose() {
+		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+		super.dispose();
+	}
 }

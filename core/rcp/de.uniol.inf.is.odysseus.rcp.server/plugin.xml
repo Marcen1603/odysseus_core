@@ -47,7 +47,7 @@
       <view
             category="Odysseus"
             class="de.uniol.inf.is.odysseus.rcp.server.views.opdetail.OperatorDetailView"
-            icon="icons/operator.png"
+            icon="icons/operator_details.png"
             id="de.uniol.inf.is.odysseus.rcp.views.OperatorDetailView"
             name="Operator Detail Info"
             restorable="true">
