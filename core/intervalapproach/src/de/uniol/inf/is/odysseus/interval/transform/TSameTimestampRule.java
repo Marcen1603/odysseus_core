@@ -55,7 +55,7 @@ public class TSameTimestampRule extends AbstractTransformationRule<TimestampAO> 
 
 	@Override
 	public String getName() {
-		return "TimestampAO -> MetadataUpdatePO(system timestamp)";
+		return "TimestampAO -> MetadataUpdatePO(no time)";
 	}
 	
 	@Override
