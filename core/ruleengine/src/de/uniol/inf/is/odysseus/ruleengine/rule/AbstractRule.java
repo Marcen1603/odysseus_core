@@ -112,7 +112,7 @@ public abstract class AbstractRule<T, U> implements IRule<T, U> {
     public boolean equals(Object obj) {
         IRule<?, ?> rule = (IRule<?, ?>) obj;
 
-        return getName().equals(rule.getName());
+        return getName().getClass().getName().equals(rule.getClass().getName());
     }
 
     @Override
