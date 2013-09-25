@@ -123,7 +123,7 @@ public class TransformationActivator implements BundleActivator, BundleListener 
 						&& classObject != ITransformationRule.class
 						&& classObject != AbstractTransformationRule.class)
 					try {
-						logger.debug("Found Rule " + classObject);
+						logger.trace("Found Rule " + classObject);
 						@SuppressWarnings("rawtypes")
 						IRule rule = (IRule) classObject.newInstance();
 						if (mode == Mode.ADD) {
