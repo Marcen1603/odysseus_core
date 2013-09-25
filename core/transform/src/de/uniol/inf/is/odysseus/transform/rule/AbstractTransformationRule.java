@@ -156,7 +156,6 @@ public abstract class AbstractTransformationRule<T> extends
 	protected void insertTimestampAO(ILogicalOperator operator,
 			String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
-		insert(timestampAO);
 		timestampAO.setDateFormat(dateFormat);
 		if (operator.getOutputSchema() != null) {
 
@@ -180,6 +179,7 @@ public abstract class AbstractTransformationRule<T> extends
 		// timestampAO.subscribeTo(operator, operator.getOutputSchema());
 		timestampAO.setName(timestampAO.getStandardName());
 		RestructHelper.insertOperatorBefore(timestampAO, operator);
+		insert(timestampAO);
 	}
 
 	protected boolean hasTimestampAOAsFather(ILogicalOperator operator) {
