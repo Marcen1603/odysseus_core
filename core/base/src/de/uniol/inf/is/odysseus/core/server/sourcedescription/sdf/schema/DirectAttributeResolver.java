@@ -90,13 +90,21 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 				return attribute;
 		}
 
+		for (SDFAttribute attr : this.schema) {
+			// Remove UserName
+			String attrName = attr.toString();
+			if (attrName.equalsIgnoreCase(name)) {
+				return attr;
+			}
+		}
+
 		// final case: UserName.SourceName.Attribute
 		for (SDFAttribute attr : this.schema) {
 			// Remove UserName
 			String attrName = attr.toString();
 			int pos = attrName.indexOf('.');
 			if (pos > 0) {
-				attrName = attrName.substring(pos+1);
+				attrName = attrName.substring(pos + 1);
 				if (attrName.equalsIgnoreCase(name)) {
 					return attr;
 				}
@@ -146,7 +154,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 
 		if (index == path.length - 1) {
 			return curRoot;
-		} else if (curRoot.getDatatype().hasSchema()) {
+		} else if (curRoot != null && curRoot.getDatatype().hasSchema()) {
 			// TODO: MG: Is this correct?
 			return findORAttribute(curRoot.getDatatype().getSchema(), null,
 					path, index + 1);
