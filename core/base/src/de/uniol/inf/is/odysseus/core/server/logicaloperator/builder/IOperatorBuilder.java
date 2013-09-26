@@ -55,4 +55,6 @@ public interface IOperatorBuilder extends Serializable {
 	public String getName();
 	
 	public String getDoc();
+	
+	public String[] getCategories();
 }

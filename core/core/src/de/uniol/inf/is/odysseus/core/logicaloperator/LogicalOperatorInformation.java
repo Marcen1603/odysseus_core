@@ -29,6 +29,7 @@ public class LogicalOperatorInformation {
 	private List<LogicalParameterInformation> parameters = new ArrayList<>();
 	private int maxPorts;
 	private int minPorts;
+	private String[] categories;
 
 	public String getOperatorName() {
 		return operatorName;
@@ -68,6 +69,14 @@ public class LogicalOperatorInformation {
 
 	public void setMaxPorts(int maxPorts) {
 		this.maxPorts = maxPorts;
+	}
+
+	public String[] getCategories() {
+		return categories;
+	}
+
+	public void setCategories(String[] categories) {
+		this.categories = categories;
 	}	
 
 }

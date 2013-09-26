@@ -49,6 +49,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private int maxPortCount;
 	private Map<Integer, InputOperatorItem> inputOperators;
 	private ISession caller;
+	private String[] categories;
 
 	protected InputOperatorItem getInputOperatorItem(int i) {
 		return inputOperators.get(i);
@@ -60,10 +61,10 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 	private String doc;
 	
 	public AbstractOperatorBuilder( String name, int minPortCount, int maxPortCount ) {
-		this(name, minPortCount, maxPortCount, null);
+		this(name, minPortCount, maxPortCount, null, null);
 	}
 
-	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc) {
+	public AbstractOperatorBuilder(String name, int minPortCount, int maxPortCount, String doc, String[] categories) {
 		this.name = name;
 		this.doc = doc;
 		if( Strings.isNullOrEmpty(this.doc)) {
@@ -80,6 +81,7 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		this.errors = new ArrayList<Exception>();
 		this.warnings = new ArrayList<Exception>();
 		this.inputOperators = new TreeMap<Integer, InputOperatorItem>();
+		this.categories = categories;
 	}
 
 	public void addParameters(IParameter<?>... parameters) {
@@ -297,6 +299,14 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 	public int getInputOperatorCount() {
 		return this.inputOperators.size();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder#getCategories()
+	 */
+	@Override
+	public String[] getCategories() {
+		return this.categories;
 	}
 
 }

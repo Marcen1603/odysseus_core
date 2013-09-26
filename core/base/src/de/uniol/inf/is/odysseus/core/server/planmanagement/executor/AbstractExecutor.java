@@ -969,6 +969,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		loi.setMaxPorts(builder.getMaxInputOperatorCount());
 		loi.setMinPorts(builder.getMinInputOperatorCount());
 		loi.setDoc(builder.getDoc());
+		loi.setCategories(builder.getCategories());
 
 		for (IParameter<?> param : builder.getParameters()) {
 			LogicalParameterInformation lpi = new LogicalParameterInformation();

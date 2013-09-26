@@ -247,7 +247,7 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 				logger.warn("Documentation for {} not available!", logicalOperatorAnnotation.name());
 			}
 			GenericOperatorBuilder builder = new GenericOperatorBuilder(curOp, logicalOperatorAnnotation.name(), parameters, logicalOperatorAnnotation.minInputPorts(),
-					logicalOperatorAnnotation.maxInputPorts(), doc);
+					logicalOperatorAnnotation.maxInputPorts(), doc, logicalOperatorAnnotation.category());
 			OperatorBuilderFactory.addOperatorBuilder(builder);
 		}catch(NoClassDefFoundError e){			
 			e.printStackTrace();
