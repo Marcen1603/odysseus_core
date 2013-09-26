@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CONVERTER", category={LogicalOperatorCategory.TRANSFORM})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CONVERTER", doc="This operator can be used to transform element with other protocol handler, e.g. read a complete document from a server and then parse this document with csv or xml", category={LogicalOperatorCategory.TRANSFORM})
 public class ConverterAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2630448144140835791L;

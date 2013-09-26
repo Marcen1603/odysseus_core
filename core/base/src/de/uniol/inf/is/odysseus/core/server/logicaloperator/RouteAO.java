@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
-@LogicalOperator(name="ROUTE", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(name="ROUTE", minInputPorts=1, maxInputPorts=1, doc="This operator can be used to route the elements in the stream to different further processing operators, depending on the predicate.",category={LogicalOperatorCategory.PROCESSING})
 public class RouteAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8015847502104587689L;

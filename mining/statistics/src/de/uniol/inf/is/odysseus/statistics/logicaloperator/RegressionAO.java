@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * 
  * @author Dennis Geesen Created at: 29.03.2012
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "REGRESSION", category={LogicalOperatorCategory.ADVANCED})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc="TODO", name = "REGRESSION", category={LogicalOperatorCategory.ADVANCED})
 public class RegressionAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1953522305718887385L;

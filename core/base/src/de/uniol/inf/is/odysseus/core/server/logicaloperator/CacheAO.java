@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CACHE", category={LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CACHE", doc="This operator can can some stream elements. At runtime, every time a new operator is connected it will get the cached elements. This can be usefull when reading from a csv file and multiple parts of a query need this information.", category={LogicalOperatorCategory.PROCESSING})
 public class CacheAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5364109842392109977L;

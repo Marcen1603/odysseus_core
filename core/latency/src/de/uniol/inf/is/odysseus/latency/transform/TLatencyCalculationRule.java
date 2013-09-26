@@ -17,13 +17,13 @@ package de.uniol.inf.is.odysseus.latency.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
-import de.uniol.inf.is.odysseus.logicaloperator.latency.LatencyCalculationAO;
+import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TLatencyCalculationRule extends
-		AbstractTransformationRule<LatencyCalculationAO> {
+		AbstractTransformationRule<CalcLatencyAO> {
 
 	@Override
 	public int getPriority() {
@@ -31,7 +31,7 @@ public class TLatencyCalculationRule extends
 	}
 
 	@Override
-	public void execute(LatencyCalculationAO operator,
+	public void execute(CalcLatencyAO operator,
 			TransformationConfiguration config) {
 		@SuppressWarnings("rawtypes")
 		LatencyCalculationPipe pO = new LatencyCalculationPipe();
@@ -39,7 +39,7 @@ public class TLatencyCalculationRule extends
 	}
 
 	@Override
-	public boolean isExecutable(LatencyCalculationAO operator,
+	public boolean isExecutable(CalcLatencyAO operator,
 			TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
@@ -55,8 +55,8 @@ public class TLatencyCalculationRule extends
 	}
 	
 	@Override
-	public Class<? super LatencyCalculationAO> getConditionClass() {	
-		return LatencyCalculationAO.class;
+	public Class<? super CalcLatencyAO> getConditionClass() {	
+		return CalcLatencyAO.class;
 	}
 
 }

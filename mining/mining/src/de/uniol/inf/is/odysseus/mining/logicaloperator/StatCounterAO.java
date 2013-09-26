@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
  * @author Dennis Geesen
  * 
  */
-@LogicalOperator(name = "COUNTSTATS", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.BENCHMARK, LogicalOperatorCategory.MINING})
+@LogicalOperator(name = "COUNTSTATS", minInputPorts = 1, maxInputPorts = 1, doc="TODO",category={LogicalOperatorCategory.BENCHMARK, LogicalOperatorCategory.MINING})
 public class StatCounterAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4443355945512399432L;

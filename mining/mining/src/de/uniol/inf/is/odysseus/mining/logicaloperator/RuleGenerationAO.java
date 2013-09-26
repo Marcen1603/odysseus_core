@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "GENERATERULES", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.MINING})
+@LogicalOperator(name = "GENERATERULES", minInputPorts = 1, maxInputPorts = 1, doc="This operator uses a list of tuples and creates rules like \"x => y\". A rule is a special datatype called \"AssociationRule\", which is principally a tuple of two patterns (one for the premise and one for the consequnce of the rule)",category = {LogicalOperatorCategory.MINING})
 public class RuleGenerationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4443355945512399432L;

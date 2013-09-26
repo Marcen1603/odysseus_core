@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "FILESINK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.SINK})
+@LogicalOperator(name = "FILESINK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, doc="The operator can be used to dump the results of an operator to a file.", category={LogicalOperatorCategory.SINK}, deprecation=true)
 public class FileSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5468128562016704956L;

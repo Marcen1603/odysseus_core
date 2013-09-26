@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", category={LogicalOperatorCategory.BASE})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc="The select operator filters the incoming data stream according to the given predicate.", category={LogicalOperatorCategory.BASE})
 public class SelectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;

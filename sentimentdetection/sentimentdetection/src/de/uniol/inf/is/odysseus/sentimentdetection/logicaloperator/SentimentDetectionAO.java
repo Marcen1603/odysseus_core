@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry
 import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.StopWordsRegistry;
 
 
-@LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=3, category={LogicalOperatorCategory.MINING})
+@LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=3, category={LogicalOperatorCategory.MINING}, doc="Allows sentiment detection on input streams.")
 public class SentimentDetectionAO extends BinaryLogicalOp{
 
 	/**

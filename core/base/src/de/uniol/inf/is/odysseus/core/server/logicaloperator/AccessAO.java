@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ACCESS", category={LogicalOperatorCategory.SOURCE})
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ACCESS", doc="Generic operator to connect to an input.", category={LogicalOperatorCategory.SOURCE})
 public class AccessAO extends AbstractAccessAO {
 
 	private static final long serialVersionUID = 3913899451565703944L;

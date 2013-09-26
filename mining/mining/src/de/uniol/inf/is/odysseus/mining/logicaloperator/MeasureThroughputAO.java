@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name="THROUGHPUT", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BENCHMARK})
+@LogicalOperator(name="THROUGHPUT", minInputPorts=1, maxInputPorts=1, doc="Measure the current throughput",category={LogicalOperatorCategory.BENCHMARK})
 public class MeasureThroughputAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8773782766638078153L;

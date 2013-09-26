@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Dennis Geesen
  * Created at: 20.10.2011
  */
-@LogicalOperator(name = "DATABASESINK", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE})
+@LogicalOperator(name = "DATABASESINK", minInputPorts = 1, maxInputPorts = 1, doc="This operator can write data to a relational database.",category={LogicalOperatorCategory.SINK, LogicalOperatorCategory.DATABASE})
 public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	
 	private static final long serialVersionUID = -6513851256783092870L;

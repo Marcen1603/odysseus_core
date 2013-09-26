@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
  * @author Dennis Geesen
  * 
  */
-@LogicalOperator(name = "CLASSIFICATION_LEARN", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLASSIFIKATION})
+@LogicalOperator(name = "CLASSIFICATION_LEARN", minInputPorts = 1, maxInputPorts = 1, doc="This operator is used to create a classifier. Therefore, the result is a stream of classifiers (this is an own datatype!)",category = {LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLASSIFIKATION})
 public class ClassificationLearnAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1231999597473176237L;

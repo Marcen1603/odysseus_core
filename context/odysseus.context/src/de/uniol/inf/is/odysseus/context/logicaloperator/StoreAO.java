@@ -46,7 +46,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  * Created at: 27.04.2012
  */
 
-@LogicalOperator(name = "STORE", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK})
+@LogicalOperator(name = "STORE", minInputPorts = 1, maxInputPorts = 1, doc="Transfer temporary information in a context store for use with the Enrich operator",category={LogicalOperatorCategory.SINK})
 public class StoreAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = -8367889240385241169L;

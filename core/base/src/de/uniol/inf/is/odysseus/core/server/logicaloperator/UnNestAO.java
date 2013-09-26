@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "UNNEST", category={LogicalOperatorCategory.TRANSFORM})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "UNNEST", doc="The UnNest operator unpacks incoming tuple with a multi value attribute to create multiple tuples",category={LogicalOperatorCategory.TRANSFORM})
 public class UnNestAO extends UnaryLogicalOp {
 
     /**

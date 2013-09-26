@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "CLASSIFY", minInputPorts = 2, maxInputPorts = 2, category={LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLASSIFIKATION})
+@LogicalOperator(name = "CLASSIFY", minInputPorts = 2, maxInputPorts = 2, doc="This operator classifies a tuple by using a classifier. The operator needs two inputs: A stream of tuples that should be classified and a stream of classifiers (that normally comes from a CLASSIFICATION_LEARN operator). It a appends a new attribute called \"clazz\" which contains the nominal class value or continuous value from a regression For the classify operator, the type of the classifier (tree, list, bayes net... ) doesn't matter. You may even mixup them to classify the same tuple with different classifiers (see Ensembles). The left port is the input for the tuples that should be classified and the right input is the one with the classifiers.",category={LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLASSIFIKATION})
 public class ClassificationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1231999597473176237L;

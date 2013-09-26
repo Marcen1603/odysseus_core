@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="BENCHMARKRESULT", category={LogicalOperatorCategory.BENCHMARK})
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="BENCHMARKRESULT", doc="Creates a benchmark result object.", category={LogicalOperatorCategory.BENCHMARK})
 public class BenchmarkResultAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 5482639974274293586L;

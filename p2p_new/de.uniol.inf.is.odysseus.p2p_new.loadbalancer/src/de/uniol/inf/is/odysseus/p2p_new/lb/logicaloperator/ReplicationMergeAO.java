@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * <code>output = DISTRIBUTION_MERGE(input1,input2,...inputn)</code> 
  * @author Michael Brand
  */
-@LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, category = {LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, doc="Merge input from semantically equal queries.", category = {LogicalOperatorCategory.PROCESSING})
 public class ReplicationMergeAO extends BinaryLogicalOp {
 	
 	private static final long serialVersionUID = -4050688632559595499L;

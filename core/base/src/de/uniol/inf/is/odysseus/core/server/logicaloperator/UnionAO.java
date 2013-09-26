@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, name = "UNION", category={LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET})
+@LogicalOperator(minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, name = "UNION", doc="Merges different input streams. (Typically preserves input order. Depending on the processing model)", category={LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET})
 public class UnionAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 2828756253165671692L;

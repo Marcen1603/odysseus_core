@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(name="LatencyConvert", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BENCHMARK, LogicalOperatorCategory.MINING})
+@LogicalOperator(name="LatencyConvert", minInputPorts=1, maxInputPorts=1,doc="Used for debugging.", category={LogicalOperatorCategory.BENCHMARK, LogicalOperatorCategory.MINING})
 public class LatencyConverterAO extends UnaryLogicalOp{
 
 	private int factor = 1000000;

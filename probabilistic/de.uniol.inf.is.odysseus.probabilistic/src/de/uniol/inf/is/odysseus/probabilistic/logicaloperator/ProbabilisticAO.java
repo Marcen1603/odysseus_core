@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "Probabilistic", category={LogicalOperatorCategory.PROBABILISTIC})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc="TODO", name = "Probabilistic", category={LogicalOperatorCategory.PROBABILISTIC})
 public class ProbabilisticAO extends UnaryLogicalOp {
 
 	/**

@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 
-@LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.BASE})
+@LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc="Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", category={LogicalOperatorCategory.BASE})
 public class AggregateAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 2539966167342852544L;

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", category={LogicalOperatorCategory.ENRICH})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", doc="Enrich tuples with data from external web services.", category={LogicalOperatorCategory.ENRICH})
 public class WSEnrichAO extends UnaryLogicalOp {
 
 	/**

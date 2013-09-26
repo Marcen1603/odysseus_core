@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PATTERN})
+@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, doc="This operator can be used to filter out equal elements and reduce data rate.", category={LogicalOperatorCategory.PATTERN})
 public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;

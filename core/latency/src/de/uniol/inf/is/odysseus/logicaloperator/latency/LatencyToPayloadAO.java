@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name="LATENCYTOPAYLOAD", maxInputPorts=1, minInputPorts=1, category={LogicalOperatorCategory.BENCHMARK})
+@LogicalOperator(name="LATENCYTOPAYLOAD", maxInputPorts=1, minInputPorts=1, doc="Add an attribute with the current latency information to each tuple.", category={LogicalOperatorCategory.BENCHMARK})
 public class LatencyToPayloadAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = -8208189869158067885L;

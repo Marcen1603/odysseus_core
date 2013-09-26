@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Christian Pieper, cpi
  *
  */
-@LogicalOperator(name = "HMM", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING})
+@LogicalOperator(name = "HMM", minInputPorts = 1, maxInputPorts = 1, doc="Hidden markov model. Can be a learner or a matcher, depending on attributes. ", category={LogicalOperatorCategory.MINING})
 public class HmmAO extends UnaryLogicalOp implements ILogicalOperator {
 
 	/**

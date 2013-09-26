@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="BUFFEREDFILTER", category={LogicalOperatorCategory.ADVANCED})
+@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="BUFFEREDFILTER", doc="This operator can be used to reduce data rate. It buffers incoming elements on port 0 (left) for bufferTime and evaluates a predicate over the elements on port 1 (right). If the predicate for the current element e evaluates to true, all elements from port 0 that are younger than e.startTimeStamp()-bufferTime will be enriched with e and delivered for deliverTime. Each time the predicate evaluates to true, the deliverTime will be increased.", category={LogicalOperatorCategory.ADVANCED})
 public class BufferedFilterAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 5312945034141719894L;

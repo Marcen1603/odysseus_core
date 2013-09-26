@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "BINDING", category={LogicalOperatorCategory.SINK})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "BINDING", doc="decprecated",category={LogicalOperatorCategory.SINK}, deprecation=true)
 public class SinkAO extends AbstractLogicalOperator {
 
 	/**

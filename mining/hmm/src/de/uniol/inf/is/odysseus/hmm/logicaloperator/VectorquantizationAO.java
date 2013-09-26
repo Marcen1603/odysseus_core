@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
  * @author Christian Pieper, cpi
  *
  */
-@LogicalOperator(name = "VECTORQUANTIZATION", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING})
+@LogicalOperator(name = "VECTORQUANTIZATION", minInputPorts = 1, maxInputPorts = 1, doc="Process the incoming feature vector, from the Feature Extraction operator  to determine the cluster id. Distinguish autonomous the incoming data, e.g. orientation, velocity, coordinates, to determine the correct method to work with", category={LogicalOperatorCategory.MINING})
 public class VectorquantizationAO extends UnaryLogicalOp implements	ILogicalOperator {
 
 	// Attributes

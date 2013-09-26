@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM", category={LogicalOperatorCategory.PROBABILISTIC})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM", doc="This operator fits gaussian mixtures model to the input stream.",category={LogicalOperatorCategory.PROBABILISTIC})
 public class EMAO extends UnaryLogicalOp {
 
 	/**

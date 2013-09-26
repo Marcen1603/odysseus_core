@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "ENRICH", minInputPorts = 2, maxInputPorts = 2,category={LogicalOperatorCategory.ENRICH})
+@LogicalOperator(name = "ENRICH", minInputPorts = 2, maxInputPorts = 2, doc ="This operator enriches tuples with data that is cached, e.g. to enrich a stream with a list of categories. The first input stream, therefore, should be only stream limited data to avoid buffer overflows. The second input is the data stream that should be enriched.", category={LogicalOperatorCategory.ENRICH})
 public class EnrichAO extends BinaryLogicalOp {
 	
 	private static final long serialVersionUID = -4221371391163499952L;

@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP", category={LogicalOperatorCategory.BASE})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP", doc="Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: StateMap can use history information. To access the last n.th version of an attribute use \"__last_n.\" Mind the two \"_\" at the beginning!", category={LogicalOperatorCategory.BASE})
 public class StateMapAO extends MapAO {
 
 	private static final long serialVersionUID = 1695948732660010522L;

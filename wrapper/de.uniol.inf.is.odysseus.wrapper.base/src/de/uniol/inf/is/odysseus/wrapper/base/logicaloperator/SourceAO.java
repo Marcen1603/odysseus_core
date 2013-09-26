@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
  * @author ckuka
  */
 
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ADAPTER", category={LogicalOperatorCategory.SOURCE}, deprecation=true)
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ADAPTER", doc="deprecated",category={LogicalOperatorCategory.SOURCE}, deprecation=true)
 public class SourceAO extends AbstractLogicalOperator {
 	/**
      * 

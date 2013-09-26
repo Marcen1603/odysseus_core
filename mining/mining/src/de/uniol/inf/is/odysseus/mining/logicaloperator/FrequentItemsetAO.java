@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "FREQUENTITEMSET", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING})
+@LogicalOperator(name = "FREQUENTITEMSET", minInputPorts = 1, maxInputPorts = 1, doc="This operator create frequent item sets from a given stream. The result stream creates a tuple with 3 attributes: id: the number (a simple counter) of the pattern, set: the frequent pattern, which is a list of tuples (a nested attribute ~ NF^2), support: the support of the pattern",category={LogicalOperatorCategory.MINING})
 public class FrequentItemsetAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7771591123865284928L;

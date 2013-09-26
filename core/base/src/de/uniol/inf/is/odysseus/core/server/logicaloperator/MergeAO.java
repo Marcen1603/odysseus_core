@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  *
  */
 
-@LogicalOperator(name = "MERGE", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.BASE})
+@LogicalOperator(name = "MERGE", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, doc="Merge different input streams into one stream with \"first comes first served\" semantics.", category={LogicalOperatorCategory.BASE})
 public class MergeAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4206936945113954674L;

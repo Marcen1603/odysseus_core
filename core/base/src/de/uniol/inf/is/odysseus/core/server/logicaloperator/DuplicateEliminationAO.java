@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name="DUPLICATEELIMINATION", maxInputPorts=1, minInputPorts=1, category={LogicalOperatorCategory.BASE})
+@LogicalOperator(name="DUPLICATEELIMINATION", maxInputPorts=1, minInputPorts=1, doc="Removes duplicates (Depending on the time model!)",category={LogicalOperatorCategory.BASE})
 public class DuplicateEliminationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -4456846799512963785L;

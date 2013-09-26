@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TimeStampOrderValidate", category = {LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TimeStampOrderValidate", doc="Assure that all elements are ordered by start timestamp and eliminate out of order elements.", category = {LogicalOperatorCategory.PROCESSING})
 public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9204585315520513917L;

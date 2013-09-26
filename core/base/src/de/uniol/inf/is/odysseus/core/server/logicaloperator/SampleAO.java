@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="SAMPLE", category={LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="SAMPLE", doc="This operator can reduce load by throwing away tuples.",category={LogicalOperatorCategory.PROCESSING})
 public class SampleAO extends UnaryLogicalOp {
 
 	/**

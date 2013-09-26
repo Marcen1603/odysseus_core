@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.RRFragmentation;
  * <code>output = FRAGMENT([FRAGMENTS=n], input)</code>
  * @author Michael Brand
  */
-@LogicalOperator(name = "FRAGMENT", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(name = "FRAGMENT", minInputPorts = 1, maxInputPorts = 1, doc="Can be used to fragment incoming streams",category={LogicalOperatorCategory.PROCESSING})
 public class FragmentAO extends UnaryLogicalOp {
 	
 	private static final long serialVersionUID = -6789007084291408905L;

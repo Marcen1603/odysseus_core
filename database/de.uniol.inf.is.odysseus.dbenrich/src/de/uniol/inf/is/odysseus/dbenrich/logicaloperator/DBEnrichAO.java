@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DBENRICH", category={LogicalOperatorCategory.ENRICH, LogicalOperatorCategory.DATABASE})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DBENRICH", doc="Enrich stream objects with information from a database.", category={LogicalOperatorCategory.ENRICH, LogicalOperatorCategory.DATABASE})
 public class DBEnrichAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 7829900765149450355L;

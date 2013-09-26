@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 
-@LogicalOperator(name = "CONTEXTENRICH", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.ENRICH})
+@LogicalOperator(name = "CONTEXTENRICH", minInputPorts = 1, maxInputPorts = 1, doc="This operator enriches tuples with information from the context store. Further Information can be found here. There is also an DBENRICH operator for fetching data from a database or a simple ENRICH that caches incoming streams.", category={LogicalOperatorCategory.ENRICH})
 public class ContextEnrichAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -6701002329614782111L;

@@ -20,22 +20,22 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name = "CALCLATENCY", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.BENCHMARK})
-public class LatencyCalculationAO extends UnaryLogicalOp {
+@LogicalOperator(name = "CALCLATENCY", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, doc = "Odysseus has some features to measure the latency of single stream elements. This latency information is modeled as an interval. An operator in Odysseus can modify the start point of this interval. This operator sets the endpoint and determines the place in the query plan, where the latency measurement finds place. There can be multiple operators in the plan, to measure latency at different places.", category={LogicalOperatorCategory.BENCHMARK})
+public class CalcLatencyAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9078812899082643674L;
 
-	public LatencyCalculationAO() {
+	public CalcLatencyAO() {
 		super();
 	}
 
-	public LatencyCalculationAO(LatencyCalculationAO ao) {
+	public CalcLatencyAO(CalcLatencyAO ao) {
 		super(ao);
 	}
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new LatencyCalculationAO(this);
+		return new CalcLatencyAO(this);
 	}
 	
 	@Override

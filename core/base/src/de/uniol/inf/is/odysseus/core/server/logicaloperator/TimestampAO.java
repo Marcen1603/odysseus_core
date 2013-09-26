@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp", category={LogicalOperatorCategory.BASE})
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp", doc="This Operator can be used to update the timestamp information in the meta data part. Be careful because this may lead undefined semantics", category={LogicalOperatorCategory.BASE})
 public class TimestampAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -467482177921504749L;
 

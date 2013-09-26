@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParamete
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(name = "BENCHMARK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.BENCHMARK})
+@LogicalOperator(name = "BENCHMARK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, doc="Simulate an operator with specific behavoir.", category={LogicalOperatorCategory.BENCHMARK})
 public class BenchmarkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 9094076133083176377L;

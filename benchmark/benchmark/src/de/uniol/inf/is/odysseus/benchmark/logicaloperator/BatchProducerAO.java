@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(name = "BATCHPRODCUER", minInputPorts = 0, maxInputPorts = 0, category={LogicalOperatorCategory.BENCHMARK})
+@LogicalOperator(name = "BATCHPRODCUER", minInputPorts = 0, maxInputPorts = 0, doc="Create input for benchmarking.", category={LogicalOperatorCategory.BENCHMARK})
 public class BatchProducerAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 730372057392120823L;
 

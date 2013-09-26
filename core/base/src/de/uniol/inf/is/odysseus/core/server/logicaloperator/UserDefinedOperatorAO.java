@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunction;
 
-@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "UDO", category = {LogicalOperatorCategory.ADVANCED})
+@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "UDO", doc="Calls a user defined operator", category = {LogicalOperatorCategory.ADVANCED})
 public class UserDefinedOperatorAO extends AbstractLogicalOperator{
 
 	private static final long serialVersionUID = 837012993098327414L;

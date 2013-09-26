@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 /**
  * @author Michael Falk
  */
-@LogicalOperator(name="PATTERN", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, category = {LogicalOperatorCategory.PATTERN})
+@LogicalOperator(name="PATTERN", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, doc="This generic operator allows the definition of different kinds of pattern (e.g. all, any). For sequence based patterns see SASE operator ",category = {LogicalOperatorCategory.PATTERN})
 public class PatternMatchingAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 938637032482611886L;

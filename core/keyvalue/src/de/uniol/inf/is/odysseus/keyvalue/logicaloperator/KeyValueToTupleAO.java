@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", category={LogicalOperatorCategory.TRANSFORM})
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", doc="Translates a key-value/json object to a tuple", category={LogicalOperatorCategory.TRANSFORM})
 public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	private static final long serialVersionUID = 4804826171047928513L;

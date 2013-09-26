@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 * @author Andreas Harre, Philipp Rudolph, Jan Sören Schwarz
 * 
 */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="FASTHEATMAP", category={LogicalOperatorCategory.ADVANCED})
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="FASTHEATMAP", doc="Optimized heat map operator for grand challenge 2013.", category={LogicalOperatorCategory.ADVANCED})
 public class FastHeatMapAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int x;

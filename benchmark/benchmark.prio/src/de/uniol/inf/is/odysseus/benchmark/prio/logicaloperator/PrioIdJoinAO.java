@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
-@LogicalOperator(name = "PRIOIDJOIN", minInputPorts = 2, maxInputPorts = 2, category={LogicalOperatorCategory.PROCESSING})
+//@LogicalOperator(name = "PRIOIDJOIN", minInputPorts = 2, maxInputPorts = 2, category={LogicalOperatorCategory.PROCESSING}, doc="Currently not working!")
 public class PrioIdJoinAO extends AbstractLogicalOperator implements
 		ILogicalOperator {
 	private static final long serialVersionUID = 7562422981222202288L;

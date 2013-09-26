@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name = "TimestampToPayload", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.TRANSFORM})
+@LogicalOperator(name = "TimestampToPayload", minInputPorts = 1, maxInputPorts = 1, doc="This operator is needed before data is send to another system (e.g. via a socket sink) to keep the time meta information (i.e. start and end time stamp). The input object gets two new fields with start and end timestamp. If this output is read again by (another) Odysseus instance, the following needs to be attached to the schema: ['start', 'StartTimestamp'], ['end', 'EndTimestamp']",category = {LogicalOperatorCategory.TRANSFORM})
 public class TimestampToPayloadAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7506659021418301530L;

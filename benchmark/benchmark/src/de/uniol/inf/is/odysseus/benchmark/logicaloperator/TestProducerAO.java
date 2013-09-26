@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
 
-@LogicalOperator(name="TESTPRODUCER", minInputPorts=0, maxInputPorts=0, category={LogicalOperatorCategory.BENCHMARK})
+@LogicalOperator(name="TESTPRODUCER", minInputPorts=0, maxInputPorts=0, doc="Create dummy data for benchmarking.",category={LogicalOperatorCategory.BENCHMARK})
 public class TestProducerAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = -6067355249297203590L;
 	private ArrayList<Integer> elementCounts = new ArrayList<Integer>();

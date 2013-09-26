@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Dennis Geesen, Marco Grawunder
  * Created at: 29.05.2012
  */
-@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="CHANGECORRELATE", category={LogicalOperatorCategory.PATTERN})
+@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="CHANGECORRELATE", doc="Operator used in DEBS Grand Challenge 2012", category={LogicalOperatorCategory.PATTERN})
 public class ChangeCorrelateAO extends BinaryLogicalOp{
 
 	// Predicates need to be stored in AbstractLogical Operator

@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
  * @author Dennis Geesen
  * 
  */
-@LogicalOperator(name = "CONVOLUTION", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.ADVANCED})
+@LogicalOperator(name = "CONVOLUTION", minInputPorts = 1, maxInputPorts = 1, doc="This operator applies a convolution filter, which is often used in electronic signal processing or in image processing to clean up wrong values like outliers. The idea behind the convultion is to correct the current value by looking at its neighbours. The number of neighbours is the size of the filter. If, for example, SIZE=3, the filter uses the three values before the current and three values after the current value to correct the current value. Therefore, the filter does not deliver any results for the first SIZE values, because it also needs additionally SIZE further values after the current one!", category={LogicalOperatorCategory.ADVANCED})
 public class ConvolutionFilterAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -8972289160969278298L;

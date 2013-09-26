@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "BUFFER", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PROCESSING})
+@LogicalOperator(name = "BUFFER", minInputPorts = 1, maxInputPorts = 1, doc="Typically, Odysseus provides a buffer placement strategy to place buffers in the query plan. This operator allows adding buffers by hand. Buffers receives data stream elements and stores them in an internal elementbuffer. The scheduler stops the execution here for now. Later, the scheduler resumes to execution (e.g. with an another thread).", category={LogicalOperatorCategory.PROCESSING})
 public class BufferAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 9204364375031967542L;
