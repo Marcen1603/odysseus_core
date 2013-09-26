@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -36,6 +38,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -57,7 +60,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	protected void internal_init() {
 		configureInsertMode(SMART_INSERT, false);
-		setDocumentProvider(new OdysseusScriptDocumentProvider());		
+		setDocumentProvider(new OdysseusScriptDocumentProvider());
 		setSourceViewerConfiguration(new OdysseusScriptViewerConfiguration(this));
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
@@ -92,7 +95,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 
 	@Override
 	public void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);		
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
 	}
 
@@ -144,6 +147,44 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#isSaveAsAllowed()
+	 */
+	@Override
+	public boolean isSaveAsAllowed() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSaveAs()
+	 */
+	@Override
+	public void doSaveAs() {
+		SaveAsDialog saveAsDialog = new SaveAsDialog(getSite().getShell());
+		saveAsDialog.setOriginalName(getTitle());
+		saveAsDialog.open();
+		IPath path = saveAsDialog.getResult();
+		if (path != null) {
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+			if (file != null) {
+				IFile oldFile = ((FileEditorInput) getEditorInput()).getFile();
+				try {					
+					file.create(oldFile.getContents(), true, new NullProgressMonitor());
+					setInputWithNotify(new FileEditorInput(file));
+					setPartName(file.getName());
+					doSave(getProgressMonitor());
+					ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	private void closeEditor(final IResource resource) {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
@@ -158,5 +199,5 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 			}
 		});
 	}
-	
+
 }
