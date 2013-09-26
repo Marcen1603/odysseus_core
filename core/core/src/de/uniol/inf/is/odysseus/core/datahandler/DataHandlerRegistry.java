@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -110,6 +111,17 @@ public class DataHandlerRegistry {
 			}
 		}		
 		return type;
+	}
+	
+	public static List<String> getStreamableDataHandlerNames(){
+		List<String> list = new ArrayList<>();
+		for(String name : getHandlerNames()){
+			IDataHandler<?> dh = dataHandlers.get(name.toLowerCase());
+			if(IStreamObject.class.isAssignableFrom(dh.createsType())){
+				list.add(name);
+			}
+		}
+		return list;
 	}
 	
 	/**

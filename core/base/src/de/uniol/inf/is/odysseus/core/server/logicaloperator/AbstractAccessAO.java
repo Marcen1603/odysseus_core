@@ -106,7 +106,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	}
 
 	public List<String> getDataHandlerValues(){
-		return DataHandlerRegistry.getHandlerNames();
+		return DataHandlerRegistry.getStreamableDataHandlerNames();
 	}
 	
 	public String getDataHandler() {
