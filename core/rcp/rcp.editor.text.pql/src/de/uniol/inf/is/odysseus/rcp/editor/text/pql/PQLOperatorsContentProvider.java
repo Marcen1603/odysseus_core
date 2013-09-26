@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.Viewer;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 
 public class PQLOperatorsContentProvider implements ITreeContentProvider {
@@ -43,11 +44,13 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 		return getChildren(inputElement);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if( parentElement instanceof List ) {
-			List<?> set = (List<?>)parentElement;
-			return set.toArray();
+			List<IOperatorBuilder> set = (List<IOperatorBuilder>)parentElement;
+			List<IOperatorBuilder> nonHiddenSet = selectNonHidden(set);
+			return nonHiddenSet.toArray();
 		}
 		if( parentElement instanceof IOperatorBuilder ) {
 			IOperatorBuilder builder = (IOperatorBuilder)parentElement;
@@ -67,6 +70,17 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 		}
 		
 		return null;
+	}
+
+	private List<IOperatorBuilder> selectNonHidden(List<IOperatorBuilder> builders) {
+		List<IOperatorBuilder> nonHidden = Lists.newArrayList();
+		for( IOperatorBuilder builder : builders ) {
+			LogicalOperator annotation = builder.getOperatorClass().getAnnotation(LogicalOperator.class);
+			if( annotation != null && !annotation.hidden() ) {
+				nonHidden.add(builder);
+			}
+		}
+		return nonHidden;
 	}
 
 	@Override
