@@ -1,20 +1,39 @@
 package de.uniol.inf.is.odysseus.billingmodel.physicaloperator;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.billingmodel.BillingManager;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	
-	private Map<Integer, Map<String, Double>> queryToUserToPrice;
+	private Map<Integer, Map<String, Double>> queryToUserToPrice = new HashMap<>();
+	private static Connection conn = null;
+	private TupleCostCalculationType calculationType;
+	private int persistenceInterval = 60 * 1000;
 	
-	public TupleCostCalculationPipe() {
+	public TupleCostCalculationPipe(TupleCostCalculationType type) {
+		if (conn == null) {
+			try {
+				Class.forName("org.postgresql.Driver");
+				String url = "jdbc:postgresql://localhost/Lena";
+				conn = DriverManager.getConnection(url, "Lena", "");
+			} catch (Exception ex) {
+				System.err.println(ex.getMessage());
+			}
+		}
+		calculationType = type;
 	}
 
 	public TupleCostCalculationPipe(AbstractPipe<T, T> pipe) {
@@ -28,6 +47,8 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 
 	@Override
 	protected void process_next(T object, int port) {
+		transfer(object);
+		
 		// get owner (query) and user of the operator for calculating the tuple price
 		for (IOperatorOwner ow : this.getOwner()) {
 			IUser user = null;
@@ -43,19 +64,66 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 				String userID = user.getId();
 				
 				tuplePrice = getTuplePrice(queryID, userID);
+				switch (calculationType) {
+				case OUTGOING_TUPLES:
+					BillingManager.addRevenue(userID, queryID, tuplePrice);
+					break;
+				case INCOMING_TUPLES:
+					BillingManager.addPayment(userID, queryID, tuplePrice);
+					break;
+				}
 				
+//				if (BillingManager.getNumberOfUnsavedRevenues() == 10)
+//					BillingManager.persistBillingInformations();
+				
+				if(System.currentTimeMillis() - BillingManager.getLastTimestampOfPersistence() > persistenceInterval)
+					BillingManager.persistBillingInformations();
 			}
 		}
-		
-		transfer(object);
 	}
 	
 	private double getTuplePrice(int queryID, String userID) {
 		double tuplePrice = 0;
 		
-		if (queryToUserToPrice.get(queryID).get(userID) == null) {
-//			String query = "select...from...where...";
-			tuplePrice = 0.01;
+		if (queryToUserToPrice.get(queryID) == null) { //.get(userID) == null) {
+
+			try {
+				PreparedStatement statement = conn.prepareStatement("SELECT \"Price\" FROM \"TuplePrice\" WHERE \"AccountID\"=? and \"QueryID\"=? and \"CostTypeID\"=?");
+				statement.setString(1, userID);
+				statement.setInt(2, queryID);
+				switch (calculationType) {
+				case INCOMING_TUPLES:
+					statement.setInt(3, 1);
+					break;
+				case OUTGOING_TUPLES:
+					statement.setInt(3, 4);
+					break;
+				}
+				ResultSet rs = statement.executeQuery();
+				while (rs.next())
+			      {
+			        tuplePrice = rs.getDouble(1);
+			      }
+			} catch (SQLException ex) {
+				System.err.println(ex.getMessage());
+			}
+			
+//			String query = "SELECT price FROM \"Test\" WHERE id=1";
+//		    try
+//		    {
+//		      Statement st = conn.createStatement();
+//		      ResultSet rs = st.executeQuery(query);
+//		      while (rs.next())
+//		      {
+//		        tuplePrice = rs.getDouble("price");
+//		      }
+//		    }
+//		    catch (SQLException ex)
+//		    {
+//		      System.err.println(ex.getMessage());
+//		    }
+			
+//			tuplePrice = 0.01;
 			
 			Map<String, Double> map = new HashMap<String, Double>();
 			map.put(userID, tuplePrice);
@@ -72,4 +140,23 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 		return new TupleCostCalculationPipe<T>(this);
 	}
 
+	public TupleCostCalculationType getCalculationType() {
+		return calculationType;
+	}
+
+	public void setCalculationType(TupleCostCalculationType calculationType) {
+		this.calculationType = calculationType;
+	}
+
+	public int getPersistenceInterval() {
+		return persistenceInterval;
+	}
+
+	public void setPersistenceInterval(int persistenceInterval) {
+		this.persistenceInterval = persistenceInterval;
+	}
+	
+	public enum TupleCostCalculationType {
+		INCOMING_TUPLES, OUTGOING_TUPLES
+	}
 }
