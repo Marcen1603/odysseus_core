@@ -21,7 +21,6 @@ public class SLAPostOptimizationAction implements IPostOptimizationAction {
 		}
 		
 		query.addPlanMonitor(MonitoringDataTypes.SELECTIVITY.name, new PlanMonitor(query, false, false, MonitoringDataTypes.SELECTIVITY.name, 10 * 1000));
-
 	}
 
 }

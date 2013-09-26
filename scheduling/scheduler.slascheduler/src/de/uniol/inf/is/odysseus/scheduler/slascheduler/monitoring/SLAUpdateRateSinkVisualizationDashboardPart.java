@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
-//import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 
 public class SLAUpdateRateSinkVisualizationDashboardPart extends
 		AbstractChartDashboardPart {
@@ -26,10 +27,17 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 
 	private XYSeriesCollection datasetCollection;
 	private Map<IPhysicalOperator, XYSeries> operatorToSerie = new HashMap<IPhysicalOperator, XYSeries>();
+	private long startTestSeries = -1;
 
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
+		if(startTestSeries == -1)
+			startTestSeries = System.currentTimeMillis();
+		
+		if (System.currentTimeMillis() - startTestSeries > 600 * 1000)
+			return;
+		
 		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
 				if (operatorToSerie.size() > 1)
@@ -60,6 +68,9 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 		JFreeChart chart = ChartFactory.createXYLineChart(
 				"SLA Violation Monitoring", "Time", "Updaterate in ms",
 				datasetCollection, PlotOrientation.VERTICAL, true, true, false);
+		
+		Color gray = new Color(222, 222, 222);
+		chart.getPlot().setBackgroundPaint(gray);
 		
 		return chart;
 	}

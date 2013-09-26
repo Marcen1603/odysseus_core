@@ -15,17 +15,23 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
+import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe.TupleCostCalculationType;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.intervalapproach.AssureHeartbeatPO;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.Helper;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
-//import de.uniol.inf.is.odysseus.intervalapproach.AssureHeartbeatPO;
 
 /**
  * Placement strategy for UpdateRateSink based sla conformance  operators
@@ -36,8 +42,6 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaCo
 public class UpdateRateSinkSLAConformancePlacement implements
 		ISLAConformancePlacement {
 
-	private boolean calculateTupleCosts;
-
 	/**
 	 * places the given sla conformance operator at the root of the given
 	 * partial plan, assuming that one partial plan consists only of one query
@@ -46,42 +50,122 @@ public class UpdateRateSinkSLAConformancePlacement implements
 	@Override
 	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator root,
 			ISLAConformance conformance) {
-		calculateTupleCosts = false;
 		// it is expected that there is only one query per partial plan!
-
+		
+		IPhysicalOperator op;
 		if (root.isSource()) { // Source or Pipe
-			ISubscribable subscribable;
-			if (calculateTupleCosts) {
-				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
-				subscribable = costCalc;
-				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-
-				subscribable = (ISubscribable) root;
-				subscribable.connectSink(costCalc, 0, 0, root.getOutputSchema());
-			} else {
-				subscribable = (ISubscribable) root;
-				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
-			}
-			return subscribable;
+			op = root;
 		} else if (root.isSink() && !root.isSource()) { // Sink
-			// assumption: a sink has just one inputstream
 			PhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) root).getSubscribedToSource().iterator().next();
-			ISource source = s.getTarget();
-			ISubscribable subscribable;
-			if (calculateTupleCosts) { // add AssureHeartBeat
-				// AssureHeartbeatPO<?> heartbeat = new
-				// AssureHeartbeat();
-				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
-				subscribable = costCalc;
-				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+			op = s.getTarget();
+		} else
+			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
+		
+		ArrayList<IPhysicalOperator> operatorsToAdd = new ArrayList<IPhysicalOperator>();
+		ISubscribable subscribable;
+		if (Helper.useBillingModel()) {
+			if (((IOwnedOperator)conformance).getOwner().size() == 0)
+				((IOwnedOperator)conformance).addOwner(root.getOwner());
+			
+			TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe(TupleCostCalculationType.OUTGOING_TUPLES);
+			if (((IOwnedOperator)costCalc).getOwner().size() == 0)
+				((IOwnedOperator)costCalc).addOwner(root.getOwner());
+			
+			AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
+			heartbeat.setSendAlwaysHeartbeat(true);
+			heartbeat.setAllowOutOfOrder(true);
+			heartbeat.setRealTimeDelay(500, TimeUnit.MILLISECONDS);
+			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
+				((IOwnedOperator)heartbeat).addOwner(root.getOwner());
 
-				subscribable = (ISubscribable) source;
-				subscribable.connectSink(costCalc, 0, 0, source.getOutputSchema());
-			} else {
-				subscribable = (ISubscribable) source;
-				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
-			}
-			return subscribable;
+			subscribable = heartbeat;
+			subscribable.connectSink(costCalc, 0, 0, op.getOutputSchema());
+			subscribable.connectSink(conformance, 0, 0, op.getOutputSchema());
+
+			subscribable = (ISubscribable) op;
+			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
+			
+			operatorsToAdd.add(costCalc);
+			operatorsToAdd.add((IPhysicalOperator) conformance);
+			
+//			subscribable = costCalc;
+//			subscribable.connectSink(conformance, 0, 0, op.getOutputSchema());
+//			
+//			AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
+//			heartbeat.setSendAlwaysHeartbeat(true);
+//			heartbeat.setAllowOutOfOrder(true);
+//			heartbeat.setRealTimeDelay(500, TimeUnit.MILLISECONDS);
+//			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
+//				((IOwnedOperator)heartbeat).addOwner(root.getOwner());
+//			subscribable = heartbeat;
+//			subscribable.connectSink(costCalc, 0, 0, op.getOutputSchema());
+//
+//			subscribable = (ISubscribable) op;
+//			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
+//			
+//			operatorsToAdd.add((IPhysicalOperator) conformance);
+		} else {
+			if (((IOwnedOperator)conformance).getOwner().size() == 0)
+				((IOwnedOperator)conformance).addOwner(root.getOwner());
+			AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
+			heartbeat.setSendAlwaysHeartbeat(true);
+			heartbeat.setAllowOutOfOrder(true);
+			heartbeat.setRealTimeDelay(500, TimeUnit.MILLISECONDS);
+			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
+				((IOwnedOperator)heartbeat).addOwner(root.getOwner());
+			subscribable = heartbeat;
+			subscribable.connectSink(conformance, 0, 0, op.getOutputSchema());
+			
+			subscribable = (ISubscribable) op;
+			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
+			
+			operatorsToAdd.add((IPhysicalOperator) conformance);
+		}
+//		query.replaceRoot(root, (IPhysicalOperator)conformance);
+		
+		ArrayList<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>(query.getRoots());
+		list.addAll(operatorsToAdd);
+		query.setRoots(list);
+		
+		return subscribable;
+			
+
+//		if (root.isSource()) { // Source or Pipe
+//			ISubscribable subscribable;
+//			if (calculateTupleCosts) {
+//				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
+//				subscribable = costCalc;
+//				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+//
+//				subscribable = (ISubscribable) root;
+//				subscribable.connectSink(costCalc, 0, 0, root.getOutputSchema());
+//			} else {
+//				subscribable = (ISubscribable) root;
+//				subscribable.connectSink(conformance, 0, 0, root.getOutputSchema());
+//			}
+//			return subscribable;
+//		} else if (root.isSink() && !root.isSource()) { // Sink
+//			// assumption: a sink has just one inputstream
+//			PhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) root).getSubscribedToSource().iterator().next();
+//			ISource source = s.getTarget();
+//			ISubscribable subscribable;
+//			if (calculateTupleCosts) {
+//				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe();
+//				subscribable = costCalc;
+//				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+//				
+//				AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
+//				heartbeat.setSendAlwaysHeartbeat(true);
+//				subscribable = heartbeat;
+//				subscribable.connectSink(costCalc, 0, 0, source.getOutputSchema());
+//
+//				subscribable = (ISubscribable) source;
+//				subscribable.connectSink(heartbeat, 0, 0, source.getOutputSchema());
+//			} else {
+//				subscribable = (ISubscribable) source;
+//				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+//			}
+//			return subscribable;
 			
 			/*for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) root).getSubscribedToSource()) {
 				ISource source = s.getTarget();
@@ -102,8 +186,8 @@ public class UpdateRateSinkSLAConformancePlacement implements
 				subscribables.add(subscribable);
 			}
 			return subscribables;*/
-		} else
-			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
+//		} else
+//			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
 	}
 
 	/**

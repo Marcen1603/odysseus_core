@@ -200,8 +200,18 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 			parseQuery(this);
 			if (isSelectivityNull) {
 				// unindebted sla violation -> send last object again
-				process_next(lastObjectSend, lastPortSend);
+				if (lastObjectSend != null)
+					process_next(lastObjectSend, lastPortSend);
 			}
+		}
+		
+		if ((System.currentTimeMillis() - this.lastTupleSend) > 1000) {
+			parseQuery(this);
+			if (isSelectivityNull) {
+				// unindebted sla violation -> send last object again
+				if (lastObjectSend != null)
+					process_next(lastObjectSend, lastPortSend);
+			}	
 		}
 		
 		

@@ -15,8 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
+import java.util.ArrayList;
+
+import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
+import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe.TupleCostCalculationType;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
@@ -39,8 +44,19 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator source,
 			ISLAConformance conformance) {
 		if (source.isSource()) {
+			if (((IOwnedOperator)conformance).getOwner().size() == 0)
+				((IOwnedOperator)conformance).addOwner(source.getOwner());
+			TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe(TupleCostCalculationType.INCOMING_TUPLES);
+			if (((IOwnedOperator)costCalc).getOwner().size() == 0)
+				((IOwnedOperator)costCalc).addOwner(source.getOwner());
 			ISubscribable subscribable = (ISubscribable) source;
 			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+			subscribable.connectSink(costCalc, 0, 0, source.getOutputSchema());
+			
+			ArrayList<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>(query.getRoots());
+			list.add((IPhysicalOperator) conformance);
+			list.add(costCalc);
+			query.setRoots(list);
 			
 			return subscribable;
 		} else {

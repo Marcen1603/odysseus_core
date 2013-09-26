@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
-//import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 
 public class SLAUpdateRateSinkViolationDashboardPart extends
 		AbstractChartDashboardPart {

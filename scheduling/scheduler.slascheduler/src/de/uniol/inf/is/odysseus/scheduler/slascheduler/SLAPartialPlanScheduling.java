@@ -155,6 +155,8 @@ public class SLAPartialPlanScheduling implements IPhysicalQueryScheduling,
 			this.querySharing = null;
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
+		if (Helper.useBillingModel())
+			this.addSLAViolationEventListener(new SLAViolationBilling());
 		this.queue = new LinkedList<Pair<IScheduling, Double>>();
 		
 		pausedPlans = new HashSet<IScheduling>();
