@@ -164,6 +164,20 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 	 */
 	@Override
 	public void doSaveAs() {
+		if(isDirty()){
+			int result = promptToSaveOnClose();
+			if(result == ISaveablePart2.CANCEL){
+				return;
+			}
+			if(result == ISaveablePart2.YES){
+				doSave(new NullProgressMonitor());
+			}
+			try {
+				ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+			} catch (CoreException e) {			
+				e.printStackTrace();
+			}
+		}
 		SaveAsDialog saveAsDialog = new SaveAsDialog(getSite().getShell());
 		saveAsDialog.setOriginalName(getTitle());
 		saveAsDialog.open();
