@@ -80,7 +80,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Lines DashboardPart only applyable for Tuples!");
 			return;
@@ -90,7 +90,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 			@Override
 			public void run() {
 				if (!chartComposite.isDisposed()) {
-					addStreamElementToChart((Tuple<?>) element, port);
+					addStreamElementToChart(senderOperator, (Tuple<?>) element, port);
 				}
 			}
 		});
@@ -102,7 +102,7 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	protected void addSecurityPunctuationToChart(ISecurityPunctuation punctuation, int port) {
 	}
 
-	protected abstract void addStreamElementToChart(Tuple<?> element, int port);
+	protected abstract void addStreamElementToChart(IPhysicalOperator senderOperator, Tuple<?> element, int port);
 
 	protected abstract JFreeChart createChart();
 
