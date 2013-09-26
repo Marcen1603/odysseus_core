@@ -34,7 +34,7 @@ public class OperatorCloudLoadBalancer extends AbstractLoadBalancer {
 	 * Returns one {@link Querypart} for each {@link ILogicalOperator} within the {@link ILogicalQuery}.
 	 */
 	@Override
-	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, QueryPart localPart) {
+	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");

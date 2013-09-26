@@ -1,45 +1,22 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation;
 
-import java.util.Collection;
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator.FragmentAO;
 
 /**
  * The class for a round-robin data fragmentation strategy. <br />
- * {@link #insertOperatorForDistribution(Collection, int, QueryBuildConfiguration)} will insert {@link FragmentAO}s and
- * {@link #createOperatorForJunction() will create an {@link UnionAO}.
+ * {@link FragmentAO}s will be used for data fragmentation.
  * @author Michael Brand
  */
-public class RRFragmentation extends AbstractDataFragmentation {
+public class RRFragmentation extends AbstractPrimaryHorizontalDataFragmentation {
 	
 	/**
 	 * @see #getName()
 	 */
 	public static final String NAME = "roundrobin";
-
-	@Override
-	public Class<? extends ILogicalOperator> getOperatorForDistributionClass() {
-		
-		return FragmentAO.class;
-		
-	}
-
-	@Override
-	public ILogicalOperator createOperatorForJunction() {
-		
-		return new UnionAO();
-		
-	}
-
-	@Override
-	public Class<? extends ILogicalOperator> getOperatorForJunctionClass() {
-		
-		return UnionAO.class;
-		
-	}
 
 	@Override
 	public String getName() {
@@ -49,12 +26,15 @@ public class RRFragmentation extends AbstractDataFragmentation {
 	}
 
 	@Override
-	protected ILogicalOperator createOperatorForDistribution(
-			int degreeOfParallelism, QueryBuildConfiguration parameters) {
+	protected ILogicalOperator createOperatorForFragmentation(int numFragments,
+			QueryBuildConfiguration parameters) {
+		
+		// Preconditions
+		Preconditions.checkArgument(numFragments > 1);
 		
 		FragmentAO fragmentAO = new FragmentAO();
-		fragmentAO.setType(RRFragmentation.NAME);
-		fragmentAO.setNumberOfFragments(degreeOfParallelism);
+		fragmentAO.setType(NAME);
+		fragmentAO.setNumberOfFragments(numFragments);
 		return fragmentAO;
 		
 	}

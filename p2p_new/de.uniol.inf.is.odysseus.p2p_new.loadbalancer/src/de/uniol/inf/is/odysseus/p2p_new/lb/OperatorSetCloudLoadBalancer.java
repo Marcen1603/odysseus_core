@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 
 /**
  * The <code>OperatorSetCloudLoadBalancer</code> splits an {@link ILogicalQuery} before each {@link IStatefulOperator} 
@@ -52,18 +53,17 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 	 * all operators before the first {@link QueryPart}.
 	 */
 	@Override
-	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, QueryPart localPart) {
+	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
-		Preconditions.checkNotNull(localPart, "localPart must be not null!");
 		
 		List<QueryPart> parts = Lists.newArrayList();
 		List<ILogicalOperator> opsForCurrentPart = Lists.newArrayList();
 		
 		for(ILogicalOperator operator : operators) {
 			
-			if(this.isSink(operator, localPart) || this.isSourceOfStatefulOperator(operator)) {
+			if(this.isSink(operator) || this.isSourceOfStatefulOperator(operator)) {
 				
 				// operator marks the beginning of a new querypart
 				if(!opsForCurrentPart.isEmpty()) {
@@ -105,18 +105,21 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 	 * @return true, if <code>operator</code> has no subscriptions or if <code>operator</code> is only subscribed to <code>localPart</code>; <br />
 	 * false, else
 	 */
-	private boolean isSink(ILogicalOperator operator, QueryPart localPart) {
+	private boolean isSink(ILogicalOperator operator) {
 		
 		Preconditions.checkNotNull(operator, "operator must be not null!");
-		Preconditions.checkNotNull(localPart, "localPart must be not null!");
 		
 		if(operator.getSubscriptions().size() == 0)
 			return true;
 		
 		for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 			
-			if(!localPart.getOperators().contains(subToSink.getTarget()))
+			if(!subToSink.getTarget().getDestinationName().equals(FragmentationHelper.REUNION_DESTINATION_NAME)) {
+				
+				// Operator is subscribed by an operator which is not part of the reunion part
 				return false;
+				
+			}
 			
 		}
 		

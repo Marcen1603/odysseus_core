@@ -61,14 +61,10 @@ public class DistributionHelper {
 	}
 	
 	/**
-	 * Logs the number of available peers and their IDs.
-	 * @see Logger#debug(String)
-	 * @param peerIDs The collection of all peer IDs. <br />
-	 * <code>peerIDs</code> must not be null.
+	 * Logs the number of available remote peers and their IDs.
+	 * @param peerIDs The collection of all remote peer IDs.
 	 */
-	public static void logPeerStatus(Collection<PeerID> peerIDs) {
-		
-		Preconditions.checkNotNull(peerIDs, "peerIDs must not be null!");
+	public static void logPeerStatus(Collection<PeerID> peerIDs) throws NullPointerException {
 		
 		if(LOG.isDebugEnabled()) {
 			
@@ -436,31 +432,6 @@ public class DistributionHelper {
 		
 		operators.removeAll(operatorsForLocalPart);
 		return operatorsForLocalPart;
-		
-	}
-	
-	/**
-	 * Returns the names of all used sources.
-	 */
-	public static Collection<String> getSourceNames(ILogicalOperator logicalPlan) {
-		
-		// Preconditions
-		Preconditions.checkNotNull(logicalPlan, "logicalPlan has to be not null!");
-		
-		Collection<String> sourceNames = Lists.newArrayList();
-		Collection<ILogicalOperator> operators = Lists.newArrayList();
-		RestructHelper.collectOperators(logicalPlan, operators);
-		
-		for(ILogicalOperator operator : operators) {
-		
-			if(operator instanceof StreamAO)
-				sourceNames.add(((StreamAO) operator).getStreamname().toString());
-			else if(operator instanceof AbstractAccessAO)
-				sourceNames.add(((AbstractAccessAO) operator).getName());
-			
-		}
-		
-		return sourceNames;
 		
 	}
 	
