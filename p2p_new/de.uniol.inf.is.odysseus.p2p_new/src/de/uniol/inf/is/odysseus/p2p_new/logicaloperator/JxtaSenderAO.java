@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "JXTASENDER", doc = "Send data with JXTA", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK})
+@LogicalOperator(name = "JXTASENDER", doc = "Send data with JXTA", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK}, hidden = true)
 public class JxtaSenderAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;

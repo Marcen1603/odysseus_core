@@ -29,4 +29,5 @@ public @interface LogicalOperator {
 	public String doc();
 	public String[] category();
 	public boolean deprecation() default false;
+	public boolean hidden() default false;
 }
