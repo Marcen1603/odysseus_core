@@ -13,10 +13,20 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.IOdysseusScriptTemplate;
 
 public final class OdysseusScriptTemplateRegistry {
 
+	public static final String EMPTY_TEMPLATE_NAME = "<empty>";
+	
 	private static OdysseusScriptTemplateRegistry instance;
 	
 	private final Map<String, IOdysseusScriptTemplate> templateMap = Maps.newHashMap();
 	
+	private OdysseusScriptTemplateRegistry() {
+		insertEmptyTemplate();
+	}
+	
+	private void insertEmptyTemplate() {
+		register(new EmptyScriptTemplate());
+	}
+
 	public static OdysseusScriptTemplateRegistry getInstance() {
 		if( instance == null ) {
 			instance = new OdysseusScriptTemplateRegistry();
@@ -33,6 +43,7 @@ public final class OdysseusScriptTemplateRegistry {
 	
 	public void unregister(IOdysseusScriptTemplate template) {
 		Preconditions.checkNotNull(template, "OdysseusScriptTemplate to remove must not be null!");
+		Preconditions.checkArgument(!template.getClass().equals(EmptyScriptTemplate.class), "Unregistering empty template not allowed");
 		Preconditions.checkArgument(isRegistered(template), "OdysseusScriptTemplate '%s' already registered", template.getName());
 
 		templateMap.remove(template.getName());
@@ -46,11 +57,13 @@ public final class OdysseusScriptTemplateRegistry {
 	
 	public void unregisterAll() {
 		templateMap.clear();
+		insertEmptyTemplate();
 	}
 	
 	// just for test-classes
 	void reset() {
 		templateMap.clear();
+		insertEmptyTemplate();
 	}
 	
 	public ImmutableCollection<String> getTemplateNames() {

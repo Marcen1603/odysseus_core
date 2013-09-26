@@ -71,6 +71,13 @@ public class OdysseusScriptTemplateRegistryTest {
 		registry().unregister(template);
 	}
 	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testUnregisterEmptyTemplate() throws Exception {
+		IOdysseusScriptTemplate emptyTemplate = registry().getTemplate(OdysseusScriptTemplateRegistry.EMPTY_TEMPLATE_NAME);
+		
+		registry().unregister(emptyTemplate);
+	}
+	
 	@Test
 	public void testUnregisterAll() throws Exception {
 		IOdysseusScriptTemplate template1 = createTemplate();
@@ -105,8 +112,7 @@ public class OdysseusScriptTemplateRegistryTest {
 		ImmutableCollection<String> names = registry().getTemplateNames();
 		
 		assertNotNull(names);
-		assertEquals(names.size(), 1);
-		assertEquals(names.iterator().next(), template.getName());
+		assertEquals(names.size(), 2);
 	}
 	
 	@Test
@@ -114,7 +120,7 @@ public class OdysseusScriptTemplateRegistryTest {
 		ImmutableCollection<String> names = registry().getTemplateNames();
 		
 		assertNotNull(names);
-		assertTrue(names.isEmpty());
+		assertEquals(names.size(), 1);
 	}
 	
 	@Test

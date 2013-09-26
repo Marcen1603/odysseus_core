@@ -24,6 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 public class OdysseusScriptWizard extends Wizard implements INewWizard {
 
 	private OdysseusScriptWizardPage page;
+	private SelectScriptTemplateWizardPage selectTemplatePage;
 
 	public OdysseusScriptWizard() {
 		super();
@@ -49,11 +51,18 @@ public class OdysseusScriptWizard extends Wizard implements INewWizard {
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		page = new OdysseusScriptWizardPage("New Odysseus Script", selection);
+		selectTemplatePage = new SelectScriptTemplateWizardPage("Select script template");
 	}
 
 	@Override
 	public void addPages() {
 		addPage(page);
+		addPage(selectTemplatePage);
+	}
+	
+	@Override
+	public IWizardPage getStartingPage() {
+		return page;
 	}
 
 	@Override
@@ -79,12 +88,7 @@ public class OdysseusScriptWizard extends Wizard implements INewWizard {
 	}
 
 	protected InputStream getQueryTemplate() {
-		String template = 
-				"///OdysseusScript\n" +
-				"#PARSER PQL\n" +
-				"#TRANSCFG Standard\n" +
-				"#RUNQUERY\n" +
-				"///Your first query here";		
+		String template = selectTemplatePage.getSelectedTemplate().getText();	
 		return new ByteArrayInputStream(template.getBytes());
 	}
 
