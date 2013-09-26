@@ -50,9 +50,13 @@ public final class OdysseusScriptTemplateRegistry {
 	}
 	
 	public boolean isRegistered( IOdysseusScriptTemplate template ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(template.getName()), "Name of OdysseusScriptTemplate must not be null or empty");
-
-		return templateMap.containsKey(template.getName());
+		return isRegistered(template.getName());
+	}
+	
+	public boolean isRegistered( String templateName ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(templateName), "Name of OdysseusScriptTemplate must not be null or empty");
+		
+		return templateMap.containsKey(templateName);
 	}
 	
 	public void unregisterAll() {

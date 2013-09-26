@@ -11,22 +11,65 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IOdysseusScriptTemplate;
 import de.uniol.inf.is.odysseus.rcp.editor.text.templates.OdysseusScriptTemplateRegistry;
 
 public class SelectScriptTemplateWizardPage extends WizardPage {
 
+	private static final String DEFAULT_TEMPLATE_CFG_KEY = "defaultScriptTemplate";
+	private static final OdysseusScriptTemplateRegistry TEMPLATE_REGISTRY = OdysseusScriptTemplateRegistry.getInstance();
+	
+	private final IOdysseusScriptTemplate defaultTemplate;
+	
 	private Text descriptionText;
 	private Text scriptText;
 	private Combo templateNameChooser;
+	
 
 	protected SelectScriptTemplateWizardPage(String pageName) {
 		super(pageName);
 		
 		setTitle("Template selection");
 		setDescription("Choose a template for your odysseus script to be preentered.");
+		
+		defaultTemplate = determineDefaultTemplate();
+	}
+
+	private static IOdysseusScriptTemplate determineDefaultTemplate() {
+		Optional<String> optDefaultTemplateName = determineDefaultTemplateFromConfig();
+		if( optDefaultTemplateName.isPresent() ) {
+			return TEMPLATE_REGISTRY.getTemplate(optDefaultTemplateName.get());
+		}
+		
+		return TEMPLATE_REGISTRY.getTemplate(determineFirstTemplateName());
+	}
+
+	private static String determineFirstTemplateName() {
+		ImmutableCollection<String> templateNames = TEMPLATE_REGISTRY.getTemplateNames();
+		
+		for( String templateName : templateNames ) {
+			if( !templateName.equals(OdysseusScriptTemplateRegistry.EMPTY_TEMPLATE_NAME)) {
+				return templateName;
+			}
+		}
+		
+		return OdysseusScriptTemplateRegistry.EMPTY_TEMPLATE_NAME;
+	}
+
+	private static Optional<String> determineDefaultTemplateFromConfig() {
+		String template = OdysseusRCPConfiguration.get(DEFAULT_TEMPLATE_CFG_KEY, "PQL Basic");
+		if( template.equals("PQL Basic")) {
+			if( TEMPLATE_REGISTRY.isRegistered(template)) {
+				return Optional.of("PQL Basic");
+			}
+			return Optional.absent();
+		}
+		
+		return Optional.of(template);
 	}
 
 	@Override
@@ -51,6 +94,7 @@ public class SelectScriptTemplateWizardPage extends WizardPage {
 				selectTemplate(combo.getItem(combo.getSelectionIndex()));
 			}
 		});
+		selectTemplate(templateNameChooser.getItem(templateNameChooser.getSelectionIndex()));
 		
 		finishCreation(rootComposite);
 	}
@@ -65,11 +109,11 @@ public class SelectScriptTemplateWizardPage extends WizardPage {
 	}
 	
 	public IOdysseusScriptTemplate getSelectedTemplate() {
-		return OdysseusScriptTemplateRegistry.getInstance().getTemplate(templateNameChooser.getItem(templateNameChooser.getSelectionIndex()));
+		return TEMPLATE_REGISTRY.getTemplate(templateNameChooser.getItem(templateNameChooser.getSelectionIndex()));
 	}
 	
 	private void selectTemplate(String templateName) {
-		IOdysseusScriptTemplate template = OdysseusScriptTemplateRegistry.getInstance().getTemplate(templateName);
+		IOdysseusScriptTemplate template = TEMPLATE_REGISTRY.getTemplate(templateName);
 		
 		String description = template.getDescription();
 		descriptionText.setText(description != null ? description : "");
@@ -78,25 +122,23 @@ public class SelectScriptTemplateWizardPage extends WizardPage {
 		scriptText.setText(script != null ? script : "");
 	}
 
-	private static Text createScriptText(Composite rootComposite) {
+	private Text createScriptText(Composite rootComposite) {
 		Text text = new Text(rootComposite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.BORDER );
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		OdysseusScriptTemplateRegistry registry = OdysseusScriptTemplateRegistry.getInstance();
-		text.setText(registry.getTemplate(OdysseusScriptTemplateRegistry.EMPTY_TEMPLATE_NAME).getText());
+		text.setText(defaultTemplate.getText());
 		
 		return text;
 	}
 
-	private static Text createDescriptionText(Composite rootComposite) {
+	private Text createDescriptionText(Composite rootComposite) {
 		Text text = new Text(rootComposite, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.BORDER );
 		
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 150;
 		text.setLayoutData(gd);
 		
-		OdysseusScriptTemplateRegistry registry = OdysseusScriptTemplateRegistry.getInstance();
-		text.setText(registry.getTemplate(OdysseusScriptTemplateRegistry.EMPTY_TEMPLATE_NAME).getDescription());
+		text.setText(defaultTemplate.getDescription());
 		
 		return text;
 	}
@@ -108,11 +150,11 @@ public class SelectScriptTemplateWizardPage extends WizardPage {
 		return label;
 	}
 
-	private static Combo createTemplateNameChooser(Composite rootComposite) {
-		OdysseusScriptTemplateRegistry registry = OdysseusScriptTemplateRegistry.getInstance();
+	private Combo createTemplateNameChooser(Composite rootComposite) {
+		OdysseusScriptTemplateRegistry registry = TEMPLATE_REGISTRY;
 		ImmutableCollection<String> templateNames = registry.getTemplateNames();
-		
-		Combo templateNameChooser = createCombo(rootComposite, templateNames.toArray(new String[0]), OdysseusScriptTemplateRegistry.EMPTY_TEMPLATE_NAME);
+
+		Combo templateNameChooser = createCombo(rootComposite, templateNames.toArray(new String[0]), defaultTemplate.getName());
 		templateNameChooser.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return templateNameChooser;
 	}

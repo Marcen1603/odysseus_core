@@ -134,6 +134,22 @@ public class OdysseusScriptTemplateRegistryTest {
 		assertEquals(recTemplate.getName(), template.getName());
 	}
 	
+	@Test
+	public void testGetTemplateByName() throws Exception {
+		IOdysseusScriptTemplate template = createTemplate();
+		registry().register(template);
+		
+		IOdysseusScriptTemplate recTemplate = registry().getTemplate(TestOdysseusScriptTemplate.TEMPLATE_NAME);
+		
+		assertEquals(recTemplate, template);
+		assertEquals(recTemplate.getName(), template.getName());	
+	}
+	
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testGetTemplateByNameNull() throws Exception {
+		registry().getTemplate("");
+	}
+	
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testGetNotRegisteredTemplate() throws Exception {
 		IOdysseusScriptTemplate template = createTemplate();
