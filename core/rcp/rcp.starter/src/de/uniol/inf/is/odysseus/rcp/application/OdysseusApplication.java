@@ -106,6 +106,8 @@ public class OdysseusApplication implements IApplication {
 			
 			List<String> recentWorkspaces = toStringList(data.getRecentWorkspaces());
 			loadRecentOdysseusWorkspaces(recentWorkspaces);
+			recentWorkspaces = cleanFromNullsAndDublicates(recentWorkspaces);
+			
 			data.setRecentWorkspaces(recentWorkspaces.toArray(new String[0]));
 			
 			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
@@ -136,8 +138,19 @@ public class OdysseusApplication implements IApplication {
 			recentWorkspaces = Lists.newArrayList(recentWorkspaces); // to avoid side effects for caller
 			recentWorkspaces.add(selection);
 		}
-			
+		
+		recentWorkspaces = cleanFromNullsAndDublicates(recentWorkspaces);
 		OdysseusRCPConfiguration.set(RECENT_WORKSPACES_CONFIG_KEY, fromListToString(recentWorkspaces));
+	}
+
+	private static List<String> cleanFromNullsAndDublicates(List<String> recentWorkspaces) {
+		List<String> cleanedList = Lists.newArrayList();
+		for( String recentWorkspace : recentWorkspaces ) {
+			if( !Strings.isNullOrEmpty(recentWorkspace) && !cleanedList.contains(recentWorkspace)) {
+				cleanedList.add(recentWorkspace);
+			}
+		}
+		return cleanedList;
 	}
 
 	private static void loadRecentOdysseusWorkspaces(List<String> recentWorkspaces) throws OdysseusRCPConfiguartionException {
@@ -172,9 +185,13 @@ public class OdysseusApplication implements IApplication {
 
 	private static List<String> toStringList(String[] recentWorkspaces) {
 		List<String> list = Lists.newArrayList();
+		
 		for( String recentWorkspace : recentWorkspaces ) {
-			list.add(recentWorkspace);
+			if( !Strings.isNullOrEmpty(recentWorkspace)) {
+				list.add(recentWorkspace);
+			}
 		}
+		
 		return list;
 	}
 
