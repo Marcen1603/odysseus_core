@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(name="EXISTENCE", minInputPorts=2, maxInputPorts=2)
+@LogicalOperator(name="EXISTENCE", minInputPorts=2, maxInputPorts=2, category={LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET})
 public class ExistenceAO extends BinaryLogicalOp implements Cloneable {
 
 //	@Override

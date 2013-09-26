@@ -27,4 +27,6 @@ public @interface LogicalOperator {
 	public int minInputPorts();
 	public int maxInputPorts();
 	public String doc() default "No description";
+	public String[] category();
+	public boolean deprecation() default false;
 }

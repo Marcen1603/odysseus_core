@@ -23,6 +23,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-@LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.BASE})
 public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;

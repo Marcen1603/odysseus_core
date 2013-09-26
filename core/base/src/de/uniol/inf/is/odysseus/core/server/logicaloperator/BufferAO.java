@@ -15,12 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "BUFFER", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "BUFFER", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PROCESSING})
 public class BufferAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 9204364375031967542L;

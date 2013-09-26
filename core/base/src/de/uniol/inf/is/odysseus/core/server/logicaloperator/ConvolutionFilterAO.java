@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
  * @author Dennis Geesen
  * 
  */
-@LogicalOperator(name = "CONVOLUTION", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "CONVOLUTION", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.ADVANCED})
 public class ConvolutionFilterAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -8972289160969278298L;

@@ -1,11 +1,12 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 
-@LogicalOperator(name="TIMESHIFT", maxInputPorts=1, minInputPorts=1, doc="Shifts the timestamp(s) a given time")
+@LogicalOperator(name="TIMESHIFT", maxInputPorts=1, minInputPorts=1, doc="Shifts the timestamp(s) a given time", category = {LogicalOperatorCategory.PROCESSING})
 public class TimeshiftAO extends AbstractLogicalOperator {
 
 	/**

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mining.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "GENERATERULES", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "GENERATERULES", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.MINING})
 public class RuleGenerationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4443355945512399432L;

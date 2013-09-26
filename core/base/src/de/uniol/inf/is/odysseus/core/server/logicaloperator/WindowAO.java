@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW")
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW", category={LogicalOperatorCategory.BASE})
 public class WindowAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 349442832133715634L;

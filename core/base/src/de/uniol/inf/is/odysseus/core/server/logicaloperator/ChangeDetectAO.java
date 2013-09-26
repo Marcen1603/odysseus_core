@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PATTERN})
 public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;

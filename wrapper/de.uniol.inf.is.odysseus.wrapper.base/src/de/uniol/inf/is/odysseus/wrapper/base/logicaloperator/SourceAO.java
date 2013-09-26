@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
  * @author ckuka
  */
 
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ADAPTER")
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ADAPTER", category={LogicalOperatorCategory.SOURCE}, deprecation=true)
 public class SourceAO extends AbstractLogicalOperator {
 	/**
      * 

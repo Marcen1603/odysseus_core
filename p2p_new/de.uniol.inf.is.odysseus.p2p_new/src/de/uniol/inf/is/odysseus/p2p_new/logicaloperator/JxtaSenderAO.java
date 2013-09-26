@@ -3,13 +3,14 @@ package de.uniol.inf.is.odysseus.p2p_new.logicaloperator;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "JXTASENDER", doc = "Send data with JXTA", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "JXTASENDER", doc = "Send data with JXTA", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK})
 public class JxtaSenderAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1L;

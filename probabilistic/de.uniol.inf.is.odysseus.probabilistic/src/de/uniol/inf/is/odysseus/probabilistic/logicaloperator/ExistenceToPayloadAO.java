@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "ExistenceToPayload", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PROBABILISTIC})
 public class ExistenceToPayloadAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = -3582366102984336742L;

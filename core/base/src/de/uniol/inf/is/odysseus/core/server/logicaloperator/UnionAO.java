@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, name = "UNION")
+@LogicalOperator(minInputPorts = 2, maxInputPorts = Integer.MAX_VALUE, name = "UNION", category={LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET})
 public class UnionAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 2828756253165671692L;

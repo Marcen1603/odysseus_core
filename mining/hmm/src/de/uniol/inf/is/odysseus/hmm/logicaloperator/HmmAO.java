@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.hmm.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -15,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Christian Pieper, cpi
  *
  */
-@LogicalOperator(name = "HMM", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "HMM", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING})
 public class HmmAO extends UnaryLogicalOp implements ILogicalOperator {
 
 	/**

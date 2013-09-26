@@ -15,11 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.logicaloperator.latency;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name = "CALCLATENCY", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
+@LogicalOperator(name = "CALCLATENCY", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.BENCHMARK})
 public class LatencyCalculationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9078812899082643674L;

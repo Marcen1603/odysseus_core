@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.mining.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -8,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name="THROUGHPUT", minInputPorts=1, maxInputPorts=1)
+@LogicalOperator(name="THROUGHPUT", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BENCHMARK})
 public class MeasureThroughputAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -8773782766638078153L;

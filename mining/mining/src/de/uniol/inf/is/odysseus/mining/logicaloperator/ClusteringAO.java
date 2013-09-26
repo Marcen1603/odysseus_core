@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -34,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * 
  * @author Dennis Geesen Created at: 14.05.2012
  */
-@LogicalOperator(name = "CLUSTERING", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "CLUSTERING", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLUSTERING})
 public class ClusteringAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -4053248940214364499L;

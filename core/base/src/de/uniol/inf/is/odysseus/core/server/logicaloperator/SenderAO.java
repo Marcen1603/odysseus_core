@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "Sender")
+@LogicalOperator(maxInputPorts = Integer.MAX_VALUE, minInputPorts = 1, name = "Sender", category={LogicalOperatorCategory.SINK})
 public class SenderAO extends AbstractSenderAO {
 
 	private static final long serialVersionUID = -7035132852387239629L;

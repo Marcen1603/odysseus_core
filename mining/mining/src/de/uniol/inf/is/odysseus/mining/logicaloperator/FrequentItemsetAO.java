@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -16,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "FREQUENTITEMSET", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "FREQUENTITEMSET", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING})
 public class FrequentItemsetAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7771591123865284928L;

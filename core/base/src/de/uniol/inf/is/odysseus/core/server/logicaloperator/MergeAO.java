@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  *
  */
 
-@LogicalOperator(name = "MERGE", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
+@LogicalOperator(name = "MERGE", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.BASE})
 public class MergeAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4206936945113954674L;

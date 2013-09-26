@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * Similar to select, but splits data into filtered and not filtered
  * 
  */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="FILTER")
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="FILTER", category={LogicalOperatorCategory.BASE})
 public class FilterAO extends SelectAO {
 
 	private static final long serialVersionUID = 2008672448859070252L;

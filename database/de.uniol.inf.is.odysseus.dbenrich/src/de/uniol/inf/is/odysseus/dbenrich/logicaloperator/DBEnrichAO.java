@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DBENRICH")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DBENRICH", category={LogicalOperatorCategory.ENRICH, LogicalOperatorCategory.DATABASE})
 public class DBEnrichAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 7829900765149450355L;

@@ -31,6 +31,7 @@
 package de.uniol.inf.is.odysseus.statistics.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -45,7 +46,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * 
  * @author Dennis Geesen Created at: 29.03.2012
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "REGRESSION")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "REGRESSION", category={LogicalOperatorCategory.ADVANCED})
 public class RegressionAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1953522305718887385L;

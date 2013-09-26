@@ -20,6 +20,7 @@
 package de.uniol.inf.is.odysseus.debs2013.heatmap.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 * @author Andreas Harre, Philipp Rudolph, Jan Sören Schwarz
 * 
 */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="HEATMAP")
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="HEATMAP", category={LogicalOperatorCategory.ADVANCED})
 public class HeatMapAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int x;

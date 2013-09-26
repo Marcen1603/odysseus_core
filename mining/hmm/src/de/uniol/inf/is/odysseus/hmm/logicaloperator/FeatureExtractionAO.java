@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -19,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Christian Pieper, cpi
  * 
  */
-@LogicalOperator(name = "FEATUREEXTRACTION", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "FEATUREEXTRACTION", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.MINING})
 public class FeatureExtractionAO extends UnaryLogicalOp implements ILogicalOperator {
 
 	/**

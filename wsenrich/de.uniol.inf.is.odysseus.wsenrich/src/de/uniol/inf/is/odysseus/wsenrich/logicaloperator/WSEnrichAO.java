@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.cache.removalstrategy.RemovalStrategyRegistry;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -22,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", category={LogicalOperatorCategory.ENRICH})
 public class WSEnrichAO extends UnaryLogicalOp {
 
 	/**

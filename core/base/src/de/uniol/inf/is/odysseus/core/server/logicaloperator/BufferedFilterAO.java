@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="BUFFEREDFILTER")
+@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="BUFFEREDFILTER", category={LogicalOperatorCategory.ADVANCED})
 public class BufferedFilterAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 5312945034141719894L;

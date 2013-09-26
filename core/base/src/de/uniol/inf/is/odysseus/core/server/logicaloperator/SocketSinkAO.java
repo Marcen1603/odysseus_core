@@ -15,13 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "SOCKETSINK", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "SOCKETSINK", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK})
 public class SocketSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 4250341797170265988L;

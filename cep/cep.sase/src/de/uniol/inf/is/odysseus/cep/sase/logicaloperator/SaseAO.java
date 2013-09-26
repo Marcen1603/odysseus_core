@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -14,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAtt
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name="SASE", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, doc="This operator can parse a query in SASE+ syntax.")
+@LogicalOperator(name="SASE", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, doc="This operator can parse a query in SASE+ syntax.", category = {LogicalOperatorCategory.PATTERN})
 public class SaseAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 15531070881194678L;

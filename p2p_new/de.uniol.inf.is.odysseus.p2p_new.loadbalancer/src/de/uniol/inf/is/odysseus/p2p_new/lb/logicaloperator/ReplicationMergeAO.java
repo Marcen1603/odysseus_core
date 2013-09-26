@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * <code>output = DISTRIBUTION_MERGE(input1,input2,...inputn)</code> 
  * @author Michael Brand
  */
-@LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE)
+@LogicalOperator(name="DISTRIBUTION_MERGE", minInputPorts=2, maxInputPorts=Integer.MAX_VALUE, category = {LogicalOperatorCategory.PROCESSING})
 public class ReplicationMergeAO extends BinaryLogicalOp {
 	
 	private static final long serialVersionUID = -4050688632559595499L;

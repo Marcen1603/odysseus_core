@@ -30,6 +30,7 @@
 
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -42,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Dennis Geesen, Marco Grawunder
  * Created at: 29.05.2012
  */
-@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="CHANGECORRELATE")
+@LogicalOperator(maxInputPorts=2, minInputPorts=2, name="CHANGECORRELATE", category={LogicalOperatorCategory.PATTERN})
 public class ChangeCorrelateAO extends BinaryLogicalOp{
 
 	// Predicates need to be stored in AbstractLogical Operator

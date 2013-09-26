@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.mining.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(name="LatencyConvert", minInputPorts=1, maxInputPorts=1)
+@LogicalOperator(name="LatencyConvert", minInputPorts=1, maxInputPorts=1, category={LogicalOperatorCategory.BENCHMARK, LogicalOperatorCategory.MINING})
 public class LatencyConverterAO extends UnaryLogicalOp{
 
 	private int factor = 1000000;

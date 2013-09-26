@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "Probabilistic")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "Probabilistic", category={LogicalOperatorCategory.PROBABILISTIC})
 public class ProbabilisticAO extends UnaryLogicalOp {
 
 	/**

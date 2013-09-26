@@ -1,10 +1,11 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CACHE")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CACHE", category={LogicalOperatorCategory.PROCESSING})
 public class CacheAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5364109842392109977L;

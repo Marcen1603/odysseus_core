@@ -34,6 +34,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -49,7 +50,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * 
  * @author Dennis Geesen Created at: 28.10.2011
  */
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE")
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", category={LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE})
 public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	
 	private static final long serialVersionUID = -5800479007184861697L;

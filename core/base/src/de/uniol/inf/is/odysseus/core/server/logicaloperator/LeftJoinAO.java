@@ -15,10 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "LEFTJOIN")
+@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "LEFTJOIN", category={LogicalOperatorCategory.BASE})
 public class LeftJoinAO extends JoinAO{
 
 	/**

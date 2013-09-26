@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Merlin Wasmann
  * 
  */
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ASSUREORDER", doc = "Operator which ensures the order of tuples")
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ASSUREORDER", category={LogicalOperatorCategory.PROCESSING, LogicalOperatorCategory.ORDER}, doc = "Operator which ensures the order of tuples")
 public class AssureOrderAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1242934768166736002L;

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
@@ -43,7 +44,7 @@ import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 /**
  * @author Michael Falk
  */
-@LogicalOperator(name="PATTERN", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE)
+@LogicalOperator(name="PATTERN", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, category = {LogicalOperatorCategory.PATTERN})
 public class PatternMatchingAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 938637032482611886L;

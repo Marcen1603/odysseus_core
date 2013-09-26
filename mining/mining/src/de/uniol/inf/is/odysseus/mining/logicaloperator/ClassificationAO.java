@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.mining.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -30,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "CLASSIFY", minInputPorts = 2, maxInputPorts = 2)
+@LogicalOperator(name = "CLASSIFY", minInputPorts = 2, maxInputPorts = 2, category={LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLASSIFIKATION})
 public class ClassificationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1231999597473176237L;

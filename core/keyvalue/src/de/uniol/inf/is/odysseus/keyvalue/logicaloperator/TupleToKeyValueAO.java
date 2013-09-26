@@ -15,10 +15,11 @@
  */
 package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TupleToKeyValue")
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="TupleToKeyValue", category={LogicalOperatorCategory.TRANSFORM})
 public class TupleToKeyValueAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514847L;
 

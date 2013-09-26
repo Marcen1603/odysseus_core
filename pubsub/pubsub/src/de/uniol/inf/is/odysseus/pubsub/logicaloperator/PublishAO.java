@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.pubsub.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -33,7 +35,7 @@ import de.uniol.inf.is.odysseus.pubsub.broker.topology.BrokerTopologyRegistry;
  * @author ChrisToenjesDeye
  *
  */
-@LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="This Operator provides the publish functionality in publish/Subscribe systems.")
+@LogicalOperator(name="Publish", minInputPorts=1, maxInputPorts=1, doc="This Operator provides the publish functionality in publish/Subscribe systems.", category={LogicalOperatorCategory.PUPSUB})
 public class PublishAO extends UnaryLogicalOp{
 
 	private static final long serialVersionUID = 6718305011922367185L;

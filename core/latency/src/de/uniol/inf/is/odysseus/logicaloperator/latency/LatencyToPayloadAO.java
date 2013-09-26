@@ -3,13 +3,14 @@ package de.uniol.inf.is.odysseus.logicaloperator.latency;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name="LATENCYTOPAYLOAD", maxInputPorts=1, minInputPorts=1)
+@LogicalOperator(name="LATENCYTOPAYLOAD", maxInputPorts=1, minInputPorts=1, category={LogicalOperatorCategory.BENCHMARK})
 public class LatencyToPayloadAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = -8208189869158067885L;

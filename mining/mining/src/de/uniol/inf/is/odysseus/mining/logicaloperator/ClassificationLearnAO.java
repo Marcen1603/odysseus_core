@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -35,7 +36,7 @@ import de.uniol.inf.is.odysseus.mining.MiningDatatypes;
  * @author Dennis Geesen
  * 
  */
-@LogicalOperator(name = "CLASSIFICATION_LEARN", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "CLASSIFICATION_LEARN", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.MINING, LogicalOperatorCategory.CLASSIFIKATION})
 public class ClassificationLearnAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1231999597473176237L;

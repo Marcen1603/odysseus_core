@@ -15,12 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "TupleCompareSink", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "TupleCompareSink", minInputPorts = 1, maxInputPorts = 1, category = {LogicalOperatorCategory.TEST, LogicalOperatorCategory.SINK})
 public class TupleCompareSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -9070744467387287793L;

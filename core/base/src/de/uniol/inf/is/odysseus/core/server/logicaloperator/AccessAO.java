@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -13,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ACCESS")
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ACCESS", category={LogicalOperatorCategory.SOURCE})
 public class AccessAO extends AbstractAccessAO {
 
 	private static final long serialVersionUID = 3913899451565703944L;

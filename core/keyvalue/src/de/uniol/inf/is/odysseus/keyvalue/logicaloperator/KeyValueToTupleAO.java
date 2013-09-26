@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.keyvalue.logicaloperator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -13,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple")
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="KeyValueToTuple", category={LogicalOperatorCategory.TRANSFORM})
 public class KeyValueToTupleAO extends UnaryLogicalOp{
 
 	private static final long serialVersionUID = 4804826171047928513L;

@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Dennis Geesen
  *
  */
-@LogicalOperator(name = "ENRICH", minInputPorts = 2, maxInputPorts = 2)
+@LogicalOperator(name = "ENRICH", minInputPorts = 2, maxInputPorts = 2,category={LogicalOperatorCategory.ENRICH})
 public class EnrichAO extends BinaryLogicalOp {
 	
 	private static final long serialVersionUID = -4221371391163499952L;

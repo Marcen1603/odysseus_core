@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.benchmark.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParamete
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(name = "BENCHMARK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
+@LogicalOperator(name = "BENCHMARK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.BENCHMARK})
 public class BenchmarkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 9094076133083176377L;

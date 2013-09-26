@@ -17,13 +17,14 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.text.DecimalFormat;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "FILESINK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE)
+@LogicalOperator(name = "FILESINK", minInputPorts = 1, maxInputPorts = Integer.MAX_VALUE, category={LogicalOperatorCategory.SINK})
 public class FileSinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5468128562016704956L;

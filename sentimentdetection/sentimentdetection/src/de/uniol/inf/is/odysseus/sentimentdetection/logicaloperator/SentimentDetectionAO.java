@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry
 import de.uniol.inf.is.odysseus.sentimentdetection.stopwords.StopWordsRegistry;
 
 
-@LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=3)
+@LogicalOperator(name="SENTIMENTDETECTION", minInputPorts=2, maxInputPorts=3, category={LogicalOperatorCategory.MINING})
 public class SentimentDetectionAO extends BinaryLogicalOp{
 
 	/**

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -17,7 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.RRFragmentation;
  * <code>output = FRAGMENT([FRAGMENTS=n], input)</code>
  * @author Michael Brand
  */
-@LogicalOperator(name = "FRAGMENT", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "FRAGMENT", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.PROCESSING})
 public class FragmentAO extends UnaryLogicalOp {
 	
 	private static final long serialVersionUID = -6789007084291408905L;

@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.benchmark.logicaloperator.BatchParameter.BatchItem;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 
-@LogicalOperator(name = "BATCHPRODCUER", minInputPorts = 0, maxInputPorts = 0)
+@LogicalOperator(name = "BATCHPRODCUER", minInputPorts = 0, maxInputPorts = 0, category={LogicalOperatorCategory.BENCHMARK})
 public class BatchProducerAO extends AbstractLogicalOperator {
 	private static final long serialVersionUID = 730372057392120823L;
 

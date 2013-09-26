@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
@@ -12,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
-@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "CSVFileSource", doc = "Allows to read input from a csv based file")
+@LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "CSVFileSource", category={LogicalOperatorCategory.SOURCE}, doc = "Allows to read input from a csv based file")
 public class CSVFileSource extends AbstractAccessAO {
 
 	private static final long serialVersionUID = -3200078517889579479L;

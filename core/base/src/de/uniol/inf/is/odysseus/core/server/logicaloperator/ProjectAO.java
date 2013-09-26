@@ -22,6 +22,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", category={LogicalOperatorCategory.BASE})
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
 	private List<SDFAttribute> attributes = new ArrayList<>();

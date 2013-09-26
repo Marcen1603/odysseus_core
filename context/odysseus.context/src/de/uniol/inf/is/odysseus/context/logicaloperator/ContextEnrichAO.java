@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 
-@LogicalOperator(name = "CONTEXTENRICH", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "CONTEXTENRICH", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.ENRICH})
 public class ContextEnrichAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -6701002329614782111L;

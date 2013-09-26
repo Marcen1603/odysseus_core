@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(name="DIFFERENCE", minInputPorts=2, maxInputPorts=2)
+@LogicalOperator(name="DIFFERENCE", minInputPorts=2, maxInputPorts=2, category={LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET})
 public class DifferenceAO extends BinaryLogicalOp{
 	
 	private static final long serialVersionUID = 4518770628909423647L;

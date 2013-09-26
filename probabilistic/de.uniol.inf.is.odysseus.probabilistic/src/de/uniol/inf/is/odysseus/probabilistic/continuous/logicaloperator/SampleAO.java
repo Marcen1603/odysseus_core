@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -19,7 +20,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
  * 
  * @author Christian Kuka <christian@kuka.cc> FIXME rename to Sample after removing SampleAO from core MG: I do not think this is a good idea!
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM", category={LogicalOperatorCategory.PROBABILISTIC})
 public class SampleAO extends UnaryLogicalOp {
 	/**
 	 * 

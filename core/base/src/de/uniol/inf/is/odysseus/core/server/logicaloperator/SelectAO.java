@@ -19,6 +19,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -29,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", category={LogicalOperatorCategory.BASE})
 public class SelectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.logicaloperator.intervalapproach;
 
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -22,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="AssureHeartbeat", doc="This operator assures that every n time elements there will be a heartbeat on "+
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="AssureHeartbeat", category={LogicalOperatorCategory.PROCESSING},doc="This operator assures that every n time elements there will be a heartbeat on "+
  " the garantees, that no element (heartbeat or streamobject) is send, that is"+
  " older than the last send hearbeat (i.e. the generated heartbeats are in order"+
  " and indicate time progress). Heartbeats can be send periodically"+

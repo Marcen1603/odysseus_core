@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -23,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp")
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "Timestamp", category={LogicalOperatorCategory.BASE})
 public class TimestampAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -467482177921504749L;
 

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -11,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="AppendTo")
+@LogicalOperator(maxInputPorts=1, minInputPorts=1, name="AppendTo", category={LogicalOperatorCategory.PLAN})
 public class AppendToPhysicalAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -6717408016417095953L;

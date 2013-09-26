@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -22,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP", category={LogicalOperatorCategory.BASE})
 public class StateMapAO extends MapAO {
 
 	private static final long serialVersionUID = 1695948732660010522L;

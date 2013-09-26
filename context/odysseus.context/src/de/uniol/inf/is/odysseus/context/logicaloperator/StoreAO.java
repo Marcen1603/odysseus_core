@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
@@ -45,7 +46,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  * Created at: 27.04.2012
  */
 
-@LogicalOperator(name = "STORE", minInputPorts = 1, maxInputPorts = 1)
+@LogicalOperator(name = "STORE", minInputPorts = 1, maxInputPorts = 1, category={LogicalOperatorCategory.SINK})
 public class StoreAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = -8367889240385241169L;
