@@ -63,7 +63,10 @@ public class ListParameterPresentation extends AbstractParameterPresentation {
 			childs = (List<Object>) currentValue;
 		}
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginLeft = 0;
+		layout.marginRight = 0;
+		container.setLayout(layout);
 
 		dropDown = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
 		ParameterPresentationFactory presentationFactory = new ParameterPresentationFactory();

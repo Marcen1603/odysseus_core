@@ -53,17 +53,22 @@ public class StringParameterPresentation extends AbstractParameterPresentation {
 
 				@Override
 				public void modifyText(ModifyEvent e) {
-					setValue(text.getText());
+					if (text.getText().isEmpty()) {
+						setValue(null);
+					} else {
+						setValue(text.getText());
+					}
 				}
 			});
 			return text;
 		} else {
 			combo = new Combo(parent, SWT.BORDER | SWT.DROP_DOWN);
 			int select = 0;
-			for(String posVal : parameterInformation.getPossibleValues()){
+			combo.add("");
+			for (String posVal : parameterInformation.getPossibleValues()) {
 				combo.add(posVal);
-				if(posVal.equals(currentValue)){
-					select = combo.getItemCount()-1;
+				if (posVal.equals(currentValue)) {
+					select = combo.getItemCount() - 1;
 				}
 			}
 			combo.select(select);
@@ -71,7 +76,12 @@ public class StringParameterPresentation extends AbstractParameterPresentation {
 
 				@Override
 				public void modifyText(ModifyEvent e) {
-					setValue(combo.getText());
+					if (combo.getText().isEmpty()) {
+						setValue(null);
+					} else {
+						setValue(combo.getText());
+					}
+
 				}
 			});
 			return combo;

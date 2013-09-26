@@ -15,6 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 /**
  * @author DGeesen
  * 
@@ -23,6 +27,8 @@ public class Connection {
 
 	private OperatorNode source;
 	private OperatorNode target;
+	private int sourcePort = 0;
+	private int targetPort = 0;
 
 	public OperatorNode getSource() {
 		return source;
@@ -59,6 +65,40 @@ public class Connection {
 	public void reconnect(OperatorNode sourceNode, OperatorNode targetNode) {
 		setTarget(targetNode);
 		setSource(sourceNode);
-	}	
+	}
+
+	public void getXML(Node parent, Document builder) {
+		Element targetElement = builder.createElement("target");
+		targetElement.setTextContent(target.getXMLIdentifier());
+		parent.appendChild(targetElement);
+		
+		Element sourceElement = builder.createElement("source");
+		sourceElement.setTextContent(source.getXMLIdentifier());
+		parent.appendChild(sourceElement);
+		
+		Element targetPortElement = builder.createElement("targetPort");
+		targetPortElement.setTextContent(Integer.toString(targetPort));
+		parent.appendChild(targetPortElement);
+		
+		Element sourcePortElement = builder.createElement("sourcePort");
+		sourcePortElement.setTextContent(Integer.toString(sourcePort));
+		parent.appendChild(sourcePortElement);
+	}
+
+	public int getTargetPort() {
+		return targetPort;
+	}
+
+	public void setTargetPort(int targetPort) {
+		this.targetPort = targetPort;
+	}
+
+	public int getSourcePort() {
+		return sourcePort;
+	}
+
+	public void setSourcePort(int sourcePort) {
+		this.sourcePort = sourcePort;
+	}
 
 }

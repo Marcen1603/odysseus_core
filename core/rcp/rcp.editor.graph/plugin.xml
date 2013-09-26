@@ -24,5 +24,17 @@
             id="de.uniol.inf.is.odysseus.rcp.editor.graph.wizards.OperatorGraphNewWizard">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.rcp.editor.graph.views.OperatorGraphPropertyView"
+            icon="icons/operator_edit.png"
+            id="de.uniol.inf.is.odysseus.rcp.editor.graph.operatorGraphView"
+            name="Graph Operator Properties"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

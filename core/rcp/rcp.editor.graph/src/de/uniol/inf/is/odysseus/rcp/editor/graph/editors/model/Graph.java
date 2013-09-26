@@ -18,12 +18,13 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 /**
  * @author DGeesen
  * 
  */
-public class Graph extends Observable{
+public class Graph extends Observable implements Observer{
 
 	private List<OperatorNode> nodes;
 
@@ -36,13 +37,39 @@ public class Graph extends Observable{
 
 	public void addNode(OperatorNode node) {
 		getNodes().add(node);
+		if(node.getId()==-1){
+			node.setId(getNodes().size());
+		}
+		node.addObserver(this);
 		setChanged();
 		notifyObservers();
 	}
 
 	public void removeNode(OperatorNode node) {
 		getNodes().remove(node);
+		node.setId(-1);
+		node.deleteObserver(this);
 		setChanged();
 		notifyObservers();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		setChanged();
+		notifyObservers();		
+	}
+	
+	
+	public OperatorNode getOperatorNodeById(int id){
+		for(OperatorNode node : this.getNodes()){
+			if(node.getId()==id){
+				return node;
+			}
+		}
+		return null;
+	}
+	
 }

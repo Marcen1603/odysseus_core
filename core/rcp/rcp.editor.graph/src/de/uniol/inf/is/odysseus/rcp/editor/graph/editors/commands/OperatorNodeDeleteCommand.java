@@ -52,7 +52,7 @@ public class OperatorNodeDeleteCommand extends Command {
 	}
 
 	public void undo() {
-		graph.addNode(node);
+		graph.addNode(node);		
 		reattachConnections();
 	}
 

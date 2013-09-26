@@ -146,5 +146,7 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {
 		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
+	
+	
 
 }

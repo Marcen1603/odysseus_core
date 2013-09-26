@@ -17,8 +17,14 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -34,7 +40,7 @@ public class ListParameterDialog extends TitleAreaDialog {
 	private LogicalParameterInformation logicalParameterInfos;
 	private List<Object> parameters;
 	private ParameterPresentationFactory factory = new ParameterPresentationFactory();
-	
+
 	/**
 	 * @param shell
 	 * @param childs
@@ -44,20 +50,58 @@ public class ListParameterDialog extends TitleAreaDialog {
 		this.logicalParameterInfos = lpi;
 		this.parameters = values;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		GridLayout layout = new GridLayout(2, true);
-		parent.setLayout(layout);
-		
-		for(Object e : this.parameters){
+//		parent.setLayoutData(new GridData(org.eclipse.draw2d.GridData.FILL_BOTH));
+//		GridLayout layout = new GridLayout(1, true);
+//		parent.setLayout(layout);		
+		final Composite area = new Composite(parent, SWT.None);
+		area.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
+		area.setLayout(new GridLayout(1, false));
+
+		for (Object e : this.parameters) {
 			IParameterPresentation presenter = factory.createPresentation(logicalParameterInfos);
-			presenter.createWidget(parent, logicalParameterInfos, e);
+			presenter.createWidget(area, logicalParameterInfos, e);
 		}
-		return super.createDialogArea(parent);
+		Composite buttons = new Composite(parent, SWT.None);
+		buttons.setLayout(new GridLayout(2, true));
+		GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		buttons.setLayoutData(gd);
+		Button addButton = new Button(buttons, SWT.PUSH);
+		addButton.setText("Add");
+		
+		addButton.addSelectionListener(new SelectionAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IParameterPresentation presenter = factory.createPresentation(logicalParameterInfos);
+				presenter.createWidget(area, logicalParameterInfos, null);
+			}
+		});
+		
+		Button delButton = new Button(buttons, SWT.PUSH);
+		delButton.setText("Remove");
+		
+		return parent;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {		
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
 }

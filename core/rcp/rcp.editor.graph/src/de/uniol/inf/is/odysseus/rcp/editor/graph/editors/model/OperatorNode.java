@@ -20,8 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Map.Entry;
 
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
@@ -32,7 +37,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation
  */
 public class OperatorNode extends Observable {
 
-	private Rectangle constraint;	
+	private int id = -1;
+
+	private Rectangle constraint;
 
 	private List<Connection> sourceConnections = new ArrayList<>();
 	private List<Connection> targetConnections = new ArrayList<>();
@@ -49,7 +56,6 @@ public class OperatorNode extends Observable {
 		for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
 			this.parameterValues.put(lpi, null);
 		}
-
 	}
 
 	public Rectangle getConstraint() {
@@ -105,42 +111,127 @@ public class OperatorNode extends Observable {
 	 */
 	public void setParameterValues(Map<LogicalParameterInformation, Object> values) {
 		this.parameterValues = values;
-		update();	
+		update();
 	}
-	
-	
-	private void update(){
+
+	private void update() {
 		recalcSatisfied();
 		setChanged();
 		notifyObservers();
 	}
 
-	private void recalcSatisfied(){
+	private void recalcSatisfied() {
 		boolean ok = true;
-		if(this.getTargetConnections().size()<this.operatorInformation.getMinPorts()){
+		if (this.getTargetConnections().size() < this.operatorInformation.getMinPorts()) {
 			ok = false;
 		}
-		if(this.getTargetConnections().size()>this.operatorInformation.getMaxPorts()){
+		if (this.getTargetConnections().size() > this.operatorInformation.getMaxPorts()) {
 			ok = false;
 		}
-		for(LogicalParameterInformation lpi : this.operatorInformation.getParameters()){
-			if(this.parameterValues.get(lpi)==null){
-				if(lpi.isMandatory()){
+		for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
+			if (this.parameterValues.get(lpi) == null) {
+				if (lpi.isMandatory()) {
 					ok = false;
 				}
-			}else{
-				if(this.parameterValues.get(lpi).toString().isEmpty()){
-					if(lpi.isMandatory()){
+			} else {
+				if (this.parameterValues.get(lpi).toString().isEmpty()) {
+					if (lpi.isMandatory()) {
 						ok = false;
 					}
 				}
 			}
-			
+
 		}
 		this.satisfied = ok;
 	}
-	
-	public boolean isSatisfied(){
+
+	public boolean isSatisfied() {
 		return this.satisfied;
 	}
+
+	public void getXML(Node parent, Document builder) {
+		// create the identifier
+		Element codeElement = builder.createElement("identifier");
+		codeElement.setTextContent(getXMLIdentifier());
+		parent.appendChild(codeElement);
+		// build parameters
+		Element parameterElement = builder.createElement("parameters");
+		for (Entry<LogicalParameterInformation, Object> entry : this.parameterValues.entrySet()) {
+			Element element = builder.createElement(entry.getKey().getName());
+			element.setTextContent(String.valueOf(entry.getValue()));
+			parameterElement.appendChild(element);
+		}
+		parent.appendChild(parameterElement);
+
+		// build dimensions
+		Element constElement = builder.createElement("contraints");
+		constElement.setAttribute("x", Integer.toString(constraint.x));
+		constElement.setAttribute("y", Integer.toString(constraint.y));
+		constElement.setAttribute("width", Integer.toString(constraint.width));
+		constElement.setAttribute("height", Integer.toString(constraint.height));
+		parent.appendChild(constElement);
+	}
+
+	public void loadFromXML(Node parent) {
+		NodeList list = parent.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			if (list.item(i) instanceof Element) {
+				Element elem = (Element) list.item(i);
+				if (list.item(i).getNodeName().equals("identifier")) {
+					this.id = Integer.parseInt(elem.getTextContent());
+				}
+				if (list.item(i).getNodeName().equals("parameters")) {
+					NodeList paramNodes = elem.getChildNodes();
+					for (int k = 0; k < paramNodes.getLength(); k++) {
+						if (paramNodes.item(k) instanceof Element) {
+							Element paramElem = (Element) paramNodes.item(k);
+							LogicalParameterInformation lpi = getParamInfoByName(paramElem.getNodeName());
+							if (!paramElem.getTextContent().equalsIgnoreCase("null")) {
+								parameterValues.put(lpi, paramElem.getTextContent());
+							} else {
+								parameterValues.put(lpi, null);
+							}
+						}
+
+					}
+
+				}
+				if (list.item(i).getNodeName().equals("contraints")) {
+					int x = Integer.parseInt(elem.getAttribute("x"));
+					int y = Integer.parseInt(elem.getAttribute("y"));
+					int width = Integer.parseInt(elem.getAttribute("width"));
+					int height = Integer.parseInt(elem.getAttribute("height"));
+					Rectangle rect = new Rectangle(x, y, width, height);
+					setConstraint(rect);
+				}
+			}
+		}
+
+	}
+
+	private LogicalParameterInformation getParamInfoByName(String name) {
+		for (LogicalParameterInformation lpi : this.parameterValues.keySet()) {
+			if (lpi.getName().equalsIgnoreCase(name)) {
+				return lpi;
+			}
+		}
+		return null;
+	}
+
+	public String getXMLIdentifier() {
+		return Integer.toString(id);
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * @param opNode
+	 */
+
 }

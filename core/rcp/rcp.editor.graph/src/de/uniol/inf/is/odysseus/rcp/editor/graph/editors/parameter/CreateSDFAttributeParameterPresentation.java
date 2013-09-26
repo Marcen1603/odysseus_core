@@ -87,7 +87,7 @@ public class CreateSDFAttributeParameterPresentation extends AbstractParameterPr
 		@Override
 		public void modifyText(ModifyEvent e) {
 			Pair<String, String> attributePair = new Pair<String, String>(textName.getText(), textDatatype.getText());
-			setValue(attributePair);
+			setValue(attributePair);			
 		}
 	}
 }

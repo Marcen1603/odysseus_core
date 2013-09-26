@@ -70,7 +70,7 @@ public class BooleanParameterPresentation extends AbstractParameterPresentation 
 					setValue(Boolean.FALSE);
 				} else {
 					setValue(null);
-				}
+				}				
 			}
 		});
 		return dropDown;

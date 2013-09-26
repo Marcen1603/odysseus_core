@@ -15,22 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 
 /**
  * @author DGeesen
  *
  */
-public interface IParameterPresentation{
-	public void addParameterValueChangedListener(IParameterValueChangeListener listener);
-	public void removeParameterValueChangedListener(IParameterValueChangeListener listener);
-	public Control createWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue);
-	public Object getValue();
-	public String getPQLString(LogicalParameterInformation parameterInformation, Object value);
-	public void setLogicalParameterInformation(LogicalParameterInformation lpi);
-	public LogicalParameterInformation getLogicalParameterInformation();
-	public Control getControl();
+public interface IParameterValueChangeListener {
+	
+	public void parameterValueChanged(Object newValue, IParameterPresentation widget);
+
 }

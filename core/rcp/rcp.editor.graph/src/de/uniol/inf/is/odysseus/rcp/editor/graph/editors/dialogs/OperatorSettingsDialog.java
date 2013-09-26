@@ -23,6 +23,7 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -82,11 +83,22 @@ public class OperatorSettingsDialog extends TitleAreaDialog {
 
 			} else {
 				label.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
-			}
-
+			}			
 			label.setText(param.getKey().getName());
 			IParameterPresentation widget = widgetFactory.createPresentation(param.getKey());
 			Control control = widget.createWidget(container, param.getKey(), param.getValue());
+			control.addFocusListener(new FocusListener() {
+				
+				@Override
+				public void focusLost(org.eclipse.swt.events.FocusEvent e) {
+					
+				}
+				
+				@Override
+				public void focusGained(org.eclipse.swt.events.FocusEvent e) {
+					setMessage(param.getKey().getName()+": "+param.getKey().getDoc());
+				}
+			});
 			controls.put(param.getKey(), widget);
 
 			GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);

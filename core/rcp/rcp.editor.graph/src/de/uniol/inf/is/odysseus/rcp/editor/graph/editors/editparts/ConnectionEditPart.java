@@ -15,7 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts;
 
+import org.eclipse.draw2d.ConnectionEndpointLocator;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.gef.EditPolicy;
@@ -40,11 +42,20 @@ public class ConnectionEditPart extends AbstractConnectionEditPart {
 	}
 	
 	protected IFigure createFigure() {
+		Connection connection = (Connection)getModel();
 		PolylineConnection con = new PolylineConnection();
 		con.setLineWidth(2);
 		PolygonDecoration deco = new PolygonDecoration();
 		deco.setTemplate(PolygonDecoration.TRIANGLE_TIP);
 		con.setTargetDecoration(deco);
+		
+		Label endPointLabel = new Label(Integer.toString(connection.getTargetPort()));
+		endPointLabel.setOpaque(false);				
+		con.add(endPointLabel, new ConnectionEndpointLocator(con, true));
+		
+		Label startPointLabel = new Label(Integer.toString(connection.getSourcePort()));
+		startPointLabel.setOpaque(false);				
+		con.add(startPointLabel, new ConnectionEndpointLocator(con, false));
 		return con;
 	}
 

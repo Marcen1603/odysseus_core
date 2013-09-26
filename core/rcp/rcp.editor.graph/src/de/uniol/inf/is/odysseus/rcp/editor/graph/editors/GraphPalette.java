@@ -15,9 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.gef.palette.ConnectionCreationToolEntry;
 import org.eclipse.gef.palette.CreationToolEntry;
@@ -47,17 +50,11 @@ public class GraphPalette {
 	}
 
 	private static void createOperatorsGroup(PaletteRoot palette) {
-		PaletteDrawer sourcesToolbar = new PaletteDrawer("Sources");
-		PaletteDrawer toolbar = new PaletteDrawer("Operators");
-		// SelectionToolEntry entry = new SelectionToolEntry();
-		// group.add(entry);
-		// setDefaultEntry(entry);
-		// group.add(new PaletteSeparator());
-
-		// group.add(new CreationToolEntry("Node", "Creates a new node.", new OperatorNodeFactory(), null, null));
-
+		
+		Map<String, PaletteDrawer> pds = new TreeMap<String, PaletteDrawer>();
+		
 		List<LogicalOperatorInformation> ops = Activator.getDefault().getExecutor().getOperatorInformations(Activator.getDefault().getCaller());
-		for (LogicalOperatorInformation op : ops) {
+		for (LogicalOperatorInformation op : ops) {			
 			op.setOperatorName(op.getOperatorName().toUpperCase());
 		}
 
@@ -68,15 +65,26 @@ public class GraphPalette {
 			}
 		});
 		for (LogicalOperatorInformation op : ops) {
-			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(), "Creates a new node.", new OperatorNodeFactory(op), null, null);
-			if (op.getMaxPorts() == 0) {
-				sourcesToolbar.add(entry);
-			} else {
-				toolbar.add(entry);
+			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(),op.getDoc(), new OperatorNodeFactory(op), null, null);
+			String category = op.getCategories()[0];
+			if(!pds.containsKey(category)){
+				pds.put(category, new PaletteDrawer(category));
 			}
+			pds.get(category).add(entry);			
 		}
-		palette.add(sourcesToolbar);
-		palette.add(toolbar);
+		List<PaletteDrawer> list = new ArrayList<>(pds.values());
+		Collections.sort(list, new Comparator<PaletteDrawer>() {
+
+			@Override
+			public int compare(PaletteDrawer arg0, PaletteDrawer arg1) {
+				return arg0.getLabel().compareTo(arg1.getLabel());
+			}
+			
+		});
+		for(PaletteDrawer d : list){	
+			d.setInitialState(PaletteDrawer.INITIAL_STATE_CLOSED);
+			palette.add(d);
+		}
 	}
 
 	private static void createToolsGroup(PaletteRoot palette) {

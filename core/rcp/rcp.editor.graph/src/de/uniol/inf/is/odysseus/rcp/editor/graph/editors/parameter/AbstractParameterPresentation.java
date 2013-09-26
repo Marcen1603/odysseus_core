@@ -15,40 +15,124 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 
-
 /**
  * @author DGeesen
- *
+ * 
  */
-public abstract class AbstractParameterPresentation implements IParameterPresentation{
+public abstract class AbstractParameterPresentation implements IParameterPresentation {
 
 	private Object value = null;
-	
-	protected void setValue(Object value){
+	private List<IParameterValueChangeListener> listeners = new ArrayList<>();
+	private Control control;
+	private LogicalParameterInformation logicalParameterInformation;
+
+	protected void setValue(Object value) {
+		Object oldValue = this.value;
 		this.value = value;
+		if (this.value == null) {
+			if (oldValue != null) {
+				valueChanged();
+			}
+			return;
+		} else {
+			if (!this.value.equals(oldValue)) {
+				valueChanged();
+			}
+		}
+
 	}
-	
-	/* (non-Javadoc)
+
+	private void valueChanged() {
+		for (IParameterValueChangeListener listener : this.listeners) {
+			listener.parameterValueChanged(this.value, this);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
 	public Control createWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
-		setValue(currentValue);
-		return createParameterWidget(parent, parameterInformation, currentValue);
+		this.value = currentValue;
+		if (this.control != null) {
+			throw new IllegalStateException("Widget can only be created once!");
+		}
+		this.control = createParameterWidget(parent, parameterInformation, currentValue);
+		this.logicalParameterInformation = parameterInformation;
+		return control;
 	}
-	
+
 	protected abstract Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#getValue()
 	 */
 	@Override
-	public Object getValue() {	
+	public Object getValue() {
 		return value;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#addParameterValueChangedListener(de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener)
+	 */
+	@Override
+	public void addParameterValueChangedListener(IParameterValueChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#removeParameterValueChangedListener(de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener)
+	 */
+	@Override
+	public void removeParameterValueChangedListener(IParameterValueChangeListener listener) {
+		listeners.remove(listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getLogicalParameterInformation()
+	 */
+	@Override
+	public LogicalParameterInformation getLogicalParameterInformation() {
+		return logicalParameterInformation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#setLogicalParameterInformation(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation)
+	 */
+	@Override
+	public void setLogicalParameterInformation(LogicalParameterInformation lpi) {
+		this.logicalParameterInformation = lpi;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getControl()
+	 */
+	@Override
+	public Control getControl() {
+		return this.control;
+	}
+
 }

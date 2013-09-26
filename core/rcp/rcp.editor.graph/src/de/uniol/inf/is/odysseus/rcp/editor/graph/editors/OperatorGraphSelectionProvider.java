@@ -13,42 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors;
 
-import org.eclipse.gef.requests.CreationFactory;
+import java.util.Observable;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
  * @author DGeesen
  *
  */
-public class OperatorNodeFactory implements CreationFactory {
-
-	private LogicalOperatorInformation operatorInformation;
+public class OperatorGraphSelectionProvider extends Observable{
 	
-	/**
-	 * @param op
-	 */
-	public OperatorNodeFactory(LogicalOperatorInformation op) {
-		this.operatorInformation = op;		
+	private static OperatorGraphSelectionProvider instance = null;
+	private OperatorNode currentlySelected;
+	
+	private OperatorGraphSelectionProvider(){
+		
+	}
+	
+	public synchronized static OperatorGraphSelectionProvider getInstance(){
+		if(instance==null){
+			instance = new OperatorGraphSelectionProvider();
+		}
+		return instance;
+	}
+	
+	
+	public OperatorNode getCurrentlySelected() {
+		return currentlySelected;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.requests.CreationFactory#getNewObject()
-	 */
-	@Override
-	public Object getNewObject() {
-		return new OperatorNode(operatorInformation);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.requests.CreationFactory#getObjectType()
-	 */
-	@Override
-	public Object getObjectType() {
-		return OperatorNode.class;
+	public void setCurrentlySelected(OperatorNode currentlySelected) {
+		this.currentlySelected = currentlySelected;
+		setChanged();
+		notifyObservers(currentlySelected);
 	}
 
 }
