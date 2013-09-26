@@ -66,7 +66,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private static final int EXPORT_INTERVAL_MILLIS = 15000;
 	private static final int EXPORT_LIFETIME_MILLIS = 60000;
 	private static final int REACHABLE_TIMEOUT_MILLIS = 5000;
-	private static final int CHECK_INTERVAL_MILLIS = 10000;
+	private static final int SOURCE_CHECK_INTERVAL_MILLIS = 10000;
 	
 	private static P2PDictionary instance;
 
@@ -80,7 +80,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	private final List<SourceAdvertisement> publishedSources = Lists.newArrayList();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement>> sameSourceMap = Maps.newHashMap();
 	private final Map<SourceAdvertisement, List<SourceAdvertisement.Same>> cachedSameMap = Maps.newHashMap();
-	private SourceChecker sourceChecker = new SourceChecker(CHECK_INTERVAL_MILLIS, this);
+	private final SourceChecker sourceChecker = new SourceChecker(SOURCE_CHECK_INTERVAL_MILLIS, this);
 
 	private final Map<SourceAdvertisement, String> importedSources = Maps.newHashMap();
 

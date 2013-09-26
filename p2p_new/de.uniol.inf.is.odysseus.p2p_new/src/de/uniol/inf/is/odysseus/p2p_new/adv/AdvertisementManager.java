@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.adv;
 
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -23,8 +22,6 @@ import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 public class AdvertisementManager implements IAdvertisementManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AdvertisementManager.class);
-	private static final long DISCOVERY_INTERVAL_MILLIS = 2 * 1000;
-	private static final int REMOTE_DISCOVERY_COUNT = 2;
 
 	private static AdvertisementManager instance;
 
@@ -35,27 +32,10 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 	// called by OSGi-DS
 	public final void activate() {
-		discoveryThread = new RepeatingJobThread(DISCOVERY_INTERVAL_MILLIS, "Advertisement discovery thread") {
-			
-			private int remoteCounter = 0;
-			
+		discoveryThread = new AdvertisementDiscoverer() {
 			@Override
-			public void doJob() {
-				if (JxtaServicesProvider.isActivated()) {
-					
-					if( remoteCounter == 0 ) {
-						JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
-					}
-					remoteCounter = (remoteCounter + 1 ) % REMOTE_DISCOVERY_COUNT;
-					
-					try {
-						Enumeration<Advertisement> localAdvertisements = JxtaServicesProvider.getInstance().getDiscoveryService().getLocalAdvertisements(DiscoveryService.ADV, null, null);
-						process(localAdvertisements);
-						
-					} catch (IOException e) {
-						LOG.error("Could not get local advertisements", e);
-					}
-				}
+			public void process(Enumeration<Advertisement> advertisements) {
+				processAdvertisements(advertisements);
 			}
 		};
 		
@@ -63,32 +43,6 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 		instance = this;
 		LOG.debug("Advertisement manager activated");
-	}
-
-	@Override
-	public void addAdvertisementListener(IAdvertisementListener listener) {
-		Preconditions.checkNotNull(listener, "Advertisement listener must not be null!");
-
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
-
-		synchronized (knownAdvertisements) {
-			for (Advertisement adv : knownAdvertisements) {
-				try {
-					listener.advertisementAdded(this, adv);
-				} catch( Throwable t ) {
-					LOG.error("Exception during processing advertisement add {}", adv, t);
-				}
-			}
-		}
-	}
-
-	// called by OSGi-DS
-	public final void bindAdvertisementListener(IAdvertisementListener listener) {
-		addAdvertisementListener(listener);
-
-		LOG.debug("Bound advertisement listener {}", listener);
 	}
 
 	// called by OSGi-DS
@@ -99,11 +53,11 @@ public class AdvertisementManager implements IAdvertisementManager {
 		LOG.debug("Advertisement manager deactivated");
 	}
 
-	@Override
-	public void removeAdvertisementListener(IAdvertisementListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+	// called by OSGi-DS
+	public final void bindAdvertisementListener(IAdvertisementListener listener) {
+		addAdvertisementListener(listener);
+
+		LOG.debug("Bound advertisement listener {}", listener);
 	}
 
 	// called by OSGi-DS
@@ -111,6 +65,36 @@ public class AdvertisementManager implements IAdvertisementManager {
 		removeAdvertisementListener(listener);
 
 		LOG.debug("Unbound advertisement listener {}", listener);
+	}
+	
+	@Override
+	public void addAdvertisementListener(IAdvertisementListener listener) {
+		Preconditions.checkNotNull(listener, "Advertisement listener must not be null!");
+
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+
+		fireLateAdvertisementEvents(listener);
+	}
+
+	private void fireLateAdvertisementEvents(IAdvertisementListener listener) {
+		synchronized (knownAdvertisements) {
+			for (Advertisement adv : knownAdvertisements) {
+				try {
+					listener.advertisementAdded(this, adv);
+				} catch( Throwable t ) {
+					LOG.error("Exception during processing advertisement add {}", adv, t);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void removeAdvertisementListener(IAdvertisementListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
 	}
 
 	@Override
@@ -149,7 +133,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 		}
 	}
 
-	private void process(Enumeration<Advertisement> advs) {
+	private void processAdvertisements(Enumeration<Advertisement> advs) {
 		List<Advertisement> newAdvertisements = Lists.newArrayList();
 		List<Advertisement> oldAdvertisements = null;
 		synchronized( knownAdvertisements ) {
