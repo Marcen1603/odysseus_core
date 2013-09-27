@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
@@ -28,15 +27,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
-import de.uniol.inf.is.odysseus.p2p_new.lb.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 
 /**
  * An abstract implementation of a load balancer.
@@ -68,34 +62,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * The maximum degree of parallelism.
 	 */
 	public static final int MAX_DEGREE_VALUE = Integer.MAX_VALUE;
-	
-	/**
-	 * The beginning of all names for {@link JxtaReceiverAO}s. <br />
-	 * It will be enhanced by identifying numbers.
-	 */
-	// TODO source out to DistributionHelper
-	public static final String ACCESS_BASSE_NAME = "JxtaReceiver_";
-
-	/**
-	 * The beginning of all names for {@link JxtaSenderAO}s. <br />
-	 * It will be enhanced by identifying numbers.
-	 */
-	// TODO source out to DistributionHelper
-	public static final String SENDER_BASE_NAME = "JxtaSender_";
-	
-	/**
-	 * The name for query parts to be executed locally.
-	 * @see QueryPart#getDestinationName()
-	 */
-	// TODO source out to DistributionHelper
-	public static final String LOCAL_DESTINATION_NAME = "local";
-	
-	/**
-	 * The number of the next connection to be generated. <br />
-	 * This number will enhance {@link #ACCESS_BASSE_NAME} and {@link #SENDER_BASE_NAME}.
-	 */
-	// TODO source out to DistributionHelper
-	private static int connectionCounter = 0;
 	
 	/**
 	 * The number of the next peer to be assigned (round-robin).
@@ -136,19 +102,16 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		List<ILogicalQuery> distributedQueries = Lists.newArrayList();
 		
 		// A list of all available remote peers
-		final Collection<PeerID> remotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
-		
-		// The degree of parallelism and also the number of fragments, if fragmentation is used
-		int degreeOfParallelism = 1;
-		
-		// Check available peers
+		final Collection<PeerID> remotePeerIDs = DistributionHelper.getAvailableRemotePeers();
 		if(remotePeerIDs.isEmpty()) {
 			
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queries;
 			
 		} 
-		DistributionHelper.logPeerStatus(remotePeerIDs);
+		
+		// The degree of parallelism and also the number of fragments, if fragmentation is used
+		int degreeOfParallelism = 1;
 		
 		// The pair of the source name and the fragmentation strategy or null.
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
@@ -263,9 +226,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// A mapping of peers to the query part to be executed on that peer
 		Map<QueryPart, PeerID> peerToQueryPartMap = Maps.newHashMap();
 		
-		// The number of used connections
-		int connectionNo = connectionCounter++;
-		
 		// A list of all copies of the query
 		List<ILogicalQuery> queryCopies = Lists.newArrayList();
 		
@@ -296,7 +256,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			// Needed for identification after fragmentation.
 			for(ILogicalOperator operator : operators) {
 				
-				if(operator.getDestinationName() == null || !operator.getDestinationName().equalsIgnoreCase(LOCAL_DESTINATION_NAME))
+				if(operator.getDestinationName() == null || !operator.getDestinationName().equalsIgnoreCase(DistributionHelper.LOCAL_DESTINATION_NAME))
 					operator.setDestinationName(String.valueOf(copyNo));
 				
 			}
@@ -332,7 +292,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		if(!operatorsToCopyNoMap.get(degreeOfParallelism).isEmpty())
 			queryParts.add(new QueryPart(operatorsToCopyNoMap.get(degreeOfParallelism)));
 		if(!operatorsToCopyNoMap.get(degreeOfParallelism + 1).isEmpty())
-			queryParts.add(new QueryPart(operatorsToCopyNoMap.get(degreeOfParallelism + 1), LOCAL_DESTINATION_NAME));
+			queryParts.add(new QueryPart(operatorsToCopyNoMap.get(degreeOfParallelism + 1), DistributionHelper.LOCAL_DESTINATION_NAME));
 
 		for(int copyNo = 0; copyNo < degreeOfParallelism; copyNo++) {
 			
@@ -352,12 +312,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		// Assign query parts to peers and generate connections
-		peerToQueryPartMap = assignQueryParts(remotePeerIDs, P2PDictionaryService.get().getLocalPeerID(), queryParts);
-		DistributionHelper.generatePeerConnections(peerToQueryPartMap, ACCESS_BASSE_NAME + connectionNo + "_", 
-				SENDER_BASE_NAME + connectionNo + "_");
+		peerToQueryPartMap = assignQueryParts(remotePeerIDs, DistributionHelper.getLocalPeerID(), queryParts);
+		DistributionHelper.generatePeerConnections(peerToQueryPartMap);
 		
 		// Publish all remote parts and return the local ones
-		return distributeAndTransformParts(queryParts, peerToQueryPartMap, parameters, query.toString(), degreeOfParallelism);
+		return DistributionHelper.distributeAndTransformParts(queryParts, peerToQueryPartMap, parameters, query.toString(), degreeOfParallelism);
 		
 	}
 	
@@ -396,7 +355,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				// The current operator
 				ILogicalOperator operator = operatorsIter.next();
 				
-				if(operator.getDestinationName().equalsIgnoreCase(LOCAL_DESTINATION_NAME)) {
+				if(operator.getDestinationName().equalsIgnoreCase(DistributionHelper.LOCAL_DESTINATION_NAME)) {
 					
 					// Split
 					List<ILogicalOperator> operators = Lists.newArrayList();
@@ -411,7 +370,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 					}
 					if(!operators.isEmpty())
 						splittedParts.add(new QueryPart(operators));
-					splittedParts.add(new QueryPart(Arrays.asList(operator), LOCAL_DESTINATION_NAME));
+					splittedParts.add(new QueryPart(Arrays.asList(operator), DistributionHelper.LOCAL_DESTINATION_NAME));
 					lastSplitPoint = operatorNo;
 					
 				}
@@ -460,15 +419,16 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		for(int partNo = 0; partNo < parts.size() - 1; partNo++) {
 			
-			if(parts.get(partNo).getDestinationName().isPresent() && parts.get(partNo).getDestinationName().get().equals(LOCAL_DESTINATION_NAME)) {
+			if(parts.get(partNo).getDestinationName().isPresent() && 
+					parts.get(partNo).getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
 				
 				if(parts.get(partNo + 1).getDestinationName().isPresent() && 
-						parts.get(partNo + 1).getDestinationName().get().equals(LOCAL_DESTINATION_NAME)) {
+						parts.get(partNo + 1).getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
 					
 					// Merge
 					Collection<ILogicalOperator> mergedOperators = parts.get(partNo).getOperators();
 					mergedOperators.addAll(parts.get(partNo + 1).getOperators());
-					mergedParts.add(new QueryPart(mergedOperators, LOCAL_DESTINATION_NAME));
+					mergedParts.add(new QueryPart(mergedOperators, DistributionHelper.LOCAL_DESTINATION_NAME));
 					
 					// skip merged part
 					partNo++;
@@ -515,23 +475,22 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			// The ID of the assigned peer
 			PeerID peerID = null;
 				
-			if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(LOCAL_DESTINATION_NAME)) {
+			if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
 					
 				// Local part
-				distributed.put(part, localPeerID);
-				peerName = P2PDictionaryService.get().getRemotePeerName(localPeerID);
+				peerID = localPeerID;
 				
 			} else {
 				
 				// Round-Robin
 				peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
-				peerCounter = (++peerCounter) % remotePeerIDs.size();
+				peerCounter = (++peerCounter) % remotePeerIDs.size();				
 				
-				peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
-				distributed.put(part, peerID);					
-				
-			}			
-				
+			}
+			
+			distributed.put(part, peerID);
+			
+			peerName = DistributionHelper.getPeerName(peerID);
 			if(peerName.isPresent())
 				LOG.debug("Assign query part {} to peer {}", part, peerName.get());
 			else LOG.debug("Assign query part {} to peer {}", part, peerID);
@@ -539,89 +498,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 
 		return distributed;
-		
-	}
-	
-	/**
-	 * Distributes query parts to their assigned peer and transforms all query parts to be executed locally into a logical query.
-	 * @param queryParts A collection of query parts to be distributed.
-	 * @param queryPartDistributionMap The mapping of assigned peer IDs to query parts.
-	 * @param parameters The {@link QueryBuildConfiguration}.
-	 * @param queryName The name of the origin query for transformation.
-	 * @param degreeOfParallelism The degree of parallelism.
-	 * @return The logical query to be executed locally.
-	 */
-	// TODO source out to DistributionHelper
-	protected ILogicalQuery distributeAndTransformParts(Collection<QueryPart> queryParts, Map<QueryPart, 
-			PeerID> queryPartDistributionMap, QueryBuildConfiguration parameters, String queryName, int degreeOfParallelism) {
-		
-		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
-		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
-		Preconditions.checkNotNull(parameters, "transCfg must be not null!");
-		
-		// Generate an ID for the shared query
-		final ID sharedQueryID = DistributionHelper.generateSharedQueryID();
-		
-		// Get all queryParts of this query mapped with the executing peer
-		final Map<QueryPart, PeerID> queryPartPeerMap = Maps.newHashMap();
-		for(QueryPart part : queryParts) {
-			
-			QueryPart preparedPart = DistributionHelper.replaceStreamAOs(part);
-			queryPartPeerMap.put(preparedPart, queryPartDistributionMap.get(part));
-			
-		}
-		
-		// publish the queryparts and transform the parts which shall be executed locally into a query
-		ILogicalQuery localQuery = DistributionHelper.transformToQuery(this.distributeParts(queryPartPeerMap, sharedQueryID, parameters), queryName);
-		
-		// Registers an sharedQueryID as a master to resolve removed query parts
-		QueryPartController.getInstance().registerAsMaster(localQuery, sharedQueryID);
-		
-		return localQuery;
-		
-	}
-	
-	/**
-	 * Distributes query parts to their assigned peer.
-	 * @param queryPartDistributionMap The mapping of assigned peer IDs to query parts.
-	 * @param sharedQueryID The shared query id.
-	 * @param parameters The {@link QueryBuildConfiguration}.
-	 * @return A list of all query parts to be executed locally.
-	 */
-	// TODO source out to DistributionHelper
-	protected List<QueryPart> distributeParts(Map<QueryPart, PeerID> queryPartDistributionMap, ID sharedQueryID, QueryBuildConfiguration parameters) {
-		
-		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
-		Preconditions.checkNotNull(sharedQueryID, "sharedQueryID must be not null!");
-		Preconditions.checkNotNull(parameters, "transCfg must be not null!");
-		
-		// The query parts to be executed locally
-		final List<QueryPart> localParts = Lists.newArrayList();
-		
-		// The ID of the local peer
-		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
-
-		for(final QueryPart part : queryPartDistributionMap.keySet()) {
-			
-			// The ID of the assigned peer for that query part
-			final PeerID assignedPeerID = queryPartDistributionMap.get(part);
-			
-			if(assignedPeerID.equals(ownPeerID)) {
-				
-				localParts.add(part);
-				LOG.debug("QueryPart {} locally stored", part);
-				
-			} else {
-				
-				SimplePlanPrinter<ILogicalOperator> printer = new SimplePlanPrinter<ILogicalOperator>();
-				LOG.debug("Plan of the querypart to publish:\n{}", printer.createString(part.getLogicalPlan()));
-				DistributionHelper.publish(part, assignedPeerID, sharedQueryID, parameters);
-				
-			}
-
-		}
-
-		return localParts;
 		
 	}
 
