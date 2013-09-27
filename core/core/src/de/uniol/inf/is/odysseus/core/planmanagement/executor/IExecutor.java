@@ -104,6 +104,21 @@ public interface IExecutor extends IClientPlanManager{
 			String queryBuildConfigurationName) throws PlanManagementException;
 
 	/**
+	 * This method tries to translate the given query to a logical plan and delivers the output schema for the root operator
+	 * Remark: It must be shure, that there in only one output operator, else the first one will be choosen that is found!
+	 * @param query The query text
+	 * @param parserID The parser to translate the query
+	 * @param user The caller of this method to validate user right
+	 * @param port The port for which the schema should be returned
+	 * @return The output schema from the top operator for the given port
+	 */	
+	public SDFSchema determinedOutputSchema(String query, String parserID,
+			ISession user, int port);
+	// TODO, Multiple roots
+//	public SDFSchema determinedOutputSchema(String query, String parserID,
+//			ISession user, String queryBuildConfigurationName, String rootName, int port);	
+	
+	/**
 	 * Return the logical query with the id
 	 * @param id
 	 * @return

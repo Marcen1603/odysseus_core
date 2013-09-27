@@ -567,5 +567,12 @@ public class WsClient implements IExecutor, IClientExecutor {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public SDFSchema determinedOutputSchema(String query, String parserID,
+			ISession user, int port) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

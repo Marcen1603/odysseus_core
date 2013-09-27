@@ -511,6 +511,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		return addQuery(query, parserID, user, params);
 	}
 
+
 	private Collection<Integer> addQuery(String query, String parserID,
 			ISession user, QueryBuildConfiguration buildConfiguration)
 			throws PlanManagementException {
@@ -639,6 +640,28 @@ public class StandardExecutor extends AbstractExecutor implements
 		}
 	}
 
+	// -------------------------------------------------------------------------------------------------
+	// Deliver Schema information
+	// -------------------------------------------------------------------------------------------------	
+	
+	@Override
+	public SDFSchema determinedOutputSchema(String query, String parserID,
+			ISession user, int port) {
+		List<IExecutorCommand> commands = getCompiler().translateQuery(
+				query, parserID, user, getDataDictionary(user.getTenant()));
+		if (commands.size() != 1){
+			throw new IllegalArgumentException("Method can only be called for one query statement!");
+		}
+		IExecutorCommand cmd = commands.get(0);
+		if (cmd instanceof CreateQueryCommand){
+			CreateQueryCommand qCmd = (CreateQueryCommand) cmd;
+			ILogicalOperator root = qCmd.getQuery().getLogicalPlan();
+			return root.getOutputSchema(port);
+		}	
+		return null;
+	}
+
+	
 	// -------------------------------------------------------------------------------------------------
 	// Query Translation Settings
 	// -------------------------------------------------------------------------------------------------
