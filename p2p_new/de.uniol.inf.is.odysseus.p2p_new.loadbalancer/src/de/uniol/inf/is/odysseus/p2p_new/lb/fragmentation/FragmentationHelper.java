@@ -1,23 +1,15 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
@@ -55,77 +47,6 @@ public class FragmentationHelper {
 	private static final Logger LOG = LoggerFactory.getLogger(FragmentationHelper.class);
 	
 	/**
-	 * Returns the names of all used sources within a collection of operators.
-	 */
-	public static Collection<String> getSourceNames(Collection<ILogicalOperator> operators) {
-		
-		Preconditions.checkNotNull(operators);
-		
-		// The return value
-		Collection<String> sourceNames = Lists.newArrayList();
-		
-		// Collect all StreamAOs and AccessAOs.
-		for(ILogicalOperator operator : operators) {
-		
-			if(operator instanceof StreamAO)
-				sourceNames.add(((StreamAO) operator).getStreamname().toString());
-			else if(operator instanceof AbstractAccessAO)
-				sourceNames.add(((AbstractAccessAO) operator).getName());
-			
-		}
-		
-		return sourceNames;
-		
-	}
-	
-	/**
-	 * Returns the names of all used sources within a logical plan.
-	 */
-	public static Collection<String> getSourceNames(ILogicalOperator logicalPlan) {
-		
-		Preconditions.checkNotNull(logicalPlan);
-		
-		// A collection of all operators within the logical plan
-		Collection<ILogicalOperator> operators = Lists.newArrayList();
-		
-		// Collect all operators within the logical plan
-		RestructHelper.collectOperators(logicalPlan, operators);
-		
-		return getSourceNames(operators);
-		
-	}
-	
-	/**
-	 * Returns a collection of the names of all used sources within a list of queries.
-	 */
-	public static Collection<String> getSourceNames(List<ILogicalQuery> queries) {
-		
-		Preconditions.checkNotNull(queries);
-		Preconditions.checkArgument(!queries.isEmpty());
-		
-		// The return value
-		Collection<String> allSourceNames = Lists.newArrayList();
-		
-		for(ILogicalQuery query : queries) {
-			
-			// Collect all StreamAOs and AccessAOs of the query
-			Collection<String> sourceNames = getSourceNames(query.getLogicalPlan());
-			
-			// Add a sourceName to the return value only if it hasn't been done before.
-			for(String sourceName : sourceNames) {
-				
-				if(!allSourceNames.contains(sourceName))
-					allSourceNames.add(sourceName);
-				
-			}
-			
-		}
-		
-		return allSourceNames;
-		
-	}
-	
-	/**
 	 * Parses an parameter of the {@link QueryBuildConfiguration} into a fragmentation strategy.
 	 * @param parameters The {@link QueryBuildConfiguration} to be parsed.
 	 * @param executor The executor calling.
@@ -158,7 +79,7 @@ public class FragmentationHelper {
 	 * @param executor The executor calling.
 	 * @return A pair of the source name and the fragmentation strategy or null.
 	 */
-	public static Optional<Pair<String,IDataFragmentation>> parseFromString(String strFragmentationStrategy, IServerExecutor executor) {
+	private static Optional<Pair<String,IDataFragmentation>> parseFromString(String strFragmentationStrategy, IServerExecutor executor) {
 		
 		Preconditions.checkNotNull(strFragmentationStrategy);
 		Preconditions.checkNotNull(executor);
