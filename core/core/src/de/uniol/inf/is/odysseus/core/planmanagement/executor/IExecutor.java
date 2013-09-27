@@ -118,14 +118,6 @@ public interface IExecutor extends IClientPlanManager{
 //	public SDFSchema determinedOutputSchema(String query, String parserID,
 //			ISession user, String queryBuildConfigurationName, String rootName, int port);	
 	
-	/**
-	 * Return the logical query with the id
-	 * @param id
-	 * @return
-	 * @deprecated use getLogicalQueryById(int id) instead
-	 */
-	@Deprecated
-	public ILogicalQuery getLogicalQuery(int id);
 	
 	/**
 	 * Return the logical query with the id

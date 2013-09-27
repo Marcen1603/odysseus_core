@@ -320,12 +320,6 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	@Deprecated
-	public ILogicalQuery getLogicalQuery(int id) {
-		return getLogicalQueryById(id);
-	}
-
-	@Override
 	public ILogicalQuery getLogicalQueryById(int id) {
 		// FIXME: Call getLogicalQueryById
 		return createLogicalQueryFromInfo(getWebserviceServer().getLogicalQuery(getSecurityToken(), "" + id).getResponseValue());

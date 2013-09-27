@@ -716,12 +716,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	@Deprecated
-	public ILogicalQuery getLogicalQuery(int id) {
-		return getLogicalQueryById(id);
-	}
-
-	@Override
 	public ILogicalQuery getLogicalQueryById(int id) {
 		IPhysicalQuery pq = executionPlan.getQueryById(id);
 		ILogicalQuery lq = null;
