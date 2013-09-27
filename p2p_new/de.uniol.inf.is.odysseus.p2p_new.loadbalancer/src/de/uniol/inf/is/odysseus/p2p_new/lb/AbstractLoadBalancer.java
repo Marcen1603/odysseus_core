@@ -147,7 +147,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
 			return queries;
 			
-		} else DistributionHelper.logPeerStatus(remotePeerIDs);
+		} 
+		DistributionHelper.logPeerStatus(remotePeerIDs);
 		
 		// The pair of the source name and the fragmentation strategy or null.
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 

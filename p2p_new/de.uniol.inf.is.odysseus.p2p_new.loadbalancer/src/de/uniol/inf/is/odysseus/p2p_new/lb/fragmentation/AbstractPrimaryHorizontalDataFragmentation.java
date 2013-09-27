@@ -133,21 +133,16 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 				// The operator for fragmentation to be subscribed.
 				// All sinks of the StreamAO will be subscribed to that new operator.
 				// For following WindowAOs other operators for fragmentation will be inserted additional.
-				ILogicalOperator operatorForFragmentation = null;
-				if(operatorsForFragmentationIter.hasNext())
-					operatorForFragmentation = operatorsForFragmentationIter.next();
+				ILogicalOperator operatorForFragmentation = operatorsForFragmentationIter.next();
 				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
-					if(subToSink.getTarget() instanceof WindowAO)
+					if(subToSink.getTarget() instanceof WindowAO) {
 						continue;
-					else {
-					
-						operator.unsubscribeSink(subToSink);
-						operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, planIndex, subToSink.getSchema());
-						
 					}
-					
+										
+					operator.unsubscribeSink(subToSink);
+					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, planIndex, subToSink.getSchema());
 				}
 				
 				operatorsToRemove.add(operator);
@@ -231,16 +226,13 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
-					if(subToSink.getTarget() instanceof WindowAO)
+					if(subToSink.getTarget() instanceof WindowAO) {
 						continue;
-					else {
-						
-						onlySubscribedByWindows = false;
-						operator.unsubscribeSink(subToSink);
-						operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, subToSink.getSchema());
-						
 					}
 					
+					onlySubscribedByWindows = false;
+					operator.unsubscribeSink(subToSink);
+					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, subToSink.getSchema());
 				}
 				
 				if(!onlySubscribedByWindows) {

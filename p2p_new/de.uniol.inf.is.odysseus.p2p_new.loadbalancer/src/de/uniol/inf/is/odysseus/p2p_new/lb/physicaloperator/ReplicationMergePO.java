@@ -241,7 +241,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 				continue;
 				
 			} else if(!elem.isPunctuation() && !object.isPunctuation() && 
-					(!((T) elem).equals((T) object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
+					(!((T) elem).equals(object) || !((T) elem).getMetadata().equals(((T) object).getMetadata()))) {
 				
 				// either the elements or the timestamps are not equal
 				continue;

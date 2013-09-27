@@ -90,15 +90,17 @@ public class RangeFragmentation extends AbstractPrimaryHorizontalDataFragmentati
 					// blank between two ranges
 					continue;
 					
-				} else ranges.add(range);
+				} 
+				
+				ranges.add(range);
 				
 			}
 				
 			if(ranges.size() < numFragments - 1 || ranges.size() > numFragments) {
 				
 				// ranges.size() == degreeOfParallelism: alle ranges angegeben
-				// ranges.size() == degreeOfParallelism - 1: eine range für den Ausgang, an den alle
-				// Tupel kommen, die keines der Prädikate erfüllen, übrig
+				// ranges.size() == degreeOfParallelism - 1: eine range fï¿½r den Ausgang, an den alle
+				// Tupel kommen, die keines der Prï¿½dikate erfï¿½llen, ï¿½brig
 				
 				throw new IllegalArgumentException("Number of ranges (" + (strParameters.length - 2) + 
 						") does not fit degree of parallelism (" + numFragments + ")!");

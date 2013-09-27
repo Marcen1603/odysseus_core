@@ -65,6 +65,7 @@ public class Replication extends AbstractPrimaryHorizontalDataFragmentation {
 	/**
 	 * Creates a new {@link ReplicationMergeAO}.
 	 */
+	@Override
 	protected ILogicalOperator createOperatorForDataReunion() {
 		
 		return new ReplicationMergeAO();
