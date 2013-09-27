@@ -42,7 +42,7 @@ public class TReplicationMergeAORule extends AbstractTransformationRule<Replicat
 	@Override
 	public String getName() {
 		
-		return "DistributionMergeAO -> DistributionMergePO";
+		return "ReplicationMergeAO -> ReplicationMergePO";
 		
 	}
 	
