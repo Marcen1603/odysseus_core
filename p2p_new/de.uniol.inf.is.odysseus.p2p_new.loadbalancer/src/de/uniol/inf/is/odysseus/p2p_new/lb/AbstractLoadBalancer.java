@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.RRPeerAssignment;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
 
@@ -62,12 +63,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * The maximum degree of parallelism.
 	 */
 	public static final int MAX_DEGREE_VALUE = Integer.MAX_VALUE;
-	
-	/**
-	 * The number of the next peer to be assigned (round-robin).
-	 */
-	// TODO source out to IPeerAssignment
-	private static int peerCounter = 0;
 	
 	@Override
 	public abstract String getName();
@@ -312,7 +307,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		// Assign query parts to peers and generate connections
-		peerToQueryPartMap = assignQueryParts(remotePeerIDs, DistributionHelper.getLocalPeerID(), queryParts);
+		// TODO As a service plus Odysseus-Script:
+		// #PEERASSIGNMENT round-robin
+		peerToQueryPartMap = new RRPeerAssignment().assignQueryPartsToPeers(remotePeerIDs, queryParts);
 		DistributionHelper.generatePeerConnections(peerToQueryPartMap);
 		
 		// Publish all remote parts and return the local ones
@@ -440,64 +437,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		return mergedParts;
-		
-	}
-	
-	/**
-	 * Assigns query parts to peers, where they shall be executed.
-	 * @param remotePeerIDs A collection of all available peers.
-	 * @param localPeerID The ID of the local peer.
-	 * @param queryParts 
-	 * @return A collection of query parts to be assigned.
-	 */
-	// TODO source out to IPeerAssignment
-	protected Map<QueryPart, PeerID> assignQueryParts(Collection<PeerID> remotePeerIDs, PeerID localPeerID, Collection<QueryPart> queryParts) { 
-		
-		Preconditions.checkNotNull(remotePeerIDs, "remotePeerIDs must be not null!");
-		Preconditions.checkArgument(remotePeerIDs.size() > 0, "remotePeerIDs must be not empty!");
-		Preconditions.checkNotNull(localPeerID, "localPeerID must be not null!");
-		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
-		
-		// The return value
-		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
-		
-		// The iterator for the query parts.
-		final Iterator<QueryPart> partsIter = queryParts.iterator();
-		
-		while(partsIter.hasNext()) {
-			
-			// The current query part
-			QueryPart part = partsIter.next();
-			
-			// The name of the assigned peer if present
-			Optional<String> peerName;
-			
-			// The ID of the assigned peer
-			PeerID peerID = null;
-				
-			if(part.getDestinationName().isPresent() && part.getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
-					
-				// Local part
-				peerID = localPeerID;
-				
-			} else {
-				
-				// Round-Robin
-				peerID = ((List<PeerID>) remotePeerIDs).get(peerCounter);
-				peerCounter = (++peerCounter) % remotePeerIDs.size();				
-				
-			}
-			
-			distributed.put(part, peerID);
-			
-			peerName = DistributionHelper.getPeerName(peerID);
-			if(peerName.isPresent())
-				LOG.debug("Assign query part {} to peer {}", part, peerName.get());
-			else LOG.debug("Assign query part {} to peer {}", part, peerID);
-			
-		}
-
-		return distributed;
 		
 	}
 
