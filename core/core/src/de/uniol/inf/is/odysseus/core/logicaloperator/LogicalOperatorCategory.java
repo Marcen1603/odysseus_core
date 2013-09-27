@@ -7,6 +7,7 @@ public class LogicalOperatorCategory {
 	public static final String BENCHMARK="BENCHMARK";
 
 	public static final String CLASSIFIKATION="CLASSIFIKATION";
+	public static final String CLEANING="CLEANING";
 	public static final String CLUSTERING="CLUSTERING";
 
 	public static final String DATABASE="DATABASE";
