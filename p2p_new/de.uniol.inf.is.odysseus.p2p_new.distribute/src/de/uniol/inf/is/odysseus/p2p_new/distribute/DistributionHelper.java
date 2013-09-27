@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -210,7 +211,9 @@ public class DistributionHelper {
 			QueryPart preparedPart = null;
 			
 			// The changed collection of all operators of the query part
-			Collection<ILogicalOperator> operators = DistributionHelper.replaceStreamAOs(part.getOperators());
+			Collection<ILogicalOperator> operators = Lists.newArrayList();
+			operators.addAll(part.getOperators());
+			DistributionHelper.replaceStreamAOs(operators);
 			if(part.getDestinationName().isPresent())
 				preparedPart = new QueryPart(operators, part.getDestinationName().get());
 			else preparedPart = new QueryPart(operators);
@@ -247,7 +250,7 @@ public class DistributionHelper {
 	
 	/**
 	 * Replaces all {@link StreamAO}s by their transformed stream.
-	 * @param operators A list of operators.
+	 * @param operators A list of operators. Must be mutable.
 	 * @return The list of operators, where each {@link StreamAO} was replaced.
 	 */
 	private static Collection<ILogicalOperator> replaceStreamAOs(Collection<ILogicalOperator> operators) {
