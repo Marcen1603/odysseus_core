@@ -42,7 +42,7 @@ public class Connection {
 		}
 		this.source = source;
 		if (source != null) {
-			source.addSourceConnection(this);
+			source.addSourceConnection(this);			
 		}
 	}
 
@@ -58,7 +58,8 @@ public class Connection {
 		}
 		this.target = target;
 		if (target != null) {
-			target.addTargetConnection(this);
+			this.targetPort = target.getTargetConnections().size();
+			target.addTargetConnection(this);								
 		}
 	}
 
