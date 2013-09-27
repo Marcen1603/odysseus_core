@@ -265,7 +265,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		return new PointInTime(time.point + toAdd);
 	}
 
-	public PointInTime plus(int time) {
+	public PointInTime plus(long time) {
 		if (isInfinite)
 			return this;
 		return new PointInTime(this.point + time);
