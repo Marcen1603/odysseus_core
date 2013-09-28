@@ -137,6 +137,20 @@ public class BillingManager {
 		}
 	}
 	
+//	private static void initBillingMaps() {
+//		try {
+//			PreparedStatement statement = conn.prepareStatement("SELECT * FROM \"CurrentRevenue\"");
+//
+//			ResultSet rs = statement.executeQuery();
+//			while (rs.next()) {
+//				
+//			}
+//		} catch (SQLException ex) {
+//			System.err.println(ex.getMessage());
+//		}
+//		
+//	}
+	
 	private static void initDatabaseConnection() {
 		if (conn == null) {
 			try {
@@ -147,6 +161,7 @@ public class BillingManager {
 				System.err.println(ex.getMessage());
 			}
 		}
+//		initBillingMaps();
 	}
 	
 	public static void persistBillingInformations() {

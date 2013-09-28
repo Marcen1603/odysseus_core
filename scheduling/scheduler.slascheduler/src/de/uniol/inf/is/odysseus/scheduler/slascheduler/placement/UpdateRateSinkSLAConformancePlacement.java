@@ -78,32 +78,32 @@ public class UpdateRateSinkSLAConformancePlacement implements
 			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
 				((IOwnedOperator)heartbeat).addOwner(root.getOwner());
 
-			subscribable = heartbeat;
-			subscribable.connectSink(costCalc, 0, 0, op.getOutputSchema());
-			subscribable.connectSink(conformance, 0, 0, op.getOutputSchema());
-
-			subscribable = (ISubscribable) op;
-			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
-			
-			operatorsToAdd.add(costCalc);
-			operatorsToAdd.add((IPhysicalOperator) conformance);
-			
-//			subscribable = costCalc;
+//			subscribable = heartbeat;
+//			subscribable.connectSink(costCalc, 0, 0, op.getOutputSchema());
 //			subscribable.connectSink(conformance, 0, 0, op.getOutputSchema());
+//
+//			subscribable = (ISubscribable) op;
+//			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
 //			
+//			operatorsToAdd.add(costCalc);
+//			operatorsToAdd.add((IPhysicalOperator) conformance);
+			
+			subscribable = costCalc;
+			subscribable.connectSink(conformance, 0, 0, op.getOutputSchema());
+			
 //			AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
 //			heartbeat.setSendAlwaysHeartbeat(true);
 //			heartbeat.setAllowOutOfOrder(true);
 //			heartbeat.setRealTimeDelay(500, TimeUnit.MILLISECONDS);
 //			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
 //				((IOwnedOperator)heartbeat).addOwner(root.getOwner());
-//			subscribable = heartbeat;
-//			subscribable.connectSink(costCalc, 0, 0, op.getOutputSchema());
-//
-//			subscribable = (ISubscribable) op;
-//			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
-//			
-//			operatorsToAdd.add((IPhysicalOperator) conformance);
+			subscribable = heartbeat;
+			subscribable.connectSink(costCalc, 0, 0, op.getOutputSchema());
+
+			subscribable = (ISubscribable) op;
+			subscribable.connectSink(heartbeat, 0, 0, op.getOutputSchema());
+			
+			operatorsToAdd.add((IPhysicalOperator) conformance);
 		} else {
 			if (((IOwnedOperator)conformance).getOwner().size() == 0)
 				((IOwnedOperator)conformance).addOwner(root.getOwner());

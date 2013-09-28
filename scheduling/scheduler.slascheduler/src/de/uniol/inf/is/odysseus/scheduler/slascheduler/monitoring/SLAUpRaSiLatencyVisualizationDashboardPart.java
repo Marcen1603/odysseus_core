@@ -21,13 +21,13 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
 
-public class SLAUpdateRateSourceVisualizationDashboardPart extends
+public class SLAUpRaSiLatencyVisualizationDashboardPart extends
 		AbstractChartDashboardPart {
 
 	private static final Logger LOG = LoggerFactory
-			.getLogger(SLAUpdateRateSourceVisualizationDashboardPart.class);
+			.getLogger(SLAUpRaSiLatencyVisualizationDashboardPart.class);
 
 	private TimeSeriesCollection datasetCollection;
 	private Map<IPhysicalOperator, TimeSeries> operatorToSerie = new HashMap<IPhysicalOperator, TimeSeries>();
@@ -35,7 +35,7 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSourceAverageConformance) {
+		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
 				if (operatorToSerie.size() > 1)
 					return;
@@ -45,16 +45,13 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 			}
 			try {
 				final Tuple<?> tuple = (Tuple<?>) element;
-				// final int queryID = tuple.getAttribute(0);
-				final double updaterate = tuple.getAttribute(1);
+				final long latency = tuple.getAttribute(3);
 
-				if (updaterate >= 0) {
+				if (latency >= 0) {
 					Date date = new Date(System.currentTimeMillis());
-					operatorToSerie.get(senderOperator).addOrUpdate(new Second(date), updaterate);
+					operatorToSerie.get(senderOperator).addOrUpdate(
+							new Second(date), latency);
 				}
-
-				// xySeriesSourceThreshold.add(System.currentTimeMillis(), ((AbstractSLAPipeConformance) senderOperator).getMetricValue());
-
 			} catch (final Throwable t) {
 				LOG.error("Could not process Tuple {}!", element, t);
 			}
@@ -64,35 +61,34 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 	@Override
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(
-				"SLA UpdateRateSource Monitoring", "Time", "Updaterate in ms",
+				"SLA Latency Monitoring", "Time", "Latency in ms",
 				datasetCollection, true, true, false);
-		
+
 		Color gray = new Color(222, 222, 222);
 		chart.getPlot().setBackgroundPaint(gray);
-		
+
 		XYPlot plot = (XYPlot) chart.getPlot();
-        DateAxis axis = (DateAxis) plot.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
-		
+		DateAxis axis = (DateAxis) plot.getDomainAxis();
+		axis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
+
 		return chart;
 	}
 
 	@Override
 	protected Dataset createDataset() {
 		datasetCollection = new TimeSeriesCollection();
-		
+
 		return datasetCollection;
 	}
 
 	@Override
 	protected void decorateChart(JFreeChart chart) {
-		
+
 	}
 
 	@Override
 	protected void startChart(Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {
-		
-	}
 
+	}
 }

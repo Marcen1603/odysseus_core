@@ -1,16 +1,20 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.general.Dataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +29,8 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 	private static final Logger LOG = LoggerFactory
 			.getLogger(SLAUpdateRateSinkVisualizationDashboardPart.class);
 
-	private XYSeriesCollection datasetCollection;
-	private Map<IPhysicalOperator, XYSeries> operatorToSerie = new HashMap<IPhysicalOperator, XYSeries>();
+	private TimeSeriesCollection datasetCollection;
+	private Map<IPhysicalOperator, TimeSeries> operatorToSerie = new HashMap<IPhysicalOperator, TimeSeries>();
 	private long startTestSeries = -1;
 
 	@Override
@@ -35,14 +39,14 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 		if(startTestSeries == -1)
 			startTestSeries = System.currentTimeMillis();
 		
-		if (System.currentTimeMillis() - startTestSeries > 600 * 1000)
+		if (System.currentTimeMillis() - startTestSeries > 300 * 1000)
 			return;
 		
 		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
 				if (operatorToSerie.size() > 1)
 					return;
-				XYSeries xySeriesSource = new XYSeries(senderOperator.getName());
+				TimeSeries xySeriesSource = new TimeSeries(senderOperator.getName());
 				operatorToSerie.put(senderOperator, xySeriesSource);
 				datasetCollection.addSeries(xySeriesSource);
 			}
@@ -52,7 +56,8 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 				final long updaterate = tuple.getAttribute(1);
 
 				if (updaterate >= 0) {
-					operatorToSerie.get(senderOperator).add(System.currentTimeMillis(), updaterate);
+					Date date = new Date(System.currentTimeMillis());
+					operatorToSerie.get(senderOperator).addOrUpdate(new Second(date), updaterate);
 				}
 
 				// xySeriesSourceThreshold.add(System.currentTimeMillis(), ((AbstractSLAPipeConformance) senderOperator).getMetricValue());
@@ -65,19 +70,23 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 
 	@Override
 	protected JFreeChart createChart() {
-		JFreeChart chart = ChartFactory.createXYLineChart(
-				"SLA Violation Monitoring", "Time", "Updaterate in ms",
-				datasetCollection, PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart chart = ChartFactory.createTimeSeriesChart(
+				"SLA UpdateRateSource Monitoring", "Time", "Updaterate in ms",
+				datasetCollection, true, true, false);
 		
 		Color gray = new Color(222, 222, 222);
 		chart.getPlot().setBackgroundPaint(gray);
+		
+		XYPlot plot = (XYPlot) chart.getPlot();
+        DateAxis axis = (DateAxis) plot.getDomainAxis();
+        axis.setDateFormatOverride(new SimpleDateFormat("HH:mm:ss"));
 		
 		return chart;
 	}
 
 	@Override
 	protected Dataset createDataset() {
-		datasetCollection = new XYSeriesCollection();
+		datasetCollection = new TimeSeriesCollection();
 		
 		return datasetCollection;
 	}

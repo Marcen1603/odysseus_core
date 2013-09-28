@@ -28,6 +28,11 @@
             configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpdateRateSinkViolationConfigurer"
             name="SLA UpdateRateSink Violation">
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpRaSiLatencyVisualizationDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring.SLAUpRaSiLatencyVisualizationConfigurer"
+            name="SLA UpdateRateSink Latency Visualization">
+      </dashboardPart>
    </extension>
 
 </plugin>

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
@@ -121,13 +123,23 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 		this.lastObjectSend = object;
 		this.lastPortSend = port;
 		
-		int attributeCount = ((Tuple<?>)object).getAttributes().length;
+		long latencyValue = -1;
+		IMetaAttribute metadata = object.getMetadata();
+		if (metadata instanceof ILatency) {
+			ILatency latency = (ILatency) metadata;
+			latencyValue = (long) this.nanoToMilli(latency.getLatency());
+		} else {
+			throw new RuntimeException("Latency missing");
+		}
+		
+		int oldAttributeCount = ((Tuple<?>)object).getAttributes().length;
 		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
 		((Tuple<?>)object).append(diff, false);
 		((Tuple<?>)object).append(getConformance() >= this.getSLA().getMetric().getValue(), false);
-		int[] attrList = new int[3];
+		((Tuple<?>)object).append(latencyValue, false);
+		int[] attrList = new int[4];
 		int index = 0;
-		for (int i = attributeCount; i < attributeCount+3; i++) {
+		for (int i = oldAttributeCount; i < oldAttributeCount+4; i++) {
 			attrList[index] = i;
 			index++;
 		}
@@ -135,22 +147,6 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 		
 		transfer((W) tuple);
 		super.process_next((R) tuple, port);
-//		super.process_next(object, port);
-		
-//		if (this.prevObj != null) {
-//			IMetaAttribute currMetadata = object.getMetadata();
-//			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
-//			
-//			if (currMetadata instanceof ILatency && prevMetadata instanceof ILatency) {
-//				ILatency currLatency = (ILatency) currMetadata;
-//				ILatency prevLatency = (ILatency) prevMetadata;
-//				long diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
-//				this.aggregate.addAggValue(nanoToMilli(diff));
-//			} else {
-//				throw new RuntimeException("Latency missing");
-//			}
-//		}
-//		this.prevObj = object;
 	}
 
 	@Override

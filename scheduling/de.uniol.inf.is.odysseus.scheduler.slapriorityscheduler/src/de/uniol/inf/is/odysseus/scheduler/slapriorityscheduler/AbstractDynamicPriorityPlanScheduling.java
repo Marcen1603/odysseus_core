@@ -75,8 +75,8 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 			this.addSLAViolationEventListener(new SLAViolationBilling());
 		this.pausedPlans = new HashSet<IScheduling>();
 
-		Helper.setUseBillingModel(true);
-//		Helper.setUseBillingModel(false);
+//		Helper.setUseBillingModel(true);
+		Helper.setUseBillingModel(false);
 	}
 
 	@SuppressWarnings("unchecked")
