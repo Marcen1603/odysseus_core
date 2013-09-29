@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
 
 /**
  * The <code>OperatorCloudLoadBalancer</code> splits an {@link ILogicalQuery} after each {@link ILogicalOperator} 

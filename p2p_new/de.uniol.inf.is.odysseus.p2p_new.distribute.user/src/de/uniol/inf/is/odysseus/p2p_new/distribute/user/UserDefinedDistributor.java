@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributo
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.user.service.JxtaServicesProviderService;

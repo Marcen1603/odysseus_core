@@ -27,11 +27,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerAssignment;
+import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.peerAssignment.RRPeerAssignment;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
+import de.uniol.inf.is.odysseus.p2p_new.lb.service.PeerAssignmentProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.parameter.PeerAssignmentParameter;
 
 /**
  * An abstract implementation of a load balancer.
@@ -236,6 +239,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkNotNull(remotePeerIDs);
 		Preconditions.checkArgument(!remotePeerIDs.isEmpty());
 		
+		// The peer assignment strategy to be used
+		IPeerAssignment peerAssignmentStrategy = determinePeerAssignmentStrategy(parameters);
+		
 		// A collection of all query parts
 		Collection<QueryPart> queryParts = Lists.newArrayList();
 		
@@ -279,9 +285,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		// Assign query parts to peers and generate connections
-		// TODO As a service plus Odysseus-Script:
-		// #PEERASSIGNMENT round-robin
-		peerToQueryPartMap = new RRPeerAssignment().assignQueryPartsToPeers(remotePeerIDs, queryParts);
+		peerToQueryPartMap = peerAssignmentStrategy.assignQueryPartsToPeers(remotePeerIDs, queryParts);
 		DistributionHelper.generatePeerConnections(peerToQueryPartMap);
 		
 		// Publish all remote parts and return the local ones
@@ -289,6 +293,25 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 	}
 	
+	/**
+	 * Determine the peer assignment strategy given by the parameters.
+	 * @param parameters The {@link QueryBuildConfiguration}.
+	 */
+	protected IPeerAssignment determinePeerAssignmentStrategy(QueryBuildConfiguration parameters) {
+		
+		// The return value
+		Optional<IPeerAssignment> peerAssignment = Optional.absent();
+		
+		if(parameters.contains(PeerAssignmentParameter.class))
+			peerAssignment = PeerAssignmentProviderService.get().getPeerAssignment(
+					parameters.get(PeerAssignmentParameter.class).getValue());
+		
+		if(peerAssignment.isPresent())
+			return peerAssignment.get();
+		else return new RRPeerAssignment();
+		
+	}
+
 	/**
 	 * Makes copies of the origin query and collects both copies and the logical plans of the copies.
 	 * @param originQuery The query to be copied.

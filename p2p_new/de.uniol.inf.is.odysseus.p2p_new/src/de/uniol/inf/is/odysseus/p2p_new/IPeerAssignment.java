@@ -1,9 +1,8 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute;
+package de.uniol.inf.is.odysseus.p2p_new;
 
 import java.util.Collection;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
 
 import net.jxta.peer.PeerID;
 
