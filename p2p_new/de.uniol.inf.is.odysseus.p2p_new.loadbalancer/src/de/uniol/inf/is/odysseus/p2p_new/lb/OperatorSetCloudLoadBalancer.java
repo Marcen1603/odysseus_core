@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 
 /**

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart;
 
 import java.util.Collection;
 import java.util.List;

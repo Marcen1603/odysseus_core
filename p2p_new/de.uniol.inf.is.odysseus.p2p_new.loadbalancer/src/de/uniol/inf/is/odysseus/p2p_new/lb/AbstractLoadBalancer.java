@@ -28,8 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDistributionType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.RRPeerAssignment;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.peerAssignment.RRPeerAssignment;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
 

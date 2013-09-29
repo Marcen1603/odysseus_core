@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.peerAssignment;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,6 +13,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.IPeerAssignment;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 
 import net.jxta.peer.PeerID;

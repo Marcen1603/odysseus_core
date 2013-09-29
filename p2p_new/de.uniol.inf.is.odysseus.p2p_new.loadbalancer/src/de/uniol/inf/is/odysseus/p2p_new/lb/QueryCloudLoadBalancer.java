@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPart;
 
 /**
  * The <code>QueryCloudLoadBalancer</code> parallelizes each {@link ILogicalQuery} on different peers. <br />
