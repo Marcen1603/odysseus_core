@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  * 
  */
 public class OperatorNodeCreateCommand extends Command {
-	private static final Dimension INITIAL_NODE_DIMENSION = new Dimension(80, 40);
+	private static final Dimension INITIAL_NODE_DIMENSION = new Dimension(160, 80);
 	private OperatorNode node;
 	private Rectangle constraint;
 	private Graph parent;

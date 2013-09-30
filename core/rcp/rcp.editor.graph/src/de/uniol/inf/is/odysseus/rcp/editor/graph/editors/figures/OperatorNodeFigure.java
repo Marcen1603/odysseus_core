@@ -21,10 +21,12 @@ import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.ImageData;
 
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
@@ -36,37 +38,56 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 public class OperatorNodeFigure extends Figure {
 
 	private Label label;
-	private RectangleFigure rectangle;
 	private ConnectionAnchor connectionAnchor;
-
+	private ImageData imageData;
+	private Label image;
+	
 	public OperatorNodeFigure(OperatorNode operatorNode) {
 		setLayoutManager(new XYLayout());
-		rectangle = new RectangleFigure();
-		rectangle.setBackgroundColor(ColorConstants.white);
-		add(rectangle);
+//		rectangle = new RectangleFigure();
+//		rectangle.setBackgroundColor(ColorConstants.white);
+//		add(rectangle);
 		label = new Label();
-		ImageDescriptor imageDesc = ImageFactory.createImageForOperator(operatorNode.getOperatorInformation().getOperatorName());
-		label.setIcon(imageDesc.createImage());
+		ImageDescriptor imageDesc = ImageFactory
+				.createImageForOperator(operatorNode.getOperatorInformation()
+						.getOperatorName());
+		imageData = imageDesc.getImageData();
+		image = new Label();
+		image.setIcon(imageDesc.createImage());
+		add(image);
 		add(label);
+	}
+	
+	@Override
+	public Dimension getPreferredSize(int wHint, int hHint) {
+		Dimension dim = new Dimension();
+		dim.setHeight(imageData.height+label.getPreferredSize().height+10);
+		dim.setWidth(Math.max(imageData.width, label.getPreferredSize().width));
+		return dim;
 	}
 
 	public Label getLabel() {
 		return label;
 	}
-	
-	public void setSatisfied(boolean value){
-		if(value){
-			rectangle.setBackgroundColor(ColorConstants.white);
-		}else{
-			rectangle.setBackgroundColor(ColorConstants.red);
+
+	public void setSatisfied(boolean value) {
+		if (value) {
+			label.setForegroundColor(ColorConstants.black);
+		} else {
+			label.setForegroundColor(ColorConstants.red);
 		}
 	}
 
 	public void paintFigure(Graphics g) {
 		Rectangle r = getBounds().getCopy();
-		setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
-		setConstraint(label, new Rectangle(0, 0, r.width, r.height));
-		rectangle.invalidate();
+		Point center = new Point(r.width/2, r.height/2);
+		//setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
+		setConstraint(image, new Rectangle(0,0, r.width, imageData.height));
+		Dimension d = label.getPreferredSize();
+		setConstraint(label, new Rectangle(center.x-d.width/2,r.height-d.height,d.width, d.height));
+		
+		//rectangle.invalidate();
+		image.invalidate();
 		label.invalidate();
 	}
 
