@@ -229,7 +229,7 @@ class OutputSchemaTableViewer {
 			return Lists.newArrayList();
 		}
 		
-		return ImmutableList.copyOf(dd.getDatatypes());
+		return ImmutableList.copyOf(dd.getDatatypeNames());
 	}
 	
 	private static Button createButton(Composite composite, String text) {
