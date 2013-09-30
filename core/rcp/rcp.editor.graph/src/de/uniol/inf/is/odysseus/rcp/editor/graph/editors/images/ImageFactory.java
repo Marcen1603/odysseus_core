@@ -30,19 +30,31 @@ public class ImageFactory {
 		String file = "";
 		switch (operatorName) {
 		case "JOIN":
-			file = "join.png";
+			file = "join2.png";
+			break;
+		case "AGGREGATE":
+			file = "sum.png";
+			break;
+		case "PROJECT":
+			file = "pi.png";
+			break;
+		case "MAP":
+		case "STATEMAP":
+			file = "function.png";
 			break;
 		case "ACCESS":
 		case "STREAM":
 		case "SINK":
 		case "SENDER":
 		case "SOCKETSINK":
+		case "SUBSCRIBE":
 			file = "right_grey.png";
 			break;
 		case "DATABASESOURCE":
 		case "DATABASESINK":
 		case "DBENRICH":
 		case "BUFFER":
+		case "CACHE":
 			file = "database.png";
 			break;
 		case "CSVFILESOURCE":
@@ -50,6 +62,7 @@ public class ImageFactory {
 			file = "csv_text.png";
 			break;
 		case "STORE":
+		case "CONTEXTENRICH":
 			file = "system_file_manager.png";
 			break;
 		case "BUFFEREDFILTER":
@@ -60,7 +73,26 @@ public class ImageFactory {
 		case "UDO":
 			file = "machine.png";
 			break;
-	
+		case "WSENRICH":
+			file = "web.png";
+			break;
+		case "PUBLISH":
+			file = "newspaper.png";
+			break;
+		case "PATTERN":
+		case "SASE":
+			file = "search.png";
+			break;
+		case "CONVERTER":
+		case "KEYVALUETOTUPLE":
+		case "TIMESTAMPTOPAYLOAD":
+		case "TUPLETOKEYVALUE":		
+			file = "convert.png";
+			break;
+		case "ASSUREHEARTBEAT":		
+			file = "heart.png";
+			break;
+
 		default:
 			file = "default.png";
 			break;
