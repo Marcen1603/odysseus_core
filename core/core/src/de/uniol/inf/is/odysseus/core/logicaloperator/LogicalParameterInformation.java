@@ -77,5 +77,13 @@ public class LogicalParameterInformation {
 	public void setPossibleValues(List<String> possibleValues) {
 		this.possibleValues = possibleValues;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {	
+		return name+" ("+parameterClass+") list="+list;
+	}
 
 }

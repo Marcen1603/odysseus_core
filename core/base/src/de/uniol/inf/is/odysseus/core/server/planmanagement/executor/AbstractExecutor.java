@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,8 +41,11 @@ import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionQuerySelector;
@@ -940,6 +944,27 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return getDataDictionary(caller.getTenant()).getSinks(caller);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getRegisteredDatatypes(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller) {
+		return getDataDictionary(caller.getTenant()).getDatatypes();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getRegisteredAggregateFunctions(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public Set<String> getRegisteredAggregateFunctions(Class<? extends IStreamObject> datamodel, ISession caller) {		
+		//TODO: get from registery
+		TreeSet<String> set = new TreeSet<>();
+		set.add("MAX");
+		set.add("SUM");
+		return set;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

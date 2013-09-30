@@ -754,8 +754,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	}
 
 	@Override
-	public Set<String> getDatatypes() {
+	public Set<String> getDatatypeNames() {
 		return this.datatypes.keySet();
+	}
+	
+	@Override	
+	public Set<SDFDatatype> getDatatypes() {
+		return new HashSet<SDFDatatype>(this.datatypes.values());
 	}
 
 	@Override
@@ -1304,5 +1309,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 		}
 		return list;
 	}
+		
 
 }

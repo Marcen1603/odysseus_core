@@ -98,7 +98,9 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 	SDFDatatype getDatatype(String name) throws DataDictionaryException;
 
-	Set<String> getDatatypes();
+	Set<String> getDatatypeNames();
+	
+	Set<SDFDatatype> getDatatypes();
 
 	boolean existsDatatype(String dtName);
 
@@ -171,6 +173,7 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 
 	IDataDictionary createInstance(ITenant t);
+
 
 
 

@@ -23,10 +23,13 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -208,6 +211,10 @@ public interface IExecutor extends IClientPlanManager{
 	 */
 	public String getCurrentSchedulingStrategyID();
 
+	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller);
+	
+	public Set<String> getRegisteredAggregateFunctions(Class<? extends IStreamObject> datamodel, ISession caller);
+	
 	public String getName();
 
 	// Facade
@@ -239,6 +246,7 @@ public interface IExecutor extends IClientPlanManager{
 	// available operator informations
 	public List<String> getOperatorNames(ISession caller);
 	public List<LogicalOperatorInformation> getOperatorInformations(ISession caller);
-	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);	
+	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller);
+		
 
 }
