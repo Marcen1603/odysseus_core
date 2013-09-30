@@ -51,6 +51,9 @@ public class ConnectionCreateCommand extends Command {
 		if(target.getOperatorInformation().getMaxPorts()==target.getTargetConnections().size()){
 			return false;
 		}
+		if(!source.isSatisfied()){
+			return false;
+		}
 		return true;
 	}
 

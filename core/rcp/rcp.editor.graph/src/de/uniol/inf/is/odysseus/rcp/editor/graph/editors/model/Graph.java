@@ -40,6 +40,7 @@ public class Graph extends Observable implements Observer{
 		if(node.getId()==-1){
 			node.setId(getNodes().size());
 		}
+		node.setGraph(this);
 		node.addObserver(this);
 		setChanged();
 		notifyObservers();
@@ -49,6 +50,7 @@ public class Graph extends Observable implements Observer{
 		getNodes().remove(node);
 		node.setId(-1);
 		node.deleteObserver(this);
+		node.setGraph(null);
 		setChanged();
 		notifyObservers();
 	}
@@ -70,6 +72,15 @@ public class Graph extends Observable implements Observer{
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * 
+	 */
+	public void recalcSatisfied() {
+		for(OperatorNode node : this.nodes){
+			node.recalcSatisfied();
+		}		
 	}
 	
 }

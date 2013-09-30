@@ -18,18 +18,20 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * @author DGeesen
  * 
  */
-public class StringParameterPresentation extends AbstractParameterPresentation {
+public class StringParameterPresentation extends AbstractParameterPresentation<String> {
 
 	private Text text;
 	private Combo combo;
@@ -40,13 +42,13 @@ public class StringParameterPresentation extends AbstractParameterPresentation {
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
-	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
+	public Control createParameterWidget(Composite parent) {
 		String currentStr = "";
-		if (currentValue != null) {
-			currentStr = currentValue.toString();
+		if (getValue() != null) {
+			currentStr = getValue().toString();
 		}
 
-		if (parameterInformation.getPossibleValues().isEmpty()) {
+		if (getLogicalParameterInformation().getPossibleValues().isEmpty()) {
 			text = new Text(parent, SWT.BORDER);
 			text.setText(currentStr);
 			text.addModifyListener(new ModifyListener() {
@@ -65,9 +67,9 @@ public class StringParameterPresentation extends AbstractParameterPresentation {
 			combo = new Combo(parent, SWT.BORDER | SWT.DROP_DOWN);
 			int select = 0;
 			combo.add("");
-			for (String posVal : parameterInformation.getPossibleValues()) {
+			for (String posVal : getLogicalParameterInformation().getPossibleValues()) {
 				combo.add(posVal);
-				if (posVal.equals(currentValue)) {
+				if (posVal.equals(getValue())) {
 					select = combo.getItemCount() - 1;
 				}
 			}
@@ -89,14 +91,64 @@ public class StringParameterPresentation extends AbstractParameterPresentation {
 
 	}
 
+	
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
-	public String getPQLString(LogicalParameterInformation parameterInformation, Object value) {
-		return parameterInformation.getName() + "='" + String.valueOf(value) + "'";
+	public String getPQLString() {
+		return "'" + String.valueOf(getValue()) + "'";
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 */
+	@Override
+	public void saveValueToXML(Node parent, Document builder) {
+		parent.setTextContent(String.valueOf(getValue()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 */
+	@Override
+	public void loadValueFromXML(Node parent) {
+		String text = parent.getTextContent();
+		if (text.equalsIgnoreCase("null")) {
+			setValue(null);
+		} else {
+			setValue(text);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#hasValidValue()
+	 */
+	@Override
+	public boolean hasValidValue() {
+		if(super.hasValidValue()){
+			if(!getValue().isEmpty()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public Control createHeaderWidget(Composite parent) {
+		Label labelName = new Label(parent, SWT.None);
+		labelName.setText("Value");		
+		labelName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));		
+		return labelName;
 	}
 
 }

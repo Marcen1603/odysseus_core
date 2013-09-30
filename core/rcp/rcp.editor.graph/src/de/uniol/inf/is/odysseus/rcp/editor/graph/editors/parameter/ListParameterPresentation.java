@@ -25,20 +25,22 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import org.eclipse.swt.widgets.Text;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author DGeesen
  * 
  */
-public class ListParameterPresentation extends AbstractParameterPresentation {
-
-	private Combo dropDown;	
+public class ListParameterPresentation<V> extends AbstractParameterPresentation<List<IParameterPresentation<V>>> {
+	
 	private Button editButton;
+	private Text currentValueText;
 
 	/*
 	 * (non-Javadoc)
@@ -46,8 +48,15 @@ public class ListParameterPresentation extends AbstractParameterPresentation {
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
-	public String getPQLString(LogicalParameterInformation parameterInformation, Object value) {
-		return parameterInformation.getName() + "=[]";
+	public String getPQLString() {
+		String str ="[";
+		String sep = "";
+		for (IParameterPresentation<?> sub : getValue()) {
+			str = str + sep + sub.getPQLString();
+			sep = ", ";
+
+		}
+		return str + "]";
 	}
 
 	/*
@@ -55,59 +64,101 @@ public class ListParameterPresentation extends AbstractParameterPresentation {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#createParameterWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected Control createParameterWidget(final Composite parent, final LogicalParameterInformation parameterInformation, Object currentValue) {
-		List<Object> childs = new ArrayList<>();
-		if (currentValue != null) {
-			childs = (List<Object>) currentValue;
-		}
+	protected Control createParameterWidget(final Composite parent) {
+		
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginLeft = 0;
 		layout.marginRight = 0;
 		container.setLayout(layout);
 
-		dropDown = new Combo(container, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-		ParameterPresentationFactory presentationFactory = new ParameterPresentationFactory();
-		for (Object child : childs) {
-			IParameterPresentation singleParamPresentation = presentationFactory.createPresentation(parameterInformation.getParameterClass());
-			dropDown.add(singleParamPresentation.getPQLString(parameterInformation, child));
-		}
+		currentValueText = new Text(container, SWT.BORDER | SWT.READ_ONLY);
+		resetValues(getValue());
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		dropDown.setLayoutData(gridData);
+		currentValueText.setLayoutData(gridData);
 		editButton = new Button(container, SWT.PUSH);
 		editButton.setText("...");
+
 		
-		final List<Object> copiedChilds = new ArrayList<>(childs);
-		
+
 		editButton.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ListParameterDialog dialog = new ListParameterDialog(parent.getShell(), parameterInformation, copiedChilds);
-				if(dialog.open()==TitleAreaDialog.OK){
-					
+				List<IParameterPresentation<V>> childs = new ArrayList<>();
+				if (getValue() != null) {
+					childs = getValue();
+				}
+				List<IParameterPresentation<V>> copiedChilds = new ArrayList<>(childs);
+				ListParameterDialog<V> dialog = new ListParameterDialog<V>(parent.getShell(), getLogicalParameterInformation(), getOperator(), copiedChilds);
+				if (dialog.open() == TitleAreaDialog.OK) {
+					List<IParameterPresentation<V>> result = dialog.getParameters();
+					resetValues(result);
 				}
 			}
 		});
-		
-		
-		//
-		//
-		//
-		// textName = new Text(container, SWT.BORDER);
-		// textName.setText(attributeName);
-		// textName.addModifyListener(pml);
-		//
-		// textDatatype = new Text(container, SWT.BORDER);
-		// textDatatype.setText(attributeDatatype);
-		// textDatatype.addModifyListener(pml);
 
 		return container;
 	}
-		
+
+	private void resetValues(List<IParameterPresentation<V>> result) {
+		currentValueText.setText(getPQLString());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 */
+	@Override
+	public void loadValueFromXML(Node parent) {
+		NodeList list = parent.getChildNodes();
+		List<IParameterPresentation<V>> values = new ArrayList<IParameterPresentation<V>>();
+		for (int i = 0; i < list.getLength(); i++) {
+			if (list.item(i) instanceof Element) {
+				Element itemElement = (Element) list.item(i);
+				IParameterPresentation<V> parameterPresentation = ParameterPresentationFactory.createPresentationByClass(getLogicalParameterInformation(), getOperator(), (V) null);
+				parameterPresentation.loadValueFromXML(itemElement);
+				values.add(parameterPresentation);
+			}
+		}
+		setValue(values);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 */
+	@Override
+	public void saveValueToXML(Node parent, Document builder) {
+		if (getValue() != null) {
+			for (IParameterPresentation<?> param : getValue()) {
+				Element listElement = builder.createElement("item");
+				param.saveValueToXML(listElement, builder);
+				parent.appendChild(listElement);
+			}
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#hasValidValue()
+	 */
+	@Override
+	public boolean hasValidValue() {
+		if (super.hasValidValue()) {
+			if(!getValue().isEmpty()){
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

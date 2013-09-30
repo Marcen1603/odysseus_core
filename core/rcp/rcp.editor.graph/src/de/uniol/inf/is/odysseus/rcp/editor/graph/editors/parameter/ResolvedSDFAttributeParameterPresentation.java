@@ -16,65 +16,35 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Spinner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * @author DGeesen
  * 
  */
-public class DoubleParameterPresentation extends AbstractParameterPresentation<Double> {
+public class ResolvedSDFAttributeParameterPresentation extends AbstractParameterPresentation<String> {
 
-	private Spinner sp;
+	private int port = 0;
+	private Combo combo;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString()
 	 */
 	@Override
 	public String getPQLString() {
-		return String.valueOf(getValue());
+		return "'" + String.valueOf(getValue()) + "'";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#createParameterWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
-	 */
-	@Override
-	protected Control createParameterWidget(Composite parent) {
-		double val = 0.0;
-		if (getValue() != null) {
-			val = getValue();
-		}
-		sp = new Spinner(parent, SWT.BORDER);
-		sp.setDigits(3);
-		sp.setSelection((int)(val*1000));
-		sp.setIncrement(10);
-		sp.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int selection = sp.getSelection();
-		        int digits = sp.getDigits();
-				double val = selection / Math.pow(10, digits);
-				setValue(val);				
-			}
-		});
-
-		return sp;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -96,8 +66,47 @@ public class DoubleParameterPresentation extends AbstractParameterPresentation<D
 		if (text.equalsIgnoreCase("null")) {
 			setValue(null);
 		} else {
-			setValue(Double.parseDouble(text));
+			setValue(text);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#createParameterWidget(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	protected Control createParameterWidget(Composite parent) {
+		String attribute = getValue();
+		combo = new Combo(parent, SWT.BORDER | SWT.DROP_DOWN);
+		int select = 0;
+		combo.add("");
+		if (getOperator().getInputSchemas() != null && getOperator().getInputSchemas().get(port) != null) {
+			for (SDFAttribute posVal : getOperator().getInputSchemas().get(port).getAttributes()) {
+				combo.add(posVal.getAttributeName());
+				if (posVal.getAttributeName().equals(attribute)) {
+					select = combo.getItemCount() - 1;
+				}
+			}
+		} else {
+			if (attribute != null) {
+				combo.add(attribute);
+				select = 1;
+			}
+		}
+		combo.select(select);
+		combo.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (combo.getText().isEmpty()) {
+					setValue(null);
+				} else {
+					setValue(combo.getText());
+				}
+
+			}
+		});
+		return combo;
+	}
 }

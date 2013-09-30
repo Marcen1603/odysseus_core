@@ -1,10 +1,18 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
@@ -18,6 +26,10 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
+	
+	private List<SDFDatatype> cachedDatatypes;
+	
+	private List<String> cachedAggregateFunctions;
 	
 	/**
 	 * The constructor
@@ -70,5 +82,35 @@ public class Activator extends AbstractUIPlugin {
 	
 	public ISession getCaller(){
 		return OdysseusRCPPlugIn.getActiveSession();
+	}
+	
+	public synchronized List<SDFDatatype> getInstalledDatatypes(){
+		if(cachedDatatypes == null){
+			cachedDatatypes = new ArrayList<SDFDatatype>(getExecutor().getRegisteredDatatypes(getCaller()));
+			Collections.sort(cachedDatatypes, new Comparator<SDFDatatype>() {
+				@Override
+				public int compare(SDFDatatype o1, SDFDatatype o2) {
+					return o1.getQualName().compareTo(o2.getQualName());					
+				}
+			});
+		}
+		return cachedDatatypes;
+	}
+	
+	public synchronized List<String> getInstalledAggregateFunctions(Class<? extends IStreamObject> datamodel){
+		if(cachedAggregateFunctions == null){
+			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel, getCaller()));
+			Collections.sort(cachedAggregateFunctions);
+		}
+		return cachedAggregateFunctions;
+	}
+	
+	public SDFDatatype resolveDatatype(String name){
+		for(SDFDatatype dt : getInstalledDatatypes()){
+			if(dt.getQualName().equalsIgnoreCase(name)){
+				return dt;
+			}
+		}
+		return null;
 	}
 }

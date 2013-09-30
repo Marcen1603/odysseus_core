@@ -41,26 +41,29 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphSelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPresentationFactory;
 
 /**
  * @author DGeesen
  * 
  */
 public class OperatorGraphPropertyView extends ViewPart implements Observer {
-	
-	
-	
-	private List<IParameterPresentation> widgets = new ArrayList<>();
-	private Map<Control, Label> labels = new HashMap<>();
-	private ParameterPresentationFactory widgetFactory = new ParameterPresentationFactory();
-	private Composite container;
-	private ScrolledComposite scroller;
 
+	private List<IParameterPresentation<?>> widgets = new ArrayList<>();
+	private Map<Control, Label> labels = new HashMap<>();
+	
+	private Composite parameterContainer;
+	private ScrolledComposite parameterScroller;
+	
+	private Composite schemaContainer;
+	private ScrolledComposite schemaScroller;
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -77,27 +80,30 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 		CTabItem tabParameters = new CTabItem(tabFolder, SWT.NONE);
 		tabParameters.setText("Parameters");
-
-		scroller = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.V_SCROLL);
-		scroller.setLayoutData(new FillLayout());
-
-		container = new Composite(scroller, SWT.NONE);
-		container.setLayout(new FillLayout());
-
-		scroller.setContent(container);
-		scroller.setExpandVertical(true);
-		scroller.setExpandHorizontal(true);
-		scroller.setMinHeight(container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		
-		tabParameters.setControl(scroller);
+		parameterScroller = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.V_SCROLL);
+		parameterScroller.setLayoutData(new FillLayout());
+		parameterContainer = new Composite(parameterScroller, SWT.NONE);
+		parameterContainer.setLayout(new FillLayout());
+		parameterScroller.setContent(parameterContainer);
+		parameterScroller.setExpandVertical(true);
+		parameterScroller.setExpandHorizontal(true);
+		parameterScroller.setMinHeight(parameterContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		tabParameters.setControl(parameterScroller);
 
 		CTabItem tabSchema = new CTabItem(tabFolder, SWT.NONE);
 		tabSchema.setText("Schema");
-
-		ScrolledComposite scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tabSchema.setControl(scrolledComposite);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
+		schemaScroller = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.V_SCROLL);
+		schemaScroller.setLayoutData(new FillLayout());
+		schemaContainer = new Composite(schemaScroller, SWT.NONE);
+		schemaContainer.setLayout(new FillLayout());
+		schemaScroller.setContent(schemaContainer);
+		schemaScroller.setExpandVertical(true);
+		schemaScroller.setExpandHorizontal(true);
+		schemaScroller.setMinHeight(schemaContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		tabSchema.setControl(schemaScroller);
+		
+		
+		
 
 		tabFolder.setSelection(tabParameters);
 	}
@@ -123,21 +129,22 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void refreshModel(final OperatorNode node) {
 		setPartName("Graph Operator Properties (No operator selected)");
 
-		for (Control c : container.getChildren()) {
+		for (Control c : parameterContainer.getChildren()) {
 			c.dispose();
 		}
-		container.layout(true);
+		parameterContainer.layout(true);
 		widgets.clear();
 		labels.clear();
-		
+
 		if (node != null) {
 			LogicalOperatorInformation op = node.getOperatorInformation();
 			setPartName("Graph Operator Properties (" + op.getOperatorName() + ")");
 
-			TreeMap<LogicalParameterInformation, Object> sortedCopy = new TreeMap<LogicalParameterInformation, Object>(new Comparator<LogicalParameterInformation>() {
+			TreeMap<LogicalParameterInformation, IParameterPresentation<?>> sortedCopy = new TreeMap<LogicalParameterInformation, IParameterPresentation<?>>(new Comparator<LogicalParameterInformation>() {
 
 				@Override
 				public int compare(LogicalParameterInformation o1, LogicalParameterInformation o2) {
@@ -147,74 +154,95 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 			sortedCopy.putAll(node.getParameterValues());
 
 			// populate widgets
-			Group requiredGroup = new Group(container, SWT.None);
+			Group requiredGroup = new Group(parameterContainer, SWT.None);
 			requiredGroup.setText("Required");
 			requiredGroup.setLayout(new GridLayout(2, false));
-			Group optionalGroup = new Group(container, SWT.None);
+			Group optionalGroup = new Group(parameterContainer, SWT.None);
 			optionalGroup.setText("Optional");
 			optionalGroup.setLayout(new GridLayout(2, false));
-			for (final Entry<LogicalParameterInformation, Object> param : sortedCopy.entrySet()) {
+			for (final Entry<LogicalParameterInformation, IParameterPresentation<?>> param : sortedCopy.entrySet()) {
 
 				Group parentGroup = optionalGroup;
 				if (param.getKey().isMandatory()) {
 					parentGroup = requiredGroup;
 				}
-				
-				
+
 				Label label = new Label(parentGroup, SWT.None);
-				
+
 				if (param.getKey().isMandatory()) {
 					parentGroup = requiredGroup;
-					setLabelColor(label, param.getKey(), param.getValue());
+					setLabelColor(label, param.getValue());
 				} else {
-					label.setForeground(container.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
+					label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				}
 				label.setText(param.getKey().getName());
 				label.setToolTipText(param.getKey().getDoc());
-				
-				IParameterPresentation widget = widgetFactory.createPresentation(param.getKey());
-				Control control = widget.createWidget(parentGroup, param.getKey(), param.getValue());
+
+				IParameterPresentation<?> widget = param.getValue();				
+				Control control = widget.createWidget(parentGroup);
 				control.setToolTipText(param.getKey().getDoc());
-				
-				labels.put(control, label);				
-				widgets.add(widget);		
-				widget.addParameterValueChangedListener(new IParameterValueChangeListener() {					
+
+				labels.put(control, label);
+				widgets.add(widget);
+				widget.addParameterValueChangedListener(new IParameterValueChangeListener() {
 					@Override
-					public void parameterValueChanged(Object newValue, IParameterPresentation widget) {
-						Label label = labels.get(widget.getControl());						
-						setLabelColor(label, widget.getLogicalParameterInformation(), newValue);
+					public void parameterValueChanged(IParameterPresentation widget) {
+						Label label = labels.get(widget.getControl());
+						setLabelColor(label, widget);
 						saveToOperatorNode(node);
 					}
 				});
-						
 
 				GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);
 				gd_dataFolderText.widthHint = 287;
 				control.setLayoutData(gd_dataFolderText);
 			}
-					
-			scroller.setMinHeight(container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-			container.layout();
-			scroller.layout(true);
+
+			parameterScroller.setMinHeight(parameterContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+			parameterContainer.layout();
+			parameterScroller.layout(true);
+
+			// update the inputSchemas
+			updateInputSchemas(node);
 		}
 	}
-	
-	
-	private void saveToOperatorNode(OperatorNode currentNode){
-		Map<LogicalParameterInformation, Object> parameterValues = new HashMap<>(); 
-		for (IParameterPresentation entry : this.widgets) {			
-			parameterValues.put(entry.getLogicalParameterInformation(), entry.getValue());
+
+	private void updateInputSchemas(OperatorNode node) {		
+		for (Control c : schemaContainer.getChildren()) {
+			c.dispose();
+		}
+		schemaContainer.layout(true);		
+		
+		for(Entry<Integer, SDFSchema> input : node.getInputSchemas().entrySet()){
+			SDFSchema schema = input.getValue();
+			Group group = new Group(schemaContainer, SWT.None);
+			group.setText(schema.getQualName()+" (Port "+input.getKey()+")");
+			group.setLayout(new GridLayout(2, true));
+			for(SDFAttribute attribute : schema){
+				Label name = new Label(group, SWT.NONE);
+				name.setText(attribute.getAttributeName());
+				Label type = new Label(group, SWT.NONE);
+				type.setText(attribute.getDatatype().getQualName());
+			}
+		}
+		schemaScroller.setMinHeight(schemaContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		schemaContainer.layout();
+		schemaScroller.layout(true);
+	}
+
+	private void saveToOperatorNode(OperatorNode currentNode) {
+		Map<LogicalParameterInformation, IParameterPresentation<?>> parameterValues = new HashMap<>();
+		for (IParameterPresentation<?> entry : this.widgets) {		
+			parameterValues.put(entry.getLogicalParameterInformation(), entry);
 		}
 		currentNode.setParameterValues(parameterValues);
 	}
-	
-	
-	
-	private void setLabelColor(Label label, LogicalParameterInformation lpi, Object value){
-		if (lpi.isMandatory() && (value == null || value.toString().isEmpty())) {
-			label.setForeground(container.getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
+
+	private void setLabelColor(Label label, IParameterPresentation<?> value) {
+		if (value.getLogicalParameterInformation().isMandatory() && (value == null || !value.hasValidValue())) {
+			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
 		} else {
-			label.setForeground(container.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
+			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		}
 	}
 

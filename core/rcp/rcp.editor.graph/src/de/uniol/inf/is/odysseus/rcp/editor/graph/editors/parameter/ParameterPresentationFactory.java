@@ -16,22 +16,36 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
  * @author DGeesen
  * 
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ParameterPresentationFactory {
 
-	public IParameterPresentation createPresentation(LogicalParameterInformation lpi) {
-		if (lpi.isList()) {
-			return new ListParameterPresentation();
+
+	
+	public static <V> IParameterPresentation<V> createPresentation(LogicalParameterInformation lpi, OperatorNode operator, V initialValue) { if (lpi.isList()) {
+			IParameterPresentation<V> param = new ListParameterPresentation();
+			param.init(lpi, operator, initialValue);
+			return param;
 		} else {
-			return createPresentation(lpi.getParameterClass());
+			IParameterPresentation<V> param = createPresentation(lpi.getParameterClass());
+			param.init(lpi, operator, initialValue);
+			return param;
 		}
 	}
 
-	public IParameterPresentation createPresentation(Class<?> parameterClass) {
+	public static <V> IParameterPresentation<V> createPresentationByClass(LogicalParameterInformation lpi, OperatorNode operator, V initialValue) {
+		IParameterPresentation<V> param = createPresentation(lpi.getParameterClass());
+		param.init(lpi, operator, initialValue);
+		return param;
+
+	}
+
+	private static <V> IParameterPresentation createPresentation(Class<?> parameterClass) {
 		if (parameterClass.getName().endsWith("builder.IntegerParameter")) {
 			return new IntegerParameterPresentation();
 		}
@@ -49,6 +63,15 @@ public class ParameterPresentationFactory {
 		}
 		if (parameterClass.getName().endsWith("builder.CreateSDFAttributeParameter")) {
 			return new CreateSDFAttributeParameterPresentation();
+		}
+		if (parameterClass.getName().endsWith("builder.ResolvedSDFAttributeParameter")) {
+			return new ResolvedSDFAttributeParameterPresentation();
+		}
+		if (parameterClass.getName().endsWith("builder.AggregateItemParameter")) {
+			return new AggregateItemParameterPresentation();
+		}
+		if (parameterClass.getName().endsWith("builder.OptionParameter")) {
+			return new OptionParameterPresentation();
 		}
 		return new StringParameterPresentation();
 	}

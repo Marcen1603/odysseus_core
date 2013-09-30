@@ -15,7 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Graph;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPresentationFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation;
 
 /**
  * @author DGeesen
@@ -31,66 +35,108 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPres
  */
 public class ScriptGenerator {
 
-	private Graph graph;
-	private ParameterPresentationFactory presentations = new ParameterPresentationFactory();
-//	private Map<String, String> properties;
+	// private ParameterPresentationFactory presentations = new ParameterPresentationFactory();
+	// private Map<String, String> properties;
 
-	private Map<OperatorNode, String> names = new HashMap<>();
-
-	public ScriptGenerator(Graph graph, Map<String, String> properties) {
-		this.graph = graph;
-//		this.properties = properties;
+	public static String buildPQL(Graph graph) {
+		List<OperatorNode> sinks = new ArrayList<OperatorNode>();
+		for (OperatorNode node : graph.getNodes()) {
+			if (node.getSourceConnections().isEmpty()) {
+				sinks.add(node);
+			}
+		}
+		return buildPQL(sinks);
 	}
 
-	public String buildPQL() {
-		names.clear();
+	/**
+	 * since one root may have more than one access or source we try to resolve the plan backwards
+	 * 
+	 * @param sinks
+	 * @return
+	 */
+	public static String buildPQL(List<OperatorNode> sinks) {
+		Map<OperatorNode, String> names = new HashMap<>();
 		StringBuilder builder = new StringBuilder();
-		builder.append("#PARSER PQL").append(System.lineSeparator());
-		builder.append("#QUERY").append(System.lineSeparator());
-		
-		// first, we create unique names
-		int i = 1;
-		for (OperatorNode node : graph.getNodes()) {
-			String name = node.getOperatorInformation().getOperatorName() + i;
-			names.put(node, name);
-			i++;
+		// builder.append("#PARSER PQL").append(System.lineSeparator());
+		// builder.append("#TRANSCFG Standard").append(System.lineSeparator());
+		// builder.append("#QUERY").append(System.lineSeparator());
+
+		// no we start at the sinks and walk through the plans
+		List<OperatorNode> foundOps = new ArrayList<>();
+		for (OperatorNode sink : sinks) {
+			foundOps.add(sink);
+			visitChildren(sink.getTargetConnections(), foundOps);
 		}
-		
-		// the use the names to connect all
-		for (OperatorNode node : graph.getNodes()) {			
+		// then we print the plan, but in other direction
+		Collections.reverse(foundOps);
+		int i = 1;
+		for (OperatorNode node : foundOps) {
+			if (!names.containsKey(node)) {
+				String name = node.getOperatorInformation().getOperatorName() + i;
+				names.put(node, name);
+				i++;
+			}
 			builder.append(nodeToString(names, node)).append(System.lineSeparator());
-			i++;
 		}
 		return builder.toString();
 	}
 
-	private String nodeToString(Map<OperatorNode, String> names, OperatorNode node) {
+	public static String buildPQLInputPlan(OperatorNode sink, int inputPort) {
+		List<OperatorNode> sinks = new ArrayList<>();
+		for (Connection conn : sink.getTargetConnections()) {
+			if (conn.getTargetPort() == inputPort) {
+				if(conn.getSource()!=null){
+					sinks.add(conn.getSource());
+				}
+			}
+		}
+		return buildPQL(sinks);
+	}
+
+	private static void visitChildren(List<Connection> conns, List<OperatorNode> found) {
+		for (Connection con : conns) {
+			OperatorNode source = con.getSource();
+			if (!found.contains(source)) {
+				found.add(source);
+				if (!source.getTargetConnections().isEmpty()) {
+					visitChildren(source.getTargetConnections(), found);
+				}
+			}
+		}
+	}
+
+	private static String nodeToString(Map<OperatorNode, String> names, OperatorNode node) {
 		String s = names.get(node) + " = " + node.getOperatorInformation().getOperatorName() + "(";
 		String sep = "";
 		String startParam = "{";
 		String endParam = "";
-		if (!node.getParameterValues().isEmpty()) {			
-			for (Entry<LogicalParameterInformation, Object> entry : node.getParameterValues().entrySet()) {
-				if (entry.getValue() == null) {
+		if (!node.getParameterValues().isEmpty()) {
+			for (Entry<LogicalParameterInformation, IParameterPresentation<?>> entry : node.getParameterValues().entrySet()) {
+				if (!entry.getValue().hasValidValue()) {
 					continue;
 				}
-				s = s + startParam + sep + paramToString(entry.getKey(), entry.getValue());
+				s = s + startParam + sep + entry.getKey().getName() + "=" + entry.getValue().getPQLString();
 				sep = ", ";
 				startParam = "";
 				endParam = "}";
 			}
 			s = s + endParam;
 		}
-		for (Connection c : node.getTargetConnections()) {
-			s = s + sep + names.get(c.getSource());
+		// order by input port!
+		List<Connection> sortedConnections = new ArrayList<>(node.getTargetConnections());
+		Collections.sort(sortedConnections, new Comparator<Connection>() {
+
+			@Override
+			public int compare(Connection o1, Connection o2) {
+				return Integer.compare(o1.getTargetPort(), o2.getTargetPort());
+			}
+		});
+		for (Connection c : sortedConnections) {
+			s = s + sep + c.getSourcePort() + ":" + names.get(c.getSource());
 			sep = ", ";
 		}
 		s = s + ")";
 		return s;
-	}
-
-	private String paramToString(LogicalParameterInformation paramInfo, Object value) {
-		return presentations.createPresentation(paramInfo).getPQLString(paramInfo, value);		
 	}
 
 }

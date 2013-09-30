@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories;
 
+import org.eclipse.gef.requests.CreationFactory;
 
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 
 /**
  * @author DGeesen
  *
  */
-public interface IParameterValueChangeListener<T> {
-	
-	public void parameterValueChanged(IParameterPresentation<T> widget);
+public class ConnectionFactory implements CreationFactory {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef.requests.CreationFactory#getNewObject()
+	 */
+	@Override
+	public Object getNewObject() {
+		return new Connection();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef.requests.CreationFactory#getObjectType()
+	 */
+	@Override
+	public Object getObjectType() {
+		return Connection.class;
+	}
 
 }

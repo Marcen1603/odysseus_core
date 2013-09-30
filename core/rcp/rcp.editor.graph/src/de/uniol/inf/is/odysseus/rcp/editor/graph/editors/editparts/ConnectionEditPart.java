@@ -15,15 +15,15 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts;
 
-import org.eclipse.draw2d.ConnectionEndpointLocator;
+import java.util.Observable;
+import java.util.Observer;
+
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.PolygonDecoration;
-import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures.ConnectionFigure;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.ConnectionEditPolicy;
 
@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.ConnectionEdit
  * @author DGeesen
  * 
  */
-public class ConnectionEditPart extends AbstractConnectionEditPart {
+public class ConnectionEditPart extends AbstractConnectionEditPart implements Observer{
 	public ConnectionEditPart(Connection connection) {
 		setModel(connection);
 	}
@@ -41,22 +41,24 @@ public class ConnectionEditPart extends AbstractConnectionEditPart {
 		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());		
 	}
 	
+	public void refreshVisuals() {
+		ConnectionFigure figure = (ConnectionFigure) getFigure();
+		Connection connection = (Connection) getModel();		
+		figure.getTargetPortLabel().setText(Integer.toString(connection.getTargetPort()));
+		figure.getSourcePortLabel().setText(Integer.toString(connection.getSourcePort()));
+		figure.repaint();
+	}
+	
 	protected IFigure createFigure() {
-		Connection connection = (Connection)getModel();
-		PolylineConnection con = new PolylineConnection();
-		con.setLineWidth(2);
-		PolygonDecoration deco = new PolygonDecoration();
-		deco.setTemplate(PolygonDecoration.TRIANGLE_TIP);
-		con.setTargetDecoration(deco);
-		
-		Label endPointLabel = new Label(Integer.toString(connection.getTargetPort()));
-		endPointLabel.setOpaque(false);				
-		con.add(endPointLabel, new ConnectionEndpointLocator(con, true));
-		
-		Label startPointLabel = new Label(Integer.toString(connection.getSourcePort()));
-		startPointLabel.setOpaque(false);				
-		con.add(startPointLabel, new ConnectionEndpointLocator(con, false));
-		return con;
+		return new ConnectionFigure();		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		refreshVisuals();		
 	}
 
 }

@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -127,9 +126,8 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				connectionsElement.appendChild(conNode);
 			}
 
-			// now, PQL for other purposes
-			ScriptGenerator generator = new ScriptGenerator(graph, new HashMap<String, String>());
-			String pql = generator.buildPQL();
+			// now, PQL for other purposes			
+			String pql = ScriptGenerator.buildPQL(graph);
 
 			CDATASection pqldata = doc.createCDATASection(pql);
 			Element pqlElement = doc.createElement("pql");
@@ -186,6 +184,8 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				Connection con = new Connection();
 				con.reconnect(sourceNode, targetNode);
 			}
+			this.graph.recalcSatisfied();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

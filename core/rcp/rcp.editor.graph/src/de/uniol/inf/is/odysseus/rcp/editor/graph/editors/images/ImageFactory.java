@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images;
 
-import org.eclipse.gef.requests.CreationFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 
 /**
  * @author DGeesen
- *
+ * 
  */
-public class ConnectionFactory implements CreationFactory {
+public class ImageFactory {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.requests.CreationFactory#getNewObject()
-	 */
-	@Override
-	public Object getNewObject() {
-		return new Connection();
+	public static ImageDescriptor createImageForOperator(String operatorName) {
+		operatorName = operatorName.toUpperCase();
+		String file = "";
+		switch (operatorName) {
+		case "JOIN":
+			file = "join.png";
+			break;
+
+		default:
+			file = "default.png";
+			break;
+		}
+
+		return Activator.getImageDescriptor("operator-images/" + file);
+
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef.requests.CreationFactory#getObjectType()
-	 */
-	@Override
-	public Object getObjectType() {
-		return Connection.class;
-	}
-
 }

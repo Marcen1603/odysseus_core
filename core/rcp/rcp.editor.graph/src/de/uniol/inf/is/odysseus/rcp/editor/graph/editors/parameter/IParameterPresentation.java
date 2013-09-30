@@ -17,20 +17,29 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
  * @author DGeesen
  *
  */
-public interface IParameterPresentation{
-	public void addParameterValueChangedListener(IParameterValueChangeListener listener);
-	public void removeParameterValueChangedListener(IParameterValueChangeListener listener);
-	public Control createWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue);
-	public Object getValue();
-	public String getPQLString(LogicalParameterInformation parameterInformation, Object value);
+public interface IParameterPresentation<V>{
+	public void addParameterValueChangedListener(IParameterValueChangeListener<V> listener);
+	public void removeParameterValueChangedListener(IParameterValueChangeListener<V> listener);
+	public void init(LogicalParameterInformation parameterInformation, OperatorNode operator, V currentValue);
+	public Control createWidget(Composite parent);
+	public V getValue();
+	public boolean hasValidValue();
+	public String getPQLString();
 	public void setLogicalParameterInformation(LogicalParameterInformation lpi);
 	public LogicalParameterInformation getLogicalParameterInformation();
 	public Control getControl();
+	public Control createHeaderWidget(Composite parent);
+	
+	public void saveValueToXML(Node parent, Document builder);
+	public void loadValueFromXML(Node parent);
 }

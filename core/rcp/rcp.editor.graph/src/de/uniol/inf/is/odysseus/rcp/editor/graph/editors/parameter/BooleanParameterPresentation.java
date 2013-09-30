@@ -21,14 +21,14 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * @author DGeesen
  * 
  */
-public class BooleanParameterPresentation extends AbstractParameterPresentation {
+public class BooleanParameterPresentation extends AbstractParameterPresentation<Boolean> {
 
 	private Combo dropDown;
 
@@ -38,13 +38,13 @@ public class BooleanParameterPresentation extends AbstractParameterPresentation 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
-	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
+	public Control createParameterWidget(Composite parent) {
 		Boolean newValue = null;
-		if (currentValue != null) {
-			newValue = (Boolean) currentValue;
+		if (getValue() != null) {
+			newValue = (Boolean) getValue();
 		}
 		dropDown = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
-		if (!parameterInformation.isMandatory()) {
+		if (!getLogicalParameterInformation().isMandatory()) {
 			dropDown.add("");
 
 		}
@@ -81,8 +81,33 @@ public class BooleanParameterPresentation extends AbstractParameterPresentation 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
-	public String getPQLString(LogicalParameterInformation parameterInformation, Object value) {
-		return parameterInformation.getName() + "='" + String.valueOf(value)+"'";
+	public String getPQLString() {
+		return "'" + String.valueOf(getValue())+"'";
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 */
+	@Override
+	public void saveValueToXML(Node parent, Document builder) {
+		parent.setTextContent(String.valueOf(getValue()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 */
+	@Override
+	public void loadValueFromXML(Node parent) {
+		String text = parent.getTextContent();
+		if (text.equalsIgnoreCase("null")) {
+			setValue(null);
+		} else {
+			setValue(Boolean.parseBoolean(text));
+		}
 	}
 
 	

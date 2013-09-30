@@ -33,8 +33,8 @@ import org.eclipse.gef.palette.ToolEntry;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures.ConnectionFactory;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures.OperatorNodeFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.ConnectionFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.OperatorNodeFactory;
 
 /**
  * @author DGeesen

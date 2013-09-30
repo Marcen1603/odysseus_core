@@ -17,24 +17,28 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
  * @author DGeesen
  * 
  */
-public abstract class AbstractParameterPresentation implements IParameterPresentation {
+public abstract class AbstractParameterPresentation<V> implements IParameterPresentation<V> {
 
-	private Object value = null;
-	private List<IParameterValueChangeListener> listeners = new ArrayList<>();
+	private V value = null;
+	private List<IParameterValueChangeListener<V>> listeners = new ArrayList<>();
 	private Control control;
 	private LogicalParameterInformation logicalParameterInformation;
+	private OperatorNode operator;
 
-	protected void setValue(Object value) {
+	protected void setValue(V value) {
 		Object oldValue = this.value;
 		this.value = value;
 		if (this.value == null) {
@@ -51,10 +55,22 @@ public abstract class AbstractParameterPresentation implements IParameterPresent
 	}
 
 	private void valueChanged() {
-		for (IParameterValueChangeListener listener : this.listeners) {
-			listener.parameterValueChanged(this.value, this);
+		for (IParameterValueChangeListener<V> listener : this.listeners) {
+			listener.parameterValueChanged(this);
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#init(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
+	 */
+	@Override
+	public void init(LogicalParameterInformation parameterInformation, OperatorNode operator, V currentValue) {
+		this.value = currentValue;
+		this.logicalParameterInformation = parameterInformation;
+		this.operator = operator;
 	}
 
 	/*
@@ -63,17 +79,17 @@ public abstract class AbstractParameterPresentation implements IParameterPresent
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
-	public Control createWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
-		this.value = currentValue;
-		if (this.control != null) {
-			throw new IllegalStateException("Widget can only be created once!");
+	public Control createWidget(Composite parent) {
+		try {
+			this.control = createParameterWidget(parent);
+			return control;
+		} catch (Exception e) {
+			RuntimeException ex = new RuntimeException("Error in creating param value for " + getLogicalParameterInformation(), e);
+			throw ex;
 		}
-		this.control = createParameterWidget(parent, parameterInformation, currentValue);
-		this.logicalParameterInformation = parameterInformation;
-		return control;
 	}
 
-	protected abstract Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue);
+	protected abstract Control createParameterWidget(Composite parent);
 
 	/*
 	 * (non-Javadoc)
@@ -81,7 +97,7 @@ public abstract class AbstractParameterPresentation implements IParameterPresent
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#getValue()
 	 */
 	@Override
-	public Object getValue() {
+	public V getValue() {
 		return value;
 	}
 
@@ -91,7 +107,7 @@ public abstract class AbstractParameterPresentation implements IParameterPresent
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#addParameterValueChangedListener(de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener)
 	 */
 	@Override
-	public void addParameterValueChangedListener(IParameterValueChangeListener listener) {
+	public void addParameterValueChangedListener(IParameterValueChangeListener<V> listener) {
 		listeners.add(listener);
 	}
 
@@ -101,7 +117,7 @@ public abstract class AbstractParameterPresentation implements IParameterPresent
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#removeParameterValueChangedListener(de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener)
 	 */
 	@Override
-	public void removeParameterValueChangedListener(IParameterValueChangeListener listener) {
+	public void removeParameterValueChangedListener(IParameterValueChangeListener<V> listener) {
 		listeners.remove(listener);
 	}
 
@@ -135,4 +151,30 @@ public abstract class AbstractParameterPresentation implements IParameterPresent
 		return this.control;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getHeaderControl()
+	 */
+	@Override
+	public Control createHeaderWidget(Composite parent) {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#hasValidValue()
+	 */
+	@Override
+	public boolean hasValidValue() {
+		if(value==null){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	public OperatorNode getOperator(){
+		return this.operator;
+	}
+	
 }

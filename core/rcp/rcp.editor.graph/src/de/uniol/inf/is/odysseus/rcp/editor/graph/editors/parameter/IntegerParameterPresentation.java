@@ -21,14 +21,14 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Spinner;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * @author DGeesen
  * 
  */
-public class IntegerParameterPresentation extends AbstractParameterPresentation {
+public class IntegerParameterPresentation extends AbstractParameterPresentation<Integer> {
 
 	private Spinner sp;
 
@@ -38,10 +38,10 @@ public class IntegerParameterPresentation extends AbstractParameterPresentation 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dialogs.parameter.IParameterWidget#createWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation)
 	 */
 	@Override
-	public Control createParameterWidget(Composite parent, LogicalParameterInformation parameterInformation, Object currentValue) {
+	public Control createParameterWidget(Composite parent) {
 		int val = 0;
-		if (currentValue != null) {
-			val = Integer.parseInt(currentValue.toString());
+		if (getValue() != null) {
+			val = Integer.parseInt(getValue().toString());
 		}
 		sp = new Spinner(parent, SWT.BORDER);
 		sp.setSelection(val);
@@ -67,8 +67,33 @@ public class IntegerParameterPresentation extends AbstractParameterPresentation 
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(java.lang.Object)
 	 */
 	@Override
-	public String getPQLString(LogicalParameterInformation parameterInformation, Object value) {
-		return parameterInformation.getName() + "=" + String.valueOf(value);
+	public String getPQLString() {
+		return String.valueOf(getValue());
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 */
+	@Override
+	public void saveValueToXML(Node parent, Document builder) {
+		parent.setTextContent(String.valueOf(getValue()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 */
+	@Override
+	public void loadValueFromXML(Node parent) {
+		String text = parent.getTextContent();
+		if (text.equalsIgnoreCase("null") || text.isEmpty()) {
+			setValue(null);
+		} else {
+			setValue(Integer.parseInt(text));
+		}
 	}
 
 }

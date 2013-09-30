@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.TreeMap;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.w3c.dom.Document;
@@ -30,12 +32,17 @@ import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator.ScriptGenerator;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPresentationFactory;
 
 /**
  * @author DGeesen
  * 
  */
-public class OperatorNode extends Observable {
+public class OperatorNode extends Observable implements Observer {
 
 	private int id = -1;
 
@@ -46,16 +53,26 @@ public class OperatorNode extends Observable {
 	private LogicalOperatorInformation operatorInformation;
 	private boolean satisfied = false;
 
-	private Map<LogicalParameterInformation, Object> parameterValues = new HashMap<>();
+	private Map<Integer, SDFSchema> inputSchemas = new TreeMap<Integer, SDFSchema>();
+
+	private Map<LogicalParameterInformation, IParameterPresentation<?>> parameterValues = new HashMap<>();
+
+	private Graph graph;
 
 	/**
 	 * @param operatorInformation
 	 */
 	public OperatorNode(LogicalOperatorInformation operatorInformation) {
 		this.operatorInformation = operatorInformation;
+		initParameters();
+	}
+
+	private void initParameters() {
 		for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
-			this.parameterValues.put(lpi, null);
+			IParameterPresentation<?> param = ParameterPresentationFactory.createPresentation(lpi, this, null);
+			this.parameterValues.put(lpi, param);
 		}
+
 	}
 
 	public Rectangle getConstraint() {
@@ -77,22 +94,30 @@ public class OperatorNode extends Observable {
 
 	public void addSourceConnection(Connection connection) {
 		getSourceConnections().add(connection);
+		connection.addObserver(this);
 		update();
+		updateInputSchemas();
 	}
 
 	public void addTargetConnection(Connection connection) {
 		getTargetConnections().add(connection);
+		connection.addObserver(this);
 		update();
+		updateInputSchemas();
 	}
 
 	public void removeSourceConnection(Connection connection) {
 		getSourceConnections().remove(connection);
+		connection.deleteObserver(this);
 		update();
+		updateInputSchemas();
 	}
 
 	public void removeTargetConnection(Connection connection) {
 		getTargetConnections().remove(connection);
+		connection.deleteObserver(this);
 		update();
+		updateInputSchemas();
 	}
 
 	/**
@@ -102,16 +127,33 @@ public class OperatorNode extends Observable {
 		return this.operatorInformation;
 	}
 
-	public Map<LogicalParameterInformation, Object> getParameterValues() {
-		return new HashMap<LogicalParameterInformation, Object>(parameterValues);
+	public Map<LogicalParameterInformation, IParameterPresentation<?>> getParameterValues() {
+		return new HashMap<LogicalParameterInformation, IParameterPresentation<?>>(parameterValues);
 	}
 
 	/**
 	 * @param parameterValues2
 	 */
-	public void setParameterValues(Map<LogicalParameterInformation, Object> values) {
+	public void setParameterValues(Map<LogicalParameterInformation, IParameterPresentation<?>> values) {
 		this.parameterValues = values;
 		update();
+	}
+
+	private void updateInputSchemas() {
+		inputSchemas.clear();
+		for (Connection connection : getTargetConnections()) {
+			String query = ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort());
+			if (!query.isEmpty()) {
+				try {
+					int port = connection.getTargetPort();
+					int outPutport = connection.getSourcePort();
+					SDFSchema schema = Activator.getDefault().getExecutor().determinedOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport);
+					inputSchemas.put(port, schema);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private void update() {
@@ -120,7 +162,7 @@ public class OperatorNode extends Observable {
 		notifyObservers();
 	}
 
-	private void recalcSatisfied() {
+	public void recalcSatisfied() {
 		boolean ok = true;
 		if (this.getTargetConnections().size() < this.operatorInformation.getMinPorts()) {
 			ok = false;
@@ -134,7 +176,7 @@ public class OperatorNode extends Observable {
 					ok = false;
 				}
 			} else {
-				if (this.parameterValues.get(lpi).toString().isEmpty()) {
+				if (!this.parameterValues.get(lpi).hasValidValue()) {
 					if (lpi.isMandatory()) {
 						ok = false;
 					}
@@ -142,7 +184,34 @@ public class OperatorNode extends Observable {
 			}
 
 		}
+		if (!validPQLBuilding()) {			
+			ok = false;
+		}
 		this.satisfied = ok;
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean validPQLBuilding() {
+		String completeQuery = "";
+		try {
+			List<OperatorNode> nodes = new ArrayList<>();
+			nodes.add(this);
+			completeQuery = ScriptGenerator.buildPQL(nodes);
+//			for (Connection connection : getTargetConnections()) {
+//				completeQuery = completeQuery + ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort())+System.lineSeparator();
+//			}
+//			completeQuery = completeQuery+ScriptGenerator.buildPQL(graph);
+			
+			if (!completeQuery.isEmpty()) {
+				Activator.getDefault().getExecutor().determinedOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0);
+			}
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public boolean isSatisfied() {
@@ -156,9 +225,16 @@ public class OperatorNode extends Observable {
 		parent.appendChild(codeElement);
 		// build parameters
 		Element parameterElement = builder.createElement("parameters");
-		for (Entry<LogicalParameterInformation, Object> entry : this.parameterValues.entrySet()) {
+		for (Entry<LogicalParameterInformation, IParameterPresentation<?>> entry : this.parameterValues.entrySet()) {
 			Element element = builder.createElement(entry.getKey().getName());
-			element.setTextContent(String.valueOf(entry.getValue()));
+			if (entry.getKey().isList()) {
+				element.setAttribute("list", "true");
+			} else {
+				element.setAttribute("list", "false");
+			}
+			if (entry.getValue() != null) {
+				entry.getValue().saveValueToXML(element, builder);
+			}
 			parameterElement.appendChild(element);
 		}
 		parent.appendChild(parameterElement);
@@ -186,11 +262,7 @@ public class OperatorNode extends Observable {
 						if (paramNodes.item(k) instanceof Element) {
 							Element paramElem = (Element) paramNodes.item(k);
 							LogicalParameterInformation lpi = getParamInfoByName(paramElem.getNodeName());
-							if (!paramElem.getTextContent().equalsIgnoreCase("null")) {
-								parameterValues.put(lpi, paramElem.getTextContent());
-							} else {
-								parameterValues.put(lpi, null);
-							}
+							this.parameterValues.get(lpi).loadValueFromXML(paramElem);
 						}
 
 					}
@@ -230,8 +302,31 @@ public class OperatorNode extends Observable {
 		this.id = id;
 	}
 
-	/**
-	 * @param opNode
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		update();
+	}
+
+	public Graph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
+
+	public Map<Integer, SDFSchema> getInputSchemas() {
+		updateInputSchemas();
+		return inputSchemas;
+	}
+
+	public void setInputSchemas(Map<Integer, SDFSchema> inputSchemas) {
+		this.inputSchemas = inputSchemas;
+	}
 
 }

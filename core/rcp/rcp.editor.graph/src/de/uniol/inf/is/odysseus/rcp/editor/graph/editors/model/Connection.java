@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model;
 
+import java.util.Observable;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,7 +25,7 @@ import org.w3c.dom.Node;
  * @author DGeesen
  * 
  */
-public class Connection {
+public class Connection extends Observable{
 
 	private OperatorNode source;
 	private OperatorNode target;

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -356,9 +355,8 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 
 	}
 
-	private String getPQLString() {
-		ScriptGenerator generator = new ScriptGenerator(graphEditor.getGraph(), new HashMap<String, String>());
-		String pql = generator.buildPQL();
+	private String getPQLString() {		
+		String pql = ScriptGenerator.buildPQL(graphEditor.getGraph());
 		return pql;
 	}
 

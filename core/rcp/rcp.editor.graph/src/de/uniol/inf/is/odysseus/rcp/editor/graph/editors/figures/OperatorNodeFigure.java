@@ -24,6 +24,10 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.jface.resource.ImageDescriptor;
+
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
  * @author DGeesen
@@ -35,12 +39,14 @@ public class OperatorNodeFigure extends Figure {
 	private RectangleFigure rectangle;
 	private ConnectionAnchor connectionAnchor;
 
-	public OperatorNodeFigure() {
+	public OperatorNodeFigure(OperatorNode operatorNode) {
 		setLayoutManager(new XYLayout());
 		rectangle = new RectangleFigure();
-		rectangle.setBackgroundColor(ColorConstants.lightGray);
+		rectangle.setBackgroundColor(ColorConstants.white);
 		add(rectangle);
 		label = new Label();
+		ImageDescriptor imageDesc = ImageFactory.createImageForOperator(operatorNode.getOperatorInformation().getOperatorName());
+		label.setIcon(imageDesc.createImage());
 		add(label);
 	}
 
@@ -50,7 +56,7 @@ public class OperatorNodeFigure extends Figure {
 	
 	public void setSatisfied(boolean value){
 		if(value){
-			rectangle.setBackgroundColor(ColorConstants.lightGray);
+			rectangle.setBackgroundColor(ColorConstants.white);
 		}else{
 			rectangle.setBackgroundColor(ColorConstants.red);
 		}
