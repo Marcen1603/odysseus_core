@@ -1,13 +1,10 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
-import com.sun.org.apache.xml.internal.security.transforms.TransformationException;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.logicaloperator.relational.ReplacementAO;
-
+import de.uniol.inf.is.odysseus.relational_interval.logicaloperator.ReplacementAO;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.IReplacement;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.RelationalReplacementPO;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
