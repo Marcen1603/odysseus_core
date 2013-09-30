@@ -18,21 +18,21 @@ public class ReplacementRegistry {
 	}
 	
 	public static void addReplacement(IReplacement<?> replacement){
-		if (reg.containsKey(replacement.getName())){
-			reg.put(replacement.getName(), replacement);
-			keys.add(replacement.getName());
+		if (!reg.containsKey(replacement.getName().toUpperCase())){
+			reg.put(replacement.getName().toUpperCase(), replacement);
+			keys.add(replacement.getName().toUpperCase());
 		}
 	}
 	
 	public static void removeReplacement(IReplacement<?> replacement){
-		if (reg.containsKey(replacement.getName())){
-			reg.remove(replacement.getName());
-			keys.remove(replacement.getName());
+		if (reg.containsKey(replacement.getName().toUpperCase())){
+			reg.remove(replacement.getName().toUpperCase());
+			keys.remove(replacement.getName().toUpperCase());
 		}
 	}
 	
 	public static IReplacement<?> getReplacement(String name){
-		return reg.get(name);
+		return reg.get(name.toUpperCase());
 	}
 
 	public static List<String> getKeys(){
