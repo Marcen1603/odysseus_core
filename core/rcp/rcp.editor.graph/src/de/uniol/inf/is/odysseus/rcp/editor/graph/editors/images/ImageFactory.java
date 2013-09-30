@@ -32,7 +32,35 @@ public class ImageFactory {
 		case "JOIN":
 			file = "join.png";
 			break;
-
+		case "ACCESS":
+		case "STREAM":
+		case "SINK":
+		case "SENDER":
+		case "SOCKETSINK":
+			file = "right_grey.png";
+			break;
+		case "DATABASESOURCE":
+		case "DATABASESINK":
+		case "DBENRICH":
+		case "BUFFER":
+			file = "database.png";
+			break;
+		case "CSVFILESOURCE":
+		case "CSVFILESINK":
+			file = "csv_text.png";
+			break;
+		case "STORE":
+			file = "system_file_manager.png";
+			break;
+		case "BUFFEREDFILTER":
+		case "FILTER":
+		case "SELECT":
+			file = "filter.png";
+			break;
+		case "UDO":
+			file = "machine.png";
+			break;
+	
 		default:
 			file = "default.png";
 			break;
