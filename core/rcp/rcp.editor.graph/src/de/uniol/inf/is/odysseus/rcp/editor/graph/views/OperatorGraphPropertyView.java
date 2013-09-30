@@ -73,6 +73,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	public void createPartControl(Composite parent) {
 		// ((FillLayout)parent.getLayout()).type = SWT.VERTICAL;
 		OperatorGraphSelectionProvider.getInstance().addObserver(this);
+		
 
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
 		tabFolder.setBorderVisible(false);
@@ -131,14 +132,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void refreshModel(final OperatorNode node) {
-		setPartName("Graph Operator Properties (No operator selected)");
-
-		for (Control c : parameterContainer.getChildren()) {
-			c.dispose();
-		}
-		parameterContainer.layout(true);
-		widgets.clear();
-		labels.clear();
+		clearState();
 
 		if (node != null) {
 			LogicalOperatorInformation op = node.getOperatorInformation();
@@ -255,6 +249,22 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		OperatorNode operator = (OperatorNode) arg1;
 		refreshModel(operator);
+	}
+
+	
+	public void opeartorGraphEditorClosed() {
+		clearState();
+	}
+	
+	private void clearState(){
+		setPartName("Graph Operator Properties (No operator selected)");
+		for (Control c : parameterContainer.getChildren()) {
+			c.dispose();
+		}
+		parameterContainer.layout(true);
+		widgets.clear();
+		labels.clear();
+		
 	}
 
 }

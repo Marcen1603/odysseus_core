@@ -29,15 +29,20 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
+import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator.ScriptGenerator;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.views.OperatorGraphPropertyView;
 
 /**
  * An example showing how to create a multi-page editor. This example has 3 pages:
@@ -143,7 +148,23 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		informGraphOperatorPropertyView();
 		super.dispose();
+	}
+
+	/**
+	 * 
+	 */
+	private void informGraphOperatorPropertyView() {
+		for (IWorkbenchPage page : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages()) {
+			for (IViewReference ref : page.getViewReferences()) {
+				IWorkbenchPart part = ref.getPart(false);
+				if (part instanceof OperatorGraphPropertyView) {
+					OperatorGraphPropertyView view = (OperatorGraphPropertyView) part;
+					view.opeartorGraphEditorClosed();
+				}
+			}
+		}
 	}
 
 	public void doSave(IProgressMonitor monitor) {
@@ -355,9 +376,8 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 
 	}
 
-	private String getPQLString() {		
-		String pql = ScriptGenerator.buildPQL(graphEditor.getGraph());
-		return pql;
+	private String getPQLString() {
+		return ScriptGenerator.buildPQL(graphEditor.getGraph());
 	}
 
 	/**
@@ -365,6 +385,11 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	 */
 	public OperatorGraphEditor getGraphEditor() {
 		return this.graphEditor;
+	}
+
+	public void executeScript() {
+		String pql = getPQLString();
+		Activator.getDefault().getExecutor().addQuery(pql, "PQL", Activator.getDefault().getCaller(), "Standard");
 	}
 
 }
