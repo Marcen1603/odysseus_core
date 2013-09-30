@@ -41,6 +41,7 @@ public class OperatorNodeFigure extends Figure {
 	private ConnectionAnchor connectionAnchor;
 	private ImageData imageData;
 	private Label image;
+	static final int IMAGE_TEXT_SPACE = 3;
 	
 	public OperatorNodeFigure(OperatorNode operatorNode) {
 		setLayoutManager(new XYLayout());
@@ -61,7 +62,7 @@ public class OperatorNodeFigure extends Figure {
 	@Override
 	public Dimension getPreferredSize(int wHint, int hHint) {
 		Dimension dim = new Dimension();
-		dim.setHeight(imageData.height+label.getPreferredSize().height+10);
+		dim.setHeight(imageData.height+label.getPreferredSize().height+IMAGE_TEXT_SPACE);
 		dim.setWidth(Math.max(imageData.width, label.getPreferredSize().width));
 		return dim;
 	}
