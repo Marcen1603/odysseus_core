@@ -22,16 +22,15 @@ import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.transform.Activator;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -82,18 +81,17 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 							partialAggregateInput = true;
 						}
 					}
-					final IAggregateFunctionBuilderRegistry registry = Activator.getAggregateFunctionBuilderRegistry();
 					final IAggregateFunctionBuilder builder;
 
 					if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
 						final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
 						if (datatype.isContinuous()) {
-							builder = registry.getBuilder(inputSchema.getType(), p.getE2().getName());
+							builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
 						} else {
-							builder = registry.getBuilder(inputSchema.getType(), p.getE2().getName());
+							builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
 						}
 					} else {
-						builder = registry.getBuilder(inputSchema.getType(), p.getE2().getName());
+						builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
 					}
 					if (builder == null) {
 						throw new RuntimeException("Could not find a builder for " + p.getE2().getName());

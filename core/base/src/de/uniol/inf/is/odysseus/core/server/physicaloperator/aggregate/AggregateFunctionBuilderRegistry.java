@@ -29,14 +29,13 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 @SuppressWarnings("rawtypes")
-public class AggregateFunctionBuilderRegistry implements
-		IAggregateFunctionBuilderRegistry {
+public class AggregateFunctionBuilderRegistry {
 
 	static Logger logger = LoggerFactory
 			.getLogger(AggregateFunctionBuilderRegistry.class);
 
-	private Map<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder>();
-	private List<String> aggregateFunctionNames = new LinkedList<String>();
+	static private Map<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder>();
+	static private List<String> aggregateFunctionNames = new LinkedList<String>();
 	static private Pattern aggregatePattern;
 
 	public synchronized void registerAggregateFunctionBuilder(
@@ -80,8 +79,8 @@ public class AggregateFunctionBuilderRegistry implements
 
 	public static Pattern getAggregatePattern() {
 		return aggregatePattern;
-	}
-
+	} 
+	
 	public synchronized void removeAggregateFunctionBuilder(
 			IAggregateFunctionBuilder builder) {
 		Class<? extends IStreamObject> datamodel = builder.getDatamodel();
@@ -100,12 +99,12 @@ public class AggregateFunctionBuilderRegistry implements
 		}
 	}
 
-	@Override
-	public IAggregateFunctionBuilder getBuilder(
+	static public IAggregateFunctionBuilder getBuilder(
 			Class<? extends IStreamObject> datamodel, String functionName) {
 		Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(
 				datamodel, functionName.toUpperCase());
 		return builders.get(key);
 	}
 
+	
 }

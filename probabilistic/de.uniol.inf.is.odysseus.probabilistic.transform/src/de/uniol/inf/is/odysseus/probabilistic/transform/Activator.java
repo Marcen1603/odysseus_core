@@ -19,7 +19,6 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 
 /**
  * 
@@ -30,7 +29,6 @@ public class Activator implements BundleActivator {
 	/** The bundle context. */
 	private static BundleContext context;
 	/** The aggregate function builder registry. */
-	private static IAggregateFunctionBuilderRegistry aggregateFunctionBuilderRegistry;
 
 	/**
 	 * Gets the bundle context.
@@ -41,14 +39,6 @@ public class Activator implements BundleActivator {
 		return Activator.context;
 	}
 
-	/**
-	 * Gets the aggregate function builder registry.
-	 * 
-	 * @return The registry
-	 */
-	public static IAggregateFunctionBuilderRegistry getAggregateFunctionBuilderRegistry() {
-		return Activator.aggregateFunctionBuilderRegistry;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -70,23 +60,5 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
-	/**
-	 * Binds the aggregate function builder registry.
-	 * 
-	 * @param registry
-	 *            The aggregation function builder registry
-	 */
-	protected final synchronized void bindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
-		Activator.aggregateFunctionBuilderRegistry = registry;
-	}
 
-	/**
-	 * Unbinds the aggregate function builder registry.
-	 * 
-	 * @param registry
-	 *            The aggregation function builder registry
-	 */
-	protected final synchronized void unbindAggregateFunctionBuilderRegistry(final IAggregateFunctionBuilderRegistry registry) {
-		Activator.aggregateFunctionBuilderRegistry = null;
-	}
 }

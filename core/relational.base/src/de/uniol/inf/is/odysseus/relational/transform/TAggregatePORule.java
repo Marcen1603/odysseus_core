@@ -26,9 +26,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -78,9 +78,8 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 						// of them
 						datatype = attr.getDatatype().getURI();
 					}
-					IAggregateFunctionBuilderRegistry registry = Activator
-							.getAggregateFunctionBuilderRegistry();
-					IAggregateFunctionBuilder builder = registry.getBuilder(
+			
+					IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry.getBuilder(
 							inputSchema.getType(), p.getE2().getName());
 					if (builder == null) {
 						throw new RuntimeException(
