@@ -63,6 +63,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -958,10 +959,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public Set<String> getRegisteredAggregateFunctions(Class<? extends IStreamObject> datamodel, ISession caller) {		
-		//TODO: get from registery
 		TreeSet<String> set = new TreeSet<>();
-		set.add("MAX");
-		set.add("SUM");
+		set.addAll(AggregateFunctionBuilderRegistry.getFunctionNames(datamodel));		
 		return set;
 	}
 	

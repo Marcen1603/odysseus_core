@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class AggregateFunctionBuilderRegistry {
 						+ " already registered!");
 			}
 		}
-	}
+	}	
 
 	/**
 	 * This methods builds a new Pattern for SDFExpression
@@ -99,6 +100,10 @@ public class AggregateFunctionBuilderRegistry {
 		}
 	}
 
+	public static Collection<String> getFunctionNames(Class<? extends IStreamObject> datamodel){
+		return Collections.unmodifiableCollection(builders.get(datamodel).getFunctionNames());
+	}
+	
 	static public IAggregateFunctionBuilder getBuilder(
 			Class<? extends IStreamObject> datamodel, String functionName) {
 		Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(
