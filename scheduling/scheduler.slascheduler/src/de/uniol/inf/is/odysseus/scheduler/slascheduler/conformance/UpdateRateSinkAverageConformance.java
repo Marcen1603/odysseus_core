@@ -127,7 +127,9 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 		IMetaAttribute metadata = object.getMetadata();
 		if (metadata instanceof ILatency) {
 			ILatency latency = (ILatency) metadata;
+			latency.setLatencyEnd(System.nanoTime());
 			latencyValue = (long) this.nanoToMilli(latency.getLatency());
+			System.out.println("UpRaSiAvgConf: " + latency.toString() + " *** " + (long) (latency.getLatency()/1000000));
 		} else {
 			throw new RuntimeException("Latency missing");
 		}
@@ -135,11 +137,10 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 		int oldAttributeCount = ((Tuple<?>)object).getAttributes().length;
 		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
 		((Tuple<?>)object).append(diff, false);
-		((Tuple<?>)object).append(getConformance() >= this.getSLA().getMetric().getValue(), false);
 		((Tuple<?>)object).append(latencyValue, false);
-		int[] attrList = new int[4];
+		int[] attrList = new int[3];
 		int index = 0;
-		for (int i = oldAttributeCount; i < oldAttributeCount+4; i++) {
+		for (int i = oldAttributeCount; i < oldAttributeCount+3; i++) {
 			attrList[index] = i;
 			index++;
 		}

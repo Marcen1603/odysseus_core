@@ -86,7 +86,7 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 		parent.layout();
 		
 		updateFrequency = 30 * 1000;
-		costTypeDescriptions = ((DatabaseBillingManager)BillingHelper.getBillingManager()).getDescriptionOfCostType();
+		costTypeDescriptions = ((DatabaseBillingManager)BillingHelper.getBillingManager()).getDescriptionOfCostTypes();
 	}
 	
 	private void createLabel(Composite topComposite) {

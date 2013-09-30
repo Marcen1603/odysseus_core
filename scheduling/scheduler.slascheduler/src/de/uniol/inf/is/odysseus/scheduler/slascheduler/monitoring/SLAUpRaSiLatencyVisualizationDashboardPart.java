@@ -45,7 +45,7 @@ public class SLAUpRaSiLatencyVisualizationDashboardPart extends
 			}
 			try {
 				final Tuple<?> tuple = (Tuple<?>) element;
-				final long latency = tuple.getAttribute(3);
+				final long latency = tuple.getAttribute(2);
 
 				if (latency >= 0) {
 					Date date = new Date(System.currentTimeMillis());

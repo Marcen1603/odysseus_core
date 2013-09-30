@@ -397,7 +397,7 @@ public class DatabaseBillingManager implements IBillingManager{
 
 	}
 	
-	public Map<Integer, String> getDescriptionOfCostType() {
+	public Map<Integer, String> getDescriptionOfCostTypes() {
 		checkDatabaseConnection();
 		Map<Integer, String> costTypeDescription = new HashMap<>();
 		try {
