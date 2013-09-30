@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.distribute">
    <implementation class="de.uniol.inf.is.odysseus.p2p_new.distribute.peerAssignment.RRPeerAssignment"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.p2p_new.distribute.IPeerAssignment"/>
+      <provide interface="de.uniol.inf.is.odysseus.p2p_new.IPeerAssignment"/>
    </service>
 </scr:component>

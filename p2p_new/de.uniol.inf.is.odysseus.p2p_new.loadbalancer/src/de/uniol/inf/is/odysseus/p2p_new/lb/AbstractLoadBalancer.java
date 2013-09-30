@@ -306,10 +306,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			peerAssignment = PeerAssignmentProviderService.get().getPeerAssignment(
 					parameters.get(PeerAssignmentParameter.class).getValue());
 		
-		if(peerAssignment.isPresent())
+		if(peerAssignment.isPresent()) {
 			return peerAssignment.get();
-		else return new RRPeerAssignment();
+		}
 		
+		return new RRPeerAssignment();
 	}
 
 	/**
