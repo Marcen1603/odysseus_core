@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
@@ -32,9 +33,10 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 		names.add(BEAN);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public String getDatamodel() {
-		return "relational";
+	public Class<? extends IStreamObject> getDatamodel() {
+		return Tuple.class;
 	}
 
 	@Override
@@ -47,9 +49,11 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 			int[] pos, boolean partialAggregateInput, String datatype) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(SCRIPT)) {
-			aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"), partialAggregateInput, datatype);
+			aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"),
+					partialAggregateInput, datatype);
 		} else if (key.getName().equalsIgnoreCase(BEAN)) {
-			aggFunc = new BeanAggregation(pos, key.getProperty("resource"), partialAggregateInput, datatype);
+			aggFunc = new BeanAggregation(pos, key.getProperty("resource"),
+					partialAggregateInput, datatype);
 		} else {
 			throw new IllegalArgumentException(String.format(
 					"No such Aggregatefunction: %s", key.getName()));
