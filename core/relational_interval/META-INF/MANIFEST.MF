@@ -25,5 +25,6 @@ Export-Package: de.uniol.inf.is.odysseus.relational_interval
 Bundle-ClassPath: .
 Require-Bundle: de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/*  
+Service-Component: OSGI-INF/*,
+ OSGI-INF/ReplacementRegistry.xml
 

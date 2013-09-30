@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
-public class RepeatReplacement<T extends IClone> extends AbstractReplacement<T> {
+public class LastElementReplacement<T extends IClone> extends AbstractReplacement<T> {
 
 	@Override
 	public List<Object> determineReplacements(T lastObject, T newObject,
@@ -19,7 +19,7 @@ public class RepeatReplacement<T extends IClone> extends AbstractReplacement<T> 
 
 	@Override
 	public String getName() {
-		return "Repeat";
+		return "Last";
 	}
 
 }
