@@ -78,7 +78,7 @@ public class Graph extends Observable implements Observer{
 	 * 
 	 */
 	public void recalcSatisfied() {
-		for(OperatorNode node : this.nodes){
+		for(OperatorNode node : getNodes()){
 			node.recalcSatisfied();
 		}		
 	}

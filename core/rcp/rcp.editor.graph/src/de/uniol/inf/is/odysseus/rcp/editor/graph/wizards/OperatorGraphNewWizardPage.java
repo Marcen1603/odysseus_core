@@ -41,7 +41,7 @@ public class OperatorGraphNewWizardPage extends WizardPage {
 	public OperatorGraphNewWizardPage(ISelection selection) {
 		super("wizardPage");
 		setTitle("Multi-page Editor File");
-		setDescription("This wizard creates a new file with *.grp extension that can be opened by a multi-page editor.");
+		setDescription("This wizard creates a new file with *.grp extension that can be opened by the operator graph editor.");
 		this.selection = selection;
 	}
 
