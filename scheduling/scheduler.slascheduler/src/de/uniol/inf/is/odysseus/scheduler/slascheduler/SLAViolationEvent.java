@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.sla.Metric;
 
 /**
  * Event, marking the violation of an sla
@@ -40,6 +41,8 @@ public class SLAViolationEvent {
 	 * measured conformnace to sla
 	 */
 	private double conformance;
+	
+	private Metric<?> metric;
 
 	/**
 	 * creates a new sla violation event
@@ -54,11 +57,12 @@ public class SLAViolationEvent {
 	 *            measured conformnace to sla
 	 */
 	public SLAViolationEvent(IPhysicalQuery query, double cost, int serviceLevel,
-			double conformance) {
+			double conformance, Metric<?> metric) {
 		this.query = query;
 		this.cost = cost;
 		this.serviceLevel = serviceLevel;
 		this.conformance = conformance;
+		this.metric = metric;
 	}
 
 	/**
@@ -87,6 +91,13 @@ public class SLAViolationEvent {
 	 */
 	public double getConformance() {
 		return conformance;
+	}
+
+	/**
+	 * @return the sla
+	 */
+	public Metric<?> getMetric() {
+		return metric;
 	}
 
 }

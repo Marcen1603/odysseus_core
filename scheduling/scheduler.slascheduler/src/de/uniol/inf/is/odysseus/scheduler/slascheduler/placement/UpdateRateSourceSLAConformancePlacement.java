@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 
 import java.util.ArrayList;
 
+import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
 import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe.TupleCostCalculationType;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
@@ -43,19 +44,32 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 	@Override
 	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator source,
 			ISLAConformance conformance) {
+		ArrayList<IPhysicalOperator> operatorsToAdd = new ArrayList<IPhysicalOperator>();
+		ISubscribable subscribable;
 		if (source.isSource()) {
-			if (((IOwnedOperator)conformance).getOwner().size() == 0)
-				((IOwnedOperator)conformance).addOwner(source.getOwner());
-			TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe(TupleCostCalculationType.INCOMING_TUPLES);
-			if (((IOwnedOperator)costCalc).getOwner().size() == 0)
-				((IOwnedOperator)costCalc).addOwner(source.getOwner());
-			ISubscribable subscribable = (ISubscribable) source;
-			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
-			subscribable.connectSink(costCalc, 0, 0, source.getOutputSchema());
-			
+			if (BillingHelper.useBillingModel()) {
+				if (((IOwnedOperator)conformance).getOwner().size() == 0)
+					((IOwnedOperator)conformance).addOwner(source.getOwner());
+				TupleCostCalculationPipe<?> costCalc = new TupleCostCalculationPipe(TupleCostCalculationType.INCOMING_TUPLES);
+				if (((IOwnedOperator)costCalc).getOwner().size() == 0)
+					((IOwnedOperator)costCalc).addOwner(source.getOwner());
+				subscribable = (ISubscribable) source;
+				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+				subscribable.connectSink(costCalc, 0, 0, source.getOutputSchema());
+				
+				operatorsToAdd.add(costCalc);
+				operatorsToAdd.add((IPhysicalOperator) conformance);
+			} else {
+				if (((IOwnedOperator)conformance).getOwner().size() == 0)
+					((IOwnedOperator)conformance).addOwner(source.getOwner());
+				
+				subscribable = (ISubscribable) source;
+				subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
+
+				operatorsToAdd.add((IPhysicalOperator) conformance);
+			}
 			ArrayList<IPhysicalOperator> list = new ArrayList<IPhysicalOperator>(query.getRoots());
-			list.add((IPhysicalOperator) conformance);
-			list.add(costCalc);
+			list.addAll(operatorsToAdd);
 			query.setRoots(list);
 			
 			return subscribable;

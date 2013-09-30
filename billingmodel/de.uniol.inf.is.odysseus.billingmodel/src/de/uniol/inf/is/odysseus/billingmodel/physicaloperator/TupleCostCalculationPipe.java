@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.billingmodel.BillingManager;
+import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -21,7 +21,7 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 	private Map<Integer, Map<String, Double>> queryToUserToPrice = new HashMap<>();
 	private static Connection conn = null;
 	private TupleCostCalculationType calculationType;
-	private int persistenceInterval = 60 * 1000;
+	private long persistenceInterval = 60 * 1000;
 	
 	public TupleCostCalculationPipe(TupleCostCalculationType type) {
 		if (conn == null) {
@@ -66,18 +66,18 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 				tuplePrice = getTuplePrice(queryID, userID);
 				switch (calculationType) {
 				case OUTGOING_TUPLES:
-					BillingManager.addRevenue(userID, queryID, tuplePrice);
+					BillingHelper.getBillingManager().addRevenue(userID, queryID, tuplePrice);
 					break;
 				case INCOMING_TUPLES:
-					BillingManager.addPayment(userID, queryID, tuplePrice);
+					BillingHelper.getBillingManager().addPayment(userID, queryID, tuplePrice);
 					break;
 				}
 				
 //				if (BillingManager.getNumberOfUnsavedRevenues() == 10)
 //					BillingManager.persistBillingInformations();
 				
-				if(System.currentTimeMillis() - BillingManager.getLastTimestampOfPersistence() > persistenceInterval)
-					BillingManager.persistBillingInformations();
+				if(System.currentTimeMillis() - BillingHelper.getBillingManager().getLastTimestampOfPersistence() > persistenceInterval)
+					BillingHelper.getBillingManager().persistBillingInformations();
 			}
 		}
 	}
@@ -148,7 +148,7 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 		this.calculationType = calculationType;
 	}
 
-	public int getPersistenceInterval() {
+	public long getPersistenceInterval() {
 		return persistenceInterval;
 	}
 

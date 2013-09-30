@@ -43,7 +43,8 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.billingmodel.BillingManager;
+import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
+import de.uniol.inf.is.odysseus.billingmodel.DatabaseBillingManager;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -57,10 +58,10 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	private Composite tableComposite;
 	private Font titleFont;
 	private final List<RowHelper> data = Lists.newArrayList();
-	private int updateFrequency;
+	private long updateFrequency;
 	private long lastUpdate;
 	private boolean refreshing = false;
-	
+	private Map<Integer, String> costTypeDescriptions = new HashMap<>();
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		
@@ -85,11 +86,12 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 		parent.layout();
 		
 		updateFrequency = 30 * 1000;
+		costTypeDescriptions = ((DatabaseBillingManager)BillingHelper.getBillingManager()).getDescriptionOfCostType();
 	}
 	
 	private void createLabel(Composite topComposite) {
 		Label label = new Label(topComposite, SWT.BOLD);
-		label.setText("Cost Monitoring");
+		label.setText("SLA Cost Monitoring");
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setAlignment(SWT.CENTER);
 		label.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
@@ -170,8 +172,8 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 			
 			data.clear();
 			addPaymentsToList();
-			addSanctionToList();
-			addOperatingCostsToList();
+			addPaymentSanctionToList();
+			addRevenueSanctionToList();
 			addRevenuesToList();
 			
 			if( !refreshing && tableViewer.getInput() != null) {
@@ -192,7 +194,7 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	}
 	
 	private void addPaymentsToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingManager.getUnsavedPayments().entrySet()) {
+		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedPayments().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
@@ -201,13 +203,13 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 				queryID = innerEntry.getKey();
 				amount = innerEntry.getValue();
 				
-				data.add(new RowHelper(userID, queryID, "Payments for incoming data", amount));
+				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(1), amount));
 			}
 		}
 	}
 	
-	private void addSanctionToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingManager.getUnsavedSanctions().entrySet()) {
+	private void addPaymentSanctionToList() {
+		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedPaymentSanctions().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
@@ -216,13 +218,13 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 				queryID = innerEntry.getKey();
 				amount = innerEntry.getValue();
 				
-				data.add(new RowHelper(userID, queryID, "Sanctions", amount));
+				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(2), amount));
 			}
 		}
 	}
 	
-	private void addOperatingCostsToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingManager.getUnsavedOperatingCosts().entrySet()) {
+	private void addRevenueSanctionToList() {
+		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedRevenueSanctions().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
@@ -231,13 +233,13 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 				queryID = innerEntry.getKey();
 				amount = innerEntry.getValue();
 				
-				data.add(new RowHelper(userID, queryID, "Operating costs", amount));
+				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(3), amount));
 			}
 		}
 	}
 	
 	private void addRevenuesToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingManager.getUnsavedRevenues().entrySet()) {
+		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedRevenues().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
@@ -246,7 +248,7 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 				queryID = innerEntry.getKey();
 				amount = innerEntry.getValue();
 				
-				data.add(new RowHelper(userID, queryID, "Revenues for outgoing data", amount));
+				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(4), amount));
 			}
 		}
 	}

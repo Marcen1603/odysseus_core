@@ -71,7 +71,7 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 	@Override
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(
-				"SLA UpdateRateSource Monitoring", "Time", "Updaterate in ms",
+				"SLA UpdateRateSink Monitoring", "Time", "Updaterate in ms",
 				datasetCollection, true, true, false);
 		
 		Color gray = new Color(222, 222, 222);

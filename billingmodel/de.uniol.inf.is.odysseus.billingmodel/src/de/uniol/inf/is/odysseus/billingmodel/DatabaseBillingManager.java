@@ -3,37 +3,39 @@ package de.uniol.inf.is.odysseus.billingmodel;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
-public class BillingManager {
+public class DatabaseBillingManager implements IBillingManager{
 
-	private static Map<String, Map<Integer, Double>> unsavedPayments = new HashMap<>(); // CostTypeID=1
-	private static Map<String, Map<Integer, Double>> unsavedSanctions = new HashMap<>(); // CostTypeID=2
-	private static Map<String, Map<Integer, Double>> unsavedOperatingCosts = new HashMap<>(); // CostTypeID=3
-	private static Map<String, Map<Integer, Double>> unsavedRevenues = new HashMap<>(); // CostTypeID=4
+	private Map<String, Map<Integer, Double>> unsavedPayments = new HashMap<>(); // CostTypeID=1
+	private Map<String, Map<Integer, Double>> unsavedPaymentSanctions = new HashMap<>(); // CostTypeID=2
+	private Map<String, Map<Integer, Double>> unsavedRevenueSanctions = new HashMap<>(); // CostTypeID=3
+	private Map<String, Map<Integer, Double>> unsavedRevenues = new HashMap<>(); // CostTypeID=4
 
-	private static int numberOfUnsavedPayments = 0;
-	private static int numberOfUnsavedSanctions = 0;
-	private static int numberOfUnsavedOperatingCosts = 0;
-	private static int numberOfUnsavedRevenues = 0;
+	private int numberOfUnsavedPayments = 0;
+	private int numberOfUnsavedPaymentSanctions = 0;
+	private int numberOfUnsavedRevenueSanctions = 0;
+	private int numberOfUnsavedRevenues = 0;
 	
-	private static long lastPersistence = 0;
+	private long lastPersistence = 0;
 	
-	private static boolean initialised = false;
-	private static Connection conn = null;
+	private boolean initialised = false;
+	private Connection conn = null;
 	
-	public static void addPayment(String userID, int queryID, double amount) {
+	@Override
+	public void addPayment(String userID, int queryID, double amount) {
 		if (unsavedPayments.get(userID) == null) {
 			Map<Integer, Double> map = new HashMap<>();
 			map.put(queryID, -amount);
 			unsavedPayments.put(userID, map);
 		} else if (!unsavedPayments.get(userID).containsKey(queryID)) {
 			Map<Integer, Double> map = unsavedPayments.get(userID);
-			map.put(queryID, amount);
+			map.put(queryID, -amount);
 		} else {
 			Map<Integer, Double> map = unsavedPayments.get(userID);
 			double newAmount = map.get(queryID) - amount;
@@ -42,39 +44,42 @@ public class BillingManager {
 		numberOfUnsavedPayments++;
 	}
 	
-	public static void addSanction(String userID, int queryID, double amount) {
-		if (unsavedSanctions.get(userID) == null) {
+	@Override
+	public void addPaymentSanction(String userID, int queryID, double amount) {
+		if (unsavedPaymentSanctions.get(userID) == null) {
 			Map<Integer, Double> map = new HashMap<>();
-			map.put(queryID, -amount);
-			unsavedSanctions.put(userID, map);
-		} else if (!unsavedSanctions.get(userID).containsKey(queryID)) {
-			Map<Integer, Double> map = unsavedSanctions.get(userID);
+			map.put(queryID, amount);
+			unsavedPaymentSanctions.put(userID, map);
+		} else if (!unsavedPaymentSanctions.get(userID).containsKey(queryID)) {
+			Map<Integer, Double> map = unsavedPaymentSanctions.get(userID);
 			map.put(queryID, amount);
 		} else {
-			Map<Integer, Double> map = unsavedSanctions.get(userID);
+			Map<Integer, Double> map = unsavedPaymentSanctions.get(userID);
+			double newAmount = map.get(queryID) + amount;
+			map.put(queryID, newAmount);
+		}
+		numberOfUnsavedPaymentSanctions++;
+	}
+	
+	@Override
+	public void addRevenueSanction(String userID, int queryID, double amount) {
+		if (unsavedRevenueSanctions.get(userID) == null) {
+			Map<Integer, Double> map = new HashMap<>();
+			map.put(queryID, -amount);
+			unsavedRevenueSanctions.put(userID, map);
+		} else if (!unsavedRevenueSanctions.get(userID).containsKey(queryID)) {
+			Map<Integer, Double> map = unsavedRevenueSanctions.get(userID);
+			map.put(queryID, -amount);
+		} else {
+			Map<Integer, Double> map = unsavedRevenueSanctions.get(userID);
 			double newAmount = map.get(queryID) - amount;
 			map.put(queryID, newAmount);
 		}
-		numberOfUnsavedSanctions++;
+		numberOfUnsavedRevenueSanctions++;
 	}
 	
-	public static void addOperatingCost(String userID, int queryID, double amount) {
-		if (unsavedOperatingCosts.get(userID) == null) {
-			Map<Integer, Double> map = new HashMap<>();
-			map.put(queryID, -amount);
-			unsavedOperatingCosts.put(userID, map);
-		} else if (!unsavedOperatingCosts.get(userID).containsKey(queryID)) {
-			Map<Integer, Double> map = unsavedOperatingCosts.get(userID);
-			map.put(queryID, amount);
-		} else {
-			Map<Integer, Double> map = unsavedOperatingCosts.get(userID);
-			double newAmount = map.get(queryID) - amount;
-			map.put(queryID, newAmount);
-		}
-		numberOfUnsavedOperatingCosts++;
-	}
-	
-	public static void addRevenue(String userID, int queryID, double amount) {
+	@Override
+	public void addRevenue(String userID, int queryID, double amount) {
 		if (unsavedRevenues.get(userID) == null) {
 			Map<Integer, Double> map = new HashMap<>();
 			map.put(queryID, amount);
@@ -90,23 +95,28 @@ public class BillingManager {
 		numberOfUnsavedRevenues++;
 	}
 	
-	public static Map<String, Map<Integer, Double>> getUnsavedPayments() {
+	@Override
+	public Map<String, Map<Integer, Double>> getUnsavedPayments() {
 		return new HashMap<String, Map<Integer, Double>>(unsavedPayments);
 	}
 	
-	public static Map<String, Map<Integer, Double>> getUnsavedSanctions() {
-		return new HashMap<String, Map<Integer, Double>>(unsavedSanctions);
+	@Override
+	public Map<String, Map<Integer, Double>> getUnsavedPaymentSanctions() {
+		return new HashMap<String, Map<Integer, Double>>(unsavedPaymentSanctions);
+	}
+	
+	@Override
+	public Map<String, Map<Integer, Double>> getUnsavedRevenueSanctions() {
+		return new HashMap<String, Map<Integer, Double>>(unsavedRevenueSanctions);
 	}
 
-	public static Map<String, Map<Integer, Double>> getUnsavedOperatingCosts() {
-		return new HashMap<String, Map<Integer, Double>>(unsavedOperatingCosts);
-	}
-
-	public static Map<String, Map<Integer, Double>> getUnsavedRevenues() {
+	@Override
+	public Map<String, Map<Integer, Double>> getUnsavedRevenues() {
 		return new HashMap<String, Map<Integer, Double>>(unsavedRevenues);
 	}
 
-	public static int getNumberOfUnsavedPayments() {
+	@Override
+	public int getNumberOfUnsavedPayments() {
 //		int count = 0;
 //		for (Map.Entry<String, Map<Integer, Double>> entry : userToQueryToPayments.entrySet()) {
 //			count += entry.getValue().size();
@@ -114,23 +124,27 @@ public class BillingManager {
 		return numberOfUnsavedPayments;
 	}
 	
-	public static int getNumberOfUnsavedSanctions() {
-		return numberOfUnsavedSanctions;
+	@Override
+	public int getNumberOfUnsavedPaymentSanctions() {
+		return numberOfUnsavedPaymentSanctions;
 	}
 	
-	public static int getNumberOfUnsavedOperatingCosts() {
-		return numberOfUnsavedOperatingCosts;
+	@Override
+	public int getNumberOfUnsavedRevenueSanctions() {
+		return numberOfUnsavedRevenueSanctions;
 	}
 	
-	public static int getNumberOfUnsavedRevenues() {
+	@Override
+	public int getNumberOfUnsavedRevenues() {
 		return numberOfUnsavedRevenues;
 	}
 	
-	public static long getLastTimestampOfPersistence() {
+	@Override
+	public long getLastTimestampOfPersistence() {
 		return lastPersistence;
 	}
 	
-	private static void checkDatabaseConnection() {
+	private void checkDatabaseConnection() {
 		if (!initialised) {
 			initDatabaseConnection();
 			initialised = true;
@@ -151,7 +165,7 @@ public class BillingManager {
 //		
 //	}
 	
-	private static void initDatabaseConnection() {
+	private void initDatabaseConnection() {
 		if (conn == null) {
 			try {
 				Class.forName("org.postgresql.Driver");
@@ -164,7 +178,8 @@ public class BillingManager {
 //		initBillingMaps();
 	}
 	
-	public static void persistBillingInformations() {
+	@Override
+	public void persistBillingInformations() {
 		checkDatabaseConnection();
 
 		// update existing database entry or insert a new row
@@ -202,8 +217,8 @@ public class BillingManager {
 		}
 		numberOfUnsavedPayments = 0;
 		
-		Map<String, Map<Integer, Double>> sanctionsToPersist = new HashMap<String, Map<Integer, Double>>(unsavedSanctions);
-		for (Map.Entry<String, Map<Integer, Double>> entry : sanctionsToPersist.entrySet()) {
+		Map<String, Map<Integer, Double>> paySanctionsToPersist = new HashMap<String, Map<Integer, Double>>(unsavedPaymentSanctions);
+		for (Map.Entry<String, Map<Integer, Double>> entry : paySanctionsToPersist.entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
@@ -232,18 +247,18 @@ public class BillingManager {
 			}
 			
 		}
-		numberOfUnsavedSanctions = 0;
+		numberOfUnsavedPaymentSanctions = 0;
 		
-		Map<String, Map<Integer, Double>> operatingCostsToPersist = new HashMap<String, Map<Integer, Double>>(unsavedOperatingCosts);
-		for (Map.Entry<String, Map<Integer, Double>> entry : operatingCostsToPersist.entrySet()) {
+		Map<String, Map<Integer, Double>> revSanctionsToPersist = new HashMap<String, Map<Integer, Double>>(unsavedRevenueSanctions);
+		for (Map.Entry<String, Map<Integer, Double>> entry : revSanctionsToPersist.entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
-			Map<Integer, Double> operatingCostsMap = new HashMap<Integer, Double>(entry.getValue());
-			for (Map.Entry<Integer, Double> innerEntry : operatingCostsMap.entrySet()) {
+			Map<Integer, Double> sanctionsMap = new HashMap<Integer, Double>(entry.getValue());
+			for (Map.Entry<Integer, Double> innerEntry : sanctionsMap.entrySet()) {
 				queryID = innerEntry.getKey();
 				amount = innerEntry.getValue();
-				
+
 				try {
 					PreparedStatement statement = conn.prepareStatement("UPDATE \"CurrentRevenue\" SET \"Amount\"=? WHERE \"AccountID\"=? and \"QueryID\"=? and \"CostTypeID\"=3");
 					statement.setDouble(1, amount);
@@ -264,7 +279,7 @@ public class BillingManager {
 			}
 			
 		}
-		numberOfUnsavedOperatingCosts = 0;
+		numberOfUnsavedRevenueSanctions = 0;
 		
 		Map<String, Map<Integer, Double>> revenuesToPersist = new HashMap<String, Map<Integer, Double>>(unsavedRevenues);
 		for (Map.Entry<String, Map<Integer, Double>> entry : revenuesToPersist.entrySet()) {
@@ -301,7 +316,7 @@ public class BillingManager {
 		lastPersistence = System.currentTimeMillis();
 	}
 	
-	public static void addQueryAndUserToDatabase(IPhysicalQuery query) {
+	public void addQueryAndUserToDatabase(IPhysicalQuery query) {
 		checkDatabaseConnection();
 		if (query.getID() == 0)
 			System.out.println("Query0 found");
@@ -344,7 +359,7 @@ public class BillingManager {
 		prepareTuplePriceTable(query);
 	}
 	
-	private static void prepareTuplePriceTable(IPhysicalQuery query) {
+	private void prepareTuplePriceTable(IPhysicalQuery query) {
 //		boolean tupleIn = false;
 //		boolean tupleOut = false;
 //		for (IPhysicalOperator op : query.getAllOperators()) {
@@ -380,5 +395,21 @@ public class BillingManager {
 			System.err.println(ex.getMessage());
 		}
 
+	}
+	
+	public Map<Integer, String> getDescriptionOfCostType() {
+		checkDatabaseConnection();
+		Map<Integer, String> costTypeDescription = new HashMap<>();
+		try {
+			PreparedStatement statement = conn.prepareStatement("SELECT * FROM \"CostType\"");
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				costTypeDescription.put(rs.getInt(1), rs.getString(2));
+			}
+		} catch (SQLException ex) {
+			System.err.println(ex.getMessage());
+		}
+		
+		return costTypeDescription;
 	}
 }

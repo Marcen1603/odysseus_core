@@ -1,43 +1,62 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.monitoring;
 
+import java.awt.Color;
+import java.awt.Paint;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationCounter;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
 
 public class SLAUpdateRateSinkViolationDashboardPart extends
 		AbstractChartDashboardPart {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SLAUpdateRateSourceVisualizationDashboardPart.class);
-
 	private DefaultCategoryDataset dataset;
-//	private List<IPhysicalOperator> operators = new ArrayList<>();
-	private Map<IPhysicalOperator, Integer> operatorToViolations = new HashMap<>();
+	private List<Integer> queriesToVisualize= new ArrayList<>();
 
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
 		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
+			
+			if (SLAViolationCounter.hasChangedUpRaSi()) {
+				int queryID;
+				int number;
+				for (Map.Entry<Integer, Integer> entry : SLAViolationCounter.getNumberOfViolationsUpRaSi().entrySet()) {
+					queryID = entry.getKey();
+					number = entry.getValue();
+
+					if (!queriesToVisualize.contains(queryID)) {
+						if (queriesToVisualize.size() > 4)
+							return;
+						queriesToVisualize.add(queryID);
+						dataset.setValue(0, "Number", "Query" + queryID);
+					} else
+						dataset.setValue(number, "Number", "Query" + queryID);
+				}
+			}
+			
+			/*
 			if (!operatorToViolations.containsKey(senderOperator)) {
 				if (operatorToViolations.size() > 1)
 					return;
 				operatorToViolations.put(senderOperator, 0);
-//				dataset.setValue(0, "Number", senderOperator.getName() + " Compliance");
+				// dataset.setValue(0, "Number", senderOperator.getName() + " Compliance");
 				dataset.setValue(0, "Number", senderOperator.getName() + " Violation");
 			}
 			try {
@@ -45,39 +64,34 @@ public class SLAUpdateRateSinkViolationDashboardPart extends
 				final boolean isViolation = tuple.getAttribute(2);
 				
 				if (isViolation) {
-//					int oldVal = dataset.getValue("Number", senderOperator.getName() + " Violation").intValue();
+					// int oldVal = dataset.getValue("Number", senderOperator.getName() + " Violation").intValue();
 					int val = operatorToViolations.get(senderOperator) + 1;
 					operatorToViolations.put(senderOperator, val);
 					dataset.setValue(val, "Number", senderOperator.getName() + " Violation");
-				} /*else {
-//					int oldVal = dataset.getValue("Number", senderOperator.getName() + " Compliance").intValue();
-					int val = operatorToCompliance.get(senderOperator) + 1;
-					operatorToCompliance.put(senderOperator, val);
-					dataset.setValue(val, "Number", senderOperator.getName() + " Compliance");
-				}*/
+				} //else {
+					//int oldVal = dataset.getValue("Number", senderOperator.getName() + " Compliance").intValue();
+					//int val = operatorToCompliance.get(senderOperator) + 1;
+					//operatorToCompliance.put(senderOperator, val);
+					//dataset.setValue(val, "Number", senderOperator.getName() + " Compliance");
+				//}
 
 			} catch (final Throwable t) {
 				LOG.error("Could not process Tuple {}!", element, t);
-			}
+			}*/
 		}
 	}
 
 	@Override
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createBarChart(
-				"SLA Violation Monitoring", null, "Number", dataset,
+				"SLA UpdateRateSink Violation Monitoring", null, "Number of violations", dataset,
 				PlotOrientation.VERTICAL, false, false, false);
 		
-		BarRenderer renderer = (BarRenderer) chart.getCategoryPlot().getRenderer(); 
-//		renderer.setBaseItemLabelGenerator(CategoryItemLabelGenerator generator);
-//		renderer.setBaseItemLabelGenerator(
-//				new StandardCategoryItemLabelGenerator()
-//				 @Override
-//				 public String generateLabel(CategoryDataset dataset, int row, int column) {
-//				        return "Your Text" +row+","+column;
-//				 }
-//				);
-		renderer.setBaseItemLabelGenerator(new StandardCategoryItemLabelGenerator());
+		CategoryPlot plot = chart.getCategoryPlot();
+		CategoryItemRenderer renderer = new CustomRenderer();
+		plot.setRenderer(renderer);
+		((BarRenderer) plot.getRenderer()).setBarPainter(new StandardBarPainter());
+		
 		return chart;
 	}
 
@@ -97,6 +111,19 @@ public class SLAUpdateRateSinkViolationDashboardPart extends
 	protected void startChart(Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {
 		
+	}
+	
+	class CustomRenderer extends BarRenderer {
+
+		private static final long serialVersionUID = 1131224651786239284L;
+
+		public CustomRenderer() {
+		}
+
+		public Paint getItemPaint(final int row, final int column) {
+			// return (row > 200) ? Color.blue : Color.yellow ;
+			return new Color(245, 34, 52);//Color.red;
+		}
 	}
 
 }

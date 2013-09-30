@@ -161,7 +161,7 @@ public abstract class AbstractSLAPipeConformance<R extends IStreamObject<?>, W e
 	 */
 	private void violation(double cost, int serviceLevel, double conformance) {
 		SLAViolationEvent event = new SLAViolationEvent(this.query, cost,
-				serviceLevel, conformance);
+				serviceLevel, conformance, this.getSLA().getMetric());
 		this.distributor.queueSLAViolationEvent(event);
 	}
 

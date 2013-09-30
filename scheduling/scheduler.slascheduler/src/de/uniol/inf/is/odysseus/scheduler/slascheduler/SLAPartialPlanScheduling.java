@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -155,7 +156,8 @@ public class SLAPartialPlanScheduling implements IPhysicalQueryScheduling,
 			this.querySharing = null;
 		}
 		this.addSLAViolationEventListener(new SLAViolationLogger());
-		if (Helper.useBillingModel())
+		this.addSLAViolationEventListener(new SLAViolationCounter());
+		if (BillingHelper.useBillingModel())
 			this.addSLAViolationEventListener(new SLAViolationBilling());
 		this.queue = new LinkedList<Pair<IScheduling, Double>>();
 		

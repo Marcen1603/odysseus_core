@@ -37,7 +37,7 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 			Tuple<?> element, int port) {
 		if (senderOperator instanceof UpdateRateSourceAverageConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
-				if (operatorToSerie.size() > 1)
+				if (operatorToSerie.size() > 4)
 					return;
 				TimeSeries xySeriesSource = new TimeSeries(senderOperator.getName());
 				operatorToSerie.put(senderOperator, xySeriesSource);

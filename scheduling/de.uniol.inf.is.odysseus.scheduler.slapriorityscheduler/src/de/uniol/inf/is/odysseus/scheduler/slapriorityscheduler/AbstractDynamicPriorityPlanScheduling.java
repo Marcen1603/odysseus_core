@@ -26,7 +26,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.billingmodel.BillingManager;
+import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
+import de.uniol.inf.is.odysseus.billingmodel.DatabaseBillingManager;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulingEventListener;
@@ -37,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.sla.metric.Latency;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
 import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSource;
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQueryScheduling;
-import de.uniol.inf.is.odysseus.scheduler.slascheduler.Helper;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventListene
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformanceFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformancePlacementFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationBilling;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationCounter;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationLogger;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
@@ -71,12 +72,14 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 		queue = new LinkedList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		this.addSLAViolationEventListener(new SLAViolationLogger());
-		if (Helper.useBillingModel())
+		this.addSLAViolationEventListener(new SLAViolationCounter());
+		if (BillingHelper.useBillingModel())
 			this.addSLAViolationEventListener(new SLAViolationBilling());
 		this.pausedPlans = new HashSet<IScheduling>();
 
-//		Helper.setUseBillingModel(true);
-		Helper.setUseBillingModel(false);
+//		BillingHelper.setUseBillingModel(false);
+		BillingHelper.setUseBillingModel(true);
+		BillingHelper.setBillingManager(new DatabaseBillingManager());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -104,8 +107,9 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 				// add SLA conformance operator to plan for monitoring
 				AbstractDynamicPriorityPlanScheduling.extendedQueries.add(query);
 				SLA sla = (SLA) query.getParameter(SLA.class.getName());
-				if (Helper.useBillingModel())
-					BillingManager.addQueryAndUserToDatabase(query);
+				if (BillingHelper.useBillingModel())
+					if (BillingHelper.getBillingManager() instanceof DatabaseBillingManager)
+						((DatabaseBillingManager)BillingHelper.getBillingManager()).addQueryAndUserToDatabase(query);
 				
 				List<IPhysicalOperator> opertors = new ArrayList<>();
 				if (sla.getMetric() instanceof Latency || sla.getMetric() instanceof UpdateRateSink) 

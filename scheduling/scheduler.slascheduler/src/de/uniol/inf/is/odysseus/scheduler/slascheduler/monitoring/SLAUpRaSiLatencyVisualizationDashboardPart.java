@@ -61,7 +61,7 @@ public class SLAUpRaSiLatencyVisualizationDashboardPart extends
 	@Override
 	protected JFreeChart createChart() {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(
-				"SLA Latency Monitoring", "Time", "Latency in ms",
+				"SLA UpdateRateSink Latency Monitoring", "Time", "Latency in ms",
 				datasetCollection, true, true, false);
 
 		Color gray = new Color(222, 222, 222);
