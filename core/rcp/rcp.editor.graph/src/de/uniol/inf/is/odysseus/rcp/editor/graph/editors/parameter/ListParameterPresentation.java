@@ -37,24 +37,30 @@ import org.w3c.dom.NodeList;
  * @author DGeesen
  * 
  */
-public class ListParameterPresentation<V> extends AbstractParameterPresentation<List<IParameterPresentation<V>>> {
-	
+public class ListParameterPresentation<V> extends
+		AbstractParameterPresentation<List<IParameterPresentation<V>>> {
+
 	private Button editButton;
 	private Text currentValueText;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation
+	 * #getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator
+	 * .LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
 	public String getPQLString() {
-		String str ="[";
+		String str = "[";
 		String sep = "";
-		for (IParameterPresentation<?> sub : getValue()) {
-			str = str + sep + sub.getPQLString();
-			sep = ", ";
+		if (getValue() != null) {
+			for (IParameterPresentation<?> sub : getValue()) {
+				str = str + sep + sub.getPQLString();
+				sep = ", ";
 
+			}
 		}
 		return str + "]";
 	}
@@ -62,11 +68,16 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#createParameterWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * AbstractParameterPresentation
+	 * #createParameterWidget(org.eclipse.swt.widgets.Composite,
+	 * de.uniol.inf.is.
+	 * odysseus.core.logicaloperator.LogicalParameterInformation,
+	 * java.lang.Object)
 	 */
 	@Override
 	protected Control createParameterWidget(final Composite parent) {
-		
+
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginLeft = 0;
@@ -82,8 +93,6 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 		editButton = new Button(container, SWT.PUSH);
 		editButton.setText("...");
 
-		
-
 		editButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -92,10 +101,14 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 				if (getValue() != null) {
 					childs = getValue();
 				}
-				List<IParameterPresentation<V>> copiedChilds = new ArrayList<>(childs);
-				ListParameterDialog<V> dialog = new ListParameterDialog<V>(parent.getShell(), getLogicalParameterInformation(), getOperator(), copiedChilds);
+				List<IParameterPresentation<V>> copiedChilds = new ArrayList<>(
+						childs);
+				ListParameterDialog<V> dialog = new ListParameterDialog<V>(
+						parent.getShell(), getLogicalParameterInformation(),
+						getOperator(), copiedChilds);
 				if (dialog.open() == TitleAreaDialog.OK) {
-					List<IParameterPresentation<V>> result = dialog.getParameters();
+					List<IParameterPresentation<V>> result = dialog
+							.getParameters();
 					resetValues(result);
 				}
 			}
@@ -111,7 +124,8 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
 	 */
 	@Override
 	public void loadValueFromXML(Node parent) {
@@ -120,7 +134,10 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 		for (int i = 0; i < list.getLength(); i++) {
 			if (list.item(i) instanceof Element) {
 				Element itemElement = (Element) list.item(i);
-				IParameterPresentation<V> parameterPresentation = ParameterPresentationFactory.createPresentationByClass(getLogicalParameterInformation(), getOperator(), (V) null);
+				IParameterPresentation<V> parameterPresentation = ParameterPresentationFactory
+						.createPresentationByClass(
+								getLogicalParameterInformation(),
+								getOperator(), (V) null);
 				parameterPresentation.loadValueFromXML(itemElement);
 				values.add(parameterPresentation);
 			}
@@ -132,7 +149,9 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#saveValueToXML(org.w3c.dom.Node,
+	 * org.w3c.dom.Document)
 	 */
 	@Override
 	public void saveValueToXML(Node parent, Document builder) {
@@ -149,12 +168,13 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#hasValidValue()
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * AbstractParameterPresentation#hasValidValue()
 	 */
 	@Override
 	public boolean hasValidValue() {
 		if (super.hasValidValue()) {
-			if(!getValue().isEmpty()){
+			if (!getValue().isEmpty()) {
 				return true;
 			}
 		}
