@@ -29,4 +29,4 @@ Export-Package: de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.context.store,
  de.uniol.inf.is.odysseus.context.store.types
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,de.uniol.inf.is.odysseus.core
-Service-Component: OSGI-INF/StoreService.xml, OSGI-INF/RuleService.xml
+Service-Component: OSGI-INF/StoreService.xml

@@ -14,4 +14,4 @@ Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule
-Service-Component: OSGI-INF/component.xml
+
