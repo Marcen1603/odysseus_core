@@ -88,12 +88,12 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 					if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
 						final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
 						if (datatype.isContinuous()) {
-							builder = registry.getBuilder(SchemaUtils.DATATYPE, p.getE2().getName());
+							builder = registry.getBuilder(inputSchema.getType(), p.getE2().getName());
 						} else {
-							builder = registry.getBuilder(SchemaUtils.DATATYPE, p.getE2().getName());
+							builder = registry.getBuilder(inputSchema.getType(), p.getE2().getName());
 						}
 					} else {
-						builder = registry.getBuilder(SchemaUtils.DATATYPE, p.getE2().getName());
+						builder = registry.getBuilder(inputSchema.getType(), p.getE2().getName());
 					}
 					if (builder == null) {
 						throw new RuntimeException("Could not find a builder for " + p.getE2().getName());

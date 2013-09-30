@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
-import de.uniol.inf.is.odysseus.relational.base.Relational;
 
 public class RelationalAggregateFunctionBuilder implements
 		IAggregateFunctionBuilder {
@@ -81,9 +81,10 @@ public class RelationalAggregateFunctionBuilder implements
 		return aggFunc;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public String getDatamodel() {
-		return Relational.RELATIONAL;
+	public Class<? extends IStreamObject> getDatamodel() {
+		return Tuple.class;
 	}
 
 	@Override

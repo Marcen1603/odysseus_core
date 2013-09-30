@@ -26,29 +26,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
+@SuppressWarnings("rawtypes")
 public class AggregateFunctionBuilderRegistry implements
 		IAggregateFunctionBuilderRegistry {
 
-	static Logger logger = LoggerFactory.getLogger(AggregateFunctionBuilderRegistry.class);
-	
-	private Map<Pair<String, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<String, String>, IAggregateFunctionBuilder>();
+	static Logger logger = LoggerFactory
+			.getLogger(AggregateFunctionBuilderRegistry.class);
+
+	private Map<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder>();
 	private List<String> aggregateFunctionNames = new LinkedList<String>();
 	static private Pattern aggregatePattern;
 
 	public synchronized void registerAggregateFunctionBuilder(
 			IAggregateFunctionBuilder builder) {
-		String datamodel = builder.getDatamodel();
+		Class<? extends IStreamObject> datamodel = builder.getDatamodel();
 		Collection<String> functionNames = builder.getFunctionNames();
-		 logger.debug("Found new AggregateBuilder " + builder);
+		logger.debug("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
-			Pair<String, String> key = new Pair<String, String>(datamodel,
+			Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(datamodel,
 					functionName.toUpperCase());
 			if (!builders.containsKey(key)) {
 				builders.put(key, builder);
 				aggregateFunctionNames.add(functionName.toUpperCase());
 				buildAggregatePattern();
-				 logger.debug("Binding " + key);
+				logger.debug("Binding " + key);
 			} else {
 				throw new RuntimeException(datamodel + " and " + functionName
 						+ " already registered!");
@@ -81,10 +84,10 @@ public class AggregateFunctionBuilderRegistry implements
 
 	public synchronized void removeAggregateFunctionBuilder(
 			IAggregateFunctionBuilder builder) {
-		String datamodel = builder.getDatamodel();
+		Class<? extends IStreamObject> datamodel = builder.getDatamodel();
 		Collection<String> functionNames = builder.getFunctionNames();
 		for (String functionName : functionNames) {
-			Pair<String, String> key = new Pair<String, String>(datamodel,
+			Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(datamodel,
 					functionName);
 			if (builders.containsKey(key)) {
 				builders.remove(key);
@@ -98,10 +101,10 @@ public class AggregateFunctionBuilderRegistry implements
 	}
 
 	@Override
-	public IAggregateFunctionBuilder getBuilder(String datamodel,
-			String functionName) {
-		Pair<String, String> key = new Pair<String, String>(datamodel,
-				functionName.toUpperCase());
+	public IAggregateFunctionBuilder getBuilder(
+			Class<? extends IStreamObject> datamodel, String functionName) {
+		Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(
+				datamodel, functionName.toUpperCase());
 		return builders.get(key);
 	}
 

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
@@ -34,10 +35,11 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
         AggregationFunctionBuilder.names.add(AggregationFunctionBuilder.UNION_GEOMETRY);
     }
 
-    @Override
-    public String getDatamodel() {
-        return "relational";
-    }
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Class<? extends IStreamObject> getDatamodel() {
+		return Tuple.class;
+	}
 
     @Override
     public Collection<String> getFunctionNames() {

@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+
 public interface IAggregateFunctionBuilderRegistry {
-	IAggregateFunctionBuilder getBuilder(String datamodel, String functionName);
+	@SuppressWarnings("rawtypes")
+	IAggregateFunctionBuilder getBuilder(Class<? extends IStreamObject> datamodel, String functionName);
 }

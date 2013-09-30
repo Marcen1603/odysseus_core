@@ -18,17 +18,17 @@ package de.uniol.inf.is.odysseus.probabilistic;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteAvg;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteCount;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteSum;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticMax;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticMin;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticStdDev;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteSum;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -58,9 +58,10 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder#getDatamodel()
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
-	public final String getDatamodel() {
-		return SchemaUtils.DATATYPE;
+	public Class<? extends IStreamObject> getDatamodel() {
+		return ProbabilisticTuple.class;
 	}
 
 	/*

@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IInitializer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
-import de.uniol.inf.is.odysseus.relational.base.Relational;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -82,7 +81,7 @@ public class TAggregatePORule extends AbstractTransformationRule<AggregatePO> {
 					IAggregateFunctionBuilderRegistry registry = Activator
 							.getAggregateFunctionBuilderRegistry();
 					IAggregateFunctionBuilder builder = registry.getBuilder(
-							Relational.RELATIONAL, p.getE2().getName());
+							inputSchema.getType(), p.getE2().getName());
 					if (builder == null) {
 						throw new RuntimeException(
 								"Could not find a builder for "
