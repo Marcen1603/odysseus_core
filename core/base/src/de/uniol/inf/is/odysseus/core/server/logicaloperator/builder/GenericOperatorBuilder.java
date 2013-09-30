@@ -65,13 +65,15 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 				String name = parameterAnnotation.name();
 				String doc = parameterAnnotation.doc();
 				String possibleValueMethod = parameterAnnotation.possibleValues();
+				boolean possibleValuesAreDynamic = parameterAnnotation.possibleValuesAreDynamic();
 				
 				// remove 'set' from set method to get the property name,
 				// if no explicit name was set
 				name = (name.isEmpty() ? method.getName().substring(3) : name).toUpperCase();
 				parameter.setName(name);
 				parameter.setDoc(doc);
-				parameter.setPossibleValueMethod(possibleValueMethod);				
+				parameter.setPossibleValueMethod(possibleValueMethod);	
+				parameter.setPossibleValuesAreDynamic(possibleValuesAreDynamic);
 				REQUIREMENT requirement = parameterAnnotation.optional() ? REQUIREMENT.OPTIONAL : REQUIREMENT.MANDATORY;
 
 				parameter.setRequirement(requirement);

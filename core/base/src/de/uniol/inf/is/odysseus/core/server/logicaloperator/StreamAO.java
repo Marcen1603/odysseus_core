@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-public class StreamAO extends AbstractLogicalOperator {
 
+@LogicalOperator(name="Stream",maxInputPorts=0, minInputPorts=0,category={LogicalOperatorCategory.SOURCE}, doc="Integrate a view.")
+public class StreamAO extends AbstractLogicalOperator {
+	
 	private static final long serialVersionUID = 1L;
 	private Resource streamname;
 
@@ -33,8 +37,8 @@ public class StreamAO extends AbstractLogicalOperator {
 		return streamname;
 	}
 
-	@Parameter(name="source", type=StringParameter.class)
-	public void setStreamname(String streamname) {
+	@Parameter(name="Source", type=StringParameter.class, optional=false, possibleValues="__DD_SOURCES")
+	public void setSource(String streamname) {
 		this.streamname = new Resource(streamname);
 	}
 

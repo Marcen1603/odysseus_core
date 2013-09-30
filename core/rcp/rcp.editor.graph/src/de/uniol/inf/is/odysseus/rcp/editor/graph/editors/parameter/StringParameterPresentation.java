@@ -47,6 +47,10 @@ public class StringParameterPresentation extends AbstractParameterPresentation<S
 		if (getValue() != null) {
 			currentStr = getValue().toString();
 		}
+		
+		if (getLogicalParameterInformation().arePossibleValuesDynamic()){
+			// refresh somehow ... ;-)
+		}
 
 		if (getLogicalParameterInformation().getPossibleValues().isEmpty()) {
 			text = new Text(parent, SWT.BORDER);

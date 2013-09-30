@@ -83,4 +83,6 @@ public @interface Parameter {
 	 * Defines the name of the getter that delivers the list of the possible value for this parameters  
 	 */
 	public String possibleValues() default "";
+	
+	public boolean possibleValuesAreDynamic() default false;
 }

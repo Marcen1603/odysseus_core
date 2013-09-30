@@ -50,6 +50,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	protected Object inputValue;
 
 	private String possibleValueMethod = "";
+	private boolean possibleValuesAreDynamic = false;
 
 
 	public AbstractParameter(String name, REQUIREMENT requirement, USAGE usage) {
@@ -278,7 +279,15 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	
 	@Override
 	public void setPossibleValueMethod(String possibleValueMethod) {
-		this.possibleValueMethod = possibleValueMethod;
-		
+		this.possibleValueMethod = possibleValueMethod;	
+	}
+	
+	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic){
+		this.possibleValuesAreDynamic =possibleValuesAreDynamic;
+	}
+	
+	@Override
+	public boolean arePossibleValuesDynamic() {
+		return possibleValuesAreDynamic;
 	}
 }

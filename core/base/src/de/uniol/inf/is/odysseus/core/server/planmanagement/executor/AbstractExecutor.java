@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,7 +42,6 @@ import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -995,7 +995,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			lpi.setMandatory(param.isMandatory());
 			lpi.setParameterClass(param.getClass());
 			lpi.setDoc(param.getDoc());
-			lpi.setPossibleValues(resolvePossibleOperatorParameterValue(builder, param));
+			lpi.setPossibleValues(resolvePossibleOperatorParameterValue(builder, param, caller));
+			lpi.setPossibleValuesAreDynamic(param.arePossibleValuesDynamic());
 			loi.getParameters().add(lpi);
 			if (param instanceof ListParameter<?>) {
 				lpi.setList(true);
@@ -1022,9 +1023,26 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return infos;
 	}
 
-	private List<String> resolvePossibleOperatorParameterValue(IOperatorBuilder builder, IParameter<?> param) {
+	private List<String> resolvePossibleOperatorParameterValue(IOperatorBuilder builder, IParameter<?> param, ISession caller) {
 		if (param.getPossibleValueMethod().isEmpty()) {
 			return new ArrayList<>();
+		}
+		// treat special cases
+		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SOURCES")){
+			Set<Entry<Resource, ILogicalOperator>> v = getDataDictionary(caller.getTenant()).getViews(caller);
+			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller.getTenant()).getStreams(caller);
+			List<String> ret = new LinkedList<>();
+			if (v != null){
+				for (Entry<Resource, ILogicalOperator> e:v){
+					ret.add(e.getKey().toString());
+				}
+			}
+			if (s != null){
+				for (Entry<Resource, ILogicalOperator> e:s){
+					ret.add(e.getKey().toString());
+				}
+			}
+			return ret;
 		}
 		try {
 			ILogicalOperator op = builder.getOperatorClass().newInstance();			

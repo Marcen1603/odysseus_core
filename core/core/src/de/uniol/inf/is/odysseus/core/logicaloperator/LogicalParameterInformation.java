@@ -19,16 +19,17 @@ import java.util.List;
 
 /**
  * @author DGeesen
- *
+ * 
  */
 public class LogicalParameterInformation {
-	
+
 	private Class<?> parameterClass;
 	private String name;
 	private boolean list;
 	private String doc;
 	private boolean mandatory;
-	private List<String> possibleValues;	
+	private List<String> possibleValues;
+	private boolean possibleValuesAreDynamic;
 
 	public Class<?> getParameterClass() {
 		return parameterClass;
@@ -72,18 +73,29 @@ public class LogicalParameterInformation {
 
 	public List<String> getPossibleValues() {
 		return possibleValues;
+		
 	}
 
 	public void setPossibleValues(List<String> possibleValues) {
 		this.possibleValues = possibleValues;
 	}
-	
-	/* (non-Javadoc)
+
+	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic) {
+		this.possibleValuesAreDynamic = possibleValuesAreDynamic;
+	}
+
+	public boolean arePossibleValuesDynamic() {
+		return possibleValuesAreDynamic;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public String toString() {	
-		return name+" ("+parameterClass+") list="+list;
+	public String toString() {
+		return name + " (" + parameterClass + ") list=" + list;
 	}
 
 }
