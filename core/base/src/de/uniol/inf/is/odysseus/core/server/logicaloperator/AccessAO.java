@@ -69,4 +69,9 @@ public class AccessAO extends AbstractAccessAO {
 		super.setOptions(value);
 	}
 	
+	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues="getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
+	public void setDataHandler(String dataHandler) {
+		super.setDataHandler(dataHandler);
+	}
+	
 }
