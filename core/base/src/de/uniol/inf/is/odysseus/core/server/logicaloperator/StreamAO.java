@@ -48,6 +48,7 @@ public class StreamAO extends AbstractLogicalOperator {
 	public void setSource(AccessAO inputStream) {
 		this.schema = inputStream.getOutputSchema();
 		this.streamname = inputStream.getAccessAOName();
+		setName(streamname.getResourceName());
 	}
 
 	@Override
