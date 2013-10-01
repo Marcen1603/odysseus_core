@@ -16,13 +16,15 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts=Integer.MAX_VALUE, minInputPorts=1, name="Sink", doc="Merge different input streams with out reodering them, e.g. to visualisize in graphs.", category={LogicalOperatorCategory.SINK})
+@LogicalOperator(maxInputPorts=Integer.MAX_VALUE, minInputPorts=1, name="Sink", doc="Represents a view for s sink.", category={LogicalOperatorCategory.SINK})
 public class SinkAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -5432522510944805110L;
+	private String sinkname;
 	
 	public SinkAO(AbstractLogicalOperator op) {
 		super(op);
@@ -34,6 +36,16 @@ public class SinkAO extends AbstractLogicalOperator {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new SinkAO(this);
+	}
+	
+	@Parameter(name = "sink", type = StringParameter.class, optional = false, possibleValues = "__DD_SINKS", possibleValuesAreDynamic=true)
+	public void setSink(String sinkname) {		
+		setName(sinkname);
+		this.sinkname = sinkname;
+	}
+	
+	public String getSinkname(){
+		return this.sinkname;
 	}
 
 }

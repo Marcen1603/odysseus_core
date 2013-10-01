@@ -39,8 +39,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies.OperatorNodeGr
  * @author DGeesen
  * 
  */
-public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
-		Observer, NodeEditPart {
+public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements Observer, NodeEditPart {
 
 	public OperatorNodeEditPart(OperatorNode node) {
 		setModel(node);
@@ -51,10 +50,8 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
 	}
 
 	protected void createEditPolicies() {
-		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE,
-				new OperatorNodeGraphicalNodeEditPolicy());
-		installEditPolicy(EditPolicy.COMPONENT_ROLE,
-				new OperatorNodeComponentEditPolicy());
+		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new OperatorNodeGraphicalNodeEditPolicy());
+		installEditPolicy(EditPolicy.COMPONENT_ROLE, new OperatorNodeComponentEditPolicy());
 	}
 
 	public void refreshVisuals() {
@@ -64,27 +61,27 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
 		Object v = getValue(node, "SOURCE");
 		Object addInfo = getValue(node, "PREDICATE");
 		if (v == null) {
-			v = getValue(node, "NAME");
+			v = getValue(node, "SINK");
+			if (v == null) {
+				v = getValue(node, "NAME");
+			}
 		}
 		if (v != null && v.toString().length() > 0) {
 			figure.getLabel().setText(v.toString());
 		} else {
-			figure.getLabel().setText(
-					node.getOperatorInformation().getOperatorName());
+			figure.getLabel().setText(node.getOperatorInformation().getOperatorName());
 		}
-		if (addInfo != null){
+		if (addInfo != null) {
 			figure.updateToolTip(addInfo.toString());
 		}
 		figure.setSatisfied(node.isSatisfied());
-		Rectangle r = new Rectangle(node.getConstraint().getLocation(),
-				figure.getPreferredSize());
+		Rectangle r = new Rectangle(node.getConstraint().getLocation(), figure.getPreferredSize());
 		parent.setLayoutConstraint(this, figure, r);
 	}
 
 	private Object getValue(OperatorNode node, String valueType) {
 		Object v = null;
-		LogicalParameterInformation param = node.getOperatorInformation()
-				.getParameter(valueType);
+		LogicalParameterInformation param = node.getOperatorInformation().getParameter(valueType);
 		if (param != null) {
 			v = node.getParameterValue(param);
 		}
@@ -136,35 +133,27 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
-	 * .ConnectionEditPart)
+	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef .ConnectionEditPart)
 	 */
 	@Override
-	public ConnectionAnchor getSourceConnectionAnchor(
-			ConnectionEditPart connection) {
+	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {
 		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
-	 * .ConnectionEditPart)
+	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef .ConnectionEditPart)
 	 */
 	@Override
-	public ConnectionAnchor getTargetConnectionAnchor(
-			ConnectionEditPart connection) {
+	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
 		return ((OperatorNodeFigure) getFigure()).getConnectionAnchor();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef
-	 * .Request)
+	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef .Request)
 	 */
 	@Override
 	public ConnectionAnchor getSourceConnectionAnchor(Request request) {
@@ -174,9 +163,7 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef
-	 * .Request)
+	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef .Request)
 	 */
 	@Override
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {

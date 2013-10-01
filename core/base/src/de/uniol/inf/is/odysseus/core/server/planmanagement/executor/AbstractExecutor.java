@@ -1044,6 +1044,16 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			}
 			return ret;
 		}
+		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SINKS")){
+			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller.getTenant()).getSinks(caller);			
+			List<String> ret = new LinkedList<>();
+			if (s != null){
+				for (Entry<Resource, ILogicalOperator> e: s){
+					ret.add(e.getKey().toString());
+				}
+			}
+			return ret;
+		}
 		try {
 			ILogicalOperator op = builder.getOperatorClass().newInstance();			
 			Method m = op.getClass().getMethod(param.getPossibleValueMethod());

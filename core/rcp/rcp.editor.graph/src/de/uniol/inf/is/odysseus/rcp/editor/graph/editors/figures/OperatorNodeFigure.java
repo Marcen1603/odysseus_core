@@ -51,9 +51,7 @@ public class OperatorNodeFigure extends Figure {
 		// add(rectangle);
 		label = new Label();
 		toolTipLabel = new Label();
-		ImageDescriptor imageDesc = ImageFactory
-				.createImageForOperator(operatorNode.getOperatorInformation()
-						.getOperatorName());
+		ImageDescriptor imageDesc = ImageFactory.createImageForOperator(operatorNode.getOperatorInformation().getOperatorName());
 		imageData = imageDesc.getImageData();
 		image = new Label();
 		image.setIcon(imageDesc.createImage());
@@ -64,8 +62,7 @@ public class OperatorNodeFigure extends Figure {
 	@Override
 	public Dimension getPreferredSize(int wHint, int hHint) {
 		Dimension dim = new Dimension();
-		dim.setHeight(imageData.height + label.getPreferredSize().height
-				+ IMAGE_TEXT_SPACE);
+		dim.setHeight(imageData.height + label.getPreferredSize().height + IMAGE_TEXT_SPACE);
 		dim.setWidth(Math.max(imageData.width, label.getPreferredSize().width));
 		return dim;
 	}
@@ -88,8 +85,7 @@ public class OperatorNodeFigure extends Figure {
 		// setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
 		setConstraint(image, new Rectangle(0, 0, r.width, imageData.height));
 		Dimension d = label.getPreferredSize();
-		setConstraint(label, new Rectangle(center.x - d.width / 2, r.height
-				- d.height, d.width, d.height));
+		setConstraint(label, new Rectangle(center.x - d.width / 2, r.height - d.height, d.width, d.height));
 
 		// rectangle.invalidate();
 		image.invalidate();

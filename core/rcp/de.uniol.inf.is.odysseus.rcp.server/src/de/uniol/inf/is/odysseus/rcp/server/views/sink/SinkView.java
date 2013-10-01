@@ -34,9 +34,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -56,6 +59,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewContentProvider;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorViewLabelProvider;
 
@@ -157,6 +161,11 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
 		getTreeViewer().setContentProvider(new OperatorViewContentProvider());
 		getTreeViewer().setLabelProvider(new OperatorViewLabelProvider("sink"));
+		
+		int operations = DND.DROP_MOVE;
+		Transfer[] transferTypes = new Transfer[]{LocalSelectionTransfer.getTransfer()};
+		getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(getTreeViewer(), "SINK"));
+		
 		refresh();
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
 		if (e instanceof IServerExecutor) {

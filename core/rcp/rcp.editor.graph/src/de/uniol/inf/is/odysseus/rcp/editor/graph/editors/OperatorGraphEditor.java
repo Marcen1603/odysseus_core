@@ -59,6 +59,7 @@ import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.dnd.OperatorDropListener;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts.OperatorNodeEditPart;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts.factories.GraphEditPartFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator.ScriptGenerator;
@@ -93,6 +94,8 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		if (input instanceof FileEditorInput) {
 			loadFromXML((FileEditorInput) input);
 		}
+		
+		
 
 	}
 
@@ -247,6 +250,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		viewer.setContents(graph);
 		viewer.addSelectionChangedListener(this);
 		viewer.getControl().setBackground(ColorConstants.white);
+		viewer.addDropTargetListener(new OperatorDropListener(getGraphicalViewer()));
 	}
 	
 	// /**
