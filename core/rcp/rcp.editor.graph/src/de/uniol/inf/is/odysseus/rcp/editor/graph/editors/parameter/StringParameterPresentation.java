@@ -49,7 +49,7 @@ public class StringParameterPresentation extends AbstractParameterPresentation<S
 		}
 		
 		if (getLogicalParameterInformation().arePossibleValuesDynamic()){
-			// refresh somehow ... ;-)
+			// TODO: refresh somehow ... ;-)
 		}
 
 		if (getLogicalParameterInformation().getPossibleValues().isEmpty()) {
