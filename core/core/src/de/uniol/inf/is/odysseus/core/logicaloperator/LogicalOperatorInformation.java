@@ -15,8 +15,11 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.logicaloperator;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author DGeesen
@@ -26,7 +29,7 @@ public class LogicalOperatorInformation {
 	
 	private String operatorName;
 	private String doc;
-	private List<LogicalParameterInformation> parameters = new ArrayList<>();
+	private Map<String, LogicalParameterInformation> parameters = new HashMap<>();
 	private int maxPorts;
 	private int minPorts;
 	private String[] categories;
@@ -47,12 +50,18 @@ public class LogicalOperatorInformation {
 		this.doc = doc;
 	}
 
-	public List<LogicalParameterInformation> getParameters() {
-		return parameters;
+	public Collection<LogicalParameterInformation> getParameters() {
+		return Collections.unmodifiableCollection(parameters.values());
+	}
+
+	public void addParameter(LogicalParameterInformation parameter) {
+		this.parameters.put(parameter.getName(), parameter);
 	}
 
 	public void setParameters(List<LogicalParameterInformation> parameters) {
-		this.parameters = parameters;
+		for (LogicalParameterInformation p:parameters){
+			this.parameters.put(p.getName(), p);
+		}
 	}
 
 	public int getMinPorts() {
@@ -77,6 +86,10 @@ public class LogicalOperatorInformation {
 
 	public void setCategories(String[] categories) {
 		this.categories = categories;
+	}
+
+	public LogicalParameterInformation getParameter(String name) {
+		return parameters.get(name);
 	}	
 
 }

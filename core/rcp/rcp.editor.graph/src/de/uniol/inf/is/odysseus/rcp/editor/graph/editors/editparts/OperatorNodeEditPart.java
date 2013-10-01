@@ -28,6 +28,7 @@ import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.figures.OperatorNodeFigure;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
@@ -60,12 +61,34 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
 		OperatorNodeFigure figure = (OperatorNodeFigure) getFigure();
 		OperatorNode node = (OperatorNode) getModel();
 		GraphEditPart parent = (GraphEditPart) getParent();
-		figure.getLabel().setText(
-				node.getOperatorInformation().getOperatorName());
+		Object v = getValue(node, "SOURCE");
+		Object addInfo = getValue(node, "PREDICATE");
+		if (v == null) {
+			v = getValue(node, "NAME");
+		}
+		if (v != null) {
+			figure.getLabel().setText(v.toString());
+		} else {
+			figure.getLabel().setText(
+					node.getOperatorInformation().getOperatorName());
+		}
+		if (addInfo != null){
+			figure.updateToolTip(addInfo.toString());
+		}
 		figure.setSatisfied(node.isSatisfied());
 		Rectangle r = new Rectangle(node.getConstraint().getLocation(),
 				figure.getPreferredSize());
 		parent.setLayoutConstraint(this, figure, r);
+	}
+
+	private Object getValue(OperatorNode node, String valueType) {
+		Object v = null;
+		LogicalParameterInformation param = node.getOperatorInformation()
+				.getParameter(valueType);
+		if (param != null) {
+			v = node.getParameterValue(param);
+		}
+		return v;
 	}
 
 	public void activate() {

@@ -997,7 +997,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			lpi.setDoc(param.getDoc());
 			lpi.setPossibleValues(resolvePossibleOperatorParameterValue(builder, param, caller));
 			lpi.setPossibleValuesAreDynamic(param.arePossibleValuesDynamic());
-			loi.getParameters().add(lpi);
+			loi.addParameter(lpi);
 			if (param instanceof ListParameter<?>) {
 				lpi.setList(true);
 				ListParameter<?> listParam = (ListParameter<?>) param;

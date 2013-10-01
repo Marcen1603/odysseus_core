@@ -139,6 +139,10 @@ public class OperatorNode extends Observable implements Observer {
 		update();
 	}
 
+	public Object getParameterValue(LogicalParameterInformation param){
+		return parameterValues.get(param).getValue();
+	}
+	
 	private void updateInputSchemas() {
 		inputSchemas.clear();
 		for (Connection connection : getTargetConnections()) {

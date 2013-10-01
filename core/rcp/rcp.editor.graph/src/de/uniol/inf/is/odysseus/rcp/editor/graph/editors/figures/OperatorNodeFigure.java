@@ -38,17 +38,19 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 public class OperatorNodeFigure extends Figure {
 
 	private Label label;
+	private Label toolTipLabel;
 	private ConnectionAnchor connectionAnchor;
 	private ImageData imageData;
 	private Label image;
 	static final int IMAGE_TEXT_SPACE = 3;
-	
+
 	public OperatorNodeFigure(OperatorNode operatorNode) {
 		setLayoutManager(new XYLayout());
-//		rectangle = new RectangleFigure();
-//		rectangle.setBackgroundColor(ColorConstants.white);
-//		add(rectangle);
+		// rectangle = new RectangleFigure();
+		// rectangle.setBackgroundColor(ColorConstants.white);
+		// add(rectangle);
 		label = new Label();
+		toolTipLabel = new Label();
 		ImageDescriptor imageDesc = ImageFactory
 				.createImageForOperator(operatorNode.getOperatorInformation()
 						.getOperatorName());
@@ -58,11 +60,12 @@ public class OperatorNodeFigure extends Figure {
 		add(image);
 		add(label);
 	}
-	
+
 	@Override
 	public Dimension getPreferredSize(int wHint, int hHint) {
 		Dimension dim = new Dimension();
-		dim.setHeight(imageData.height+label.getPreferredSize().height+IMAGE_TEXT_SPACE);
+		dim.setHeight(imageData.height + label.getPreferredSize().height
+				+ IMAGE_TEXT_SPACE);
 		dim.setWidth(Math.max(imageData.width, label.getPreferredSize().width));
 		return dim;
 	}
@@ -81,13 +84,14 @@ public class OperatorNodeFigure extends Figure {
 
 	public void paintFigure(Graphics g) {
 		Rectangle r = getBounds().getCopy();
-		Point center = new Point(r.width/2, r.height/2);
-		//setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
-		setConstraint(image, new Rectangle(0,0, r.width, imageData.height));
+		Point center = new Point(r.width / 2, r.height / 2);
+		// setConstraint(rectangle, new Rectangle(0, 0, r.width, r.height));
+		setConstraint(image, new Rectangle(0, 0, r.width, imageData.height));
 		Dimension d = label.getPreferredSize();
-		setConstraint(label, new Rectangle(center.x-d.width/2,r.height-d.height,d.width, d.height));
-		
-		//rectangle.invalidate();
+		setConstraint(label, new Rectangle(center.x - d.width / 2, r.height
+				- d.height, d.width, d.height));
+
+		// rectangle.invalidate();
 		image.invalidate();
 		label.invalidate();
 	}
@@ -102,4 +106,9 @@ public class OperatorNodeFigure extends Figure {
 		return connectionAnchor;
 	}
 
+	public void updateToolTip(String text) {
+		toolTipLabel.setText(text);
+		// toolTipLabel.setIcon(icon);
+		setToolTip(toolTipLabel);
+	}
 }
