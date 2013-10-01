@@ -47,6 +47,36 @@ public class FragmentationHelper {
 	private static final Logger LOG = LoggerFactory.getLogger(FragmentationHelper.class);
 	
 	/**
+	 * Determine the fragmentation strategy given by the parameters.
+	 * @param parameters The {@link QueryBuildConfiguration}.
+	 * @param executor The {@link IServerExecutor} calling.
+	 * @param degreeOfParallelism The degree of parallelism which is also the number of fragments.
+	 * @return A pair of source name and fragmentation strategy for that source, if any is given by the user.
+	 */
+	public static Optional<Pair<String, IDataFragmentation>> determineFragmentationStrategy(QueryBuildConfiguration parameters, IServerExecutor executor, 
+			int degreeOfParallelism) {
+		
+		// The return value
+		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
+				FragmentationHelper.parseFromConfiguration(parameters, executor);
+		if(fragmentationStrategy.isPresent())
+			LOG.debug("Using '{}' as fragmentation strategy for the source '{}'.", 
+					fragmentationStrategy.get().getE2().getName(), fragmentationStrategy.get().getE1());
+		else LOG.debug("Using replication for all sources.");
+		
+		// Check the number of fragments if fragmentation is selected
+		if(fragmentationStrategy.isPresent() && degreeOfParallelism < 2) {
+			
+			LOG.warn("Degree of parallelism must be at least 2 to use data fragmentation. Turned off data fragmentation.");
+			fragmentationStrategy = Optional.absent();
+			
+		}
+		
+		return fragmentationStrategy;
+		
+	}
+	
+	/**
 	 * Parses an parameter of the {@link QueryBuildConfiguration} into a fragmentation strategy.
 	 * @param parameters The {@link QueryBuildConfiguration} to be parsed.
 	 * @param executor The executor calling.

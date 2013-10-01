@@ -30,11 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.p2p_new.IPeerAssignment;
 import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.peerAssignment.RRPeerAssignment;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.Replication;
-import de.uniol.inf.is.odysseus.p2p_new.lb.service.PeerAssignmentProviderService;
-import de.uniol.inf.is.odysseus.p2p_new.parameter.PeerAssignmentParameter;
 
 /**
  * An abstract implementation of a load balancer.
@@ -114,46 +111,20 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// The pair of the source name and the fragmentation strategy or null.
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
-				determineFragmentationStrategy(parameters, (IServerExecutor) executor, degreeOfParallelism);		
+				FragmentationHelper.determineFragmentationStrategy(parameters, (IServerExecutor) executor, degreeOfParallelism);
+		
+		// The peer assignment strategy to be used
+		IPeerAssignment peerAssignmentStrategy = DistributionHelper.determinePeerAssignmentStrategy(parameters);
 		
 		for(final ILogicalQuery originQuery : queries) {
 			
 			// Distribute the single query
-			distributedQueries.add(distributeLogicalQuery(originQuery, parameters, fragmentationStrategy, degreeOfParallelism, remotePeerIDs));
+			distributedQueries.add(distributeLogicalQuery(originQuery, parameters, fragmentationStrategy, degreeOfParallelism, remotePeerIDs, 
+					peerAssignmentStrategy));
 			
 		}
 		
 		return distributedQueries;
-		
-	}
-	
-	/**
-	 * Determine the fragmentation strategy given by the parameters.
-	 * @param parameters The {@link QueryBuildConfiguration}.
-	 * @param executor The {@link IServerExecutor} calling.
-	 * @param degreeOfParallelism The degree of parallelism which is also the number of fragments.
-	 * @return A pair of source name and fragmentation strategy for that source, if any is given by the user.
-	 */
-	protected Optional<Pair<String, IDataFragmentation>> determineFragmentationStrategy(QueryBuildConfiguration parameters, IServerExecutor executor, 
-			int degreeOfParallelism) {
-		
-		// The return value
-		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
-				FragmentationHelper.parseFromConfiguration(parameters, executor);
-		if(fragmentationStrategy.isPresent())
-			LOG.debug("Using '{}' as fragmentation strategy for the source '{}'.", 
-					fragmentationStrategy.get().getE2().getName(), fragmentationStrategy.get().getE1());
-		else LOG.debug("Using replication for all sources.");
-		
-		// Check the number of fragments if fragmentation is selected
-		if(fragmentationStrategy.isPresent() && degreeOfParallelism < 2) {
-			
-			LOG.warn("Degree of parallelism must be at least 2 to use data fragmentation. Turned off data fragmentation.");
-			fragmentationStrategy = Optional.absent();
-			
-		}
-		
-		return fragmentationStrategy;
 		
 	}
 	
@@ -228,19 +199,18 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param fragmentationStrategy The pair of source name and fragmentation strategy if set.
 	 * @param degreeOfParallelism The degree of parallelism.
 	 * @param remotePeerIDs A collection of all available peers.
+	 * @param peerAssignmentStrategy The peer assignment strategy.
 	 * @return The logical query to be executed locally.
 	 */
 	protected ILogicalQuery distributeLogicalQuery(ILogicalQuery query, QueryBuildConfiguration parameters, 
-			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, int degreeOfParallelism, Collection<PeerID> remotePeerIDs) {
+			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, int degreeOfParallelism, Collection<PeerID> remotePeerIDs, 
+			IPeerAssignment peerAssignmentStrategy) {
 		
 		Preconditions.checkNotNull(query);
 		Preconditions.checkNotNull(parameters);
 		Preconditions.checkArgument(degreeOfParallelism > 0);
 		Preconditions.checkNotNull(remotePeerIDs);
 		Preconditions.checkArgument(!remotePeerIDs.isEmpty());
-		
-		// The peer assignment strategy to be used
-		IPeerAssignment peerAssignmentStrategy = determinePeerAssignmentStrategy(parameters);
 		
 		// A collection of all query parts
 		Collection<QueryPart> queryParts = Lists.newArrayList();
@@ -289,28 +259,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		DistributionHelper.generatePeerConnections(peerToQueryPartMap);
 		
 		// Publish all remote parts and return the local ones
-		return DistributionHelper.distributeAndTransformParts(queryParts, peerToQueryPartMap, parameters, query.toString(), degreeOfParallelism);
+		return DistributionHelper.distributeAndTransformParts(queryParts, peerToQueryPartMap, parameters, query.toString());
 		
-	}
-	
-	/**
-	 * Determine the peer assignment strategy given by the parameters.
-	 * @param parameters The {@link QueryBuildConfiguration}.
-	 */
-	protected IPeerAssignment determinePeerAssignmentStrategy(QueryBuildConfiguration parameters) {
-		
-		// The return value
-		Optional<IPeerAssignment> peerAssignment = Optional.absent();
-		
-		if(parameters.contains(PeerAssignmentParameter.class))
-			peerAssignment = PeerAssignmentProviderService.get().getPeerAssignment(
-					parameters.get(PeerAssignmentParameter.class).getValue());
-		
-		if(peerAssignment.isPresent()) {
-			return peerAssignment.get();
-		}
-		
-		return new RRPeerAssignment();
 	}
 
 	/**

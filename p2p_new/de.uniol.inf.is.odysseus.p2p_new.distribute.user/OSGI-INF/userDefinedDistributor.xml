@@ -4,5 +4,4 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor"/>
    </service>
-   <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
 </scr:component>

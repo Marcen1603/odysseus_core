@@ -30,16 +30,20 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerAssignment;
 import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.peerAssignment.RRPeerAssignment;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.PeerAssignmentProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.parameter.PeerAssignmentParameter;
 
 /**
  * Utilities for the usage of the interface {@link ILogicalQueryDistributor}.
@@ -191,11 +195,10 @@ public class DistributionHelper {
 	 * @param queryPartDistributionMap The mapping of assigned peer IDs to query parts.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param queryName The name of the origin query for transformation.
-	 * @param degreeOfParallelism The degree of parallelism.
 	 * @return The logical query to be executed locally.
 	 */
 	public static ILogicalQuery distributeAndTransformParts(Collection<QueryPart> queryParts, Map<QueryPart, 
-			PeerID> queryPartDistributionMap, QueryBuildConfiguration parameters, String queryName, int degreeOfParallelism) {
+			PeerID> queryPartDistributionMap, QueryBuildConfiguration parameters, String queryName) {
 		
 		Preconditions.checkNotNull(queryPartDistributionMap, "queryPartDistributionMap must be not null!");
 		Preconditions.checkNotNull(queryParts, "queryParts must be not null!");
@@ -231,6 +234,26 @@ public class DistributionHelper {
 		
 		return localQuery;
 		
+	}
+	
+	/**
+	 * Determine the peer assignment strategy given by the parameters.
+	 * @param parameters The {@link QueryBuildConfiguration}.
+	 */
+	public static IPeerAssignment determinePeerAssignmentStrategy(QueryBuildConfiguration parameters) {
+		
+		// The return value
+		Optional<IPeerAssignment> peerAssignment = Optional.absent();
+		
+		if(parameters.contains(PeerAssignmentParameter.class))
+			peerAssignment = PeerAssignmentProviderService.get().getPeerAssignment(
+					parameters.get(PeerAssignmentParameter.class).getValue());
+		
+		if(peerAssignment.isPresent()) {
+			return peerAssignment.get();
+		}
+		
+		return new RRPeerAssignment();
 	}
 	
 	/**

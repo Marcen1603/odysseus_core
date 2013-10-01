@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p_new.distribute.user
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/userDefinedDistributor.xml,OSGI-INF/p2pDictionaryService.xml,
- OSGI-INF/jxtaServicesProviderService.xml
+Service-Component: OSGI-INF/userDefinedDistributor.xml
 Import-Package: de.uniol.inf.is.odysseus.logicaloperator.intervalapproach,
  de.uniol.inf.is.odysseus.parser.pql.generator,
  org.osgi.framework;version="1.6.0"
