@@ -121,6 +121,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setPeerID(r.getPeer());
 		adv.setMasterPeerID(this.masterID);
 		adv.setQueryPartOperatorObjects(r.getPlan(true));
+		adv.setIntersections(r.getIntersections());
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
 		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
 	}
@@ -160,5 +161,29 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	private IServerExecutor getExecutor() {
 		return this.executor;
+	}
+
+
+
+	public PeerID getMasterID() {
+		return masterID;
+	}
+
+
+
+	public void setMasterID(PeerID masterID) {
+		this.masterID = masterID;
+	}
+
+
+
+	public PeerID getLocalID() {
+		return localID;
+	}
+
+
+
+	public void setLocalID(PeerID localID) {
+		this.localID = localID;
 	}
 }

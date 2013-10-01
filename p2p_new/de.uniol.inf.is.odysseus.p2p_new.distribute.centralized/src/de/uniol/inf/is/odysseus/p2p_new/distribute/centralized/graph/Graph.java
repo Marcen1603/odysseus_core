@@ -254,7 +254,7 @@ public class Graph {
 	 * PhysicalQueryPartAdvertisement.
 	 */ 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void reconnectAssociatedOperatorsAccordingToGraphLayout() {
+	public void reconnectAssociatedOperatorsAccordingToGraphLayout(boolean leaveOldOnesAlone) {
 		// unsubscribe all Operators from their sources/sinks
 		for(IPhysicalOperator o : this.getAllOperatorsInvolved()) {
 			if(o.isSink()) {
@@ -265,21 +265,25 @@ public class Graph {
 			}
 		}
 		// connect them according to this graph's connections
-		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
+		for(GraphNode gn : this.getGraphNodesUngrouped(leaveOldOnesAlone)) {
 			// Sink Subscriptions
 			if(gn.isSource()) {
 				for(Subscription<GraphNode> sub : gn.getSinkSubscriptions()) {
 					GraphNode sinkNode = sub.getTarget();
-					ISink sink = (ISink)sinkNode.getOperator();
-					((ISource<?>)gn.getOperator()).subscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					if(!leaveOldOnesAlone || !sinkNode.isOld()) {
+						ISink sink = (ISink)sinkNode.getOperator();
+						((ISource<?>)gn.getOperator()).subscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					}
 				}
 			}
 			// Source Subscriptions
 			if(gn.isSink()) {
 				for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
 					GraphNode sourceNode = sub.getTarget();
-					ISource source = (ISource)sourceNode.getOperator();
-					((ISink<?>)gn.getOperator()).subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					if(!leaveOldOnesAlone || !sourceNode.isOld()) {
+						ISource source = (ISource)sourceNode.getOperator();
+						((ISink<?>)gn.getOperator()).subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+					}
 				}
 			}
 		}
@@ -300,6 +304,20 @@ public class Graph {
 				if(!onlyNew || !gn.isOld()) {
 					result.add(gn);
 				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns the Set of GraphNodes, which aren't connected to any other sinks, i.e. are at the top.
+	 * This just returns pipes and sources though, since the point of collecting these is to put JxtaSenderPOs on top.
+	 */
+	public List<GraphNode> getSinkNodes() {
+		List<GraphNode> result = new ArrayList<GraphNode>();
+		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
+			if(gn.isSource()) {
+				result.add(gn);
 			}
 		}
 		return result;

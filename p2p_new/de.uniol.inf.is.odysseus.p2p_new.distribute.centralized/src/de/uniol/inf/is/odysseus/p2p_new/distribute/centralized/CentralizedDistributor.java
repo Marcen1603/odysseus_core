@@ -14,6 +14,7 @@ import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.QSSimulator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 
@@ -51,6 +53,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	IP2PDictionary dictionary = P2PDictionaryService.get();
 	private static final String DISTRIBUTION_TYPE = "centralized";
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
 			List<ILogicalQuery> queriesToDistribute,
@@ -80,13 +83,39 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		}
 
 		List<SimulationResult> results = new ArrayList<SimulationResult>();
-	
+		List<PeerID> usedPeers = new ArrayList<PeerID>();
 		
 		// this is the graph representing the new Plan and its connections "as is",
 		// we'll work on clones in order to simulate the query-sharing
 		Graph baseGraph = new Graph(null, newOperatorsMap);
-		SimulationResult bestResult = getMostPromisingPlacement(baseGraph, null, parameters);
+		// before we do anything with this graph, let's make sure we get the results back to the masternode.
+		// we can do that, by setting JxtaSenderPOs on all the top-operators (in case they are pipes/sources).
+		
+		List<GraphNode> topNodes = baseGraph.getSinkNodes();
+		List<ILogicalOperator> newLogicalOps = new ArrayList<ILogicalOperator>();
+		for(GraphNode gn : topNodes) {
+			// insert a receive and a send-operator
+			PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+			JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
+			GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), true);
+			SDFSchema schema = gn.getOperator().getOutputSchema();
+			baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
+			
+			JxtaReceiverAO receiverOp = new JxtaReceiverAO();
+			receiverOp.setPipeID(pipeID.toURI().toString());
+			receiverOp.setOutputSchema(schema);
+			// no GraphNode for the receiver, because it goes to the master
+			// and thus has to find its way into the resulting query as a logical operator
+			newLogicalOps.add(receiverOp);
+		}
+		// TODO: Figure out what to make of plans with more than one returnable resultstream from different operators
+		// The receivers for those would be unconnected and thus not transformable in the traditional manner
+		queriesToDistribute.get(0).setLogicalPlan(newLogicalOps.get(0), true);
+		
+		SimulationResult bestResult = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
 		results.add(bestResult);
+		usedPeers.add(bestResult.getPeer());
+		
 		List<SimulationResult> placeableResults = placeable(results);
 		// only stop, if we have successfully placed every result on some peer
 		while(placeableResults.size() != results.size()) {
@@ -99,7 +128,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			for(SimulationResult s : currentlyUnplaceable) {
 				SplitSimulationResult splitResult = splitGraph(s);
 				Graph newGraph = splitResult.getSurplusNodes();
-				SimulationResult additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters);
+				SimulationResult additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
 				
 				// currently handled via the splitGraph-method
 //				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
@@ -118,6 +147,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 //					j.setFlowTargetResult(additionalResult);
 //				}
 				results.add(additionalResult);
+				usedPeers.add(additionalResult.getPeer());
 			}
 			// we now have additional results in the results-list,
 			// as well as the former non-placeable results which should be placeable now that they've been cut down a little
@@ -129,11 +159,11 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		for(SimulationResult sr : placeableResults) {
 			// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
 			// in order to generate the subscription-statements properly.
-			sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout();
+			sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(true);
 			this.manager.sendPhysicalPlanToPeer(sr);
 		}
 
-		return null;
+		return queriesToDistribute;
 	}
 	
 	
@@ -294,10 +324,14 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		}
 	}
 	
-	public SimulationResult getMostPromisingPlacement(Graph baseGraph, List<PlanJunction> junctions, QueryBuildConfiguration parameters) {
+	public SimulationResult getMostPromisingPlacement(Graph baseGraph, List<PlanJunction> junctions, QueryBuildConfiguration parameters, List<PeerID> usedPeers) {
 		SimulationResult bestResult = null;
 		ICost<IPhysicalOperator> bestCost = this.costModel.getMaximumCost();
 		for(PeerID peer : operatorPlans.keySet()) {
+			// skip peers, if they're already supposed to host a part of the query or if it's the master
+			if(usedPeers.contains(peer) || peer.toString().equals(manager.getMasterID().toString())) {
+				continue;
+			}
 			Map<Integer,IPhysicalOperator> operatorsOnPeer = operatorPlans.get(peer);
 			if(this.getCostModel() == null) {
 				LOG.debug("Centralized distribution not possible without a bound costmodel");
