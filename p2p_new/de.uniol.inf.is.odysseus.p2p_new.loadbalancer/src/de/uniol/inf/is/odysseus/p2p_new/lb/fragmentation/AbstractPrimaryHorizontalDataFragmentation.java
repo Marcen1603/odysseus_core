@@ -88,6 +88,10 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 		}
 		
 		// Initialize the operators for fragmentation
+		/*
+		 * Note:
+		 * Any destination set by the user will be ignored for fragmentation part operators (related StreamAO, WindowAO).
+		 */
 		for(ILogicalOperator operatorForFragmentation : operatorsForFragmentation) {
 			
 			operatorForFragmentation.setDestinationName(FragmentationHelper.FRAGMENTATION_DESTINATION_NAME);
@@ -316,6 +320,10 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 		// Initialize the operators for data reunion
 		for(ILogicalOperator operatorForDataReunion : operatorsForDataReunion) {
 			
+			/*
+			 * Note:
+			 * Any destination set by the user will be ignored for fragmentation part operators (FileSinkAO).
+			 */
 			operatorForDataReunion.setDestinationName(FragmentationHelper.REUNION_DESTINATION_NAME);
 			operatorForDataReunion.initialize();
 			
