@@ -44,7 +44,7 @@ public class StreamAO extends AbstractLogicalOperator {
 		return schema;
 	}
 
-	@Parameter(name = "Source", type = SourceParameter.class, optional = false, possibleValues = "__DD_SOURCES")
+	@Parameter(name = "Source", type = SourceParameter.class, optional = false, possibleValues = "__DD_SOURCES", possibleValuesAreDynamic=true)
 	public void setSource(AccessAO inputStream) {
 		this.schema = inputStream.getOutputSchema();
 		this.streamname = inputStream.getAccessAOName();
