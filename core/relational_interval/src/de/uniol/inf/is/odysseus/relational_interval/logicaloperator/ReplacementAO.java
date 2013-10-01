@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.relational_interval.replacement.ReplacementRegistry;
 
-@LogicalOperator(name = "Replacement", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can be used if a value is espected but was not delivered timely. Different methods to determine the missing value are available.", category = { LogicalOperatorCategory.CLEANING })
+@LogicalOperator(name = "Replacement", minInputPorts = 1, maxInputPorts = 1, doc = "This operator can be used if a value is espected but was not delivered timely. Different methods to determine the missing value are available.", category = { LogicalOperatorCategory.PROCESSING })
 public class ReplacementAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = -8189563624334302716L;

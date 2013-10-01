@@ -148,7 +148,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return optionsMap;
 	}
 
-	@Parameter(type = StringParameter.class, name = "inputSchema", isList = true, optional = true, doc = "A list of data types describing the input format. Must be compatible with output schema!")
+	@Parameter(type = StringParameter.class, name = "inputSchema", isList = true, optional = true, possibleValues="__DD_DATATYPES", possibleValuesAreDynamic=true, doc = "A list of data types describing the input format. Must be compatible with output schema!")
 	public void setInputSchema(List<String> inputSchema) {
 		this.inputSchema = inputSchema;
 	}
