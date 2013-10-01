@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -39,17 +40,32 @@ import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.MouseWheelHandler;
+import org.eclipse.gef.MouseWheelZoomHandler;
+import org.eclipse.gef.SnapToGrid;
+import org.eclipse.gef.editparts.ScalableRootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.DeleteAction;
+import org.eclipse.gef.ui.actions.RedoAction;
+import org.eclipse.gef.ui.actions.UndoAction;
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette;
+import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -90,13 +106,26 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		super.init(site, input);
-		initGraphEditorListener();	
+		initGraphEditorListener();
 		if (input instanceof FileEditorInput) {
 			loadFromXML((FileEditorInput) input);
 		}
-		
-		
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette#getAdapter(java.lang.Class)
+	 */
+	@Override
+	public Object getAdapter(@SuppressWarnings("rawtypes") Class type) {
+		if (type == ActionRegistry.class) {
+			return getActionRegistry();
+		}
+		if (type == ZoomManager.class) {
+			return ((ScalableRootEditPart) getGraphicalViewer().getRootEditPart()).getZoomManager();
+		}
+		return super.getAdapter(type);
 	}
 
 	private void saveToXML(FileEditorInput fileInput) {
@@ -129,7 +158,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				connectionsElement.appendChild(conNode);
 			}
 
-			// now, PQL for other purposes			
+			// now, PQL for other purposes
 			String pql = ScriptGenerator.buildPQL(graph);
 
 			CDATASection pqldata = doc.createCDATASection(pql);
@@ -181,14 +210,14 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 			// then, load the connections
 			List<Element> connectionNodes = getChildList(mainNodes.get("connections"));
 			for (Element conElement : connectionNodes) {
-				Map<String, String> values = getChildElements(conElement);				
+				Map<String, String> values = getChildElements(conElement);
 				OperatorNode sourceNode = graph.getOperatorNodeById(Integer.parseInt(values.get("source")));
 				OperatorNode targetNode = graph.getOperatorNodeById(Integer.parseInt(values.get("target")));
 				Connection con = new Connection();
 				con.reconnect(sourceNode, targetNode);
 			}
 			this.graph.recalcSatisfied();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -251,34 +280,31 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		viewer.addSelectionChangedListener(this);
 		viewer.getControl().setBackground(ColorConstants.white);
 		viewer.addDropTargetListener(new OperatorDropListener(getGraphicalViewer()));
+		viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, true);
+
+		// actions
+		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(this));
+		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(this));
+		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getEditorSite().getPart()));
+		ZoomManager zoomManager = ((ScalableRootEditPart) viewer.getRootEditPart()).getZoomManager();
+		registerAndBindingService(new ZoomInAction(zoomManager));
+		registerAndBindingService(new ZoomOutAction(zoomManager));
+
+		List<String> zoomContributions = Arrays.asList(new String[] { ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT, ZoomManager.FIT_WIDTH });
+		zoomManager.setZoomLevelContributions(zoomContributions);
+		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
+		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
 	}
-	
-	// /**
-	// * @param form
-	// */
-	// private void createPaletteViewer(Composite parent) {
-	// PaletteViewer viewer = new PaletteViewer();
-	// viewer.createControl(parent);
-	// editDomain.setPaletteViewer(viewer);
-	// editDomain.setPaletteRoot(GraphPalette.createGraphPalette());
-	//
-	// }
-	//
-	//
-	// /**
-	// * @param form
-	// */
-	// private void createGraphViewer(Composite parent) {
-	// ScrollingGraphicalViewer viewer = new ScrollingGraphicalViewer();
-	// viewer.createControl(parent);
-	// viewer.setRootEditPart(new ScalableFreeformRootEditPart());
-	// viewer.getControl().setBackground(ColorConstants.white);
-	// viewer.setEditPartFactory(new GraphEditPartFactory());
-	//
-	// viewer.setContents(graph);
-	// editDomain.addViewer(viewer);
-	//
-	// }
+
+	private void registerAndBindingService(IAction action) {
+		registerAndBindingService(action.getActionDefinitionId(), action);
+	}
+
+	private void registerAndBindingService(String actionDefinitionId, IAction action) {
+		getActionRegistry().registerAction(action);
+		IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
+		service.activateHandler(actionDefinitionId, new ActionHandler(action));
+	}
 
 	/*
 	 * (non-Javadoc)

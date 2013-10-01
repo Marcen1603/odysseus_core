@@ -1,138 +1,163 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.DeleteRetargetAction;
+import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.gef.ui.actions.RedoRetargetAction;
 import org.eclipse.gef.ui.actions.UndoRetargetAction;
+import org.eclipse.gef.ui.actions.ZoomComboContributionItem;
+import org.eclipse.gef.ui.actions.ZoomInRetargetAction;
+import org.eclipse.gef.ui.actions.ZoomOutRetargetAction;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 
 public class OperatorGraphEditorContributor extends MultiPageEditorActionBarContributor {
 
-	private List<String> globalActionKeys = new ArrayList<String>();
-	private List<RetargetAction> retargetActions = new ArrayList<RetargetAction>();
 	private ActionRegistry registry = new ActionRegistry();
 
-	/**
-	 * Initialization
-	 */
-	public void init(IActionBars bars) {
-		buildActions();
-		declareGlobalActionKeys();
-		super.init(bars);
+	private ActionRegistry activePageRegistry;
+
+	private ActionRegistry rootEditorRegistry;
+
+	protected IEditorPart rootEditor;
+
+	private List<RetargetAction> retargetActions = new ArrayList<RetargetAction>();
+
+	
+	private Set<String> globalActionKeys = new HashSet<String>();
+
+	protected void addAction(IAction action) {
+		getActionRegistry().registerAction(action);
 	}
 
-	/**
-	 * Builds the actions.
-	 * 
-	 * @see org.eclipse.gef.ui.actions.ActionBarContributor#buildActions()
-	 */
-	protected void buildActions() {
-		addRetargetAction(new UndoRetargetAction());
-		addRetargetAction(new RedoRetargetAction());
-		addRetargetAction(new DeleteRetargetAction());
+
+	public void addGlobalActionKey(String key) {
+		globalActionKeys.add(key);
 	}
 
-	/**
-	 * Adds the retarded actions.
-	 * 
-	 * @param action
-	 *            The action to add
-	 */
-	protected void addRetargetAction(RetargetAction action) {
+
+	public void addRetargetAction(RetargetAction action) {
 		addAction(action);
 		retargetActions.add(action);
 		getPage().addPartListener(action);
 		addGlobalActionKey(action.getId());
 	}
 
-	/**
-	 * Adds global action key.
-	 * 
-	 * @param key
-	 *            The key to add
-	 */
-	protected void addGlobalActionKey(String key) {
-		globalActionKeys.add(key);
+	protected void buildActions() {
+		addRetargetAction(new UndoRetargetAction());
+		addRetargetAction(new RedoRetargetAction());
+		addRetargetAction(new DeleteRetargetAction());
+		addRetargetAction(new ZoomInRetargetAction());
+		addRetargetAction(new ZoomOutRetargetAction());
+
 	}
 
-	/**
-	 * Adds to action registry an action.
-	 * 
-	 * @param action
-	 *            The action to add
-	 */
-	protected void addAction(IAction action) {
-		getActionRegistry().registerAction(action);
+	protected void declareGlobalActionKeys() {
+		addGlobalActionKey(ActionFactory.PRINT.getId());
+		addGlobalActionKey(ActionFactory.SELECT_ALL.getId());
+		addGlobalActionKey(ActionFactory.COPY.getId());
+		addGlobalActionKey(ActionFactory.PASTE.getId());
+		addGlobalActionKey(ActionFactory.DELETE.getId());
 	}
 
-	/**
-	 * Gets the registry.
-	 * 
-	 * @return ActionRegistry The registry
-	 */
+	@Override
+	public void dispose() {
+		for (int i = 0; i < retargetActions.size(); i++) {
+			RetargetAction action = (RetargetAction) retargetActions.get(i);
+			getPage().removePartListener(action);
+			action.dispose();
+		}
+		registry.dispose();
+		retargetActions = null;
+		registry = null;
+	}
+
+	protected IAction getAction(String id) {
+		return registry.getAction(id);
+	}
+
+
 	protected ActionRegistry getActionRegistry() {
 		return registry;
 	}
 
-	/**
-	 * Declares the global action keys.
-	 * 
-	 * @see org.eclipse.gef.ui.actions.ActionBarContributor#declareGlobalActionKeys()
-	 */
-	protected void declareGlobalActionKeys() {
-		addGlobalActionKey(ActionFactory.UNDO.getId());
-		addGlobalActionKey(ActionFactory.REDO.getId());
-		addGlobalActionKey(ActionFactory.COPY.getId());
-		addGlobalActionKey(ActionFactory.PASTE.getId());
-		addGlobalActionKey(ActionFactory.SELECT_ALL.getId());
-		addGlobalActionKey(ActionFactory.DELETE.getId());
+	public void init(IActionBars bars) {
+		buildActions();
+		declareGlobalActionKeys();
+		super.init(bars);
 	}
 
-	protected IAction getAction(String id) {
-		return getActionRegistry().getAction(id);
+	public void setActivePage(IEditorPart editor) {
+		activePageRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
+		connectActions();
 	}
 
 	/**
-	 * Adds the undo and redo items to the toolbar.
-	 * 
-	 * @param tbm
-	 *            The IToolBarManager
-	 * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(IToolBarManager)
+	 * {@inheritDoc}
 	 */
-	public void contributeToToolBar(IToolBarManager tbm) {
-		tbm.add(getAction(ActionFactory.UNDO.getId()));
-		tbm.add(getAction(ActionFactory.REDO.getId()));
-		tbm.add(getAction(ActionFactory.DELETE.getId()));
+	@Override
+	public void setActiveEditor(IEditorPart editor) {
+		super.setActiveEditor(editor);
+		rootEditor = editor;
+		rootEditorRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
+		connectActions();
+	}
+
+	public void contributeToToolBar(IToolBarManager toolBarManager) {
+		toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
+		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
+		toolBarManager.add(getAction(ActionFactory.DELETE.getId()));
+		toolBarManager.add(new Separator());
+		toolBarManager.add(getAction(GEFActionConstants.ZOOM_IN));
+		toolBarManager.add(getAction(GEFActionConstants.ZOOM_OUT));
+		toolBarManager.add(new ZoomComboContributionItem(getPage()));
 
 	}
 
-	/**
-	 * Sets the page to active status.
-	 * 
-	 * @param activeEditor
-	 *            The active editor
-	 */
-	public void setActivePage(IEditorPart activeEditor) {
-		if (activeEditor != null) {
-			ActionRegistry registry = (ActionRegistry) activeEditor.getAdapter(ActionRegistry.class);
-			if (registry != null) {
-				IActionBars bars = getActionBars();
-				for (int i = 0; i < globalActionKeys.size(); i++) {
-					String id = (String) globalActionKeys.get(i);
-					bars.setGlobalActionHandler(id, registry.getAction(id));
-				}
-				getActionBars().updateActionBars();
-			}
+	public void contributeToMenu(IMenuManager menubar) {
+		super.contributeToMenu(menubar);
+		MenuManager viewMenu = new MenuManager("View");
+		viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
+		viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));		
+		menubar.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);
+	}
+
+	protected void connectActions() {
+		IActionBars bars = getActionBars();
+		Iterator<String> iter = globalActionKeys.iterator();
+		while (iter.hasNext()) {
+			String id = iter.next();
+			bars.setGlobalActionHandler(id, getEditorAction(id));
+			bars.updateActionBars();
 		}
 	}
+
+	
+	protected IAction getEditorAction(String key) {
+		IAction action = null;
+
+		if (activePageRegistry != null) {
+			action = activePageRegistry.getAction(key);
+		}
+		if (action == null && rootEditorRegistry != null) {
+			action = rootEditorRegistry.getAction(key);
+		}
+		return action;
+	}	
 
 }

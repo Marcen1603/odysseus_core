@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -266,9 +265,13 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	}
 
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-		if (adapter == CommandStack.class) {
-			return graphEditor.getCurrentEditDomain().getCommandStack();
-		}
+//		if (adapter == CommandStack.class) {
+//			return graphEditor.getCurrentEditDomain().getCommandStack();
+//		}		
+		Object ob = graphEditor.getAdapter(adapter);
+		if(ob != null){
+			return ob;
+        }
 		return super.getAdapter(adapter);
 	}
 

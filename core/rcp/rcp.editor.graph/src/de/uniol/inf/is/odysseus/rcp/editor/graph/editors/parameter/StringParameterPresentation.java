@@ -15,6 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -26,6 +29,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 
 /**
  * @author DGeesen
@@ -48,11 +54,14 @@ public class StringParameterPresentation extends AbstractParameterPresentation<S
 			currentStr = getValue().toString();
 		}
 		
+		List<String> possibleValues = new ArrayList<String>(getLogicalParameterInformation().getPossibleValues());
+		
 		if (getLogicalParameterInformation().arePossibleValuesDynamic()){
-			// TODO: refresh somehow ... ;-)
+			LogicalOperatorInformation loi = Activator.getDefault().getExecutor().getOperatorInformation(getOperator().getOperatorInformation().getOperatorName(), Activator.getDefault().getCaller());
+			possibleValues = new ArrayList<>(loi.getParameter(getLogicalParameterInformation().getName()).getPossibleValues());			
 		}
 
-		if (getLogicalParameterInformation().getPossibleValues().isEmpty()) {
+		if (possibleValues.isEmpty()) {
 			text = new Text(parent, SWT.BORDER);
 			text.setText(currentStr);
 			text.addModifyListener(new ModifyListener() {
@@ -71,7 +80,7 @@ public class StringParameterPresentation extends AbstractParameterPresentation<S
 			combo = new Combo(parent, SWT.BORDER | SWT.DROP_DOWN);
 			int select = 0;
 			combo.add("");
-			for (String posVal : getLogicalParameterInformation().getPossibleValues()) {
+			for (String posVal : possibleValues) {
 				combo.add(posVal);
 				if (posVal.equals(getValue())) {
 					select = combo.getItemCount() - 1;
