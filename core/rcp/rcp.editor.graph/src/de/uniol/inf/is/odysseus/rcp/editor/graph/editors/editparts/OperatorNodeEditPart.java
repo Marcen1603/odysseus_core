@@ -66,7 +66,7 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements
 		if (v == null) {
 			v = getValue(node, "NAME");
 		}
-		if (v != null) {
+		if (v != null && v.toString().length() > 0) {
 			figure.getLabel().setText(v.toString());
 		} else {
 			figure.getLabel().setText(
