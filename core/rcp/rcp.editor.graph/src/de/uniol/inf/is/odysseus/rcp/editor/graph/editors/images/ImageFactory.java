@@ -25,30 +25,34 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
  */
 public class ImageFactory {
 
+	// TODO: Make config file
 	public static ImageDescriptor createImageForOperator(String operatorName) {
 		operatorName = operatorName.toUpperCase();
 		String file = "";
 		switch (operatorName) {
 		case "JOIN":
+		case "LEFTJOIN":
 			file = "join2.png";
 			break;
 		case "AGGREGATE":
 			file = "sum.png";
 			break;
 		case "PROJECT":
-			file = "pi.png";
+			file = "project.png";
 			break;
 		case "MAP":
 		case "STATEMAP":
-			file = "function.png";
+			file = "calculator.png";
 			break;
 		case "ACCESS":
 		case "STREAM":
+		case "SUBSCRIBE":
+			file = "arrow_right_blue.png";
+			break;
 		case "SINK":
 		case "SENDER":
 		case "SOCKETSINK":
-		case "SUBSCRIBE":
-			file = "right_grey.png";
+			file = "arrow_up_right_blue.png";
 			break;
 		case "DATABASESOURCE":
 		case "DATABASESINK":
@@ -63,7 +67,10 @@ public class ImageFactory {
 			break;
 		case "STORE":
 		case "CONTEXTENRICH":
-			file = "system_file_manager.png";
+			file = "cabinet_open.png";
+			break;
+		case "ENRICH":
+			file = "enrich.png";
 			break;
 		case "BUFFEREDFILTER":
 		case "FILTER":
@@ -86,13 +93,46 @@ public class ImageFactory {
 		case "CONVERTER":
 		case "KEYVALUETOTUPLE":
 		case "TIMESTAMPTOPAYLOAD":
-		case "TUPLETOKEYVALUE":		
+		case "TUPLETOKEYVALUE":
 			file = "convert.png";
 			break;
-		case "ASSUREHEARTBEAT":		
+		case "ASSUREHEARTBEAT":
 			file = "heart.png";
 			break;
-
+		case "WINDOW":
+			file = "window.png";
+			break;
+		case "SYNCWITHSYSTEMTIME":
+		case "TIMESHIFT":
+		case "TIMESTAMP":
+			file = "clock.png";
+			break;
+		case "TIMESTAMPORDERVALIDATE":
+			file = "timecheck.png";
+			break;
+		case "ASSUREORDER":
+			file = "sort_ascending.png";
+			break;
+		case "ROUTE":
+			file = "signpost.png";
+			break;
+		case "UNION":
+			file = "logic_or.png";
+			break;
+		case "DIFFERENCE":
+			file = "logic_not.png";
+			break;
+		case "MERGE":
+			file = "union.png";
+			break;
+		case "CHANGEDETECT":
+		case "SAMPLE":
+		case "COALESCE":
+			file = "c_clamp.png";
+			break;
+		case "REGRESSION":
+			file = "graph.png";
+			break;
 		default:
 			file = "default.png";
 			break;
