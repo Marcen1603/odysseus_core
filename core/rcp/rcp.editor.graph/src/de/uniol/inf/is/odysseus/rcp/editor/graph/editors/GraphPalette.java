@@ -30,11 +30,13 @@ import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.palette.PaletteToolbar;
 import org.eclipse.gef.palette.PanningSelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.ConnectionFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.OperatorNodeFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
 
 /**
  * @author DGeesen
@@ -64,8 +66,10 @@ public class GraphPalette {
 				return o1.getOperatorName().compareTo(o2.getOperatorName());
 			}
 		});
-		for (LogicalOperatorInformation op : ops) {
-			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(),op.getDoc(), new OperatorNodeFactory(op), null, null);
+		for (LogicalOperatorInformation op : ops) {			
+			ImageDescriptor imgBig = ImageFactory.createImageForOperator(op.getOperatorName());
+			ImageDescriptor imgSmall = ImageDescriptor.createFromImageData(imgBig.getImageData().scaledTo(16, 16));
+			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(),op.getDoc(), new OperatorNodeFactory(op), imgSmall, imgBig);
 			String category = op.getCategories()[0];
 			if(!pds.containsKey(category)){
 				pds.put(category, new PaletteDrawer(category));
