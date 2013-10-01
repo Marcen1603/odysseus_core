@@ -91,8 +91,11 @@ public class GenericOperatorBuilder extends AbstractOperatorBuilder {
 						if(!parameterAnnotation.isMap()){
 							throw new IllegalParameterException("Parameter '" + name + "' is incompatible to method '" + method.getName() + "'");
 						}
-					}
+					}					
 					parameter = new ListParameter(parameter);
+					parameter.setDoc(doc);
+					parameter.setPossibleValueMethod(possibleValueMethod);	
+					parameter.setPossibleValuesAreDynamic(possibleValuesAreDynamic);
 					parameter.setName(name);
 					parameter.setRequirement(requirement);
 				}

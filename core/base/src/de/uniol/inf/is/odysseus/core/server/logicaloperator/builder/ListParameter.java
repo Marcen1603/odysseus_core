@@ -69,7 +69,7 @@ public class ListParameter<T> extends AbstractParameter<List<T>> {
 
 	public IParameter<T> getSingleParameter() {
 		return singleParameter;
-	}
+	}	
 
 	@Override
 	protected String getPQLStringInternal() {
