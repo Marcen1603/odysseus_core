@@ -79,8 +79,7 @@ public class SARelationalProjectPO<T extends IStreamObject<? extends ITimeInterv
 		}
 		@SuppressWarnings("unchecked")
 		SARelationalProjectPO<T> rppo = (SARelationalProjectPO<T>) ipo;
-		if(this.hasSameSources(ipo) &&
-				this.restrictList.length == rppo.restrictList.length) {
+		if(this.restrictList.length == rppo.restrictList.length) {
 			for(int i = 0; i<this.restrictList.length; i++) {
 				if(this.restrictList[i] != rppo.restrictList[i]) {
 					return false;

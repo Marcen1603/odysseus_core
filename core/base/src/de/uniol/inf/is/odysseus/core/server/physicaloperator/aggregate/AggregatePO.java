@@ -224,10 +224,6 @@ abstract public class AggregatePO<M extends IMetaAttribute, R extends IStreamObj
 		@SuppressWarnings("unchecked")
 		AggregatePO<M,R, W> apo = (AggregatePO<M,R, W>) ipo;
 		
-		// Falls die Operatoren verschiedene Quellen haben, wird false zurück gegeben
-		if(!this.hasSameSources(ipo)) {
-			return false;
-		}
 		if(this.groupProcessor.getClass().toString().equals(apo.groupProcessor.getClass().toString())
 				&& this.inputSchema.compareTo(apo.inputSchema) == 0
 				&& this.internalOutputSchema.compareTo(apo.internalOutputSchema) == 0

@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
+import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.PlanIntersection;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
 
@@ -77,4 +81,25 @@ public class SimulationResult {
 	public void setPeer(PeerID peer) {
 		this.peer = peer;
 	}
+	
+	public List<PlanIntersection> getIntersections() {
+		List<PlanIntersection> result = new ArrayList<PlanIntersection>();
+		for(GraphNode gn : this.getGraph().getGraphNodesUngrouped(true)) {
+			if(gn.isSink()) {
+				for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
+					// we have found a new GraphNode, which has a subscription to an old one.
+					if(sub.getTarget().isOld()) {
+						PlanIntersection pi = new PlanIntersection(sub.getTarget().getOperatorID(),
+								gn.getOperatorID(),
+								sub.getSinkInPort(),
+								sub.getSourceOutPort(),
+								sub.getSchema());
+						result.add(pi);
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
 }

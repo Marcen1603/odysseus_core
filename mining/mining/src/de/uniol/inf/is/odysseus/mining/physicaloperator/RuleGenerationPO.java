@@ -245,12 +245,11 @@ public class RuleGenerationPO<M extends ILatencyTimeInterval> extends AbstractPi
 		if (!(ipo instanceof RuleGenerationPO)) {
 			return false;
 		}
-		if (this.hasSameSources(ipo)) {
-			RuleGenerationPO<?> po = (RuleGenerationPO<?>) ipo;
-			if (this.itemposition == po.itemposition && this.minconfidence == po.minconfidence) {
-				return true;
-			}
+		RuleGenerationPO<?> po = (RuleGenerationPO<?>) ipo;
+		if (this.itemposition == po.itemposition && this.minconfidence == po.minconfidence) {
+			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 }

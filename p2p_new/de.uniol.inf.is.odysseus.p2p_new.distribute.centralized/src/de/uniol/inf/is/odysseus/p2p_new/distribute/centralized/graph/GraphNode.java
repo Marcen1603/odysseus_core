@@ -213,4 +213,30 @@ public class GraphNode {
 		}
 		return result;
 	}
+	
+	public List<GraphNode> collectConnectedGraphNodes(List<GraphNode> result) {
+		if(result.contains(this)) {
+			return result;
+		}
+		result.add(this);
+		// collect all the sources
+		if(!this.getSubscribedToSource().isEmpty()) {
+			for(Subscription<GraphNode> sub : this.getSubscribedToSource()) {
+				// only collect GraphNodes from Nodes which weren't already visited
+				if(!result.contains(sub.getTarget())) {
+					result.addAll(sub.getTarget().collectConnectedGraphNodes(result));
+				}
+			}
+		}
+		// collect all the sinks
+		if(!this.getSinkSubscriptions().isEmpty()) {
+			for(Subscription<GraphNode> sub : this.getSinkSubscriptions()) {
+				// only collect GraphNodes from Nodes which weren't already visited
+				if(!result.contains(sub.getTarget())) {
+					result.addAll(sub.getTarget().collectConnectedGraphNodes(result));
+				}
+			}
+		}
+		return result;
+	}
 }

@@ -131,8 +131,8 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 					// Schritt 1: Entfernen von identischen Operatoren
 
-					// Operatoren sind semantisch gleiche Pipes
-					if (op1 instanceof IPipe && op1.isSemanticallyEqual(op2)) {
+					// Operatoren sind semantisch gleiche Pipes, die identische Quellen haben
+					if (op1 instanceof IPipe && ((AbstractPipe)op1).hasSameSources(op2) && op1.isSemanticallyEqual(op2)) {
 						// Der erste Operator ist nicht neu, der zweite
 						// allerdings schon und eine Umstrukturierung des alten
 						// Plans ist untersagt
@@ -176,9 +176,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 					// deren Ergebnis
 					// im Ergebnis anderer Operatoren enthalten ist
 
-					// op1 ist in op2 enthalten
+					// op1 und op2 haben identische Quellen und op1 ist in op2 enthalten
 					if (op1 instanceof AbstractPipe
 							&& op2 instanceof IPipe
+							&& ((AbstractPipe<?, ?>)op1).hasSameSources((IPipe) op2)
 							&& ((AbstractPipe<?, ?>) op1)
 									.isContainedIn((IPipe) op2)
 							&& (newOps.contains(op1) || restructuringAllowed)) {
@@ -187,9 +188,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 						// Operatoren)
 						return true;
 						// break;
-						// op2 ist in op1 enthalten
+						// op1 und op2 haben identische Quellen und op2 ist in op1 enthalten
 					} else if (op1 instanceof AbstractPipe
 							&& op2 instanceof IPipe
+							&& ((AbstractPipe<?, ?>)op2).hasSameSources((IPipe) op1)
 							&& ((AbstractPipe<?, ?>) op2)
 									.isContainedIn((IPipe) op1)
 							&& (newOps.contains(op2) || restructuringAllowed)) {

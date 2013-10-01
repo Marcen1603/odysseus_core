@@ -191,7 +191,7 @@ public class RelationalThreadedMapPO<T extends IMetaAttribute> extends AbstractP
             return false;
         }
 
-        if (this.hasSameSources(rmpo) && this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
+        if (this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
             if (this.expressions.length == rmpo.expressions.length) {
                 for (int i = 0; i < this.expressions.length; i++) {
                     if (!this.expressions[i].getExpression().equals(rmpo.expressions[i].getExpression())) {

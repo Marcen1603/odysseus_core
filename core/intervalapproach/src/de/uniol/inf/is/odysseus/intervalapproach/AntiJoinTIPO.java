@@ -365,8 +365,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (ipo instanceof AntiJoinTIPO
-				&& ((AntiJoinTIPO<?, ?>) ipo).hasSameSources(this)) {
+		if (ipo instanceof AntiJoinTIPO) {
 			AntiJoinTIPO<?, ?> ajtipo = (AntiJoinTIPO<?, ?>) ipo;
 			if (ajtipo.sa[0].getQueryPredicate().equals(
 					this.sa[0].getQueryPredicate())

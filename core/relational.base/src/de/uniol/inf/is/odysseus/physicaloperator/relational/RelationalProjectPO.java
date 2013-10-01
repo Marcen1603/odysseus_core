@@ -74,8 +74,7 @@ public class RelationalProjectPO<T extends IMetaAttribute> extends
 		}
 		@SuppressWarnings("unchecked")
 		RelationalProjectPO<T> rppo = (RelationalProjectPO<T>) ipo;
-		if(this.hasSameSources(ipo) &&
-				this.restrictList.length == rppo.restrictList.length) {
+		if(this.restrictList.length == rppo.restrictList.length) {
 			for(int i = 0; i<this.restrictList.length; i++) {
 				if(this.restrictList[i] != rppo.restrictList[i]) {
 					return false;

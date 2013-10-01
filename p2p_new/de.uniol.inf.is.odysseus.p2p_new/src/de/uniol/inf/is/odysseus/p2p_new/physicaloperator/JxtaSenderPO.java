@@ -57,6 +57,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	private long sentByteRateCounter;
 	private long sentByteRateTimestamp;
 
+	
 	public JxtaSenderPO(JxtaSenderAO ao) {
 		pipeID = convertToPipeID(ao.getPipeID());
 		useUDP = ao.isUseUDP();
@@ -377,5 +378,25 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 	private static int determineQueryID(List<IOperatorOwner> owner) {
 		return owner.get(0).getID();
+	}
+
+	/**
+	 * This constructor only serves to create dummy-instances of this operator
+	 * for optimisation-considerations of the centralised distributor, which has to
+	 * create local copies of operator-plans.
+	 * In that case, the operator only has to retain some information like the pipeID or the useUDP-setting,
+	 * but doesn't need to re-create the actual jxta-connections
+	 */
+	public JxtaSenderPO(String pipeIDString, boolean useUDP) {
+		this.useUDP = useUDP;
+		this.pipeID = convertToPipeID(pipeIDString);
+	}
+	
+	public PipeID getPipeID() {
+		return pipeID;
+	}
+
+	public boolean isUseUDP() {
+		return useUDP;
 	}
 }

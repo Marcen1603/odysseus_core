@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.Ph
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
@@ -79,7 +80,14 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) a;
 			// this node is a normal peer and received a physical query-part to place within the local plan
 			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
-				//this.getExecutor().addQuery(physicalPlan, user, queryBuildConfigurationName)
+
+				// Add the operators under the ID they were sent, because this is how the master knows them.
+				// Since master and peer hold their own objects, we have to keep things consistent
+				// and synchronize their references by the communicated IDs.
+				Map<Integer, IPhysicalOperator> newOperators = adv.getQueryPartOperatorObjects();
+				CentralizedDistributor.getInstance().addOperators(localID, newOperators);
+				
+				//this.getExecutor().addQuery(newOperators, user, queryBuildConfigurationName)
 			}	
 		}
 	}
@@ -90,16 +98,31 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setMasterPeerID(this.masterID);
 		adv.setPeerID(this.localID);
 		Collection<IPhysicalQuery> queries = this.getExecutor().getExecutionPlan().getQueries();
-		Map<Integer,IPhysicalOperator> operators = new HashMap<Integer,IPhysicalOperator>();
-		for(IPhysicalQuery q : queries) {
-			for(IPhysicalOperator o : q.getAllOperators()) {
-				operators.put(o.hashCode(), o);
+		
+		Map<Integer,IPhysicalOperator> operators = CentralizedDistributor.getInstance().getOperatorPlans().get(this.localID);
+		// if the local plan isn't saved already, retrieve it and store it
+		if(operators == null) {
+			operators = new HashMap<Integer,IPhysicalOperator>();
+			for(IPhysicalQuery q : queries) {
+				for(IPhysicalOperator o : q.getAllOperators()) {
+					operators.put(o.hashCode(), o);
+				}
 			}
+			CentralizedDistributor.getInstance().setPhysicalPlan(this.localID, operators);
 		}
 		adv.setOpObjects(operators);
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
 		
 		LOG.debug("Sent physicalQueryPlan of Peer " + this.localID + " to MasterPeer " + this.masterID);
+	}
+	
+	public void sendPhysicalPlanToPeer(SimulationResult r) {
+		final PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPartAdvertisement.getAdvertisementType());
+		adv.setPeerID(r.getPeer());
+		adv.setMasterPeerID(this.masterID);
+		adv.setQueryPartOperatorObjects(r.getPlan(true));
+		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
+		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
 	}
 
 

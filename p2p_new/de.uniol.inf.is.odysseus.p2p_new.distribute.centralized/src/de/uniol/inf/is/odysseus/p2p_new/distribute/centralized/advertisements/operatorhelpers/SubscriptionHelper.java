@@ -65,7 +65,7 @@ public class SubscriptionHelper {
 				result.appendChild(result.createElement(SUBSCRIPTION_SCHEMA, SchemaHelper.createOutputSchemaStatement(sub.getSchema(), mimeType)));
 			}
 		}
-		return null;
+		return result;
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked" })
@@ -94,6 +94,10 @@ public class SubscriptionHelper {
 				} else if(subDetailElem.getName().equals(SUBSCRIPTION_SCHEMA)) {
 					schema = SchemaHelper.createSchemaFromStatement(subDetailElem);
 				}
+			}
+			// continue with next subscription, if the origin or the target can't be found in the current set of operators
+			if(newOperators.get(subOrigin) == null || newOperators.get(subTarget) == null) {
+				continue;
 			}
 			// It's a sink subscription, meaning that the source of the subscription is the source and the target the sink
 			if(elem.getName().equals(SINKSUBSCRIPTIONS_TAG)) {

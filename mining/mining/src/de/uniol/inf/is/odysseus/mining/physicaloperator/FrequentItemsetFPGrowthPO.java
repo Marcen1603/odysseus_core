@@ -281,13 +281,12 @@ public class FrequentItemsetFPGrowthPO<M extends ITimeInterval> extends Abstract
 		if (!(ipo instanceof FrequentItemsetFPGrowthPO)) {
 			return false;
 		}
-		if (this.hasSameSources(ipo)) {
-			FrequentItemsetFPGrowthPO<?> po = (FrequentItemsetFPGrowthPO<?>) ipo;
-			if (this.maxTransactions == po.maxTransactions && this.minsupport == po.minsupport) {
-				return true;
-			}
+		FrequentItemsetFPGrowthPO<?> po = (FrequentItemsetFPGrowthPO<?>) ipo;
+		if (this.maxTransactions == po.maxTransactions && this.minsupport == po.minsupport) {
+			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	/**

@@ -9,12 +9,25 @@ import java.util.Map.Entry;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class Graph {
 	Map<String,List<GraphNode>> nodesGroupedByOpType = new HashMap<String, List<GraphNode>>();
 	
+	
+	public Graph() {
+
+	}
+	
+	/**
+	 * 
+	 * @param oldPlan running operators, which are considered old
+	 * @param newPlan operators of a new query, not yet running and thus considered to be new
+	 */
 	public Graph(Map<Integer, IPhysicalOperator> oldPlan, Map<Integer, IPhysicalOperator> newPlan) {
 		if(oldPlan == null && newPlan == null) {
 			return;
@@ -43,7 +56,11 @@ public class Graph {
 		}
 		this.createConnections(nodesGroupedByOpType);
 	}
-	
+
+	/**
+	 * returns a new Graph based on the given one but deep-copies all the GraphNodes and their associations
+	 * @param graph the graph to copy
+	 */
 	public Graph(Graph graph) {
 		for(String opType : graph.getNodesGroupedByOpType().keySet()) {
 			List<GraphNode> oldGraphNodes = graph.getNodesGroupedByOpType().get(opType);
@@ -84,7 +101,11 @@ public class Graph {
 		}
 	}
 	
-	// adds 
+	/**
+	 *  adds a new plan to the current graph
+	 *  @Param opsAreNew specifies whether or not the nodes based on the provided operators should be marked as new or old
+	 *  @return this Graph object including the added GraphNodes
+	 */
 	public Graph addPlan(Map<Integer,IPhysicalOperator> ops, boolean opsAreNew) {
 		List<GraphNode> temp = new ArrayList<GraphNode>();
 		for(Entry<Integer, IPhysicalOperator> e : ops.entrySet()) {
@@ -103,7 +124,7 @@ public class Graph {
 		}
 		// only create the connections of the new nodes
 		this.createConnections(tempMap);
-		// then merge the results with this graph, and we should have new set of interconnected graphnodes
+		// then merge the results with this Graph, and we should have new set of interconnected GraphNodes
 		for(String s : tempMap.keySet()) {
 			if(this.nodesGroupedByOpType.containsKey(s)) {
 				this.nodesGroupedByOpType.get(s).addAll(tempMap.get(s));
@@ -169,6 +190,12 @@ public class Graph {
 		return new Graph(this);
 	}
 
+	
+	/**
+	 * This method removes a node from the Graph, but doesn't touch the GraphNode-object or its associations with other GraphNodes
+	 * Its subscriptions have thus to be handled separately!
+	 * @param gn the GraphNode to delete from the Graph
+	 */
 	public void removeNode(GraphNode gn) {
 		String opType = gn.getOperatorType();
 		if(this.nodesGroupedByOpType.keySet().contains(opType)) {
@@ -179,5 +206,102 @@ public class Graph {
 				this.nodesGroupedByOpType.remove(opType);
 			}
 		}
+	}
+
+	/**
+	 * add an additonal node and specify another node in this graph which the new one should connect to
+	 * @param node the GraphNode you want to add
+	 * @param nodeToBeConnected the ID of the node the new GraphNode is supposed to be connected to
+	 * @param connectNodeAsSource true, if the new node is supposed to be connected to the nodeToBeConnected as source,
+	 * false if it should connect as a sink
+	 */
+	public void addAdditionalNode(GraphNode node, int nodeToBeConnected, boolean connectNodeAsSource, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		GraphNode other = this.getGraphNode(nodeToBeConnected);
+		if(other == null) {
+			System.out.println("Can't connect node " + node.getOperatorID() + ", because the target-node " + nodeToBeConnected + " doesn't exist in the graph.");			
+			return;
+		}
+		if(this.getNodesGroupedByOpType().containsKey(node.getOperatorType())) {
+			this.getNodesGroupedByOpType().get(node.getOperatorType()).add(node);
+		} else {
+			List<GraphNode> l = new ArrayList<GraphNode>();
+			l.add(node);
+			this.getNodesGroupedByOpType().put(node.getOperatorType(),l);
+		}
+		if(connectNodeAsSource) {
+			other.subscribeToSource(node, sinkInPort, sourceOutPort, schema);
+		} else {
+			other.subscribeSink(node, sinkInPort, sourceOutPort, schema);
+		}
+	}
+	public void addNode(GraphNode gn) {
+		String type = gn.getOperatorType();
+		if(this.nodesGroupedByOpType.containsKey(type)) {
+			// only add, if it isn't in the Graph already
+			if(this.getGraphNode(gn.getOperatorID()) == null) {
+				nodesGroupedByOpType.get(type).add(gn);
+			}
+		} else {
+			List<GraphNode> l = new ArrayList<GraphNode>();
+			l.add(gn);
+			nodesGroupedByOpType.put(type,l);
+		}
+	}
+
+	/** This method will set the subscriptions of the underlying physical operator exactly as the
+	 * layout of this Graph specifies. The old connections will be wiped beforehand, this should only be
+	 * called when an optimised query will be made "ready for shipping", so right before the generation of a
+	 * PhysicalQueryPartAdvertisement.
+	 */ 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void reconnectAssociatedOperatorsAccordingToGraphLayout() {
+		// unsubscribe all Operators from their sources/sinks
+		for(IPhysicalOperator o : this.getAllOperatorsInvolved()) {
+			if(o.isSink()) {
+				((ISink<?>)o).unsubscribeFromAllSources();
+			}
+			if(o.isSource()) {
+				((ISource<?>)o).unsubscribeFromAllSinks();
+			}
+		}
+		// connect them according to this graph's connections
+		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
+			// Sink Subscriptions
+			if(gn.isSource()) {
+				for(Subscription<GraphNode> sub : gn.getSinkSubscriptions()) {
+					GraphNode sinkNode = sub.getTarget();
+					ISink sink = (ISink)sinkNode.getOperator();
+					((ISource<?>)gn.getOperator()).subscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				}
+			}
+			// Source Subscriptions
+			if(gn.isSink()) {
+				for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
+					GraphNode sourceNode = sub.getTarget();
+					ISource source = (ISource)sourceNode.getOperator();
+					((ISink<?>)gn.getOperator()).subscribeToSource(source, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				}
+			}
+		}
+	}
+	
+	public List<IPhysicalOperator> getAllOperatorsInvolved() {
+		List<IPhysicalOperator> result = new ArrayList<IPhysicalOperator>();
+		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
+			result.add(gn.getOperator());
+		}
+		return result;
+	}
+	
+	public List<GraphNode> getGraphNodesUngrouped(boolean onlyNew) {
+		List<GraphNode> result = new ArrayList<GraphNode>();
+		for(String s : this.getNodesGroupedByOpType().keySet()) {
+			for(GraphNode gn : this.getNodesGroupedByOpType().get(s)) {
+				if(!onlyNew || !gn.isOld()) {
+					result.add(gn);
+				}
+			}
+		}
+		return result;
 	}
 }

@@ -86,17 +86,13 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		return new TimeStampOrderValidatorTIPO<K, T>(this);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof TimeStampOrderValidatorTIPO)) {
 			return false;
-		}
-		TimeStampOrderValidatorTIPO bp = (TimeStampOrderValidatorTIPO) ipo;
-		if (this.hasSameSources(bp)) {
+		} else {
 			return true;
 		}
-		return false;
 	}
 
 }

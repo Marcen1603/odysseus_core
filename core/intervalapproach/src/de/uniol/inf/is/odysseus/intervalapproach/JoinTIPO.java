@@ -302,10 +302,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ipo;
 
-		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck
-		// gegeben
-		if (!this.hasSameSources(jtipo)
-				|| !dataMerge.getClass().toString()
+		if (!dataMerge.getClass().toString()
 						.equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString()
 						.equals(jtipo.metadataMerge.getClass().toString())
@@ -330,10 +327,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ip;
 
-		// Falls die Operatoren verschiedene Quellen haben, wird false zur�ck
-		// gegeben
-		if (!this.hasSameSources(jtipo)
-				|| !dataMerge.getClass().toString()
+		if (!dataMerge.getClass().toString()
 						.equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString()
 						.equals(jtipo.metadataMerge.getClass().toString())

@@ -34,7 +34,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 	private static final String ID_TAG = "id";
 	private static final String OPERATORS_TAG = "operators";
 	private static final String PEER_ID_TAG = "peerid";
-	private static final String MASTER_PEER_ID = "masterpeerid";
+	private static final String MASTER_PEER_ID_TAG = "masterpeerid";
 	private static final String SUBSCRIPTIONS_TAG = "subscriptions";
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 	
@@ -56,10 +56,9 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			LOG.debug("can't instantiate from null");
 		}
 		final Enumeration<?> elements = root.getChildren();
-
+		TextElement<?> subscriptionElement = null;
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
-			TextElement<?> subscriptionElement = null;
 			if (elem.getName().equals(ID_TAG)) {
 				this.id = convertToID(elem.getTextValue());
 			} else if (elem.getName().equals(OPERATORS_TAG)) {
@@ -69,12 +68,12 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			} else if (elem.getName().equals(SUBSCRIPTIONS_TAG)) {
 				// it's essential to process the subscriptions last
 				subscriptionElement = elem;
-			} else if (elem.getName().equals(MASTER_PEER_ID)) {
+			} else if (elem.getName().equals(MASTER_PEER_ID_TAG)) {
 				this.setMasterPeerID((PeerID)convertToID(elem.getTextValue()));
 			}
-			if(subscriptionElement != null) {
-				handleSubscriptionsStatement(subscriptionElement);
-			}
+		}
+		if(subscriptionElement != null) {
+			handleSubscriptionsStatement(subscriptionElement);
 		}
 	}
 	
@@ -101,7 +100,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			String operatorType = elem.getName();
 			IPhysicalOperatorHelper<?> helper = HelperProvider.getInstance().getPhysicalOperatorHelper(operatorType);
 			if(helper != null) {
-				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((StructuredDocument<? extends TextElement<?>>)elem);
+				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((StructuredDocument<? extends TextElement<?>>)elem, false);
 				opObjects.put(e.getKey(),e.getValue());
 			}
 		}
@@ -124,6 +123,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 		generateOperatorsDocument(asMimeType);
 		doc.appendChild(doc.createElement(OPERATORS_TAG, getOperators()));
 		doc.appendChild(doc.createElement(PEER_ID_TAG, peerID.toString()));
+		doc.appendChild(doc.createElement(MASTER_PEER_ID_TAG, masterPeerID.toString()));
 		generateSubscriptionsDocument(asMimeType);
 		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptions()));
 		return doc;
@@ -171,7 +171,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			IPhysicalOperatorHelper<?> gen = HelperProvider.getInstance().getPhysicalOperatorHelper(o);
 			if(gen != null) {
 				// use the class of the operator as a tag, in order to get the right Helper on the other side to re-assemble it
-				appendElement(doc,gen.getOperatorClass().toString(),gen.generateStatement(o,asMimeType));
+				appendElement(doc,gen.getOperatorClass().toString(),gen.generateStatement(o,asMimeType,false));
 			}
 		}
 		setOperators(doc);

@@ -313,8 +313,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 			return false;
 		}
 		ExistencePO epo = (ExistencePO) ipo;
-		if (this.hasSameSources(epo)
-				&& this.joinPredicate.equals(epo.joinPredicate)) {
+		if (this.joinPredicate.equals(epo.joinPredicate)) {
 			return true;
 		}
 		return false;

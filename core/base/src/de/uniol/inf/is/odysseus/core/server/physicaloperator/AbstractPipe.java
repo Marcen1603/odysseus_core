@@ -485,9 +485,6 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof IPipe))
 			return false;
-		if (!this.hasSameSources(ipo)) {
-			return false;
-		}
 		return process_isSemanticallyEqual(ipo);
 	}
 	

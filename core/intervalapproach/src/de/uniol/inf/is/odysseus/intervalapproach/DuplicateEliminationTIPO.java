@@ -152,12 +152,9 @@ public class DuplicateEliminationTIPO<T extends IStreamObject<? extends ITimeInt
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof DuplicateEliminationTIPO)) {
 			return false;
-		}
-		DuplicateEliminationTIPO<?> bpp = (DuplicateEliminationTIPO<?>) ipo;
-		if(this.hasSameSources(bpp)) {
+		} else {
 			return true;
 		}
-		return false;
 	}
 
 }

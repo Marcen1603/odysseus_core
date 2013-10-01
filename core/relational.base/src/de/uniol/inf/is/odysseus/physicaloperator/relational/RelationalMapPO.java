@@ -172,7 +172,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 			return false;
 		}
 		
-		if (this.hasSameSources(rmpo) && this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
+		if (this.inputSchema.compareTo(rmpo.inputSchema) == 0) {
 			if (this.expressions.length == rmpo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
 					if (!this.expressions[i].equals(rmpo.expressions[i])) {

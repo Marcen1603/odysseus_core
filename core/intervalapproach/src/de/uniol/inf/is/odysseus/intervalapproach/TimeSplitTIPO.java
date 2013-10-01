@@ -64,8 +64,7 @@ public class TimeSplitTIPO<T extends IStreamObject<? extends ITimeInterval>>
 			return false;
 		}
 		TimeSplitTIPO<T> tstipo = (TimeSplitTIPO) ipo;
-		if(this.hasSameSources(tstipo) &&
-				this.size == tstipo.size) {
+		if(this.size == tstipo.size) {
 			return true;
 		}
 		return false;

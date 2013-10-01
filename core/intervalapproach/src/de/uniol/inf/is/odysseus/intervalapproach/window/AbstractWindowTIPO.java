@@ -97,11 +97,6 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		// System.out.println(ipo.getClass().toString());
 		AbstractWindowTIPO<T> awtipo = (AbstractWindowTIPO<T>) ipo;
 
-		// Falls die Operatoren verschiedene Quellen haben, wird false zurück
-		// gegeben
-		if (!this.hasSameSources(awtipo)) {
-			return false;
-		}
 		// System.out.println("SAME WINDOWS - Step 2");
 		if (this.windowSize == awtipo.windowSize
 				&& this.windowAdvance == awtipo.windowAdvance

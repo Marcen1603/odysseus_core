@@ -21,12 +21,14 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 	private String OPERATOR_CONTENT_TAG = "operator_content";
 	private String OUTPUTSCHEMATA_TAG = "outputSchemata";
 	
-	private Map<Integer,SDFSchema> schemata = new TreeMap<Integer,SDFSchema>();
+	protected Map<Integer,SDFSchema> schemata = new TreeMap<Integer,SDFSchema>();
+	protected boolean jxtaStartup = true;
 	private int operatorId = -1;
 
 	@Override@SuppressWarnings({ "rawtypes", "unchecked" })
 	public StructuredDocument<?> generateStatement(IPhysicalOperator o,
-			MimeMediaType mimeType) {
+			MimeMediaType mimeType, boolean startupJxtaConnections) {
+		this.jxtaStartup = startupJxtaConnections;
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		// We need some way of distinguishing the operators, just for the purpose of reconnecting them later. The hashcode will do.
 		result.appendChild(result.createElement(OPERATOR_ID_TAG, o.hashCode()));
@@ -44,7 +46,8 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 	abstract StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType);
 	
 	@Override
-	public SimpleImmutableEntry<Integer,T> createOperatorFromStatement(StructuredDocument<? extends TextElement<?>> doc) {
+	public SimpleImmutableEntry<Integer,T> createOperatorFromStatement(StructuredDocument<? extends TextElement<?>> doc, boolean startupJxtaConnections) {
+		this.jxtaStartup = startupJxtaConnections;
 		Enumeration<? extends TextElement<?>> elems = doc.getChildren();
 		TextElement<?> contentElement = null;
 		while(elems.hasMoreElements()) {

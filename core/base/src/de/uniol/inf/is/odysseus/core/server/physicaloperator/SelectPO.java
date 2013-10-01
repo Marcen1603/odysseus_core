@@ -125,8 +125,6 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 		}
 		@SuppressWarnings("unchecked")
 		SelectPO<T> spo = (SelectPO<T>) ipo;
-		// Different sources
-		if(!this.hasSameSources(spo)) return false;
 		// Predicates match
 		if(this.predicate.equals(spo.getPredicate())
 				|| (this.predicate.isContainedIn(spo.getPredicate()) && spo.getPredicate().isContainedIn(this.predicate))) {
@@ -139,7 +137,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 	@Override
 	@SuppressWarnings({"rawtypes"})
 	public boolean isContainedIn(IPipe<T,T> ip) {
-		if(!(ip instanceof SelectPO) || !this.hasSameSources(ip)) {
+		if(!(ip instanceof SelectPO)) {
 			return false;
 		}
 		// Sonderfall, dass das Pr�dikat des anderen SelectPOs ein OrPredicate ist und das Pr�dikat von diesem SelectPO nicht.

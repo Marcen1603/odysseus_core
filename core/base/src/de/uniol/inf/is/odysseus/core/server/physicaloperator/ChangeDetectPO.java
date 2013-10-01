@@ -136,8 +136,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		}
 		@SuppressWarnings("unchecked")
 		ChangeDetectPO<R> rppo = (ChangeDetectPO<R>) ipo;
-		if (this.hasSameSources(ipo)
-				&& this.deliverFirstElement == rppo.deliverFirstElement
+		if (this.deliverFirstElement == rppo.deliverFirstElement
 				&& this.heartbeatGenerationStrategy
 						.equals(rppo.heartbeatGenerationStrategy) &&
 						((this.groupProcessor != null && this.groupProcessor.equals(rppo.groupProcessor)) || 

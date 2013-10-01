@@ -193,7 +193,7 @@ public class BufferPO<T extends IStreamObject<?>> extends
 			return false;
 		}
 		BufferPO bp = (BufferPO) ipo;
-		if (this.hasSameSources(bp) && this.buffername.equals(bp.buffername)) {
+		if (this.buffername.equals(bp.buffername)) {
 			return true;
 		}
 		return false;

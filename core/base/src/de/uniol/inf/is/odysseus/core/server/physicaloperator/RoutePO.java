@@ -125,8 +125,7 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 			return false;
 		}
 		RoutePO spo = (RoutePO) ipo;
-		if (this.hasSameSources(spo)
-				&& this.predicates.size() == spo.predicates.size()) {
+		if (this.predicates.size() == spo.predicates.size()) {
 			for (int i = 0; i < this.predicates.size(); i++) {
 				if (!this.predicates.get(i).equals(spo.predicates.get(i))) {
 					return false;

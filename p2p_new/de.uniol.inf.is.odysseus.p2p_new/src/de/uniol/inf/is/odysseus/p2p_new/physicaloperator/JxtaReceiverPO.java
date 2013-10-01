@@ -66,6 +66,7 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private JxtaConnectionType connectionType = JxtaConnectionType.NONE;
 	private String connectedPeerName = "<not set>";
 	
+	
 	public JxtaReceiverPO(JxtaReceiverAO ao) {
 		SDFSchema schema = ao.getOutputSchema().clone();
 		setOutputSchema(schema);
@@ -431,5 +432,22 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 		}
 
 		return "false";
+	}
+	
+	/**
+	 * This constructor only serves to create dummy-instances of this operator
+	 * for optimisation-considerations of the centralised distributor, which has to
+	 * create local copies of operator-plans.
+	 * In that case, the operator only has to retain some information like the pipeID or the schema,
+	 * but doesn't need to re-create the actual jxta-connections
+	 */
+	public JxtaReceiverPO(String pipeIDString, SDFSchema schema) {
+		this.setOutputSchema(schema);
+		this.pipeID = convertToPipeID(pipeIDString);
+		this.pipeAdvertisement = null;
+	}
+
+	public PipeID getPipeID() {
+		return pipeID;
 	}
 }

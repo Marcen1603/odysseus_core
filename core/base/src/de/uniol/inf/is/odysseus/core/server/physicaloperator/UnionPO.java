@@ -77,16 +77,13 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> impl
 	}
 	
 	@Override
-	@SuppressWarnings({"rawtypes"})
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		if(!(ipo instanceof UnionPO)) {
 			return false;
-		}
-		UnionPO<?> upo = (UnionPO) ipo;
-		if(this.hasSameSources(upo)) {
+		} else {
 			return true;
 		}
-		return false;
+
 	}
 	
 	@Override

@@ -61,8 +61,9 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof CachePO)){
 			return false;
+		} else {
+			return true;
 		}
-		return this.hasSameSources(ipo);
 	}
 
 }
