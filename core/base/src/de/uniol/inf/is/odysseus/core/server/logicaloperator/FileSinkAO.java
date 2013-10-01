@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -78,7 +79,7 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		this.textSeperator = fileSinkAO.textSeperator;
 	}
 
-	@Parameter(name = "FILE", type = StringParameter.class)
+	@Parameter(name = "FILENAME", type = FileNameParameter.class)
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}

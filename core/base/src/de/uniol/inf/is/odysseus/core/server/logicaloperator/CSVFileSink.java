@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandl
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 
@@ -34,7 +35,7 @@ public class CSVFileSink extends AbstractSenderAO {
 		return new CSVFileSink(this);
 	}
 	
-	@Parameter(type = StringParameter.class, name = "filename", optional = false)
+	@Parameter(type = FileNameParameter.class, name = "filename", optional = false)
 	public void setFilename(String filename) {
 		addOption(FileHandler.FILENAME,filename);
 	}
