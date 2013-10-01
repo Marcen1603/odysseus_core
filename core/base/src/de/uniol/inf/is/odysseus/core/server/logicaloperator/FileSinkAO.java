@@ -155,12 +155,5 @@ public class FileSinkAO extends AbstractLogicalOperator {
 	public Character getTextSeperator() {
 		return textSeperator;
 	}
-	
-	@Override
-    public boolean needsLocalResources() {
-    	
-    	return true;
-    	
-    }
 
 }

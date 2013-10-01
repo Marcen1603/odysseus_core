@@ -816,11 +816,4 @@ public abstract class AbstractLogicalOperator implements Serializable,
 		return copy;
 	}
 
-	@Override
-	public boolean needsLocalResources() {
-
-		return false;
-
-	}
-
 }

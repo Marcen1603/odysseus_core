@@ -256,11 +256,6 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public boolean needsLocalResources() {
-		return true;
-	}
-
-	@Override
 	public boolean isValid() {
 		if (!WrapperRegistry.containsWrapper(this.wrapper)) {
 			this.addError(new IllegalArgumentException("Wrapper "
