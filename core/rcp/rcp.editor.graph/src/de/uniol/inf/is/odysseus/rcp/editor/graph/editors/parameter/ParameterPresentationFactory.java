@@ -73,6 +73,9 @@ public class ParameterPresentationFactory {
 		if (parameterClass.getName().endsWith("builder.OptionParameter")) {
 			return new OptionParameterPresentation();
 		}
+		if (parameterClass.getName().endsWith("builder.FileNameParameter")) {
+			return new FilenameParameterPresentation();
+		}
 		return new StringParameterPresentation();
 	}
 
