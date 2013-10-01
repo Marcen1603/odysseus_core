@@ -107,11 +107,15 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 				// add SLA conformance operator to plan for monitoring
 				AbstractDynamicPriorityPlanScheduling.extendedQueries.add(query);
 				SLA sla = (SLA) query.getParameter(SLA.class.getName());
+				if (sla == null){
+					throw new IllegalArgumentException("No SLA set!");
+				}
 				if (BillingHelper.useBillingModel())
 					if (BillingHelper.getBillingManager() instanceof DatabaseBillingManager)
 						((DatabaseBillingManager)BillingHelper.getBillingManager()).addQueryAndUserToDatabase(query);
 				
 				List<IPhysicalOperator> opertors = new ArrayList<>();
+
 				if (sla.getMetric() instanceof Latency || sla.getMetric() instanceof UpdateRateSink) 
 					opertors = query.getRoots();
 				else if (sla.getMetric() instanceof UpdateRateSource)
