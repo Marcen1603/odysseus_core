@@ -292,18 +292,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			Collection<ILogicalOperator> operators = Lists.newArrayList();
 			RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 			
-			// Use destination name to identify all operators belonging to that copy.
-			// Needed for identification after fragmentation.
-			for(ILogicalOperator operator : operators) {
-				
-				if(operator.getDestinationName() == null || !operator.getDestinationName().equalsIgnoreCase(DistributionHelper.LOCAL_DESTINATION_NAME))
-					operator.setDestinationName(String.valueOf(copyNo));
-				
-			}
-			
 			queryCopies.add(queryCopy);
 			logicalPlans.add(queryCopy.getLogicalPlan());
-			operatorsToCopyNoMap.put(copyNo, new ArrayList<ILogicalOperator>());			
+			operatorsToCopyNoMap.put(copyNo, (List<ILogicalOperator>) operators);		
 			
 		}
 		
@@ -344,11 +335,25 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// Map each operator to its query
 		for(ILogicalOperator operator : operators) {
 			
-			if(operator.getDestinationName().equals(FragmentationHelper.FRAGMENTATION_DESTINATION_NAME))
+			// Operators, which destination may have changed, need to be updated in the CopyNo->Operators - Map.
+			if(operator.getDestinationName() == null || !(
+					operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.FRAGMENTATION_DESTINATION_NAME) ||
+					operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.REUNION_DESTINATION_NAME)))
+				continue;
+			
+			// Removed changed operator from map
+			for(int copyNo : operatorsToCopyNoMap.keySet()) {
+				
+				if(operatorsToCopyNoMap.get(copyNo).contains(operator))
+					operatorsToCopyNoMap.get(copyNo).remove(operator);
+				
+			}
+			
+			// Add changed operator to map
+			if(operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.FRAGMENTATION_DESTINATION_NAME))
 				operatorsToCopyNoMap.get(logicalPlans.size()).add(operator);
-			else if(operator.getDestinationName().equals(FragmentationHelper.REUNION_DESTINATION_NAME))
+			else if(operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.REUNION_DESTINATION_NAME))
 				operatorsToCopyNoMap.get(logicalPlans.size() + 1).add(operator);
-			else operatorsToCopyNoMap.get(Integer.parseInt(operator.getDestinationName())).add(operator);
 			
 		}
 		
@@ -389,7 +394,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				// The current operator
 				ILogicalOperator operator = operatorsIter.next();
 				
-				if(operator.getDestinationName().equalsIgnoreCase(DistributionHelper.LOCAL_DESTINATION_NAME)) {
+				if(operator.getDestinationName() != null && 
+						operator.getDestinationName().equalsIgnoreCase(DistributionHelper.LOCAL_DESTINATION_NAME)) {
 					
 					// Split
 					List<ILogicalOperator> operators = Lists.newArrayList();
