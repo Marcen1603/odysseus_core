@@ -76,6 +76,9 @@ public class ParameterPresentationFactory {
 		if (parameterClass.getName().endsWith("builder.FileNameParameter")) {
 			return new FilenameParameterPresentation();
 		}
+		if (parameterClass.getName().endsWith("builder.PredicateParameter")) {
+			return new PredicateParameterPresentation();
+		}				
 		return new StringParameterPresentation();
 	}
 
