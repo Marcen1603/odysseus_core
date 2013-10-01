@@ -364,4 +364,9 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return newSchema;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString()+" "+type;
+	}
+	
 }
