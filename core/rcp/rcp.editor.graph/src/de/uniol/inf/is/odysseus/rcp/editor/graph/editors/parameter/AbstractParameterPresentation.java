@@ -17,13 +17,11 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
@@ -38,7 +36,7 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	private LogicalParameterInformation logicalParameterInformation;
 	private OperatorNode operator;
 
-	protected void setValue(V value) {
+	public void setValue(V value) {
 		Object oldValue = this.value;
 		this.value = value;
 		if (this.value == null) {

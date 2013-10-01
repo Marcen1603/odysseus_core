@@ -37,8 +37,7 @@ import org.w3c.dom.NodeList;
  * @author DGeesen
  * 
  */
-public class ListParameterPresentation<V> extends
-		AbstractParameterPresentation<List<IParameterPresentation<V>>> {
+public class ListParameterPresentation<V> extends AbstractParameterPresentation<List<IParameterPresentation<V>>> {
 
 	private Button editButton;
 	private Text currentValueText;
@@ -46,10 +45,7 @@ public class ListParameterPresentation<V> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
-	 * IParameterPresentation
-	 * #getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator
-	 * .LogicalParameterInformation, java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter. IParameterPresentation #getPQLString(de.uniol.inf.is.odysseus.core.logicaloperator .LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
 	public String getPQLString() {
@@ -68,12 +64,7 @@ public class ListParameterPresentation<V> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
-	 * AbstractParameterPresentation
-	 * #createParameterWidget(org.eclipse.swt.widgets.Composite,
-	 * de.uniol.inf.is.
-	 * odysseus.core.logicaloperator.LogicalParameterInformation,
-	 * java.lang.Object)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter. AbstractParameterPresentation #createParameterWidget(org.eclipse.swt.widgets.Composite, de.uniol.inf.is. odysseus.core.logicaloperator.LogicalParameterInformation, java.lang.Object)
 	 */
 	@Override
 	protected Control createParameterWidget(final Composite parent) {
@@ -101,14 +92,10 @@ public class ListParameterPresentation<V> extends
 				if (getValue() != null) {
 					childs = getValue();
 				}
-				List<IParameterPresentation<V>> copiedChilds = new ArrayList<>(
-						childs);
-				ListParameterDialog<V> dialog = new ListParameterDialog<V>(
-						parent.getShell(), getLogicalParameterInformation(),
-						getOperator(), copiedChilds);
+				List<IParameterPresentation<V>> copiedChilds = new ArrayList<>(childs);
+				ListParameterDialog<V> dialog = new ListParameterDialog<V>(parent.getShell(), getLogicalParameterInformation(), getOperator(), copiedChilds);
 				if (dialog.open() == TitleAreaDialog.OK) {
-					List<IParameterPresentation<V>> result = dialog
-							.getParameters();
+					List<IParameterPresentation<V>> result = dialog.getParameters();
 					resetValues(result);
 				}
 			}
@@ -118,14 +105,14 @@ public class ListParameterPresentation<V> extends
 	}
 
 	private void resetValues(List<IParameterPresentation<V>> result) {
-		currentValueText.setText(getPQLString());
+		setValue(result);
+		currentValueText.setText(getPQLString());		
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
-	 * IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter. IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
 	 */
 	@Override
 	public void loadValueFromXML(Node parent) {
@@ -134,10 +121,7 @@ public class ListParameterPresentation<V> extends
 		for (int i = 0; i < list.getLength(); i++) {
 			if (list.item(i) instanceof Element) {
 				Element itemElement = (Element) list.item(i);
-				IParameterPresentation<V> parameterPresentation = ParameterPresentationFactory
-						.createPresentationByClass(
-								getLogicalParameterInformation(),
-								getOperator(), (V) null);
+				IParameterPresentation<V> parameterPresentation = ParameterPresentationFactory.createPresentationByClass(getLogicalParameterInformation(), getOperator(), (V) null);
 				parameterPresentation.loadValueFromXML(itemElement);
 				values.add(parameterPresentation);
 			}
@@ -149,9 +133,7 @@ public class ListParameterPresentation<V> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
-	 * IParameterPresentation#saveValueToXML(org.w3c.dom.Node,
-	 * org.w3c.dom.Document)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter. IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
 	 */
 	@Override
 	public void saveValueToXML(Node parent, Document builder) {
@@ -168,8 +150,7 @@ public class ListParameterPresentation<V> extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
-	 * AbstractParameterPresentation#hasValidValue()
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter. AbstractParameterPresentation#hasValidValue()
 	 */
 	@Override
 	public boolean hasValidValue() {

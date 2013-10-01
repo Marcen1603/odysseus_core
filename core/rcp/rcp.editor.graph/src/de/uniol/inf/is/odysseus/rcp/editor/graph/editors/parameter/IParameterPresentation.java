@@ -32,14 +32,19 @@ public interface IParameterPresentation<V>{
 	public void removeParameterValueChangedListener(IParameterValueChangeListener<V> listener);
 	public void init(LogicalParameterInformation parameterInformation, OperatorNode operator, V currentValue);
 	public Control createWidget(Composite parent);
+	
 	public V getValue();
+	public void setValue(V name);
 	public boolean hasValidValue();
+	
 	public String getPQLString();
 	public void setLogicalParameterInformation(LogicalParameterInformation lpi);
 	public LogicalParameterInformation getLogicalParameterInformation();
+	
 	public Control getControl();
 	public Control createHeaderWidget(Composite parent);
 	
 	public void saveValueToXML(Node parent, Document builder);
 	public void loadValueFromXML(Node parent);
+	
 }
