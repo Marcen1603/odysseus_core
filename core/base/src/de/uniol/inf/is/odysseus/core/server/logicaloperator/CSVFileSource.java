@@ -38,7 +38,7 @@ public class CSVFileSource extends AbstractAccessAO {
 		addOption(FileHandler.FILENAME,filename);
 	}
 
-	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ';'")
+	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ','")
 	public void setDelimiter(String delimiter) {
 		addOption(AbstractCSVHandler.CSV_DELIMITER, delimiter);
 	}
