@@ -99,7 +99,7 @@ public abstract class AbstractBenchmarkResult<T> extends AbstractStreamObject<IT
 	
 	@Override
 	public String getCSVHeader(char delimiter) {
-		return "queryId"+delimiter+"startTime"+delimiter+"endTime"+delimiter+"duration;size;"+desc.getCSVHeader(delimiter);
+		return "queryId"+delimiter+"startTime"+delimiter+"endTime"+delimiter+"duration"+delimiter+"size"+delimiter+desc.getCSVHeader(delimiter);
 	}
 
 	/**
