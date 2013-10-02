@@ -16,6 +16,7 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.rcp.base;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  org.eclipse.ui.workbench,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.ui.navigator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

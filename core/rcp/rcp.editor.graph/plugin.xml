@@ -55,5 +55,13 @@
          </activeWhen>
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            type="new"
+            wizardId="de.uniol.inf.is.odysseus.rcp.editor.graph.wizards.OperatorGraphNewWizard">
+         <enablement></enablement>
+      </commonWizard>
+   </extension>
 
 </plugin>
