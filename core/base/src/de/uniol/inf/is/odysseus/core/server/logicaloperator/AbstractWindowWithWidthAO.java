@@ -32,5 +32,9 @@ abstract public class AbstractWindowWithWidthAO extends AbstractWindowAO {
 		super(windowPO);
 	}
 	
+	public AbstractWindowWithWidthAO(){
+		super();
+	}
+	
 
 }
