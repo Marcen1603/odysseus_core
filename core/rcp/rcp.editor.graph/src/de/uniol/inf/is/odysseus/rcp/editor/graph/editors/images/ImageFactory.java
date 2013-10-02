@@ -100,10 +100,16 @@ public class ImageFactory {
 			file = "heart.png";
 			break;
 		case "WINDOW":
-		case "ELEMENTWINDOW":
-		case "TIMEWINDOW":
-		case "PREDICATEWINDOW":
 			file = "window.png";
+			break;
+		case "ELEMENTWINDOW":
+			file = "element_window.png";
+			break;
+		case "TIMEWINDOW":
+			file = "time_window.png";
+			break;
+		case "PREDICATEWINDOW":
+			file = "predicate_window.png";
 			break;
 		case "SYNCWITHSYSTEMTIME":
 		case "TIMESHIFT":
