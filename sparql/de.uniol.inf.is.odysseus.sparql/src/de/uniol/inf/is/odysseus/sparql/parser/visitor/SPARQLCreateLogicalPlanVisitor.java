@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
@@ -582,7 +582,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 
 		// this is the window that can be defined in a basic
 		// graph pattern
-		WindowAO explicitWindow = node.getWindowAO();
+		AbstractWindowAO explicitWindow = node.getWindowAO();
 
 		// top logical operator, that results from this group graph pattern.
 		ILogicalOperator topOfGroupGraphPattern = null;
@@ -672,7 +672,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 							}
 
 							// get the window for the named stream
-							WindowAO win = null;
+							AbstractWindowAO win = null;
 							if (explicitWindow != null) {
 								win = explicitWindow;
 							} else {
@@ -732,7 +732,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 								else {
 									if (this.defaultStreams.get(di)
 											.getWindowOp() != null) {
-										WindowAO defaultWindow = this.defaultStreams
+										AbstractWindowAO defaultWindow = (AbstractWindowAO) this.defaultStreams
 												.get(di).getWindowOp().clone();
 										defaultWindow.subscribeTo(accessAO,
 												accessAO.getOutputSchema());

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  */
 public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T>{
 
-	public SlidingAdvanceTimeWindowTIPO(WindowAO algebraOp) {
+	public SlidingAdvanceTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
 

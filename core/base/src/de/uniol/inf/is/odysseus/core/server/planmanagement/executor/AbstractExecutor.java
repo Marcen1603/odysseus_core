@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
@@ -1055,6 +1056,13 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 				for (Entry<Resource, ILogicalOperator> e: s){
 					ret.add(e.getKey().toString());
 				}
+			}
+			return ret;
+		}
+		if (param.getPossibleValueMethod().equalsIgnoreCase("__JAVA_TIMEUNITS")){
+			List<String> ret = new LinkedList<>();
+			for (TimeUnit u:TimeUnit.values()){
+				ret.add(u.toString());
 			}
 			return ret;
 		}

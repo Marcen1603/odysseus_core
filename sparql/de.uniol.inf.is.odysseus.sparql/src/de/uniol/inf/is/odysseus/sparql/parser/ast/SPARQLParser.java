@@ -968,7 +968,7 @@ import de.uniol.inf.is.odysseus.sparql.*;
     ASTStreamClause jjtn000 = new ASTStreamClause(JJTSTREAMCLAUSE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);INode streamName;
-    WindowAO window = null;
+    AbstractWindowAO window = null;
     AbstractAccessAO access;
     boolean named = false;
       try {
@@ -1101,13 +1101,13 @@ import de.uniol.inf.is.odysseus.sparql.*;
     }
   }
 
-  final public WindowAO Window() throws ParseException {
+  final public AbstractWindowAO Window() throws ParseException {
     trace_call("Window");
     try {
                      /*@bgen(jjtree) Window */
                      ASTWindow jjtn000 = new ASTWindow(JJTWINDOW);
                      boolean jjtc000 = true;
-                     jjtree.openNodeScope(jjtn000);WindowAO window = null;
+                     jjtree.openNodeScope(jjtn000);AbstractWindowAO window = null;
       try {
         if (jj_2_1(2147483647)) {
           window = SlidingTimeWindow();
@@ -1150,13 +1150,13 @@ import de.uniol.inf.is.odysseus.sparql.*;
     }
   }
 
-  final public WindowAO SlidingTimeWindow() throws ParseException {
+  final public AbstractWindowAO SlidingTimeWindow() throws ParseException {
     trace_call("SlidingTimeWindow");
     try {
  /*@bgen(jjtree) SlidingTimeWindow */
     ASTSlidingTimeWindow jjtn000 = new ASTSlidingTimeWindow(JJTSLIDINGTIMEWINDOW);
     boolean jjtc000 = true;
-    jjtree.openNodeScope(jjtn000);WindowAO window = null;
+    jjtree.openNodeScope(jjtn000);AbstractWindowAO window = null;
     long range = 1;
     long delta = 1;
       try {
@@ -1203,13 +1203,13 @@ import de.uniol.inf.is.odysseus.sparql.*;
     }
   }
 
-  final public WindowAO SlidingTupelWindow() throws ParseException {
+  final public AbstractWindowAO SlidingTupelWindow() throws ParseException {
     trace_call("SlidingTupelWindow");
     try {
  /*@bgen(jjtree) SlidingTupelWindow */
         ASTSlidingTupelWindow jjtn000 = new ASTSlidingTupelWindow(JJTSLIDINGTUPELWINDOW);
         boolean jjtc000 = true;
-        jjtree.openNodeScope(jjtn000);WindowAO window = null;
+        jjtree.openNodeScope(jjtn000);AbstractWindowAO window = null;
         Token rangeToken = null;
         Token deltaToken = null;
         long range = 1;
@@ -1287,13 +1287,13 @@ import de.uniol.inf.is.odysseus.sparql.*;
 //      return sepw;
 //    }
 //}
-  final public WindowAO WindowNotPWindow() throws ParseException {
+  final public AbstractWindowAO WindowNotPWindow() throws ParseException {
     trace_call("WindowNotPWindow");
     try {
                                /*@bgen(jjtree) WindowNotPWindow */
                                ASTWindowNotPWindow jjtn000 = new ASTWindowNotPWindow(JJTWINDOWNOTPWINDOW);
                                boolean jjtc000 = true;
-                               jjtree.openNodeScope(jjtn000);WindowAO window= null;
+                               jjtree.openNodeScope(jjtn000);AbstractWindowAO window= null;
       try {
         if (jj_2_2(2)) {
           window = SlidingTimeWindow();
@@ -1900,7 +1900,7 @@ E. g. a window size of 2 hours is equal to a size of 7200000 milliseconds.
                             /*@bgen(jjtree) GroupGraphPattern */
                              ASTGroupGraphPattern jjtn000 = new ASTGroupGraphPattern(JJTGROUPGRAPHPATTERN);
                              boolean jjtc000 = true;
-                             jjtree.openNodeScope(jjtn000);WindowAO window;
+                             jjtree.openNodeScope(jjtn000);AbstractWindowAO window;
       try {
         jj_consume_token(LBRACE);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {

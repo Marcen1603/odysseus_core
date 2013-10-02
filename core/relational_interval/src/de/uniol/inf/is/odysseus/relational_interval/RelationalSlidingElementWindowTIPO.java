@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
 
@@ -46,7 +46,7 @@ public class RelationalSlidingElementWindowTIPO extends
 	final private Map<Integer, List<IStreamable>> buffers = new HashMap<>();
 	private DefaultTISweepArea<Tuple<ITimeInterval>> outputQueue = new DefaultTISweepArea<Tuple<ITimeInterval>>();
 
-	public RelationalSlidingElementWindowTIPO(WindowAO ao) {
+	public RelationalSlidingElementWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
 		init(ao);
 	}
@@ -57,7 +57,7 @@ public class RelationalSlidingElementWindowTIPO extends
 		buffers.clear();
 	}
 
-	private void init(WindowAO ao) {
+	private void init(AbstractWindowAO ao) {
 		List<SDFAttribute> grAttribs = ao.getPartitionBy();
 		if (grAttribs != null && grAttribs.size() > 0) {
 			gRestrict = new int[grAttribs.size()];

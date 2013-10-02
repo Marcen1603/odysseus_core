@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.interval.transform.window;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 @SuppressWarnings({"rawtypes"})
 public class TSlidingAdvanceTimeWindowTIPORule extends
-		AbstractTransformationRule<WindowAO> {
+		AbstractTransformationRule<AbstractWindowAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,7 +34,7 @@ public class TSlidingAdvanceTimeWindowTIPORule extends
 	}
 
 	@Override
-	public void execute(WindowAO windowAO,
+	public void execute(AbstractWindowAO windowAO,
 			TransformationConfiguration transformConfig) {
 		SlidingAdvanceTimeWindowTIPO windowPO = new SlidingAdvanceTimeWindowTIPO(
 				windowAO);
@@ -42,7 +42,7 @@ public class TSlidingAdvanceTimeWindowTIPORule extends
 	}
 
 	@Override
-	public boolean isExecutable(WindowAO operator,
+	public boolean isExecutable(AbstractWindowAO operator,
 			TransformationConfiguration transformConfig) {
 		if ((operator.getWindowType() == WindowType.TIME && operator
 				.getWindowSlide() == -1)) {
@@ -69,8 +69,8 @@ public class TSlidingAdvanceTimeWindowTIPORule extends
 	}
 	
 	@Override
-	public Class<? super WindowAO> getConditionClass() {	
-		return WindowAO.class;
+	public Class<? super AbstractWindowAO> getConditionClass() {	
+		return AbstractWindowAO.class;
 	}
 
 }

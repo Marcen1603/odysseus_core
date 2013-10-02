@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.costmodel.operator.DataStream;
 import de.uniol.inf.is.odysseus.costmodel.operator.IOperatorEstimator;
@@ -22,18 +22,18 @@ import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
  * @author Merlin Wasmann, Timo Michelsen
  *
  */
-public class WindowAOEstimator implements IOperatorEstimator<WindowAO> {
+public class WindowAOEstimator implements IOperatorEstimator<AbstractWindowAO> {
 
 	@Override
-	public Class<WindowAO> getOperatorClass() {
-		return WindowAO.class;
+	public Class<AbstractWindowAO> getOperatorClass() {
+		return AbstractWindowAO.class;
 	}
 
 	@Override
-	public OperatorEstimation<WindowAO> estimateOperator(WindowAO instance,
+	public OperatorEstimation<AbstractWindowAO> estimateOperator(AbstractWindowAO instance,
 			List<OperatorEstimation<?>> prevOperators,
 			Map<SDFAttribute, IHistogram> baseHistograms) {
-		OperatorEstimation<WindowAO> estimation = new OperatorEstimation<WindowAO>(instance);
+		OperatorEstimation<AbstractWindowAO> estimation = new OperatorEstimation<AbstractWindowAO>(instance);
 		OperatorEstimation<?> lastOpEstimation = prevOperators.get(0);
 
 		WindowType windowType = instance.getWindowType();
@@ -69,13 +69,13 @@ public class WindowAOEstimator implements IOperatorEstimator<WindowAO> {
 			// depends on the windowType
 			g = (windowType.equals(WindowType.TIME) ? windowSize / 2.0 : windowSize / (2.0 * r));
 
-		DataStream<WindowAO> stream = new DataStream<WindowAO>(instance, r, g);
+		DataStream<AbstractWindowAO> stream = new DataStream<AbstractWindowAO>(instance, r, g);
 		estimation.setDataStream(stream);
 
 		/** 4. DetailCost **/
 		double cpuCost = CPURateSaver.getInstance().get(instance.getClass().getSimpleName()) * r;
 
-		estimation.setDetailCost(new OperatorDetailCost<WindowAO>(instance, MemoryUsageSaver.get(instance), cpuCost));
+		estimation.setDetailCost(new OperatorDetailCost<AbstractWindowAO>(instance, MemoryUsageSaver.get(instance), cpuCost));
 
 		return estimation;
 	}

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -162,7 +162,7 @@ public class StandardTransformationHelper implements ITransformationHelper {
 
 	@Override
 	public boolean containsWindow(ILogicalOperator inputOp) {
-		if (inputOp instanceof WindowAO) {
+		if (inputOp instanceof AbstractWindowAO) {
 			return true;
 		}
 		int numberOfInputs = inputOp.getSubscribedToSource().size();

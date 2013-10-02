@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 
 /**
  * This is the physical sliding delta window po. This window is used to change
@@ -50,7 +50,7 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 	final private long windowSlide;
 
 	/** Creates a new instance of SlidingDeltaWindowPO */
-	public SlidingPeriodicWindowTIPO(WindowAO logical) {
+	public SlidingPeriodicWindowTIPO(AbstractWindowAO logical) {
 		super(logical);
 		this.windowSlide = TimeUnit.MILLISECONDS.convert(logical.getWindowSlide(), logical.getTimeUnit());
 		setName(getName() + " slide=" + windowSlide);

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
 /**
@@ -141,7 +141,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
-					if(subToSink.getTarget() instanceof WindowAO) {
+					if(subToSink.getTarget() instanceof AbstractWindowAO) {
 						continue;
 					}
 										
@@ -151,7 +151,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 				
 				operatorsToRemove.add(operator);
 				
-			} else if(operator instanceof WindowAO) {
+			} else if(operator instanceof AbstractWindowAO) {
 				
 				// True, if the WindowAO is for the source to be fragmented
 				boolean windowOfSourceToBeFragmented = false;
@@ -230,7 +230,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
-					if(subToSink.getTarget() instanceof WindowAO) {
+					if(subToSink.getTarget() instanceof AbstractWindowAO) {
 						continue;
 					}
 					
@@ -246,7 +246,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 					
 				}
 				
-			} else if(operator instanceof WindowAO) {
+			} else if(operator instanceof AbstractWindowAO) {
 				
 				// True, if the WindowAO is for the source to be fragmented
 				boolean windowOfSourceToBeFragmented = false;

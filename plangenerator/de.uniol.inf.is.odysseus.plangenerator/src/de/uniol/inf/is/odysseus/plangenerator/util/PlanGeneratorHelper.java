@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorInputSchemaLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
@@ -85,8 +85,8 @@ public class PlanGeneratorHelper {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Set<WindowAO> getWindowOperators(ILogicalOperator plan) {
-		CollectOperatorLogicalGraphVisitor<WindowAO> visitor = new CollectOperatorLogicalGraphVisitor<WindowAO>(WindowAO.class);
+	public static Set<AbstractWindowAO> getWindowOperators(ILogicalOperator plan) {
+		CollectOperatorLogicalGraphVisitor<AbstractWindowAO> visitor = new CollectOperatorLogicalGraphVisitor<AbstractWindowAO>(AbstractWindowAO.class);
 		GenericGraphWalker walker = new GenericGraphWalker();
 		walker.prefixWalk(plan, visitor);
 		return visitor.getResult();
@@ -224,7 +224,7 @@ public class PlanGeneratorHelper {
 		ILogicalOperator next = source.getSubscriptions().iterator().next()
 				.getTarget();
 		while (next != null) {
-			if (next instanceof WindowAO) {
+			if (next instanceof AbstractWindowAO) {
 				return true;
 			}
 			if (next instanceof JoinAO) {

@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 
 public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>> extends AbstractWindowTIPO<T> {
 
@@ -40,7 +40,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>> ex
 
 	private int realelementsize = 0;
 
-	public SlidingElementWindowTIPO(WindowAO ao) {
+	public SlidingElementWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
 		_buffer = new LinkedList<IStreamable>();
 		advance = windowAdvance > 0 ? windowAdvance : 1;

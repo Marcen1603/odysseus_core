@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.intervalapproach.window;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractWindowTIPO<T> {
 
-	public AbstractNonBlockingWindowTIPO(WindowAO algebraOp) {
+	public AbstractNonBlockingWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
 

@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -34,7 +34,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final boolean partitioned;
 	protected final boolean usesAdvanceParam;
 
-	public AbstractWindowTIPO(WindowAO ao) {
+	public AbstractWindowTIPO(AbstractWindowAO ao) {
 		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(),
 				ao.getTimeUnit());
 		if (ao.getWindowAdvance() > 0) {

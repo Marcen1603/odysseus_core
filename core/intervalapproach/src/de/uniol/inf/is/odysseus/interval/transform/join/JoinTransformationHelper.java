@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.EqualsOperator;
@@ -83,7 +83,7 @@ public class JoinTransformationHelper {
 	 * 		   true, if there is no window in the path.
 	 */
 	public static boolean checkLogicalPath(ILogicalOperator operator){
-		if(operator instanceof WindowAO){
+		if(operator instanceof AbstractWindowAO){
 			return false;
 		}
 		

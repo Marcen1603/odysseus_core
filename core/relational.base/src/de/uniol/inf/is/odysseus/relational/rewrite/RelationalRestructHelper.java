@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.core.server.util.LoggerHelper;
@@ -125,7 +125,7 @@ public class RelationalRestructHelper {
 		return retValue[0];
 	}
 
-	public static Collection<ILogicalOperator> switchOperator(SelectAO father, WindowAO son) {
+	public static Collection<ILogicalOperator> switchOperator(SelectAO father, AbstractWindowAO son) {
 		return RestructHelper.simpleOperatorSwitch(father, son);
 	}
 
@@ -176,7 +176,7 @@ public class RelationalRestructHelper {
 		return toUpdate;
 	}
 
-	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, WindowAO son) {
+	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, AbstractWindowAO son) {
 		return RestructHelper.simpleOperatorSwitch(father, son);
 	}
 

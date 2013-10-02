@@ -15,7 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform.window;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
+public class TUnboundedWindowRule extends AbstractTransformationRule<AbstractWindowAO> {
 
 	@Override
 	public int getPriority() {
@@ -33,13 +33,13 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void execute(WindowAO windowAO, TransformationConfiguration transformConfig) {
+	public void execute(AbstractWindowAO windowAO, TransformationConfiguration transformConfig) {
 		UnboundedWindowTIPO window = new UnboundedWindowTIPO(windowAO);
 		defaultExecute(windowAO, window, transformConfig, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(WindowAO operator, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(AbstractWindowAO operator, TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (operator.getWindowType() == WindowType.UNBOUNDED) {
 				if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {			
@@ -61,8 +61,8 @@ public class TUnboundedWindowRule extends AbstractTransformationRule<WindowAO> {
 	}
 	
 	@Override
-	public Class<? super WindowAO> getConditionClass() {	
-		return WindowAO.class;
+	public Class<? super AbstractWindowAO> getConditionClass() {	
+		return AbstractWindowAO.class;
 	}
 
 }

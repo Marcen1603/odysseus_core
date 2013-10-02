@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 
 /**
  * This class provides functionality to insert the beforehand collected 
@@ -166,13 +166,13 @@ public class PartialPlanInserter {
 				unWindowedSources.add(source);
 			}
 		}
-		Set<WindowAO> windows = PlanGeneratorHelper
+		Set<AbstractWindowAO> windows = PlanGeneratorHelper
 				.getWindowOperators(this.joinPlan);
-		Set<Pair<ILogicalOperator, WindowAO>> repaired = new HashSet<Pair<ILogicalOperator, WindowAO>>();
+		Set<Pair<ILogicalOperator, AbstractWindowAO>> repaired = new HashSet<Pair<ILogicalOperator, AbstractWindowAO>>();
 		// TODO: Prüfen welches Window zu welchem Access/Stream gehört
 		for (ILogicalOperator unWindowed : unWindowedSources) {
 			SDFSchema sourceOutput = unWindowed.getOutputSchema();
-			for (WindowAO window : windows) {
+			for (AbstractWindowAO window : windows) {
 				SDFSchema windowInput = PlanGeneratorHelper
 						.getInputSchemaForOperator(window);
 				SDFSchema intersect = SDFSchema.intersection(sourceOutput,
@@ -180,12 +180,12 @@ public class PartialPlanInserter {
 				if (intersect.getAttributes().size() == sourceOutput
 						.getAttributes().size()) {
 					// the window is associate with this source.
-					repaired.add(new Pair<ILogicalOperator, WindowAO>(unWindowed,
+					repaired.add(new Pair<ILogicalOperator, AbstractWindowAO>(unWindowed,
 							window));
 				}
 			}
 		}
-		for (Pair<ILogicalOperator, WindowAO> pair : repaired) {
+		for (Pair<ILogicalOperator, AbstractWindowAO> pair : repaired) {
 			ILogicalOperator after = pair.getE1().getSubscriptions().iterator()
 					.next().getTarget();
 			int sinkInPort = 0;

@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 
 /**
  * This is the physical sliding delta window po. It returns elements after a
@@ -62,7 +62,7 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 	private LinkedList<IStreamable> inputBuffer = new LinkedList<IStreamable>();
 
 	/** Creates a new instance of SlidingDeltaWindowPO */
-	public SlidingPeriodicBlockingWindowTIPO(WindowAO logical) {
+	public SlidingPeriodicBlockingWindowTIPO(AbstractWindowAO logical) {
 		super(logical);
 		this.windowSlide = TimeUnit.MILLISECONDS.convert(
 				logical.getWindowSlide(), logical.getTimeUnit());

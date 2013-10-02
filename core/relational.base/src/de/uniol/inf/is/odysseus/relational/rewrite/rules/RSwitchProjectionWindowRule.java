@@ -19,14 +19,14 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
+public class RSwitchProjectionWindowRule extends AbstractRewriteRule<AbstractWindowAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,7 +34,7 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	}
 
 	@Override
-	public void execute(WindowAO win, RewriteConfiguration config) {
+	public void execute(AbstractWindowAO win, RewriteConfiguration config) {
 		for (ProjectAO proj : this.getAllOfSameTyp(new ProjectAO())) {
 			if (proj.getInputAO().equals(win)) {
 				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(proj, win);
@@ -48,7 +48,7 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	}
 
 	@Override
-	public boolean isExecutable(WindowAO win, RewriteConfiguration config) {
+	public boolean isExecutable(AbstractWindowAO win, RewriteConfiguration config) {
 		if (win.getSubscriptions().size() > 1) {
 			return false;
 		}
@@ -72,8 +72,8 @@ public class RSwitchProjectionWindowRule extends AbstractRewriteRule<WindowAO> {
 	}
 
 	@Override
-	public Class<? super WindowAO> getConditionClass() {
-		return WindowAO.class;
+	public Class<? super AbstractWindowAO> getConditionClass() {
+		return AbstractWindowAO.class;
 	}
 
 }

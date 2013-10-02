@@ -17,18 +17,18 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=true,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 
 public
 class ASTGroupGraphPattern extends SimpleNode {
   
-	WindowAO windowAO;
+	AbstractWindowAO windowAO;
 	
-	public WindowAO getWindowAO() {
+	public AbstractWindowAO getWindowAO() {
 		return windowAO;
 	}
 
-	public void setWindowAO(WindowAO windowAO) {
+	public void setWindowAO(AbstractWindowAO windowAO) {
 		this.windowAO = windowAO;
 	}
 

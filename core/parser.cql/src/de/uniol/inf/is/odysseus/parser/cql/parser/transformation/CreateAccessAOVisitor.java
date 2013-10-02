@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
@@ -98,7 +99,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		}
 
 		if (node.hasWindow()) {
-			WindowAO window = createWindow(node.getWindow(), inputOp);
+			AbstractWindowAO window = createWindow(node.getWindow(), inputOp);
 			inputOp = window;
 		}
 		this.attributeResolver.addSourceOriginal(originalName.toString(), inputOp);
@@ -106,8 +107,8 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		this.attributeResolver.addSource(sourceName, inputOp);
 	}
 
-	private static WindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
-		WindowAO window = new WindowAO();
+	private static AbstractWindowAO createWindow(ASTWindow windowNode, ILogicalOperator inputOp) {
+		AbstractWindowAO window = new WindowAO();
 		window.subscribeToSource(inputOp, 0, 0, inputOp.getOutputSchema());
 
 		if (windowNode.isPartitioned()) {
@@ -173,7 +174,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 
 		Node asNode = node.jjtGetChild(1);
 		if (asNode instanceof ASTWindow) {
-			WindowAO window = createWindow((ASTWindow) asNode, result);
+			AbstractWindowAO window = createWindow((ASTWindow) asNode, result);
 			result = window;
 			asNode = node.jjtGetChild(2);
 		}

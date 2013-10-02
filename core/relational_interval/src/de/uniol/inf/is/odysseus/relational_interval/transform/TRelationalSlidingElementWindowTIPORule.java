@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalSlidingElementWindowTIPO;
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TRelationalSlidingElementWindowTIPORule extends
-		AbstractTransformationRule<WindowAO> {
+		AbstractTransformationRule<AbstractWindowAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,7 +34,7 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	}
 
 	@Override
-	public void execute(WindowAO windowAO,
+	public void execute(AbstractWindowAO windowAO,
 			TransformationConfiguration transformConfig) {
 		RelationalSlidingElementWindowTIPO windowPO = new RelationalSlidingElementWindowTIPO(
 				windowAO);
@@ -43,7 +43,7 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	}
 
 	@Override
-	public boolean isExecutable(WindowAO operator,
+	public boolean isExecutable(AbstractWindowAO operator,
 			TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet())
 			if (operator.getWindowType() == WindowType.TUPLE
@@ -70,8 +70,8 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	}
 	
 	@Override
-	public Class<? super WindowAO> getConditionClass() {	
-		return WindowAO.class;
+	public Class<? super AbstractWindowAO> getConditionClass() {	
+		return AbstractWindowAO.class;
 	}
 
 }
