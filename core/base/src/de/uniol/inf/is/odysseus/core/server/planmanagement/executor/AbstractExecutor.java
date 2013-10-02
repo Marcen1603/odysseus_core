@@ -958,7 +958,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getRegisteredAggregateFunctions(de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public Set<String> getRegisteredAggregateFunctions(Class<? extends IStreamObject> datamodel, ISession caller) {		
+	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {		
 		TreeSet<String> set = new TreeSet<>();
 		set.addAll(AggregateFunctionBuilderRegistry.getFunctionNames(datamodel));		
 		return set;

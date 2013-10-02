@@ -188,6 +188,7 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 
 		EntryModifyListener ml = new EntryModifyListener();
 
+		@SuppressWarnings("rawtypes")
 		Class<? extends IStreamObject> datamodel = getOperator().getInputSchemas().get(0).getType();
 
 		functionCombo = new Combo(container, SWT.BORDER | SWT.DROP_DOWN);

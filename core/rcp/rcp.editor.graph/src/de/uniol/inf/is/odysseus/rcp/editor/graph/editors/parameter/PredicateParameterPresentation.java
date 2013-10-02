@@ -32,6 +32,7 @@ public class PredicateParameterPresentation extends StringParameterPresentation 
 	@Override
 	public String getPQLString() {
 		if (getValue() != null) {
+			@SuppressWarnings("rawtypes")
 			Class<? extends IStreamObject> datamodel = getOperator().getInputSchemas().get(0).getType();
 			if (datamodel.equals(Tuple.class)) {
 				if (!getValue().startsWith("RelationalPredicate")) {					

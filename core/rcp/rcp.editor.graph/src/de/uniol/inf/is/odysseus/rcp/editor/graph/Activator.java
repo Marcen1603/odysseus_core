@@ -9,7 +9,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -97,7 +96,7 @@ public class Activator extends AbstractUIPlugin {
 		return cachedDatatypes;
 	}
 	
-	public synchronized List<String> getInstalledAggregateFunctions(Class<? extends IStreamObject> datamodel){
+	public synchronized List<String> getInstalledAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel){
 		if(cachedAggregateFunctions == null){
 			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel, getCaller()));
 			Collections.sort(cachedAggregateFunctions);

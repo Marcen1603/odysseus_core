@@ -85,6 +85,7 @@ public abstract class AbstractInventory implements IRuleFlow {
 			this.ruleBase.get(group).offer(rule);
 		} else{
 			// For DEBUGGING ONLY
+			@SuppressWarnings("unused")
 			int a = 0;
 		}
 	}
