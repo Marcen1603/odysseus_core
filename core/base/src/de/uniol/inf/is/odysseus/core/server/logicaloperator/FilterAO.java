@@ -20,6 +20,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
@@ -39,6 +40,11 @@ public class FilterAO extends SelectAO {
 
 	public FilterAO(FilterAO po) {
 		super(po);
+	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		return super.getOutputSchemaIntern(0);
 	}
 
 	@Override
