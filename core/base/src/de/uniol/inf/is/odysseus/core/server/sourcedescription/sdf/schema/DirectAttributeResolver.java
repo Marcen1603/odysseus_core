@@ -58,6 +58,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	@Override
 	public SDFAttribute getAttribute(String name)
 			throws AmbiguousAttributeException, NoSuchAttributeException {
+
 		String[] parts = name.split("\\.", 2); // the attribute can have the
 												// form a.b.c.d
 
@@ -98,7 +99,8 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 			}
 		}
 
-		// final case: UserName.SourceName.Attribute
+		// final cases: UserName.SourceName.Attribute 
+		// --> remove User name from schema
 		for (SDFAttribute attr : this.schema) {
 			// Remove UserName
 			String attrName = attr.toString();
@@ -106,6 +108,18 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 			if (pos > 0) {
 				attrName = attrName.substring(pos + 1);
 				if (attrName.equalsIgnoreCase(name)) {
+					return attr;
+				}
+			}
+		}
+
+		// final cases: UserName.SourceName.Attribute 
+		// --> remove User name from name
+		int pos = name.indexOf('.');
+		if (pos > 0) {
+			name = name.substring(pos + 1);
+			for (SDFAttribute attr : this.schema) {	
+				if (attr.toString().equalsIgnoreCase(name)) {
 					return attr;
 				}
 			}
