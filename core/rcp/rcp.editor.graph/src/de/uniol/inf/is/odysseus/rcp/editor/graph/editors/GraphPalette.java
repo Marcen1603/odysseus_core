@@ -31,6 +31,7 @@ import org.eclipse.gef.palette.PaletteToolbar;
 import org.eclipse.gef.palette.PanningSelectionToolEntry;
 import org.eclipse.gef.palette.ToolEntry;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.ImageData;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
@@ -44,6 +45,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
  */
 public class GraphPalette {
 
+	private static final int MAX_IMAGE_SIZE = 16;
+
 	public static PaletteRoot createGraphPalette() {
 		PaletteRoot pr = new PaletteRoot();
 		createToolsGroup(pr);
@@ -52,11 +55,11 @@ public class GraphPalette {
 	}
 
 	private static void createOperatorsGroup(PaletteRoot palette) {
-		
+
 		Map<String, PaletteDrawer> pds = new TreeMap<String, PaletteDrawer>();
-		
+
 		List<LogicalOperatorInformation> ops = Activator.getDefault().getExecutor().getOperatorInformations(Activator.getDefault().getCaller());
-		for (LogicalOperatorInformation op : ops) {			
+		for (LogicalOperatorInformation op : ops) {
 			op.setOperatorName(op.getOperatorName().toUpperCase());
 		}
 
@@ -66,15 +69,15 @@ public class GraphPalette {
 				return o1.getOperatorName().compareTo(o2.getOperatorName());
 			}
 		});
-		for (LogicalOperatorInformation op : ops) {			
+		for (LogicalOperatorInformation op : ops) {
 			ImageDescriptor imgBig = ImageFactory.createImageForOperator(op.getOperatorName());
-			ImageDescriptor imgSmall = ImageDescriptor.createFromImageData(imgBig.getImageData().scaledTo(16, 16));
-			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(),op.getDoc(), new OperatorNodeFactory(op), imgSmall, imgBig);
+			ImageDescriptor imgSmall = ImageDescriptor.createFromImageData(resizeImage(imgBig.getImageData()));
+			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(), op.getDoc(), new OperatorNodeFactory(op), imgSmall, imgBig);
 			String category = op.getCategories()[0];
-			if(!pds.containsKey(category)){
+			if (!pds.containsKey(category)) {
 				pds.put(category, new PaletteDrawer(category));
 			}
-			pds.get(category).add(entry);			
+			pds.get(category).add(entry);
 		}
 		List<PaletteDrawer> list = new ArrayList<>(pds.values());
 		Collections.sort(list, new Comparator<PaletteDrawer>() {
@@ -83,11 +86,25 @@ public class GraphPalette {
 			public int compare(PaletteDrawer arg0, PaletteDrawer arg1) {
 				return arg0.getLabel().compareTo(arg1.getLabel());
 			}
-			
+
 		});
-		for(PaletteDrawer d : list){	
+		for (PaletteDrawer d : list) {
 			d.setInitialState(PaletteDrawer.INITIAL_STATE_CLOSED);
 			palette.add(d);
+		}
+	}
+
+	private static ImageData resizeImage(ImageData oldData) {
+		double oldW = oldData.width;
+		double oldH = oldData.height;		
+		if (oldW > oldH) {
+			int newW = MAX_IMAGE_SIZE;
+			int newH = (int) ((oldH / oldW) * MAX_IMAGE_SIZE);			
+			return oldData.scaledTo(newW, newH);
+		} else {
+			int newH = MAX_IMAGE_SIZE;
+			int newW = (int) (oldW / oldH) * MAX_IMAGE_SIZE;
+			return oldData.scaledTo(newW, newH);
 		}
 	}
 
@@ -96,8 +113,8 @@ public class GraphPalette {
 		ToolEntry tool = new PanningSelectionToolEntry();
 		toolbar.add(tool);
 		palette.setDefaultEntry(tool);
-		toolbar.add(new MarqueeToolEntry());		
-		toolbar.add(new ConnectionCreationToolEntry("Connection", "Creates a new connection.", new ConnectionFactory(),Activator.getImageDescriptor("icons/graph_edge_directed_16.png") ,Activator.getImageDescriptor("icons/graph_edge_directed_32.png")));
-		palette.add(toolbar);		
+		toolbar.add(new MarqueeToolEntry());
+		toolbar.add(new ConnectionCreationToolEntry("Connection", "Creates a new connection.", new ConnectionFactory(), Activator.getImageDescriptor("icons/graph_edge_directed_16.png"), Activator.getImageDescriptor("icons/graph_edge_directed_32.png")));
+		palette.add(toolbar);
 	}
 }
