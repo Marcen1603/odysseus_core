@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.keywords;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,11 @@ public class PeerAssignmentPreParserKeyword extends AbstractPreParserKeyword {
 		
 		return null;
 		
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		return PeerAssignmentProvider.getInstance().getPeerAssignmentNames();
 	}
 
 }
