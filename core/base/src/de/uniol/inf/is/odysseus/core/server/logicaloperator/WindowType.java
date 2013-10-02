@@ -18,11 +18,29 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public enum WindowType {
 	TIME,
 	TUPLE,
 	UNBOUNDED,
-	PREDICATE
+	PREDICATE;
+	
+	static final List<String> values = new LinkedList<>();
+
+	static public List<String> getValues(){
+		synchronized(values){
+		if (values.size() == 0){
+			for (WindowType t: WindowType.values()){
+				values.add(t.toString());
+			}
+		}
+		}
+		return values;
+	}
+	
+	
 }
 //    PERIODIC_TIME_WINDOW, // Zeit mit SLIDE
 //    PERIODIC_TUPLE_WINDOW, // Tupel mit SLIDE

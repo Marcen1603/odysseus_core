@@ -103,9 +103,13 @@ public class WindowAO extends UnaryLogicalOp {
 		return windowType;
 	}
 
-	@Parameter(type = EnumParameter.class, name = "TYPE")
+	@Parameter(type = EnumParameter.class, name = "TYPE", possibleValues="getWindowTypes")
 	public void setWindowType(WindowType windowType) {
 		this.windowType = windowType;
+	}
+	
+	public List<String> getWindowTypes(){
+		return WindowType.getValues();
 	}
 
 	@GetParameter(name = "PARTITION")
