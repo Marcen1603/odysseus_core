@@ -38,18 +38,15 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 
 	private List<RetargetAction> retargetActions = new ArrayList<RetargetAction>();
 
-	
 	private Set<String> globalActionKeys = new HashSet<String>();
 
 	protected void addAction(IAction action) {
 		getActionRegistry().registerAction(action);
 	}
 
-
 	public void addGlobalActionKey(String key) {
 		globalActionKeys.add(key);
 	}
-
 
 	public void addRetargetAction(RetargetAction action) {
 		addAction(action);
@@ -91,7 +88,6 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 		return registry.getAction(id);
 	}
 
-
 	protected ActionRegistry getActionRegistry() {
 		return registry;
 	}
@@ -103,8 +99,10 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 	}
 
 	public void setActivePage(IEditorPart editor) {
-		activePageRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
-		connectActions();
+		if (editor != null) {
+			activePageRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
+			connectActions();
+		}
 	}
 
 	/**
@@ -133,7 +131,7 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 		super.contributeToMenu(menubar);
 		MenuManager viewMenu = new MenuManager("View");
 		viewMenu.add(getAction(GEFActionConstants.ZOOM_IN));
-		viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));		
+		viewMenu.add(getAction(GEFActionConstants.ZOOM_OUT));
 		menubar.insertAfter(IWorkbenchActionConstants.M_EDIT, viewMenu);
 	}
 
@@ -147,7 +145,6 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 		}
 	}
 
-	
 	protected IAction getEditorAction(String key) {
 		IAction action = null;
 
@@ -158,6 +155,6 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 			action = rootEditorRegistry.getAction(key);
 		}
 		return action;
-	}	
+	}
 
 }
