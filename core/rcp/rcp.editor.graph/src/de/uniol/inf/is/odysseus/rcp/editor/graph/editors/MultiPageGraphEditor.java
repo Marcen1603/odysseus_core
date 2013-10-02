@@ -265,13 +265,13 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	}
 
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
-//		if (adapter == CommandStack.class) {
-//			return graphEditor.getCurrentEditDomain().getCommandStack();
-//		}		
+		// if (adapter == CommandStack.class) {
+		// return graphEditor.getCurrentEditDomain().getCommandStack();
+		// }
 		Object ob = graphEditor.getAdapter(adapter);
-		if(ob != null){
+		if (ob != null) {
 			return ob;
-        }
+		}
 		return super.getAdapter(adapter);
 	}
 
@@ -374,8 +374,13 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	}
 
 	private void reloadTextEditor() {
+		String pql = "There are still problems in your graph, so that PQL cannot be generated!";
+		try {
+			pql = getPQLString();
+		} catch (Exception e) {
 
-		text.setText(getPQLString());
+		}
+		text.setText(pql);
 
 	}
 

@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editing;
 
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.requests.GroupRequest;
-
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands.ConnectionDeleteCommand;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
+import org.eclipse.draw2d.Label;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
 
 /**
  * @author DGeesen
  * 
  */
-public class ConnectionEditPolicy extends org.eclipse.gef.editpolicies.ConnectionEditPolicy {
-	
-		
-	protected Command getDeleteCommand(GroupRequest request) {
-		ConnectionDeleteCommand result = new ConnectionDeleteCommand();
-		result.setConnection((Connection) getHost().getModel());
-		return result;
-	}	
+public class ConnectionDirectEditManager extends DirectEditManager {
+
+	private Label label;
+
+	public ConnectionDirectEditManager(GraphicalEditPart source, @SuppressWarnings("rawtypes") Class editorType, CellEditorLocator locator, Label label) {
+		super(source, editorType, locator);
+		this.label = label;
+	}
+
+	@Override
+	protected void initCellEditor() {
+		String initialLabelText = label.getText();
+		getCellEditor().setValue(initialLabelText);
+
+	}
 
 }

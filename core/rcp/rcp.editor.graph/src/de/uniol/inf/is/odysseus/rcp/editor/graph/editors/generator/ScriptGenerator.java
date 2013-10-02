@@ -95,7 +95,7 @@ public class ScriptGenerator {
 
 	private static void visitChildren(List<Connection> conns, List<OperatorNode> found) {
 		for (Connection con : conns) {
-			OperatorNode source = con.getSource();
+			OperatorNode source = con.getSource();			
 			if (!found.contains(source)) {
 				found.add(source);
 				if (!source.getTargetConnections().isEmpty()) {

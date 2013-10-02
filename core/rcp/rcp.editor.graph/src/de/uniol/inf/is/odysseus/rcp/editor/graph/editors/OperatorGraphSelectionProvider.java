@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 public class OperatorGraphSelectionProvider extends Observable{
 	
 	private static OperatorGraphSelectionProvider instance = null;
-	private OperatorNode currentlySelected;
+	private OperatorNode currentlySelected;	
 	
 	private OperatorGraphSelectionProvider(){
 		
@@ -48,6 +48,14 @@ public class OperatorGraphSelectionProvider extends Observable{
 		this.currentlySelected = currentlySelected;
 		setChanged();
 		notifyObservers(currentlySelected);
+	}
+
+	/**
+	 * 
+	 */
+	public void update() {		
+//		setChanged();
+//		notifyObservers(this.currentlySelected);		
 	}
 
 }

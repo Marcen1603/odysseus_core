@@ -41,8 +41,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphSelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation;
@@ -56,14 +54,11 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 
 	private List<IParameterPresentation<?>> widgets = new ArrayList<>();
 	private Map<Control, Label> labels = new HashMap<>();
-	
+
 	private Composite parameterContainer;
 	private ScrolledComposite parameterScroller;
-	
-	private Composite schemaContainer;
-	private ScrolledComposite schemaScroller;
-	
-	
+	private SchemaContainer outputSchema;
+	private SchemaContainer inputSchema;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -73,12 +68,12 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	public void createPartControl(Composite parent) {
 		// ((FillLayout)parent.getLayout()).type = SWT.VERTICAL;
 		OperatorGraphSelectionProvider.getInstance().addObserver(this);
-		
 
 		final CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.FLAT | SWT.BOTTOM);
 		tabFolder.setBorderVisible(false);
-		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-
+		tabFolder.setSelectionBackground(Display.getCurrent().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));	
+		
+		
 		CTabItem tabParameters = new CTabItem(tabFolder, SWT.NONE);
 		tabParameters.setText("Parameters");
 		parameterScroller = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.V_SCROLL);
@@ -90,21 +85,12 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		parameterScroller.setExpandHorizontal(true);
 		parameterScroller.setMinHeight(parameterContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		tabParameters.setControl(parameterScroller);
-
-		CTabItem tabSchema = new CTabItem(tabFolder, SWT.NONE);
-		tabSchema.setText("Schema");
-		schemaScroller = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.V_SCROLL);
-		schemaScroller.setLayoutData(new FillLayout());
-		schemaContainer = new Composite(schemaScroller, SWT.NONE);
-		schemaContainer.setLayout(new FillLayout());
-		schemaScroller.setContent(schemaContainer);
-		schemaScroller.setExpandVertical(true);
-		schemaScroller.setExpandHorizontal(true);
-		schemaScroller.setMinHeight(schemaContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		tabSchema.setControl(schemaScroller);
 		
+		inputSchema = new SchemaContainer();
+		inputSchema.createContainer(tabFolder, "Input Schema");
 		
-		
+		outputSchema = new SchemaContainer();
+		outputSchema.createContainer(tabFolder, "Output Schema");
 
 		tabFolder.setSelection(tabParameters);
 	}
@@ -172,7 +158,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 				label.setText(param.getKey().getName());
 				label.setToolTipText(param.getKey().getDoc());
 
-				IParameterPresentation<?> widget = param.getValue();				
+				IParameterPresentation<?> widget = param.getValue();
 				Control control = widget.createWidget(parentGroup);
 				control.setToolTipText(param.getKey().getDoc());
 
@@ -197,36 +183,19 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 			parameterScroller.layout(true);
 
 			// update the inputSchemas
-			updateInputSchemas(node);
+			updateSchemas(node);
 		}
 	}
 
-	private void updateInputSchemas(OperatorNode node) {		
-		for (Control c : schemaContainer.getChildren()) {
-			c.dispose();
-		}
-		schemaContainer.layout(true);		
+	private void updateSchemas(OperatorNode node) {		
+		this.inputSchema.updateSchemas(node.getInputSchemas());		
+		this.outputSchema.updateSchemas(node.getOutputSchemas());
 		
-		for(Entry<Integer, SDFSchema> input : node.getInputSchemas().entrySet()){
-			SDFSchema schema = input.getValue();
-			Group group = new Group(schemaContainer, SWT.None);
-			group.setText(schema.getQualName()+" (Port "+input.getKey()+")");
-			group.setLayout(new GridLayout(2, true));
-			for(SDFAttribute attribute : schema){
-				Label name = new Label(group, SWT.NONE);
-				name.setText(attribute.getAttributeName());
-				Label type = new Label(group, SWT.NONE);
-				type.setText(attribute.getDatatype().getQualName());
-			}
-		}
-		schemaScroller.setMinHeight(schemaContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-		schemaContainer.layout();
-		schemaScroller.layout(true);
 	}
 
 	private void saveToOperatorNode(OperatorNode currentNode) {
 		Map<LogicalParameterInformation, IParameterPresentation<?>> parameterValues = new HashMap<>();
-		for (IParameterPresentation<?> entry : this.widgets) {		
+		for (IParameterPresentation<?> entry : this.widgets) {
 			parameterValues.put(entry.getLogicalParameterInformation(), entry);
 		}
 		currentNode.setParameterValues(parameterValues);
@@ -251,12 +220,11 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		refreshModel(operator);
 	}
 
-	
 	public void opeartorGraphEditorClosed() {
 		clearState();
 	}
-	
-	private void clearState(){
+
+	private void clearState() {
 		setPartName("Graph Operator Properties (No operator selected)");
 		for (Control c : parameterContainer.getChildren()) {
 			c.dispose();
@@ -264,7 +232,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 		parameterContainer.layout(true);
 		widgets.clear();
 		labels.clear();
-		
+
 	}
 
 }

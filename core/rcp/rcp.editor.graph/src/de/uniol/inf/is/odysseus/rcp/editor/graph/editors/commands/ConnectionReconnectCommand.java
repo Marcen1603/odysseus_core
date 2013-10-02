@@ -90,9 +90,11 @@ public class ConnectionReconnectCommand extends Command {
 		} else {
 			throw new IllegalStateException("Should not happen");
 		}
+		conn.getGraph().updateInformation();
 	}
 
 	public void undo() {
 		conn.reconnect(oldSourceNode, oldTargetNode);
+		conn.getGraph().updateInformation();
 	}
 }

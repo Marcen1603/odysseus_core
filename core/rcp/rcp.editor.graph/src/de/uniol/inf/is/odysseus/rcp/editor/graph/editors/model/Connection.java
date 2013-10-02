@@ -31,6 +31,7 @@ public class Connection extends Observable{
 	private OperatorNode target;
 	private int sourcePort = 0;
 	private int targetPort = 0;
+	private Graph graph;
 
 	public OperatorNode getSource() {
 		return source;
@@ -46,6 +47,7 @@ public class Connection extends Observable{
 		if (source != null) {
 			source.addSourceConnection(this);			
 		}
+		update();
 	}
 
 	public OperatorNode getTarget() {
@@ -63,11 +65,12 @@ public class Connection extends Observable{
 			this.targetPort = target.getTargetConnections().size();
 			target.addTargetConnection(this);								
 		}
+		update();
 	}
 
 	public void reconnect(OperatorNode sourceNode, OperatorNode targetNode) {
 		setTarget(targetNode);
-		setSource(sourceNode);
+		setSource(sourceNode);		
 	}
 
 	public void getXML(Node parent, Document builder) {
@@ -94,6 +97,7 @@ public class Connection extends Observable{
 
 	public void setTargetPort(int targetPort) {
 		this.targetPort = targetPort;
+		update();
 	}
 
 	public int getSourcePort() {
@@ -102,6 +106,21 @@ public class Connection extends Observable{
 
 	public void setSourcePort(int sourcePort) {
 		this.sourcePort = sourcePort;
+		update();
 	}
 
+	
+	private void update(){		
+		graph.updateInformation();
+		setChanged();
+		notifyObservers();
+	}
+
+	public Graph getGraph() {
+		return graph;
+	}
+
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
 }

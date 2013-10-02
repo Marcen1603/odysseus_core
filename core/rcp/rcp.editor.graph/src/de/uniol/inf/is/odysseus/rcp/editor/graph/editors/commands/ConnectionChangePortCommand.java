@@ -13,25 +13,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.policies;
+package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.requests.GroupRequest;
 
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.commands.ConnectionDeleteCommand;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 
 /**
  * @author DGeesen
  * 
  */
-public class ConnectionEditPolicy extends org.eclipse.gef.editpolicies.ConnectionEditPolicy {
-	
-		
-	protected Command getDeleteCommand(GroupRequest request) {
-		ConnectionDeleteCommand result = new ConnectionDeleteCommand();
-		result.setConnection((Connection) getHost().getModel());
-		return result;
-	}	
+public class ConnectionChangePortCommand extends Command {
+
+	private Integer oldPort;
+	private Integer newPort;
+	private Connection conn;
+	private boolean target;
+
+	public ConnectionChangePortCommand(boolean target) {
+		this.target = target;
+	}
+
+	@Override
+	public void execute() {
+		if (target) {
+			oldPort = conn.getTargetPort();
+			conn.setTargetPort(newPort);
+		} else {
+			oldPort = conn.getSourcePort();
+			conn.setSourcePort(newPort);
+		}
+	}
+
+	@Override
+	public void undo() {
+		if (target) {
+			conn.setTargetPort(oldPort);
+		} else {
+			conn.setSourcePort(oldPort);
+		}
+	}
+
+	public void setNewPort(Integer newPort) {
+		this.newPort = newPort;
+	}
+
+	public void setModel(Connection conn) {
+		this.conn = conn;
+	}
 
 }

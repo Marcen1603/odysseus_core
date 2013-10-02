@@ -145,6 +145,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 			for (OperatorNode p : graph.getNodes()) {
 				Element opNode = doc.createElement("operatornode");
 				opNode.setAttribute("type", p.getOperatorInformation().getOperatorName());
+				opNode.setAttribute("id", Integer.toString(p.getId()));
 				p.getXML(opNode, doc);
 				operatorsElement.appendChild(opNode);
 				connections.addAll(p.getSourceConnections());
@@ -199,24 +200,39 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 
 			Map<String, Element> mainNodes = getChildNodes(root);
 
+			Map<String, OperatorNode> currentIdToNodes = new TreeMap<>();
+			
 			List<Element> operatorNodes = getChildList(mainNodes.get("operators"));
 			for (Element opNode : operatorNodes) {
 				String typeName = opNode.getAttributes().getNamedItem("type").getNodeValue();
+				String idName = opNode.getAttributes().getNamedItem("id").getNodeValue();
 				LogicalOperatorInformation loi = getLogicalOperatorInformationByName(typeName);
 				OperatorNode operatorNode = new OperatorNode(loi);
 				operatorNode.loadFromXML(opNode);
+				currentIdToNodes.put(idName, operatorNode);
 				this.graph.addNode(operatorNode);
 			}
 			// then, load the connections
 			List<Element> connectionNodes = getChildList(mainNodes.get("connections"));
 			for (Element conElement : connectionNodes) {
 				Map<String, String> values = getChildElements(conElement);
-				OperatorNode sourceNode = graph.getOperatorNodeById(Integer.parseInt(values.get("source")));
-				OperatorNode targetNode = graph.getOperatorNodeById(Integer.parseInt(values.get("target")));
+				OperatorNode sourceNode = currentIdToNodes.get(values.get("source"));
+				OperatorNode targetNode = currentIdToNodes.get(values.get("target"));
+				int sourcePort = 0;
+				int targetPort = 0;
+				if(values.get("sourcePort")!=null){
+					sourcePort = Integer.parseInt(values.get("sourcePort"));
+				}
+				if(values.get("targetPort")!=null){
+					targetPort = Integer.parseInt(values.get("targetPort"));
+				}
 				Connection con = new Connection();
+				con.setGraph(graph);
+				con.setSourcePort(sourcePort);
+				con.setTargetPort(targetPort);
 				con.reconnect(sourceNode, targetNode);
 			}
-			this.graph.recalcSatisfied();
+			this.graph.updateInformation();
 
 		} catch (Exception e) {
 			e.printStackTrace();

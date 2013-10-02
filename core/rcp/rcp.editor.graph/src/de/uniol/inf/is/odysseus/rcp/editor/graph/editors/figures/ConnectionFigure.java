@@ -37,7 +37,7 @@ public class ConnectionFigure extends PolylineConnection {
 		setTargetDecoration(deco);
 
 		targetPortLabel = new Label(Integer.toString(0));
-		targetPortLabel.setOpaque(false);
+		targetPortLabel.setOpaque(false);		
 		add(targetPortLabel, new ConnectionEndpointLocator(this, true));
 
 		sourcePortLabel = new Label(Integer.toString(0));

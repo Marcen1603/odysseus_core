@@ -35,20 +35,18 @@ public class Graph extends Observable implements Observer{
 		return nodes;
 	}
 
-	public void addNode(OperatorNode node) {
-		getNodes().add(node);
-		if(node.getId()==-1){
-			node.setId(getNodes().size());
-		}
+	public synchronized void addNode(OperatorNode node) {
+		getNodes().add(node);	
+		resetUniqueIds();
 		node.setGraph(this);
 		node.addObserver(this);
 		setChanged();
 		notifyObservers();
 	}
 
-	public void removeNode(OperatorNode node) {
+	public synchronized void removeNode(OperatorNode node) {
 		getNodes().remove(node);
-		node.setId(-1);
+		resetUniqueIds();		
 		node.deleteObserver(this);
 		node.setGraph(null);
 		setChanged();
@@ -64,6 +62,13 @@ public class Graph extends Observable implements Observer{
 		notifyObservers();		
 	}
 	
+	public synchronized void resetUniqueIds(){
+		int id = 1;
+		for(OperatorNode node : this.getNodes()){
+			node.setId(id);
+			id++;
+		}
+	}
 	
 	public OperatorNode getOperatorNodeById(int id){
 		for(OperatorNode node : this.getNodes()){
@@ -73,12 +78,10 @@ public class Graph extends Observable implements Observer{
 		}
 		return null;
 	}
-
-	/**
-	 * 
-	 */
-	public void recalcSatisfied() {
+	
+	public void updateInformation() {
 		for(OperatorNode node : getNodes()){
+			node.updateInformations();
 			node.recalcSatisfied();
 		}		
 	}

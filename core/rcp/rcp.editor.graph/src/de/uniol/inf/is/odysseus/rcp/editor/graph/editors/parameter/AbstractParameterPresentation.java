@@ -36,7 +36,7 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	private LogicalParameterInformation logicalParameterInformation;
 	private OperatorNode operator;
 
-	public void setValue(V value) {
+	public synchronized void setValue(V value) {
 		Object oldValue = this.value;
 		this.value = value;
 		if (this.value == null) {
@@ -52,7 +52,7 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 
 	}
 
-	private void valueChanged() {
+	private synchronized void valueChanged() {
 		for (IParameterValueChangeListener<V> listener : this.listeners) {
 			listener.parameterValueChanged(this);
 		}
@@ -105,7 +105,7 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#addParameterValueChangedListener(de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener)
 	 */
 	@Override
-	public void addParameterValueChangedListener(IParameterValueChangeListener<V> listener) {
+	public synchronized void addParameterValueChangedListener(IParameterValueChangeListener<V> listener) {
 		listeners.add(listener);
 	}
 
@@ -115,7 +115,7 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#removeParameterValueChangedListener(de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterValueChangeListener)
 	 */
 	@Override
-	public void removeParameterValueChangedListener(IParameterValueChangeListener<V> listener) {
+	public synchronized void removeParameterValueChangedListener(IParameterValueChangeListener<V> listener) {
 		listeners.remove(listener);
 	}
 

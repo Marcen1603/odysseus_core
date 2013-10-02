@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphSelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator.ScriptGenerator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPresentationFactory;
@@ -54,6 +56,7 @@ public class OperatorNode extends Observable implements Observer {
 	private boolean satisfied = false;
 
 	private Map<Integer, SDFSchema> inputSchemas = new TreeMap<Integer, SDFSchema>();
+	private Map<Integer, SDFSchema> outputSchemas = new TreeMap<Integer, SDFSchema>();
 
 	private Map<LogicalParameterInformation, IParameterPresentation<?>> parameterValues = new HashMap<>();
 
@@ -95,29 +98,29 @@ public class OperatorNode extends Observable implements Observer {
 	public void addSourceConnection(Connection connection) {
 		getSourceConnections().add(connection);
 		connection.addObserver(this);
+		connection.setGraph(graph);
 		update();
-		updateInputSchemas();
 	}
 
 	public void addTargetConnection(Connection connection) {
 		getTargetConnections().add(connection);
 		connection.addObserver(this);
+		connection.setGraph(graph);
 		update();
-		updateInputSchemas();
 	}
 
 	public void removeSourceConnection(Connection connection) {
 		getSourceConnections().remove(connection);
 		connection.deleteObserver(this);
 		update();
-		updateInputSchemas();
+
 	}
 
 	public void removeTargetConnection(Connection connection) {
 		getTargetConnections().remove(connection);
 		connection.deleteObserver(this);
 		update();
-		updateInputSchemas();
+
 	}
 
 	/**
@@ -139,31 +142,52 @@ public class OperatorNode extends Observable implements Observer {
 		update();
 	}
 
-	public Object getParameterValue(LogicalParameterInformation param){
+	public Object getParameterValue(LogicalParameterInformation param) {
 		return parameterValues.get(param).getValue();
 	}
-	
+
 	private void updateInputSchemas() {
 		inputSchemas.clear();
 		for (Connection connection : getTargetConnections()) {
-			String query = ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort());
-			if (!query.isEmpty()) {
-				try {
+			try {
+				String query = ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort());
+				if (!query.isEmpty()) {
 					int port = connection.getTargetPort();
 					int outPutport = connection.getSourcePort();
 					SDFSchema schema = Activator.getDefault().getExecutor().determinedOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport);
 					inputSchemas.put(port, schema);
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
+			} catch (Exception e) {
+				// this could be normal during editing - so no exception throwing!
+				// System.out.println("tried to resolve inputschema for " + this + " but this failed");
 			}
+
+		}
+	}
+
+	private void updateOutputSchemas() {
+		outputSchemas.clear();
+		try {
+			String query = ScriptGenerator.buildPQL(Arrays.asList(this));
+			if (!query.isEmpty()) {
+				int outPutport = 0;
+				SDFSchema schema = Activator.getDefault().getExecutor().determinedOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport);
+				outputSchemas.put(0, schema);
+			}
+		} catch (Exception e) {
+			// this could be normal during editing - so no exception throwing!
+			// System.out.println("tried to resolve outputschema for " + this + " but this failed");
 		}
 	}
 
 	private void update() {
-		recalcSatisfied();
+		if(this.graph!=null){
+			this.graph.updateInformation();
+		}
 		setChanged();
 		notifyObservers();
+		// inform view
+		OperatorGraphSelectionProvider.getInstance().update();
 	}
 
 	public void recalcSatisfied() {
@@ -188,7 +212,7 @@ public class OperatorNode extends Observable implements Observer {
 			}
 
 		}
-		if (!validPQLBuilding()) {			
+		if (!validPQLBuilding()) {
 			ok = false;
 		}
 		this.satisfied = ok;
@@ -203,11 +227,11 @@ public class OperatorNode extends Observable implements Observer {
 			List<OperatorNode> nodes = new ArrayList<>();
 			nodes.add(this);
 			completeQuery = ScriptGenerator.buildPQL(nodes);
-//			for (Connection connection : getTargetConnections()) {
-//				completeQuery = completeQuery + ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort())+System.lineSeparator();
-//			}
-//			completeQuery = completeQuery+ScriptGenerator.buildPQL(graph);
-			
+			// for (Connection connection : getTargetConnections()) {
+			// completeQuery = completeQuery + ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort())+System.lineSeparator();
+			// }
+			// completeQuery = completeQuery+ScriptGenerator.buildPQL(graph);
+
 			if (!completeQuery.isEmpty()) {
 				Activator.getDefault().getExecutor().determinedOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0);
 			}
@@ -325,7 +349,7 @@ public class OperatorNode extends Observable implements Observer {
 	}
 
 	public Map<Integer, SDFSchema> getInputSchemas() {
-		updateInputSchemas();
+		// updateInputSchemas();
 		return inputSchemas;
 	}
 
@@ -333,4 +357,31 @@ public class OperatorNode extends Observable implements Observer {
 		this.inputSchemas = inputSchemas;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getOperatorInformation().getOperatorName() + " - " + super.toString();
+	}
+
+	/**
+	 * @return
+	 */
+	public Map<Integer, SDFSchema> getOutputSchemas() {
+		// updateOutputSchemas();
+		return this.outputSchemas;
+	}
+
+	/**
+	 * 
+	 */
+	public void updateInformations() {
+		updateInputSchemas();
+		updateOutputSchemas();
+		recalcSatisfied();
+		// inform descendant operators
+	}
 }

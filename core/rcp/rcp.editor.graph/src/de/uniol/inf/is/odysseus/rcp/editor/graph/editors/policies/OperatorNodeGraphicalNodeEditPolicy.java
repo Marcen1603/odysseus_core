@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  * 
  */
 public class OperatorNodeGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
-	
+		
 	
 	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = new ConnectionCreateCommand();
