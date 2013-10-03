@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -32,7 +33,10 @@ public class Replication extends AbstractPrimaryHorizontalDataFragmentation {
 	 * Does nothing.
 	 */
 	@Override
-	protected List<List<ILogicalOperator>> insertOperatorForFragmentation(List<ILogicalOperator> logicalPlans, QueryBuildConfiguration parameters, String sourceName) {
+	protected List<List<ILogicalOperator>> insertOperatorForFragmentation(
+			List<ILogicalOperator> logicalPlans, QueryBuildConfiguration parameters, String sourceName, 
+			Collection<ILogicalOperator> operatorsChangedDueToFragmentation, 
+			Collection<ILogicalOperator> operatorsDeleted) {
 		
 		// The return value
 		List<List<ILogicalOperator>> operatorsPerLogicalPlan = Lists.newArrayList();

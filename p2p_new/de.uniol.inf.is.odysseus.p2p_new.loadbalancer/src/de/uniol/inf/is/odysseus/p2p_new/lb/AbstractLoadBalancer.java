@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.lb;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -71,8 +70,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * Distributes a list of logical query as follows (for every query): <br />
 	 * 1. Make copies of the query. <br />
 	 * 2. Use the fragmentation strategy to merge the copies. <br />
-	 * 3. Create the part of fragmentation (StreamAO and, if existing, WindowAO of the source to be fragmented plus the operator for fragmentation. <br />
-	 * 4. Create the part of data reunion (The operator for data reunion plus FileSinkAO or other operators, which must be executed after the data reunion. <br />
+	 * 3. Create the part of fragmentation (StreamAO and, if existing, WindowAO of the source to be 
+	 * fragmented plus the operator for fragmentation. <br />
+	 * 4. Create the part of data reunion (The operator for data reunion plus FileSinkAO or other 
+	 * operators, which must be executed after the data reunion. <br />
 	 * 5. Create the remaining parts of the query according to the concrete load balancer. <br />
 	 * 6. Assign the query parts to their peers and distribute them.
 	 * @param executor The {@link IServerExecutor} calling.
@@ -98,7 +99,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final Collection<PeerID> remotePeerIDs = DistributionHelper.getAvailableRemotePeers();
 		if(remotePeerIDs.isEmpty()) {
 			
-			LOG.debug("Could not find any remote peers to distribute logical query. Executing all locally.");
+			LOG.debug("Could not find any remote peers to distribute logical query. " +
+					"Executing all locally.");
 			return queries;
 			
 		} 
@@ -111,16 +113,18 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// The pair of the source name and the fragmentation strategy or null.
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
-				FragmentationHelper.determineFragmentationStrategy(parameters, (IServerExecutor) executor, degreeOfParallelism);
+				FragmentationHelper.determineFragmentationStrategy(parameters, 
+						(IServerExecutor) executor, degreeOfParallelism);
 		
 		// The peer assignment strategy to be used
-		IPeerAssignment peerAssignmentStrategy = DistributionHelper.determinePeerAssignmentStrategy(parameters);
+		IPeerAssignment peerAssignmentStrategy = 
+				DistributionHelper.determinePeerAssignmentStrategy(parameters);
 		
 		for(final ILogicalQuery originQuery : queries) {
 			
 			// Distribute the single query
-			distributedQueries.add(distributeLogicalQuery(originQuery, parameters, fragmentationStrategy, degreeOfParallelism, remotePeerIDs, 
-					peerAssignmentStrategy));
+			distributedQueries.add(distributeLogicalQuery(originQuery, parameters, 
+					fragmentationStrategy, degreeOfParallelism, remotePeerIDs, peerAssignmentStrategy));
 			
 		}
 		
@@ -129,12 +133,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * Determines the degree of parallelism as the minimum of the degree given by the user and the number of available peers.
+	 * Determines the degree of parallelism as the minimum of the degree given by the user and the 
+	 * number of available peers.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param remotePeerIDs A list of all available peers.
 	 * @return The degree of parallelism.
 	 */
-	protected int determineDegreeOfParallelismn(QueryBuildConfiguration parameters, Collection<PeerID> remotePeerIDs) {
+	protected int determineDegreeOfParallelismn(QueryBuildConfiguration parameters, 
+			Collection<PeerID> remotePeerIDs) {
 		
 		Preconditions.checkNotNull(parameters);
 		Preconditions.checkArgument(parameters.contains(ParameterDistributionType.class));
@@ -148,7 +154,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final String separator = " ";
 		
 		// The arguments of the parameter ParameterDistributionType
-		final String[] strParameters = parameters.get(ParameterDistributionType.class).getValue().split(separator);
+		final String[] strParameters = 
+				parameters.get(ParameterDistributionType.class).getValue().split(separator);
 		
 		// The wanted degree of parallelism by the user
 		int wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
@@ -165,7 +172,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				wantedDegreeOfParallelism = Integer.parseInt(strParameters[1]);
 				if(wantedDegreeOfParallelism < MIN_DEGREE_VALUE) {
 					
-					LOG.warn("{} is an invalid degree of parallelism. Degree settet to {}", strParameters[1], MIN_DEGREE_VALUE);
+					LOG.warn("{} is an invalid degree of parallelism. Degree settet to {}", 
+							strParameters[1], MIN_DEGREE_VALUE);
 					wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
 					
 				}
@@ -173,7 +181,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			} catch(NumberFormatException e) {
 				
 				e.printStackTrace();
-				LOG.error("Could not parse {} to an integer. Degree settet to {}", strParameters[1], MIN_DEGREE_VALUE);
+				LOG.error("Could not parse {} to an integer. Degree settet to {}", 
+						strParameters[1], MIN_DEGREE_VALUE);
 				
 			}
 			
@@ -190,8 +199,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * Distributes a logical query as follows: <br />
 	 * 1. Make copies of the query. <br />
 	 * 2. Use the fragmentation strategy to merge the copies. <br />
-	 * 3. Create the part of fragmentation (StreamAO and, if existing, WindowAO of the source to be fragmented plus the operator for fragmentation. <br />
-	 * 4. Create the part of data reunion (The operator for data reunion plus FileSinkAO or other operators, which must be executed after the data reunion. <br />
+	 * 3. Create the part of fragmentation (StreamAO and, if existing, WindowAO of the source to be 
+	 * fragmented plus the operator for fragmentation. <br />
+	 * 4. Create the part of data reunion (The operator for data reunion plus FileSinkAO or other 
+	 * operators, which must be executed after the data reunion. <br />
 	 * 5. Create the remaining parts of the query according to the concrete load balancer. <br />
 	 * 6. Assign the query parts to their peers and distribute them.
 	 * @param query The logical query to be distributed.
@@ -202,9 +213,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param peerAssignmentStrategy The peer assignment strategy.
 	 * @return The logical query to be executed locally.
 	 */
-	protected ILogicalQuery distributeLogicalQuery(ILogicalQuery query, QueryBuildConfiguration parameters, 
-			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, int degreeOfParallelism, Collection<PeerID> remotePeerIDs, 
-			IPeerAssignment peerAssignmentStrategy) {
+	protected ILogicalQuery distributeLogicalQuery(ILogicalQuery query, 
+			QueryBuildConfiguration parameters, 
+			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, int degreeOfParallelism, 
+			Collection<PeerID> remotePeerIDs, IPeerAssignment peerAssignmentStrategy) {
 		
 		Preconditions.checkNotNull(query);
 		Preconditions.checkNotNull(parameters);
@@ -224,30 +236,36 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// A list of all logical plans
 		List<ILogicalOperator> logicalPlans = Lists.newArrayList();
 		
-		// A mapping of all operators the the number of the copy they are part of.
-		// key = degreeOfParallelism -> source part
-		// key = degreeOfParallelism + 1 -> data reunion part
-		Map<Integer, List<ILogicalOperator>> operatorsToCopyNoMap = Maps.newHashMap();
-		operatorsToCopyNoMap.put(degreeOfParallelism, new ArrayList<ILogicalOperator>());
-		operatorsToCopyNoMap.put(degreeOfParallelism + 1, new ArrayList<ILogicalOperator>());
+		// A mapping of all operators to the copy they are part of.
+		Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap = Maps.newHashMap();
+		
+		// A collection of all operators added or changed due to fragmentation.
+		Collection<ILogicalOperator> operatorsChangedDueToFragmentation = Lists.newArrayList();
+		
+		// A collection of all operators added or changed due to data reunion.
+		Collection<ILogicalOperator> operatorsChangedDueToDataReunion = Lists.newArrayList();
 		
 		// Make copies of the query
-		copyQueryAndCollectCopiesAndLogicalPlans(query, queryCopies, logicalPlans, operatorsToCopyNoMap, degreeOfParallelism);
+		copyQueryAndCollectCopiesAndLogicalPlans(query, queryCopies, logicalPlans, 
+				operatorsToQueryCopyMap, degreeOfParallelism);
 		
 		// Execute fragmentation strategy
-		executeFragmentationStrategy(fragmentationStrategy, parameters, logicalPlans, operatorsToCopyNoMap);
+		executeFragmentationStrategy(fragmentationStrategy, parameters, logicalPlans, 
+				operatorsToQueryCopyMap, operatorsChangedDueToFragmentation, 
+				operatorsChangedDueToDataReunion);
 		
 		// Create source part and reunion part
-		if(!operatorsToCopyNoMap.get(degreeOfParallelism).isEmpty())
-			queryParts.add(new QueryPart(operatorsToCopyNoMap.get(degreeOfParallelism)));
-		if(!operatorsToCopyNoMap.get(degreeOfParallelism + 1).isEmpty())
-			queryParts.add(new QueryPart(operatorsToCopyNoMap.get(degreeOfParallelism + 1), DistributionHelper.LOCAL_DESTINATION_NAME));
+		if(!operatorsChangedDueToFragmentation.isEmpty())
+			queryParts.add(new QueryPart(operatorsChangedDueToFragmentation));
+		if(!operatorsChangedDueToDataReunion.isEmpty())
+			queryParts.add(new QueryPart(operatorsChangedDueToDataReunion, 
+					DistributionHelper.LOCAL_DESTINATION_NAME));
 
-		for(int copyNo = 0; copyNo < degreeOfParallelism; copyNo++) {
+		for(ILogicalQuery copy : queryCopies) {
 			
 			// Determine query parts
-			List<QueryPart> partsOfCopy = determineQueryParts(operatorsToCopyNoMap.get(copyNo));
-			LOG.debug("Got '{}' parts of logical query '{}'", partsOfCopy.size(), queryCopies.get(copyNo));
+			List<QueryPart> partsOfCopy = determineQueryParts(operatorsToQueryCopyMap.get(copy));
+			LOG.debug("Got '{}' parts of logical query '{}'", partsOfCopy.size(), copy);
 			
 			// Split and merge parts if needed
 			queryParts.addAll(mergeQueryParts(splitQueryParts(partsOfCopy)));
@@ -259,7 +277,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		DistributionHelper.generatePeerConnections(peerToQueryPartMap);
 		
 		// Publish all remote parts and return the local ones
-		return DistributionHelper.distributeAndTransformParts(queryParts, peerToQueryPartMap, parameters, query.toString());
+		return DistributionHelper.distributeAndTransformParts(queryParts, peerToQueryPartMap, 
+				parameters, query.toString());
 		
 	}
 
@@ -268,20 +287,20 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param originQuery The query to be copied.
 	 * @param queryCopies A mutable, empty list of query copies. Will be filled.
 	 * @param logicalPlans A mutable, empty list of logical plans. Will be filled.
-	 * @param operatorsToCopyNoMap A mutable, empty mapping of all operators of a copy to the number of the copy they were belonging. 
-	 * Will be filled. <br />
-	 * key = degreeOfParallelism -> source part <br />
-	 * key = degreeOfParallelism + 1 -> data reunion part
+	 * @param operatorsToCopyNoMap A mutable, empty mapping of all operators t o the copy they were 
+	 * belonging. Will be filled.
 	 * @param degreeOfParallelism The degree of parallelism is also the number of copies to make.
 	 */
-	protected void copyQueryAndCollectCopiesAndLogicalPlans(ILogicalQuery originQuery, List<ILogicalQuery> queryCopies, 
-			List<ILogicalOperator> logicalPlans, Map<Integer, List<ILogicalOperator>> operatorsToCopyNoMap, int degreeOfParallelism) {
+	protected void copyQueryAndCollectCopiesAndLogicalPlans(ILogicalQuery originQuery, 
+			List<ILogicalQuery> queryCopies, List<ILogicalOperator> logicalPlans, 
+			Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyNoMap, 
+			int degreeOfParallelism) {
 		
 		Preconditions.checkNotNull(queryCopies);
 		Preconditions.checkNotNull(logicalPlans);
 		Preconditions.checkNotNull(originQuery);
 		Preconditions.checkArgument(degreeOfParallelism > 0);
-		Preconditions.checkNotNull(operatorsToCopyNoMap);
+		Preconditions.checkNotNull(operatorsToQueryCopyNoMap);
 		
 		for(int copyNo = 0; copyNo < degreeOfParallelism; copyNo++) {
 		
@@ -294,7 +313,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 			queryCopies.add(queryCopy);
 			logicalPlans.add(queryCopy.getLogicalPlan());
-			operatorsToCopyNoMap.put(copyNo, (List<ILogicalOperator>) operators);		
+			operatorsToQueryCopyNoMap.put(queryCopy, (List<ILogicalOperator>) operators);		
 			
 		}
 		
@@ -302,58 +321,55 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	
 	/**
 	 * Executes a fragmentation strategy or {@link Replication}, if none is set.
-	 * @param fragmentationStrategy The pair of source name and fragmentation strategy for that source, if set.
+	 * @param fragmentationStrategy The pair of source name and fragmentation strategy for that source, 
+	 * if set.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param logicalPlans A list of the logical plans of all copies.
-	 * @param operatorsToCopyNoMap A mutable, empty mapping of all operators of a copy to the number of the copy they were belonging. 
-	 * Will be filled. <br />
-	 * key = degreeOfParallelism -> source part <br />
-	 * key = degreeOfParallelism + 1 -> data reunion part
+	 * @param operatorsToQueryCopyMap A mutable, empty mapping of all operators to the copy they were 
+	 * belonging. Will be changed.
+	 * @param operatorsChangedDueToFragmentation A mutable, empty collection, 
+	 * which will be filled by this method. <br /> 
+	 * This collection contains all operators which are added or modified in any way due to 
+	 * fragmentation. A modification means e.g. a related StreamAO, which copies were deleted.
+	 * @param operatorsChangedDueToDataReunion A mutable, empty collection, 
+	 * which will be filled by this method. <br /> 
+	 * This collection contains all operators which are added or modified in any way due to 
+	 * data reunion. A modification means e.g. a related FileSinkAO, which has been moved within 
+	 * the logical plan and which copies were deleted.
 	 */
-	protected void executeFragmentationStrategy(Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, 
-			QueryBuildConfiguration parameters, List<ILogicalOperator> logicalPlans, Map<Integer, List<ILogicalOperator>> operatorsToCopyNoMap) {
+	protected void executeFragmentationStrategy(
+			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, 
+			QueryBuildConfiguration parameters, List<ILogicalOperator> logicalPlans, 
+			Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap, 
+			Collection<ILogicalOperator> operatorsChangedDueToFragmentation, 
+			Collection<ILogicalOperator> operatorsChangedDueToDataReunion) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(parameters);
 		Preconditions.checkNotNull(logicalPlans);
 		Preconditions.checkArgument(!logicalPlans.isEmpty());
-		Preconditions.checkNotNull(operatorsToCopyNoMap);
+		Preconditions.checkNotNull(operatorsToQueryCopyMap);
 		
-		// The new whole logical plan after fragmentation
-		ILogicalOperator completeLogicalPlan = null;
+		// A collection of all operators deleted due to fragmentation or data reunion
+		Collection<ILogicalOperator> operatorsDeleted = Lists.newArrayList();
 		
 		if(fragmentationStrategy.isPresent())
-			completeLogicalPlan = fragmentationStrategy.get().getE2().fragment(logicalPlans, parameters, fragmentationStrategy.get().getE1());
-		else if(logicalPlans.size() == 1)
-			completeLogicalPlan = logicalPlans.iterator().next();
-		else completeLogicalPlan = new Replication().fragment(logicalPlans, parameters, null);
+			fragmentationStrategy.get().getE2().fragment(
+					logicalPlans, parameters, fragmentationStrategy.get().getE1(), 
+					operatorsChangedDueToFragmentation, operatorsChangedDueToDataReunion, 
+					operatorsDeleted);
+		else if(logicalPlans.size() > 1)
+			new Replication().fragment(
+				logicalPlans, parameters, null, operatorsChangedDueToFragmentation, 
+				operatorsChangedDueToDataReunion, operatorsDeleted);
 		
-		// All operators of the logical plan
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		RestructHelper.collectOperators(completeLogicalPlan, operators);
+		// Update  mapping of all operators to the copy they were belonging.
+		operatorsDeleted.addAll(operatorsChangedDueToFragmentation);
+		operatorsDeleted.addAll(operatorsChangedDueToDataReunion);
+		for(ILogicalOperator operatorToDelete : operatorsDeleted) {
 		
-		// Map each operator to its query
-		for(ILogicalOperator operator : operators) {
-			
-			// Operators, which destination may have changed, need to be updated in the CopyNo->Operators - Map.
-			if(operator.getDestinationName() == null || !(
-					operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.FRAGMENTATION_DESTINATION_NAME) ||
-					operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.REUNION_DESTINATION_NAME)))
-				continue;
-			
-			// Removed changed operator from map
-			for(int copyNo : operatorsToCopyNoMap.keySet()) {
-				
-				if(operatorsToCopyNoMap.get(copyNo).contains(operator))
-					operatorsToCopyNoMap.get(copyNo).remove(operator);
-				
-			}
-			
-			// Add changed operator to map
-			if(operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.FRAGMENTATION_DESTINATION_NAME))
-				operatorsToCopyNoMap.get(logicalPlans.size()).add(operator);
-			else if(operator.getDestinationName().equalsIgnoreCase(FragmentationHelper.REUNION_DESTINATION_NAME))
-				operatorsToCopyNoMap.get(logicalPlans.size() + 1).add(operator);
+			for(ILogicalQuery copy : operatorsToQueryCopyMap.keySet())
+				operatorsToQueryCopyMap.get(copy).remove(operatorToDelete);			
 			
 		}
 		
