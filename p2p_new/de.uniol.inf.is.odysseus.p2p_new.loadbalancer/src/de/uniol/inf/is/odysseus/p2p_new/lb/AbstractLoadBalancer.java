@@ -255,8 +255,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 				operatorsChangedDueToDataReunion);
 		
 		// Create source part and reunion part
-		if(!operatorsChangedDueToFragmentation.isEmpty())
-			queryParts.add(new QueryPart(operatorsChangedDueToFragmentation));
+		Optional<QueryPart> dataReunionPart = Optional.absent();
+		if(!operatorsChangedDueToFragmentation.isEmpty()) {
+			
+			dataReunionPart = Optional.of(new QueryPart(operatorsChangedDueToDataReunion));
+			queryParts.add(dataReunionPart.get());
+			
+		}
 		if(!operatorsChangedDueToDataReunion.isEmpty())
 			queryParts.add(new QueryPart(operatorsChangedDueToDataReunion, 
 					DistributionHelper.LOCAL_DESTINATION_NAME));
@@ -264,7 +269,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		for(ILogicalQuery copy : queryCopies) {
 			
 			// Determine query parts
-			List<QueryPart> partsOfCopy = determineQueryParts(operatorsToQueryCopyMap.get(copy));
+			List<QueryPart> partsOfCopy = determineQueryParts(operatorsToQueryCopyMap.get(copy), 
+					dataReunionPart);
 			LOG.debug("Got '{}' parts of logical query '{}'", partsOfCopy.size(), copy);
 			
 			// Split and merge parts if needed
@@ -378,9 +384,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	/**
 	 * Determines the query parts of a query.
 	 * @param operators A list of all operators of the query.
+	 * @param dataReunionPart The query part of data reunion, if present.
 	 * @return A list of the query parts.
 	 */
-	protected abstract List<QueryPart> determineQueryParts(List<ILogicalOperator> operators);
+	protected abstract List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, 
+			Optional<QueryPart> dataReunionPart);
 	
 	/**
 	 * Splits query parts, which have operators within to be executed locally to several parts having these operators an exclusive one.

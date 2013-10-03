@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.lb;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -33,7 +34,8 @@ public class QueryCloudLoadBalancer extends AbstractLoadBalancer {
 	 * Returns one {@link Querypart} for the whole {@link ILogicalQuery}.
 	 */
 	@Override
-	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
+	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, 
+			Optional<QueryPart> dataReunionPart) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.lb;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -15,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.IntersectionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
-import de.uniol.inf.is.odysseus.p2p_new.lb.fragmentation.FragmentationHelper;
 
 /**
  * The <code>OperatorSetCloudLoadBalancer</code> splits an {@link ILogicalQuery} before each {@link IStatefulOperator} 
@@ -53,7 +53,8 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 	 * all operators before the first {@link QueryPart}.
 	 */
 	@Override
-	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators) {
+	protected List<QueryPart> determineQueryParts(List<ILogicalOperator> operators, 
+			Optional<QueryPart> dataReunionPart) {
 		
 		Preconditions.checkNotNull(operators, "operators must be not null!");
 		Preconditions.checkArgument(operators.size() > 0, "operators must be not empty!");
@@ -63,7 +64,7 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 		
 		for(ILogicalOperator operator : operators) {
 			
-			if(this.isSink(operator) || this.isSourceOfStatefulOperator(operator)) {
+			if(this.isSink(operator, dataReunionPart) || this.isSourceOfStatefulOperator(operator)) {
 				
 				// operator marks the beginning of a new querypart
 				if(!opsForCurrentPart.isEmpty()) {
@@ -102,10 +103,11 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 	 * Determines if an {@link ILogicalOperator} is a sink of a distributed {@link ILogicalQuery}.
 	 * @param operator The {@link ILogicalOperator}.
 	 * @param localPart The local part of the distributed {@link ILogicalQuery}.
+	 * @param dataReunionPart The query part of data reunion, if present.
 	 * @return true, if <code>operator</code> has no subscriptions or if <code>operator</code> is only subscribed to <code>localPart</code>; <br />
 	 * false, else
 	 */
-	private boolean isSink(ILogicalOperator operator) {
+	private boolean isSink(ILogicalOperator operator, Optional<QueryPart> dataReunionPart) {
 		
 		Preconditions.checkNotNull(operator, "operator must be not null!");
 		
@@ -114,7 +116,8 @@ public class OperatorSetCloudLoadBalancer extends AbstractLoadBalancer {
 		
 		for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 			
-			if(!subToSink.getTarget().getDestinationName().equals(FragmentationHelper.REUNION_DESTINATION_NAME)) {
+			if(!dataReunionPart.isPresent() || 
+					!dataReunionPart.get().getOperators().contains(subToSink.getTarget())) {
 				
 				// Operator is subscribed by an operator which is not part of the reunion part
 				return false;

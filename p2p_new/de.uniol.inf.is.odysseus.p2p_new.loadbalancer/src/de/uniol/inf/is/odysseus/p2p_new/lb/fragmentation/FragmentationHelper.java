@@ -7,7 +7,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -28,18 +27,6 @@ public class FragmentationHelper {
 	public static final Class<?>[] OPERATOR_CLASSES_DATAREUNION_PART = {
 		FileSinkAO.class
 	};
-	
-	/**
-	 * The identifier for {@link ILogicalOperator#setDestinationName(String)}, 
-	 * which marks that the operator belongs to the reunion part of the query.
-	 */
-	public static final String REUNION_DESTINATION_NAME = "reunion";
-	
-	/**
-	 * The identifier for {@link ILogicalOperator#setDestinationName(String)}, 
-	 * which marks that the operator belongs to the fragmentation part of the query.
-	 */
-	public static final String FRAGMENTATION_DESTINATION_NAME = "fragmentation";
 	
 	/**
 	 * The {@link Logger} instance for this class.
