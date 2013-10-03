@@ -19,8 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -343,6 +346,51 @@ public class RestructHelper {
 
 		}
 
+	}
+	
+	/**
+	 * Assigns a plane to every operator within a logical plan.
+	 * @param root The operator, which acts as the root of the logical plan.
+	 * @return A mapping of planes to the operators. <br />
+	 * The plane '0' will be assigned to <code>root</code>.
+	 */
+	public static Map<ILogicalOperator, Integer> assignOperatorPlanes(ILogicalOperator root) {
+		
+		Preconditions.checkNotNull(root);
+		
+		// The return value
+		Map<ILogicalOperator, Integer> planeToOperatorMap = Maps.newHashMap();
+		
+		assignOperatorPlanes(root, 0, planeToOperatorMap);
+		
+		return planeToOperatorMap;
+		
+	}
+	
+	/**
+	 * Assigns a plane to every operator within a logical plan.
+	 * @param currentOperator The current operator to be assigned.
+	 * @param currentPlane The plane of <code>currrentOperator</code>.
+	 * @param planeToOperatorMap A mapping of planes to the operators.
+	 */
+	private static void assignOperatorPlanes(ILogicalOperator currentOperator, int currentPlane, 
+			Map<ILogicalOperator, Integer> planeToOperatorMap) {
+		
+		Preconditions.checkNotNull(currentOperator);
+		Preconditions.checkNotNull(planeToOperatorMap);
+		
+		if(!planeToOperatorMap.containsKey(currentOperator)) {
+			
+			planeToOperatorMap.put(currentOperator, currentPlane);
+			
+			for(final LogicalSubscription subscription : currentOperator.getSubscriptions())
+				assignOperatorPlanes(subscription.getTarget(), currentPlane + 1, planeToOperatorMap);
+
+			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource())
+				assignOperatorPlanes(subscription.getTarget(), currentPlane - 1, planeToOperatorMap);
+
+		}
+		
 	}
 
 }
