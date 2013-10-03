@@ -4,10 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
@@ -399,6 +402,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 	 * data reunion. A modification means e.g. a related FileSinkAO, which has been moved within 
 	 * the logical plan and which copies were deleted.
 	 */
+	// FIXME Seems to be a big workaround. M.B.
 	protected void insertOperatorForDataReunion(List<ILogicalOperator> operators, 
 			List<ILogicalOperator> operatorsForDataReunion, 
 			Collection<ILogicalOperator> operatorsChangedDueToDataReunion) {
@@ -410,58 +414,95 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 		Preconditions.checkNotNull(operatorsChangedDueToDataReunion);
 		Preconditions.checkNotNull(operatorsChangedDueToDataReunion.isEmpty());
 		
-		// A list of operators which shall be moved to the data reunion part
-		List<ILogicalOperator> operatorsForDataReunionPart = Lists.newArrayList();
+		// A mapping of all operators to their plane within the logical plan
+		Map<ILogicalOperator, Integer> operatorsToPlaneMap = 
+				RestructHelper.assignOperatorPlanes(operators.iterator().next());
 		
-		for(ILogicalOperator operator : operators) {
+		// A mapping of all operators which shall be moved to the data reunion part 
+		// to their plane within the logical plan
+		Map<ILogicalOperator, Integer> operatorsForDataReunionPartToPlaneMap = Maps.newHashMap();
+		
+		boolean finished = false;
+		do {
 			
-			// Only sinks will be processed
+			finished = true;
 			
-			if(operator.getSubscriptions().isEmpty()) {
+			for(ILogicalOperator operator : operators) {
 				
-				if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
+				if(operatorsForDataReunionPartToPlaneMap.containsKey(operator))
+					continue;
+				else if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
 						operator.getClass())) {
 					
+					// Delete subscriptions
+					for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+							
+						for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+							
+							subToSink.getTarget().subscribeToSource(
+									subToSource.getTarget(), subToSink.getSinkInPort(), 
+									subToSource.getSourceOutPort(), subToSink.getSchema());
+							
+						}
+						operator.unsubscribeSink(subToSink);
+						
+					}
+					operator.unsubscribeFromAllSources();
+						
 					// Collect operators to be moved to the data reunion part
-					operatorsForDataReunionPart.add(operator);
+					operatorsForDataReunionPartToPlaneMap.put(
+							operator, operatorsToPlaneMap.get(operator));
 					
+					finished = false;
+						
+				} else if(operator.getSubscriptions().isEmpty()) {
+					
+					// The operator for data reunion to be inserted
+					ILogicalOperator operatorForDataReunion = createOperatorForDataReunion();
+					operator.subscribeSink(operatorForDataReunion, 0, 0, operator.getOutputSchema());
+					operatorsForDataReunion.add(operatorForDataReunion);
+					
+					finished = false;
+				
 				}
 				
-				// The operator for data reunion to be inserted
-				ILogicalOperator operatorForDataReunion = createOperatorForDataReunion();
-				operator.subscribeSink(operatorForDataReunion, 0, 0, operator.getOutputSchema());
-				operatorsForDataReunion.add(operatorForDataReunion);
-				
-			}
+			}		
 			
-		}
+		} while(!finished);
+			
+		// A sorted list of all operators which shall be moved to the data reunion part
+		List<ILogicalOperator> sortedOperatorsForDataReunionPart = 
+				sortOperatorsToPlaneMap(operatorsForDataReunionPartToPlaneMap);
+		
+		// The iterator through the operators for data reunion
+		Iterator<ILogicalOperator> operatorsForDataReunionIter = operatorsForDataReunion.iterator();
+		
+		// The lowest plane
+		int lowestPlane = operatorsForDataReunionPartToPlaneMap.get(
+				sortedOperatorsForDataReunionPart.iterator().next());
 		
 		// Insert the operators for the data reunion part
-		for(ILogicalOperator operator : operatorsForDataReunionPart) {
+		for(int operatorNo = 0; operatorNo < sortedOperatorsForDataReunionPart.size(); operatorNo++) {
 			
+			// The current operator
+			ILogicalOperator operator = sortedOperatorsForDataReunionPart.get(operatorNo);		
 			operatorsChangedDueToDataReunion.add(operator);
 			
-			// The subscriptions from the operator to its sources
-			Collection<LogicalSubscription> subsToSources = Lists.newArrayList();
-			for(LogicalSubscription subToSource : operator.getSubscribedToSource())
-				subsToSources.add(subToSource);
-			
-			// The only(the operator was a sink before calling this method) subscription from the 
-			// operator to an operator for data reunion.
-			LogicalSubscription subToSink = operator.getSubscriptions().iterator().next();
-			
-			// The operator for data reunion.
-			ILogicalOperator operatorForDataReunion = subToSink.getTarget();
-			
-			operator.unsubscribeFromAllSources();
-			operator.unsubscribeSink(subToSink);
-			
-			for(LogicalSubscription subToSource : subsToSources)
-				operatorForDataReunion.subscribeToSource(subToSource.getTarget(), 
-						subToSink.getSinkInPort(), subToSource.getSourceOutPort(), 
-						subToSink.getSchema());
-			
-			operatorForDataReunion.subscribeSink(operator, 0, 0, subToSink.getSchema());
+			if(operatorsForDataReunionPartToPlaneMap.get(operator) == lowestPlane &&
+					operatorsForDataReunionIter.hasNext()) {
+				
+				// Subscribe to operator for data reunion
+				ILogicalOperator operatorForDataReunion = operatorsForDataReunionIter.next();
+				operatorForDataReunion.subscribeSink(operator, 0, 0, 
+						operatorForDataReunion.getOutputSchema());
+				
+			} else {
+				
+				// Subscribe to previous operator
+				operator.subscribeToSource(sortedOperatorsForDataReunionPart.get(operatorNo - 1), 
+						0, 0, sortedOperatorsForDataReunionPart.get(operatorNo - 1).getOutputSchema());
+				
+			}
 			
 		}
 		
@@ -479,6 +520,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 	 * which will be filled by this method. <br /> 
 	 * This collection contains all operators which are deleted due to fragmentation or data reunion.
 	 */
+	// FIXME Seems to be a big workaround. M.B.
 	protected void subscribeOperatorForDataReUnion(List<ILogicalOperator> operators, 
 			List<ILogicalOperator> operatorsForDataReunion, int planIndex, 
 			Collection<ILogicalOperator> operatorsDeleted) {
@@ -497,55 +539,55 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 		// the creation
 		Iterator<ILogicalOperator> operatorsForDataReunionIter = operatorsForDataReunion.iterator();
 		
-		for(ILogicalOperator operator : operators) {
+		boolean finished = false;
+		do {
 			
-			// Only sinks will be processed
+			finished = true;
 			
-			if(operator.getSubscriptions().isEmpty()) {
-				
-				if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
+			for(ILogicalOperator operator : operators) {
+			
+				if(operatorsForDataReunionPart.contains(operator))
+					continue;
+				else if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
 						operator.getClass())) {
 					
+					// Delete subscriptions
+					for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+							
+						for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+							
+							subToSink.getTarget().subscribeToSource(
+									subToSource.getTarget(), subToSink.getSinkInPort(), 
+									subToSource.getSourceOutPort(), subToSink.getSchema());
+							
+						}
+						operator.unsubscribeSink(subToSink);
+						
+					}
+					operator.unsubscribeFromAllSources();
+						
 					// Collect operators to be moved to the data reunion part
 					operatorsForDataReunionPart.add(operator);
 					
+					finished = false;
+						
+				} else if(operator.getSubscriptions().isEmpty()) {
+					
+					// The operator for data reunion to be subscribed
+					ILogicalOperator operatorForDataReunion = operatorsForDataReunionIter.next();
+					operator.subscribeSink(operatorForDataReunion, planIndex, 0, 
+							operator.getOutputSchema());
+					
+					finished = false;
+				
 				}
 				
-				// The operator for data reunion to be subscribed
-				ILogicalOperator operatorForDataReunion = operatorsForDataReunionIter.next();
-				operator.subscribeSink(operatorForDataReunion, planIndex, 0, 
-						operator.getOutputSchema());
-				
-			}
+			}		
 			
-		}
+		} while(!finished);
 		
 		// Remove the operators for the data reunion part
-		for(ILogicalOperator operator : operatorsForDataReunionPart) {
-			
-			// The subscriptions from the operator to its sources
-			Collection<LogicalSubscription> subsToSources = Lists.newArrayList();
-			for(LogicalSubscription subToSource : operator.getSubscribedToSource())
-				subsToSources.add(subToSource);
-			
-			// The only(the operator was a sink before calling this method) subscription from the 
-			// operator to an operator for data reunion.
-			LogicalSubscription subToSink = operator.getSubscriptions().iterator().next();
-			
-			// The operator for data reunion.
-			ILogicalOperator operatorForDataReunion = subToSink.getTarget();
-			
-			operator.unsubscribeFromAllSources();
-			operator.unsubscribeSink(subToSink);
-			
-			for(LogicalSubscription subToSource : subsToSources)
-				operatorForDataReunion.subscribeToSource(subToSource.getTarget(), 
-						subToSink.getSinkInPort(), subToSource.getSourceOutPort(), 
-						subToSink.getSchema());
-			
-			operatorsDeleted.add(operator);
-			
-		}
+		operatorsDeleted.addAll(operatorsForDataReunionPart);
 		
 	}
 	
@@ -555,6 +597,42 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 	protected ILogicalOperator createOperatorForDataReunion() {
 		
 		return new UnionAO();
+		
+	}
+	
+	// TODO javaDoc
+	@SuppressWarnings("null")
+	protected static List<ILogicalOperator> sortOperatorsToPlaneMap(
+			Map<ILogicalOperator, Integer> operatorsToPlaneMap) {
+		
+		Preconditions.checkNotNull(operatorsToPlaneMap);
+		
+		// The return value
+		List<ILogicalOperator> sortedList = Lists.newArrayList();
+		
+		// A copy of the input map
+		Map<ILogicalOperator, Integer> copyMap = Maps.newHashMap(operatorsToPlaneMap);
+		
+		// The minium plane found
+		Pair<ILogicalOperator, Integer> minimumPlane = null;
+		
+		while(!copyMap.isEmpty()) {
+		
+			for(ILogicalOperator operator : copyMap.keySet()) {
+				
+				if(minimumPlane == null || copyMap.get(operator) < minimumPlane.getE2())
+					minimumPlane = new Pair<ILogicalOperator, Integer>(
+							operator, copyMap.get(operator));
+				
+			}
+			
+			sortedList.add(minimumPlane.getE1());
+			copyMap.remove(minimumPlane.getE1());
+			minimumPlane = null;
+			
+		};
+		
+		return sortedList;
 		
 	}
 	

@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterFragmentationType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 
 /**
  * Utilities for the usage of the interface {@link IDataFragmentation}.
@@ -21,11 +22,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 public class FragmentationHelper {
 	
 	/**
-	 * A list of operator classes which instances shall be part of the query part of data reunion. <br />
-	 * It should only contain sinks.
+	 * A list of operator classes which instances shall be part of the query part of data reunion.
 	 */
 	public static final Class<?>[] OPERATOR_CLASSES_DATAREUNION_PART = {
-		FileSinkAO.class
+		FileSinkAO.class, 
+		CalcLatencyAO.class
 	};
 	
 	/**
@@ -38,10 +39,11 @@ public class FragmentationHelper {
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param executor The {@link IServerExecutor} calling.
 	 * @param degreeOfParallelism The degree of parallelism which is also the number of fragments.
-	 * @return A pair of source name and fragmentation strategy for that source, if any is given by the user.
+	 * @return A pair of source name and fragmentation strategy for that source, if any is given by 
+	 * the user.
 	 */
-	public static Optional<Pair<String, IDataFragmentation>> determineFragmentationStrategy(QueryBuildConfiguration parameters, IServerExecutor executor, 
-			int degreeOfParallelism) {
+	public static Optional<Pair<String, IDataFragmentation>> determineFragmentationStrategy(
+			QueryBuildConfiguration parameters, IServerExecutor executor, int degreeOfParallelism) {
 		
 		// The return value
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
@@ -54,7 +56,8 @@ public class FragmentationHelper {
 		// Check the number of fragments if fragmentation is selected
 		if(fragmentationStrategy.isPresent() && degreeOfParallelism < 2) {
 			
-			LOG.warn("Degree of parallelism must be at least 2 to use data fragmentation. Turned off data fragmentation.");
+			LOG.warn("Degree of parallelism must be at least 2 to use data fragmentation. " +
+					"Turned off data fragmentation.");
 			fragmentationStrategy = Optional.absent();
 			
 		}
@@ -69,7 +72,8 @@ public class FragmentationHelper {
 	 * @param executor The executor calling.
 	 * @return A pair of the source name and the fragmentation strategy or null.
 	 */
-	public static Optional<Pair<String,IDataFragmentation>> parseFromConfiguration(QueryBuildConfiguration parameters, IServerExecutor executor) {
+	public static Optional<Pair<String,IDataFragmentation>> parseFromConfiguration(
+			QueryBuildConfiguration parameters, IServerExecutor executor) {
 		
 		Preconditions.checkNotNull(parameters);
 		Preconditions.checkNotNull(executor);
@@ -85,7 +89,8 @@ public class FragmentationHelper {
 			LOG.warn("No fragmentation strategy defined.");
 			return Optional.absent();
 			
-		} else return parseFromString(parameters.get(ParameterFragmentationType.class).getValue(), executor);
+		} else return parseFromString(parameters.get(ParameterFragmentationType.class).getValue(), 
+				executor);
 		
 	}
 	
@@ -96,7 +101,8 @@ public class FragmentationHelper {
 	 * @param executor The executor calling.
 	 * @return A pair of the source name and the fragmentation strategy or null.
 	 */
-	private static Optional<Pair<String,IDataFragmentation>> parseFromString(String strFragmentationStrategy, IServerExecutor executor) {
+	private static Optional<Pair<String,IDataFragmentation>> parseFromString(
+			String strFragmentationStrategy, IServerExecutor executor) {
 		
 		Preconditions.checkNotNull(strFragmentationStrategy);
 		Preconditions.checkNotNull(executor);
@@ -116,10 +122,12 @@ public class FragmentationHelper {
 		String sourceName = fragmentationStrategyParameters[1];
 		
 		// The data fragmentation strategy
-		Optional<IDataFragmentation> fragmentationStrategy = executor.getDataFragmentation(fragmentationStrategyName);	
+		Optional<IDataFragmentation> fragmentationStrategy =
+				executor.getDataFragmentation(fragmentationStrategyName);	
 	
 		if(fragmentationStrategy.isPresent())
-			return Optional.of(new Pair<String, IDataFragmentation>(sourceName, fragmentationStrategy.get()));
+			return Optional.of(new Pair<String, IDataFragmentation>(sourceName, 
+					fragmentationStrategy.get()));
 		return Optional.absent();
 		
 	}
