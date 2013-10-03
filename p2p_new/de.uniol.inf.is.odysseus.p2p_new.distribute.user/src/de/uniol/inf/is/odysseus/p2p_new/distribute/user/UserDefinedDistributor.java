@@ -65,8 +65,12 @@ public class UserDefinedDistributor implements ILogicalQueryDistributor {
 			
 			// The peer assignment strategy to be used
 			final IPeerAssignment peerAssignmentStrategy = DistributionHelper.determinePeerAssignmentStrategy(transCfg);
-			final Map<QueryPart, PeerID> queryPartDistributionMap = peerAssignmentStrategy.assignQueryPartsToPeers(remotePeerIDs, queryParts);
 			
+			// Assign query parts to peers and generate connections
+			final Map<QueryPart, PeerID> queryPartDistributionMap = DistributionHelper.assignPeersDueToGivenDestinations(remotePeerIDs, queryParts);
+			List<QueryPart> partsToBeAssigned = Lists.newArrayList(queryParts);
+			partsToBeAssigned.removeAll(queryPartDistributionMap.keySet());
+			queryPartDistributionMap.putAll(peerAssignmentStrategy.assignQueryPartsToPeers(remotePeerIDs, partsToBeAssigned));
 			DistributionHelper.generatePeerConnections(queryPartDistributionMap);
 			
 			final ILogicalQuery logicalQuery = DistributionHelper.distributeAndTransformParts(queryParts, queryPartDistributionMap, transCfg, query.toString());

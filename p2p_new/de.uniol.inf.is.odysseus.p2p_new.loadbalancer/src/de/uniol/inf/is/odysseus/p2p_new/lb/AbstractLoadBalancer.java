@@ -279,7 +279,10 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		}
 		
 		// Assign query parts to peers and generate connections
-		peerToQueryPartMap = peerAssignmentStrategy.assignQueryPartsToPeers(remotePeerIDs, queryParts);
+		peerToQueryPartMap = DistributionHelper.assignPeersDueToGivenDestinations(remotePeerIDs, queryParts);
+		List<QueryPart> partsToBeAssigned = Lists.newArrayList(queryParts);
+		partsToBeAssigned.removeAll(peerToQueryPartMap.keySet());
+		peerToQueryPartMap.putAll(peerAssignmentStrategy.assignQueryPartsToPeers(remotePeerIDs, partsToBeAssigned));
 		DistributionHelper.generatePeerConnections(peerToQueryPartMap);
 		
 		// Publish all remote parts and return the local ones

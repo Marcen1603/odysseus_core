@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -254,6 +255,77 @@ public class DistributionHelper {
 		}
 		
 		return new RRPeerAssignment();
+	}
+	
+	/**
+	 * Assigns query parts to peers, where they shall be executed, if names of present peers 
+	 * are set via {@link QueryPart#QueryPart(Collection, String)} . <br />
+	 * For all query parts, which have no destination set, nothing will be done.
+	 * @param remotePeerIDs A collection of all available peers.
+	 * @param queryParts A collection of query parts to be assigned.
+	 * @return A mapping of assigned peer IDs to the query parts.
+	 */
+	public static Map<QueryPart, PeerID> assignPeersDueToGivenDestinations(
+			Collection<PeerID> remotePeerIDs, Collection<QueryPart> queryParts) {
+		
+		Preconditions.checkNotNull(remotePeerIDs);
+		Preconditions.checkArgument(remotePeerIDs.size() > 0);
+		Preconditions.checkNotNull(queryParts);
+		
+		// The return value
+		final Map<QueryPart, PeerID> distributed = Maps.newHashMap();
+		
+		// The mapping of all available peers to their names
+		final Map<String, PeerID> peerIDToNameMap = Maps.newHashMap();
+		peerIDToNameMap.put(DistributionHelper.LOCAL_DESTINATION_NAME, 
+				P2PDictionaryService.get().getLocalPeerID());
+		for(final PeerID remotePeerID : remotePeerIDs) {
+			
+			// The name of the peer
+			final Optional<String> peerName = 
+					P2PDictionaryService.get().getRemotePeerName(remotePeerID);
+			if(peerName.isPresent())
+				peerIDToNameMap.put(peerName.get(), remotePeerID);
+			
+		}
+		
+		// The iterator for the query parts.
+		final Iterator<QueryPart> partsIter = queryParts.iterator();
+		
+		while(partsIter.hasNext()) {
+			
+			// The current query part
+			QueryPart part = partsIter.next();
+			
+			// The name of the assigned peer if present
+			Optional<String> peerName;
+			
+			// The ID of the assigned peer
+			PeerID peerID = null;
+				
+			if(part.getDestinationName().isPresent()) {
+				
+				peerName = part.getDestinationName();
+				
+				if(peerIDToNameMap.containsKey(part.getDestinationName().get())) {
+					
+					// peer name found
+					peerID = peerIDToNameMap.get(peerName.get());
+					
+					distributed.put(part, peerID);
+					
+					if(peerName.isPresent())
+						LOG.debug("Assign query part {} to peer {}", part, peerName.get());
+					else LOG.debug("Assign query part {} to peer {}", part, peerID);
+					
+				}
+				
+			}
+			
+		}
+
+		return distributed;
+		
 	}
 	
 	/**
