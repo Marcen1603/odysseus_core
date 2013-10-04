@@ -108,7 +108,9 @@ public class OdysseusApplication implements IApplication {
 			loadRecentOdysseusWorkspaces(recentWorkspaces);
 			recentWorkspaces = cleanFromNullsAndDublicates(recentWorkspaces);
 			
-			data.setRecentWorkspaces(recentWorkspaces.toArray(new String[0]));
+			if( !recentWorkspaces.isEmpty() ) {
+				data.setRecentWorkspaces(recentWorkspaces.toArray(new String[0]));
+			}
 			
 			ChooseWorkspaceDialogExtended dialog = new ChooseWorkspaceDialogExtended(display.getActiveShell(), data, false, true);
 			dialog.prompt(false);
