@@ -62,6 +62,7 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	private long lastUpdate;
 	private boolean refreshing = false;
 	private Map<Integer, String> costTypeDescriptions = new HashMap<>();
+	
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
 		
@@ -194,14 +195,14 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	}
 	
 	private void addPaymentsToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedPayments().entrySet()) {
+		for (Map.Entry<String, Map<Integer, Long>> entry : BillingHelper.getBillingManager().getUnsavedPayments().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
-			Map<Integer, Double> paymentsMap = new HashMap<Integer, Double>(entry.getValue());
-			for (Map.Entry<Integer, Double> innerEntry : paymentsMap.entrySet()) {
+			Map<Integer, Long> paymentsMap = new HashMap<Integer, Long>(entry.getValue());
+			for (Map.Entry<Integer, Long> innerEntry : paymentsMap.entrySet()) {
 				queryID = innerEntry.getKey();
-				amount = innerEntry.getValue();
+				amount = innerEntry.getValue() / 10000;
 				
 				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(1), amount));
 			}
@@ -209,14 +210,14 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	}
 	
 	private void addPaymentSanctionToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedPaymentSanctions().entrySet()) {
+		for (Map.Entry<String, Map<Integer, Long>> entry : BillingHelper.getBillingManager().getUnsavedPaymentSanctions().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
-			Map<Integer, Double> paymentsMap = new HashMap<Integer, Double>(entry.getValue());
-			for (Map.Entry<Integer, Double> innerEntry : paymentsMap.entrySet()) {
+			Map<Integer, Long> paymentsMap = new HashMap<Integer, Long>(entry.getValue());
+			for (Map.Entry<Integer, Long> innerEntry : paymentsMap.entrySet()) {
 				queryID = innerEntry.getKey();
-				amount = innerEntry.getValue();
+				amount = innerEntry.getValue() / 10000;
 				
 				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(2), amount));
 			}
@@ -224,14 +225,14 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	}
 	
 	private void addRevenueSanctionToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedRevenueSanctions().entrySet()) {
+		for (Map.Entry<String, Map<Integer, Long>> entry : BillingHelper.getBillingManager().getUnsavedRevenueSanctions().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
-			Map<Integer, Double> paymentsMap = new HashMap<Integer, Double>(entry.getValue());
-			for (Map.Entry<Integer, Double> innerEntry : paymentsMap.entrySet()) {
+			Map<Integer, Long> paymentsMap = new HashMap<Integer, Long>(entry.getValue());
+			for (Map.Entry<Integer, Long> innerEntry : paymentsMap.entrySet()) {
 				queryID = innerEntry.getKey();
-				amount = innerEntry.getValue();
+				amount = innerEntry.getValue() / 10000;
 				
 				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(3), amount));
 			}
@@ -239,14 +240,14 @@ public class SLACostMonitoringDashboardPart extends AbstractDashboardPart implem
 	}
 	
 	private void addRevenuesToList() {
-		for (Map.Entry<String, Map<Integer, Double>> entry : BillingHelper.getBillingManager().getUnsavedRevenues().entrySet()) {
+		for (Map.Entry<String, Map<Integer, Long>> entry : BillingHelper.getBillingManager().getUnsavedRevenues().entrySet()) {
 			String userID = entry.getKey();
 			int queryID;
 			double amount;
-			Map<Integer, Double> paymentsMap = new HashMap<Integer, Double>(entry.getValue());
-			for (Map.Entry<Integer, Double> innerEntry : paymentsMap.entrySet()) {
+			Map<Integer, Long> paymentsMap = new HashMap<Integer, Long>(entry.getValue());
+			for (Map.Entry<Integer, Long> innerEntry : paymentsMap.entrySet()) {
 				queryID = innerEntry.getKey();
-				amount = innerEntry.getValue();
+				amount = innerEntry.getValue() / 10000;
 				
 				data.add(new RowHelper(userID, queryID, costTypeDescriptions.get(4), amount));
 			}

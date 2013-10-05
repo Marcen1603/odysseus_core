@@ -16,8 +16,10 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -25,11 +27,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
+import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 
 /**
  * sla conformance for metric update rate and scope rate
@@ -57,8 +62,9 @@ public class UpdateRateSinkRateConformance<R extends IStreamObject<?>, W extends
 	private long lastTupleSend;
 	private R lastObjectSend;
 	private int lastPortSend;
-
+	
 	private boolean isSelectivityNull = false;
+	private long currentWindowStart = 0;
 
 	/**
 	 * creates a new sla conformance for metric update rate and scope rate
@@ -119,10 +125,9 @@ public class UpdateRateSinkRateConformance<R extends IStreamObject<?>, W extends
 	/**
 	 * measures the update rate and counts how often it exceeds the threshold
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(R object, int port) {
-		super.process_next(object, port);
-
 		long diff = 0;
 		if (this.prevTime != -1) {
 			long currTime = System.currentTimeMillis();
@@ -138,37 +143,75 @@ public class UpdateRateSinkRateConformance<R extends IStreamObject<?>, W extends
 		this.lastObjectSend = object;
 		this.lastPortSend = port;
 		
-		Tuple<?> tuple = new Tuple<>(3, false);
-		tuple.addAttributeValue(0, this.getOwner().get(0).getID());
-		tuple.addAttributeValue(1, diff);
-		tuple.addAttributeValue(2, getConformance() >= this.getSLA().getMetric().getValue());
+		long latencyValue = -1;
+		IMetaAttribute metadata = object.getMetadata();
+		if (metadata instanceof ILatency) {
+			ILatency latency = (ILatency) metadata;
+			latency.setLatencyEnd(System.nanoTime());
+			latencyValue = (long) this.nanoToMilli(latency.getLatency());
+		} else {
+			throw new RuntimeException("Latency missing");
+		}
 		
-//		super.process_next((T) tuple, port);
+		if (SLAHelper.isTestWorkaroundEnabled()) {
+			if (currentWindowStart == 0)
+				currentWindowStart = System.currentTimeMillis();
+			
+			long passedTime = System.currentTimeMillis() - currentWindowStart;
+			if (passedTime >= this.getSLA().getWindow().lengthToMilliseconds()) {
+				currentWindowStart = System.currentTimeMillis();
+				checkViolation();
+			}
+		}
+		
+		int oldAttributeCount = ((Tuple<?>)object).getAttributes().length;
+		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
+		((Tuple<?>)object).append(diff, false);
+		((Tuple<?>)object).append(latencyValue, false);
+		int[] attrList = new int[3];
+		int index = 0;
+		for (int i = oldAttributeCount; i < oldAttributeCount+3; i++) {
+			attrList[index] = i;
+			index++;
+		}
+		Tuple<?> tuple = ((Tuple<?>)object).restrict(attrList, true);
+		
+		transfer((W) tuple);
+		super.process_next((R) tuple, port);
 	}
 
 	@Override
 	public double predictConformance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.getConformance();
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// heartbeat received
-		// TODO: Selectivity Listener fuer vorangehenden Operator
-		// wenn Selektivitaet 0 und und seit x Zeiteineheiten (Updaterate)
-		// nichts gesendet wurde dann z. B. das letzte nochmal senden
+		// wenn Selektivitaet 0 und und seit x Zeiteinheiten (Updaterate) nichts gesendet wurde dann z. B. das letzte nochmal senden
+		
+		long buffer = SLAHelper.getHeartbeatInterval();
 
-		long buffer = 1000;
+		boolean violated = false;
+		List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
+		double currentThreshold = serviceLevels.get(0).getThreshold();
+		for (int i = serviceLevels.size() - 1; i >= 0 && !violated; i--) {
+			if (serviceLevels.get(i).getThreshold() < (System.currentTimeMillis() - this.lastTupleSend)) {
+				violated = true;
+				currentThreshold = serviceLevels.get(i).getThreshold();
+			}
+		}
 
 		// check update rate
-		if ((System.currentTimeMillis() - this.lastTupleSend) > (this.getSLA()
-				.getMetric().getValue() - buffer)) {
+		if ((System.currentTimeMillis() - this.lastTupleSend) > (currentThreshold - buffer)) {
 			// check if selectivity of at least one operator is 0
 			parseQuery(this);
 			if (isSelectivityNull) {
 				// unindebted sla violation -> send last object again
-				process_next(lastObjectSend, lastPortSend);
+				if (lastObjectSend != null) {
+					process_next(lastObjectSend, lastPortSend);
+//					System.out.println("Sending alternative tuple (sla)");
+				}
 			}
 		}
 	}
@@ -184,7 +227,7 @@ public class UpdateRateSinkRateConformance<R extends IStreamObject<?>, W extends
 					if (getSelectivityMetadata(sub.getTarget()) == 0.0) {
 						isSelectivityNull = true;
 						break;
-					} else {
+					} else { 
 						parseQuery(sub.getTarget());
 					}
 				}
@@ -194,18 +237,17 @@ public class UpdateRateSinkRateConformance<R extends IStreamObject<?>, W extends
 				isSelectivityNull = true;
 		}
 	}
-
+	
 	private static double getSelectivityMetadata(IPhysicalOperator operator) {
 		try {
 			if (operator.isOpen()) {
-				IMonitoringData<Double> selectivityMonitoringData = operator
-						.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
+				IMonitoringData<Double> selectivityMonitoringData = operator.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
 				if (selectivityMonitoringData != null) {
 					Double selectivity = selectivityMonitoringData.getValue();
 					if (selectivity == null || Double.isNaN(selectivity)) {
 						return -1.0;
 					}
-
+					
 					return selectivity;
 				}
 			}

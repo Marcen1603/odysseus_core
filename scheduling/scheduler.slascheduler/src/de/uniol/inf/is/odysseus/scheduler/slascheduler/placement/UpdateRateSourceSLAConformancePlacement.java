@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
 
 /**
@@ -44,6 +45,9 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 	@Override
 	public ISubscribable<?, ?> placeSLAConformance(IPhysicalQuery query, IPhysicalOperator source,
 			ISLAConformance conformance) {
+		
+		((AbstractSLAPipeConformance)conformance).setAssociatedWith(source);
+		
 		ArrayList<IPhysicalOperator> operatorsToAdd = new ArrayList<IPhysicalOperator>();
 		ISubscribable subscribable;
 		if (source.isSource()) {
@@ -76,16 +80,6 @@ public class UpdateRateSourceSLAConformancePlacement implements ISLAConformanceP
 		} else {
 			throw new RuntimeException("Cannot connect SLA conformance operator to query source: " + source);
 		}
-		
-//		IPhysicalOperator source = query.getLeafSources().get(0);
-//		if (source.isSource()) {
-//			ISubscribable subscribable = (ISubscribable) source;
-//			subscribable.connectSink(conformance, 0, 0, source.getOutputSchema());
-//
-//			return subscribable;
-//		}
-//		throw new RuntimeException(
-//				"Cannot connect SLA conformance operator to query root: " + source);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked"})

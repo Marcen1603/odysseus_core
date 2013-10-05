@@ -54,7 +54,9 @@ public class SLAViolationEvent {
 	 * @param serviceLevel
 	 *            index of the hold service level
 	 * @param conformance
-	 *            measured conformnace to sla
+	 *            measured conformance to sla
+	 * @param metric
+	 * 			  the metric of the sla 
 	 */
 	public SLAViolationEvent(IPhysicalQuery query, double cost, int serviceLevel,
 			double conformance, Metric<?> metric) {
@@ -94,7 +96,7 @@ public class SLAViolationEvent {
 	}
 
 	/**
-	 * @return the sla
+	 * @return the metric of the sla
 	 */
 	public Metric<?> getMetric() {
 		return metric;

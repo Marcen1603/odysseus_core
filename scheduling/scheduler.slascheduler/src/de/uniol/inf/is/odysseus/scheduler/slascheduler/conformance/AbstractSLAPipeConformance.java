@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
@@ -18,9 +19,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSink;
+import de.uniol.inf.is.odysseus.core.server.sla.metric.UpdateRateSource;
 import de.uniol.inf.is.odysseus.latency.physicaloperator.LatencyCalculationPipe;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.test.GenQueries;
 
@@ -58,7 +62,7 @@ public abstract class AbstractSLAPipeConformance<R extends IStreamObject<?>, W e
 	 */
 	private long windowEnd;
 	/**
-	 * true iff the window has run in the current evaluation window
+	 * true if the window has run in the current evaluation window
 	 */
 	private boolean hasRunInWindow;
 	/**
@@ -78,10 +82,15 @@ public abstract class AbstractSLAPipeConformance<R extends IStreamObject<?>, W e
 	 */
 	private Map<IBuffer<?>, Double> maxPathTimeMap;
 	/**
-	 * update interval for path time map in millis
+	 * update interval for path time map in milliseconds
 	 */
 	private int pathTimeUpdateInterval;
 	private long lastUpdate;
+	
+	/**
+	 * the operator to which the conformance operator is associated 
+	 */
+	private IPhysicalOperator associatedWith;
 
 	/**
 	 * default constructor
@@ -230,7 +239,15 @@ public abstract class AbstractSLAPipeConformance<R extends IStreamObject<?>, W e
 					if (serviceLevels.get(i).getThreshold() < conformance) {
 						this.violation(serviceLevels.get(i).getPenalty()
 								.getCost(), i + 1, conformance);
-						violated = true;
+						
+						if (SLAHelper.isTestWorkaroundEnabled()) {
+							double cost = serviceLevels.get(i).getPenalty().getCost();
+							if (this.getSLA().getMetric() instanceof UpdateRateSource)
+								BillingHelper.getBillingManager().addPaymentSanction(this.query.getSession().getUser().getId(),this.query.getID(), (long)(cost * 10000));
+							else if (this.getSLA().getMetric() instanceof UpdateRateSink)
+								BillingHelper.getBillingManager().addRevenueSanction(this.query.getSession().getUser().getId(), this.query.getID(), (long)(cost * 10000));
+					
+						}
 					}
 				}
 			}
@@ -493,4 +510,17 @@ public abstract class AbstractSLAPipeConformance<R extends IStreamObject<?>, W e
 		return getMeanCPUTimeMetadataNano(operator) / 1000000.0;
 	}
 
+	/**
+	 * @return the attachedTo
+	 */
+	public IPhysicalOperator getAssociatedWith() {
+		return associatedWith;
+	}
+
+	/**
+	 * @param attachedTo the attachedTo to set
+	 */
+	public void setAssociatedWith(IPhysicalOperator associatedWith) {
+		this.associatedWith = associatedWith;
+	}
 }

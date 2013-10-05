@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -21,7 +23,6 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 	private Map<Integer, Map<String, Double>> queryToUserToPrice = new HashMap<>();
 	private static Connection conn = null;
 	private TupleCostCalculationType calculationType;
-	private long persistenceInterval = 60 * 1000;
 	
 	public TupleCostCalculationPipe(TupleCostCalculationType type) {
 		if (conn == null) {
@@ -34,6 +35,7 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 			}
 		}
 		calculationType = type;
+		BillingHelper.setPersistenceInterval(30 * 1000);
 	}
 
 	public TupleCostCalculationPipe(AbstractPipe<T, T> pipe) {
@@ -50,7 +52,8 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 		transfer(object);
 		
 		// get owner (query) and user of the operator for calculating the tuple price
-		for (IOperatorOwner ow : this.getOwner()) {
+		Set<IOperatorOwner> ownerSet = new HashSet<IOperatorOwner>(this.getOwner());
+		for (IOperatorOwner ow : ownerSet) {
 			IUser user = null;
 			int queryID = ow.getID();
 			double tuplePrice = 0;
@@ -66,26 +69,32 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 				tuplePrice = getTuplePrice(queryID, userID);
 				switch (calculationType) {
 				case OUTGOING_TUPLES:
-					BillingHelper.getBillingManager().addRevenue(userID, queryID, tuplePrice);
+					BillingHelper.getBillingManager().addRevenue(userID, queryID, (long)(tuplePrice * 10000));
 					break;
 				case INCOMING_TUPLES:
-					BillingHelper.getBillingManager().addPayment(userID, queryID, tuplePrice);
+					BillingHelper.getBillingManager().addPayment(userID, queryID, (long)(tuplePrice * 10000));
 					break;
 				}
 				
-//				if (BillingManager.getNumberOfUnsavedRevenues() == 10)
+//				if (BillingManager.getNumberOfUnsavedRevenues() == 50)
 //					BillingManager.persistBillingInformations();
 				
-				if(System.currentTimeMillis() - BillingHelper.getBillingManager().getLastTimestampOfPersistence() > persistenceInterval)
+				if(System.currentTimeMillis() - BillingHelper.getBillingManager().getLastTimestampOfPersistence() > BillingHelper.getPersistenceInterval())
 					BillingHelper.getBillingManager().persistBillingInformations();
 			}
 		}
 	}
 	
+	/**
+	 * gets the tuple price of the database (if its not in the cache yet)
+	 * @param queryID
+	 * @param userID
+	 * @return the tuple price
+	 */
 	private double getTuplePrice(int queryID, String userID) {
 		double tuplePrice = 0;
 		
-		if (queryToUserToPrice.get(queryID) == null) { //.get(userID) == null) {
+		if (queryToUserToPrice.get(queryID) == null) {
 
 			try {
 				PreparedStatement statement = conn.prepareStatement("SELECT \"Price\" FROM \"TuplePrice\" WHERE \"AccountID\"=? and \"QueryID\"=? and \"CostTypeID\"=?");
@@ -108,23 +117,6 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 				System.err.println(ex.getMessage());
 			}
 			
-//			String query = "SELECT price FROM \"Test\" WHERE id=1";
-//		    try
-//		    {
-//		      Statement st = conn.createStatement();
-//		      ResultSet rs = st.executeQuery(query);
-//		      while (rs.next())
-//		      {
-//		        tuplePrice = rs.getDouble("price");
-//		      }
-//		    }
-//		    catch (SQLException ex)
-//		    {
-//		      System.err.println(ex.getMessage());
-//		    }
-			
-//			tuplePrice = 0.01;
-			
 			Map<String, Double> map = new HashMap<String, Double>();
 			map.put(userID, tuplePrice);
 			queryToUserToPrice.put(queryID,  map);
@@ -140,22 +132,27 @@ public class TupleCostCalculationPipe<T extends IStreamObject<?>> extends Abstra
 		return new TupleCostCalculationPipe<T>(this);
 	}
 
+	/**
+	 * 
+	 * @return the calculationType
+	 */
 	public TupleCostCalculationType getCalculationType() {
 		return calculationType;
 	}
 
+	/**
+	 * 
+	 * @param the calculationType to set
+	 */
 	public void setCalculationType(TupleCostCalculationType calculationType) {
 		this.calculationType = calculationType;
 	}
-
-	public long getPersistenceInterval() {
-		return persistenceInterval;
-	}
-
-	public void setPersistenceInterval(int persistenceInterval) {
-		this.persistenceInterval = persistenceInterval;
-	}
 	
+	/**
+	 * tuple cost calculation types
+	 * @author Lena
+	 *
+	 */
 	public enum TupleCostCalculationType {
 		INCOMING_TUPLES, OUTGOING_TUPLES
 	}

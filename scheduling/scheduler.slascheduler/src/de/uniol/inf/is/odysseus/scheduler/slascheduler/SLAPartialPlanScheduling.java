@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
+import de.uniol.inf.is.odysseus.billingmodel.DatabaseBillingManager;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -155,6 +156,13 @@ public class SLAPartialPlanScheduling implements IPhysicalQueryScheduling,
 		} else {
 			this.querySharing = null;
 		}
+		
+		BillingHelper.setUseBillingModel(true); //false);
+		if (BillingHelper.useBillingModel())
+			BillingHelper.setBillingManager(new DatabaseBillingManager());
+		SLAHelper.setTestWorkaroundEnabled(true);
+		SLAHelper.setHeartbeatInterval(500);
+		
 		this.addSLAViolationEventListener(new SLAViolationLogger());
 		this.addSLAViolationEventListener(new SLAViolationCounter());
 		if (BillingHelper.useBillingModel())

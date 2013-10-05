@@ -21,7 +21,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationCounter;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkSingleConformance;
 
 public class SLAUpdateRateSinkViolationDashboardPart extends
 		AbstractChartDashboardPart {
@@ -32,7 +36,10 @@ public class SLAUpdateRateSinkViolationDashboardPart extends
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
+		if (senderOperator instanceof UpdateRateSinkAverageConformance 
+				|| senderOperator instanceof UpdateRateSinkNumberConformance 
+				|| senderOperator instanceof UpdateRateSinkRateConformance 
+				|| senderOperator instanceof UpdateRateSinkSingleConformance) {
 			
 			if (SLAViolationCounter.hasChangedUpRaSi()) {
 				int queryID;
@@ -41,43 +48,18 @@ public class SLAUpdateRateSinkViolationDashboardPart extends
 					queryID = entry.getKey();
 					number = entry.getValue();
 
+					@SuppressWarnings("rawtypes")
+					String sinkName = ((AbstractSLAPipeConformance)senderOperator).getAssociatedWith().getName();
+					
 					if (!queriesToVisualize.contains(queryID)) {
-						if (queriesToVisualize.size() > 4)
-							return;
+//						if (queriesToVisualize.size() > 4)
+//							return;
 						queriesToVisualize.add(queryID);
-						dataset.setValue(0, "Number", "Query" + queryID);
+						dataset.setValue(0, "Number", "Query" + queryID + "_" + sinkName);
 					} else
-						dataset.setValue(number, "Number", "Query" + queryID);
+						dataset.setValue(number, "Number", "Query" + queryID + "_" + sinkName);
 				}
 			}
-			
-			/*
-			if (!operatorToViolations.containsKey(senderOperator)) {
-				if (operatorToViolations.size() > 1)
-					return;
-				operatorToViolations.put(senderOperator, 0);
-				// dataset.setValue(0, "Number", senderOperator.getName() + " Compliance");
-				dataset.setValue(0, "Number", senderOperator.getName() + " Violation");
-			}
-			try {
-				final Tuple<?> tuple = (Tuple<?>) element;
-				final boolean isViolation = tuple.getAttribute(2);
-				
-				if (isViolation) {
-					// int oldVal = dataset.getValue("Number", senderOperator.getName() + " Violation").intValue();
-					int val = operatorToViolations.get(senderOperator) + 1;
-					operatorToViolations.put(senderOperator, val);
-					dataset.setValue(val, "Number", senderOperator.getName() + " Violation");
-				} //else {
-					//int oldVal = dataset.getValue("Number", senderOperator.getName() + " Compliance").intValue();
-					//int val = operatorToCompliance.get(senderOperator) + 1;
-					//operatorToCompliance.put(senderOperator, val);
-					//dataset.setValue(val, "Number", senderOperator.getName() + " Compliance");
-				//}
-
-			} catch (final Throwable t) {
-				LOG.error("Could not process Tuple {}!", element, t);
-			}*/
 		}
 	}
 
@@ -122,7 +104,7 @@ public class SLAUpdateRateSinkViolationDashboardPart extends
 
 		public Paint getItemPaint(final int row, final int column) {
 			// return (row > 200) ? Color.blue : Color.yellow ;
-			return new Color(245, 34, 52);//Color.red;
+			return new Color(245, 34, 52);
 		}
 	}
 

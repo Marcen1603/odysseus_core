@@ -16,15 +16,14 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 
 /**
  * sla conformance for metric update rate and scope average
@@ -39,7 +38,8 @@ public class UpdateRateSourceAverageConformance<R extends IStreamObject<?>, W ex
 	 */
 	private AvgSumPartialAggregate<R> aggregate;
 	
-	private R prevObj;
+	private long prevTime = -1;
+	private long currentWindowStart = 0;
 	
 	/**
 	 * creates a new sla conformance for metric update rate and scope average
@@ -94,28 +94,50 @@ public class UpdateRateSourceAverageConformance<R extends IStreamObject<?>, W ex
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(R object, int port) {
-		long diff = -1;
-		if (this.prevObj != null) {
-			IMetaAttribute currMetadata = object.getMetadata();
-			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
+		long diff = 0;
+		if (this.prevTime != -1) {
+			long currTime = System.nanoTime();
+			diff = currTime - prevTime;
+			this.aggregate.addAggValue((double)diff);
+		}
+		this.prevTime = System.nanoTime();
+		
+		if (SLAHelper.isTestWorkaroundEnabled()) {
+			if (currentWindowStart == 0)
+				currentWindowStart = System.currentTimeMillis();
 			
-			if (currMetadata instanceof ILatency && prevMetadata instanceof ILatency) {
-				ILatency currLatency = (ILatency) currMetadata;
-				ILatency prevLatency = (ILatency) prevMetadata;
-				diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
-				this.aggregate.addAggValue(nanoToMilli(diff));
-			} else {
-				throw new RuntimeException("Latency missing");
+			long passedTime = System.currentTimeMillis() - currentWindowStart;
+			if (passedTime >= this.getSLA().getWindow().lengthToMilliseconds()) {
+				currentWindowStart = System.currentTimeMillis();
+				checkViolation();
 			}
 		}
-		this.prevObj = object;
 		
-		int attributeCount = ((Tuple<?>)object).getAttributes().length;
+//		long diff = -1;
+//		if (this.prevObj != null) {
+//			IMetaAttribute currMetadata = object.getMetadata();
+//			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
+//			
+//			if (currMetadata instanceof ILatency && prevMetadata instanceof ILatency) {
+//				ILatency currLatency = (ILatency) currMetadata;
+//				ILatency prevLatency = (ILatency) prevMetadata;
+//				diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
+//				this.aggregate.addAggValue(nanoToMilli(diff));
+//			} else {
+//				if (currMetadata != null)
+//					throw new RuntimeException("Latency missing, metadata type is " + currMetadata.getClass().getName());
+//				else
+//					throw new RuntimeException("Metadata missing");
+//			}
+//		}
+//		this.prevObj = object;
+		
+		int oldAttributeCount = ((Tuple<?>)object).getAttributes().length;
 		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
 		((Tuple<?>)object).append(nanoToMilli(diff), false);
 		int[] attrList = new int[2];
 		int index = 0;
-		for (int i = attributeCount; i < attributeCount+2; i++) {
+		for (int i = oldAttributeCount; i < oldAttributeCount+2; i++) {
 			attrList[index] = i;
 			index++;
 		}
@@ -123,13 +145,12 @@ public class UpdateRateSourceAverageConformance<R extends IStreamObject<?>, W ex
 		
 		transfer((W) tuple);
 		super.process_next((R) tuple, port);
-//		super.process_next(object, port);
 	}
 
 	@Override
 	public double predictConformance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.getConformance();
 	}
 
 	/**

@@ -42,6 +42,10 @@ public class BenchmarkResultPO<M extends ILatency> extends
 	private IBenchmarkResultFactory<M> resultFactory;
 	private Map<Integer, IBenchmarkResult<M>> result = new HashMap<>();
 	private long resultsToRead = -1;
+	
+//	private int receivedTuples = 0;
+//	private long start = 0;
+//	private long end = 0;
 
 	public BenchmarkResultPO(IBenchmarkResultFactory<M> resultFactory,
 			long resultsToRead) {
@@ -82,6 +86,15 @@ public class BenchmarkResultPO<M extends ILatency> extends
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
+
+//		if (receivedTuples == 0) {
+//			start = System.nanoTime();
+//			System.out.println("Benchmark first tupel received, time: " + start);
+//		}
+//		receivedTuples++;
+//		end = System.nanoTime();
+//		System.out.println("Duration until tuple " + receivedTuples + ": " + (end-start));
+		
 		if (isOpen()) {
 			if (resultsToRead == -1 || result.get(port).size() < resultsToRead) {
 				result.get(port).add(object.getMetadata());

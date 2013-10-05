@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistrib
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventListener;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformanceFactory;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAConformancePlacementFactory;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationBilling;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationCounter;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationEvent;
@@ -69,6 +70,12 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 	final private Set<IScheduling> pausedPlans;
 
 	public AbstractDynamicPriorityPlanScheduling() {
+		BillingHelper.setUseBillingModel(true); //false);
+		if (BillingHelper.useBillingModel())
+			BillingHelper.setBillingManager(new DatabaseBillingManager());
+		SLAHelper.setTestWorkaroundEnabled(true);
+		SLAHelper.setHeartbeatInterval(500);
+		
 		queue = new LinkedList<IScheduling>();
 		this.listeners = new ArrayList<ISLAViolationEventListener>();
 		this.addSLAViolationEventListener(new SLAViolationLogger());
@@ -76,10 +83,6 @@ abstract public class AbstractDynamicPriorityPlanScheduling implements
 		if (BillingHelper.useBillingModel())
 			this.addSLAViolationEventListener(new SLAViolationBilling());
 		this.pausedPlans = new HashSet<IScheduling>();
-
-//		BillingHelper.setUseBillingModel(false);
-		BillingHelper.setUseBillingModel(true);
-		BillingHelper.setBillingManager(new DatabaseBillingManager());
 	}
 
 	@SuppressWarnings("unchecked")

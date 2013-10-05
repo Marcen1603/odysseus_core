@@ -21,7 +21,11 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceSingleConformance;
 
 public class SLAUpdateRateSourceVisualizationDashboardPart extends
 		AbstractChartDashboardPart {
@@ -32,14 +36,20 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 	private TimeSeriesCollection datasetCollection;
 	private Map<IPhysicalOperator, TimeSeries> operatorToSerie = new HashMap<IPhysicalOperator, TimeSeries>();
 
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSourceAverageConformance) {
+		if (senderOperator instanceof UpdateRateSourceAverageConformance 
+				|| senderOperator instanceof UpdateRateSourceNumberConformance 
+				|| senderOperator instanceof UpdateRateSourceRateConformance 
+				|| senderOperator instanceof UpdateRateSourceSingleConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
-				if (operatorToSerie.size() > 4)
-					return;
-				TimeSeries xySeriesSource = new TimeSeries(senderOperator.getName());
+//				if (operatorToSerie.size() > 4)
+//					return;
+//				
+				String sourceName = ((AbstractSLAPipeConformance)senderOperator).getAssociatedWith().getName();
+				TimeSeries xySeriesSource = new TimeSeries(sourceName);
 				operatorToSerie.put(senderOperator, xySeriesSource);
 				datasetCollection.addSeries(xySeriesSource);
 			}
@@ -52,9 +62,6 @@ public class SLAUpdateRateSourceVisualizationDashboardPart extends
 					Date date = new Date(System.currentTimeMillis());
 					operatorToSerie.get(senderOperator).addOrUpdate(new Second(date), updaterate);
 				}
-
-				// xySeriesSourceThreshold.add(System.currentTimeMillis(), ((AbstractSLAPipeConformance) senderOperator).getMetricValue());
-
 			} catch (final Throwable t) {
 				LOG.error("Could not process Tuple {}!", element, t);
 			}

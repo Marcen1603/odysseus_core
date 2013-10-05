@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import java.util.Collection;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -32,8 +33,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AvgSumPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
-import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
+import de.uniol.inf.is.odysseus.core.server.sla.ServiceLevel;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 
 /**
  * sla conformance for metric update rate and scope average
@@ -48,13 +50,13 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 	 */
 	private AvgSumPartialAggregate<R> aggregate;
 	
-//	private T prevObj;
 	private long prevTime = -1;
 	private long lastTupleSend;
 	private R lastObjectSend;
 	private int lastPortSend;
 	
 	private boolean isSelectivityNull = false;
+	private long currentWindowStart = 0;
 	
 	/**
 	 * creates a new sla conformance for metric update rate and scope average
@@ -109,8 +111,6 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(R object, int port) {
-//		super.process_next(object, port);
-		
 		long diff = 0;
 		if (this.prevTime != -1) {
 			long currTime = System.currentTimeMillis();
@@ -129,9 +129,19 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 			ILatency latency = (ILatency) metadata;
 			latency.setLatencyEnd(System.nanoTime());
 			latencyValue = (long) this.nanoToMilli(latency.getLatency());
-			System.out.println("UpRaSiAvgConf: " + latency.toString() + " *** " + (long) (latency.getLatency()/1000000));
 		} else {
 			throw new RuntimeException("Latency missing");
+		}
+		
+		if (SLAHelper.isTestWorkaroundEnabled()) {
+			if (currentWindowStart == 0)
+				currentWindowStart = System.currentTimeMillis();
+			
+			long passedTime = System.currentTimeMillis() - currentWindowStart;
+			if (passedTime >= this.getSLA().getWindow().lengthToMilliseconds()) {
+				currentWindowStart = System.currentTimeMillis();
+				checkViolation();
+			}
 		}
 		
 		int oldAttributeCount = ((Tuple<?>)object).getAttributes().length;
@@ -153,74 +163,37 @@ public class UpdateRateSinkAverageConformance<R extends IStreamObject<?>, W exte
 	@Override
 	public double predictConformance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.getConformance();
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// heartbeat received
-		// TODO: Selectivity Listener fuer vorangehende Operatoren
-		// wenn Selektivitaet 0 und und seit x Zeiteineheiten (Updaterate) 
-		// nichts gesendet wurde dann z. B. das letzte nochmal senden
+		// wenn Selektivitaet 0 und und seit x Zeiteinheiten (Updaterate) nichts gesendet wurde dann z. B. das letzte nochmal senden
 		
-		long buffer = 1000;
-		TimeUnit unit = null;
-		if (this.getSLA().getMetric().getUnit() instanceof TimeUnit)
-			unit = (TimeUnit) this.getSLA().getMetric().getUnit();
-
-		if (unit != null) {
-			switch (unit) {
-			case ms:
-				buffer = 1000;
-				break;
-			case s:
-				buffer = 1000;
-				break;
-			case m:
-				buffer = 1000;
-				break;
-			case h:
-				buffer = 1000;
-				break;
-			case d:
-				buffer = 1000;
-				break;
-			case months:
-				buffer = 1000;
-				break;
+		long buffer = SLAHelper.getHeartbeatInterval();
+		
+		boolean violated = false;
+		List<ServiceLevel> serviceLevels = this.getSLA().getServiceLevel();
+		double currentThreshold = serviceLevels.get(0).getThreshold();
+		for (int i = serviceLevels.size() - 1; i >= 0 && !violated; i--) {
+			if (serviceLevels.get(i).getThreshold() < (System.currentTimeMillis() - this.lastTupleSend)) {
+				violated = true;
+				currentThreshold = serviceLevels.get(i).getThreshold();
 			}
 		}
 		
 		// check update rate
-		if ((System.currentTimeMillis() - this.lastTupleSend) > (this.getSLA().getMetric().getValue() - buffer)) {
+		if ((System.currentTimeMillis() - this.lastTupleSend) > (currentThreshold - buffer)) {
 			// check if selectivity of at least one operator is 0
 			parseQuery(this);
 			if (isSelectivityNull) {
 				// unindebted sla violation -> send last object again
-				if (lastObjectSend != null)
+				if (lastObjectSend != null) {
 					process_next(lastObjectSend, lastPortSend);
+//					System.out.println("Sending alternative tuple (sla)");
+				}
 			}
 		}
-		
-		if ((System.currentTimeMillis() - this.lastTupleSend) > 1000) {
-			parseQuery(this);
-			if (isSelectivityNull) {
-				// unindebted sla violation -> send last object again
-				if (lastObjectSend != null)
-					process_next(lastObjectSend, lastPortSend);
-			}	
-		}
-		
-		
-//		for (PhysicalSubscription<? extends ISource<?>> s : ((ISink<?>) this)
-//				.getSubscribedToSource()) {
-//			ISource<?> source = s.getTarget();
-////			source.getMonitoringData(MonitoringDataTypes.SELECTIVITY.name);
-//			if (getSelectivityMetadata(source) == 0.0 && (System.currentTimeMillis() - this.lastTupleSend) > this.getSLA().getMetric().getValue()) {
-//				// unindebted sla violation -> send last object again
-//				process_next(lastObjectSend, lastPortSend);
-//			}
-//		}
 	}
 	
 	private void parseQuery(IPhysicalOperator operator) {

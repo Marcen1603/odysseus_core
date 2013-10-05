@@ -22,6 +22,9 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkSingleConformance;
 
 public class SLAUpRaSiLatencyVisualizationDashboardPart extends
 		AbstractChartDashboardPart {
@@ -35,10 +38,13 @@ public class SLAUpRaSiLatencyVisualizationDashboardPart extends
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
+		if (senderOperator instanceof UpdateRateSinkAverageConformance 
+				|| senderOperator instanceof UpdateRateSinkNumberConformance 
+				|| senderOperator instanceof UpdateRateSinkRateConformance 
+				|| senderOperator instanceof UpdateRateSinkSingleConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
-				if (operatorToSerie.size() > 1)
-					return;
+//				if (operatorToSerie.size() > 1)
+//					return;
 				TimeSeries xySeriesSource = new TimeSeries(senderOperator.getName());
 				operatorToSerie.put(senderOperator, xySeriesSource);
 				datasetCollection.addSeries(xySeriesSource);

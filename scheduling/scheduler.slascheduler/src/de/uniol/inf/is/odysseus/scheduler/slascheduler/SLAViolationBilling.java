@@ -11,11 +11,10 @@ public class SLAViolationBilling implements ISLAViolationEventListener {
 	@Override
 	public void slaViolated(SLAViolationEvent event) {
 		if (event.getServiceLevel() != 0) { // if ServiceLevel = 0 no violation occurred
-			System.out.println("Violation billing: " + event.getCost());
 			if (event.getMetric() instanceof UpdateRateSource)
-				BillingHelper.getBillingManager().addPaymentSanction(event.getQuery().getSession().getUser().getId(), event.getQuery().getID(), event.getCost());
+				BillingHelper.getBillingManager().addPaymentSanction(event.getQuery().getSession().getUser().getId(), event.getQuery().getID(), (long)(event.getCost() * 10000));
 			else if (event.getMetric() instanceof UpdateRateSink)
-				BillingHelper.getBillingManager().addRevenueSanction(event.getQuery().getSession().getUser().getId(), event.getQuery().getID(), event.getCost());
+				BillingHelper.getBillingManager().addRevenueSanction(event.getQuery().getSession().getUser().getId(), event.getQuery().getID(), (long)(event.getCost() * 10000));
 		}
 	}
 }

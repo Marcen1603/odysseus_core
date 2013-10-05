@@ -16,14 +16,13 @@
 package de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAViolationEventDistributor;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 
 /**
  * sla conformance for metric update rate and scope single
@@ -38,7 +37,8 @@ public class UpdateRateSourceSingleConformance<R extends IStreamObject<?>, W ext
 	 */
 	private double maxUpdateRate;
 	
-	private R prevObj;
+	private long prevTime = -1;
+	private long currentWindowStart = 0;
 	
 	/**
 	 * creates a new sla conformance for metric update rate and scope single
@@ -85,40 +85,49 @@ public class UpdateRateSourceSingleConformance<R extends IStreamObject<?>, W ext
 	/**
 	 * measures the update rate and saves it, if it exceeds the current maximum
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(R object, int port) {
-		super.process_next(object, port);
-		
 		long diff = 0;
-		if (this.prevObj != null) {
-			IMetaAttribute currMetadata = object.getMetadata();
-			IMetaAttribute prevMetadata = this.prevObj.getMetadata();
-			
-			if (currMetadata instanceof ILatency && prevMetadata instanceof ILatency) {
-				ILatency currLatency = (ILatency) currMetadata;
-				ILatency prevLatency = (ILatency) prevMetadata;
-				diff = currLatency.getLatencyStart() - prevLatency.getLatencyStart();
-				if (diff > this.maxUpdateRate) {
-					this.maxUpdateRate = nanoToMilli(diff);
-				}
-			} else {
-				throw new RuntimeException("Latency missing");
+		if (this.prevTime != -1) {
+			long currTime = System.nanoTime();
+			diff = currTime - prevTime;
+			if (diff > this.maxUpdateRate) {
+				this.maxUpdateRate = nanoToMilli(diff);
 			}
 		}
-		this.prevObj = object;
+		this.prevTime = System.nanoTime();
 		
-		Tuple<?> tuple = new Tuple<>(3, false);
-		tuple.addAttributeValue(0, this.getOwner().get(0).getID());
-		tuple.addAttributeValue(1, diff);
-		tuple.addAttributeValue(2, getConformance() >= this.getSLA().getMetric().getValue());
+		if (SLAHelper.isTestWorkaroundEnabled()) {
+			if (currentWindowStart == 0)
+				currentWindowStart = System.currentTimeMillis();
+			
+			long passedTime = System.currentTimeMillis() - currentWindowStart;
+			if (passedTime >= this.getSLA().getWindow().lengthToMilliseconds()) {
+				currentWindowStart = System.currentTimeMillis();
+				checkViolation();
+			}
+		}
 		
-//		super.process_next((T) tuple, port);
+		int oldAttributeCount = ((Tuple<?>)object).getAttributes().length;
+		((Tuple<?>)object).append(this.getOwner().get(0).getID(), false);
+		((Tuple<?>)object).append(nanoToMilli(diff), false);
+		int[] attrList = new int[2];
+		int index = 0;
+		for (int i = oldAttributeCount; i < oldAttributeCount+2; i++) {
+			attrList[index] = i;
+			index++;
+		}
+		Tuple<?> tuple = ((Tuple<?>)object).restrict(attrList, true);
+		
+		transfer((W) tuple);
+		super.process_next((R) tuple, port);
 	}
 
 	@Override
 	public double predictConformance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.getConformance();
 	}
 
 	@Override

@@ -21,7 +21,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAViolationCounter;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSourceSingleConformance;
 
 public class SLAUpdateRateSourceViolationDashboardPart extends
 		AbstractChartDashboardPart {
@@ -32,7 +36,10 @@ public class SLAUpdateRateSourceViolationDashboardPart extends
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
 			Tuple<?> element, int port) {
-		if (senderOperator instanceof UpdateRateSourceAverageConformance) {
+		if (senderOperator instanceof UpdateRateSourceAverageConformance 
+				|| senderOperator instanceof UpdateRateSourceNumberConformance 
+				|| senderOperator instanceof UpdateRateSourceRateConformance 
+				|| senderOperator instanceof UpdateRateSourceSingleConformance) {
 			if (SLAViolationCounter.hasChangedUpRaSo()) {
 				int queryID;
 				int number;
@@ -40,13 +47,16 @@ public class SLAUpdateRateSourceViolationDashboardPart extends
 					queryID = entry.getKey();
 					number = entry.getValue();
 
+					@SuppressWarnings("rawtypes")
+					String sourceName = ((AbstractSLAPipeConformance)senderOperator).getAssociatedWith().getName();
+					
 					if (!queriesToVisualize.contains(queryID)) {
-						if (queriesToVisualize.size() > 4)
-							return;
+//						if (queriesToVisualize.size() > 4)
+//							return;
 						queriesToVisualize.add(queryID);
-						dataset.setValue(0, "Number", "Query" + queryID);
+						dataset.setValue(0, "Number", "Query" + queryID + "_" + sourceName);
 					} else
-						dataset.setValue(number, "Number", "Query" + queryID);
+						dataset.setValue(number, "Number", "Query" + queryID + "_" + sourceName);
 				}
 			}
 			

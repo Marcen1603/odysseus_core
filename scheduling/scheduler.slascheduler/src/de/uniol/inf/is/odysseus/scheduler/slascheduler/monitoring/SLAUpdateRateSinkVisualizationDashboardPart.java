@@ -21,7 +21,11 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.AbstractChartDashboardPart;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkAverageConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkNumberConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkRateConformance;
+import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.UpdateRateSinkSingleConformance;
 
 public class SLAUpdateRateSinkVisualizationDashboardPart extends
 		AbstractChartDashboardPart {
@@ -31,22 +35,21 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 
 	private TimeSeriesCollection datasetCollection;
 	private Map<IPhysicalOperator, TimeSeries> operatorToSerie = new HashMap<IPhysicalOperator, TimeSeries>();
-	private long startTestSeries = -1;
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void addStreamElementToChart(IPhysicalOperator senderOperator,
-			Tuple<?> element, int port) {
-		if(startTestSeries == -1)
-			startTestSeries = System.currentTimeMillis();
-		
-		if (System.currentTimeMillis() - startTestSeries > 300 * 1000)
-			return;
-		
-		if (senderOperator instanceof UpdateRateSinkAverageConformance) {
+			Tuple<?> element, int port) {		
+		if (senderOperator instanceof UpdateRateSinkAverageConformance 
+				|| senderOperator instanceof UpdateRateSinkNumberConformance 
+				|| senderOperator instanceof UpdateRateSinkRateConformance 
+				|| senderOperator instanceof UpdateRateSinkSingleConformance) {
 			if (!operatorToSerie.containsKey(senderOperator)) {
-				if (operatorToSerie.size() > 1)
-					return;
-				TimeSeries xySeriesSource = new TimeSeries(senderOperator.getName());
+//				if (operatorToSerie.size() > 1)
+//					return;
+				String sinkName = ((AbstractSLAPipeConformance)senderOperator).getAssociatedWith().getName();
+				TimeSeries xySeriesSource = new TimeSeries(sinkName);
+
 				operatorToSerie.put(senderOperator, xySeriesSource);
 				datasetCollection.addSeries(xySeriesSource);
 			}
@@ -59,8 +62,6 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 					Date date = new Date(System.currentTimeMillis());
 					operatorToSerie.get(senderOperator).addOrUpdate(new Second(date), updaterate);
 				}
-
-				// xySeriesSourceThreshold.add(System.currentTimeMillis(), ((AbstractSLAPipeConformance) senderOperator).getMetricValue());
 
 			} catch (final Throwable t) {
 				LOG.error("Could not process Tuple {}!", element, t);
