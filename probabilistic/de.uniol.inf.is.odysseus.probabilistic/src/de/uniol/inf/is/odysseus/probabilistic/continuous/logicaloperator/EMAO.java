@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -52,6 +53,10 @@ public class EMAO extends UnaryLogicalOp {
 	private List<SDFAttribute> attributes;
 	/** The number of Gaussian mixtures. */
 	private int mixtures;
+	/** The convergence threshold for fitting. */
+	private double threshold = 1E-5;
+	/** The maximum number of iterations allowed per fitting process. */
+	private int iterations = 1000;
 
 	/**
 	 * Crates a new EM logical operator.
@@ -70,6 +75,8 @@ public class EMAO extends UnaryLogicalOp {
 		super(emAO);
 		this.attributes = new ArrayList<SDFAttribute>(emAO.attributes);
 		this.mixtures = emAO.mixtures;
+		this.iterations = emAO.iterations;
+		this.threshold = emAO.threshold;
 	}
 
 	/**
@@ -118,6 +125,48 @@ public class EMAO extends UnaryLogicalOp {
 	}
 
 	/**
+	 * Sets the maximum number of iterations allowed per fitting process.
+	 * 
+	 * @param iterations
+	 *            the iterations to set
+	 */
+	@Parameter(type = IntegerParameter.class, name = "ITERATIONS", optional = true)
+	public final void setIterations(final int iterations) {
+		this.iterations = iterations;
+	}
+
+	/**
+	 * Gets the maximum number of iterations allowed per fitting process.
+	 * 
+	 * @return the iterations
+	 */
+	@GetParameter(name = "ITERATIONS")
+	public final int getIterations() {
+		return this.iterations;
+	}
+
+	/**
+	 * Sets the convergence threshold for fitting.
+	 * 
+	 * @param threshold
+	 *            the threshold to set
+	 */
+	@Parameter(type = DoubleParameter.class, name = "THRESHOLD", optional = true)
+	public final void setThreshold(final double threshold) {
+		this.threshold = threshold;
+	}
+
+	/**
+	 * Gets the convergence threshold for fitting.
+	 * 
+	 * @return the threshold
+	 */
+	@GetParameter(name = "THRESHOLD")
+	public final double getThreshold() {
+		return this.threshold;
+	}
+
+	/**
 	 * Gets the positions of the attributes.
 	 * 
 	 * @return The positions of the attributes
@@ -152,7 +201,7 @@ public class EMAO extends UnaryLogicalOp {
 			}
 		}
 
-		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(),this.getInputSchema().getType(), outputAttributes);
+		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), outputAttributes);
 		this.setOutputSchema(outputSchema);
 	}
 }

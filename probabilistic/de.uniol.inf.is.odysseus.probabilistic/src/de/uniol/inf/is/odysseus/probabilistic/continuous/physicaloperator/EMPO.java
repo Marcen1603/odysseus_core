@@ -16,11 +16,12 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
+import org.apache.commons.math3.exception.ConvergenceException;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -38,6 +39,8 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
  * @param <T>
  */
 public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
+	/** The logger. */
+	private static final Logger LOG = LoggerFactory.getLogger(EMPO.class);
 	/** The sweep area to hold the data. */
 	private final DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
 	/** The attribute positions. */
@@ -50,10 +53,14 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 	 *            The attribute positions
 	 * @param mixtures
 	 *            The number of mixtures
+	 * @param iterations
+	 *            The maximum number of iterations allowed per fitting process
+	 * @param threshold
+	 *            The convergence threshold for fitting
 	 */
-	public EMPO(final int[] attributes, final int mixtures) {
+	public EMPO(final int[] attributes, final int mixtures, final int iterations, final double threshold) {
 		this.attributes = attributes;
-		this.area = new BatchEMTISweepArea(attributes, mixtures);
+		this.area = new BatchEMTISweepArea(attributes, mixtures, iterations, threshold);
 	}
 
 	/**
@@ -91,33 +98,35 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 		synchronized (this.area) {
 			this.area.purgeElements(object, Order.LeftRight);
 		}
-		// Insert the new element into the sweep area.
-		// Expectation-step and Maximization-step will be done during insert.
-		synchronized (this.area) {
-			this.area.insert(object);
-		}
+		try {
+			// Insert the new element into the sweep area.
+			// Expectation-step and Maximization-step will be done during insert.
+			synchronized (this.area) {
+				this.area.insert(object);
+			}
 
-		// Construct the multivariate distribution
-		final List<Pair<Double, MultivariateNormalDistribution>> components = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-		for (int i = 0; i < emArea.getMixtures(); i++) {
-			final MultivariateNormalDistribution distribution = new MultivariateNormalDistribution(emArea.getMean(i).getColumn(0), emArea.getCovarianceMatrix(i).getData());
-			components.add(new Pair<Double, MultivariateNormalDistribution>(emArea.getWeight(i), distribution));	
-		}
-		final NormalDistributionMixture mixture = new NormalDistributionMixture(components);
-		mixture.setAttributes(this.attributes);
-		final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+			// Construct the multivariate distribution
+			final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
+			MixtureMultivariateNormalDistribution model = emArea.getModel();
+			if (model != null) {
+				final NormalDistributionMixture mixture = new NormalDistributionMixture(model.getComponents());
+				mixture.setAttributes(this.attributes);
+				final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
 
-		for (final int attribute : this.attributes) {
-			outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
+				for (final int attribute : this.attributes) {
+					outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
+				}
+				// Copy the old distribution to the new tuple
+				System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
+				// And append the new distribution to the end of the array
+				outputValDistributions[distributions.length] = mixture;
+				outputVal.setDistributions(outputValDistributions);
+				// KTHXBYE
+				this.transfer(outputVal);
+			}
+		} catch (MathIllegalArgumentException | MaxCountExceededException | ConvergenceException e) {
+			LOG.trace(e.getMessage(), e);
 		}
-		// Copy the old distribution to the new tuple
-		System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
-		// And append the new distribution to the end of the array
-		outputValDistributions[distributions.length] = mixture;
-		outputVal.setDistributions(outputValDistributions);
-		// KTHXBYE
-		this.transfer(outputVal);
 	}
 
 	/*

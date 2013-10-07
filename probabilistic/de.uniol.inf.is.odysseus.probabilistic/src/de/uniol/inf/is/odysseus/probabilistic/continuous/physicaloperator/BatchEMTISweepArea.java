@@ -3,15 +3,14 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.linear.CholeskyDecomposition;
-import org.apache.commons.math3.linear.DecompositionSolver;
-import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.fitting.MultivariateNormalMixtureExpectationMaximization;
+import org.apache.commons.math3.exception.ConvergenceException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.random.RandomDataGenerator;
-import org.apache.commons.math3.random.Well19937c;
-import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,24 +27,17 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> {
 
 	/** The logger. */
-	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(BatchEMTISweepArea.class);
 	/** Constant value for numeric stability. */
-	private static final double NUMERIC_STABILITY_FACTOR = 10E-5;
-	/** Random data generator for initialization. */
-	private final RandomDataGenerator randomDataGenerator = new RandomDataGenerator(new Well19937c());
-	/** The number of Gaussian mixtures. */
 	private final int mixtures;
 	/** The dimension of the Gaussian Mixture Model. */
-	private final int dimension;
-	/** The weights (w), with \f$ \sum_{i=0}^{|m|} w_{i} = 1 \f$. */
-	private final double[] weights;
-	/** The means for each mixture. */
-	private final RealMatrix[] means;
-	/** The covariance matrixes for each mixture. */
-	private final RealMatrix[] covarianceMatrices;
-	/** The attribute positions. */
 	private final int[] attributes;
+	/** The weights (w), with \f$ \sum_{i=0}^{|m|} w_{i} = 1 \f$. */
+	private final double threshold;
+	/** The means for each mixture. */
+	private final int iterations;
+	/** The covariance matrixes for each mixture. */
+	private MixtureMultivariateNormalDistribution model;
 
 	/**
 	 * Creates a new sweep area for Expectation Maximization (EM) classification.
@@ -54,19 +46,16 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 *            The attribute indexes to perform the classification on
 	 * @param mixtures
 	 *            The number of mixtures
+	 * @param iterations
+	 *            The maximum number of iterations allowed per fitting process
+	 * @param threshold
+	 *            The convergence threshold for fitting
 	 */
-	public BatchEMTISweepArea(final int[] attributes, final int mixtures) {
+	public BatchEMTISweepArea(final int[] attributes, final int mixtures, final int iterations, final double threshold) {
 		this.attributes = attributes;
-		this.dimension = attributes.length;
 		this.mixtures = mixtures;
-		this.weights = new double[this.getMixtures()];
-		this.covarianceMatrices = new RealMatrix[this.getMixtures()];
-		this.means = new RealMatrix[this.getMixtures()];
-		try {
-			this.initWeights();
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		this.iterations = iterations;
+		this.threshold = threshold;
 	}
 
 	/*
@@ -77,23 +66,19 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	@Override
 	public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {
 		super.insert(s.restrict(this.attributes, false));
-		if (this.size() == 1) {
-			for (int m = 0; m < this.getMixtures(); m++) {
-				this.means[m] = MatrixUtils.createColumnRealMatrix(new double[this.getDimension()]);
-				this.covarianceMatrices[m] = MatrixUtils.createRealIdentityMatrix(this.getDimension());
+		try {
+			if (getModel() == null) {
+				setModel(MultivariateNormalMixtureExpectationMaximization.estimate(getData(), mixtures));
 			}
+			MultivariateNormalMixtureExpectationMaximization em = new MultivariateNormalMixtureExpectationMaximization(getData());
+			em.fit(getModel(), getIterations(), getThreshold());
+			MixtureMultivariateNormalDistribution fittedModel = em.getFittedModel();
+			if (fittedModel != null) {
+				setModel(fittedModel);
 		} //else {
-			//if (this.isEstimateable()) {
-				for (int i = 0; i < 100; i++) {
-					final double[][] data = this.doExpectation();
-					try {
-
-						this.doMaximisation(data);
-					} catch (final Exception e) {
-						e.printStackTrace();
-					}
-			//	}
-		//	}
+		} catch (MaxCountExceededException|ConvergenceException e) {
+			setModel(null);
+			throw e;
 		}
 	}
 
@@ -108,12 +93,49 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	}
 
 	/**
+	 * Gets the fitted model.
+	 * 
+	 * @return The model
+	 */
+	public final MixtureMultivariateNormalDistribution getModel() {
+		return this.model;
+	}
+
+	/**
+	 * Sets the fitted model.
+	 * 
+	 * @param model
+	 *            the model to set
+	 */
+	private void setModel(final MixtureMultivariateNormalDistribution model) {
+		this.model = model;
+	}
+
+	/**
+	 * Gets the maximum number of iterations allowed per fitting process.
+	 * 
+	 * @return the iterations
+	 */
+	public final int getIterations() {
+		return this.iterations;
+	}
+
+	/**
+	 * Gets the convergence threshold for fitting.
+	 * 
+	 * @return the threshold
+	 */
+	public final double getThreshold() {
+		return this.threshold;
+	}
+
+	/**
 	 * Gets the dimension of the Gaussian Mixture Model.
 	 * 
 	 * @return The dimension
 	 */
 	public final int getDimension() {
-		return this.dimension;
+		return this.attributes.length;
 	}
 
 	/**
@@ -133,36 +155,27 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * @return The weights.
 	 */
 	public final double[] getWeights() {
-		return this.weights;
+		double[] weights = new double[getDimension()];
+		for (int c = 0; c < this.model.getComponents().size(); c++) {
+			Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+			weights[c] = component.getFirst();
+		}
+
+		return weights;
 	}
 
 	/**
 	 * Gets the weight for the given mixture. If the mixture index is lower than zero or greater than the number of mixtures the result is 0.
 	 * 
-	 * @param mixture
+	 * @param component
 	 *            The index of the mixture
 	 * @return The weight
 	 */
-	public final double getWeight(final int mixture) {
-		if ((mixture < 0) || (mixture > this.getMixtures())) {
+	public final double getWeight(final int component) {
+		if ((component < 0) || (component > this.getMixtures())) {
 			return 0;
 		}
-		return this.weights[mixture];
-	}
-
-	/**
-	 * Sets the weight of the given mixture.
-	 * 
-	 * @param mixture
-	 *            The index of the mixture
-	 * @param weight
-	 *            The weight
-	 */
-	private void setWeight(final int mixture, final double weight) {
-		if ((mixture < 0) || (mixture > this.getMixtures())) {
-			return;
-		}
-		this.weights[mixture] = weight;
+		return this.model.getComponents().get(component).getFirst();
 	}
 
 	/**
@@ -171,37 +184,27 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * @return The means vectors
 	 */
 	public final RealMatrix[] getMeans() {
-		return this.means;
+		RealMatrix[] means = new RealMatrix[getDimension()];
+		for (int c = 0; c < this.model.getComponents().size(); c++) {
+			Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+			means[c] = MatrixUtils.createColumnRealMatrix(component.getValue().getMeans());
+		}
+		return means;
 	}
 
 	/**
 	 * 
 	 * Gets the mean vector for the given mixture or <code>null</code> if the given mixture does not exist.
 	 * 
-	 * @param mixture
+	 * @param component
 	 *            The index of the mixture
 	 * @return The means vector
 	 */
-	public final RealMatrix getMean(final int mixture) {
-		if ((mixture < 0) || (mixture > this.getMixtures())) {
+	public final RealMatrix getMean(final int component) {
+		if ((component < 0) || (component > this.getMixtures())) {
 			return null;
 		}
-		return this.means[mixture];
-	}
-
-	/**
-	 * Sets the means vector for the given mixture.
-	 * 
-	 * @param mixture
-	 *            The index of the mixture
-	 * @param mean
-	 *            The means vector
-	 */
-	private void setMean(final int mixture, final RealMatrix mean) {
-		if ((mixture < 0) || (mixture > this.getMixtures())) {
-			return;
-		}
-		this.means[mixture] = mean;
+		return MatrixUtils.createColumnRealMatrix(this.model.getComponents().get(component).getValue().getMeans());
 	}
 
 	/**
@@ -210,54 +213,41 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * @return The covariance matrixes
 	 */
 	public final RealMatrix[] getCovarianceMatrices() {
-		return this.covarianceMatrices;
+		RealMatrix[] covariances = new RealMatrix[getDimension()];
+		for (int c = 0; c < this.model.getComponents().size(); c++) {
+			Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+			covariances[c] = component.getValue().getCovariances();
+		}
+		return covariances;
 	}
 
 	/**
 	 * Gets the covariance matrix for the given mixture or <code>null</code> if the given mixture does not exist.
 	 * 
-	 * @param mixture
+	 * @param component
 	 *            The index of the mixture
 	 * @return The covariance matrix
 	 */
-	public final RealMatrix getCovarianceMatrix(final int mixture) {
-		if ((mixture < 0) || (mixture > this.getMixtures())) {
+	public final RealMatrix getCovarianceMatrix(final int component) {
+		if ((component < 0) || (component > this.getMixtures())) {
 			return null;
 		}
-		return this.covarianceMatrices[mixture];
+		return this.model.getComponents().get(component).getValue().getCovariances();
 	}
 
 	/**
-	 * Sets the covariance matrix for the given mixture.
+	 * Gets the data in the current sweep area.
 	 * 
-	 * @param mixture
-	 *            The index of the mixture
-	 * @param covarianceMatrix
-	 *            The covariance matrix
+	 * @return The data.
 	 */
-	private void setCovarianceMatrix(final int mixture, final RealMatrix covarianceMatrix) {
-		if ((mixture < 0) || (mixture > this.getMixtures())) {
-			return;
+	private double[][] getData() {
+		final double[][] data = new double[this.getElements().size()][this.getDimension()];
+		for (int i = 0; i < this.getElements().size(); i++) {
+			for (int d = 0; d < this.getDimension(); d++) {
+				data[i][d] = ((Number) this.getElements().get(i).getAttribute(d)).doubleValue();
 		}
-		this.covarianceMatrices[mixture] = covarianceMatrix;
 	}
-
-	/**
-	 * Gets the current log likelihood.
-	 * 
-	 * @return The log likelyhood.
-	 */
-	@SuppressWarnings("unused")
-	private double getLogLikelihood() {
-		double loglikelihood = 0.0;
-		for (int s = 0; s < this.size(); s++) {
-			double sum = 0.0;
-			for (int m = 0; m < this.getMixtures(); m++) {
-				sum += this.eval(this.getWeight(m), this.getRowData(s), this.getMean(m), this.getCovarianceMatrix(m));
-			}
-			loglikelihood += FastMath.log(sum);
-		}
-		return loglikelihood / this.size();
+		return data;
 	}
 
 	/**
@@ -403,7 +393,6 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * 
 	 * @return <code>true</code> iff enough data are collected to estimate the result
 	 */
-	@SuppressWarnings("unused")
 	private boolean isEstimateable() {
 		final double v = this.getMixtures() + (this.getDimension() + ((this.getDimension() * (this.getDimension() + 1.0)) / 2.0)) + 1.0;
 		return v < this.size();
