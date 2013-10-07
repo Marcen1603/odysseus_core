@@ -13,6 +13,7 @@ Import-Package: com.google.common.primitives,
  com.rits.cloning,
  de.uniol.inf.is.odysseus.interval.transform.join,
  de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.latency,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
@@ -23,8 +24,8 @@ Import-Package: com.google.common.primitives,
  org.apache.commons.math3.util,
  org.osgi.framework,
  org.slf4j
-Service-Component: OSGI-INF/QueryBuildConfiguration.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticContinuousDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml,OSGI-INF/IntervalProbabilistic.xml,OSGI-INF/ProbabilisticTupleDataHandler.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticFloatDataHandler.xml,OSGI-INF/ProbabilisticLongDataHandler.xml,OSGI-INF/ProbabilisticIntegerDataHandler.xml,
- OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml,OSGI-INF/ProbabilisticAggregationFunctionBuilder.xml
+Service-Component: OSGI-INF/IntervalProbabilistic.xml,OSGI-INF/ProbabilisticTupleDataHandler.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticFloatDataHandler.xml,OSGI-INF/ProbabilisticLongDataHandler.xml,OSGI-INF/ProbabilisticIntegerDataHandler.xml,OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml,
+ OSGI-INF/IntervalProbabilisticLatencyQueryBuildConfiguration.xml,OSGI-INF/ProbabilisticAggregationFunctionBuilder.xml,OSGI-INF/IntervalProbabilisticLatency.xml,OSGI-INF/IntervalProbabilisticQueryBuildConfiguration.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticContinuousDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml
 Export-Package: de.uniol.inf.is.odysseus.probabilistic,
  de.uniol.inf.is.odysseus.probabilistic.base,
  de.uniol.inf.is.odysseus.probabilistic.common,

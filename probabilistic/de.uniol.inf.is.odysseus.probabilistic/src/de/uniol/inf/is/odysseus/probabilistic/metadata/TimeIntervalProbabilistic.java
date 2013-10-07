@@ -62,7 +62,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#clone()
 	 */
 	@Override
-	public final TimeIntervalProbabilistic clone() {
+	public TimeIntervalProbabilistic clone() {
 		return new TimeIntervalProbabilistic(this);
 	}
 
@@ -71,7 +71,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#toString()
 	 */
 	@Override
-	public final String toString() {
+	public String toString() {
 		return "( i= " + super.toString() + " | " + " p=" + this.probabilistic + ")";
 	}
 
@@ -80,7 +80,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#csvToString(char, java.lang.Character, java.text.NumberFormat, java.text.NumberFormat, boolean)
 	 */
 	@Override
-	public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
+	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.probabilistic.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
@@ -89,7 +89,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#getCSVHeader(char)
 	 */
 	@Override
-	public final String getCSVHeader(final char delimiter) {
+	public String getCSVHeader(final char delimiter) {
 		return super.getCSVHeader(delimiter) + delimiter + this.probabilistic.getCSVHeader(delimiter);
 	}
 
@@ -116,7 +116,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.core.metadata.TimeInterval#getClasses()
 	 */
 	@Override
-	public final Class<? extends IMetaAttribute>[] getClasses() {
+	public Class<? extends IMetaAttribute>[] getClasses() {
 		return TimeIntervalProbabilistic.CLASSES;
 	}
 }
