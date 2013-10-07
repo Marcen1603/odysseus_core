@@ -35,8 +35,11 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.Proba
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As2DVectorFunction;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As3DVectorFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunctionVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.EuclideanDistanceFunction;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.EuclideanDistanceFunctionVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunctionVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousDivisionNumberRHSOperator;
@@ -49,6 +52,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.Probabil
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateMultivariateFunction;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.transform.ToProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.ProbabilisticGreaterThanOperator;
@@ -161,6 +165,9 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
 			functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
 
+			/** Convert functions */
+			functions.add(new ToProbabilisticContinuousDouble());
+			
 			/** Additional functions for continuous probabilistic value */
 			functions.add(new BhattacharyyaDistanceFunctionVector());
 			functions.add(new BhattacharyyaDistanceFunction());
@@ -168,6 +175,10 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new MahalanobisDistanceFunction());
 
 			functions.add(new As2DVectorFunction());
+			functions.add(new As3DVectorFunction());
+			
+			functions.add(new EuclideanDistanceFunction());
+			functions.add(new EuclideanDistanceFunctionVector());
 			// ProbabilisticFunctionProvider.LOG.info(String.format(
 			// "Register functions: %s", functions));
 		} catch (final Exception e) {

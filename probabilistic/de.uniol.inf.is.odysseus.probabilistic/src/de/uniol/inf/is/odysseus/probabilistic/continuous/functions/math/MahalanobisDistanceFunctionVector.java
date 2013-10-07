@@ -58,7 +58,7 @@ public class MahalanobisDistanceFunctionVector extends AbstractMahalanobisDistan
 	public final Double getValue() {
 		final Object[] aVector = this.getInputValue(0);
 		final NormalDistributionMixture a = (NormalDistributionMixture) aVector[0];
-		final RealMatrix b = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(1));
+		final RealMatrix b = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(1))[0]);
 		return this.getValueInternal(a, b);
 	}
 }

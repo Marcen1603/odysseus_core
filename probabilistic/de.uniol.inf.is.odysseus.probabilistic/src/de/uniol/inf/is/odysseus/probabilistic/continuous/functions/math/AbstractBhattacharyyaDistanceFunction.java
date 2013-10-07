@@ -58,13 +58,12 @@ public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProb
 	}
 
 	/**
-	 * Integrates the given distribution from the lower to the upper bound.
 	 * 
 	 * @param a
-	 *            The distribution
+	 *            The normal distribution mixture
 	 * @param b
-	 *            The distribution
-	 * @return The cumulative probability in the given bound
+	 *            The other distribution
+	 * @return The distance measure
 	 */
 	protected final double getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
 		double weightedBhattacharyyaDistance = 0.0;

@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.linear.CholeskyDecomposition;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
@@ -23,6 +24,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.NonPositiveDefiniteMatrixException;
 import org.apache.commons.math3.linear.NonSymmetricMatrixException;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -57,15 +59,17 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
 	}
 
 	/**
-	 * Integrates the given distribution from the lower to the upper bound.
 	 * 
 	 * @param a
-	 *            The distribution
+	 *            The normal distribution mixture
 	 * @param b
-	 *            The distribution
-	 * @return The cumulative probability in the given bound
+	 *            The point
+	 * @return The distance measure
 	 */
 	protected final double getValueInternal(final NormalDistributionMixture a, final RealMatrix b) {
+		if (b.getColumnDimension() > 1) {
+			throw new DimensionMismatchException(b.getColumnDimension(), 1);
+		}
 		double weightedMahalanobisDistance = 0.0;
 		for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
 			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
@@ -77,10 +81,8 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
 				solver = new LUDecomposition(aCovariance).getSolver();
 			}
 			RealMatrix aCovarianceInverse = solver.getInverse();
-
-			RealMatrix mahalanobisDistance = b.subtract(aMean).transpose().multiply(aCovarianceInverse).multiply(b.subtract(aMean));
-			// FIXME IS this correct?
-			weightedMahalanobisDistance += mahalanobisDistance.getEntry(0, 0) * aEntry.getKey();
+			double mahalanobisDistance = FastMath.sqrt((b.subtract(aMean).transpose().multiply(aCovarianceInverse).multiply(b.subtract(aMean))).getEntry(0, 0));
+			weightedMahalanobisDistance += mahalanobisDistance * aEntry.getKey();
 		}
 		return weightedMahalanobisDistance;
 	}

@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticIntegrateFunction extends ProbabilisticIntegrateMultivariateFunction {
+public class ProbabilisticIntegrateFunction extends AbstractIntegrateMultivariateFunction {
 
 	/**
      * 
