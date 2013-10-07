@@ -63,7 +63,7 @@ public class TestProjectPO extends RelationalProjectPO<IMetaAttribute> {
 	 */
 	@Test(dataProvider = "tuple")
 	public final void testprocess(final ProbabilisticTuple<IMetaAttribute> tuple) {
-		System.out.println("In: " + tuple);
+		TestProjectPO.LOG.debug("In: " + tuple);
 		this.process_next(tuple, 0);
 	}
 

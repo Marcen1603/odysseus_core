@@ -67,11 +67,11 @@ public class TProbabilisiticContinuousSelectAORule extends AbstractTransformatio
 	@Override
 	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet()) {
-			if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+			//if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 				if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
 					return true;
 				}
-			}
+			//}
 		}
 		return false;
 	}

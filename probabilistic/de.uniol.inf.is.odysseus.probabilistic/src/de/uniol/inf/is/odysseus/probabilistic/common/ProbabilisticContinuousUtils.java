@@ -18,7 +18,9 @@ package de.uniol.inf.is.odysseus.probabilistic.common;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
+import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
@@ -45,12 +47,17 @@ public final class ProbabilisticContinuousUtils {
 	public static double cumulativeProbability(final NormalDistributionMixture mixtures, final RealVector lowerBound, final RealVector upperBound) {
 
 		double probability = 0.0;
-
+		RealVector maxLowerBound = lowerBound.copy();
+		RealVector minUpperBound = upperBound.copy();
+		for (int i = 0; i < mixtures.getDimension(); i++) {
+			maxLowerBound.setEntry(i, FastMath.max(lowerBound.getEntry(i), mixtures.getSupport(i).inf()));
+			minUpperBound.setEntry(i, FastMath.min(upperBound.getEntry(i), mixtures.getSupport(i).sup()));
+		}
 		final int dimension = mixtures.getDimension();
 		if (dimension == 1) {
-			probability = ProbabilisticContinuousUtils.univariateCumulativeProbability(mixtures, lowerBound.getEntry(0), upperBound.getEntry(0));
+			probability = ProbabilisticContinuousUtils.univariateCumulativeProbability(mixtures, maxLowerBound.getEntry(0), minUpperBound.getEntry(0));
 		} else {
-			probability = ProbabilisticContinuousUtils.multivariateCumulativeProbability(mixtures, lowerBound, upperBound);
+			probability = ProbabilisticContinuousUtils.multivariateCumulativeProbability(mixtures, maxLowerBound, minUpperBound);
 		}
 		return probability;
 	}
@@ -94,9 +101,9 @@ public final class ProbabilisticContinuousUtils {
 			final MultivariateNormalDistribution normalDistribution = entry.getValue();
 			final Double weight = entry.getKey();
 			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
-			final Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
-			final Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
-			probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).p * weight;
+			final Matrix lower = new Matrix(new double[][] { lowerBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
+			final Matrix upper = new Matrix(new double[][] { upperBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
+			probability += QSIMVN.cumulativeProbability(500, covarianceMatrix, lower, upper).p * weight;
 		}
 		return probability;
 	}
