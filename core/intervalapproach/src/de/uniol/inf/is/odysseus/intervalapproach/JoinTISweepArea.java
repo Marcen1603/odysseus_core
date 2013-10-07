@@ -36,7 +36,18 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 		super(list);
 	}
 	
-	@Override
+	/**
+     * Class constructor.
+     *
+     * @param sweepArea The sweep area
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+     */
+    public JoinTISweepArea(JoinTISweepArea<T> sweepArea) throws InstantiationException, IllegalAccessException {
+        super(sweepArea);
+    }
+
+    @Override
 	public void insert(T s) {
 		synchronized (this.getElements()) {
 			setLatestTimeStamp(s);
