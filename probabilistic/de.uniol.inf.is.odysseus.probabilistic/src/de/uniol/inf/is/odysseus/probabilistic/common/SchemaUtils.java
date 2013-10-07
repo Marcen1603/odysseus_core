@@ -284,7 +284,7 @@ public final class SchemaUtils {
 	 *            The schema
 	 * @param attributes
 	 *            The {@link Collection attributes}
-	 * @return An array with the idnexes of the attributes in the schema
+	 * @return An array with the indexes of the attributes in the schema
 	 */
 	public static int[] getAttributePos(final SDFSchema schema, final Collection<SDFAttribute> attributes) {
 		final int[] pos = new int[attributes.size()];
@@ -300,6 +300,23 @@ public final class SchemaUtils {
 		return pos;
 	}
 
+	/**
+	 * Returns the index of the given attribute in the given schema.
+	 * 
+	 * @param schema
+	 *            The schema
+	 * @param attribute
+	 *            The attribute
+	 * @return The index of the attribute in the schema
+	 */
+	public static int getAttributePos(final SDFSchema schema, final SDFAttribute attribute) {
+		if (!schema.contains(attribute)) {
+			throw new IllegalArgumentException("No such attribute " + attribute + " in schema " + schema);
+		} else {
+			return schema.indexOf(attribute);
+		}
+	}
+	
 	/**
 	 * Return true if the given expression is of the form:
 	 * 

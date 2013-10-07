@@ -22,6 +22,8 @@ package de.uniol.inf.is.odysseus.probabilistic.common;
 public final class ProbabilisticConstants {
 	/** Acceptable epsilon for test on equality. */
 	public static final double EPSILON = 10E-9;
+	/** Number of samples for the Genz algorithm. */
+	public static final int SAMPLES = 100;
 
 	/**
 	 * Private constructor.

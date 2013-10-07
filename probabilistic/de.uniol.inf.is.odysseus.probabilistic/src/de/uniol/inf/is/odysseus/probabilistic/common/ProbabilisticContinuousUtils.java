@@ -26,6 +26,7 @@ import org.apache.commons.math3.util.Pair;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.Matrix;
 import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVN;
+import de.uniol.inf.is.odysseus.probabilistic.math.genz.QSIMVNResult;
 
 /**
  * 
@@ -103,7 +104,8 @@ public final class ProbabilisticContinuousUtils {
 			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
 			final Matrix lower = new Matrix(new double[][] { lowerBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
 			final Matrix upper = new Matrix(new double[][] { upperBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
-			probability += QSIMVN.cumulativeProbability(500, covarianceMatrix, lower, upper).p * weight;
+			QSIMVNResult result = QSIMVN.cumulativeProbability(ProbabilisticConstants.SAMPLES, covarianceMatrix, lower, upper);
+			probability += result.p * weight;
 		}
 		return probability;
 	}
