@@ -108,6 +108,9 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 	/** Probabilistic continuous byte datatype. */
 	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_BYTE = new SDFProbabilisticDatatype("ProbabilisticContinuousByte");
 
+	/** Probabilistic continuous double vector datatype. */
+	public static final SDFDatatype VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticContinuousDouble");
+
 	/**
 	 * Checks whether the data type is a probabilistic data type.
 	 * 
@@ -124,7 +127,8 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 	 */
 	public final boolean isContinuous() {
 		return (this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI())
-				|| this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI()));
+				|| this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI()) || this
+				.getURI().equals(SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()));
 	}
 
 	/**

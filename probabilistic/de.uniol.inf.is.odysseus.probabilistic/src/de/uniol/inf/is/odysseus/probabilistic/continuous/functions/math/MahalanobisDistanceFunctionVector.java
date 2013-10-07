@@ -34,7 +34,7 @@ public class MahalanobisDistanceFunctionVector extends AbstractMahalanobisDistan
 	/**
 	 * Accepted data types.
 	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_DOUBLE } };
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
 	/**
 	 * {@inheritDoc}
@@ -58,7 +58,7 @@ public class MahalanobisDistanceFunctionVector extends AbstractMahalanobisDistan
 	public final Double getValue() {
 		final Object[] aVector = this.getInputValue(0);
 		final NormalDistributionMixture a = (NormalDistributionMixture) aVector[0];
-		final RealMatrix b = MatrixUtils.createColumnRealMatrix((double[]) this.getInputValue(1));
+		final RealMatrix b = MatrixUtils.createRealMatrix((double[][]) this.getInputValue(1));
 		return this.getValueInternal(a, b);
 	}
 }

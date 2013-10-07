@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.Proba
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As2DVectorFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunctionVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunction;
@@ -159,13 +160,14 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
 			functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
 			functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
-			
+
 			/** Additional functions for continuous probabilistic value */
 			functions.add(new BhattacharyyaDistanceFunctionVector());
 			functions.add(new BhattacharyyaDistanceFunction());
 			functions.add(new MahalanobisDistanceFunctionVector());
 			functions.add(new MahalanobisDistanceFunction());
 
+			functions.add(new As2DVectorFunction());
 			// ProbabilisticFunctionProvider.LOG.info(String.format(
 			// "Register functions: %s", functions));
 		} catch (final Exception e) {

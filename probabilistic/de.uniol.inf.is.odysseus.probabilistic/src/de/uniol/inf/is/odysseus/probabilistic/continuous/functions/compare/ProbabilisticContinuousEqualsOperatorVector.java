@@ -64,15 +64,16 @@ public class ProbabilisticContinuousEqualsOperatorVector extends AbstractProbabi
 	 */
 	@Override
 	public final NormalDistributionMixture getValue() {
-		final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
+		final Object[] aVector = this.getInputValue(0);
+		final NormalDistributionMixture a = ((NormalDistributionMixture) aVector[0]).clone();
 
 		final double[][] b = (double[][]) this.getInputValue(1);
 		final double[] lowerBoundData = new double[a.getDimension()];
 		Arrays.fill(lowerBoundData, Double.NEGATIVE_INFINITY);
-		System.arraycopy(b[1], 0, lowerBoundData, 0, b[1].length);
+		System.arraycopy(b[0], 0, lowerBoundData, 0, b[0].length);
 		final double[] upperBoundData = new double[a.getDimension()];
 		Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
-		System.arraycopy(b[1], 0, lowerBoundData, 0, b[1].length);
+		System.arraycopy(b[0], 0, lowerBoundData, 0, b[0].length);
 
 		final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
 		final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
@@ -145,8 +146,7 @@ public class ProbabilisticContinuousEqualsOperatorVector extends AbstractProbabi
 	 * Accepted data types.
 	 */
 	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
-			{ SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT,
-					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
+			{ SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
 	/*
 	 * 
