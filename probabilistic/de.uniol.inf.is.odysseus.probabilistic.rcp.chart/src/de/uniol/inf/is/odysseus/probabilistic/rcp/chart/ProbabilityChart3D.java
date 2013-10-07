@@ -23,6 +23,8 @@ import java.util.Set;
 import net.ericaro.surfaceplotter.JSurfacePanel;
 import net.ericaro.surfaceplotter.ProgressiveSurfaceModel;
 
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.util.Pair;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -51,18 +53,17 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.MethodSetting;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilityChart3D extends
-		AbstractProbabilityChart<NormalDistributionMixture, IMetaAttribute>
-		implements IChartSettingChangeable {
+public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistributionMixture, IMetaAttribute> implements IChartSettingChangeable {
 	/** Logger. */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ProbabilityChart3D.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilityChart3D.class);
 	/** The view ID. */
 	public static final String VIEW_ID = "de.offis.chart.charts.probabilitychart3d";
 	/** The surface panel. */
 	private final JSurfacePanel chart = new JSurfacePanel();
 	/** The progressive surface model. */
 	private final ProgressiveSurfaceModel surfaceModel = new ProgressiveSurfaceModel();
+	/** Auto adjust the drawing area. */
+	private boolean autoadjust = false;
 	/** The continuous mapper. */
 	private final ProbabilisticMapper mapper = new ProbabilisticMapper();
 	/** The actions. */
@@ -71,13 +72,9 @@ public class ProbabilityChart3D extends
 	private ChangeSettingsAction changeSettingsAction;
 
 	/** The monitor edit icon. */
-	protected static final ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor
-			.createFromURL(Activator.getBundleContext().getBundle()
-					.getEntry("icons/monitor_edit.png"));
+	protected static final ImageDescriptor IMG_MONITOR_EDIT = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/monitor_edit.png"));
 	/** The configuration icon. */
-	protected static final ImageDescriptor IMG_COG = ImageDescriptor
-			.createFromURL(Activator.getBundleContext().getBundle()
-					.getEntry("icons/cog.png"));
+	protected static final ImageDescriptor IMG_COG = ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
 
 	/**
  * 
@@ -96,15 +93,28 @@ public class ProbabilityChart3D extends
 			return; // No multivariate distribution mixture
 		}
 
+		double maxX = Double.NEGATIVE_INFINITY;
+		double maxY = Double.NEGATIVE_INFINITY;
+		double standardDeviationX = 0.0;
+		double minX = Double.POSITIVE_INFINITY;
+		double minY = Double.POSITIVE_INFINITY;
+		double standardDeviationY = 0.0;
+		for (Pair<Double, MultivariateNormalDistribution> component : mixture.getMixtures().getComponents()) {
+			maxX = Math.max(maxX, component.getValue().getMeans()[0]);
+			minX = Math.min(minX, component.getValue().getMeans()[0]);
+			standardDeviationX = Math.max(standardDeviationX, component.getValue().getStandardDeviations()[0]);
+			maxY = Math.max(maxY, component.getValue().getMeans()[1]);
+			minY = Math.min(minY, component.getValue().getMeans()[1]);
+			standardDeviationY = Math.max(standardDeviationY, component.getValue().getStandardDeviations()[1]);
+		}
+		this.adjust(minX - 3 * standardDeviationX, maxX + 3 * standardDeviationX, minY - 3 * standardDeviationY, maxY + 3 * standardDeviationY);
 		this.mapper.setup(mixture);
 		this.surfaceModel.plot().execute();
 	}
 
 	/*
 	 * 
-	 * @see
-	 * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
-	 * .Composite)
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets .Composite)
 	 */
 	@Override
 	public final void createPartControl(final Composite parent) {
@@ -120,22 +130,16 @@ public class ProbabilityChart3D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#processElement
-	 * (java.util.List, de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute,
-	 * int)
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#processElement (java.util.List, de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute, int)
 	 */
 	@Override
-	protected final void processElement(
-			final List<NormalDistributionMixture> tuple,
-			final IMetaAttribute metadata, final int port) {
+	protected final void processElement(final List<NormalDistributionMixture> tuple, final IMetaAttribute metadata, final int port) {
 
 		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					final ViewableSDFAttribute attribute = (ViewableSDFAttribute) ProbabilityChart3D.this
-							.getChoosenAttributes(port).get(0);
+					final ViewableSDFAttribute attribute = (ViewableSDFAttribute) ProbabilityChart3D.this.getChoosenAttributes(port).get(0);
 					final String name = attribute.getName();
 					final SDFDatatype type = attribute.getSDFDatatype();
 
@@ -211,28 +215,21 @@ public class ProbabilityChart3D extends
 	 * Creates the view actions.
 	 */
 	private void createActions() {
-		this.changeAttributesAction = new ChangeSelectedAttributesAction<NormalDistributionMixture>(
-				this.getSite().getShell(), this);
+		this.changeAttributesAction = new ChangeSelectedAttributesAction<NormalDistributionMixture>(this.getSite().getShell(), this);
 		this.changeAttributesAction.setText("Change Attributes");
-		this.changeAttributesAction
-				.setToolTipText("Configure the attributes that will be shown by the chart");
-		this.changeAttributesAction
-				.setImageDescriptor(ProbabilityChart3D.IMG_MONITOR_EDIT);
+		this.changeAttributesAction.setToolTipText("Configure the attributes that will be shown by the chart");
+		this.changeAttributesAction.setImageDescriptor(ProbabilityChart3D.IMG_MONITOR_EDIT);
 
-		this.changeSettingsAction = new ChangeSettingsAction(this.getSite()
-				.getShell(), this);
+		this.changeSettingsAction = new ChangeSettingsAction(this.getSite().getShell(), this);
 		this.changeSettingsAction.setText("Change Settings");
-		this.changeSettingsAction
-				.setToolTipText("Change several settings for this chart");
-		this.changeSettingsAction
-				.setImageDescriptor(ProbabilityChart3D.IMG_COG);
+		this.changeSettingsAction.setToolTipText("Change several settings for this chart");
+		this.changeSettingsAction.setImageDescriptor(ProbabilityChart3D.IMG_COG);
 
 	}
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.
-	 * IChartSettingChangeable#getChartSettings()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings. IChartSettingChangeable#getChartSettings()
 	 */
 	@Override
 	public final List<MethodSetting> getChartSettings() {
@@ -247,8 +244,7 @@ public class ProbabilityChart3D extends
 	 *            The class to analyse
 	 * @return A list of method settings
 	 */
-	public final List<MethodSetting> getAnnotatedSettings(
-			final Class<?> theclass) {
+	public final List<MethodSetting> getAnnotatedSettings(final Class<?> theclass) {
 		final List<MethodSetting> settings = new ArrayList<MethodSetting>();
 		for (final Method method : theclass.getMethods()) {
 			final ChartSetting us = method.getAnnotation(ChartSetting.class);
@@ -256,13 +252,11 @@ public class ProbabilityChart3D extends
 				if (us.type().equals(Type.GET)) {
 					final Method other = this.getAccordingType(us);
 					if (other != null) {
-						final MethodSetting methodSetting = new MethodSetting(
-								us.name(), method, other);
+						final MethodSetting methodSetting = new MethodSetting(us.name(), method, other);
 						methodSetting.setListGetter(this.getListMethod(us));
 						settings.add(methodSetting);
 					} else {
-						ProbabilityChart3D.LOG
-								.warn("Setting can not be loaded because there is no getter/setter pair");
+						ProbabilityChart3D.LOG.warn("Setting can not be loaded because there is no getter/setter pair");
 						continue;
 					}
 				}
@@ -291,8 +285,7 @@ public class ProbabilityChart3D extends
 	 */
 	private Method findMethod(final String name, final Type searchForTyp) {
 		for (final Method method : this.getClass().getMethods()) {
-			final ChartSetting chartSetting = method
-					.getAnnotation(ChartSetting.class);
+			final ChartSetting chartSetting = method.getAnnotation(ChartSetting.class);
 			if (chartSetting != null) {
 				if (chartSetting.name().equals(name)) {
 					if (chartSetting.type().equals(searchForTyp)) {
@@ -323,7 +316,7 @@ public class ProbabilityChart3D extends
 	 * @return The xMax value
 	 */
 	@ChartSetting(name = "X-Max", type = Type.GET)
-	public final double getXMaxValue() {
+	public final double getXMax() {
 		return this.surfaceModel.getXMax();
 	}
 
@@ -334,7 +327,7 @@ public class ProbabilityChart3D extends
 	 *            The xMax value
 	 */
 	@ChartSetting(name = "X-Max", type = Type.SET)
-	public final void setXMaxValue(final double x) {
+	public final void setXMax(final double x) {
 		this.surfaceModel.setXMax((float) x);
 	}
 
@@ -344,7 +337,7 @@ public class ProbabilityChart3D extends
 	 * @return The xMin value
 	 */
 	@ChartSetting(name = "X-Min", type = Type.GET)
-	public final double getXMinValue() {
+	public final double getXMin() {
 		return this.surfaceModel.getXMin();
 	}
 
@@ -355,7 +348,7 @@ public class ProbabilityChart3D extends
 	 *            The xMin value
 	 */
 	@ChartSetting(name = "X-Min", type = Type.SET)
-	public final void setXMinValue(final double x) {
+	public final void setXMin(final double x) {
 		this.surfaceModel.setXMin((float) x);
 	}
 
@@ -365,7 +358,7 @@ public class ProbabilityChart3D extends
 	 * @return The yMax value
 	 */
 	@ChartSetting(name = "Y-Max", type = Type.GET)
-	public final double getYMaxValue() {
+	public final double getYMax() {
 		return this.surfaceModel.getYMax();
 	}
 
@@ -376,7 +369,7 @@ public class ProbabilityChart3D extends
 	 *            The yMax value
 	 */
 	@ChartSetting(name = "Y-Max", type = Type.SET)
-	public final void setYMaxValue(final double y) {
+	public final void setYMax(final double y) {
 		this.surfaceModel.setYMax((float) y);
 	}
 
@@ -386,7 +379,7 @@ public class ProbabilityChart3D extends
 	 * @return The yMin value
 	 */
 	@ChartSetting(name = "Y-Min", type = Type.GET)
-	public final double getYMinValue() {
+	public final double getYMin() {
 		return this.surfaceModel.getYMin();
 	}
 
@@ -397,7 +390,7 @@ public class ProbabilityChart3D extends
 	 *            The yMin value
 	 */
 	@ChartSetting(name = "Y-Min", type = Type.SET)
-	public final void setYMinValue(final double y) {
+	public final void setYMin(final double y) {
 		this.surfaceModel.setYMin((float) y);
 	}
 
@@ -407,7 +400,7 @@ public class ProbabilityChart3D extends
 	 * @return The zMax value
 	 */
 	@ChartSetting(name = "Z-Max", type = Type.GET)
-	public final double getZMaxValue() {
+	public final double getZMax() {
 		return this.surfaceModel.getZMax();
 	}
 
@@ -418,7 +411,7 @@ public class ProbabilityChart3D extends
 	 *            The zMax value
 	 */
 	@ChartSetting(name = "Z-Max", type = Type.SET)
-	public final void setZMaxValue(final double z) {
+	public final void setZMax(final double z) {
 		this.surfaceModel.setZMax((float) z);
 	}
 
@@ -428,7 +421,7 @@ public class ProbabilityChart3D extends
 	 * @return The zMin value
 	 */
 	@ChartSetting(name = "Z-Min", type = Type.GET)
-	public final double getZMinValue() {
+	public final double getZMin() {
 		return this.surfaceModel.getZMin();
 	}
 
@@ -439,15 +432,35 @@ public class ProbabilityChart3D extends
 	 *            The zMin value
 	 */
 	@ChartSetting(name = "Z-Min", type = Type.SET)
-	public final void setZMinValue(final double z) {
+	public final void setZMin(final double z) {
 		this.surfaceModel.setZMin((float) z);
+	}
+
+	/**
+	 * Gets the value of the autoadjust property.
+	 * 
+	 * @return The autoadjust value
+	 */
+	@ChartSetting(name = "Autoadjust Bounds", type = Type.GET)
+	public final Boolean isAutoadjust() {
+		return this.autoadjust;
+	}
+
+	/**
+	 * Sets the value of the autoadjust property.
+	 * 
+	 * @param autoadjust
+	 *            Whether to enable or disable auto adjust
+	 */
+	@ChartSetting(name = "Autoadjust Bounds", type = Type.SET)
+	public final void setAutoadjust(final Boolean autoadjust) {
+		this.autoadjust = autoadjust;
+		// this.surfaceModel.setAutoScaleZ(autoadjust);
 	}
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable
-	 * #chartSettingsChanged()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable #chartSettingsChanged()
 	 */
 	@Override
 	public final void chartSettingsChanged() {
@@ -465,9 +478,7 @@ public class ProbabilityChart3D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#getViewID
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#getViewID ()
 	 */
 	@Override
 	public final String getViewID() {
@@ -476,24 +487,53 @@ public class ProbabilityChart3D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable
-	 * #isValidSelection(java.util.Map)
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable #isValidSelection(java.util.Map)
 	 */
 	@Override
-	public final String isValidSelection(
-			final Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public final String isValidSelection(final Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		return this.checkAtLeastOneSelectedAttribute(selectAttributes);
 	}
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#reloadChart
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#reloadChart ()
 	 */
 	@Override
 	protected void reloadChart() {
+
+	}
+
+	/**
+	 * Adjust the drawing area if the area does not include the given position.
+	 * 
+	 * @param minX
+	 *            The x min value
+	 * @param maxX
+	 *            The x max value
+	 * @param minY
+	 *            The y min value
+	 * @param maxY
+	 *            The y max value
+	 */
+	private void adjust(final double minX, final double maxX, final double minY, final double maxY) {
+		if (Double.isNaN(this.getXMax())) {
+			this.setXMax(maxX);
+		}
+		if (Double.isNaN(this.getXMin())) {
+			this.setXMin(minX);
+		}
+		if (Double.isNaN(this.getYMax())) {
+			this.setYMax(maxY);
+		}
+		if (Double.isNaN(this.getYMin())) {
+			this.setYMin(minY);
+		}
+		if (this.autoadjust) {
+			this.setYMin(minY);
+			this.setYMax(maxY);
+			this.setXMin(minX);
+			this.setXMax(maxX);
+		}
 
 	}
 }

@@ -53,8 +53,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilityChart2D extends
-		AbstractJFreeChart<Object, IMetaAttribute> {
+public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribute> {
 	/** The data set to draw. */
 	private final XYSeriesCollection dataset = new XYSeriesCollection();
 	/** Upper Bound for X-Axis. */
@@ -69,7 +68,7 @@ public class ProbabilityChart2D extends
 	private int samples = 1000;
 	/** Auto adjust the drawing area. */
 	private boolean autoadjust = false;
-	/** Margins to he borders. */
+	/** Margins to the borders. */
 	private final double margin = 0.05; // 5 percent
 	/** Number of data to redraw. */
 	private int redrawEach = 0;
@@ -78,9 +77,7 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#getViewID
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#getViewID ()
 	 */
 	@Override
 	public final String getViewID() {
@@ -89,27 +86,22 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart#
-	 * chartSettingsChanged()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart# chartSettingsChanged()
 	 */
 	@Override
 	public final void chartSettingsChanged() {
 		if (!this.autoadjust) {
 			if (!Double.isNaN(this.yMin)) {
-				this.getChart().getXYPlot().getRangeAxis()
-						.setLowerBound(this.yMin * (1.0 - this.margin));
+				this.getChart().getXYPlot().getRangeAxis().setLowerBound(this.yMin * (1.0 - this.margin));
 			}
 			if (!Double.isNaN(this.yMax)) {
-				this.getChart().getXYPlot().getRangeAxis()
-						.setUpperBound(this.yMax * (1.0 + this.margin));
+				this.getChart().getXYPlot().getRangeAxis().setUpperBound(this.yMax * (1.0 + this.margin));
 			}
 			if (!Double.isNaN(this.xMin)) {
-				this.getChart().getXYPlot().getDomainAxis()
-						.setLowerBound(this.xMin * (1.0 - this.margin));
+				this.getChart().getXYPlot().getDomainAxis().setLowerBound(this.xMin * (1.0 - this.margin));
 			}
 			if (!Double.isNaN(this.xMax)) {
-				this.getChart().getXYPlot().getDomainAxis()
-						.setUpperBound(this.xMax * (1.0 + this.margin));
+				this.getChart().getXYPlot().getDomainAxis().setUpperBound(this.xMax * (1.0 + this.margin));
 			}
 		}
 
@@ -118,16 +110,12 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable
-	 * #isValidSelection(java.util.Map)
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable #isValidSelection(java.util.Map)
 	 */
 	@Override
-	public final String isValidSelection(
-			final Map<Integer, Set<IViewableAttribute>> selectAttributes) {
+	public final String isValidSelection(final Map<Integer, Set<IViewableAttribute>> selectAttributes) {
 		int sel = 0;
-		for (final Entry<Integer, Set<IViewableAttribute>> e : selectAttributes
-				.entrySet()) {
+		for (final Entry<Integer, Set<IViewableAttribute>> e : selectAttributes.entrySet()) {
 			final Set<IViewableAttribute> attributes = e.getValue();
 			for (final IViewableAttribute attribute : attributes) {
 				final SDFDatatype type = attribute.getSDFDatatype();
@@ -316,8 +304,7 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#init()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#init()
 	 */
 	@Override
 	protected void init() {
@@ -326,25 +313,19 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart#
-	 * createChart()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart# createChart()
 	 */
 	@Override
 	protected final JFreeChart createChart() {
-		final JFreeChart chart = ChartFactory.createXYLineChart(
-				this.getTitle(), "", "", this.getDataset(),
-				PlotOrientation.VERTICAL, true, true, false);
-		chart.getPlot().setBackgroundPaint(
-				AbstractJFreeChart.DEFAULT_BACKGROUND);
-		chart.getLegend().setBackgroundPaint(
-				AbstractJFreeChart.DEFAULT_BACKGROUND_GRID);
+		final JFreeChart chart = ChartFactory.createXYLineChart(this.getTitle(), "", "", this.getDataset(), PlotOrientation.VERTICAL, true, true, false);
+		chart.getPlot().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND);
+		chart.getLegend().setBackgroundPaint(AbstractJFreeChart.DEFAULT_BACKGROUND_GRID);
 		return chart;
 	}
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart#
-	 * decorateChart(org.jfree.chart.JFreeChart)
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart# decorateChart(org.jfree.chart.JFreeChart)
 	 */
 	@Override
 	protected void decorateChart(final JFreeChart thechart) {
@@ -353,20 +334,12 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#initConnection
-	 * (de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection)
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#initConnection (de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection)
 	 */
 	@Override
-	protected final void initConnection(
-			final IStreamConnection<IStreamObject<?>> streamConnection) {
-		for (final ISubscription<? extends ISource<?>> s : streamConnection
-				.getSubscriptions()) {
-			this.viewSchema.put(
-					s.getSinkInPort(),
-					new ProbabilisticViewSchema<Object>(s.getSchema(), s
-							.getTarget().getMetaAttributeSchema(), s
-							.getSinkInPort()));
+	protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
+		for (final ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
+			this.viewSchema.put(s.getSinkInPort(), new ProbabilisticViewSchema<Object>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
 		}
 		if (this.validate()) {
 			streamConnection.addStreamElementListener(this);
@@ -378,57 +351,43 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#processElement
-	 * (java.util.List, de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute,
-	 * int)
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#processElement (java.util.List, de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute, int)
 	 */
 	@Override
-	protected final void processElement(final List<Object> tuple,
-			final IMetaAttribute metadata, final int port) {
+	protected final void processElement(final List<Object> tuple, final IMetaAttribute metadata, final int port) {
 		this.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				int serie = 0;
 				for (final int port : ProbabilityChart2D.this.getPorts()) {
-					final Iterator<IViewableAttribute> iter = ProbabilityChart2D.this
-							.getChoosenAttributes(port).iterator();
+					final Iterator<IViewableAttribute> iter = ProbabilityChart2D.this.getChoosenAttributes(port).iterator();
 					while (iter.hasNext()) {
-						final ProbabilisticViewableSDFAttribute attribute = (ProbabilisticViewableSDFAttribute) iter
-								.next();
+						final ProbabilisticViewableSDFAttribute attribute = (ProbabilisticViewableSDFAttribute) iter.next();
 						final String key = attribute.getName();
-						final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) attribute
-								.getSDFDatatype();
+						final SDFProbabilisticDatatype type = (SDFProbabilisticDatatype) attribute.getSDFDatatype();
 						final int index = attribute.getIndex();
 						XYSeries currentserie;
 						if (!ProbabilityChart2D.this.containsSeriesWithKey(key)) {
 							currentserie = new XYSeries(key);
-							currentserie
-									.setMaximumItemCount(ProbabilityChart2D.this.samples);
-							ProbabilityChart2D.this.dataset
-									.addSeries(currentserie);
+							currentserie.setMaximumItemCount(ProbabilityChart2D.this.samples);
+							ProbabilityChart2D.this.dataset.addSeries(currentserie);
 						} else {
-							currentserie = ProbabilityChart2D.this.dataset
-									.getSeries(key);
+							currentserie = ProbabilityChart2D.this.dataset.getSeries(key);
 						}
 
 						final Object x = tuple.get(serie);
 						currentserie.clear();
 						if (type.isContinuous()) {
-							ProbabilityChart2D.this.updateSerie(currentserie,
-									(NormalDistributionMixture) x, index);
+							ProbabilityChart2D.this.updateSerie(currentserie, (NormalDistributionMixture) x, index);
 						} else if (type.isDiscrete()) {
-							ProbabilityChart2D.this.updateSerie(currentserie,
-									(AbstractProbabilisticValue<?>) x);
+							ProbabilityChart2D.this.updateSerie(currentserie, (AbstractProbabilisticValue<?>) x);
 						}
 
 						ProbabilityChart2D.this.count++;
 						if (ProbabilityChart2D.this.count > ProbabilityChart2D.this.redrawEach) {
 							ProbabilityChart2D.this.count = 0;
 							currentserie.setNotify(true);
-							ProbabilityChart2D.this.adjust(
-									currentserie.getMaxX(),
-									currentserie.getMaxY());
+							ProbabilityChart2D.this.adjust(currentserie.getMinX(), currentserie.getMaxX(), currentserie.getMinY(), currentserie.getMaxY());
 						} else {
 							currentserie.setNotify(false);
 						}
@@ -443,32 +402,35 @@ public class ProbabilityChart2D extends
 	/**
 	 * Adjust the drawing area if the area does not include the given position.
 	 * 
-	 * @param valueX
-	 *            The x value
-	 * @param valueY
-	 *            The y value
+	 * @param minX
+	 *            The x min value
+	 * @param maxX
+	 *            The x max value
+	 * @param minY
+	 *            The y min value
+	 * @param maxY
+	 *            The y max value
 	 */
-	private void adjust(final double valueX, final double valueY) {
-		// for X
-		if (Double.isNaN(this.xMax)) {
-			this.setXMax(valueX);
+	private void adjust(final double minX, final double maxX, final double minY, final double maxY) {
+		if (Double.isNaN(this.getXMax())) {
+			this.setXMax(maxX);
 		}
-		if (Double.isNaN(this.xMin)) {
-			this.setXMin(valueX);
+		if (Double.isNaN(this.getXMin())) {
+			this.setXMin(minX);
 		}
-
+		if (Double.isNaN(this.getYMax())) {
+			this.setYMax(maxY);
+		}
+		if (Double.isNaN(this.getYMin())) {
+			this.setYMin(minY);
+		}
 		if (this.autoadjust) {
-			this.getChart().getXYPlot().getRangeAxis()
-					.setLowerBound(this.yMin * (1.0 - this.margin));
-			this.getChart().getXYPlot().getRangeAxis()
-					.setUpperBound(this.yMax * (1.0 + this.margin));
+			this.getChart().getXYPlot().getRangeAxis().setLowerBound(minY * (1.0 - this.margin));
+			this.getChart().getXYPlot().getRangeAxis().setUpperBound(maxY * (1.0 + this.margin));
 
-			this.getChart().getXYPlot().getDomainAxis()
-					.setLowerBound(this.xMin * (1.0 - this.margin));
-			this.getChart().getXYPlot().getDomainAxis()
-					.setUpperBound(this.xMax * (1.0 + this.margin));
+			this.getChart().getXYPlot().getDomainAxis().setLowerBound(minX * (1.0 - this.margin));
+			this.getChart().getXYPlot().getDomainAxis().setUpperBound(maxX * (1.0 + this.margin));
 		}
-
 	}
 
 	/**
@@ -490,14 +452,11 @@ public class ProbabilityChart2D extends
 	 * @param value
 	 *            The probabilistic value
 	 */
-	private void updateSerie(final XYSeries series,
-			final AbstractProbabilisticValue<?> value) {
+	private void updateSerie(final XYSeries series, final AbstractProbabilisticValue<?> value) {
 		for (final Entry<?, Double> e : value.getValues().entrySet()) {
-			series.add(((Number) e.getKey()).doubleValue() - Double.MIN_VALUE,
-					0.0);
+			series.add(((Number) e.getKey()).doubleValue() - Double.MIN_VALUE, 0.0);
 			series.add(((Number) e.getKey()).doubleValue(), e.getValue());
-			series.add(((Number) e.getKey()).doubleValue() + Double.MIN_VALUE,
-					0.0);
+			series.add(((Number) e.getKey()).doubleValue() + Double.MIN_VALUE, 0.0);
 		}
 	}
 
@@ -511,8 +470,7 @@ public class ProbabilityChart2D extends
 	 * @param dimensionIndex
 	 *            The dimension
 	 */
-	private void updateSerie(final XYSeries series,
-			final NormalDistributionMixture mixture, final int dimensionIndex) {
+	private void updateSerie(final XYSeries series, final NormalDistributionMixture mixture, final int dimensionIndex) {
 		if (mixture.getDimension() < 1) {
 			return; // no dimension
 		}
@@ -527,8 +485,7 @@ public class ProbabilityChart2D extends
 		}
 		dimension = d;
 
-		final MixtureMultivariateNormalDistribution distribution = mixture
-				.getMixtures();
+		final MixtureMultivariateNormalDistribution distribution = mixture.getMixtures();
 		final Interval[] interval = mixture.getSupport();
 		final double scale = mixture.getScale();
 
@@ -546,10 +503,7 @@ public class ProbabilityChart2D extends
 			}
 		};
 		@SuppressWarnings("unchecked")
-		final List<XYDataItem> items = DatasetUtilities
-				.sampleFunction2DToSeries(function, this.getXMin(),
-						this.getXMax(), this.getSamples(), series.getKey())
-				.getItems();
+		final List<XYDataItem> items = DatasetUtilities.sampleFunction2DToSeries(function, this.getXMin(), this.getXMax(), this.getSamples(), series.getKey()).getItems();
 		for (final XYDataItem item : items) {
 			series.add(item);
 		}
@@ -557,9 +511,7 @@ public class ProbabilityChart2D extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#reloadChart
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractChart#reloadChart ()
 	 */
 	@Override
 	protected void reloadChart() {
