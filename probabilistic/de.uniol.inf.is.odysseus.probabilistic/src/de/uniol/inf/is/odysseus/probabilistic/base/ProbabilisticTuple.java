@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -358,7 +359,12 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 				final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 				for (final Pair<Double, MultivariateNormalDistribution> entry : this.distributions[oldLayerIndex].getMixtures().getComponents()) {
 					final MultivariateNormalDistribution mixture = entry.getValue();
-					final double[] means = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose()).getColumn(0);
+
+					RealMatrix meansMatrix = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose());
+					final double[] means = new double[newDimension];
+					for (int d = 0; d < meansMatrix.getRowDimension(); d++) {
+						means[d] = meansMatrix.getEntry(d, d);
+					}
 					final RealMatrix covariances = restrictMatrix[oldLayerIndex].multiply(mixture.getCovariances()).multiply(restrictMatrix[oldLayerIndex].transpose());
 					MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
 					mvns.add(new Pair<Double, MultivariateNormalDistribution>(entry.getKey(), component));
@@ -393,6 +399,32 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			}
 		}
 		return this.restrictCreation(createNew, newAttributes, newDistributions);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+		String csv = super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
+		StringBuffer retBuff = new StringBuffer();
+		retBuff.append(csv);
+		if (distributions.length > 0) {
+			for (int i = 0; i < this.distributions.length; ++i) {
+				Object curDistribution = this.distributions[i];
+				retBuff.append(delimiter);
+				if (curDistribution == null) {
+					retBuff.append("");
+				} else {
+					retBuff.append(curDistribution.toString());
+				}
+			}
+		} else {
+			retBuff.append(delimiter);
+			retBuff.append("null");
+		}
+
+		return retBuff.toString();
 	}
 
 	/*
