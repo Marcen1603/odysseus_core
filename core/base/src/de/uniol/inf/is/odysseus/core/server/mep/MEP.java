@@ -113,6 +113,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.DoubleToShor
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.EFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.ToByteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.ToDegrees;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.ToDoubleFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.ToFloatFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.ToIntegerFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.ToLongFunction;
@@ -213,6 +214,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToByteFunction());
         registerFunction(new ToShortFunction());
         registerFunction(new ToFloatFunction());
+        registerFunction(new ToDoubleFunction());
         registerFunction(new ToLongFunction());
         registerFunction(new ToIntegerFunction());
         registerFunction(new ToStringFunction());
