@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * 
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DISTRIBUTION")
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DISTRIBUTION", category = { "Probabilistic" }, doc = "Assign a distribution to the given attributes")
 public class AssignDistributionAO extends UnaryLogicalOp {
 
 	/**

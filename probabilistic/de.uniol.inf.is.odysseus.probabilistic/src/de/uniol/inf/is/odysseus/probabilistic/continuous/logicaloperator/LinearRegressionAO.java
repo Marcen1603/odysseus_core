@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -30,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression", doc="This operator performs a linear regression on the given set of explanatory attributes to explain the given set of dependent attributes", category={LogicalOperatorCategory.PROBABILISTIC})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression", doc = "This operator performs a linear regression on the given set of explanatory attributes to explain the given set of dependent attributes", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class LinearRegressionAO extends UnaryLogicalOp {
 
 	/**

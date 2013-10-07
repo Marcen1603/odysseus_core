@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -15,12 +14,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LogicalOperatorCategory;
 
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM", doc="TODO", category={LogicalOperatorCategory.PROBABILISTIC})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM", doc = "TODO", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class SampleAO extends UnaryLogicalOp {
 	/**
 	 * 

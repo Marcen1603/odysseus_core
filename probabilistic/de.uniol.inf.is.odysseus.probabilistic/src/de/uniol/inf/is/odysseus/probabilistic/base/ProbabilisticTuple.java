@@ -401,32 +401,6 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		return this.restrictCreation(createNew, newAttributes, newDistributions);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
-		String csv = super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
-		StringBuffer retBuff = new StringBuffer();
-		retBuff.append(csv);
-		if (distributions.length > 0) {
-			for (int i = 0; i < this.distributions.length; ++i) {
-				Object curDistribution = this.distributions[i];
-				retBuff.append(delimiter);
-				if (curDistribution == null) {
-					retBuff.append("");
-				} else {
-					retBuff.append(curDistribution.toString());
-				}
-			}
-		} else {
-			retBuff.append(delimiter);
-			retBuff.append("null");
-		}
-
-		return retBuff.toString();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
