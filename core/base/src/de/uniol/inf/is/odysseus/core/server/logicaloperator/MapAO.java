@@ -78,8 +78,9 @@ public class MapAO extends UnaryLogicalOp {
 				String toSplit;
 				if (exprString.startsWith("__")) {
 					toSplit = exprString.substring(exprString.indexOf(".") + 1);
-					lastString = exprString.substring(0,
-							exprString.indexOf(".") - 1);
+                    if (exprString.indexOf(".") > -1) {
+                        lastString = exprString.substring(0, exprString.indexOf(".") - 1);
+                    }
 				} else {
 					toSplit = exprString;
 				}
