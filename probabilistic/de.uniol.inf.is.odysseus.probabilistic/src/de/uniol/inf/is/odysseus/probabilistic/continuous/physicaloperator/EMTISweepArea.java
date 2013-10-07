@@ -1,3 +1,18 @@
+/**
+ * Copyright 2013 The Odysseus Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 
 import java.util.ArrayList;
@@ -9,7 +24,6 @@ import org.apache.commons.math3.distribution.fitting.MultivariateNormalMixtureEx
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -24,15 +38,13 @@ import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
- * Sweep area to perform the Expectation Maximization (EM) classifier.
- * 
- * @author Christian Kuka <christian.kuka@offis.de>
+ * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
+public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
 
 	/** The logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(BatchEMTISweepArea.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EMTISweepArea.class);
 	/** The number of Gaussian mixtures. */
 	private final int mixtures;
 	/** The attribute positions. */
@@ -66,7 +78,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * @param predicate
 	 *            The predicate for model fitting
 	 */
-	public BatchEMTISweepArea(final int[] attributes, final int mixtures, final int iterations, final double threshold, final boolean incremental, final IPredicate<IStreamObject<?>> predicate) {
+	public EMTISweepArea(final int[] attributes, final int mixtures, final int iterations, final double threshold, final boolean incremental, final IPredicate<IStreamObject<?>> predicate) {
 		this.attributes = attributes;
 		this.mixtures = mixtures;
 		this.iterations = iterations;
@@ -81,20 +93,20 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	/**
 	 * Class constructor.
 	 * 
-	 * @param batchEMTISweepArea
+	 * @param emModelTISweepArea
 	 *            The clone
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @throws IllegalAccessException Illegal access exception
+	 * @throws InstantiationException Unable to instantiate the area
 	 */
-	public BatchEMTISweepArea(final BatchEMTISweepArea batchEMTISweepArea) throws InstantiationException, IllegalAccessException {
-		super(batchEMTISweepArea);
-		this.attributes = batchEMTISweepArea.attributes;
-		this.mixtures = batchEMTISweepArea.mixtures;
-		this.iterations = batchEMTISweepArea.iterations;
-		this.threshold = batchEMTISweepArea.threshold;
-		this.incremental = batchEMTISweepArea.incremental;
-		if (batchEMTISweepArea.predicate != null) {
-			this.predicate = batchEMTISweepArea.predicate.clone();
+	public EMTISweepArea(final EMTISweepArea emModelTISweepArea) throws InstantiationException, IllegalAccessException {
+		super(emModelTISweepArea);
+		this.attributes = emModelTISweepArea.attributes;
+		this.mixtures = emModelTISweepArea.mixtures;
+		this.iterations = emModelTISweepArea.iterations;
+		this.threshold = emModelTISweepArea.threshold;
+		this.incremental = emModelTISweepArea.incremental;
+		if (emModelTISweepArea.predicate != null) {
+			this.predicate = emModelTISweepArea.predicate.clone();
 			this.predicate.init();
 		}
 	}
@@ -106,27 +118,13 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 */
 	@Override
 	public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {
-
 		ProbabilisticTuple<? extends ITimeInterval> restricted = s.restrict(this.attributes, true);
-
-		// / REMOVE me (Data Sheet Distribution evaluation
-			super.insert(restricted);
-
-		// MultivariateNormalDistribution component = new MultivariateNormalDistribution(new double[] { ((Number) restricted.getAttribute(0)).doubleValue(),((Number) restricted.getAttribute(1)).doubleValue()}, new double[][] { { 4000000.0, 0.0 }, { 0.0, 4000000.0 } });
-		// components.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
-		//
-		// setModel(new MixtureMultivariateNormalDistribution(components));
-		// setModel(estimateModel(getModel()));
-		// // REMOVE me END
-
-		// / Other evaluation
 		if ((getPredicate() == null) || (predicate.evaluate(s))) {
-			// super.insert(restricted);
+			super.insert(restricted);
 
 			try {
 				if ((!isIncremental()) || (getModel() == null)) {
 					MixtureMultivariateNormalDistribution newModel = MultivariateNormalMixtureExpectationMaximization.estimate(getData(), mixtures);
-				System.out.println("CREATE NEW MODEL");
 					if (newModel != null) {
 						setModel(newModel);
 					}
@@ -168,24 +166,6 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 				setModel(new MixtureMultivariateNormalDistribution(components));
 				normalizeModel = false;
 			}
-		}
-		if ((getPredicate() != null) && (getModel() != null)) {
-			final List<Pair<Double, MultivariateNormalDistribution>> components = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-			for (final Pair<Double, MultivariateNormalDistribution> entry : getModel().getComponents()) {
-				final MultivariateNormalDistribution normalDistribution = entry.getValue();
-				final Double weight = entry.getKey();
-				RealVector means = MatrixUtils.createRealVector(normalDistribution.getMeans());
-				double[] values = new double[restricted.getAttributes().length];
-				for (int i = 0; i < values.length; i++) {
-					values[i] = ((Number) restricted.getAttribute(i)).doubleValue();
-				}
-				means.add(MatrixUtils.createRealVector(values));
-				MultivariateNormalDistribution component = new MultivariateNormalDistribution(means.toArray(), normalDistribution.getCovariances().getData());
-				components.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
-			}
-			setModel(new MixtureMultivariateNormalDistribution(components));
-			setModel(estimateModel(getModel()));
-
 		}
 	}
 
@@ -362,9 +342,9 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final BatchEMTISweepArea clone() {
+	public final EMTISweepArea clone() {
 		try {
-			return new BatchEMTISweepArea(this);
+			return new EMTISweepArea(this);
 		} catch (InstantiationException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -403,96 +383,6 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 			avg[d] /= this.getElements().size();
 		}
 		return avg;
-	}
-
-	private MixtureMultivariateNormalDistribution estimateModel(MixtureMultivariateNormalDistribution initialMixture) {
-		double[][] data = getData();
-		final int n = data.length;
-		if (data.length < 1) {
-			throw new NotStrictlyPositiveException(data.length);
-		}
-		// Number of data columns. Jagged data already rejected in constructor,
-		// so we can assume the lengths of each row are equal.
-		final int numCols = data[0].length;
-		final int k = initialMixture.getComponents().size();
-
-		final int numMeanColumns = initialMixture.getComponents().get(0).getSecond().getMeans().length;
-
-		int numIterations = 0;
-		double previousLogLikelihood = 0d;
-
-		double logLikelihood = Double.NEGATIVE_INFINITY;
-
-		// Initialize model to fit to initial mixture.
-		MixtureMultivariateNormalDistribution fittedModel = new MixtureMultivariateNormalDistribution(initialMixture.getComponents());
-
-		while (numIterations++ <= getIterations() && Math.abs(previousLogLikelihood - logLikelihood) > threshold) {
-			previousLogLikelihood = logLikelihood;
-			double sumLogLikelihood = 0d;
-
-			// Mixture components
-			final List<Pair<Double, MultivariateNormalDistribution>> components = fittedModel.getComponents();
-
-			// Weight and distribution of each component
-			final double[] weights = new double[k];
-
-			final MultivariateNormalDistribution[] mvns = new MultivariateNormalDistribution[k];
-
-			for (int j = 0; j < k; j++) {
-				weights[j] = components.get(j).getFirst();
-				mvns[j] = components.get(j).getSecond();
-			}
-
-			// E-step: compute the data dependent parameters of the expectation
-			// function.
-			// The percentage of row's total density between a row and a
-			// component
-			final double[][] gamma = new double[n][k];
-
-			// Sum of gamma for each component
-			final double[] gammaSums = new double[k];
-
-			// Sum of gamma times its row for each each component
-			final double[][] gammaDataProdSums = new double[k][numCols];
-
-			for (int i = 0; i < n; i++) {
-				final double rowDensity = fittedModel.density(data[i]);
-				sumLogLikelihood += Math.log(rowDensity);
-
-				for (int j = 0; j < k; j++) {
-					gamma[i][j] = weights[j] * mvns[j].density(data[i]) / rowDensity;
-					gammaSums[j] += gamma[i][j];
-
-					for (int col = 0; col < numCols; col++) {
-						gammaDataProdSums[j][col] += gamma[i][j] * data[i][col];
-					}
-				}
-			}
-
-			logLikelihood = sumLogLikelihood / n;
-
-			// M-step: compute the new parameters based on the expectation
-			// function.
-			final double[] newWeights = new double[k];
-			final double[][] newMeans = new double[k][numCols];
-
-			for (int j = 0; j < k; j++) {
-				newWeights[j] = components.get(j).getKey();
-				for (int col = 0; col < numCols; col++) {
-					newMeans[j][col] = gammaDataProdSums[j][col] / gammaSums[j];
-				}
-			}
-
-			// Compute new covariance matrices
-			final double[][][] newCovMatArrays = new double[k][numCols][numCols];
-			for (int j = 0; j < k; j++) {
-				newCovMatArrays[j] = components.get(j).getValue().getCovariances().getData();
-			}
-
-			// Update current model
-			fittedModel = new MixtureMultivariateNormalDistribution(newWeights, newMeans, newCovMatArrays);
-		}
-		return fittedModel;
 	}
 
 }
