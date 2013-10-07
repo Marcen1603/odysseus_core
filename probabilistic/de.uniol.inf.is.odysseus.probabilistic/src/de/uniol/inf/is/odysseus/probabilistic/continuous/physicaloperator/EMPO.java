@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
@@ -57,10 +58,15 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 	 *            The maximum number of iterations allowed per fitting process
 	 * @param threshold
 	 *            The convergence threshold for fitting
+	 * @param incremental
+	 *            Flag indicating incremental fitting
+	 * @param predicate
+	 *            The predicate for model fitting
 	 */
-	public EMPO(final int[] attributes, final int mixtures, final int iterations, final double threshold) {
+	@SuppressWarnings("unchecked")
+	public EMPO(final int[] attributes, final int mixtures, final int iterations, final double threshold, final boolean incremental, @SuppressWarnings("rawtypes") final IPredicate predicate) {
 		this.attributes = attributes;
-		this.area = new BatchEMTISweepArea(attributes, mixtures, iterations, threshold);
+		this.area = new BatchEMTISweepArea(attributes, mixtures, iterations, threshold, incremental, predicate);
 	}
 
 	/**
@@ -118,14 +124,14 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 				}
 				// Copy the old distribution to the new tuple
 				System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
-				// And append the new distribution to the end of the array
+				// And append the new distribution to tThe end of the array
 				outputValDistributions[distributions.length] = mixture;
 				outputVal.setDistributions(outputValDistributions);
 				// KTHXBYE
 				this.transfer(outputVal);
 			}
 		} catch (MathIllegalArgumentException | MaxCountExceededException | ConvergenceException e) {
-			LOG.trace(e.getMessage(), e);
+			LOG.debug(e.getMessage(), e);
 		}
 	}
 

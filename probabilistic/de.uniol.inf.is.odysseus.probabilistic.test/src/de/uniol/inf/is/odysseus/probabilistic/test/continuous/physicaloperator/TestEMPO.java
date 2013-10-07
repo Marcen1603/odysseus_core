@@ -48,7 +48,7 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
 	 * Test constructor of the Project PO.
 	 */
 	public TestEMPO() {
-		super(new int[] { 0, 2 }, 2, 100, 1E-5);
+		super(new int[] { 0, 2 }, 2, 100, 1E-5, false, null);
 	}
 
 	/*

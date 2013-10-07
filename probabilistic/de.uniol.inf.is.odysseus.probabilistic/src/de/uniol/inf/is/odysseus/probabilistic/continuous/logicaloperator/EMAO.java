@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -28,8 +27,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
@@ -42,7 +43,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM", doc="This operator fits gaussian mixtures model to the input stream.",category={LogicalOperatorCategory.PROBABILISTIC})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "EM")
 public class EMAO extends UnaryLogicalOp {
 
 	/**
@@ -57,6 +58,8 @@ public class EMAO extends UnaryLogicalOp {
 	private double threshold = 1E-5;
 	/** The maximum number of iterations allowed per fitting process. */
 	private int iterations = 1000;
+
+	private boolean incremental = false;
 
 	/**
 	 * Crates a new EM logical operator.
@@ -77,6 +80,7 @@ public class EMAO extends UnaryLogicalOp {
 		this.mixtures = emAO.mixtures;
 		this.iterations = emAO.iterations;
 		this.threshold = emAO.threshold;
+		this.incremental = emAO.incremental;
 	}
 
 	/**
@@ -164,6 +168,39 @@ public class EMAO extends UnaryLogicalOp {
 	@GetParameter(name = "THRESHOLD")
 	public final double getThreshold() {
 		return this.threshold;
+	}
+
+	/**
+	 * Sets the value of incremental fitting.
+	 * 
+	 * @param incremental
+	 *            The value of incremental fitting.
+	 */
+	@Parameter(type = BooleanParameter.class, name = "INCREMENTAL", optional = true)
+	public final void setIncremental(final boolean incremental) {
+		this.incremental = incremental;
+	}
+
+	/**
+	 * Gets the value of incremental fitting.
+	 * 
+	 * @return The value of incremental fitting.
+	 */
+	@GetParameter(name = "INCREMENTAL")
+	public final boolean isIncremental() {
+		return this.incremental;
+	}
+
+	/**
+	 * Sets the model fitting predicate.
+	 * 
+	 * @param predicate
+	 *            The predicate for model fitting.
+	 */
+	@Override
+	@Parameter(type = PredicateParameter.class, name = "PREDICATE", optional = true)
+	public final void setPredicate(@SuppressWarnings("rawtypes") final IPredicate predicate) {
+		super.setPredicate(predicate);
 	}
 
 	/**
