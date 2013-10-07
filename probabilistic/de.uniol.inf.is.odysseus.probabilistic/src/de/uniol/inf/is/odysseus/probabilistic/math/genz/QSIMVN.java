@@ -79,21 +79,32 @@ public class QSIMVN {
 			}
 			d = (vi - p) / i;
 			p = p + d;
+
 			if (FastMath.abs(d) > 0.0) {
-				final double a1 = (e / d);
-				final double b2 = (2.0 * (i - 2.0)) / i;
-				final double v1 = FastMath.pow(a1, b2);
-				double v2 = FastMath.sqrt(1.0 + v1);
-				if (Double.isNaN(v2)) {
-					// sometimes wants to compute sqrt of negative number
-					v2 = 0.0;
-				}
-				final double val = FastMath.abs(d) * v2;
-				e = val;
+				e = FastMath.abs(d) * FastMath.sqrt(1.0 + FastMath.pow(e / d, 2.0) * (i - 2.0) / i);
+
+				// final double a1 = (e / d);
+				// final double b2 = 2.0 * (i - 2.0) / i;
+				// double v1 = FastMath.pow(a1, b2);
+				// if (Double.isNaN(v1)) {
+				// v1=0.0;
+				// }
+				// double v2 = FastMath.pow(1.0 + v1, 0.5);
+				//
+				// if (Double.isNaN(v2)) {
+				// // sometimes wants to compute sqrt of negative number
+				// v2 = 0.0;
+				// }
+				// final double val = FastMath.abs(d) * v2;
+				// e = val;
 			} else {
 				if (i > 1.0) {
 					final double val = FastMath.sqrt((i - 2.0) / i);
-					e = e * val;
+					if (val == 0.0) {
+						e = 0.0;
+					} else {
+						e = e * val;
+					}
 				}
 			}
 		}
@@ -158,6 +169,7 @@ public class QSIMVN {
 		// % also permuting integration limit vectors a and b.
 		// %
 		final double ep = 1e-10; // % singularity tolerance;
+		final double eps = FastMath.pow(2, -52.0);
 		// %
 		// [n, n] = size(R);
 		// size of R must be quadratic i guess ...
@@ -177,7 +189,7 @@ public class QSIMVN {
 			}
 		}
 		final Matrix y = Matrix.zeros(n, 1);
-		final double sqtp = Util.sqrt(2.0 * FastMath.PI);
+		final double sqtp = FastMath.sqrt(2.0 * FastMath.PI);
 		for (int k = 1; k <= n; k++) {
 			int im = k;
 			double ckk = 0.0;
@@ -192,31 +204,30 @@ public class QSIMVN {
 			double bm = 0.0;
 			double tv;
 			Matrix t;
-
 			for (int i = k; i <= n; i++) {
-				// if (c.get(i,i) > eps(1)){
-				cii = FastMath.sqrt(Util.max(new double[] { c.get(i, i), 0.0 }));
-				if (i > 1) {
-					if (k <= 1) {
-						// added at java convcersion
-						s = 0.0;
-					} else {
-						s = c.getSubRow(i, 1, k - 1).matlabMultiply(y.getSubVector(1, k - 1));
+				if (c.get(i, i) > eps) {
+					cii = FastMath.sqrt(Util.max(new double[] { c.get(i, i), 0.0 }));
+					if (i > 1) {
+						if (k <= 1) {
+							// added at java convcersion
+							s = 0.0;
+						} else {
+							s = c.getSubRow(i, 1, k - 1).matlabMultiply(y.getSubVector(1, k - 1));
 
+						}
+					}
+
+					ai = (ap.get(i) - s) / cii;
+					bi = (bp.get(i) - s) / cii;
+					de = Util.phi(bi) - Util.phi(ai);
+					if (de <= dem) {
+						ckk = cii;
+						dem = de;
+						am = ai;
+						bm = bi;
+						im = i;
 					}
 				}
-
-				ai = (ap.get(i) - s) / cii;
-				bi = (bp.get(i) - s) / cii;
-				de = Util.phi(bi) - Util.phi(ai);
-				if (de <= dem) {
-					ckk = cii;
-					dem = de;
-					am = ai;
-					bm = bi;
-					im = i;
-				}
-				// }
 			}
 			if (im > k) {
 				tv = ap.get(im);
@@ -247,7 +258,7 @@ public class QSIMVN {
 					c.setSubRow(i, k + 1, c.getSubRow(i, k + 1, i).substract(c.getSubColumn(k, k + 1, i).trans().matlabMultiply(c.get(i, k))));
 				}
 				if (FastMath.abs(dem) > ep) {
-					y.set(k, (Util.exp(FastMath.pow(-am, 2.0) / 2.0) - Util.exp(FastMath.pow(-bm, 2.0) / 2.0)) / (sqtp * dem));
+					y.set(k, (FastMath.exp(FastMath.pow(-am, 2.0) / 2.0) - FastMath.exp(FastMath.pow(-bm, 2.0) / 2.0)) / (sqtp * dem));
 				} else {
 					if (am < -10.0) {
 						y.set(k, bm);
