@@ -232,9 +232,11 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 		final NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
 		int distributions = 0;
-		for (int i = attributes.length; i < input.length; i++) {
-			distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input[i]);
-			distributions = i;
+		if (this.maxDistributions > 0) {
+			for (int i = attributes.length; i < input.length; i++) {
+				distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input[i]);
+				distributions = i;
+			}
 		}
 		r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
 		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
@@ -254,9 +256,11 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 		}
 		final NormalDistributionMixture[] distribution = new NormalDistributionMixture[this.maxDistributions];
 		int distributions = 0;
-		for (int i = attributes.length; i < input.size(); i++) {
-			distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input.get(i));
-			distributions = i;
+		if (this.maxDistributions > 0) {
+			for (int i = attributes.length; i < input.size(); i++) {
+				distribution[attributes.length - i] = this.probabilisticDistributionHandler.readData(input.get(i));
+				distributions = i;
+			}
 		}
 		r = new ProbabilisticTuple<IMetaAttribute>(attributes, this.requiresDeepClone);
 		r.setDistributions(Arrays.copyOfRange(distribution, 0, distributions));
@@ -321,7 +325,9 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 	 *            The schema
 	 */
 	private void createDataHandler(final SDFSchema schema) {
-		if (schema == null) return;
+		if (schema == null) {
+			return;
+		}
 		this.dataHandlers = new IDataHandler<?>[schema.size()];
 		this.maxDistributions = 0;
 		int i = 0;
