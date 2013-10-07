@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
@@ -24,61 +23,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
  * An abstract implementation for primary horizontal fragmentation strategies.
  * @author Michael Brand
  */
-public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDataFragmentation {
+public abstract class AbstractPrimaryHorizontalDataFragmentation extends AbstractDataFragmentation {
 	
 	@Override
 	public abstract String getName();
-	
-	@Override
-	public ILogicalOperator fragment(List<ILogicalOperator> logicalPlans, 
-			QueryBuildConfiguration parameters, String sourceName, 
-			Collection<ILogicalOperator> operatorsChangedDueToFragmentation, 
-			Collection<ILogicalOperator> operatorsChangedDueToDataReunion, 
-			Collection<ILogicalOperator> operatorsDeleted) {
-		
-		// Preconditions
-		Preconditions.checkNotNull(logicalPlans);
-		Preconditions.checkArgument(logicalPlans.size() > 1);
-		Preconditions.checkNotNull(parameters);
-		Preconditions.checkNotNull(operatorsChangedDueToFragmentation);
-		Preconditions.checkNotNull(operatorsChangedDueToFragmentation.isEmpty());
-		Preconditions.checkNotNull(operatorsChangedDueToDataReunion);
-		Preconditions.checkNotNull(operatorsChangedDueToDataReunion.isEmpty());
-		Preconditions.checkNotNull(operatorsDeleted);
-		Preconditions.checkNotNull(operatorsDeleted.isEmpty());
-		
-		// All operators of each logical plan
-		List<List<ILogicalOperator>> operatorsPerLogicalPlan = null;
-		
-		// Insert operator for fragmentation
-		operatorsPerLogicalPlan = insertOperatorForFragmentation(logicalPlans, parameters, sourceName, 
-				operatorsChangedDueToFragmentation, operatorsDeleted);
-		
-		// Insert operator for data reunion
-		return insertOperatorForDataReunion(operatorsPerLogicalPlan, operatorsChangedDueToDataReunion, 
-				operatorsDeleted);
-		
-		
-	}
 
-	/**
-	 * Inserts operators for fragmentation, if a source was set by {@link #setSourceName(String)} and 
-	 * deletes all replications of the source access. <br />
-	 * So there is only one source access left. All fragments will be subscribed to that single source 
-	 * access.
-	 * @param logicalPlans A list of semantically equivalent logical plans, which shall be used as 
-	 * partitions.
-	 * @param parameters the {@link QueryBuildConfiguration}.
-	 * @param sourceName The name of the source to be fragmented.
-	 * @param operatorsChangedDueToFragmentation A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are added or modified in any way due to 
-	 * fragmentation. A modification means e.g. a related StreamAO, which copies were deleted.
-	 * @param operatorsDeleted A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are deleted due to fragmentation or data reunion.
-	 * @return All operators of each logical plan inclusive the operators for fragmentation.
-	 */
+	@Override
 	protected List<List<ILogicalOperator>> insertOperatorForFragmentation(
 			List<ILogicalOperator> logicalPlans, QueryBuildConfiguration parameters, 
 			String sourceName, Collection<ILogicalOperator> operatorsChangedDueToFragmentation, 
@@ -345,21 +295,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 	protected abstract ILogicalOperator createOperatorForFragmentation(int numFragments, 
 			QueryBuildConfiguration parameters);
 
-	/**
-	 * Inserts operators for data reunion. All sinks of all fragments will be subscribed by the data 
-	 * reunion operators.
-	 * @param logicalPlans A list of semantically equivalent logical plans, which shall be used as 
-	 * partitions.
-	 * @param operatorsChangedDueToDataReunion A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are added or modified in any way due to 
-	 * data reunion. A modification means e.g. a related FileSinkAO, which has been moved within 
-	 * the logical plan and which copies were deleted.
-	 * @param operatorsDeleted A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are deleted due to fragmentation or data reunion.
-	 * @return The merged logical plan.
-	 */
+	@Override
 	protected ILogicalOperator insertOperatorForDataReunion(
 			List<List<ILogicalOperator>> operatorsPerLogicalPlan, 
 			Collection<ILogicalOperator> operatorsChangedDueToDataReunion, 
@@ -469,38 +405,42 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation implements IDat
 			}		
 			
 		} while(!finished);
-			
-		// A sorted list of all operators which shall be moved to the data reunion part
-		List<ILogicalOperator> sortedOperatorsForDataReunionPart = 
-				sortOperatorsToPlaneMap(operatorsForDataReunionPartToPlaneMap);
 		
-		// The iterator through the operators for data reunion
-		Iterator<ILogicalOperator> operatorsForDataReunionIter = operatorsForDataReunion.iterator();
-		
-		// The lowest plane
-		int lowestPlane = operatorsForDataReunionPartToPlaneMap.get(
-				sortedOperatorsForDataReunionPart.iterator().next());
-		
-		// Insert the operators for the data reunion part
-		for(int operatorNo = 0; operatorNo < sortedOperatorsForDataReunionPart.size(); operatorNo++) {
+		if(!operatorsForDataReunionPartToPlaneMap.isEmpty()) {
 			
-			// The current operator
-			ILogicalOperator operator = sortedOperatorsForDataReunionPart.get(operatorNo);		
-			operatorsChangedDueToDataReunion.add(operator);
+			// A sorted list of all operators which shall be moved to the data reunion part
+			List<ILogicalOperator> sortedOperatorsForDataReunionPart = 
+					sortOperatorsToPlaneMap(operatorsForDataReunionPartToPlaneMap);
 			
-			if(operatorsForDataReunionPartToPlaneMap.get(operator) == lowestPlane &&
-					operatorsForDataReunionIter.hasNext()) {
+			// The iterator through the operators for data reunion
+			Iterator<ILogicalOperator> operatorsForDataReunionIter = operatorsForDataReunion.iterator();
+			
+			// The lowest plane
+			int lowestPlane = operatorsForDataReunionPartToPlaneMap.get(
+					sortedOperatorsForDataReunionPart.iterator().next());
+			
+			// Insert the operators for the data reunion part
+			for(int operatorNo = 0; operatorNo < sortedOperatorsForDataReunionPart.size(); operatorNo++) {
 				
-				// Subscribe to operator for data reunion
-				ILogicalOperator operatorForDataReunion = operatorsForDataReunionIter.next();
-				operatorForDataReunion.subscribeSink(operator, 0, 0, 
-						operatorForDataReunion.getOutputSchema());
+				// The current operator
+				ILogicalOperator operator = sortedOperatorsForDataReunionPart.get(operatorNo);		
+				operatorsChangedDueToDataReunion.add(operator);
 				
-			} else {
-				
-				// Subscribe to previous operator
-				operator.subscribeToSource(sortedOperatorsForDataReunionPart.get(operatorNo - 1), 
-						0, 0, sortedOperatorsForDataReunionPart.get(operatorNo - 1).getOutputSchema());
+				if(operatorsForDataReunionPartToPlaneMap.get(operator) == lowestPlane &&
+						operatorsForDataReunionIter.hasNext()) {
+					
+					// Subscribe to operator for data reunion
+					ILogicalOperator operatorForDataReunion = operatorsForDataReunionIter.next();
+					operatorForDataReunion.subscribeSink(operator, 0, 0, 
+							operatorForDataReunion.getOutputSchema());
+					
+				} else {
+					
+					// Subscribe to previous operator
+					operator.subscribeToSource(sortedOperatorsForDataReunionPart.get(operatorNo - 1), 
+							0, 0, sortedOperatorsForDataReunionPart.get(operatorNo - 1).getOutputSchema());
+					
+				}
 				
 			}
 			

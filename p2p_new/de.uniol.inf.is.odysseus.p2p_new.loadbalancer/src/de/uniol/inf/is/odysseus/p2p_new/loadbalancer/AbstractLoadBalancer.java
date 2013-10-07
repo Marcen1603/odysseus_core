@@ -256,15 +256,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		
 		// Create source part and reunion part
 		Optional<QueryPart> dataReunionPart = Optional.absent();
-		if(!operatorsChangedDueToFragmentation.isEmpty()) {
+		if(!operatorsChangedDueToFragmentation.isEmpty())
+			queryParts.add(new QueryPart(operatorsChangedDueToFragmentation));
+		if(!operatorsChangedDueToDataReunion.isEmpty()) {
 			
-			dataReunionPart = Optional.of(new QueryPart(operatorsChangedDueToDataReunion));
+			dataReunionPart = Optional.of(new QueryPart(operatorsChangedDueToDataReunion, 
+					DistributionHelper.LOCAL_DESTINATION_NAME));
 			queryParts.add(dataReunionPart.get());
 			
 		}
-		if(!operatorsChangedDueToDataReunion.isEmpty())
-			queryParts.add(new QueryPart(operatorsChangedDueToDataReunion, 
-					DistributionHelper.LOCAL_DESTINATION_NAME));
 
 		for(ILogicalQuery copy : queryCopies) {
 			
