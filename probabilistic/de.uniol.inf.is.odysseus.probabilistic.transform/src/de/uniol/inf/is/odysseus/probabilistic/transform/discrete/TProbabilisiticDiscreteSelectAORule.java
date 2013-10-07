@@ -68,8 +68,8 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 	 */
 	@Override
 	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+		if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
+			if (operator.isAllPhysicalInputSet()) {
 				if (SchemaUtils.containsDiscreteProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
 					return true;
 				}

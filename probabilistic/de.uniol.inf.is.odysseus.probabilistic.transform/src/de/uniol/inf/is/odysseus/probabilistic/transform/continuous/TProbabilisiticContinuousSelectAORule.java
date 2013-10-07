@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
@@ -66,12 +67,12 @@ public class TProbabilisiticContinuousSelectAORule extends AbstractTransformatio
 	 */
 	@Override
 	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			//if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+			if (operator.isAllPhysicalInputSet()) {
 				if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
 					return true;
 				}
-			//}
+			}
 		}
 		return false;
 	}

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteUnNestPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
@@ -74,8 +75,8 @@ public class TProbabilisticDiscreteUnNestAORule extends AbstractTransformationRu
 	 */
 	@Override
 	public final boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+			if (operator.isAllPhysicalInputSet()) {
 				return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
 
 			}

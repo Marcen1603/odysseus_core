@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ProbabilisticAO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticFactory;
@@ -57,8 +58,8 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
 	 */
 	@Override
 	public final boolean isExecutable(final ProbabilisticAO operator, final TransformationConfiguration config) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+		if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
+			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}
 		}

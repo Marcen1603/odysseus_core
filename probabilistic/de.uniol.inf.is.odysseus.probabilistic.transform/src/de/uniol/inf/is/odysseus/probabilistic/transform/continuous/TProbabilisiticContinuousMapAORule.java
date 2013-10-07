@@ -20,8 +20,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -69,18 +71,21 @@ public class TProbabilisiticContinuousMapAORule extends AbstractTransformationRu
 	 */
 	@Override
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.getPhysSubscriptionTo() != null) {
-		//	if (transformConfig.getDataTypes().contains(SchemaUtils.DATATYPE)) {
+		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+			if (operator.getPhysSubscriptionTo() != null) {
 				boolean isProbabilisticContinuous = false;
 				for (final SDFExpression expr : operator.getExpressions()) {
 					if (SchemaUtils.containsContinuousProbabilisticAttributes(expr.getAllAttributes())) {
+						isProbabilisticContinuous = true;
+					}
+					if (expr.getType() == SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE) {
 						isProbabilisticContinuous = true;
 					}
 				}
 				if (isProbabilisticContinuous) {
 					return true;
 				}
-			//}
+			}
 		}
 		return false;
 	}
