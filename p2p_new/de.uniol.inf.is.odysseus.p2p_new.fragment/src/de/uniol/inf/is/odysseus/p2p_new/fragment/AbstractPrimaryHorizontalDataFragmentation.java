@@ -5,15 +5,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
@@ -373,11 +376,11 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		// to their plane within the logical plan
 		Map<ILogicalOperator, Integer> operatorsForDataReunionPartToPlaneMap = Maps.newHashMap();
 		
-		// TODO
 		// Collect aggregation, if present
-//		Optional<AggregateAO> aggregation = replaceAggregation(operators);
-//		if(aggregation.isPresent())
-//			operatorsForDataReunionPartToPlaneMap.put(aggregation.get(), operatorsToPlaneMap.get(aggregation.get()));
+		IPair<IFragmentPlan, Optional<AggregateAO>> aggregation = replaceAggregation(enhancedFragmentPlan, query);
+		enhancedFragmentPlan = aggregation.getE1();
+		if(aggregation.getE2().isPresent())
+			operatorsForDataReunionPartToPlaneMap.put(aggregation.getE2().get(), operatorsToPlaneMap.get(aggregation.getE2().get()));
 		
 		boolean finished = false;
 		do {
@@ -503,9 +506,8 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		// the creation
 		Iterator<ILogicalOperator> operatorsForDataReunionIter = operatorsForDataReunion.iterator();
 		
-		// TODO
 		// Handle aggregation
-//		replaceAggregation(operators);
+		enhancedFragmentPlan = replaceAggregation(enhancedFragmentPlan, query).getE1();
 		
 		boolean finished = false;
 		do {
