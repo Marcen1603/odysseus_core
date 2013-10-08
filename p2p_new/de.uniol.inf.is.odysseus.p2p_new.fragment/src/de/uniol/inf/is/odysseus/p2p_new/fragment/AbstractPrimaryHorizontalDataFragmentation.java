@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.fragment;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,8 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
@@ -29,95 +30,95 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	public abstract String getName();
 
 	@Override
-	protected List<List<ILogicalOperator>> insertOperatorForFragmentation(
-			List<ILogicalOperator> logicalPlans, QueryBuildConfiguration parameters, 
-			String sourceName, Collection<ILogicalOperator> operatorsChangedDueToFragmentation, 
-			Collection<ILogicalOperator> operatorsDeleted) {
+	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+			QueryBuildConfiguration parameters, String sourceName) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(logicalPlans);
-		Preconditions.checkArgument(logicalPlans.size() > 1);
+		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(parameters);
 		Preconditions.checkNotNull(sourceName);
-		Preconditions.checkNotNull(operatorsChangedDueToFragmentation);
-		Preconditions.checkNotNull(operatorsChangedDueToFragmentation.isEmpty());
-		Preconditions.checkNotNull(operatorsDeleted);
 		
 		// The return value
-		List<List<ILogicalOperator>> operatorsPerLogicalPlan = Lists.newArrayList();
+		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
 		
 		// The operators for fragmentation
 		List<ILogicalOperator> operatorsForFragmentation = Lists.newArrayList();
 		
 		// Insert the operator for fragmentation
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		RestructHelper.collectOperators(logicalPlans.get(0), operators);
-		RestructHelper.removeTopAOs(operators);
-		insertOperatorForFragmentation(operators, operatorsForFragmentation, parameters, sourceName, 
-				logicalPlans.size(), operatorsChangedDueToFragmentation);
-		operatorsPerLogicalPlan.add(operators);
+		enhancedFragmentPlan = 
+				insertOperatorForFragmentation(enhancedFragmentPlan, parameters, sourceName, operatorsForFragmentation);
 		
 		// Subscribe all other logical plans
-		for(int planIndex = 1; planIndex < logicalPlans.size(); planIndex++) {
+		int planIndex = 0;
+		for(ILogicalQuery query : enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
 			
-			operators = Lists.newArrayList();
-			RestructHelper.collectOperators(logicalPlans.get(planIndex), operators);
-			RestructHelper.removeTopAOs(operators);
-			subscribeOperatorForFragmentation(operators, operatorsForFragmentation, sourceName, 
-					planIndex, operatorsDeleted);
-			operatorsPerLogicalPlan.add(operators);
+			if(planIndex == 0) {
+				
+				planIndex++;
+				continue;
+				
+			}
+			
+			enhancedFragmentPlan = 
+					subscribeOperatorForFragmentation(enhancedFragmentPlan, sourceName, query, planIndex, operatorsForFragmentation);
+			planIndex++;
 			
 		}
 		
 		// Initialize the operators for fragmentation
-		for(ILogicalOperator operatorForFragmentation : operatorsForFragmentation)
+		for(ILogicalOperator operatorForFragmentation : 
+			enhancedFragmentPlan.getOperatorsOfFragmentationPart()) {
+			
 			operatorForFragmentation.initialize();
+			
+		}
 		
-		return operatorsPerLogicalPlan;
+		return enhancedFragmentPlan;
 		
 	}
 	
 	/**
 	 * Inserts operators for fragmentation, if a source was set by {@link #setSourceName(String)}.
-	 * @param operators A list of all operators within a logical plan.
-	 * @param operatorsForFragmentation A list of all created operators for fragmentation for the query.
+	 * @param fragmentPlan The current status of the fragmentation.
 	 * @param parameters the {@link QueryBuildConfiguration}.
 	 * @param sourceName The name of the source to be fragmented.
-	 * @param numFragments The number of fragments.
-	 * @param operatorsChangedDueToFragmentation A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are added or modified in any way due to 
-	 * fragmentation. A modification means e.g. a related StreamAO, which copies were deleted.
+	 * @param operatorsForFragmentation A list of all created operators for fragmentation for the query.
+	 * @return The new status of the fragmentation.
 	 */
-	protected void insertOperatorForFragmentation(List<ILogicalOperator> operators, 
-			List<ILogicalOperator> operatorsForFragmentation, 
-			QueryBuildConfiguration parameters, String sourceName, int numFragments, 
-			Collection<ILogicalOperator> operatorsChangedDueToFragmentation) {
+	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+			QueryBuildConfiguration parameters, String sourceName, 
+			List<ILogicalOperator> operatorsForFragmentation) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(operators);
-		Preconditions.checkArgument(!operators.isEmpty());
-		Preconditions.checkNotNull(operatorsForFragmentation);
+		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(parameters);
-		Preconditions.checkArgument(numFragments > 1);
 		Preconditions.checkNotNull(sourceName);
-		Preconditions.checkNotNull(operatorsChangedDueToFragmentation);
-		Preconditions.checkNotNull(operatorsChangedDueToFragmentation.isEmpty());
+		Preconditions.checkNotNull(operatorsForFragmentation);
 		
-		for(ILogicalOperator operator : operators) {
+		// The return value
+		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
+		
+		// The query to be used for insertion
+		ILogicalQuery query = fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().iterator().next();
+		
+		// Operators for the fragmentation part
+		List<ILogicalOperator> operatorsForFragmentationPart = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : 
+			fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 			
 			// Only StreamAOs or following WindowAOs will be processed
 			
 			if(operator instanceof StreamAO && 
 					((StreamAO) operator).getStreamname().getResourceName().equals(sourceName)) {
 				
-				operatorsChangedDueToFragmentation.add(operator);
+				operatorsForFragmentationPart.add(operator);
 				
 				// The operator for fragmentation to be inserted.
 				// All sinks of the StreamAO will be subscribed to that new operator.
 				// For following WindowAOs other operators for fragmentation will be inserted additional.
 				ILogicalOperator operatorForFragmentation = 
-						createOperatorForFragmentation(numFragments, parameters);
+						createOperatorForFragmentation(enhancedFragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().size(), parameters);
 				
 				// True, if the StreamAO is only subscribed by WindowAOs
 				boolean onlySubscribedByWindows = true;
@@ -162,12 +163,12 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				if(!windowOfSourceToBeFragmented)
 					continue;
 				
-				operatorsChangedDueToFragmentation.add(operator);
+				operatorsForFragmentationPart.add(operator);
 				
 				// The operator for fragmentation to be subscribed.
 				// All sinks of the WindowAO will be subscribed to that new operator.
 				ILogicalOperator operatorForFragmentation = 
-						createOperatorForFragmentation(numFragments, parameters);
+						createOperatorForFragmentation(enhancedFragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().size(), parameters);
 				operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
 				operatorsForFragmentation.add(operatorForFragmentation);
 				
@@ -183,46 +184,56 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			
 		}
 		
-		operators.addAll(operatorsForFragmentation);
-		operatorsChangedDueToFragmentation.addAll(operatorsForFragmentation);
+		enhancedFragmentPlan.getOperatorsOfFragmentationPart().addAll(operatorsForFragmentationPart);
+		enhancedFragmentPlan.getOperatorsOfFragmentationPart().addAll(operatorsForFragmentation);
+		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForFragmentationPart);
+		
+		return enhancedFragmentPlan;
 		
 	}
 
 	/**
 	 * Subscribes operators for fragmentation, if a source was set by {@link #setSourceName(String)} 
 	 * and deletes the source access of the current logical plan represented by <code>operators</code>.
-	 * @param operators A list of all operators within a logical plan.
-	 * @param operatorsForFragmentation A list of all created operators for fragmentation for the 
-	 * query.
+	 * @param fragmentPlan The current status of the fragmentation.
 	 * @param sourceName The name of the source to be fragmented.
+	 * @param query The query to process.
 	 * @param planIndex The index of the logical plan to process. <br />
 	 * It is also the output port of the inserted operator for fragmentation.
-	 * @param operatorsDeleted A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are deleted due to fragmentation or data reunion.
+	 * @param operatorsForFragmentation A list of all created operators for fragmentation for the query.
+	 * @return The new status of the fragmentation.
 	 */
-	protected void subscribeOperatorForFragmentation(List<ILogicalOperator> operators, 
-			List<ILogicalOperator> operatorsForFragmentation, String sourceName, int planIndex, 
-			Collection<ILogicalOperator> operatorsDeleted) {
+	protected IFragmentPlan subscribeOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+			String sourceName, ILogicalQuery query, int planIndex, List<ILogicalOperator> operatorsForFragmentation) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(operators);
-		Preconditions.checkArgument(!operators.isEmpty());
-		Preconditions.checkNotNull(operatorsForFragmentation);
-		Preconditions.checkArgument(planIndex >= 0);
+		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(sourceName);
-		Preconditions.checkNotNull(operatorsDeleted);
+		Preconditions.checkNotNull(query);
+		Preconditions.checkArgument(planIndex >= 0);
+		Preconditions.checkArgument(
+				planIndex < fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().size());
+		Preconditions.checkNotNull(operatorsForFragmentation);
+		
+		// The return value
+		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
+		
+		// Operators for the fragmentation part
+		List<ILogicalOperator> operatorsForFragmentationPart = Lists.newArrayList();
 		
 		// The iterator of the operators for fragmentation as the subscription goes the same way as 
 		// the creation
 		Iterator<ILogicalOperator> operatorsForFragmentationIter = operatorsForFragmentation.iterator();
 		
-		for(ILogicalOperator operator : operators) {
+		for(ILogicalOperator operator : 
+			fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 			
 			// Only StreamAOs or following WindowAOs will be processed
 			
 			if(operator instanceof StreamAO && 
 					((StreamAO) operator).getStreamname().getResourceName().equals(sourceName)) {
+				
+				operatorsForFragmentationPart.add(operator);
 				
 				// The operator for fragmentation to be subscribed.
 				// All sinks of the StreamAO will be subscribed to that new operator.
@@ -240,8 +251,6 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 							subToSink.getSchema());
 					
 				}
-				
-				operatorsDeleted.add(operator);
 				
 			} else if(operator instanceof AbstractWindowAO) {
 				
@@ -264,6 +273,8 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				if(!windowOfSourceToBeFragmented)
 					continue;
 				
+				operatorsForFragmentationPart.add(operator);
+				
 				// The operator for fragmentation to be subscribed.
 				// All sinks of the WindowAO will be subscribed to that new operator.
 				ILogicalOperator operatorForFragmentation = operatorsForFragmentationIter.next();
@@ -276,14 +287,13 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					
 				}
 				
-				operatorsDeleted.add(operator);
-				
 			}
 			
 		}
 		
-		// Remove the replicated source access operators
-		operators.removeAll(operatorsDeleted);
+		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForFragmentationPart);
+		
+		return enhancedFragmentPlan;
 		
 	}
 
@@ -296,79 +306,93 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			QueryBuildConfiguration parameters);
 
 	@Override
-	protected ILogicalOperator insertOperatorForDataReunion(
-			List<List<ILogicalOperator>> operatorsPerLogicalPlan, 
-			Collection<ILogicalOperator> operatorsChangedDueToDataReunion, 
-			Collection<ILogicalOperator> operatorsDeleted) {
+	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(operatorsPerLogicalPlan);
-		Preconditions.checkArgument(operatorsPerLogicalPlan.size() > 1);
-		Preconditions.checkNotNull(operatorsChangedDueToDataReunion);
-		Preconditions.checkNotNull(operatorsChangedDueToDataReunion.isEmpty());
-		Preconditions.checkNotNull(operatorsDeleted);
+		Preconditions.checkNotNull(fragmentPlan);
+		
+		// The return value
+		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
 		
 		// The operators for data reunion
 		List<ILogicalOperator> operatorsForDataReunion = Lists.newArrayList();
 		
 		// Insert the operator for data reunion
-		insertOperatorForDataReunion(operatorsPerLogicalPlan.get(0), operatorsForDataReunion, 
-				operatorsChangedDueToDataReunion);
+		enhancedFragmentPlan = 
+				insertOperatorForDataReunion(enhancedFragmentPlan, operatorsForDataReunion);
 		
 		// Subscribe all other logical plans
-		for(int planIndex = 1; planIndex < operatorsPerLogicalPlan.size(); planIndex++)
-			subscribeOperatorForDataReUnion(operatorsPerLogicalPlan.get(planIndex), 
-					operatorsForDataReunion, planIndex, operatorsDeleted);
+		int planIndex = 0;
+		for(ILogicalQuery query : enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
+			
+			if(planIndex == 0) {
+				
+				planIndex++;
+				continue;
+				
+			}
+			
+			enhancedFragmentPlan = 
+					subscribeOperatorForDataReUnion(enhancedFragmentPlan, operatorsForDataReunion, query, planIndex);
+			planIndex++;
+			
+		}
 		
 		// Initialize the operators for data reunion
-		for(ILogicalOperator operatorForDataReunion : operatorsForDataReunion)
+		for(ILogicalOperator operatorForDataReunion : enhancedFragmentPlan.getOperatorsOfReunionPart())
 			operatorForDataReunion.initialize();
 		
-		return operatorsForDataReunion.iterator().next();
+		return enhancedFragmentPlan;
 		
 	}
 	
 	/**
 	 * Inserts operators for data reunion.
-	 * @param operators A list of all operators within a logical plan.
+	 * @param fragmentPlan The current status of the fragmentation.
 	 * @param operatorsForDataReunion A list of all created operators for data reunion for the query.
-	 * @param operatorsChangedDueToDataReunion A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are added or modified in any way due to 
-	 * data reunion. A modification means e.g. a related FileSinkAO, which has been moved within 
-	 * the logical plan and which copies were deleted.
+	 * @return The new status of the fragmentation.
 	 */
-	// FIXME Seems to be a big workaround. M.B.
-	protected void insertOperatorForDataReunion(List<ILogicalOperator> operators, 
-			List<ILogicalOperator> operatorsForDataReunion, 
-			Collection<ILogicalOperator> operatorsChangedDueToDataReunion) {
+	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan, 
+			List<ILogicalOperator> operatorsForDataReunion) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(operators);
-		Preconditions.checkArgument(!operators.isEmpty());
+		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(operatorsForDataReunion);
-		Preconditions.checkNotNull(operatorsChangedDueToDataReunion);
-		Preconditions.checkNotNull(operatorsChangedDueToDataReunion.isEmpty());
+		
+		// The return value
+		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
+		
+		// The query to be used for insertion
+		ILogicalQuery query = fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().iterator().next();
 		
 		// A mapping of all operators to their plane within the logical plan
 		Map<ILogicalOperator, Integer> operatorsToPlaneMap = 
-				RestructHelper.assignOperatorPlanes(operators.iterator().next());
+				RestructHelper.assignOperatorPlanes(fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).iterator().next());
 		
 		// A mapping of all operators which shall be moved to the data reunion part 
 		// to their plane within the logical plan
 		Map<ILogicalOperator, Integer> operatorsForDataReunionPartToPlaneMap = Maps.newHashMap();
+		
+		// TODO
+		// Collect aggregation, if present
+//		Optional<AggregateAO> aggregation = replaceAggregation(operators);
+//		if(aggregation.isPresent())
+//			operatorsForDataReunionPartToPlaneMap.put(aggregation.get(), operatorsToPlaneMap.get(aggregation.get()));
 		
 		boolean finished = false;
 		do {
 			
 			finished = true;
 			
-			for(ILogicalOperator operator : operators) {
+			for(ILogicalOperator operator : 
+				fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 				
 				if(operatorsForDataReunionPartToPlaneMap.containsKey(operator))
 					continue;
 				else if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
 						operator.getClass())) {
+					
+					operatorsForDataReunionPartToPlaneMap.put(operator, operatorsToPlaneMap.get(operator));
 					
 					// Delete subscriptions
 					for(LogicalSubscription subToSink : operator.getSubscriptions()) {
@@ -384,10 +408,6 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 						
 					}
 					operator.unsubscribeFromAllSources();
-						
-					// Collect operators to be moved to the data reunion part
-					operatorsForDataReunionPartToPlaneMap.put(
-							operator, operatorsToPlaneMap.get(operator));
 					
 					finished = false;
 						
@@ -423,8 +443,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			for(int operatorNo = 0; operatorNo < sortedOperatorsForDataReunionPart.size(); operatorNo++) {
 				
 				// The current operator
-				ILogicalOperator operator = sortedOperatorsForDataReunionPart.get(operatorNo);		
-				operatorsChangedDueToDataReunion.add(operator);
+				ILogicalOperator operator = sortedOperatorsForDataReunionPart.get(operatorNo);
 				
 				if(operatorsForDataReunionPartToPlaneMap.get(operator) == lowestPlane &&
 						operatorsForDataReunionIter.hasNext()) {
@@ -446,50 +465,62 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			
 		}
 		
-		operatorsChangedDueToDataReunion.addAll(operatorsForDataReunion);
+		enhancedFragmentPlan.getOperatorsOfReunionPart().addAll(operatorsForDataReunionPartToPlaneMap.keySet());
+		enhancedFragmentPlan.getOperatorsOfReunionPart().addAll(operatorsForDataReunion);
+		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForDataReunionPartToPlaneMap.keySet());
+		
+		return enhancedFragmentPlan;
 		
 	}
 	
 	/**
 	 * Subscribes operators for data reunion.
-	 * @param operators A list of all operators within a logical plan.
+	 * @param fragmentPlan The current status of the fragmentation.
 	 * @param operatorsForDataReunion A list of all created operators for data reunion for the query.
+	 * @param query The query to process.
 	 * @param planIndex The index of the logical plan to process. <br />
 	 * It is also the input port of the inserted operator for data reunion.
-	 * @param operatorsDeleted A mutable, empty collection, 
-	 * which will be filled by this method. <br /> 
-	 * This collection contains all operators which are deleted due to fragmentation or data reunion.
+	 * @return The new status of the fragmentation.
 	 */
-	// FIXME Seems to be a big workaround. M.B.
-	protected void subscribeOperatorForDataReUnion(List<ILogicalOperator> operators, 
-			List<ILogicalOperator> operatorsForDataReunion, int planIndex, 
-			Collection<ILogicalOperator> operatorsDeleted) {
+	protected IFragmentPlan subscribeOperatorForDataReUnion(IFragmentPlan fragmentPlan, 
+			List<ILogicalOperator> operatorsForDataReunion, ILogicalQuery query, int planIndex) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(operators);
-		Preconditions.checkArgument(!operators.isEmpty());
+		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(operatorsForDataReunion);
+		Preconditions.checkNotNull(query);
 		Preconditions.checkArgument(planIndex >= 0);
-		Preconditions.checkNotNull(operatorsDeleted);
+		Preconditions.checkArgument(
+				planIndex < fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().size());
 		
-		// A list of operators which shall be moved to the data reunion part
-		List<ILogicalOperator> operatorsForDataReunionPart = Lists.newArrayList();
+		// The return value
+		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
+		
+		// Operators for the reunion part
+		List<ILogicalOperator> operatorsForReunionPart = Lists.newArrayList();
 		
 		// The iterator of the operators for data reunion as the subscription goes the same way as 
 		// the creation
 		Iterator<ILogicalOperator> operatorsForDataReunionIter = operatorsForDataReunion.iterator();
+		
+		// TODO
+		// Handle aggregation
+//		replaceAggregation(operators);
 		
 		boolean finished = false;
 		do {
 			
 			finished = true;
 			
-			for(ILogicalOperator operator : operators) {
+			for(ILogicalOperator operator : 
+				fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 			
-				if(operatorsForDataReunionPart.contains(operator))
+				if(operatorsForReunionPart.contains(operator))
 					continue;
 				else if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
 						operator.getClass())) {
+					
+					operatorsForReunionPart.add(operator);
 					
 					// Delete subscriptions
 					for(LogicalSubscription subToSink : operator.getSubscriptions()) {
@@ -505,9 +536,6 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 						
 					}
 					operator.unsubscribeFromAllSources();
-						
-					// Collect operators to be moved to the data reunion part
-					operatorsForDataReunionPart.add(operator);
 					
 					finished = false;
 						
@@ -526,8 +554,9 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			
 		} while(!finished);
 		
-		// Remove the operators for the data reunion part
-		operatorsDeleted.addAll(operatorsForDataReunionPart);
+		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForReunionPart);
+		
+		return enhancedFragmentPlan;
 		
 	}
 	
