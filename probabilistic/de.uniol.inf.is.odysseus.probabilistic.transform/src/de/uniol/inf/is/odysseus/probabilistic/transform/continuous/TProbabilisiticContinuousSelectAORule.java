@@ -24,26 +24,14 @@ import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
  * Transformation rule for Select operator for continuous probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TProbabilisiticContinuousSelectAORule extends AbstractTransformationRule<SelectAO> {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+public class TProbabilisiticContinuousSelectAORule extends TSelectAORule {
 
 	/*
 	 * (non-Javadoc)
@@ -67,8 +55,8 @@ public class TProbabilisiticContinuousSelectAORule extends AbstractTransformatio
 	 */
 	@Override
 	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-			if (operator.isAllPhysicalInputSet()) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 				if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
 					return true;
 				}
@@ -85,26 +73,6 @@ public class TProbabilisiticContinuousSelectAORule extends AbstractTransformatio
 	@Override
 	public final String getName() {
 		return "SelectAO -> ProbabilisticDiscreteSelectPO";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super SelectAO> getConditionClass() {
-		return SelectAO.class;
 	}
 
 }

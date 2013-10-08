@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
@@ -60,9 +61,9 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
 	 */
 	@Override
 	public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
-		if ((config.getDataTypes().contains(SchemaUtils.DATATYPE))) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+			return true;
 			}
 		}
 		return false;

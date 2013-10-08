@@ -58,8 +58,8 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
 	 */
 	@Override
 	public final boolean isExecutable(final ProbabilisticAO operator, final TransformationConfiguration config) {
-		if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
-			if (operator.isAllPhysicalInputSet()) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 				return true;
 			}
 		}

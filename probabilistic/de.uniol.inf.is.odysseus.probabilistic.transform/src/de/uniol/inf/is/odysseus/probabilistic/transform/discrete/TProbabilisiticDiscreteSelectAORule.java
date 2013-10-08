@@ -24,26 +24,14 @@ import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
  * Transformation rule for Select operator for discrete probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationRule<SelectAO> {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+public class TProbabilisiticDiscreteSelectAORule extends TSelectAORule {
 
 	/*
 	 * (non-Javadoc)
@@ -68,8 +56,8 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 	 */
 	@Override
 	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
-			if (operator.isAllPhysicalInputSet()) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 				if (SchemaUtils.containsDiscreteProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
 					return true;
 				}
@@ -86,26 +74,6 @@ public class TProbabilisiticDiscreteSelectAORule extends AbstractTransformationR
 	@Override
 	public final String getName() {
 		return "SelectAO -> ProbabilisticDiscreteSelectPO";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super SelectAO> getConditionClass() {
-		return SelectAO.class;
 	}
 
 }

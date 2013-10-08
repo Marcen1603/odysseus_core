@@ -21,16 +21,13 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteUnNestPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+import de.uniol.inf.is.odysseus.relational.transform.TUnnestAORule;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticDiscreteUnNestAORule extends AbstractTransformationRule<UnNestAO> {
+public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
 
 	/**
 	 * 
@@ -56,41 +53,14 @@ public class TProbabilisticDiscreteUnNestAORule extends AbstractTransformationRu
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
 	public final boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
-		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-			if (operator.isAllPhysicalInputSet()) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 				return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
 
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final Class<? super UnNestAO> getConditionClass() {
-		return UnNestAO.class;
 	}
 
 }

@@ -27,27 +27,15 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.AggregateTIPO;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+import de.uniol.inf.is.odysseus.relational.transform.TAggregatePORule;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TAggregateProbabilisticRule extends AbstractTransformationRule<AggregateTIPO<?, ?, ?>> {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
-		return 1;
-	}
+public class TAggregateProbabilisticRule extends TAggregatePORule {
 
 	/*
 	 * (non-Javadoc)
@@ -56,7 +44,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public final void execute(final AggregateTIPO<?, ?, ?> operator, final TransformationConfiguration config) {
+	public final void execute(final AggregatePO operator, final TransformationConfiguration config) {
 		@SuppressWarnings({ "rawtypes" })
 		final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations());
 		operator.setGroupProcessor(r);
@@ -113,7 +101,7 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final boolean isExecutable(final AggregateTIPO<?, ?, ?> operator, final TransformationConfiguration config) {
+	public final boolean isExecutable(final AggregatePO operator, final TransformationConfiguration config) {
 		if (config.getDataTypes().contains(SchemaUtils.DATATYPE)) {
 			if (operator.getGroupProcessor() == null) {
 				return true;
@@ -130,26 +118,6 @@ public class TAggregateProbabilisticRule extends AbstractTransformationRule<Aggr
 	@Override
 	public final String getName() {
 		return "AggregateTIPO use probabilistic aggregations (IProbabilistic)";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.METAOBJECTS;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super AggregateTIPO<?, ?, ?>> getConditionClass() {
-		return AggregatePO.class;
 	}
 
 }

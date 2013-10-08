@@ -25,25 +25,16 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * Transformation rule for probabilistic Map operator.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule<MapAO> {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+public class TProbabilisiticDiscreteMapAORule extends TMapAORule {
 
 	/*
 	 * (non-Javadoc)
@@ -70,8 +61,9 @@ public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule
 	 */
 	@Override
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-			if (operator.getPhysSubscriptionTo() != null) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+			
 				boolean isProbabilisticDiscrete = false;
 				for (final SDFExpression expr : operator.getExpressions()) {
 					if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {
@@ -94,26 +86,6 @@ public class TProbabilisiticDiscreteMapAORule extends AbstractTransformationRule
 	@Override
 	public final String getName() {
 		return "MapAO -> ProbabilisticDiscreteMapPO";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super MapAO> getConditionClass() {
-		return MapAO.class;
 	}
 
 }
