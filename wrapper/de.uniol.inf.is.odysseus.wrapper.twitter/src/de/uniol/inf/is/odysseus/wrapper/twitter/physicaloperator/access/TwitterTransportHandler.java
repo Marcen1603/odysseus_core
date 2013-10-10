@@ -174,6 +174,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 			if(locations != null){
 				fq.locations(locations);
 			}
+			
 			twitterStream.filter(fq);
 		}else{
 			twitterStream.sample();
@@ -219,6 +220,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	
 		List<String> tweetlist = new ArrayList<>();
 		tweetlist.add(Long.toString(status.getId()));
+		tweetlist.add(status.getUser().getName());
+		tweetlist.add(status.getUser().getScreenName());
 		tweetlist.add(status.getCreatedAt().toString());
 		tweetlist.add(status.getText());
 		tweetlist.add(geoData);
