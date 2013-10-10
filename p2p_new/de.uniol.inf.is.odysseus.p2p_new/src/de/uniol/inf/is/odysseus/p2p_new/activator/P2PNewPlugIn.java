@@ -52,7 +52,7 @@ public class P2PNewPlugIn implements BundleActivator {
 		P2PDictionary.setLocalPeerID(ownPeerID);
 		P2PDictionary.setLocalPeerName(ownPeerName);
 		
-		final File conf = new File("." + System.getProperty("file.separator") + ownPeerName);
+		final File conf = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ownPeerName);
 		NetworkManager.RecursiveDelete(conf);
 		manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, ownPeerName, conf.toURI());
 
