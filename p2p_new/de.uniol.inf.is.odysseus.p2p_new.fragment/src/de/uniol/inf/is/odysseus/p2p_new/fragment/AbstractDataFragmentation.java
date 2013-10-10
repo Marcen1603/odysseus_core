@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
@@ -147,14 +146,16 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	}
 	
 	/**
-	 * TODO javaDoc update
-	 * Replaces one aggregation within a list of given operators. <br />
+	 * Replaces one aggregation within a logical query. <br />
 	 * The aggregation will be replaced by a partial aggregation.
-	 * @param operators A list of operators.
-	 * @return The origin, replaced aggregation without subscriptions, if there was exact one aggregation 
-	 * within <code>operators</code>.
+	 * @param fragmentPlan The current status of the fragmentation.
+	 * @param A logical query of the current fragment plan.
+	 * @return A pair of the changed fragment plan and the origin, replaced aggregation without subscriptions, 
+	 * if there was exact one aggregation within <code>operators</code>.
 	 */
 	protected IPair<IFragmentPlan, Optional<AggregateAO>> replaceAggregation(IFragmentPlan fragmentPlan, ILogicalQuery query) {
+		
+		// FIXME Not working yet
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
@@ -185,6 +186,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				
 				// A new partial aggregation
 				AggregateAO pa = new AggregateAO();
+				pa.setOutputPA(true);
 				
 				// Change origin aggegration to be used as partial aggegration
 				Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = origin.getAggregations();
@@ -193,15 +195,15 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 					for(AggregateFunction function : aggregations.get(attributes).keySet()) {
 						
 						SDFAttribute outAttr = aggregations.get(attributes).get(function);
-						pa.addAggregation(attributes, function, new SDFAttribute(outAttr.getSourceName(), outAttr.getAttributeName(), 
-								SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE));
+//						pa.addAggregation(attributes, function, new SDFAttribute(outAttr.getSourceName(), outAttr.getAttributeName(), 
+//								SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE));
+						pa.addAggregation(attributes, function, outAttr);
 						
 					}
 					
 				}
 				for(SDFAttribute groupBy : origin.getGroupingAttributes())
 					pa.addGroupingAttribute(groupBy);
-				pa.setOutputPA(true);
 				
 				// Subscribe the partial one
 				for(LogicalSubscription subToSink : origin.getSubscriptions()) {
