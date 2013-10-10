@@ -214,6 +214,7 @@ import java.io.File;
  *  <p>
  *  <hr>
  */
+@SuppressWarnings("all")
 public class HDFLibrary implements java.io.Serializable 
 {
     /**

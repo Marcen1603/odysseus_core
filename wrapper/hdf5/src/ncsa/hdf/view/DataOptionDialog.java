@@ -72,6 +72,7 @@ import ncsa.hdf.object.ScalarDS;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DataOptionDialog extends JDialog implements ActionListener, ItemListener 
 {
     /**

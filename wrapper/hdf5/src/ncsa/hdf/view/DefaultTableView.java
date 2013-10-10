@@ -127,6 +127,7 @@ import ncsa.hdf.view.ViewProperties.BITMASK_OP;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DefaultTableView extends JInternalFrame implements TableView, ActionListener, MouseListener {
     private static final long       serialVersionUID = -7452459299532863847L;
 

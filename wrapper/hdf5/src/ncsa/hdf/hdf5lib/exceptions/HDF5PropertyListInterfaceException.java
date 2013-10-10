@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5PropertyListInterfaceException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9174392044166650187L;
+
+	/**
      * Constructs an <code>HDF5PropertyListInterfaceException</code> with no
      * specified detail message.
      */

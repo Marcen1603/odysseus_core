@@ -45,6 +45,7 @@ import ncsa.hdf.object.FileFormat;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class FileConversionDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = 2645021913986116744L;
 

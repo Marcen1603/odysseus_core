@@ -26,6 +26,7 @@ import nom.tam.fits.BasicHDU;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class FitsDatatype extends Datatype
 {
     private static final long serialVersionUID = 6545936196104493765L;

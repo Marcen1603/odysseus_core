@@ -54,6 +54,7 @@ import javax.swing.border.TitledBorder;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class UserOptionsDialog extends JDialog implements ActionListener, ItemListener 
 {
     private static final long     serialVersionUID = -8521813136101442590L;

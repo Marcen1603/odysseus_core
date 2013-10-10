@@ -12,10 +12,14 @@
 package ncsa.hdf.hdflib;
 
 import java.io.OutputStream;
-
+@SuppressWarnings("all")
 public class HDFDeprecated extends HDFLibrary {
 
-    static {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9107363024834941388L;
+	static {
         String v = HDFLibrary.getJHIVersion();
     }
 

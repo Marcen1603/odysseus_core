@@ -30,7 +30,11 @@ package ncsa.hdf.hdflib;
 public class HDFLibraryException extends HDFException 
 {
 
-    int HDFerror;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4695322677310539593L;
+	int HDFerror;
     String msg;
 
     public HDFLibraryException() {

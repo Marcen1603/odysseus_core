@@ -29,7 +29,7 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5JavaException;
  * href="./ncsa.hdf.hdf5lib.HDFNativeData.html">HDFNativeData</a> class to
  * convert between Java and C representations.
  */
-
+@SuppressWarnings("all")
 public class HDFArray {
 
     private Object _theArray = null;
@@ -935,6 +935,7 @@ public class HDFArray {
  * <p>
  * We use java.lang.reflection here.
  */
+@SuppressWarnings("all")
 class ArrayDescriptor {
 
     static String theType = "";

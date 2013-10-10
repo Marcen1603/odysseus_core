@@ -62,6 +62,7 @@ import ncsa.hdf.object.HObject;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class NewLinkDialog extends JDialog implements ActionListener,DocumentListener, ItemListener {
     private static final long serialVersionUID = 7100424106041533918L;
 

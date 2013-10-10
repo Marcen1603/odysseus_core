@@ -33,6 +33,7 @@ import ucar.nc2.NetcdfFile;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class NC2Group extends Group {
     private static final long serialVersionUID = -1261533010442193447L;
 

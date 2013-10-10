@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 package ncsa.hdf.hdflib;
-
+@SuppressWarnings("all")
 public class HDFNativeData
 {
     public HDFNativeData() {}

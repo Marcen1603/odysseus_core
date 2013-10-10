@@ -30,6 +30,7 @@ import ncsa.hdf.object.Group;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class FitsGroup extends Group
 {
     private static final long serialVersionUID = 4993155577664991838L;

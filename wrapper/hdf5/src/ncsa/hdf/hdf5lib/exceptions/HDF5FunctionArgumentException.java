@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5FunctionArgumentException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7105129014757220119L;
+
+	/**
      * Constructs an <code>HDF5FunctionArgumentException</code> with no
      * specified detail message.
      */

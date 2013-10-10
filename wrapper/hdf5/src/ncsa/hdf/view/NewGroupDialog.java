@@ -57,6 +57,7 @@ import ncsa.hdf.object.HObject;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class NewGroupDialog extends JDialog implements ActionListener, ItemListener, KeyListener {
     private static final long serialVersionUID = 7340860373483987075L;
 

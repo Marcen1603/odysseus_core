@@ -40,6 +40,7 @@ import java.util.List;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public abstract class Datatype extends HObject {
     /**
      * 

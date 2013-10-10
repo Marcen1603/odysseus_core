@@ -27,6 +27,7 @@ import ucar.ma2.DataType;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class NC2Datatype extends Datatype {
     private static final long serialVersionUID = 5399364372073889764L;
     DataType nativeType = null;

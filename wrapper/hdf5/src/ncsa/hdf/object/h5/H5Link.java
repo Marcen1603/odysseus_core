@@ -33,7 +33,7 @@ import ncsa.hdf.object.HObject;
  * @version 2.7.2 7/6/2010
  * @author Nidhi Gupta
  */
-
+@SuppressWarnings("all")
 public class H5Link extends HObject {
     /**
      * 

@@ -43,6 +43,7 @@ import nom.tam.fits.TableHDU;
  * @version 2.4 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class FitsFile extends FileFormat
 {
     private static final long serialVersionUID = -1965689032980605791L;

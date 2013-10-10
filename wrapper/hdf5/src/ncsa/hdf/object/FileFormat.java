@@ -51,6 +51,7 @@ import javax.swing.tree.TreeNode;
  * @author Peter X. Cao
  * @version 2.4 9/4/2007
  */
+@SuppressWarnings("all")
 public abstract class FileFormat extends File {
     /***************************************************************************
      * File access flags used in calls to createInstance( String, flag );

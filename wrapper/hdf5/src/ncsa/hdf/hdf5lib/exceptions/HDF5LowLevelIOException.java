@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5LowLevelIOException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 59885924393416001L;
+
+	/**
      * Constructs an <code>HDF5LowLevelIOException</code> with no specified
      * detail message.
      */

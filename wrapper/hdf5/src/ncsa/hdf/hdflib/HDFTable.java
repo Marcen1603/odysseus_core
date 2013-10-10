@@ -12,7 +12,7 @@
 package ncsa.hdf.hdflib;
 
 import java.lang.reflect.Field;
-
+@SuppressWarnings("all")
 public class HDFTable {
 
     static {
@@ -185,7 +185,7 @@ Object setfield( String type, Object obj, byte[] barray, int offset, int maxlen 
 }
 }
 
-
+@SuppressWarnings("all")
 class TabDescriptor {
 
     String theType = "";

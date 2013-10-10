@@ -38,6 +38,7 @@ import ncsa.hdf.object.FileFormat;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class ViewProperties extends Properties {
     private static final long   serialVersionUID     = -6411465283887959066L;
 

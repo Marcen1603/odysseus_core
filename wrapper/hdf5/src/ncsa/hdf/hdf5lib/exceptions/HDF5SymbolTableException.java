@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5SymbolTableException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6461732896455503682L;
+
+	/**
      * Constructs an <code>HDF5SymbolTableException</code> with no specified
      * detail message.
      */

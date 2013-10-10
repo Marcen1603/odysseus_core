@@ -38,6 +38,7 @@ import ucar.nc2.Variable;
  * @version 2.4 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class NC2File extends FileFormat {
 
     /**

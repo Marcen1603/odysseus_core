@@ -30,7 +30,11 @@ package ncsa.hdf.hdf5lib.exceptions;
  * 
  */
 public class HDF5Exception extends Exception {
-    protected String detailMessage;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3061692441793550046L;
+	protected String detailMessage;
 
     /**
      * Constructs an <code>HDF5Exception</code> with no specified detail

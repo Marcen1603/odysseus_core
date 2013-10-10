@@ -47,6 +47,7 @@ import javax.swing.event.ListSelectionListener;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class MathConversionDialog extends JDialog implements ActionListener,
         ListSelectionListener {
     private static final long serialVersionUID = 5136554941147830371L;

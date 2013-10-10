@@ -25,7 +25,7 @@ package ncsa.hdf.hdflib;
  *  This class heavily uses the <a href="./ncsa.hdf.hdflib.HDFNativeData.html">HDFNativeData</a>
  *  class to convert between Java and C representations.
  */
-
+@SuppressWarnings("all")
 public class HDFArray {
 
 private Object _theArray = null;
@@ -715,7 +715,7 @@ private Long[] ByteToLongObj( int start, int len, byte[] bin ) {
   * This class is used by HDFArray to discover the shape and type of an
   * arbitrary array.
   */
-
+@SuppressWarnings("all")
 class ArrayDescriptor {
 
     static String theType = "";

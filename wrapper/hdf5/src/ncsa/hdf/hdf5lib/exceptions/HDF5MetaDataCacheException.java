@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5MetaDataCacheException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2817903381083056751L;
+
+	/**
      * Constructs an <code>HDF5MetaDataCacheException</code> with no specified
      * detail message.
      */

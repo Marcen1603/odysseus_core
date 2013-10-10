@@ -80,6 +80,7 @@ import ncsa.hdf.object.ScalarDS;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DefaultTextView extends JInternalFrame implements TextView,
         ActionListener, KeyListener {
     private static final long serialVersionUID = 3892752752951438428L;
@@ -269,7 +270,12 @@ public class DefaultTextView extends JInternalFrame implements TextView,
         
         AbstractTableModel tm =  new AbstractTableModel()
         {
-            public int getColumnCount() {
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = -1163613174765925933L;
+
+			public int getColumnCount() {
                 return 1;
             }
 

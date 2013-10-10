@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5DataStorageException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5350898739806431018L;
+
+	/**
      * Constructs an <code>HDF5DataStorageExceptionn</code> with no specified
      * detail message.
      */

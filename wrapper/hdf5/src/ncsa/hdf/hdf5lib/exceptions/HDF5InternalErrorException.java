@@ -20,6 +20,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5InternalErrorException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3071253751740164838L;
+
+	/**
      * Constructs an <code>HDF5InternalErrorException</code> with no specified
      * detail message.
      */

@@ -42,6 +42,7 @@ import nom.tam.fits.HeaderCard;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class FitsDataset extends ScalarDS
 {
     private static final long serialVersionUID = 3944770379558335171L;

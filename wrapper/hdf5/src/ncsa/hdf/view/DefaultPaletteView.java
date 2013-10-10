@@ -65,6 +65,7 @@ import ncsa.hdf.object.ScalarDS;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DefaultPaletteView extends JDialog implements PaletteView,
         MouseListener, MouseMotionListener, ActionListener, ItemListener {
     private static final long serialVersionUID = -5092012421988388661L;

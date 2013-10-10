@@ -33,6 +33,7 @@ import ncsa.hdf.object.FileFormat;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class NewFileDialog extends JFileChooser // JDialog
 // implements ActionListener
 {

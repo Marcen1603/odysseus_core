@@ -18,6 +18,11 @@ package ncsa.hdf.hdf5lib.exceptions;
  */
 public class HDF5DatasetInterfaceException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3629611513382634801L;
+
+	/**
      * Constructs an <code>HDF5DatasetInterfaceException</code> with no
      * specified detail message.
      */

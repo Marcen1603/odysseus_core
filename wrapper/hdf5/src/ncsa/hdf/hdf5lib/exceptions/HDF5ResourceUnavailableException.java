@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5ResourceUnavailableException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4643009461957227230L;
+
+	/**
      * Constructs an <code>HDF5ResourceUnavailableException</code> with no
      * specified detail message.
      */

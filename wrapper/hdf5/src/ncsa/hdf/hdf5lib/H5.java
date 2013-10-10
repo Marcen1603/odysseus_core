@@ -237,6 +237,8 @@ import ncsa.hdf.hdf5lib.structs.H5O_info_t;
  *          <a href="http://hdfgroup.org/HDF5/">
  *          http://hdfgroup.org/HDF5"</a>
  **/
+
+@SuppressWarnings("all")
 public class H5 implements java.io.Serializable {
     /**
      * 

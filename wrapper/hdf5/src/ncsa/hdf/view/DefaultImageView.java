@@ -130,6 +130,7 @@ import ncsa.hdf.view.ViewProperties.BITMASK_OP;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DefaultImageView extends JInternalFrame implements ImageView,
         ActionListener {
     private static final long serialVersionUID = -6534336542813587242L;
@@ -1205,9 +1206,9 @@ public class DefaultImageView extends JInternalFrame implements ImageView,
     private void flip(int direction) {
         ImageFilter filter = new FlipFilter(direction);
 
-        if (filter == null) {
-            return;
-        }
+//        if (filter == null) {
+//            return;
+//        }
 
         if (applyImageFilter(filter)) {
             // taggle flip flag
@@ -1246,9 +1247,9 @@ public class DefaultImageView extends JInternalFrame implements ImageView,
     private void contour(int level) {
         ImageFilter filter = new ContourFilter(level);
 
-        if (filter == null) {
-            return;
-        }
+//        if (filter == null) {
+//            return;
+//        }
 
         applyImageFilter(filter);
     }

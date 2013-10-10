@@ -100,6 +100,7 @@ import ncsa.hdf.object.ScalarDS;
  * @version 1.1 9/4/2007
  * @author Peter X. Cao
  */
+@SuppressWarnings("all")
 public class H4GRImage extends ScalarDS
 {
     /**

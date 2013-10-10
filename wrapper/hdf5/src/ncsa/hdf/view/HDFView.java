@@ -96,7 +96,7 @@ import ncsa.hdf.object.ScalarDS;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
-
+@SuppressWarnings("all")
 public class HDFView extends JFrame implements ViewManager, ActionListener, ChangeListener, DropTargetListener {
     private static final long     serialVersionUID = 2211017444445918998L;
 

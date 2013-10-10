@@ -21,6 +21,11 @@ package ncsa.hdf.hdf5lib.exceptions;
  */
 public class HDF5JavaException extends HDF5Exception {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5268796820529626962L;
+
+	/**
      * Constructs an <code>HDF5JavaException</code> with no specified detail
      * message.
      */

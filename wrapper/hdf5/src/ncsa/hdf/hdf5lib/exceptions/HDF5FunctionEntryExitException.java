@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5FunctionEntryExitException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2331834293836032155L;
+
+	/**
      * Constructs an <code>HDF5FunctionEntryExitException</code> with no
      * specified detail message.
      */

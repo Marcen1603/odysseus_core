@@ -32,7 +32,7 @@ import ncsa.hdf.hdf5lib.exceptions.HDF5JavaException;
  * <P>
  * <b>See also:</b> ncsa.hdf.hdf5lib.HDFArray.
  */
-
+@SuppressWarnings("all")
 public class HDFNativeData {
 
     static {

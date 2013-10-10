@@ -69,6 +69,7 @@ import ncsa.hdf.object.ScalarDS;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DefaultMetaDataView extends JDialog implements ActionListener, MetaDataView {
     private static final long serialVersionUID = 7891048909810508761L;
 

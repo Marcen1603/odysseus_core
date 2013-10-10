@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5ExternalFileListException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3300952666644754937L;
+
+	/**
      * Constructs an <code>HDF5ExternalFileListException</code> with no
      * specified detail message.
      */

@@ -83,6 +83,7 @@ import ncsa.hdf.object.ScalarDS;
  * @author Peter X. Cao
  * @version 2.4 9/4/2007
  */
+@SuppressWarnings("all")
 public class H5File extends FileFormat {
     private static final long      serialVersionUID = 6247335559471526045L;
 

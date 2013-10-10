@@ -99,6 +99,7 @@ import ncsa.hdf.view.ViewProperties.DATA_VIEW_KEY;
  * @author Peter X. Cao
  * @version 2.4 9/6/2007
  */
+@SuppressWarnings("all")
 public class DefaultTreeView extends JPanel implements TreeView, ActionListener {
     private static final long            serialVersionUID    = 4092566164712521186L;
 

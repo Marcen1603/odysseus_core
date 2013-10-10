@@ -19,6 +19,11 @@ package ncsa.hdf.hdf5lib.exceptions;
 
 public class HDF5AtomException extends HDF5LibraryException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3657027190214103455L;
+
+	/**
      * Constructs an <code>HDF5AtomException</code> with no specified detail
      * message.
      */
