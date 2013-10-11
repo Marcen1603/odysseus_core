@@ -15,13 +15,10 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
 /**
@@ -185,25 +182,29 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				AggregateAO origin = (AggregateAO) operator;
 				
 				// A new partial aggregation
-				AggregateAO pa = new AggregateAO();
+//				AggregateAO pa = new AggregateAO();
+				AggregateAO pa = origin.clone();
 				pa.setOutputPA(true);
 				
 				// Change origin aggegration to be used as partial aggegration
-				Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = origin.getAggregations();
-				for(SDFSchema attributes : aggregations.keySet()) {
-					
-					for(AggregateFunction function : aggregations.get(attributes).keySet()) {
-						
-						SDFAttribute outAttr = aggregations.get(attributes).get(function);
-//						pa.addAggregation(attributes, function, new SDFAttribute(outAttr.getSourceName(), outAttr.getAttributeName(), 
-//								SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE));
-						pa.addAggregation(attributes, function, outAttr);
-						
-					}
-					
-				}
-				for(SDFAttribute groupBy : origin.getGroupingAttributes())
-					pa.addGroupingAttribute(groupBy);
+//				List<AggregateItem> items = Lists.newArrayList();
+//				Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = origin.getAggregations();
+//				for(SDFSchema attributes : aggregations.keySet()) {
+//					
+//					SDFAttribute inAttr = attributes.iterator().next();
+//					
+//					for(AggregateFunction function : aggregations.get(attributes).keySet()) {
+//						
+//						SDFAttribute outAttr = aggregations.get(attributes).get(function);
+//						
+//						items.add(new AggregateItem(function.getName(), inAttr, outAttr));
+//						
+//					}
+//					
+//				}
+//				pa.setAggregationItems(items);
+//				for(SDFAttribute groupBy : origin.getGroupingAttributes())
+//					pa.addGroupingAttribute(groupBy);
 				
 				// Subscribe the partial one
 				for(LogicalSubscription subToSink : origin.getSubscriptions()) {
