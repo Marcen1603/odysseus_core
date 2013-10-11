@@ -3,11 +3,13 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 abstract public class AbstractFileHandler extends AbstractTransportHandler {
 
+	public static final String FILENAME = "filename";
 	protected String filename;
 	protected InputStream in;
 	protected OutputStream out;
@@ -19,6 +21,16 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 
 	public AbstractFileHandler(IProtocolHandler<?> protocolHandler) {
 		super(protocolHandler);
+	}
+	
+	@Override
+	public void setOptionsMap(Map<String, String> options) {
+		super.setOptionsMap(options);
+		if (options.containsKey(FILENAME)){
+			filename = options.get(FILENAME);
+		}else{
+			throw new IllegalArgumentException("No filename given!");			
+		}
 	}
 
 	@Override
