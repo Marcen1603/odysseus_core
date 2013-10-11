@@ -25,10 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 /**
  * Transformation rule for probabilistic Map operator.

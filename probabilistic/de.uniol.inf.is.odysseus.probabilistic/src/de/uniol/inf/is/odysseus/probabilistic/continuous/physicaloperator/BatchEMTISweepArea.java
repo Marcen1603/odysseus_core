@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
+@SuppressWarnings({"all"})
 public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
 
 	/** The logger. */

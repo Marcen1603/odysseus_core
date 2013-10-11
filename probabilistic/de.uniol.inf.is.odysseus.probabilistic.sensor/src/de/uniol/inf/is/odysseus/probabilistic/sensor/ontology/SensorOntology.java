@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,8 +41,6 @@ import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import com.hp.hpl.jena.shared.PrefixMapping;
@@ -61,6 +58,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sensor.Activator;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+@SuppressWarnings({"all"})
 public class SensorOntology {
 
     private static final String SOURCE = "http://purl.oclc.org/NET/ssnx/ssn";

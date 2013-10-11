@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
