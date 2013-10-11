@@ -144,11 +144,11 @@ public class FileHandler extends AbstractFileHandler {
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		FileHandler fh = new FileHandler(protocolHandler);
 		fh.setOptionsMap(options);
-		fh.filename = options.get("filename");
-		fh.append = (options.containsKey("append")) ? Boolean
-				.parseBoolean(options.get("append")) : false;
-		fh.preload = (options.containsKey("preload")) ? Boolean
-				.parseBoolean(options.get("preload")) : false;
+		fh.filename = options.get(FILENAME);
+		fh.append = (options.containsKey(APPEND)) ? Boolean
+				.parseBoolean(options.get(APPEND)) : false;
+		fh.preload = (options.containsKey(PRELOAD)) ? Boolean
+				.parseBoolean(options.get(PRELOAD)) : false;
 		return fh;
 	}
 
