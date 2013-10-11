@@ -1,0 +1,144 @@
+package de.uniol.inf.is.odysseus.wrapper.ncsa_hdf;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import ncsa.hdf.object.Datatype;
+import ncsa.hdf.object.FileFormat;
+import ncsa.hdf.object.HObject;
+import ncsa.hdf.object.ScalarDS;
+import ncsa.hdf.object.h5.H5File;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProvidesStringArray;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractFileHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+
+public class NcsaHDFTransportHandler extends AbstractFileHandler implements
+		IProvidesStringArray {
+
+	public static Logger LOG = LoggerFactory.getLogger(NcsaHDFTransportHandler.class);
+	
+	public static final String NAME = "NcsaHDFFile";
+	public static final String PATH = "path";
+
+	private String path;
+	private List<String[]> read = new LinkedList<>();
+
+	public NcsaHDFTransportHandler() {
+		try {
+			System.loadLibrary("jhdf");
+			System.loadLibrary("jhdf5");
+		} catch (Exception e) {
+			LOG.error("Error loading libraries ",e);
+		}
+	}
+
+	public NcsaHDFTransportHandler(IProtocolHandler<?> protocolHandler,
+			Map<String, String> options) {
+		super(protocolHandler);
+		setOptionsMap(options);
+	}
+
+	@Override
+	public void setOptionsMap(Map<String, String> options) {
+		super.setOptionsMap(options);
+		if (options.containsKey(PATH)) {
+			path = options.get(PATH);
+		} else {
+			throw new IllegalArgumentException("No path given!");
+		}
+	}
+
+	@Override
+	public void send(byte[] message) throws IOException {
+		throw new IllegalArgumentException(
+				"This handler cannot be used for writing!");
+	}
+
+	@Override
+	public ITransportHandler createInstance(
+			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		return new NcsaHDFTransportHandler(protocolHandler, options);
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		throw new IllegalArgumentException(
+				"This handler cannot be used for writing!");
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public void processInOpen() throws IOException {
+		H5File f = new H5File(filename, FileFormat.READ);
+		HObject out;
+		try {
+			out = f.get(path);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		if (out instanceof ScalarDS) {
+			ScalarDS v = (ScalarDS) out;
+			try {
+				Object data = v.getData();
+				switch (v.getDatatype().getDatatypeClass()) {
+				case Datatype.CLASS_FLOAT:
+					float[] values = (float[]) data;
+					for (int i = 0; i < values.length; i++) {
+						String[] t = new String[2];
+						t[0] = "" + i;
+						t[1] = "" + values[i];
+						read.add(t);
+						System.out.println(i + "," + values[i]);
+					}
+					break;
+
+				}
+			} catch (OutOfMemoryError | Exception e) {
+				throw new IOException(e);
+			}
+		} else {
+			throw new IllegalArgumentException("Unsupported path destination "
+					+ path);
+		}
+	}
+
+	@Override
+	public boolean hasNext() {
+		return read.size() > 0;
+	}
+
+	@Override
+	public String[] getNext() {
+		return read.remove(0);
+	}
+
+	@Override
+	public void processOutOpen() throws IOException {
+		throw new IllegalArgumentException(
+				"This handler cannot be used for writing!");
+	}
+
+	@Override
+	public void processOutClose() throws IOException {
+		throw new IllegalArgumentException(
+				"This handler cannot be used for writing!");
+	}
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
+		return false;
+	}
+
+}
