@@ -46,23 +46,23 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartController.class);
 
-	private static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
-	private static final String TYPE_TAG = "type";
-	private static final String REMOVE_MSG_TYPE = "remove";
+	protected static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
+	protected static final String TYPE_TAG = "type";
+	protected static final String REMOVE_MSG_TYPE = "remove";
 
 	private static QueryPartController instance;
 
-	private final Map<ID, OutputPipe> outputPipeMap = Maps.newHashMap();
+	protected final Map<ID, OutputPipe> outputPipeMap = Maps.newHashMap();
 
-	private final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
+	protected final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
 
-	private final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
+	protected final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
 
 	private final List<OutputPipeResolver> runningResolvers = Lists.newArrayList();
 
-	private IServerExecutor executor;
+	protected IServerExecutor executor;
 
-	private boolean inEvent;
+	protected boolean inEvent;
 
 	// called by OSGi-DS
 	public void activate() {
@@ -259,7 +259,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		}
 	}
 
-	private static ID convertToID(String sharedQueryIDString) {
+	protected static ID convertToID(String sharedQueryIDString) {
 		try {
 			return IDFactory.fromURI(new URI(sharedQueryIDString));
 		} catch (final URISyntaxException ex) {
@@ -277,7 +277,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		return adv;
 	}
 
-	private static Collection<Integer> determineLocalIDs(Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
+	protected static Collection<Integer> determineLocalIDs(Map<Integer, ID> sharedQueryIDMap, ID sharedQueryID) {
 		final List<Integer> ids = Lists.newArrayList();
 		for (final Integer id : sharedQueryIDMap.keySet().toArray(new Integer[0])) {
 			final ID sharedQueryID2 = sharedQueryIDMap.get(id);
@@ -288,7 +288,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		return ids;
 	}
 
-	private static void sendMessage(OutputPipe outputPipe, ID sharedQueryID, String messageType) {
+	protected static void sendMessage(OutputPipe outputPipe, ID sharedQueryID, String messageType) {
 		final Message msg = new Message();
 		msg.addMessageElement(new StringMessageElement(TYPE_TAG, messageType, null));
 		msg.addMessageElement(new StringMessageElement(SHARED_QUERY_ID_TAG, sharedQueryID.toString(), null));
@@ -314,7 +314,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		runningResolvers.clear();
 	}
 
-	private static void tryRemoveQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
+	protected static void tryRemoveQueries(IExecutor executor, Collection<Integer> ids, Integer exceptionID) {
 		for (final Integer id : ids) {
 			if (exceptionID == null || id != exceptionID) {
 				try {

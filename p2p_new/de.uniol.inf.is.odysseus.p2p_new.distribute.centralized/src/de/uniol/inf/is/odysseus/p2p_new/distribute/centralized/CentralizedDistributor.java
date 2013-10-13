@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
@@ -16,6 +17,8 @@ import net.jxta.pipe.PipeID;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -27,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
@@ -42,6 +46,9 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private ICostModel<IPhysicalOperator> costModel = null;
 	private IServerExecutor executor = null;
 	protected IQueryOptimizer queryOptimizer = null;
+	private Map<PeerID,ResourceUsage> resourceUsages = new HashMap<PeerID,ResourceUsage>();
+	private Map<PeerID,ICost<IPhysicalOperator>> planCostEstimates =  new HashMap<PeerID,ICost<IPhysicalOperator>>();
+	private Map<PeerID,Map<ID, List<Integer>>> opsForQueriesForPeer = new HashMap<>();
 	
 	// a map containing the physical plans for each peer known to the master
 	private Map<PeerID,Map<Integer,IPhysicalOperator>> operatorPlans = new HashMap<PeerID,Map<Integer,IPhysicalOperator>>();
@@ -133,7 +140,6 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// currently handled via the splitGraph-method
 //				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
 //				for(PlanJunction j : junctions) {
-//					// TODO: Create the jxta-send-operator for the graph in s and its GraphNode
 //					PeerID targetPeer = s.getPeer();
 //					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
 //					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
@@ -156,13 +162,17 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// looping means that there were still some results who couldn't be realized
 		}
 		// if we reached this point, we have one or more results waiting to get placed on their respective peers.
+		ID sharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 		for(SimulationResult sr : placeableResults) {
 			// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
 			// in order to generate the subscription-statements properly.
-			sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(true);
-			this.manager.sendPhysicalPlanToPeer(sr);
+			sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
+			this.addOperators(sr.getPeer(), sr.getPlan(true));
+			this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
 		}
-
+		for(ILogicalQuery query : queriesToDistribute) {
+			PhysicalQueryPartController.getInstance().registerAsMaster(query, sharedQueryID);
+		}
 		return queriesToDistribute;
 	}
 	
@@ -325,14 +335,17 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	}
 	
 	public SimulationResult getMostPromisingPlacement(Graph baseGraph, List<PlanJunction> junctions, QueryBuildConfiguration parameters, List<PeerID> usedPeers) {
-		SimulationResult bestResult = null;
+		List<SimulationResult> bestResults = new ArrayList<SimulationResult>();
 		ICost<IPhysicalOperator> bestCost = this.costModel.getMaximumCost();
-		for(PeerID peer : operatorPlans.keySet()) {
+		for(PeerID peer : getNonOverloadedPeers()) {
 			// skip peers, if they're already supposed to host a part of the query or if it's the master
 			if(usedPeers.contains(peer) || peer.toString().equals(manager.getMasterID().toString())) {
 				continue;
 			}
 			Map<Integer,IPhysicalOperator> operatorsOnPeer = operatorPlans.get(peer);
+			if(operatorsOnPeer == null) {
+				operatorsOnPeer = new HashMap<Integer, IPhysicalOperator>();
+			}
 			if(this.getCostModel() == null) {
 				LOG.debug("Centralized distribution not possible without a bound costmodel");
 				return null;
@@ -348,7 +361,19 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			res.setCost(costModel.estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
 			if(res.getCost().compareTo(bestCost) < 0) {
 				bestCost = res.getCost();
-				bestResult = res;
+				bestResults.add(res);
+			}
+		}
+		// if we have two or more best results with the same estimated costs,
+		// we have to choose the peer by considering their current usage,
+		// preferring those with lower usages.
+		double minimumUsage = Double.MAX_VALUE;
+		SimulationResult bestResult = null;
+		for(SimulationResult r : bestResults) {
+			double peerUsage = getResourceUsageForPeer(r.getPeer()).getOverallUsage();
+			if(peerUsage < minimumUsage) {
+				minimumUsage = peerUsage;
+				bestResult = r;
 			}
 		}
 		// if we have a result and got a list of planjunctions before, we have to change the graphnodes and targetsimulationresults accordingly
@@ -394,8 +419,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	
 	// function to determine the load a peer could potentially bear, represented as ICost
 	public ICost<IPhysicalOperator> determineBearableCost(PeerID peer) {
-		// TODO: implement
-		return null;
+		ResourceUsage ru = resourceUsages.get(peer);
+		double weightedUsage = ru.getOverallUsage();
+		ICost<IPhysicalOperator> costOfCurrentPlan = planCostEstimates.get(peer);
+		return CostConverter.calculateBearableCost(costOfCurrentPlan, weightedUsage, ru.getCOMBINED_THRESHOLD(), costModel);
 	}
 	
 	public boolean isPlaceable(SimulationResult r) {
@@ -476,6 +503,139 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				oldOperators.put(key, newOperators.get(key));
 			}
 		}
+		updatePlanCostEstimateForPeer(peerID, this.getOperatorPlans().get(peerID));
 	}
 
+	public void updatePlanCostEstimateForPeer(PeerID peerID, Map<Integer, IPhysicalOperator> o) {
+		List<IPhysicalOperator> operators = new ArrayList<IPhysicalOperator>(o.values());
+		ICost<IPhysicalOperator> newCost = this.getCostModel().estimateCost(operators, false);
+		planCostEstimates.put(peerID,newCost);
+	}
+
+
+
+	public void updateResourceUsage(ResourceUsageUpdateAdvertisement adv) {
+		if(resourceUsages.keySet().contains((adv.getPeerID()))
+				&& getResourceUsageForPeer(adv.getPeerID()).getTimestamp() >= adv.getTimestamp()) {
+			// don't update, if the arrived advertisement is for some reason older than the currently available information
+			return;
+		}
+		ResourceUsage ru = new ResourceUsage();
+		ru.setPeerID(adv.getPeerID());
+		ru.setCpu_usage(adv.getCpu_usage());
+		ru.setMem_free(adv.getMem_free());
+		ru.setMem_used(adv.getMem_used());
+		ru.setMem_total(adv.getMem_total());
+		ru.setTimestamp(adv.getTimestamp());
+		ru.setNetworkUsage(adv.getNetworkUsage());
+		resourceUsages.put(adv.getPeerID(), ru);
+	}
+	
+	public ResourceUsage getResourceUsageForPeer(PeerID peerID) {
+		return resourceUsages.get(peerID);
+	}
+	
+	/**
+	 * Retrieves a list of peers eligible for adding more plans,
+	 * i.e. peers whose memory- or cpu-usage-thresholds haven't yet been reached
+	 * Only includes peers for which resource-information is available
+	 */
+	private List<PeerID> getNonOverloadedPeers() {
+		List<PeerID> result = new ArrayList<PeerID>();
+		for(PeerID peerID : operatorPlans.keySet()) {
+			if(!(getResourceUsageForPeer(peerID) == null) && !getResourceUsageForPeer(peerID).isOverLoaded()) {
+				result.add(peerID);
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void processIntersections(PeerID peerID, List<PlanIntersection> intersections) {
+		Map<Integer,IPhysicalOperator> operators = this.operatorPlans.get(peerID);
+		for(PlanIntersection pi : intersections) {
+			// The old operator is a source, the new one a sink
+			ISource oldOp = (ISource)operators.get(pi.getOldOperatorID());
+			ISink newOp = (ISink)operators.get(pi.getNewOperatorID());
+			oldOp.subscribeSink(newOp, pi.getSinkInPort(), pi.getSourceOutPort(), pi.getSchema());
+		}
+	}
+
+
+
+	public Map<ID, List<Integer>> getOpsForQueriesForPeer(PeerID peerID) {
+		return opsForQueriesForPeer.get(peerID);
+	}
+
+	public void setOpsForQueryForPeer(PeerID peerID, ID sharedQueryID, List<Integer> opsForQuery) {
+		
+		Map<ID,List<Integer>> map = getOpsForQueriesForPeer(peerID);
+		if(map == null) {
+			map = new HashMap<ID,List<Integer>>();
+		}
+		map.put(sharedQueryID, opsForQuery);
+		this.opsForQueriesForPeer.put(peerID, map);
+	}
+	
+	public void removeQueryFromPeer(PeerID peerID, ID sharedQueryID) {
+		Map<ID,List<Integer>> queriesOnThatPeer = this.getOpsForQueriesForPeer(peerID);
+		if(queriesOnThatPeer == null) {
+			return;
+		}
+		List<Integer> queryOperators = queriesOnThatPeer.get(sharedQueryID);
+		if(queryOperators == null) {
+			return;
+		}
+		removeOperatorsOfQueryFromOperatorPlansForPeer(peerID, sharedQueryID, queryOperators);
+		this.getOpsForQueriesForPeer(peerID).remove(sharedQueryID);
+	}
+	
+	private void removeOperatorsOfQueryFromOperatorPlansForPeer(PeerID peerID, ID sharedQueryID, List<Integer> queryOperators) {
+		// only remove those operators, who aren't used by any other query anymore
+		for(int i : queryOperators) {
+			if(!usedByAnotherQueryThan(peerID, i, sharedQueryID)) {
+				removeOperator(peerID,i);
+			}
+		}
+	}
+	
+	public void removeQuery(ID sharedQueryID) {
+		for(PeerID peerID : this.getPeersInvolvedInQuery(sharedQueryID)) {
+			removeQueryFromPeer(peerID, sharedQueryID);
+		}
+	}
+	
+	public List<PeerID> getPeersInvolvedInQuery(ID sharedQueryID) {
+		List<PeerID> result = new ArrayList<PeerID>();
+		for(PeerID peerID : this.opsForQueriesForPeer.keySet()) {
+			if(this.getOpsForQueriesForPeer(peerID).containsKey(sharedQueryID)) {
+				result.add(peerID);
+			}
+		}
+		return result;
+	}
+
+
+	/**
+	 * determines, whether or not an operator is used by a query other than the one specified
+	 */
+	private boolean usedByAnotherQueryThan(PeerID peerID, int operatorID, ID sharedQueryID) {
+		Map<ID, List<Integer>> operatorsForQueries = this.getOpsForQueriesForPeer(peerID);
+		for(Entry<ID,List<Integer>> query : operatorsForQueries.entrySet()) {
+			if(query.getKey() != sharedQueryID && query.getValue().contains(operatorID)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void removeOperator(PeerID peerID, int operatorID) {
+		this.operatorPlans.get(peerID).remove(operatorID);
+	}
+
+
+
+	public CentralizedDistributorAdvertisementManager getManager() {
+		return manager;
+	}
 }

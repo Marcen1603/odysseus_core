@@ -38,8 +38,11 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	private static final String NEW_OPERATORS_TAG = "new_operators";
 	private static final String SUBSCRIPTIONS_TAG = "subscriptions";
 	private static final String PLANINTERSECTIONS_TAG = "planIntersections";
+	private static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
 	private static final String ADVERTISEMENT_TYPE = "jxta:PhysicalQueryPartAdvertisement";
+
 	private ID id;
+	private ID sharedQueryID;
 	private PeerID masterPeerID;
 	private PeerID peerID;
 	// information about subscriptions between new operators and operators from the old plan
@@ -79,6 +82,8 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 				this.setMasterPeerID((PeerID)convertToID(elem.getTextValue()));
 			} else if(elem.getName().equals(PLANINTERSECTIONS_TAG)) {
 				this.setIntersections(PlanIntersectionHelper.createPlanIntersectionsFromStatement(elem));
+			} else if(elem.getName().equals(SHARED_QUERY_ID_TAG)) {
+				this.setSharedQueryID(convertToID(elem.getTextValue()));
 			}
 		}
 		if(subscriptionElement != null) {
@@ -126,6 +131,7 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptionsStatement()));
 		generatePlanIntersectionsStatement(asMimeType);
 		doc.appendChild(doc.createElement(PLANINTERSECTIONS_TAG, getPlanIntersectionsStatement()));
+		doc.appendChild(doc.createElement(SHARED_QUERY_ID_TAG, sharedQueryID));
 		return doc;
 	}
 
@@ -244,5 +250,13 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	public void setPlanIntersectionsStatement(
 			StructuredDocument<?> planIntersectionsStatement) {
 		this.planIntersectionsStatement = planIntersectionsStatement;
+	}
+
+	public ID getSharedQueryID() {
+		return sharedQueryID;
+	}
+
+	public void setSharedQueryID(ID sharedQueryID) {
+		this.sharedQueryID = sharedQueryID;
 	}	
 }

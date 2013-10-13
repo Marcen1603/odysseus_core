@@ -202,7 +202,9 @@ public class GraphNode {
 		}
 	}
 	
-	// returns a List of the IDs of every operator leading to this operator
+	/**
+	 *  returns a List of the IDs of every operator leading to this operator
+	 */
 	public List<Integer> getIDsOfAllSources() {
 		List<Integer> result = new ArrayList<Integer>();
 		result.add(this.getOperatorID());

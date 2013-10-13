@@ -1,33 +1,42 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hyperic.sigar.Mem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.MasterNotificationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
-public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener {
+public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener {
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributorAdvertisementManager.class);
 	private IServerExecutor executor;
+	private ResourceUsageMonitor monitor;
 	
 	// the PeerID of the Master
 	private PeerID masterID;
@@ -41,12 +50,17 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		instance = this;
 		localID = P2PDictionaryService.get().getLocalPeerID();
 		// TODO: check via parameters, if this peer is designated as the master
-		if(true) {
+		boolean isMaster = true;
+		if(isMaster) {
 			this.masterID = localID;
 			// broadcast a request for their physical plans to all known peers and let them know, that this instance is their master
 			for(PeerID peerID : P2PDictionaryService.get().getRemotePeerIDs()) {
 				notifyPeerOfMaster(masterID, peerID);
 			}
+		} else {
+			// if it's a peer, start the performance-monitoring
+			monitor = new ResourceUsageMonitor(this);
+			monitor.start();
 		}
 		LOG.debug("AdvertisementController for the centralized distributor activated");
 	}
@@ -67,6 +81,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				// At this point, the Advertisement should be rebuild already because jxta handles this upon receiving the message
 				// This means, that it should already have the connected operators attached to it
 				CentralizedDistributor.getInstance().setPhysicalPlan(adv.getPeerID(), adv.getOpObjects());
+				CentralizedDistributor.getInstance().updatePlanCostEstimateForPeer(adv.getPeerID(), adv.getOpObjects());
 			}
 		} else if (a instanceof MasterNotificationAdvertisement) {
 			MasterNotificationAdvertisement adv = (MasterNotificationAdvertisement) a;
@@ -86,9 +101,21 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				// and synchronize their references by the communicated IDs.
 				Map<Integer, IPhysicalOperator> newOperators = adv.getQueryPartOperatorObjects();
 				CentralizedDistributor.getInstance().addOperators(localID, newOperators);
+				List<PlanIntersection> intersections = adv.getIntersections();
+				CentralizedDistributor.getInstance().processIntersections(adv.getPeerID(),intersections);
+				//TODO: implement starting and registration of the query
+				String queryBuildConfigurationName = "";
+				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
+				int queryID = this.getExecutor().addQuery(new ArrayList<IPhysicalOperator>(newOperators.values()), user, queryBuildConfigurationName);
+				ID sharedQueryID = adv.getSharedQueryID();
+				PhysicalQueryPartController.getInstance().registerAsSlave(new ArrayList<Integer>(queryID), sharedQueryID);
 				
-				//this.getExecutor().addQuery(newOperators, user, queryBuildConfigurationName)
 			}	
+		} else if (a instanceof ResourceUsageUpdateAdvertisement) {
+			ResourceUsageUpdateAdvertisement adv = (ResourceUsageUpdateAdvertisement) a;
+			if(isMaster() && adv.getMasterID().equals(this.localID)) {
+				CentralizedDistributor.getInstance().updateResourceUsage(adv);
+			}
 		}
 	}
 
@@ -116,14 +143,34 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		LOG.debug("Sent physicalQueryPlan of Peer " + this.localID + " to MasterPeer " + this.masterID);
 	}
 	
-	public void sendPhysicalPlanToPeer(SimulationResult r) {
+	public void sendPhysicalPlanToPeer(SimulationResult r, ID sharedQueryID) {
 		final PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPartAdvertisement.getAdvertisementType());
+		adv.setSharedQueryID(sharedQueryID);
 		adv.setPeerID(r.getPeer());
 		adv.setMasterPeerID(this.masterID);
 		adv.setQueryPartOperatorObjects(r.getPlan(true));
 		adv.setIntersections(r.getIntersections());
-		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
+		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(r.getPeer().toString(), adv, 15000);
 		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
+		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), sharedQueryID, r.getOperatorIDsOfNewQuery(true));
+	}
+	
+	public void updateResourceUsage(double cpuUsage, Mem memory, double networkUsage) {
+		sendResourceUsageToMaster(cpuUsage, memory, networkUsage);
+	}
+	
+	private void sendResourceUsageToMaster(double cpuUsage, Mem memory, double networkUsage) {
+		ResourceUsageUpdateAdvertisement adv = new ResourceUsageUpdateAdvertisement();
+		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setCpu_usage(cpuUsage);
+		adv.setNetworkUsage(networkUsage);
+		adv.setMem_free(memory.getFree());
+		adv.setMem_total(memory.getTotal());
+		adv.setMem_used(memory.getUsed());
+		adv.setTimestamp(System.currentTimeMillis());
+		adv.setMasterID(this.masterID);
+		adv.setPeerID(this.localID);
+		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
 	}
 
 

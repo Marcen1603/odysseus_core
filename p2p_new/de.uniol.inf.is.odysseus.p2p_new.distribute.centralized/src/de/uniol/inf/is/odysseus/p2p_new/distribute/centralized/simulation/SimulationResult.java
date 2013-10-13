@@ -42,6 +42,34 @@ public class SimulationResult {
 		return plan;
 	}
 	
+	public List<GraphNode> getGraphNodes(boolean onlyNew) {
+		List<GraphNode> plan = new ArrayList<GraphNode>();
+		for(String opType : graph.getNodesGroupedByOpType().keySet()) {
+			for(GraphNode gn : graph.getNodesGroupedByOpType().get(opType)) {
+				if(!(onlyNew && gn.isOld())) {
+					plan.add(gn);
+				}
+			}
+		}
+		return plan;
+	}
+	
+	public List<Integer> getOperatorIDsOfNewQuery(boolean includeSharedOperatorsOfOldPlan) {
+		List<Integer> result = new ArrayList<Integer>();
+		for(GraphNode gn : getGraphNodes(true)) {
+			if(!result.contains(gn.getOperatorID())) {
+				result.add(gn.getOperatorID());
+			}
+			List<Integer> sourceIDs = gn.getIDsOfAllSources();
+			for(int i : sourceIDs) {
+				if(!result.contains(i)) {
+					result.add(i);
+				}
+			}
+		}
+		return result;
+	}
+	
 	public ICost<IPhysicalOperator> getCost() {
 		return cost;
 	}

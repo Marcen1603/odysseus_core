@@ -316,7 +316,7 @@ public class Graph {
 	public List<GraphNode> getSinkNodes() {
 		List<GraphNode> result = new ArrayList<GraphNode>();
 		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
-			if(gn.isSource()) {
+			if(gn.isSource() && gn.getSinkSubscriptions().isEmpty()) {
 				result.add(gn);
 			}
 		}

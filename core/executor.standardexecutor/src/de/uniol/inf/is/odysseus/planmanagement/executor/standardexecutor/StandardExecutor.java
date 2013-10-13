@@ -246,7 +246,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		LOG.debug("Translating query into logical plans");
 		// translate query and build logical plans
 		List<IExecutorCommand> commands = getCompiler().translateQuery(
-				queryStr, parameters.getParserID(), user, getDataDictionary(user.getTenant()));
+				queryStr, parameters.getParserID(), user,
+				getDataDictionary(user.getTenant()));
 		LOG.trace("Number of commands: " + commands.size());
 		LOG.debug("Translation done.");
 		annotateQueries(commands, queryStr, user, parameters);
@@ -366,8 +367,9 @@ public class StandardExecutor extends AbstractExecutor implements
 	 *             An exception during optimization occurred.
 	 */
 	private Collection<IPhysicalQuery> addQueries(
-			List<IExecutorCommand> newCommands, OptimizationConfiguration conf, ISession session)
-			throws NoOptimizerLoadedException, QueryOptimizationException {
+			List<IExecutorCommand> newCommands, OptimizationConfiguration conf,
+			ISession session) throws NoOptimizerLoadedException,
+			QueryOptimizationException {
 		LOG.debug("Starting Optimization of logical queries...");
 		Collection<IPhysicalQuery> optimizedQueries = new ArrayList<IPhysicalQuery>();
 
@@ -399,7 +401,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			LOG.debug("Starting optimization and transformation for "
 					+ newQueries.size() + " logical queries...");
 			optimizedQueries = getOptimizer().optimize(this,
-					getExecutionPlan(), newQueries, conf, getDataDictionary(session.getTenant()));
+					getExecutionPlan(), newQueries, conf,
+					getDataDictionary(session.getTenant()));
 			LOG.debug("Optimization and transformation for  "
 					+ newQueries.size() + " logical queries done.");
 			LOG.debug("Changing execution plan for optimized queries...");
@@ -433,10 +436,49 @@ public class StandardExecutor extends AbstractExecutor implements
 		return optimizedQueries;
 	}
 
-	private static List<IPhysicalQuery> addQueries(
-			ArrayList<IPhysicalQuery> newQueries, OptimizationConfiguration conf) {
-		throw new RuntimeException(
-				"Adding physical query plans is currently not implemented");
+	private List<IPhysicalQuery> addQueries(
+			ArrayList<IPhysicalQuery> newQueries,
+			OptimizationConfiguration conf, ISession session) {
+		// Work in Progress
+		
+		// throw new
+		// RuntimeException("Adding physical query plans is currently not implemented");
+
+		// synchronize the process
+		this.executionPlanLock.lock();
+		LOG.debug("Changing execution plan for optimized queries...");
+		try {
+			executionPlanChanged(PlanModificationEventType.QUERY_ADDED,
+					newQueries);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		LOG.debug("Execution plan changed.");
+
+		for (IPhysicalQuery query : newQueries) {
+			query.addReoptimizeListener(this);
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_ADDED, query));
+			if (query.getLogicalQuery() != null) {
+				getDataDictionary(session.getTenant()).addQuery(
+						query.getLogicalQuery(), query.getSession(),
+						conf.getName());
+			}
+		}
+		// TODO: maybe the physical plan could be optimized further,
+		// in which case it should be run through the QuerySharing-Optimizer
+		// For now, just leave the operators alone and add the queries to the
+		// execution-plan as is.
+		// Adding the new Queries to the execution-plan would normally be done
+		// by the optimizer,
+		// but since we don't need the transformation of a logical query in this
+		// case, we do it here instead.
+		getExecutionPlan().addQueries(newQueries);
+		this.executionPlanLock.unlock();
+
+		LOG.debug("Optimization of logical queries done");
+		return newQueries;
+
 	}
 
 	private QueryBuildConfiguration validateBuildParameters(
@@ -510,7 +552,6 @@ public class StandardExecutor extends AbstractExecutor implements
 		params.set(new ParameterParserID(parserID));
 		return addQuery(query, parserID, user, params);
 	}
-
 
 	private Collection<Integer> addQuery(String query, String parserID,
 			ISession user, QueryBuildConfiguration buildConfiguration)
@@ -632,7 +673,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			query.addReoptimizeListener(this);
 			newQueries.add(query);
 			List<IPhysicalQuery> added = addQueries(newQueries,
-					new OptimizationConfiguration(queryBuildConfiguration));
+					new OptimizationConfiguration(queryBuildConfiguration),
+					user);
 			return added.get(0).getID();
 		} catch (Exception e) {
 			LOG.error("Error adding Queries. Details: " + e.getMessage());
@@ -642,26 +684,26 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	// -------------------------------------------------------------------------------------------------
 	// Deliver Schema information
-	// -------------------------------------------------------------------------------------------------	
-	
+	// -------------------------------------------------------------------------------------------------
+
 	@Override
 	public SDFSchema determinedOutputSchema(String query, String parserID,
 			ISession user, int port) {
-		List<IExecutorCommand> commands = getCompiler().translateQuery(
-				query, parserID, user, getDataDictionary(user.getTenant()));
-		if (commands.size() != 1){
-			throw new IllegalArgumentException("Method can only be called for one query statement!");
+		List<IExecutorCommand> commands = getCompiler().translateQuery(query,
+				parserID, user, getDataDictionary(user.getTenant()));
+		if (commands.size() != 1) {
+			throw new IllegalArgumentException(
+					"Method can only be called for one query statement!");
 		}
 		IExecutorCommand cmd = commands.get(0);
-		if (cmd instanceof CreateQueryCommand){
+		if (cmd instanceof CreateQueryCommand) {
 			CreateQueryCommand qCmd = (CreateQueryCommand) cmd;
 			ILogicalOperator root = qCmd.getQuery().getLogicalPlan();
 			return root.getOutputSchema(port);
-		}	
+		}
 		return null;
 	}
 
-	
 	// -------------------------------------------------------------------------------------------------
 	// Query Translation Settings
 	// -------------------------------------------------------------------------------------------------
@@ -713,7 +755,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			try {
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
-						this.executionPlan, null, getDataDictionary(caller.getTenant()));
+						this.executionPlan, null,
+						getDataDictionary(caller.getTenant()));
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE,
 						queryToRemove);
 				stopQuery(queryToRemove.getID(), caller);
@@ -737,7 +780,8 @@ public class StandardExecutor extends AbstractExecutor implements
 						}
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
-							getDataDictionary(caller.getTenant()).removeOperator(id.getValue());
+							getDataDictionary(caller.getTenant())
+									.removeOperator(id.getValue());
 							toRemove.add(id.getKey());
 						}
 					} else { // Remove ids from query sharing with this removed
@@ -745,8 +789,8 @@ public class StandardExecutor extends AbstractExecutor implements
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
 							if (id.getKey().getID() == queryToRemove.getID()) {
-								getDataDictionary(caller.getTenant()).removeOperator(
-										id.getValue());
+								getDataDictionary(caller.getTenant())
+										.removeOperator(id.getValue());
 								toRemove.add(id.getKey());
 							}
 						}
@@ -1320,21 +1364,25 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		return getDataDictionary(caller.getTenant()).getStoredProcedure(name, caller);
+		return getDataDictionary(caller.getTenant()).getStoredProcedure(name,
+				caller);
 	}
 
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
-		getDataDictionary(caller.getTenant()).removeStoredProcedure(name, caller);
+		getDataDictionary(caller.getTenant()).removeStoredProcedure(name,
+				caller);
 	}
 
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
-		return getDataDictionary(caller.getTenant()).getStoredProcedures(caller);
+		return getDataDictionary(caller.getTenant())
+				.getStoredProcedures(caller);
 	}
 
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
-		return getDataDictionary(caller.getTenant()).containsStoredProcedure(name, caller);
+		return getDataDictionary(caller.getTenant()).containsStoredProcedure(
+				name, caller);
 	}
 }
