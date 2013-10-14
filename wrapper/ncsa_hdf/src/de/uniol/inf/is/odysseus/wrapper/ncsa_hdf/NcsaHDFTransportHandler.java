@@ -109,7 +109,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 								t[p+1] = ""+values[i]; 
 							}
 							read.add(t);
-							System.out.println(i + "," + values[i]);
+							//System.out.println(i + "," + values[i]);
 						}
 						break;
 

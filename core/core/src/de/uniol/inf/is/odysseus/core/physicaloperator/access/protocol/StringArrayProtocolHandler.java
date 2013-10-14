@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
-	static final String NAME = "StringArray";
+	public static final String NAME = "StringArray";
 
 	public StringArrayProtocolHandler() {
 	}
