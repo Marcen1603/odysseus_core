@@ -93,8 +93,16 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	 * @param sourceName The name of the source to be fragmented.
 	 * @return The new status of the fragmentation.
 	 */
-	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
-			QueryBuildConfiguration parameters, String sourceName) {
+	protected abstract IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+			QueryBuildConfiguration parameters, String sourceName);
+	
+	/**
+	 * Inserts operators for data reunion. All sinks of all fragments will be subscribed by the data 
+	 * reunion operators.
+	 * @param fragmentPlan The current status of the fragmentation.
+	 * @return The new status of the fragmentation.
+	 */
+	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
@@ -342,52 +350,6 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		} while(!finished);
 		
 		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForReunionPart);
-		
-		return enhancedFragmentPlan;
-		
-	}
-	
-	/**
-	 * Inserts operators for data reunion. All sinks of all fragments will be subscribed by the data 
-	 * reunion operators.
-	 * @param fragmentPlan The current status of the fragmentation.
-	 * @return The new status of the fragmentation.
-	 */
-	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan) {
-		
-		// Preconditions
-		Preconditions.checkNotNull(fragmentPlan);
-		
-		// The return value
-		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
-		
-		// The operators for data reunion
-		List<ILogicalOperator> operatorsForDataReunion = Lists.newArrayList();
-		
-		// Insert the operator for data reunion
-		enhancedFragmentPlan = 
-				insertOperatorForDataReunion(enhancedFragmentPlan, operatorsForDataReunion);
-		
-		// Subscribe all other logical plans
-		int planIndex = 0;
-		for(ILogicalQuery query : enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
-			
-			if(planIndex == 0) {
-				
-				planIndex++;
-				continue;
-				
-			}
-			
-			enhancedFragmentPlan = 
-					subscribeOperatorForDataReUnion(enhancedFragmentPlan, operatorsForDataReunion, query, planIndex);
-			planIndex++;
-			
-		}
-		
-		// Initialize the operators for data reunion
-		for(ILogicalOperator operatorForDataReunion : enhancedFragmentPlan.getOperatorsOfReunionPart())
-			operatorForDataReunion.initialize();
 		
 		return enhancedFragmentPlan;
 		
