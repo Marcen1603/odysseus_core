@@ -26,4 +26,9 @@ public class Document<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return this;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString()+"\""+content+"\"";
+	}
+	
 }

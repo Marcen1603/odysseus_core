@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +62,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class XMLProtocolHandler<T extends Tuple<?>> extends
 		AbstractProtocolHandler<T> {
+	public static final String NAME = "XML";
+	public static final String XPATHS = "xpaths";
+	public static final String NANODELAY = "nanodelay";
+	public static final String DELAY = "delay";
+	
 	private static final Logger LOG = LoggerFactory
 			.getLogger(XMLProtocolHandler.class);
+	
 	private InputStream input;
 	private OutputStream output;
 	private long delay;
@@ -84,11 +91,17 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	 * 
 	 * @param direction
 	 * @param access
+	 * @param transfer
+	 * @param dataHandler
+	 * @param options
 	 */
 	public XMLProtocolHandler(final ITransportDirection direction,
-			final IAccessPattern access) {
+			final IAccessPattern access, IDataHandler<T> dataHandler,
+			ITransferHandler<T> transfer, Map<String, String> options) {
 		super(direction, access);
-
+		setDataHandler(dataHandler);
+		setTransfer(transfer);
+		setOptionsMap(options);
 	}
 
 	@Override
@@ -198,37 +211,39 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 			final IDataHandler<T> dataHandler,
 			final ITransferHandler<T> transfer) {
 		final XMLProtocolHandler<T> instance = new XMLProtocolHandler<T>(
-				direction, access);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
-		instance.init(options);
-
-		instance.setOptionsMap(options);
-		
-		final SDFSchema schema = dataHandler.getSchema();
-		final List<String> xpaths = new ArrayList<String>();
-		for (int i = 0; i < schema.size(); i++) {
-			final String attr = schema.get(i).getAttributeName();
-			if (options.containsKey(attr)) {
-				xpaths.add(options.get(attr));
-			}
-		}
-		instance.setXPaths(xpaths);
+				direction, access, dataHandler, transfer, options);
 		return instance;
 	}
 
-	protected void init(Map<String, String> options) {
-		if (options.get("delay") != null) {
-			setDelay(Long.parseLong(options.get("delay")));
+	public void setOptionsMap(Map<String, String> options) {
+		super.setOptionsMap(options);
+		if (options.get(DELAY) != null) {
+			setDelay(Long.parseLong(options.get(DELAY)));
 		}
-		if (options.get("nanodelay") != null) {
-			setNanodelay(Integer.parseInt(options.get("nanodelay")));
+		if (options.get(NANODELAY) != null) {
+			setNanodelay(Integer.parseInt(options.get(NANODELAY)));
 		}
+		final List<String> xpaths;
+		if (options.get(XPATHS) != null) {
+			String[] paths = options.get(XPATHS).split(";");
+			xpaths = Arrays.asList(paths);
+		} else {
+			xpaths = new ArrayList<>();
+			final SDFSchema schema = getDataHandler().getSchema();
+			for (int i = 0; i < schema.size(); i++) {
+				final String attr = schema.get(i).getAttributeName();
+				if (options.containsKey(attr)) {
+					xpaths.add(options.get(attr));
+				}
+			}
+		}
+		setXPaths(xpaths);
+
 	}
 
 	@Override
 	public String getName() {
-		return "XML";
+		return NAME;
 	}
 
 	public long getDelay() {
@@ -279,28 +294,28 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	public void process(final ByteBuffer message) {
 		this.getTransfer().transfer(this.getDataHandler().readData(message));
 	}
-	
+
 	@Override
 	public void process(String[] message) {
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
-	
+
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {
-		if(!(o instanceof XMLProtocolHandler)) {
+		if (!(o instanceof XMLProtocolHandler)) {
 			return false;
 		}
-		XMLProtocolHandler<?> other = (XMLProtocolHandler<?>)o;
-		if(this.nanodelay != other.getNanodelay() ||
-				this.delay != other.getDelay()) {
+		XMLProtocolHandler<?> other = (XMLProtocolHandler<?>) o;
+		if (this.nanodelay != other.getNanodelay()
+				|| this.delay != other.getDelay()) {
 			return false;
 		}
 		List<String> otherXPaths = other.getXPaths();
-		if(otherXPaths.size() != this.getXPaths().size()) {
+		if (otherXPaths.size() != this.getXPaths().size()) {
 			return false;
 		}
-		for(String s : this.getXPaths()) {
-			if(!otherXPaths.contains(s)) {
+		for (String s : this.getXPaths()) {
+			if (!otherXPaths.contains(s)) {
 				return false;
 			}
 		}
