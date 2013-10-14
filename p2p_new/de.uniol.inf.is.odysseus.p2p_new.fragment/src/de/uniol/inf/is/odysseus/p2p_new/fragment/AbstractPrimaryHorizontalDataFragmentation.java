@@ -27,6 +27,18 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	
 	@Override
 	public abstract String getName();
+	
+	@Override
+	public IFragmentPlan fragment(Map<ILogicalQuery,ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
+			QueryBuildConfiguration parameters, String sourceName) {
+		
+		// Preconditions
+		Preconditions.checkArgument(numFragments > 1);
+		Preconditions.checkArgument(numReplicates > 0);
+		
+		return super.fragment(logicalPlans, numFragments, numReplicates, parameters, sourceName);
+		
+	}
 
 	@Override
 	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 

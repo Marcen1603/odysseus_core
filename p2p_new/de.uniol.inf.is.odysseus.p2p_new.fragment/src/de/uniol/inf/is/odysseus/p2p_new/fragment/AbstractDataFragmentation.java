@@ -44,6 +44,8 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		// Preconditions
 		Preconditions.checkNotNull(logicalPlans);
 		Preconditions.checkArgument(logicalPlans.size() > 1);
+		Preconditions.checkArgument(numFragments > 0);
+		Preconditions.checkArgument(numReplicates > 0);
 		Preconditions.checkNotNull(parameters);
 		
 		// The return value
