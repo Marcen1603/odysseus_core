@@ -29,7 +29,7 @@ public class ContainsFunction extends AbstractBooleanStringFunction {
 
 	@Override
 	public Boolean getValue() {
-		return ((String)getInputValue(0)).contains((String)getInputValue(1));
+		return ((String)getInputValue(0)).toLowerCase().contains(((String)getInputValue(1)).toLowerCase());
 	}
 
 
