@@ -58,6 +58,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	}
 	
 	IP2PDictionary dictionary = P2PDictionaryService.get();
+	private int maximumConsideredAlternatives = 3;
 	private static final String DISTRIBUTION_TYPE = "centralized";
 	
 	@SuppressWarnings("rawtypes")
@@ -75,103 +76,141 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			LOG.debug("The centralized distributor hasn't bound an IQueryOptimizer-instance");
 			return null;
 		}
-		// convert the operators of the new Queries to physical ones
-		List<IPhysicalOperator> newOperators = new ArrayList<IPhysicalOperator>();
+
 		for(ILogicalQuery q : queriesToDistribute) {
-			newOperators.addAll(this.getQueryOptimizer().optimizeQuery(
+
+			List<List<IPhysicalOperator>> newOperators = new ArrayList<List<IPhysicalOperator>>();
+			
+			// convert the operators of the new Queries to physical ones
+			List<IPhysicalOperator> originalPlan = new ArrayList<IPhysicalOperator>();
+			originalPlan.addAll(this.getQueryOptimizer().optimizeQuery(
 					this.getExecutor(),
 					q,
 					new OptimizationConfiguration(parameters),
 					this.getExecutor().getDataDictionary(null)).getAllOperators());
-		}
-		Map<Integer,IPhysicalOperator> newOperatorsMap = new HashMap<Integer,IPhysicalOperator>();
-		for(IPhysicalOperator o : newOperators) {
-			newOperatorsMap.put(o.hashCode(), o);
-		}
+			newOperators.add(originalPlan);
+			// after the first run through the queryOptimizer, the logical query should have alternative plans,
+			// the first one being the original one
+			int bestAlternative = -1;
+			List<ILogicalOperator> alternatives = q.getAlternativeLogicalPlans();
+			for(int i = 1; i < alternatives.size() && i < maximumConsideredAlternatives ; i++) {
+				List<IPhysicalOperator> tmp = new ArrayList<IPhysicalOperator>();
+				tmp.addAll(this.getQueryOptimizer().optimizeQuery(
+						this.getExecutor(),
+						q,
+						new OptimizationConfiguration(parameters),
+						this.getExecutor().getDataDictionary(null)).getAllOperators());
+				newOperators.add(tmp);
+			}
+			Map<Integer,List<ILogicalOperator>> requiredLogicalOpsForMaster = new HashMap<Integer, List<ILogicalOperator>>();
+			Map<Integer,Graph> baseGraphs = new HashMap<Integer, Graph>();
+			List<SimulationResult> results = new ArrayList<SimulationResult>();
+			List<PeerID> usedPeers = new ArrayList<PeerID>();
+			SimulationResult bestResult = null;
+			ICost<IPhysicalOperator> bestCost = this.getCostModel().getMaximumCost();
+			for(int x = 0; x < newOperators.size(); x++) {
 
-		List<SimulationResult> results = new ArrayList<SimulationResult>();
-		List<PeerID> usedPeers = new ArrayList<PeerID>();
-		
-		// this is the graph representing the new Plan and its connections "as is",
-		// we'll work on clones in order to simulate the query-sharing
-		Graph baseGraph = new Graph(null, newOperatorsMap);
-		// before we do anything with this graph, let's make sure we get the results back to the masternode.
-		// we can do that, by setting JxtaSenderPOs on all the top-operators (in case they are pipes/sources).
-		
-		List<GraphNode> topNodes = baseGraph.getSinkNodes();
-		List<ILogicalOperator> newLogicalOps = new ArrayList<ILogicalOperator>();
-		for(GraphNode gn : topNodes) {
-			// insert a receive and a send-operator
-			PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-			JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
-			GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), true);
-			SDFSchema schema = gn.getOperator().getOutputSchema();
-			baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
-			
-			JxtaReceiverAO receiverOp = new JxtaReceiverAO();
-			receiverOp.setPipeID(pipeID.toURI().toString());
-			receiverOp.setOutputSchema(schema);
-			// no GraphNode for the receiver, because it goes to the master
-			// and thus has to find its way into the resulting query as a logical operator
-			newLogicalOps.add(receiverOp);
-		}
-		// TODO: Figure out what to make of plans with more than one returnable resultstream from different operators
-		// The receivers for those would be unconnected and thus not transformable in the traditional manner
-		queriesToDistribute.get(0).setLogicalPlan(newLogicalOps.get(0), true);
-		
-		SimulationResult bestResult = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
-		results.add(bestResult);
-		usedPeers.add(bestResult.getPeer());
-		
-		List<SimulationResult> placeableResults = placeable(results);
-		// only stop, if we have successfully placed every result on some peer
-		while(placeableResults.size() != results.size()) {
-			List<SimulationResult> currentlyUnplaceable = new ArrayList<SimulationResult>();
-			for(SimulationResult s : results) {
-				if(!placeableResults.contains(s)) {
-					currentlyUnplaceable.add(s);
+				List<IPhysicalOperator> bla = newOperators.get(x);
+				Map<Integer,IPhysicalOperator> newOperatorsMap = new HashMap<Integer,IPhysicalOperator>();
+				for(IPhysicalOperator o : bla) {
+					newOperatorsMap.put(o.hashCode(), o);
+				}
+
+				// this is the graph representing the new Plan and its connections "as is",
+				// we'll work on clones in order to simulate the query-sharing
+				Graph baseGraph = new Graph(null, newOperatorsMap);
+				baseGraphs.put(x,baseGraph);
+				// before we do anything with this graph, let's make sure we get the results back to the masternode.
+				// we can do that, by setting JxtaSenderPOs on all the top-operators (in case they are pipes/sources).
+
+				List<GraphNode> topNodes = baseGraph.getSinkNodes();
+				List<ILogicalOperator> newLogicalOps = new ArrayList<ILogicalOperator>();
+				for(GraphNode gn : topNodes) {
+					// insert a receive and a send-operator
+					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+					JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
+					GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), true);
+					SDFSchema schema = gn.getOperator().getOutputSchema();
+					baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
+
+					JxtaReceiverAO receiverOp = new JxtaReceiverAO();
+					receiverOp.setPipeID(pipeID.toURI().toString());
+					receiverOp.setOutputSchema(schema);
+					// no GraphNode for the receiver, because it goes to the master
+					// and thus has to find its way into the resulting query as a logical operator
+					newLogicalOps.add(receiverOp);
+				}
+				// The receivers for those would be unconnected and thus not transformable in the traditional manner
+				requiredLogicalOpsForMaster.put(x,newLogicalOps);
+
+				// simulate the whole plan once and determine if its costs are higher
+				// or lower than the placement of one of the alternative plans
+				SimulationResult result = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
+				if(result.getCost().compareTo(bestCost) < 0) {
+					bestResult = result;
+					bestCost = result.getCost();
+					bestAlternative = x;
 				}
 			}
-			for(SimulationResult s : currentlyUnplaceable) {
-				SplitSimulationResult splitResult = splitGraph(s);
-				Graph newGraph = splitResult.getSurplusNodes();
-				SimulationResult additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
-				
-				// currently handled via the splitGraph-method
-//				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
-//				for(PlanJunction j : junctions) {
-//					PeerID targetPeer = s.getPeer();
-//					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
-//					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-//					jxtaSenderLOp.setPipeID(pipeID.toString());
-//					jxtaSenderLOp.setOutputSchema(j.getJunctionSchema());
-//					
-//					JxtaSenderPO jxtaOp = new JxtaSenderPO(jxtaSenderLOp);
-//					GraphNode jxtaSendNode = new GraphNode(jxtaOp, jxtaOp.hashCode(), false);
-//					s.getGraph().addAdditionalNode(jxtaSendNode,j.getFlowOriginNode().getOperatorID(), false, j.getJunctionSinkInPort(), j.getJunctionSourceOutPort(), j.getJunctionSchema());
-//					j.setSendingNode(jxtaSendNode);
-//					j.setFlowTargetResult(additionalResult);
-//				}
-				results.add(additionalResult);
-				usedPeers.add(additionalResult.getPeer());
+			// at this point, we simulated each of the alternatives once, let's continue with the most
+			// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
+			
+			// we can now also set the proper receivers on the master, couldn't do that before
+			// it wasn't yet clear which alternative would be chosen
+			q.setLogicalPlan(requiredLogicalOpsForMaster.get(bestAlternative).get(0), true);
+
+
+			results.add(bestResult);
+			usedPeers.add(bestResult.getPeer());
+
+			List<SimulationResult> placeableResults = placeable(results);
+			// only stop, if we have successfully placed every result on some peer
+			while(placeableResults.size() != results.size()) {
+				List<SimulationResult> currentlyUnplaceable = new ArrayList<SimulationResult>();
+				for(SimulationResult s : results) {
+					if(!placeableResults.contains(s)) {
+						currentlyUnplaceable.add(s);
+					}
+				}
+				for(SimulationResult s : currentlyUnplaceable) {
+					SplitSimulationResult splitResult = splitGraph(s);
+					Graph newGraph = splitResult.getSurplusNodes();
+					SimulationResult additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
+
+					// currently handled via the splitGraph-method
+					//				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
+					//				for(PlanJunction j : junctions) {
+					//					PeerID targetPeer = s.getPeer();
+					//					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
+					//					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+					//					jxtaSenderLOp.setPipeID(pipeID.toString());
+					//					jxtaSenderLOp.setOutputSchema(j.getJunctionSchema());
+					//					
+					//					JxtaSenderPO jxtaOp = new JxtaSenderPO(jxtaSenderLOp);
+					//					GraphNode jxtaSendNode = new GraphNode(jxtaOp, jxtaOp.hashCode(), false);
+					//					s.getGraph().addAdditionalNode(jxtaSendNode,j.getFlowOriginNode().getOperatorID(), false, j.getJunctionSinkInPort(), j.getJunctionSourceOutPort(), j.getJunctionSchema());
+					//					j.setSendingNode(jxtaSendNode);
+					//					j.setFlowTargetResult(additionalResult);
+					//				}
+					results.add(additionalResult);
+					usedPeers.add(additionalResult.getPeer());
+				}
+				// we now have additional results in the results-list,
+				// as well as the former non-placeable results which should be placeable now that they've been cut down a little
+				placeableResults = placeable(results);
+				// continuing means, that all the results were placeable,
+				// looping means that there were still some results who couldn't be realized
 			}
-			// we now have additional results in the results-list,
-			// as well as the former non-placeable results which should be placeable now that they've been cut down a little
-			placeableResults = placeable(results);
-			// continuing means, that all the results were placeable,
-			// looping means that there were still some results who couldn't be realized
-		}
-		// if we reached this point, we have one or more results waiting to get placed on their respective peers.
-		ID sharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
-		for(SimulationResult sr : placeableResults) {
-			// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
-			// in order to generate the subscription-statements properly.
-			sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
-			this.addOperators(sr.getPeer(), sr.getPlan(true));
-			this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
-		}
-		for(ILogicalQuery query : queriesToDistribute) {
-			PhysicalQueryPartController.getInstance().registerAsMaster(query, sharedQueryID);
+			// if we reached this point, we have one or more results waiting to get placed on their respective peers.
+			ID sharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+			for(SimulationResult sr : placeableResults) {
+				// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
+				// in order to generate the subscription-statements properly.
+				sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
+				this.addOperators(sr.getPeer(), sr.getPlan(true));
+				this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
+			}
+			PhysicalQueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
 		}
 		return queriesToDistribute;
 	}
