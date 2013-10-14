@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,10 +68,10 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	public static final String XPATHS = "xpaths";
 	public static final String NANODELAY = "nanodelay";
 	public static final String DELAY = "delay";
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(XMLProtocolHandler.class);
-	
+
 	private InputStream input;
 	private OutputStream output;
 	private long delay;
@@ -77,6 +79,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	private final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
 	private final List<String> xpaths = new ArrayList<String>();
+	private List<T> result = new LinkedList<>();
 
 	/**
 	 * Create a new XML Data Handler
@@ -131,12 +134,17 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 
 	@Override
 	public boolean hasNext() throws IOException {
-		return this.input.available() > 0;
+		return result.size() > 0 || this.input.available() > 0;
 	}
 
 	@Override
 	public T getNext() throws IOException {
 		this.delay();
+		// Deliver Input from former runs
+		if (result.size() > 0) {
+			return result.remove(0);
+		}
+
 		if (this.input.available() > 0) {
 			try {
 				final DocumentBuilder db = this.documentBuilderFactory
@@ -145,23 +153,37 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 				final XPathFactory factory = XPathFactory.newInstance();
 				final XPath xpath = factory.newXPath();
 				final SDFSchema schema = this.getDataHandler().getSchema();
-				final String[] tuple = new String[schema.size()];
+				final Map<String, NodeList> nodesMap = new HashMap<String, NodeList>();
 				for (int i = 0; i < this.getXPaths().size(); i++) {
 					final String path = this.getXPaths().get(i);
 					try {
 						final XPathExpression expr = xpath.compile(path);
 						final NodeList nodes = (NodeList) expr.evaluate(dom,
 								XPathConstants.NODESET);
-						if (nodes.getLength() > 0) {
-							final Node node = nodes.item(0);
-							final String content = node.getTextContent();
-							tuple[i] = content;
-						}
+						nodesMap.put(path, nodes);
 					} catch (final XPathExpressionException e) {
 						XMLProtocolHandler.LOG.error(e.getMessage(), e);
 					}
 				}
-				return this.getDataHandler().readData(tuple);
+
+				for (int jj = 0; jj < nodesMap.get(getXPaths().get(0))
+						.getLength(); jj++) {
+					final String[] tuple = new String[schema.size()];
+					for (int i = 0; i < this.getXPaths().size(); i++) {
+						NodeList nodes = nodesMap.get(getXPaths().get(i));
+						if (nodes.getLength() > jj) {
+							final Node node = nodes.item(jj);
+							final String content = node.getTextContent();
+							tuple[i] = content;
+						}
+					}
+					result.add(this.getDataHandler().readData(tuple));
+				}
+				if (result.size() > 0) {
+					return result.remove(0);
+				} else {
+					return null;
+				}
 			} catch (ParserConfigurationException | SAXException e) {
 				XMLProtocolHandler.LOG.error(e.getMessage(), e);
 			}
