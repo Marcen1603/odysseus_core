@@ -37,6 +37,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 @LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc="Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", category={LogicalOperatorCategory.BASE})
 public class AggregateAO extends UnaryLogicalOp {
@@ -44,6 +47,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 2539966167342852544L;
 
 	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
+	final private Map<SDFAttribute, AggregateFunction> outAttributeToAggregation;
 	final private List<SDFAttribute> groupingAttributes;
 	final private List<Pair<SDFAttribute, Boolean>> outputAttributList;
 
@@ -54,6 +58,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	public AggregateAO() {
 		super();
 		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>();
+		outAttributeToAggregation = new HashMap<>();
 		groupingAttributes = new ArrayList<SDFAttribute>();
 		outputAttributList = new ArrayList<>();
 	}
@@ -62,6 +67,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		super(op);
 		aggregations = new HashMap<SDFSchema, Map<AggregateFunction, SDFAttribute>>(
 				op.aggregations);
+		outAttributeToAggregation = new HashMap<>(op.outAttributeToAggregation);
 		groupingAttributes = new ArrayList<SDFAttribute>(op.groupingAttributes);
 		outputAttributList = new ArrayList<>(op.outputAttributList);
 		dumpAtValueCount = op.dumpAtValueCount;
@@ -93,6 +99,7 @@ public class AggregateAO extends UnaryLogicalOp {
 			aggregations.put(attributes, af);
 		}
 		af.put(function, outAttribute);
+		outAttributeToAggregation.put(outAttribute, function);
 	}
 
 	public void addAggregations(
@@ -167,9 +174,20 @@ public class AggregateAO extends UnaryLogicalOp {
 		
 		for (Pair<SDFAttribute, Boolean> a : outputAttributList) {
 			if (outputPA && a.getE2()) {
+				SDFDatatype type = SDFDatatype.PARTIAL_AGGREGATE;
+				AggregateFunction f = this.outAttributeToAggregation.get(a.getE1());
+				
+				// Determine the real PartialAggregate type
+				IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry.getBuilder(
+						getInputSchema().getType(), f.getName());
+				int[] posArray = new int[1];
+				posArray[0] = 0;
+				IAggregateFunction<?, ?> realAggFunc = builder.createAggFunction(f, posArray, false, type.getURI());
+				type = realAggFunc.getPartialAggregateType();
+				
 				outAttribs.add(new SDFAttribute(a.getE1().getSourceName(), a
 						.getE1().getAttributeName(),
-						SDFDatatype.PARTIAL_AGGREGATE));
+						type));
 			} else {
 				outAttribs.add(a.getE1());
 			}
