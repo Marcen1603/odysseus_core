@@ -23,8 +23,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 		IProvidesStringArray {
 
-	public static Logger LOG = LoggerFactory.getLogger(NcsaHDFTransportHandler.class);
-	
+	public static Logger LOG = LoggerFactory
+			.getLogger(NcsaHDFTransportHandler.class);
+
 	public static final String NAME = "NcsaHDFFile";
 	public static final String PATH = "path";
 
@@ -36,7 +37,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 			System.loadLibrary("jhdf");
 			System.loadLibrary("jhdf5");
 		} catch (Exception e) {
-			LOG.error("Error loading libraries ",e);
+			LOG.error("Error loading libraries ", e);
 		}
 	}
 
@@ -83,34 +84,43 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	public void processInOpen() throws IOException {
 		H5File f = new H5File(filename, FileFormat.READ);
 		HObject out;
-		try {
-			out = f.get(path);
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-		if (out instanceof ScalarDS) {
-			ScalarDS v = (ScalarDS) out;
+		String[] pathes = path.split(";");
+		for (int p = 0; p< pathes.length; p++) {
 			try {
-				Object data = v.getData();
-				switch (v.getDatatype().getDatatypeClass()) {
-				case Datatype.CLASS_FLOAT:
-					float[] values = (float[]) data;
-					for (int i = 0; i < values.length; i++) {
-						String[] t = new String[2];
-						t[0] = "" + i;
-						t[1] = "" + values[i];
-						read.add(t);
-//						System.out.println(i + "," + values[i]);
-					}
-					break;
-
-				}
-			} catch (OutOfMemoryError | Exception e) {
+				out = f.get(pathes[p]);
+			} catch (Exception e) {
 				throw new IOException(e);
 			}
-		} else {
-			throw new IllegalArgumentException("Unsupported path destination "
-					+ path);
+			if (out instanceof ScalarDS) {
+				ScalarDS v = (ScalarDS) out;
+				try {
+					Object data = v.getData();
+					switch (v.getDatatype().getDatatypeClass()) {
+					case Datatype.CLASS_FLOAT:
+						float[] values = (float[]) data;
+						for (int i = 0; i < values.length; i++) {
+							String[] t;
+							if (p==0) {
+								t = new String[pathes.length + 1];
+								t[0] = "" + i;
+								t[1] = "" + values[i];
+							} else {
+								t = read.get(i);
+								t[p+1] = ""+values[i]; 
+							}
+							read.add(t);
+							System.out.println(i + "," + values[i]);
+						}
+						break;
+
+					}
+				} catch (OutOfMemoryError | Exception e) {
+					throw new IOException(e);
+				}
+			} else {
+				throw new IllegalArgumentException(
+						"Unsupported path destination " + path);
+			}
 		}
 	}
 
