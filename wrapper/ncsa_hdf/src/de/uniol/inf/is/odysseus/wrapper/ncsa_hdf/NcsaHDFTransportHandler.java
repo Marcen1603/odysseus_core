@@ -97,22 +97,13 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 					Object data = v.getData();
 					switch (v.getDatatype().getDatatypeClass()) {
 					case Datatype.CLASS_FLOAT:
-						float[] values = (float[]) data;
-						for (int i = 0; i < values.length; i++) {
-							String[] t;
-							if (p==0) {
-								t = new String[pathes.length + 1];
-								t[0] = "" + i;
-								t[1] = "" + values[i];
-							} else {
-								t = read.get(i);
-								t[p+1] = ""+values[i]; 
-							}
-							read.add(t);
-							//System.out.println(i + "," + values[i]);
-						}
+						float[] float_values = (float[]) data;
+						readValues(pathes.length, p, float_values);
 						break;
-
+					case Datatype.CLASS_INTEGER:
+						int[] int_values = (int[]) data;
+						readValues(pathes.length, p, int_values);
+						break;	
 					}
 				} catch (OutOfMemoryError | Exception e) {
 					throw new IOException(e);
@@ -123,7 +114,42 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 			}
 		}
 	}
+	
+	// ----
+	// Grml ... is there a better way than to copy the method ...
+	
+	private void readValues(int pathesLength, int p, float[] values) {
+		for (int i = 0; i < values.length; i++) {
+			String[] t;
+			if (p==0) {
+				t = new String[pathesLength + 1];
+				t[0] = "" + i;
+				t[1] = "" + values[i];
+			} else {
+				t = read.get(i);
+				t[p+1] = ""+values[i]; 
+			}
+			read.add(t);
+		}
+	}
 
+	// DO NOT MODIFY CONTENT. COPY FROM ABOVE!!
+	private void readValues(int pathesLength, int p, int[] values) {
+		for (int i = 0; i < values.length; i++) {
+			String[] t;
+			if (p==0) {
+				t = new String[pathesLength + 1];
+				t[0] = "" + i;
+				t[1] = "" + values[i];
+			} else {
+				t = read.get(i);
+				t[p+1] = ""+values[i]; 
+			}
+			read.add(t);
+		}
+	}
+
+	
 	@Override
 	public boolean hasNext() {
 		return read.size() > 0;
