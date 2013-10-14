@@ -21,11 +21,13 @@ public interface IDataFragmentation {
 	 * Inserts operators for fragmentation and data reunion into several copies of a logical plan to 
 	 * merge them.
 	 * @param logicalPlans A mapping of all origin logical plans to their query.
+	 * @param numFragments The number of fragments.
+	 * @param numReplicates The number of replicates for each fragment.
 	 * @param parameters the {@link QueryBuildConfiguration}.
 	 * @param sourceName The name of the source to be fragmented.
 	 * @return An ADT-class, which provides the result of a fragmentation.
 	 */
-	public IFragmentPlan fragment(Map<ILogicalQuery, ILogicalOperator> logicalPlans, 
+	public IFragmentPlan fragment(Map<ILogicalQuery, ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName);
 
 }

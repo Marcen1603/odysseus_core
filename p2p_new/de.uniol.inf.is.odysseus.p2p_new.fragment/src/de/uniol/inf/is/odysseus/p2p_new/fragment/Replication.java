@@ -34,7 +34,7 @@ public class Replication extends AbstractDataFragmentation {
 	 * Does nothing.
 	 */
 	@Override
-	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName) {
 		
 		return fragmentPlan;
@@ -51,7 +51,7 @@ public class Replication extends AbstractDataFragmentation {
 	}
 
 	@Override
-	protected ILogicalOperator createOperatorForDataReunion() {
+	protected ILogicalOperator createOperatorForDataReunion(int numReplicates) {
 		
 		return new ReplicationMergeAO();
 		

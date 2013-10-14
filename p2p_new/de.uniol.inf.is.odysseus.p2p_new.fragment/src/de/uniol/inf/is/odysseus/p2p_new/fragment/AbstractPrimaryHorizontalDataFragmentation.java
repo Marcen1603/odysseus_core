@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.fragment.logicaloperator.ReplicationMergeAO;
 
 /**
  * An abstract implementation for primary horizontal fragmentation strategies.
@@ -28,7 +29,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	public abstract String getName();
 
 	@Override
-	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName) {
 		
 		// Preconditions
@@ -44,22 +45,28 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		
 		// Insert the operator for fragmentation
 		enhancedFragmentPlan = 
-				insertOperatorForFragmentation(enhancedFragmentPlan, parameters, sourceName, operatorsForFragmentation);
+				insertOperatorForFragmentation(enhancedFragmentPlan, numFragments, parameters, sourceName, operatorsForFragmentation);
 		
 		// Subscribe all other logical plans
-		int planIndex = 0;
+		boolean firstQuery = true;
+		int fragmentNo = 0;
 		for(ILogicalQuery query : enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
 			
-			if(planIndex == 0) {
+			if(firstQuery) {
 				
-				planIndex++;
+				firstQuery = false;
+				fragmentNo++;
 				continue;
 				
 			}
 			
+			if(fragmentNo == numReplicates)
+				fragmentNo = 0;
+			
 			enhancedFragmentPlan = 
-					subscribeOperatorForFragmentation(enhancedFragmentPlan, sourceName, query, planIndex, operatorsForFragmentation);
-			planIndex++;
+					subscribeOperatorForFragmentation(enhancedFragmentPlan, sourceName, query, fragmentNo, operatorsForFragmentation);
+
+			fragmentNo++;
 			
 		}
 		
@@ -78,12 +85,13 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	/**
 	 * Inserts operators for fragmentation, if a source was set by {@link #setSourceName(String)}.
 	 * @param fragmentPlan The current status of the fragmentation.
+	 * @param numFragments The number of fragments.
 	 * @param parameters the {@link QueryBuildConfiguration}.
 	 * @param sourceName The name of the source to be fragmented.
 	 * @param operatorsForFragmentation A list of all created operators for fragmentation for the query.
 	 * @return The new status of the fragmentation.
 	 */
-	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+	protected IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, int numFragments, 
 			QueryBuildConfiguration parameters, String sourceName, 
 			List<ILogicalOperator> operatorsForFragmentation) {
 		
@@ -115,8 +123,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				// The operator for fragmentation to be inserted.
 				// All sinks of the StreamAO will be subscribed to that new operator.
 				// For following WindowAOs other operators for fragmentation will be inserted additional.
-				ILogicalOperator operatorForFragmentation = 
-						createOperatorForFragmentation(enhancedFragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().size(), parameters);
+				ILogicalOperator operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
 				
 				// True, if the StreamAO is only subscribed by WindowAOs
 				boolean onlySubscribedByWindows = true;
@@ -165,8 +172,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				
 				// The operator for fragmentation to be subscribed.
 				// All sinks of the WindowAO will be subscribed to that new operator.
-				ILogicalOperator operatorForFragmentation = 
-						createOperatorForFragmentation(enhancedFragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().size(), parameters);
+				ILogicalOperator operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
 				operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
 				operatorsForFragmentation.add(operatorForFragmentation);
 				
@@ -196,21 +202,19 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	 * @param fragmentPlan The current status of the fragmentation.
 	 * @param sourceName The name of the source to be fragmented.
 	 * @param query The query to process.
-	 * @param planIndex The index of the logical plan to process. <br />
+	 * @param fragmentNo The fragment number for <code>query</code>. Is also the output port of the operator for fragmentation to use.
 	 * It is also the output port of the inserted operator for fragmentation.
 	 * @param operatorsForFragmentation A list of all created operators for fragmentation for the query.
 	 * @return The new status of the fragmentation.
 	 */
 	protected IFragmentPlan subscribeOperatorForFragmentation(IFragmentPlan fragmentPlan, 
-			String sourceName, ILogicalQuery query, int planIndex, List<ILogicalOperator> operatorsForFragmentation) {
+			String sourceName, ILogicalQuery query, int fragmentNo, List<ILogicalOperator> operatorsForFragmentation) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(sourceName);
 		Preconditions.checkNotNull(query);
-		Preconditions.checkArgument(planIndex >= 0);
-		Preconditions.checkArgument(
-				planIndex < fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().size());
+		Preconditions.checkArgument(fragmentNo >= 0);
 		Preconditions.checkNotNull(operatorsForFragmentation);
 		
 		// The return value
@@ -245,7 +249,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 						continue;
 										
 					operator.unsubscribeSink(subToSink);
-					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, planIndex, 
+					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, fragmentNo, 
 							subToSink.getSchema());
 					
 				}
@@ -280,7 +284,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
 					operator.unsubscribeSink(subToSink);
-					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, planIndex, 
+					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, fragmentNo, 
 							subToSink.getSchema());
 					
 				}
@@ -303,12 +307,14 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	protected abstract ILogicalOperator createOperatorForFragmentation(int numFragments, 
 			QueryBuildConfiguration parameters);
 	
-	/**
-	 * Creates a new operator for data reunion.
-	 */
-	protected ILogicalOperator createOperatorForDataReunion() {
+	@Override
+	protected ILogicalOperator createOperatorForDataReunion(int numReplicates) {
 		
-		return new UnionAO();
+		Preconditions.checkArgument(numReplicates > 0);
+		
+		if(numReplicates == 1)
+			return new UnionAO();
+		else return new ReplicationMergeAO();
 		
 	}
 	

@@ -38,7 +38,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	public abstract String getName();
 	
 	@Override
-	public IFragmentPlan fragment(Map<ILogicalQuery,ILogicalOperator> logicalPlans, 
+	public IFragmentPlan fragment(Map<ILogicalQuery,ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName) {
 		
 		// Preconditions
@@ -50,10 +50,10 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		IFragmentPlan fragmentPlan = createFragmentPlan(logicalPlans);
 		
 		// Insert operator for fragmentation
-		fragmentPlan = insertOperatorForFragmentation(fragmentPlan, parameters, sourceName);
+		fragmentPlan = insertOperatorForFragmentation(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
 		
 		// Insert operator for data reunion
-		fragmentPlan = insertOperatorForDataReunion(fragmentPlan);
+		fragmentPlan = insertOperatorForDataReunion(fragmentPlan, numReplicates);
 		
 		return fragmentPlan;
 		
@@ -82,30 +82,34 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		return new StandardFragmentPlan(operatorsPerLogicalPlan);
 		
 	}
-
+	
 	/**
 	 * Inserts operators for fragmentation, if a source was set by {@link #setSourceName(String)} and 
 	 * deletes all replications of the source access. <br />
 	 * So there is only one source access left. All fragments will be subscribed to that single source 
 	 * access.
 	 * @param fragmentPlan The current status of the fragmentation.
+	 * @param numFragments The number of fragments.
+	 * @param numReplicates The number of replicates for each fragment.
 	 * @param parameters the {@link QueryBuildConfiguration}.
 	 * @param sourceName The name of the source to be fragmented.
 	 * @return The new status of the fragmentation.
 	 */
-	protected abstract IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, 
+	protected abstract IFragmentPlan insertOperatorForFragmentation(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName);
 	
 	/**
 	 * Inserts operators for data reunion. All sinks of all fragments will be subscribed by the data 
 	 * reunion operators.
 	 * @param fragmentPlan The current status of the fragmentation.
+	 * @param numReplicates The number of replicates of each fragment.
 	 * @return The new status of the fragmentation.
 	 */
-	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan) {
+	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan, int numReplicates) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
+		Preconditions.checkArgument(numReplicates > 0);
 		
 		// The return value
 		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
@@ -115,7 +119,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		
 		// Insert the operator for data reunion
 		enhancedFragmentPlan = 
-				insertOperatorForDataReunion(enhancedFragmentPlan, operatorsForDataReunion);
+				insertOperatorForDataReunion(enhancedFragmentPlan, numReplicates, operatorsForDataReunion);
 		
 		// Subscribe all other logical plans
 		int planIndex = 0;
@@ -145,14 +149,16 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	/**
 	 * Inserts operators for data reunion.
 	 * @param fragmentPlan The current status of the fragmentation.
+	 * @param numReplicates The number of replicates for each fragment.
 	 * @param operatorsForDataReunion A list of all created operators for data reunion for the query.
 	 * @return The new status of the fragmentation.
 	 */
-	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan, 
+	protected IFragmentPlan insertOperatorForDataReunion(IFragmentPlan fragmentPlan, int numReplicates, 
 			List<ILogicalOperator> operatorsForDataReunion) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
+		Preconditions.checkArgument(numReplicates > 0);
 		Preconditions.checkNotNull(operatorsForDataReunion);
 		
 		// The return value
@@ -210,7 +216,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				} else if(operator.getSubscriptions().isEmpty()) {
 					
 					// The operator for data reunion to be inserted
-					ILogicalOperator operatorForDataReunion = createOperatorForDataReunion();
+					ILogicalOperator operatorForDataReunion = createOperatorForDataReunion(numReplicates);
 					operator.subscribeSink(operatorForDataReunion, 0, 0, operator.getOutputSchema());
 					operatorsForDataReunion.add(operatorForDataReunion);
 					
@@ -357,8 +363,9 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	
 	/**
 	 * Creates a new operator for data reunion.
+	 * @param numReplicates The number of replicates for each fragment.
 	 */
-	protected abstract ILogicalOperator createOperatorForDataReunion();
+	protected abstract ILogicalOperator createOperatorForDataReunion(int numPeplicates);
 	
 	/**
 	 * Sorts a given mapping of operators and planes.
@@ -440,29 +447,29 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				AggregateAO origin = (AggregateAO) operator;
 				
 				// A new partial aggregation
-//				AggregateAO pa = new AggregateAO();
+	//			AggregateAO pa = new AggregateAO();
 				AggregateAO pa = origin.clone();
 				pa.setOutputPA(true);
 				
 				// Change origin aggegration to be used as partial aggegration
-//				List<AggregateItem> items = Lists.newArrayList();
-//				Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = origin.getAggregations();
-//				for(SDFSchema attributes : aggregations.keySet()) {
-//					
-//					SDFAttribute inAttr = attributes.iterator().next();
-//					
-//					for(AggregateFunction function : aggregations.get(attributes).keySet()) {
-//						
-//						SDFAttribute outAttr = aggregations.get(attributes).get(function);
-//						
-//						items.add(new AggregateItem(function.getName(), inAttr, outAttr));
-//						
-//					}
-//					
-//				}
-//				pa.setAggregationItems(items);
-//				for(SDFAttribute groupBy : origin.getGroupingAttributes())
-//					pa.addGroupingAttribute(groupBy);
+	//			List<AggregateItem> items = Lists.newArrayList();
+	//			Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = origin.getAggregations();
+	//			for(SDFSchema attributes : aggregations.keySet()) {
+	//				
+	//				SDFAttribute inAttr = attributes.iterator().next();
+	//				
+	//				for(AggregateFunction function : aggregations.get(attributes).keySet()) {
+	//					
+	//					SDFAttribute outAttr = aggregations.get(attributes).get(function);
+	//					
+	//					items.add(new AggregateItem(function.getName(), inAttr, outAttr));
+	//					
+	//				}
+	//				
+	//			}
+	//			pa.setAggregationItems(items);
+	//			for(SDFAttribute groupBy : origin.getGroupingAttributes())
+	//				pa.addGroupingAttribute(groupBy);
 				
 				// Subscribe the partial one
 				for(LogicalSubscription subToSink : origin.getSubscriptions()) {

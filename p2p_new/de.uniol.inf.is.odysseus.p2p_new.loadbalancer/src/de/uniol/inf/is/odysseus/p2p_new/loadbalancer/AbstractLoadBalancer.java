@@ -348,11 +348,12 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// The fragment plan, if fragmented
 		Optional<IFragmentPlan> fragmentPlan = Optional.absent();
 		
+		// TODO workaround till Odysseus-Skript is adapted
 		if(fragmentationStrategy.isPresent())
 			fragmentPlan = Optional.of(fragmentationStrategy.get().getE2().fragment(
-					logicalPlans, parameters, fragmentationStrategy.get().getE1()));
+					logicalPlans, logicalPlans.size(), 1, parameters, fragmentationStrategy.get().getE1()));
 		else if(logicalPlans.size() > 1)
-			fragmentPlan = Optional.of(new Replication().fragment(logicalPlans, parameters, null));
+			fragmentPlan = Optional.of(new Replication().fragment(logicalPlans, 1, logicalPlans.size(), parameters, null));
 		else return fragmentPlan;
 		
 		// Update  mapping of all operators to the copy they were belonging.
