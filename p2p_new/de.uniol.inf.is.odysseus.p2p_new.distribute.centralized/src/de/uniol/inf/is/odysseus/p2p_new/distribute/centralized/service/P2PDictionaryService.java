@@ -1,9 +1,13 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.IServiceStatusListener;
 
 
 /**
@@ -12,6 +16,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
  * 
  */
 public class P2PDictionaryService {
+	private static List<IServiceStatusListener> listeners = new ArrayList<IServiceStatusListener>();
 
 	private static final Logger LOG = LoggerFactory.getLogger(P2PDictionaryService.class);
 	private static IP2PDictionary dictionary;
@@ -20,6 +25,9 @@ public class P2PDictionaryService {
 		dictionary = dict;
 		
 		LOG.debug("P2PDictionary bound");
+		for(IServiceStatusListener l : listeners) {
+			l.serviceBound(dict);
+		}
 	}
 	
 	public void unbindP2PDictionary( IP2PDictionary dict ) {
@@ -35,5 +43,9 @@ public class P2PDictionaryService {
 	
 	public static boolean isBound() {
 		return dictionary != null;
+	}
+
+	public static void addListener(IServiceStatusListener l) {
+		listeners.add(l);
 	}
 }

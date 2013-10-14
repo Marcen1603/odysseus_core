@@ -13,7 +13,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.costmodel.opcount;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
  sigar;bundle-version="1.0.0"
@@ -26,6 +25,6 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.p2p_new.logicaloperator,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  org.osgi.framework;version="1.6.0"
-Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.distribute.loadbalancer.CentralizedDistributorPlugin
-Service-Component: OSGI-INF/dictionaryProvider.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/centralizedDistributor.xml
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistributorPlugin
+Service-Component: OSGI-INF/dictionaryProvider.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/centralizedDistributor.xml,OSGI-INF/centralizedDistributorAdvertisementManager.xml,OSGI-INF/physicalQueryPartController.xml
 Bundle-ActivationPolicy: lazy

@@ -22,10 +22,10 @@ public class CentralizedDistributorPlugin implements BundleActivator {
 		AdvertisementFactory.registerAdvertisementInstance(PhysicalQueryPlanAdvertisement.getAdvertisementType(), new PhysicalQueryPlanAdvertisementInstantiator());
 		// activate the advertisementmanager in order to find the other peers, send the the current plan to the master etc.
 		CentralizedDistributorAdvertisementManager.getInstance().activate();
+		System.out.println("The Centralized Distributor has been activated");
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
 	}
-
 }

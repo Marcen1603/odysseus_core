@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,9 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.MasterNotificationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
@@ -33,7 +37,7 @@ import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
-public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener {
+public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener, IServiceStatusListener, IP2PDictionaryListener {
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributorAdvertisementManager.class);
 	private IServerExecutor executor;
 	private ResourceUsageMonitor monitor;
@@ -44,11 +48,30 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	private PeerID localID;
 	private static CentralizedDistributorAdvertisementManager instance;
 	
+	private CentralizedDistributorAdvertisementManager() {
+		
+	}
 	
+	public void serviceBound(Object o) {
+		System.out.println("Someone called? Must be " + Arrays.toString(o.getClass().getInterfaces()));
+		for(Class<?> c : o.getClass().getInterfaces()) {
+			if(c.equals(IP2PDictionary.class)) {
+				System.out.println("SUCCESS");
+				((IP2PDictionary)o).addListener(this);
+				this.activate();
+			}
+		}
+	}
 	// activator
 	public void activate() {
+		if(!P2PDictionaryService.isBound()) {
+			System.out.println("No P2P-Dictionary bound yet, delaying activation");
+			P2PDictionaryService.addListener(this);
+			return;
+		}
 		instance = this;
 		localID = P2PDictionaryService.get().getLocalPeerID();
+		System.out.println("The local ID of this peer is " + localID);
 		// TODO: check via parameters, if this peer is designated as the master
 		boolean isMaster = true;
 		if(isMaster) {
@@ -68,6 +91,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 
 	
 	public static CentralizedDistributorAdvertisementManager getInstance() {
+		if(instance == null) {
+			instance =  new CentralizedDistributorAdvertisementManager();
+		}
 		return instance;
 	}
 
@@ -193,7 +219,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setMasterPeerID(masterPeer);
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeer.toString(), adv, 15000);
 		
-		LOG.debug("Notified Peer " + destinationPeer + " of Master " + masterPeer);
+		System.out.println("Notified Peer " + destinationPeer + " of Master " + masterPeer);
 	}
 	
 	public void bindExecutor(IExecutor exe) {
@@ -232,5 +258,61 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 
 	public void setLocalID(PeerID localID) {
 		this.localID = localID;
+	}
+
+	@Override
+	public void sourceAdded(IP2PDictionary sender,
+			SourceAdvertisement advertisement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sourceRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sourceImported(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sourceImportRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sourceExported(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sourceExportRemoved(IP2PDictionary sender,
+			SourceAdvertisement advertisement, String sourceName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
+		System.out.println("Peer " + name + " has been added, trying to notify it of this master's status!");
+		if(isMaster()) {
+			notifyPeerOfMaster(masterID, id);
+		}
+	}
+
+	@Override
+	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
+		// TODO Auto-generated method stub
+		
 	}
 }
