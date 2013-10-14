@@ -45,11 +45,7 @@ public class HDFSource extends AbstractAccessAO {
 	
 	@Parameter(type=StringParameter.class, name="paths", optional=false, isList = true)
 	public void setPaths(List<String> paths){
-		StringBuffer v = new StringBuffer();
-		for (String s:paths){
-			v.append(s).append(";");
-		}
-		addOption(NcsaHDFTransportHandler.PATH, v.substring(0, v.length()-1));
+		addOption(NcsaHDFTransportHandler.PATH, buildString(paths, ";"));
 	}
 	
 	@Override

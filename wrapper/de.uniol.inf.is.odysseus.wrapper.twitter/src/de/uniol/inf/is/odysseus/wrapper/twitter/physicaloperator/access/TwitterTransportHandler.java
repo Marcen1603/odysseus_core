@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class TwitterTransportHandler extends AbstractPushTransportHandler
 		implements StatusListener {
-	private static final String NAME = "Twitter";
+	public static final String NAME = "Twitter";
 
 	/** Logger */
 	private final Logger LOG = LoggerFactory

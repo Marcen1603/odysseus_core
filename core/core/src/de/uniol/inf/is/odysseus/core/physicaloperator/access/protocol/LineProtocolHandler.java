@@ -36,6 +36,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
+	public static final String NAME = "Line";
+
 	Logger LOG = LoggerFactory.getLogger(LineProtocolHandler.class);
 
 	protected BufferedReader reader;
@@ -270,7 +272,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public String getName() {
-		return "Line";
+		return NAME;
 	}
 
 	public long getDelay() {
