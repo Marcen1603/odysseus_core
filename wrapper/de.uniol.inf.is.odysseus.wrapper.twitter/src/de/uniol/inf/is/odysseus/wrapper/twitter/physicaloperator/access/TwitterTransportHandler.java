@@ -37,9 +37,19 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class TwitterTransportHandler extends AbstractPushTransportHandler
 		implements StatusListener {
+	private static final String NAME = "Twitter";
+
 	/** Logger */
 	private final Logger LOG = LoggerFactory
 			.getLogger(TwitterTransportHandler.class);
+	
+	public static final String LOCATIONS = "locations";
+	public static final String SEARCHKEYS = "searchkeys";
+	public static final String ACCESSTOKENSECRET = "accesstokensecret";
+	public static final String ACCESSTOKEN = "accesstoken";
+	public static final String CONSUMERSECRET = "consumersecret";
+	public static final String CONSUMERKEY = "consumerkey";
+	
 	private TwitterStream twitterStream;
 	private Twitter twitter;
 	private String consumerKey;
@@ -83,29 +93,29 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	}
 
 	private void init(final Map<String, String> options) {
-		if (options.containsKey("consumerkey")) {
-			setConsumerKey(options.get("consumerkey"));
+		if (options.containsKey(CONSUMERKEY)) {
+			setConsumerKey(options.get(CONSUMERKEY));
 		}
-		if (options.containsKey("consumersecret")) {
-			setConsumerSecret(options.get("consumersecret"));
+		if (options.containsKey(CONSUMERSECRET)) {
+			setConsumerSecret(options.get(CONSUMERSECRET));
 		}
-		if (options.containsKey("accesstoken")) {
-			setAccessToken(options.get("accesstoken"));
+		if (options.containsKey(ACCESSTOKEN)) {
+			setAccessToken(options.get(ACCESSTOKEN));
 		}
-		if (options.containsKey("accesstokensecret")) {
-			setAccessTokenSecret(options.get("accesstokensecret"));
+		if (options.containsKey(ACCESSTOKENSECRET)) {
+			setAccessTokenSecret(options.get(ACCESSTOKENSECRET));
 		}
-		if (options.containsKey("searchkeys")){
-			setSearchKeys(options.get("searchkeys"));
+		if (options.containsKey(SEARCHKEYS)){
+			setSearchKeys(options.get(SEARCHKEYS));
 		}
-		if (options.containsKey("locations")){
-			setLocations(options.get("locations"));
+		if (options.containsKey(LOCATIONS)){
+			setLocations(options.get(LOCATIONS));
 		}
 	}
 
 	@Override
 	public String getName() {
-		return "Twitter";
+		return NAME;
 	}
 
 	public String getConsumerKey() {
