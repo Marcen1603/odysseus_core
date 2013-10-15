@@ -43,10 +43,12 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.Euclidea
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.MahalanobisDistanceFunctionVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousDivisionNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousDivisionOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMinusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMinusOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationNumberRHSOperator;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousMultiplicationOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticContinuousPlusOperator;
@@ -163,11 +165,13 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticContinuousPlusNumberLHSOperator());
 			functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
 			functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
+			functions.add(new ProbabilisticContinuousMultiplicationOperator());
 			functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
+			functions.add(new ProbabilisticContinuousDivisionOperator());
 
 			/** Convert functions */
 			functions.add(new ToProbabilisticContinuousDouble());
-			
+
 			/** Additional functions for continuous probabilistic value */
 			functions.add(new BhattacharyyaDistanceFunctionVector());
 			functions.add(new BhattacharyyaDistanceFunction());
@@ -176,7 +180,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 
 			functions.add(new As2DVectorFunction());
 			functions.add(new As3DVectorFunction());
-			
+
 			functions.add(new EuclideanDistanceFunction());
 			functions.add(new EuclideanDistanceFunctionVector());
 			// ProbabilisticFunctionProvider.LOG.info(String.format(

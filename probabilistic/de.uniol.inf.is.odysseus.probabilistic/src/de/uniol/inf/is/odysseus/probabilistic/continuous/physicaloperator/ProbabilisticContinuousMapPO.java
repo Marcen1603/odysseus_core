@@ -211,7 +211,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		boolean nullValueOccured = false;
 		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, this.distributions, false);
-		//FIXME restrict object for each expression or we will get an error if multiple expressions assume a univariate distribution
+		// FIXME restrict object for each expression or we will get an error if multiple expressions assume a univariate distribution
 		final ProbabilisticTuple<T> restrictedObject = object.restrict(this.neededAttributePos, false);
 		outputVal.setMetadata((T) restrictedObject.getMetadata().clone());
 		int lastObjectSize = this.lastObjects.size();
@@ -224,6 +224,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 		synchronized (this.expressions) {
 			for (int i = 0, d = 0; i < this.expressions.length; ++i) {
 				final Object[] values = new Object[this.variables[i].length];
+				int[] neededAttributes = new int[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					ProbabilisticTuple<T> obj = null;
 					if (lastObjectSize > this.variables[i][j].getObjectPosToUse()) {
@@ -232,6 +233,7 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 					if (obj != null) {
 						Object attribute = obj.getAttribute(this.variables[i][j].getPos());
 						if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
+							// FIXME: if more than one dimension of a distribution is used in a MAP expression, the dimensions are also propagated to MEP functions that only use less dimensions
 							attribute = restrictedObject.getDistribution(((ProbabilisticContinuousDouble) attribute).getDistribution());
 						}
 						values[j] = attribute;
