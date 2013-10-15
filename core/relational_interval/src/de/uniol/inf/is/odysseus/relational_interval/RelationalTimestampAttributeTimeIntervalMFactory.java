@@ -53,7 +53,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
 			int endAttrPos, boolean clearEnd, String dateFormat,
-			String timezone, Locale locale) {
+			String timezone, Locale locale, int factor) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
 
@@ -79,7 +79,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		startTimestampMinutePos = -1;
 		startTimestampSecondPos = -1;
 		startTimestampMillisecondPos = -1;
-		factor = 0;
+		this.factor = factor;
 
 		this.clearEnd = clearEnd;
 	}
