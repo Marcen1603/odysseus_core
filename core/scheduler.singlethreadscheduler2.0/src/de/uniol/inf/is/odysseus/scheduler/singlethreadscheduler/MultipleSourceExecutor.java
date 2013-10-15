@@ -122,13 +122,13 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 						}
 					} else {
 						alldone = true;
-						for (IIterableSource<?> others : sources) {
-							if (!others.isDone()) {
-								alldone = false;
-								break;
-							}
-						}
 						while (alldone) {
+							for (IIterableSource<?> others : sources) {
+								if (!others.isDone()) {
+									alldone = false;
+									break;
+								}
+							}
 							try {
 								sources.wait(1000);
 							} catch (InterruptedException e) {
