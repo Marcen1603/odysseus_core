@@ -161,7 +161,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	private PointInTime extractTimestamp(Tuple<? extends ITimeInterval> inElem,
 			int attrPos) {
-		final Number timeN;
+		Number timeN;
 		if (df != null) {
 			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
@@ -174,6 +174,10 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		} else {
 			timeN = (Number) inElem.getAttribute(attrPos);
 		}
+		if (factor != 0){
+			timeN = timeN.longValue() * factor;
+		}
+		
 		PointInTime time = null;
 		if (timeN == null || timeN.longValue() == -1) {
 			time = PointInTime.getInfinityTime();
