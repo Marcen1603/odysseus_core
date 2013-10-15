@@ -164,6 +164,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	public String[] getNext() {
 		return read.remove(0);
 	}
+	
+	@Override
+	public boolean isDone() {
+		return read.size() == 0;
+	}
 
 	@Override
 	public void processOutOpen() throws IOException {
