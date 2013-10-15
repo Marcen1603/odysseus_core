@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 
 /**
  * This class contains information of a datastream clause.
