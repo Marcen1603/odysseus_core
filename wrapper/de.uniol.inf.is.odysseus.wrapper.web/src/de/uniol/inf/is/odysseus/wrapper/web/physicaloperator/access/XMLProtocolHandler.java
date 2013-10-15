@@ -66,6 +66,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 		AbstractProtocolHandler<T> {
 	public static final String NAME = "XML";
 	public static final String XPATHS = "xpaths";
+	public static final String REVERSE = "reverse";
 	public static final String NANODELAY = "nanodelay";
 	public static final String DELAY = "delay";
 
@@ -80,6 +81,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 			.newInstance();
 	private final List<String> xpaths = new ArrayList<String>();
 	private List<T> result = new LinkedList<>();
+	private boolean reverse;
 
 	/**
 	 * Create a new XML Data Handler
@@ -165,14 +167,18 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 						XMLProtocolHandler.LOG.error(e.getMessage(), e);
 					}
 				}
-
-				for (int jj = 0; jj < nodesMap.get(getXPaths().get(0))
-						.getLength(); jj++) {
+				
+				int xPathCount = nodesMap.get(getXPaths().get(0)).getLength();
+				for (int jj = 0; jj < xPathCount; jj++) {
+					int pos = jj;
+					if (reverse){
+						pos = (xPathCount - jj)-1;
+					}
 					final String[] tuple = new String[schema.size()];
 					for (int i = 0; i < this.getXPaths().size(); i++) {
 						NodeList nodes = nodesMap.get(getXPaths().get(i));
-						if (nodes.getLength() > jj) {
-							final Node node = nodes.item(jj);
+						if (nodes.getLength() > pos) {
+							final Node node = nodes.item(pos);
 							final String content = node.getTextContent();
 							tuple[i] = content;
 						}
@@ -260,6 +266,11 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 			}
 		}
 		setXPaths(xpaths);
+		if (options.get(REVERSE) != null){
+			reverse = Boolean.parseBoolean(options.get(REVERSE));
+		}else{
+			reverse = false;
+		}
 
 	}
 
