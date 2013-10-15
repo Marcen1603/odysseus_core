@@ -151,6 +151,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 
 	
 	@Override
+	public void processInClose() throws IOException {
+		read.clear();
+	}
+	
+	@Override
 	public boolean hasNext() {
 		return read.size() > 0;
 	}
