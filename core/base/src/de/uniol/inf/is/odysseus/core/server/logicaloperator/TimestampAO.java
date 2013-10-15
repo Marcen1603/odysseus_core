@@ -86,7 +86,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestamp;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "START", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "START", isList = false, optional = true, doc="The name of the attribute for the start timestamp for application time")
 	public void setStartTimestamp(SDFAttribute startTimestamp) {
 		this.startTimestamp = startTimestamp;
 		addParameterInfoIfNeeded("START", startTimestamp);
@@ -101,13 +101,13 @@ public class TimestampAO extends UnaryLogicalOp {
 		return endTimestamp;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "END", isList = false, optional = true, doc="The name of the attribute for the start timestamp for application time")
 	public void setEndTimestamp(SDFAttribute endTimestamp) {
 		this.endTimestamp = endTimestamp;
 		addParameterInfoIfNeeded("END", endTimestamp);
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "clearEnd", isList = false, optional = true)
+	@Parameter(type = BooleanParameter.class, name = "clearEnd", isList = false, optional = true, doc="If set to true, the end timestamp will be set to infinity")
 	public void setClearEnd(boolean clearEnd) {
 		this.clearEnd = clearEnd;
 		addParameterInfo("CLEAREND", "'" + Boolean.valueOf(clearEnd) + "'");
@@ -129,7 +129,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return this.isUsingSystemTime;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "SystemTime", isList = false, optional = true)
+	@Parameter(type = BooleanParameter.class, name = "SystemTime", isList = false, optional = true, doc="If set to true, system time instead of application time will be used")
 	public void setIsUsingSystemTime(boolean value) {
 		this.isUsingSystemTime = value;
 	}
@@ -146,7 +146,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampYear;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "YEAR", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "YEAR", isList = false, optional = true, doc = "The name of the attribute for the year part of the start timestamp for application time")
 	public void setStartTimestampYear(SDFAttribute startTimestampYear) {
 		this.startTimestampYear = startTimestampYear;
 		addParameterInfoIfNeeded("YEAR", startTimestampYear);
@@ -161,7 +161,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampMonth;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MONTH", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MONTH", isList = false, optional = true, doc = "The name of the attribute for the month part of the start timestamp for application time")
 	public void setStartTimestampMonth(SDFAttribute startTimestampMonth) {
 		addParameterInfoIfNeeded("MONTH", startTimestampMonth);
 		this.startTimestampMonth = startTimestampMonth;
@@ -171,7 +171,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampDay;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DAY", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DAY", isList = false, optional = true, doc = "The name of the attribute for the day part of the start timestamp for application time")
 	public void setStartTimestampDay(SDFAttribute startTimestampDay) {
 		addParameterInfoIfNeeded("DAY", startTimestampDay);
 		this.startTimestampDay = startTimestampDay;
@@ -181,7 +181,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampHour;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "HOUR", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "HOUR", isList = false, optional = true, doc = "The name of the attribute for the hour part of the start timestamp for application time")
 	public void setStartTimestampHour(SDFAttribute startTimestampHour) {
 		addParameterInfoIfNeeded("HOUR", startTimestampHour);
 		this.startTimestampHour = startTimestampHour;
@@ -191,7 +191,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampMinute;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MINUTE", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MINUTE", isList = false, optional = true, doc = "The name of the attribute for the minute part of the start timestamp for application time")
 	public void setStartTimestampMinute(SDFAttribute startTimestampMinute) {
 		addParameterInfoIfNeeded("MINUTE", startTimestampMinute);
 		this.startTimestampMinute = startTimestampMinute;
@@ -201,7 +201,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampSecond;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "SECOND", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "SECOND", isList = false, optional = true, doc = "The name of the attribute for the second part of the start timestamp for application time")
 	public void setStartTimestampSecond(SDFAttribute startTimestampSecond) {
 		addParameterInfoIfNeeded("SECOND", startTimestampSecond);
 		this.startTimestampSecond = startTimestampSecond;
@@ -211,7 +211,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return startTimestampMillisecond;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MILLISECOND", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "MILLISECOND", isList = false, optional = true, doc = "The name of the attribute for the millisecond part of the start timestamp for application time")
 	public void setStartTimestampMillisecond(SDFAttribute startTimestampMillisecond) {
 		addParameterInfoIfNeeded("MILLISECOND", startTimestampMillisecond);
 		this.startTimestampMillisecond = startTimestampMillisecond;
@@ -221,7 +221,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return factor;
 	}
 
-	@Parameter(type = IntegerParameter.class, name = "FACTOR", isList = false, optional = true)
+	@Parameter(type = IntegerParameter.class, name = "FACTOR", isList = false, optional = true, doc ="A multiplication factor for a single attributed timestamp to calc milliseconds (e.g. if input is seconds, use 1000 here)")
 	public void setFactor(int factor) {
 		addParameterInfo("FACTOR", Integer.valueOf(factor));
 		this.factor = factor;
@@ -236,7 +236,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return dateFormat;
 	}
 
-	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true)
+	@Parameter(type = StringParameter.class, name = "dateFormat", isList = false, optional = true, doc="If using a string for date information, use this format to parse the date (in Java syntax).")
 	public void setDateFormat(String dateFormat) {
 		addParameterInfo("DATEFORMAT", dateFormat);
 		this.dateFormat = dateFormat;
@@ -246,7 +246,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		return dateFormat;
 	}
 
-	@Parameter(type = StringParameter.class, name = "timezone", isList = false, optional = true)
+	@Parameter(type = StringParameter.class, name = "timezone", isList = false, optional = true, doc="The timezone in Java syntax.")
 	public void setTimezone(String timezone) {
 		addParameterInfo("TIMEZONE", timezone);
 		this.timezone = timezone;
