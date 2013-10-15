@@ -114,27 +114,27 @@ public class StreamTableEditor implements IStreamEditorType {
 			tuples.remove(tuples.size() - 1);
 		}
 
-		if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
-			
-			synchronized( isRefreshing ) {
+		synchronized( isRefreshing ) {
+			if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
+				
 				isRefreshing = true;
-			}
-			
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					synchronized( isRefreshing ) {
-						try {
-							if (!getTableViewer().getTable().isDisposed()) {
-								getTableViewer().refresh();
+				
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							synchronized (isRefreshing) {
+								try {
+									if (!getTableViewer().getTable().isDisposed()) {
+										getTableViewer().refresh();
+									}
+								} finally {
+									isRefreshing = false;
+								}
 							}
-						} finally {
-							isRefreshing = false;
 						}
-					}
-				}
-			});
-			editor.activateIfNeeded();
+				});
+				editor.activateIfNeeded();
+			}
 		}
 	}
 
