@@ -67,7 +67,7 @@ public class StreamTableEditor implements IStreamEditorType {
 	private List<Tuple<?>> tuples = new ArrayList<Tuple<?>>();
 	private List<Integer> shownAttributes = new ArrayList<Integer>();
 	private int maxTuplesCount;
-	private boolean isRefreshing;
+	private Boolean isRefreshing = false;
 	
 	private boolean isDesync;
 	private RefreshTableThread desyncThread;
@@ -115,16 +115,22 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 
 		if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
-			isRefreshing = true;
+			
+			synchronized( isRefreshing ) {
+				isRefreshing = true;
+			}
+			
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						if (!getTableViewer().getTable().isDisposed()) {
-							getTableViewer().refresh();
+					synchronized( isRefreshing ) {
+						try {
+							if (!getTableViewer().getTable().isDisposed()) {
+								getTableViewer().refresh();
+							}
+						} finally {
+							isRefreshing = false;
 						}
-					} finally {
-						isRefreshing = false;
 					}
 				}
 			});
