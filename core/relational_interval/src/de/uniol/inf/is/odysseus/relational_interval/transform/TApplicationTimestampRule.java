@@ -52,7 +52,7 @@ public class TApplicationTimestampRule extends
 						.indexOf(timestampAO.getEndTimestamp()) : -1;
 				mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(
 						pos, posEnd, clearEnd, timestampAO.getDateFormat(),
-						timestampAO.getTimezone());
+						timestampAO.getTimezone(), timestampAO.getLocale());
 			} else {
 
 				int year = schema.indexOf(timestampAO.getStartTimestampYear());

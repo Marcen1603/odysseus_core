@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -36,7 +37,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private int startAttrPos;
 	final private int endAttrPos;
 	final private SimpleDateFormat df;
-
+	
 	// Time is separated to different attributes
 	final private int startTimestampYearPos;
 	final private int startTimestampMonthPos;
@@ -51,15 +52,21 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private TimeZone timezone;
 
 	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
-			int endAttrPos, boolean clearEnd, String dateFormat, String timezone) {
+			int endAttrPos, boolean clearEnd, String dateFormat,
+			String timezone, Locale locale) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
 
 		if (dateFormat != null) {
-			df = new SimpleDateFormat(dateFormat);
+			if (locale != null) {
+				df = new SimpleDateFormat(dateFormat, locale);
+			} else {
+				df = new SimpleDateFormat(dateFormat);
+			}
 		} else {
 			df = null;
 		}
+
 		if (timezone != null) {
 			this.timezone = TimeZone.getTimeZone(timezone);
 		} else {
@@ -159,16 +166,16 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			String timeString = (String) inElem.getAttribute(attrPos);
 			try {
 				timeN = df.parse(timeString).getTime();
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				throw new RuntimeException("Date cannot be parsed! "
-						+ timeString);
+						+ timeString + " with " + df.toPattern());
 			}
 		} else {
 			timeN = (Number) inElem.getAttribute(attrPos);
 		}
 		PointInTime time = null;
-		if (timeN == null ||  timeN.longValue() == -1) {
+		if (timeN == null || timeN.longValue() == -1) {
 			time = PointInTime.getInfinityTime();
 		} else {
 			time = new PointInTime(timeN);
@@ -246,6 +253,17 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		String form = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 		SimpleDateFormat df = new SimpleDateFormat(form);
 		ParsePosition ps = new ParsePosition(0);
+		System.out.println(df.parse(test, ps) + " parse position " + ps + " "
+				+ test.substring(ps.getIndex()));
+
+		test = "Tue, 15 Oct 2013 09:55:21 +0200";
+		form = "EEE, d MMM yyyy HH:mm:ss Z";
+
+		test = "Tue, 15 Oct 2013 09:55:21 +0200";
+		form = "EEE, d MMM yyyy HH:mm:ss Z";
+
+		df = new SimpleDateFormat(form, Locale.ENGLISH);
+		ps = new ParsePosition(0);
 		System.out.println(df.parse(test, ps) + " parse position " + ps + " "
 				+ test.substring(ps.getIndex()));
 

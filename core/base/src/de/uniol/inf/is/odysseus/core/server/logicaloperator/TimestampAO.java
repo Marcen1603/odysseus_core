@@ -15,6 +15,10 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -28,11 +32,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 public class TimestampAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -467482177921504749L;
 
+	static List<String> locales = null;
+	
 	// To be used if timestamps are given in one attribute
 	private SDFAttribute startTimestamp;
 	private SDFAttribute endTimestamp;
 	// an optional String representation of the date format
 	private String dateFormat;
+	private Locale locale;
 	/** The timezone to use */
 	private String timezone;
 	// To be used if timestamps are seperated
@@ -56,6 +63,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		setEndTimestamp(ao.endTimestamp);
 		setClearEnd(ao.clearEnd);
 		setDateFormat(ao.dateFormat);
+		this.locale = ao.locale;
 		setTimezone(ao.timezone);
 		setStartTimestampYear(ao.startTimestampYear);
 		setStartTimestampMonth(ao.startTimestampMonth);
@@ -242,6 +250,26 @@ public class TimestampAO extends UnaryLogicalOp {
 		this.dateFormat = dateFormat;
 	}
 
+	@Parameter(type = StringParameter.class, name = "locale", optional = true, doc ="Interprete the date string with this locale")
+	public void setLocaleStr(String localeStr) {
+		this.locale = Locale.forLanguageTag(localeStr);;
+	}
+	
+	public List<String> getLocales(){
+		if (locales == null){
+			for (Locale l:Locale.getAvailableLocales()){
+				locales = new LinkedList<>();
+				locales.add(l.getDisplayName());
+			}
+		}
+		return locales;
+	}
+	
+	
+	public Locale getLocale() {
+		return locale;
+	}
+	
 	public String getTimezone() {
 		return dateFormat;
 	}
