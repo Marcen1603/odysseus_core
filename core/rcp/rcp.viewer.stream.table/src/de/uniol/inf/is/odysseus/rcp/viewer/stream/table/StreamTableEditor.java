@@ -110,7 +110,7 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 
 		tuples.add(0, (Tuple<?>) element);
-		if (tuples.size() > getMaxTuplesCount()) {
+		if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
 			tuples.remove(tuples.size() - 1);
 		}
 
@@ -212,10 +212,6 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	public final SDFSchema getSchema() {
 		return schema;
-	}
-
-	public final int getMaxTuplesCount() {
-		return maxTuplesCount;
 	}
 
 	public final Composite getParent() {
