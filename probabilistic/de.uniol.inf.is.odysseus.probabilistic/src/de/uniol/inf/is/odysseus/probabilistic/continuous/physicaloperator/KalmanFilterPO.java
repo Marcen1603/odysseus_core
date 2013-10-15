@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
@@ -89,7 +90,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 			value[i] = ((Number) object.getAttribute(this.attributes[i])).doubleValue();
 		}
 		if (filter == null) {
-			MeasurementModel measurement = new DefaultMeasurementModel(new double[][] { value }, measurementNoise);
+			MeasurementModel measurement = new DefaultMeasurementModel(MatrixUtils.createColumnRealMatrix(value).getData(), measurementNoise);
 			this.filter = new KalmanFilter(process, measurement);
 		}
 		this.filter.correct(value);
