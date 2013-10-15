@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 		extends AbstractPipe<T, T> {
 
 	Logger logger = LoggerFactory.getLogger(TimeStampOrderValidatorTIPO.class);
-
+	boolean debug = false;
+	
 	PointInTime lastTimestamp = null;
 
 	public TimeStampOrderValidatorTIPO(
@@ -71,9 +72,12 @@ public class TimeStampOrderValidatorTIPO<K extends ITimeInterval, T extends IStr
 	private boolean validate(PointInTime timestamp, int port) {
 		if (lastTimestamp != null) {
 			if (timestamp.before(lastTimestamp)) {
-				System.err.println("Wrong timestamp order " + timestamp + " after "
-						+ lastTimestamp + " from previous operator: "
-						+ this.getSubscribedToSource(port).toString());
+				if (debug) {
+					System.err.println("Wrong timestamp order " + timestamp
+							+ " after " + lastTimestamp
+							+ " from previous operator: "
+							+ this.getSubscribedToSource(port).toString());
+				}
 				return false;
 			}
 		}
