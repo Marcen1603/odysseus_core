@@ -125,11 +125,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 				t = new String[pathesLength + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
+				read.add(t);
 			} else {
 				t = read.get(i);
 				t[p+1] = ""+values[i]; 
 			}
-			read.add(t);
 		}
 	}
 
@@ -141,11 +141,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 				t = new String[pathesLength + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
+				read.add(t);
 			} else {
 				t = read.get(i);
 				t[p+1] = ""+values[i]; 
 			}
-			read.add(t);
 		}
 	}
 
