@@ -624,7 +624,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void connectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		//subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		sink.addOwner(this.getOwner());
@@ -642,7 +642,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		//unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		connectedSinks.remove(sub);
