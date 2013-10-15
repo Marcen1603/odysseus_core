@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
     private Map<String, Variable> symbolTable = new HashMap<String, Variable>();
-    private final SDFSchema       schema;
+    private final SDFSchema schema;
 
     public ExpressionBuilderVisitor(SDFSchema schema) {
         this.schema = schema;
@@ -95,40 +95,49 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         // }
         // }
         // else {
-        
-		if (functions.size() == 0) {
-			throw new IllegalArgumentException("no such function: " + symbol);
-		} else if (functions.size() == 1) {
-			selectedFunction = functions.get(0);
-			IExpression<?>[] expressions = new IExpression[arity];
-			for (int i = 0; i < arity; ++i) {
-				// pass the accepted types of this function for the current
-				// argument
-				expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
-			}
-			selectedFunction.setArguments(expressions);
-		} else {
-			for (IFunction<?> function : functions) {
-				List<SDFDatatype> parameters = new ArrayList<SDFDatatype>();
-				for (int i = 0; i < arity; ++i) {
-					parameters.add(((IExpression<?>) node.jjtGetChild(i).jjtAccept(this, function.getAcceptedTypes(i))).getReturnType());
-				}
-				selectedFunction = MEP.getFunction(symbol, parameters);
-				if (selectedFunction != null) {
-					break;
-				}
-			}
-			if (selectedFunction == null) {
-				selectedFunction = functions.get(0);
-			}
 
-			IExpression<?>[] expressions = new IExpression[arity];
-			for (int i = 0; i < arity; ++i) {
-				expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
-			}
-			selectedFunction.setArguments(expressions);
-		}
+        if (functions.size() == 0) {
+            throw new IllegalArgumentException("no such function: " + symbol);
+        }
+        else if (functions.size() == 1) {
+            selectedFunction = functions.get(0);
+            IExpression<?>[] expressions = new IExpression[arity];
+            for (int i = 0; i < arity; ++i) {
+                // pass the accepted types of this function for the current
+                // argument
+                expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
+            }
+            selectedFunction.setArguments(expressions);
+        }
+        else {
+            IExpression<?>[] expressions = new IExpression[arity];
 
+            for (IFunction<?> function : functions) {
+                if (arity == function.getArity()) {
+                    List<SDFDatatype> parameters = new ArrayList<SDFDatatype>();
+                    for (int i = 0; i < arity; ++i) {
+                        expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, function.getAcceptedTypes(i));
+                    }
+                    for (int i = 0; i < arity; ++i) {
+                        parameters.add(expressions[i].getReturnType());
+                    }
+                    selectedFunction = MEP.getFunction(symbol, parameters);
+                    if (selectedFunction != null) {
+                        break;
+                    }
+                }
+            }
+            // If no function match the parameter use the first available
+            // function
+            if (selectedFunction == null) {
+                selectedFunction = functions.get(0);
+                for (int i = 0; i < arity; ++i) {
+                    expressions[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this, selectedFunction.getAcceptedTypes(i));
+                }
+            }
+
+            selectedFunction.setArguments(expressions);
+        }
 
         // }
 
@@ -140,6 +149,15 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         SDFDatatype type = SDFDatatype.OBJECT;
         if (node.getValue() instanceof Double) {
             type = SDFDatatype.DOUBLE;
+        }
+        if (node.getValue() instanceof Float) {
+            type = SDFDatatype.FLOAT;
+        }
+        if (node.getValue() instanceof Short) {
+            type = SDFDatatype.SHORT;
+        }
+        if (node.getValue() instanceof Byte) {
+            type = SDFDatatype.BYTE;
         }
         if (node.getValue() instanceof Integer) {
             type = SDFDatatype.INTEGER;
@@ -164,17 +182,19 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
             var.restrictAcceptedTypes((SDFDatatype[]) data);
             return var;
         }
-		Variable variable;
-		if (this.schema != null) {
-			SDFAttribute attribute = schema.findAttribute(identifier);
-			if (attribute != null) {
-				variable = new Variable(identifier, attribute.getDatatype());
-			} else {
-				variable = new Variable(identifier);
-			}
-		} else {
-			variable = new Variable(identifier);
-		}
+        Variable variable;
+        if (this.schema != null) {
+            SDFAttribute attribute = schema.findAttribute(identifier);
+            if (attribute != null) {
+                variable = new Variable(identifier, attribute.getDatatype());
+            }
+            else {
+                variable = new Variable(identifier);
+            }
+        }
+        else {
+            variable = new Variable(identifier);
+        }
         variable.setAcceptedTypes((SDFDatatype[]) data);
         symbolTable.put(identifier, variable);
         return variable;

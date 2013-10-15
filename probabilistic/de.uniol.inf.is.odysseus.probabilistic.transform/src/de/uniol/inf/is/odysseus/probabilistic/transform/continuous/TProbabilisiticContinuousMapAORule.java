@@ -85,7 +85,7 @@ public class TProbabilisiticContinuousMapAORule extends TMapAORule {
 	 */
 	@Override
 	public final String getName() {
-		return "MapAO -> ProbabilisticDiscreteMapPO";
+		return "MapAO -> ProbabilisticContinuousMapPO";
 	}
 
 }
