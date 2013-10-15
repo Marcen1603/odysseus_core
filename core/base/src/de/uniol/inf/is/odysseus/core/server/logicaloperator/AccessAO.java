@@ -63,11 +63,6 @@ public class AccessAO extends AbstractAccessAO {
 	public List<String> getProtocolValues(){
 		return ProtocolHandlerRegistry.getHandlerNames();
 	}
-
-	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for different handler.")
-	public void setOptions(List<Option> value) {
-		super.setOptions(value);
-	}
 	
 	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues="getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
