@@ -33,7 +33,9 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.CostModelService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.QSSimulator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -44,7 +46,6 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private static CentralizedDistributor instance;
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributor.class);
 	private ICostModel<IPhysicalOperator> costModel = null;
-	private IServerExecutor executor = null;
 	protected IQueryOptimizer queryOptimizer = null;
 	private Map<PeerID,ResourceUsage> resourceUsages = new HashMap<PeerID,ResourceUsage>();
 	private Map<PeerID,ICost<IPhysicalOperator>> planCostEstimates =  new HashMap<PeerID,ICost<IPhysicalOperator>>();
@@ -485,30 +486,12 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		return instance;
 	}
 	
-	public void bindCostModel(ICostModel<IPhysicalOperator> costModel) {
-		this.costModel = costModel;
-	}
-
-	public void unbindCostModel(ICostModel<IPhysicalOperator> costModel) {
-		this.costModel = null;
-	}
-	
 	public ICostModel<IPhysicalOperator> getCostModel() {
-		return this.costModel;
-	}
-	
-	public void bindExecutor(IExecutor exe) {
-		executor = (IServerExecutor) exe;
-		LOG.debug("Executor bound: " + exe);
-	}
-	
-	public void unbindExecutor(IExecutor exe) {
-		executor = null;
-		LOG.debug("Executor unbound: " + exe);
+		return CostModelService.getCostModel();
 	}
 	
 	private IServerExecutor getExecutor() {
-		return this.executor;
+		return ServerExecutorService.getServerExecutor();
 	}
 	
 	public void bindQueryOptimizer(IQueryOptimizer queryOptimizer) {

@@ -124,14 +124,14 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 		StructuredDocument doc =  StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
 		doc.appendChild(doc.createElement(ID_TAG, id.toString()));
 		generateOperatorsDocument(asMimeType);
-		doc.appendChild(doc.createElement(NEW_OPERATORS_TAG, getNewOperatorsStatement()));
+		doc.appendChild(doc.createElement(NEW_OPERATORS_TAG, getNewOperatorsStatement().toString()));
 		doc.appendChild(doc.createElement(PEER_ID_TAG, peerID.toString()));
 		doc.appendChild(doc.createElement(MASTER_PEER_ID_TAG, masterPeerID.toString()));
 		generateSubscriptionsDocument(asMimeType);
-		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptionsStatement()));
+		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptionsStatement().toString()));
 		generatePlanIntersectionsStatement(asMimeType);
-		doc.appendChild(doc.createElement(PLANINTERSECTIONS_TAG, getPlanIntersectionsStatement()));
-		doc.appendChild(doc.createElement(SHARED_QUERY_ID_TAG, sharedQueryID));
+		doc.appendChild(doc.createElement(PLANINTERSECTIONS_TAG, getPlanIntersectionsStatement().toString()));
+		doc.appendChild(doc.createElement(SHARED_QUERY_ID_TAG, sharedQueryID.toString()));
 		return doc;
 	}
 

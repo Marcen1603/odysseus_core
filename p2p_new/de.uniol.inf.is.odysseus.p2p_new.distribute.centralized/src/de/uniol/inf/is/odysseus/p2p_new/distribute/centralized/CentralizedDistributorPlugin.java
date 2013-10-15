@@ -12,6 +12,8 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.Ph
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisementInstantiator;
 
 public class CentralizedDistributorPlugin implements BundleActivator {
 
@@ -20,9 +22,9 @@ public class CentralizedDistributorPlugin implements BundleActivator {
 		AdvertisementFactory.registerAdvertisementInstance(PhysicalQueryPartAdvertisement.getAdvertisementType(), new PhysicalQueryPartAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(MasterNotificationAdvertisement.getAdvertisementType(), new MasterNotificationAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(PhysicalQueryPlanAdvertisement.getAdvertisementType(), new PhysicalQueryPlanAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(ResourceUsageUpdateAdvertisement.getAdvertisementType(), new ResourceUsageUpdateAdvertisementInstantiator());
 		// activate the advertisementmanager in order to find the other peers, send the the current plan to the master etc.
 		CentralizedDistributorAdvertisementManager.getInstance().activate();
-		System.out.println("The Centralized Distributor has been activated");
 	}
 
 	@Override

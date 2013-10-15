@@ -26,5 +26,5 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor,
  org.osgi.framework;version="1.6.0"
 Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistributorPlugin
-Service-Component: OSGI-INF/dictionaryProvider.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/centralizedDistributor.xml,OSGI-INF/centralizedDistributorAdvertisementManager.xml,OSGI-INF/physicalQueryPartController.xml
+Service-Component: OSGI-INF/dictionaryProvider.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/centralizedDistributor.xml,OSGI-INF/physicalQueryPartController.xml,OSGI-INF/advertisementManagerService.xml,OSGI-INF/serverExecutorService.xml,OSGI-INF/costModelService.xml
 Bundle-ActivationPolicy: lazy

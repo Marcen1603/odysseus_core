@@ -121,11 +121,11 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 		StructuredDocument doc =  StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
 		doc.appendChild(doc.createElement(ID_TAG, id.toString()));
 		generateOperatorsDocument(asMimeType);
-		doc.appendChild(doc.createElement(OPERATORS_TAG, getOperators()));
+		doc.appendChild(doc.createElement(OPERATORS_TAG, getOperators().toString()));
 		doc.appendChild(doc.createElement(PEER_ID_TAG, peerID.toString()));
 		doc.appendChild(doc.createElement(MASTER_PEER_ID_TAG, masterPeerID.toString()));
 		generateSubscriptionsDocument(asMimeType);
-		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptions()));
+		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptions().toString()));
 		return doc;
 	}
 	

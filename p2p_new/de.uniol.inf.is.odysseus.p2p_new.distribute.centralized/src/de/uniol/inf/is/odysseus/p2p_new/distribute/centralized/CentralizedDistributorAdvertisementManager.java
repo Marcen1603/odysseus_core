@@ -10,10 +10,12 @@ import org.hyperic.sigar.Mem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -27,8 +29,10 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.Ma
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.AdvertisementManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 import net.jxta.document.Advertisement;
@@ -39,7 +43,7 @@ import net.jxta.peer.PeerID;
 
 public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener, IServiceStatusListener, IP2PDictionaryListener {
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributorAdvertisementManager.class);
-	private IServerExecutor executor;
+	private static final String MASTER_STATUS_SYS_PROPERTY = "isCentralizedDistributorMaster";
 	private ResourceUsageMonitor monitor;
 	
 	// the PeerID of the Master
@@ -48,16 +52,22 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	private PeerID localID;
 	private static CentralizedDistributorAdvertisementManager instance;
 	
+	private List<ID> processedAdvertisements = new ArrayList<ID>();
+	
 	private CentralizedDistributorAdvertisementManager() {
-		
+
 	}
 	
 	public void serviceBound(Object o) {
-		System.out.println("Someone called? Must be " + Arrays.toString(o.getClass().getInterfaces()));
+		LOG.debug("Someone called? Must be " + Arrays.toString(o.getClass().getInterfaces()));
 		for(Class<?> c : o.getClass().getInterfaces()) {
 			if(c.equals(IP2PDictionary.class)) {
-				System.out.println("SUCCESS");
+				LOG.debug("Found P2PDictionary");
 				((IP2PDictionary)o).addListener(this);
+				this.activate();
+			} else if(c.equals(IAdvertisementManager.class)) {
+				LOG.debug("Found AdvertisementManager");
+				((IAdvertisementManager)o).addAdvertisementListener(this);
 				this.activate();
 			}
 		}
@@ -65,22 +75,28 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	// activator
 	public void activate() {
 		if(!P2PDictionaryService.isBound()) {
-			System.out.println("No P2P-Dictionary bound yet, delaying activation");
+			LOG.debug("No P2P-Dictionary bound yet, delaying activation");
 			P2PDictionaryService.addListener(this);
+			return;
+		} else if (!AdvertisementManagerService.isBound()) {
+			LOG.debug("No AdvertisementManager bound yet, delaying activation");
+			AdvertisementManagerService.addListener(this);
 			return;
 		}
 		instance = this;
 		localID = P2PDictionaryService.get().getLocalPeerID();
-		System.out.println("The local ID of this peer is " + localID);
+		LOG.debug("The local ID of this peer is " + localID);
 		// TODO: check via parameters, if this peer is designated as the master
-		boolean isMaster = true;
+		boolean isMaster = determineMasterStatus();
 		if(isMaster) {
 			this.masterID = localID;
+			LOG.debug("Peer " + localID + " is the master.");
 			// broadcast a request for their physical plans to all known peers and let them know, that this instance is their master
 			for(PeerID peerID : P2PDictionaryService.get().getRemotePeerIDs()) {
 				notifyPeerOfMaster(masterID, peerID);
 			}
 		} else {
+			LOG.debug("Peer " + localID + " is a peer.");
 			// if it's a peer, start the performance-monitoring
 			monitor = new ResourceUsageMonitor(this);
 			monitor.start();
@@ -100,10 +116,15 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender,
 			Advertisement a) {
+		if(processedAdvertisements.contains(a.getID())) {
+			//System.out.println("Discarded Advertisement " + a.getID().toString() + " of type " + a.getAdvType());
+			return;
+		}
 		if(a instanceof PhysicalQueryPlanAdvertisement) {
 			PhysicalQueryPlanAdvertisement adv = (PhysicalQueryPlanAdvertisement) a;
 			// This node is the master and received a PhysicalQueryPlanAdvertisement intended for it
 			if(isMaster() && adv.getMasterPeerID().equals(this.localID)) {
+				LOG.debug("Peer " + this.localID + " received a PhysicalQueryPlanAdvertisement from peer " + adv.getPeerID());
 				// At this point, the Advertisement should be rebuild already because jxta handles this upon receiving the message
 				// This means, that it should already have the connected operators attached to it
 				CentralizedDistributor.getInstance().setPhysicalPlan(adv.getPeerID(), adv.getOpObjects());
@@ -113,7 +134,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			MasterNotificationAdvertisement adv = (MasterNotificationAdvertisement) a;
 			// This node is a normal peer and received a MasterNotificationAdvertisement from the master
 			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
+				LOG.debug("Peer " + this.localID + " received a MasterNotificationAdvertisement");
 				this.masterID = adv.getMasterPeerID();
+				LOG.debug("Peer " + localID + " is now aware of Peer " + masterID + "'s master status.");
 				// send a PhysicalQueryPlanAdvertisement to the master to let it know of the plans currently running on this node
 				sendQueryPlanToMaster();				
 			}
@@ -140,9 +163,12 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		} else if (a instanceof ResourceUsageUpdateAdvertisement) {
 			ResourceUsageUpdateAdvertisement adv = (ResourceUsageUpdateAdvertisement) a;
 			if(isMaster() && adv.getMasterID().equals(this.localID)) {
+				LOG.debug("Peer " + this.localID + " received a ResourceUsageUpdateAdvertisement from " + adv.getPeerID());
+				//LOG.debug(adv.toString());
 				CentralizedDistributor.getInstance().updateResourceUsage(adv);
 			}
 		}
+		processedAdvertisements.add(a.getID());
 	}
 
 	private void sendQueryPlanToMaster() {
@@ -150,6 +176,16 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setMasterPeerID(this.masterID);
 		adv.setPeerID(this.localID);
+		if(this.getExecutor() == null) {
+			LOG.debug("no executor!");
+			return;
+		} else if (this.getExecutor().getExecutionPlan() == null) {
+			LOG.debug("no executionPlan!");
+			return;
+		} else if (this.getExecutor().getExecutionPlan().getQueries() == null) {
+			LOG.debug("no queries in the plan");
+			return;
+		}
 		Collection<IPhysicalQuery> queries = this.getExecutor().getExecutionPlan().getQueries();
 		
 		Map<Integer,IPhysicalOperator> operators = CentralizedDistributor.getInstance().getOperatorPlans().get(this.localID);
@@ -186,6 +222,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	}
 	
 	private void sendResourceUsageToMaster(double cpuUsage, Mem memory, double networkUsage) {
+		if(masterID == null) {
+			return;
+		}
 		ResourceUsageUpdateAdvertisement adv = new ResourceUsageUpdateAdvertisement();
 		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setCpu_usage(cpuUsage);
@@ -197,6 +236,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setMasterID(this.masterID);
 		adv.setPeerID(this.localID);
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
+		LOG.debug("Sent ResourceUsageUpdateAdvertisement to peer " + masterID.toString());
 	}
 
 
@@ -209,7 +249,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	}
 	
 	public boolean isMaster() {
-		return this.masterID.equals(this.localID);
+		return this.localID.equals(this.masterID);
 	}
 	
 	private static void notifyPeerOfMaster(PeerID masterPeer, PeerID destinationPeer) {
@@ -219,21 +259,11 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setMasterPeerID(masterPeer);
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeer.toString(), adv, 15000);
 		
-		System.out.println("Notified Peer " + destinationPeer + " of Master " + masterPeer);
-	}
-	
-	public void bindExecutor(IExecutor exe) {
-		executor = (IServerExecutor) exe;
-		LOG.debug("Executor bound: " + exe);
-	}
-	
-	public void unbindExecutor(IExecutor exe) {
-		executor = null;
-		LOG.debug("Executor unbound: " + exe);
+		LOG.debug("Notified Peer " + destinationPeer + " of Master " + masterPeer);
 	}
 	
 	private IServerExecutor getExecutor() {
-		return this.executor;
+		return ServerExecutorService.getServerExecutor();
 	}
 
 
@@ -304,15 +334,31 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 
 	@Override
 	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
-		System.out.println("Peer " + name + " has been added, trying to notify it of this master's status!");
+		if(id.equals(localID)) {
+			return;
+		}
 		if(isMaster()) {
+			System.out.println("Peer " + name + " has been added, trying to notify it of this master's status!");
 			notifyPeerOfMaster(masterID, id);
 		}
 	}
 
 	@Override
 	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
+	}
+	
+	private static boolean determineMasterStatus() {
+		String isMaster = System.getProperty(MASTER_STATUS_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(isMaster)) {
+			return Boolean.parseBoolean(isMaster);
+		}
+
+		isMaster = OdysseusConfiguration.get(MASTER_STATUS_SYS_PROPERTY);
+		if (!Strings.isNullOrEmpty(isMaster)) {
+			return Boolean.parseBoolean(isMaster);
+		}
+
+		return false;
 	}
 }

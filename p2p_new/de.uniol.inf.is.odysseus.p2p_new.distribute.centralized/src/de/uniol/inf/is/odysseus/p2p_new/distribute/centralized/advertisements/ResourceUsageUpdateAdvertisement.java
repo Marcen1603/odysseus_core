@@ -86,12 +86,12 @@ public class ResourceUsageUpdateAdvertisement extends Advertisement {
 	public Document getDocument(MimeMediaType asMimeType) {
 		StructuredDocument doc =  StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
 		doc.appendChild(doc.createElement(ID_TAG, id.toString()));
-		doc.appendChild(doc.createElement(CPU_USAGE_TAG, cpu_usage));
-		doc.appendChild(doc.createElement(NET_USAGE_TAG, networkUsage));
-		doc.appendChild(doc.createElement(MEM_FREE_TAG, mem_free));
-		doc.appendChild(doc.createElement(MEM_USED_TAG, mem_used));
-		doc.appendChild(doc.createElement(MEM_TOTAL_TAG, mem_total));
-		doc.appendChild(doc.createElement(TIMESTAMP_TAG, timestamp));
+		doc.appendChild(doc.createElement(CPU_USAGE_TAG, Double.toString(cpu_usage)));
+		doc.appendChild(doc.createElement(NET_USAGE_TAG, Double.toString(networkUsage)));
+		doc.appendChild(doc.createElement(MEM_FREE_TAG, Double.toString(mem_free)));
+		doc.appendChild(doc.createElement(MEM_USED_TAG, Double.toString(mem_used)));
+		doc.appendChild(doc.createElement(MEM_TOTAL_TAG, Double.toString(mem_total)));
+		doc.appendChild(doc.createElement(TIMESTAMP_TAG, Long.toString(timestamp)));
 		doc.appendChild(doc.createElement(PEER_ID_TAG, peerID.toString()));
 		doc.appendChild(doc.createElement(MASTER_ID_TAG, masterID.toString()));
 		return doc;
