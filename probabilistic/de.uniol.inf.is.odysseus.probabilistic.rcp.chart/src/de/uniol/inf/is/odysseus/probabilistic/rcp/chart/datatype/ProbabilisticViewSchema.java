@@ -15,6 +15,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.rcp.chart.datatype;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
@@ -50,7 +51,7 @@ public class ProbabilisticViewSchema<T> extends ViewSchema<T> {
 	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema#init()
 	 */
 	@Override
-	protected final void init() {
+	protected final void init(List<String> preChoosenAttributes) {
 		int index = 0;
 		for (final SDFAttribute a : this.outputSchema) {
 			if (SchemaUtils.isProbabilisticAttribute(a)) {

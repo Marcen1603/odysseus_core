@@ -34,14 +34,21 @@ import org.eclipse.ui.IActionBars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewableSDFAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
@@ -535,5 +542,19 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
 			this.setXMax(maxX);
 		}
 
+	}
+
+	@Override
+	protected void initConnection(IStreamConnection<IStreamObject<?>> streamConnection) {
+		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
+			this.viewSchema.put(s.getSinkInPort(), new ViewSchema<NormalDistributionMixture>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
+		}
+		
+		if (validate()) {
+			streamConnection.addStreamElementListener(this);
+			streamConnection.connect();
+			reloadChartImpl();
+			init();
+		}
 	}
 }
