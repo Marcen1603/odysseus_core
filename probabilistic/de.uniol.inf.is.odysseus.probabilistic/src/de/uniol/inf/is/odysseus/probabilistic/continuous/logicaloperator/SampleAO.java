@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LogicalOperatorCat
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM", doc = "TODO", category = { LogicalOperatorCategory.PROBABILISTIC })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAMPLEFROM", doc = "Create samples from a given distribution", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class SampleAO extends UnaryLogicalOp {
 	/**
 	 * 
@@ -56,7 +56,7 @@ public class SampleAO extends UnaryLogicalOp {
 	 * @param attributes
 	 *            The list of attributes
 	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false, doc = "The distribution to sample from.")
 	public final void setAttributes(final List<SDFAttribute> attributes) {
 		this.attributes = attributes;
 	}
@@ -80,7 +80,7 @@ public class SampleAO extends UnaryLogicalOp {
 	 * @param samples
 	 *            The number of samples
 	 */
-	@Parameter(type = IntegerParameter.class, name = "SAMPLES", isList = false, optional = false)
+	@Parameter(type = IntegerParameter.class, name = "SAMPLES", isList = false, optional = false, doc = "The number of samples to create.")
 	public final void setSamples(final int samples) {
 		this.samples = samples;
 	}

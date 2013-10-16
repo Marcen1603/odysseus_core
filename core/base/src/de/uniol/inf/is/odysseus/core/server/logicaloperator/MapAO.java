@@ -174,7 +174,7 @@ public class MapAO extends UnaryLogicalOp {
      * @param threads
      *            The number of threads
      */
-    @Parameter(type = IntegerParameter.class, name = "threads", optional = true)
+    @Parameter(type = IntegerParameter.class, name = "threads", optional = true, doc = "Number of threads used to calculate the result.")
     public void setThreads(int threads) {
         this.threads = threads;
     }

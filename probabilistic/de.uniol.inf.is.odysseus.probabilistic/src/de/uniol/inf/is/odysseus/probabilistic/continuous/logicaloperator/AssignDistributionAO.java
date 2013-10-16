@@ -72,7 +72,7 @@ public class AssignDistributionAO extends UnaryLogicalOp {
 	 * @param attributes
 	 *            The list of attributes
 	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false, doc = "The attributes holding the expected value.")
 	public final void setAttributes(final List<SDFAttribute> attributes) {
 		this.attributes = attributes;
 	}
@@ -106,7 +106,7 @@ public class AssignDistributionAO extends UnaryLogicalOp {
 	 * @param variance
 	 *            The variance
 	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "VARIANCE", isList = false, optional = false)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "VARIANCE", isList = false, optional = false, doc = "The attribute holding the variance of the distribution.")
 	public final void setVariance(final SDFAttribute variance) {
 		this.variance = variance;
 	}

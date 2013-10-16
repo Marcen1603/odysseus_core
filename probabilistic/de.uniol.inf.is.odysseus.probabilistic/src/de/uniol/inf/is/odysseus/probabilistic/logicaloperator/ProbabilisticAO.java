@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc="TODO", name = "Probabilistic", category={LogicalOperatorCategory.PROBABILISTIC})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "This Operator can be used to update the existence uncertainty information in the meta data part.", name = "Probabilistic", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class ProbabilisticAO extends UnaryLogicalOp {
 
 	/**
@@ -61,7 +61,7 @@ public class ProbabilisticAO extends UnaryLogicalOp {
 	 * @param attribute
 	 *            The attribute
 	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true, doc = "The name of the attribute for the existence uncertainty.")
 	public final void setAttribute(final SDFAttribute attribute) {
 		this.attribute = attribute;
 	}

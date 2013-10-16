@@ -19,6 +19,14 @@ package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class LogicalOperatorCategory {
+public final class LogicalOperatorCategory {
+	/** The logical operator category for operators working with probabilistic values. */
 	public static final String PROBABILISTIC = "Probabilistic";
+
+	/**
+	 * Class constructor.
+	 * 
+	 */
+	private LogicalOperatorCategory() {
+	}
 }

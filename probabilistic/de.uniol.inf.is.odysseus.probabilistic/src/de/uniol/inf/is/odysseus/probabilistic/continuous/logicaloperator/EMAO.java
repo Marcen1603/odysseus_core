@@ -91,7 +91,7 @@ public class EMAO extends UnaryLogicalOp {
 	 * @param attributes
 	 *            The list of attributes
 	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false, doc = "The attributes to fit a distribution to")
 	public final void setAttributes(final List<SDFAttribute> attributes) {
 		this.attributes = attributes;
 	}
@@ -115,7 +115,7 @@ public class EMAO extends UnaryLogicalOp {
 	 * @param mixtures
 	 *            The number of Gaussian mixtures.
 	 */
-	@Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false)
+	@Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false, doc = "The number of mixture components.")
 	public final void setMixtures(final int mixtures) {
 		this.mixtures = mixtures;
 	}
@@ -136,7 +136,7 @@ public class EMAO extends UnaryLogicalOp {
 	 * @param iterations
 	 *            the iterations to set
 	 */
-	@Parameter(type = IntegerParameter.class, name = "ITERATIONS", optional = true)
+	@Parameter(type = IntegerParameter.class, name = "ITERATIONS", optional = true, doc = "The number of iterations (default: 1000).")
 	public final void setIterations(final int iterations) {
 		this.iterations = iterations;
 	}
@@ -157,7 +157,7 @@ public class EMAO extends UnaryLogicalOp {
 	 * @param threshold
 	 *            the threshold to set
 	 */
-	@Parameter(type = DoubleParameter.class, name = "THRESHOLD", optional = true)
+	@Parameter(type = DoubleParameter.class, name = "THRESHOLD", optional = true, doc = "The threshold for the loglikelyhood to terminate the fitting process (default: 10E-5).")
 	public final void setThreshold(final double threshold) {
 		this.threshold = threshold;
 	}
@@ -178,7 +178,7 @@ public class EMAO extends UnaryLogicalOp {
 	 * @param incremental
 	 *            The value of incremental fitting.
 	 */
-	@Parameter(type = BooleanParameter.class, name = "INCREMENTAL", optional = true)
+	@Parameter(type = BooleanParameter.class, name = "INCREMENTAL", optional = true, doc = "Reuse the existing model in each fitting process.")
 	public final void setIncremental(final boolean incremental) {
 		this.incremental = incremental;
 	}
@@ -200,7 +200,7 @@ public class EMAO extends UnaryLogicalOp {
 	 *            The predicate for model fitting.
 	 */
 	@Override
-	@Parameter(type = PredicateParameter.class, name = "PREDICATE", optional = true)
+	@Parameter(type = PredicateParameter.class, name = "PREDICATE", optional = true, doc = "The predicate to run a new fitting process.")
 	public final void setPredicate(@SuppressWarnings("rawtypes") final IPredicate predicate) {
 		super.setPredicate(predicate);
 	}

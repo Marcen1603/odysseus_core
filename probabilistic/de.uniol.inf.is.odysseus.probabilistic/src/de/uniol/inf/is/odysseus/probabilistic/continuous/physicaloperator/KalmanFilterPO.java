@@ -35,6 +35,8 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
+ * 
+ *         FIXME not fully working, have to handle the input and output right. Also no prediction is implemented yet
  * @param <T>
  */
 public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
@@ -48,10 +50,22 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	private KalmanFilter filter;
 
 	/**
+	 * 
 	 * Creates a new Kalman filter operator.
 	 * 
+	 * 
 	 * @param attributes
-	 *            The attribute positions
+	 *            The list of attributes
+	 * @param stateTransition
+	 *            The state transition matrix
+	 * @param control
+	 *            The control matrix
+	 * @param processNoise
+	 *            The process noise matrix
+	 * @param measurement
+	 *            The measurement matrix
+	 * @param measurementNoise
+	 *            The measurement noise matrix
 	 */
 	public KalmanFilterPO(final int[] attributes, final double[][] stateTransition, final double[][] control, final double[][] processNoise, final double[][] measurement, final double[][] measurementNoise) {
 		this.attributes = attributes;
