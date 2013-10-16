@@ -25,9 +25,11 @@ public final class ProbabilisticConstants {
 	/** Number of samples for the Genz algorithm. */
 	public static final int SAMPLES = 100;
 
-	/** Constants using in MEP functions. */
+	/** Maximum number of iterations for distribution fitting in MEP functions. */
 	public static final int MEP_MAX_ITERATIONS = 1000;
+	/** Threshold for distribution fitting in MEP functions. */
 	public static final double MEP_THRESHOLD = 10E-4;
+	/** Samples for distribution fitting in MEP functions. */
 	public static final int MEP_SAMPLES = 100;
 
 	/**

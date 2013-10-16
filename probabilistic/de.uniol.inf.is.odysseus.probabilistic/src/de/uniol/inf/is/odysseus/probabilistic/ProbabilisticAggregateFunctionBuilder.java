@@ -60,7 +60,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Class<? extends IStreamObject> getDatamodel() {
+	public final Class<? extends IStreamObject> getDatamodel() {
 		return ProbabilisticTuple.class;
 	}
 

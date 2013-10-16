@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
-import org.apache.commons.math3.distribution.fitting.MultivariateNormalMixtureExpectationMaximization;
 import org.apache.commons.math3.exception.ConvergenceException;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
@@ -29,7 +28,6 @@ import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.SingularMatrixException;
 import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.util.MathArrays;
 import org.apache.commons.math3.util.Pair;
@@ -66,14 +64,8 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * 
 	 * @param data
 	 *            Data to use in fitting procedure
-	 * @throws NotStrictlyPositiveException
-	 *             if data has no rows
-	 * @throws DimensionMismatchException
-	 *             if rows of data have different numbers of columns
-	 * @throws NumberIsTooSmallException
-	 *             if the number of columns in the data is less than 2
 	 */
-	public UnivariateNormalMixtureExpectationMaximization(double[][] data) throws NotStrictlyPositiveException, DimensionMismatchException, NumberIsTooSmallException {
+	public UnivariateNormalMixtureExpectationMaximization(final double[][] data) {
 		if (data.length < 1) {
 			throw new NotStrictlyPositiveException(data.length);
 		}
@@ -101,14 +93,8 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 *            Maximum iterations allowed for fit
 	 * @param threshold
 	 *            Convergence threshold computed as difference in logLikelihoods between successive iterations
-	 * @throws SingularMatrixException
-	 *             if any component's covariance matrix is singular during fitting
-	 * @throws NotStrictlyPositiveException
-	 *             if numComponents is less than one or threshold is less than Double.MIN_VALUE
-	 * @throws DimensionMismatchException
-	 *             if initialMixture mean vector and data number of columns are not equal
 	 */
-	public void fit(final MixtureMultivariateNormalDistribution initialMixture, final int maxIterations, final double threshold) throws SingularMatrixException, NotStrictlyPositiveException, DimensionMismatchException {
+	public final void fit(final MixtureMultivariateNormalDistribution initialMixture, final int maxIterations, final double threshold) {
 		if (maxIterations < 1) {
 			throw new NotStrictlyPositiveException(maxIterations);
 		}
@@ -233,12 +219,8 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * 
 	 * @param initialMixture
 	 *            Model containing initial values of weights and multivariate normals
-	 * @throws SingularMatrixException
-	 *             if any component's covariance matrix is singular during fitting
-	 * @throws NotStrictlyPositiveException
-	 *             if numComponents is less than one or threshold is less than Double.MIN_VALUE
 	 */
-	public void fit(MixtureMultivariateNormalDistribution initialMixture) throws SingularMatrixException, NotStrictlyPositiveException {
+	public final void fit(final MixtureMultivariateNormalDistribution initialMixture) {
 		fit(initialMixture, DEFAULT_MAX_ITERATIONS, DEFAULT_THRESHOLD);
 	}
 
@@ -252,16 +234,8 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * @param numComponents
 	 *            Number of components for estimated mixture
 	 * @return Multivariate normal mixture model estimated from the data
-	 * @throws NumberIsTooLargeException
-	 *             if {@code numComponents} is greater than the number of data rows.
-	 * @throws NumberIsTooSmallException
-	 *             if {@code numComponents < 2}.
-	 * @throws NotStrictlyPositiveException
-	 *             if data has less than 2 rows
-	 * @throws DimensionMismatchException
-	 *             if rows of data have different numbers of columns
 	 */
-	public static MixtureMultivariateNormalDistribution estimate(final double[][] data, final int numComponents) throws NotStrictlyPositiveException, DimensionMismatchException {
+	public static MixtureMultivariateNormalDistribution estimate(final double[][] data, final int numComponents) {
 		if (data.length < 2) {
 			throw new NotStrictlyPositiveException(data.length);
 		}
@@ -331,7 +305,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * 
 	 * @return Log likelihood of data or zero of no data has been fit
 	 */
-	public double getLogLikelihood() {
+	public final double getLogLikelihood() {
 		return logLikelihood;
 	}
 
@@ -340,7 +314,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * 
 	 * @return fitted model or {@code null} if no fit has been performed yet.
 	 */
-	public MixtureMultivariateNormalDistribution getFittedModel() {
+	public final MixtureMultivariateNormalDistribution getFittedModel() {
 		return new MixtureMultivariateNormalDistribution(fittedModel.getComponents());
 	}
 
@@ -383,7 +357,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 
 		/** {@inheritDoc} */
 		@Override
-		public boolean equals(Object other) {
+		public boolean equals(final Object other) {
 
 			if (this == other) {
 				return true;

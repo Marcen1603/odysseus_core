@@ -18,13 +18,13 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.filter.DefaultMeasurementModel;
 import org.apache.commons.math3.filter.DefaultProcessModel;
 import org.apache.commons.math3.filter.KalmanFilter;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -40,9 +40,11 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
 public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
 	/** The attribute positions. */
 	private final int[] attributes;
-
-	private final ProcessModel process;
-	private double[][] measurementNoise;
+	/** The process model. */
+	private final ProcessModel processModel;
+	/** The measurement model. */
+	private final MeasurementModel measurementModel;
+	/** The Kalman filter. */
 	private KalmanFilter filter;
 
 	/**
@@ -51,10 +53,17 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	 * @param attributes
 	 *            The attribute positions
 	 */
-	public KalmanFilterPO(final int[] attributes, double[][] stateTransition, double[][] control, double[][] processNoise, double[][] measurementNoise) {
+	public KalmanFilterPO(final int[] attributes, final double[][] stateTransition, final double[][] control, final double[][] processNoise, final double[][] measurement, final double[][] measurementNoise) {
 		this.attributes = attributes;
-		this.measurementNoise = measurementNoise;
-		this.process = new DefaultProcessModel(stateTransition, control, processNoise);
+		this.measurementModel = new DefaultMeasurementModel(measurement, measurementNoise);
+		if (control == null) {
+			this.processModel = new DefaultProcessModel(new Array2DRowRealMatrix(stateTransition), null, new Array2DRowRealMatrix(processNoise), null, null);
+
+		} else {
+			this.processModel = new DefaultProcessModel(stateTransition, control, processNoise);
+
+		}
+		this.filter = new KalmanFilter(this.processModel, this.measurementModel);
 	}
 
 	/**
@@ -66,14 +75,17 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	public KalmanFilterPO(final KalmanFilterPO<T> kalmanPO) {
 		super(kalmanPO);
 		this.attributes = kalmanPO.attributes.clone();
-		this.process = new DefaultProcessModel(kalmanPO.process.getStateTransitionMatrix().copy(), kalmanPO.process.getControlMatrix().copy(), kalmanPO.process.getProcessNoise().copy(), kalmanPO.process.getInitialStateEstimate().copy(), kalmanPO.process.getInitialErrorCovariance().copy());
+		this.measurementModel = new DefaultMeasurementModel(kalmanPO.measurementModel.getMeasurementMatrix().copy(), kalmanPO.measurementModel.getMeasurementNoise().copy());
+		this.processModel = new DefaultProcessModel(kalmanPO.processModel.getStateTransitionMatrix().copy(), kalmanPO.processModel.getControlMatrix().copy(), kalmanPO.processModel.getProcessNoise().copy(), kalmanPO.processModel.getInitialStateEstimate().copy(), kalmanPO.processModel
+				.getInitialErrorCovariance().copy());
+		this.filter = new KalmanFilter(this.processModel, this.measurementModel);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AbstractPipe.OutputMode getOutputMode() {
+	public final AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
@@ -81,17 +93,13 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void process_next(ProbabilisticTuple<T> object, int port) {
+	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
 		final NormalDistributionMixture[] distributions = object.getDistributions();
 		final ProbabilisticTuple<T> outputVal = object.clone();
 
 		final double[] value = new double[this.attributes.length];
 		for (int i = 0; i < this.attributes.length; i++) {
 			value[i] = ((Number) object.getAttribute(this.attributes[i])).doubleValue();
-		}
-		if (filter == null) {
-			MeasurementModel measurement = new DefaultMeasurementModel(MatrixUtils.createColumnRealMatrix(value).getData(), measurementNoise);
-			this.filter = new KalmanFilter(process, measurement);
 		}
 		this.filter.correct(value);
 
@@ -124,7 +132,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
+	public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
 		return new KalmanFilterPO<>(this);
 	}
 

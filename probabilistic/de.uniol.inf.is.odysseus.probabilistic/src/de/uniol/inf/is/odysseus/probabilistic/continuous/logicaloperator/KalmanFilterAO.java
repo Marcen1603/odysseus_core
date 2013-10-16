@@ -48,6 +48,8 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	private double[][] stateTransition;
 	/** The control matrix. */
 	private double[][] control;
+	/** The measurement matrix. */
+	private double[][] measurement;
 	/** The noise of the process. */
 	private double[][] processNoise;
 	/** The noise of the measurement. */
@@ -141,9 +143,6 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	 */
 	@GetParameter(name = "CONTROL")
 	public final double[][] getControl() {
-		if (this.control == null) {
-			return MatrixUtils.createColumnRealMatrix(new double[getAttributes().size()]).getData();
-		}
 		return this.control;
 	}
 
@@ -172,6 +171,30 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	}
 
 	/**
+	 * Sets the measurement for the Kalman correction.
+	 * 
+	 * @param measurement
+	 *            The measurement
+	 */
+	@Parameter(type = MatrixParameter.class, name = "MEASUREMENT", isList = false, optional = true)
+	public final void setMeasurement(final double[][] measurement) {
+		this.measurement = measurement;
+	}
+
+	/**
+	 * Gets the measurement for the Kalman correction.
+	 * 
+	 * @return The measurement
+	 */
+	@GetParameter(name = "MEASUREMENT")
+	public final double[][] getMeasurement() {
+		if (this.measurement == null) {
+			return MatrixUtils.createRealIdentityMatrix(getAttributes().size()).getData();
+		}
+		return this.measurement;
+	}
+
+	/**
 	 * Sets the measurement noise for the Kalman correction.
 	 * 
 	 * @param noise
@@ -190,7 +213,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	@GetParameter(name = "MEASUREMENTNOISE")
 	public final double[][] getMeasurementNoise() {
 		if (this.measurementNoise == null) {
-			return MatrixUtils.createColumnRealMatrix(new double[getAttributes().size()]).getData();
+			return MatrixUtils.createColumnRealMatrix(new double[1]).getData();
 		}
 		return this.measurementNoise;
 	}

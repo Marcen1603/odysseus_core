@@ -224,7 +224,6 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 		synchronized (this.expressions) {
 			for (int i = 0, d = 0; i < this.expressions.length; ++i) {
 				final Object[] values = new Object[this.variables[i].length];
-				int[] neededAttributes = new int[this.variables[i].length];
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					ProbabilisticTuple<T> obj = null;
 					if (lastObjectSize > this.variables[i][j].getObjectPosToUse()) {

@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-@SuppressWarnings({"all"})
+
 public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> implements Cloneable {
 
 	/** The logger. */
@@ -111,7 +111,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 		ProbabilisticTuple<? extends ITimeInterval> restricted = s.restrict(this.attributes, true);
 
 		// / REMOVE me (Data Sheet Distribution evaluation
-			super.insert(restricted);
+		super.insert(restricted);
 
 		// MultivariateNormalDistribution component = new MultivariateNormalDistribution(new double[] { ((Number) restricted.getAttribute(0)).doubleValue(),((Number) restricted.getAttribute(1)).doubleValue()}, new double[][] { { 4000000.0, 0.0 }, { 0.0, 4000000.0 } });
 		// components.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
@@ -127,7 +127,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 			try {
 				if ((!isIncremental()) || (getModel() == null)) {
 					MixtureMultivariateNormalDistribution newModel = MultivariateNormalMixtureExpectationMaximization.estimate(getData(), mixtures);
-				System.out.println("CREATE NEW MODEL");
+					System.out.println("CREATE NEW MODEL");
 					if (newModel != null) {
 						setModel(newModel);
 					}
@@ -406,7 +406,13 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 		return avg;
 	}
 
-	private MixtureMultivariateNormalDistribution estimateModel(MixtureMultivariateNormalDistribution initialMixture) {
+	/**
+	 * 
+	 * @param initialMixture
+	 *            The initial model
+	 * @return The estimated model
+	 */
+	private MixtureMultivariateNormalDistribution estimateModel(final MixtureMultivariateNormalDistribution initialMixture) {
 		double[][] data = getData();
 		final int n = data.length;
 		if (data.length < 1) {
@@ -417,6 +423,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 		final int numCols = data[0].length;
 		final int k = initialMixture.getComponents().size();
 
+		@SuppressWarnings("unused")
 		final int numMeanColumns = initialMixture.getComponents().get(0).getSecond().getMeans().length;
 
 		int numIterations = 0;

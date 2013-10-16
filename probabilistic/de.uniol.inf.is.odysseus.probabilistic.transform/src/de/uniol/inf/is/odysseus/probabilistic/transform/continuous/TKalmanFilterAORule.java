@@ -48,7 +48,7 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
 	 */
 	@Override
 	public final void execute(final KalmanFilterAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(), operator.getMeasurementNoise());
+		final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(), operator.getMeasurement(), operator.getMeasurementNoise());
 		this.defaultExecute(operator, filterPO, config, true, true);
 	}
 

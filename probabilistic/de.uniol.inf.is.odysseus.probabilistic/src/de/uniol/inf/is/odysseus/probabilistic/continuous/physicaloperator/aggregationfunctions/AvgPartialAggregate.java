@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ * @param <T>
  */
 public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	/** The sum value of the aggregate. */
