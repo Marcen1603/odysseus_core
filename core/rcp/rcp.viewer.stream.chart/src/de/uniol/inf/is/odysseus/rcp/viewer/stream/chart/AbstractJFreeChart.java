@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionManager;
@@ -46,16 +47,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardActionBarContributor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
@@ -85,6 +93,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private ChangeSelectedAttributesAction<T> changeAttributesAction;
 	private ChangeSettingsAction changeSettingsAction;
 	private String queryFileName = null;
+	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps.newHashMap();
 	
 	private List<IDashboardPartListener> listener = new ArrayList<>();
 
@@ -163,7 +172,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void chartSettingsChanged() {
 		fireDashboardChangedEvent();
-		reloadChart();	
+		reloadChartImpl();	
 	}
 
 	private void fireDashboardChangedEvent() {
@@ -315,7 +324,18 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> toSave = new HashMap<>();
+		
 		if (opened) {
+			Set<Integer> ports = getPorts();
+			for( Integer port : ports ) {
+				List<IViewableAttribute> choosenAttributes = getChoosenAttributes(port);
+				
+				for( IViewableAttribute choosenAttribute : choosenAttributes ) {
+					String key = port + "#" + choosenAttribute.getName();
+					toSave.put(key, "choosenAttribute");
+				}
+			}
+
 			for (MethodSetting ms : getChartSettings()) {
 				Object value = null;
 				try {
@@ -325,6 +345,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 				}
 				if (value != null) {
 					toSave.put(ms.getName(), value.toString());
+					System.err.println("Save: " + ms.getName() + " --> " + value.toString());
 				}
 			}
 		}
@@ -333,9 +354,27 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	@Override
 	public void onLoad(Map<String, String> saved) {
+		loadedChoosenAttributes.clear();
+		
 		for (Entry<String, String> values : saved.entrySet()) {
+			
+			String key = values.getKey();
+			
+			if( key.contains("#")) {
+				String[] splittedKey = key.split("#");
+				
+				Integer port = Integer.valueOf(splittedKey[0]);
+				String choosenAttribute = splittedKey[1];
+				
+				if( !loadedChoosenAttributes.containsKey(port)) {
+					loadedChoosenAttributes.put(port, Lists.<String>newArrayList());
+				}
+				loadedChoosenAttributes.get(port).add(choosenAttribute);
+			}
+			
 			String methodName = values.getKey();
 			String value = values.getValue();
+			System.err.println("Load: " + methodName + " --> " + value);
 			try {
 				for (MethodSetting ms : getChartSettings()) {
 					if (ms.getName().equals(methodName)) {
@@ -365,6 +404,24 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		initWithOperator(physicalRoots.iterator().next());
 		opened = true;
 	}
+	
+	@Override
+	protected void initConnection(IStreamConnection<IStreamObject<?>> streamConnection) {
+
+		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
+			int port = s.getSinkInPort();
+			List<String> preChoosenAttributesOfPort = loadedChoosenAttributes.get(port);
+			
+			this.viewSchema.put(port, new ViewSchema<T>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), port, preChoosenAttributesOfPort != null ? preChoosenAttributesOfPort : Lists.<String>newArrayList()));
+		}
+		
+		if (validate()) {
+			streamConnection.addStreamElementListener(this);
+			streamConnection.connect();
+			reloadChartImpl();
+			init();
+		}
+	}
 
 	@Override
 	public void onStop() {
@@ -389,25 +446,16 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		this.listener.remove(listener);
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getWorkbenchPart()
-	 */
 	@Override
 	public IWorkbenchPart getWorkbenchPart() {
 		return this.workbenchpart;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#setWorkbenchPart(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public void setWorkbenchPart(IWorkbenchPart workbenchpark) {
 		this.workbenchpart = workbenchpark;		
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getEditorActionBarContributor()
-	 */
 	@Override
 	public IDashboardActionBarContributor getEditorActionBarContributor() {
 		return null;

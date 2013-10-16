@@ -49,4 +49,16 @@ public class ViewableSDFAttribute extends AbstractViewableAttribute{
 		return tuple.getAttribute(this.index);		
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if( !(obj instanceof ViewableSDFAttribute)) {
+			return false;
+		}
+		if( obj == this ) {
+			return true;
+		}
+		ViewableSDFAttribute other = (ViewableSDFAttribute)obj;
+		
+		return other.attribute.equals(this.attribute);
+	}
 }

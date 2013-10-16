@@ -19,6 +19,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -43,10 +46,20 @@ public class ViewSchema<T> {
 		this.metadataSchema = metaSchema;
 		this.port = port;
 
-		init();
+		init(Lists.<String>newArrayList());
+	}
+	
+	public ViewSchema(SDFSchema outputSchema, SDFMetaAttributeList metaSchema, int port, List<String> preChoosenAttributes) {
+		Preconditions.checkNotNull(preChoosenAttributes, "List of previous chosen attributes must not be null!");
+		
+		this.outputSchema = outputSchema;
+		this.metadataSchema = metaSchema;
+		this.port = port;
+
+		init(preChoosenAttributes);
 	}
 
-	protected void init() {
+	protected void init(List<String> preChoosenAttributes) {
 		int index = 0;
 		for (SDFAttribute a : this.outputSchema) {
 			IViewableAttribute attribute = new ViewableSDFAttribute(a, outputSchema.getURI(), index, port);
@@ -55,10 +68,14 @@ public class ViewSchema<T> {
 			}
 			index++;
 		}
-		// add all (except of currently timestamps) to the list of pre-chosen attributes
+		
 		this.choosenAttributes = new ArrayList<IViewableAttribute>();
 		for(IViewableAttribute a : this.viewableAttributes){
-			if(chooseAsInitialAttribute(a.getSDFDatatype())){
+			if( !preChoosenAttributes.isEmpty() ) {
+				if( preChoosenAttributes.contains(a.getName()) && chooseAsInitialAttribute(a.getSDFDatatype())) {
+					this.choosenAttributes.add(a);
+				}
+			} else if(chooseAsInitialAttribute(a.getSDFDatatype())){
 				this.choosenAttributes.add(a);
 			}
 		}
@@ -73,9 +90,6 @@ public class ViewSchema<T> {
 				}
 			}
 		}
-		
-		
-
 	}
 
 	protected boolean chooseAsInitialAttribute(SDFDatatype sdfDatatype) {

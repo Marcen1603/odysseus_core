@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -35,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.IAttributesChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.AbstractViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.IChartSettingChangeable;
@@ -53,7 +53,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	private final Preferences preferences = ConfigurationScope.INSTANCE.getNode(MAIN_PREFERENCE_NODE);
 	private final Map<String, TableEditor> tableEditors = new HashMap<String, TableEditor>();
 
-	private IChartSettingChangeable changeable;
+	private AbstractJFreeChart dashboardPartChart;
 	
 	private Button saveAsDefaults;
 	private Button loadDefaults;
@@ -63,33 +63,55 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	private final List<IViewableAttribute> activatedAttributes = new ArrayList<IViewableAttribute>();
 	private final List<Button> tableChecks = new ArrayList<>();
 	
-	private IAttributesChangeable<?> attributesChangeable;
 	private Button selectAllButton;
 	private Button deselectAllButton;
 	private Table table;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init(AbstractJFreeChart dashboardPartToConfigure, Collection<IPhysicalOperator> roots ) {
-		changeable = dashboardPartToConfigure;
-		attributesChangeable = dashboardPartToConfigure;
+		dashboardPartChart = dashboardPartToConfigure;
 		
-		for (MethodSetting ms : this.changeable.getChartSettings()) {
+		for (MethodSetting ms : ((IChartSettingChangeable)this.dashboardPartChart).getChartSettings()) {
 			try {
-				currentValues.put(ms, ms.getGetter().invoke(this.changeable));
+				Object value = ms.getGetter().invoke(this.dashboardPartChart);
+				System.err.println("Init: " + ms.getName() + " --> " + value.toString());
+				currentValues.put(ms, value);
 			} catch (Exception e) {
 				LOG.error("Could not determine value", e);
 			}
 		}
 		
-		for (Integer port : attributesChangeable.getPorts()) {
-			for (IViewableAttribute att : attributesChangeable.getChoosenAttributes(port)) {
+		for (Integer port : getPorts()) {
+			for (IViewableAttribute att : getChoosenAttributes(port)) {
 				activatedAttributes.add(att);
 			}
 		}
+		
+		try {
+			dashboardPartChart.onStart(roots);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	private List<IViewableAttribute> getChoosenAttributes(int port) {
+		return dashboardPartChart.getChoosenAttributes(port);
+	}
+	
+	@SuppressWarnings({ "unchecked" })
+	private Set<Integer> getPorts() {
+		return dashboardPartChart.getPorts();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<IViewableAttribute> getViewableAttributes(int port) {
+		return dashboardPartChart.getViewableAttributes(port);
 	}
 	
 	protected final IChartSettingChangeable getChangeable() {
-		return changeable;
+		return dashboardPartChart;
 	}
 
 	@Override
@@ -112,7 +134,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		selectAllButton = new Button(labelTextComposite, SWT.PUSH);
 		selectAllButton.setText("Select all");
 		deselectAllButton = new Button(labelTextComposite, SWT.PUSH);
-		deselectAllButton.setText("Select all");
+		deselectAllButton.setText("Deselect all");
 
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -141,19 +163,20 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		col1.setWidth(416);
 
 		TableColumn col2 = new TableColumn(table, SWT.CENTER);
-		col2.setText("visible");
+		col2.setText("Visible");
 		col2.setWidth(200);
 
 		table.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		tableChecks.clear();
-		for (Integer port : this.attributesChangeable.getPorts()) {
-			for (IViewableAttribute a : this.attributesChangeable.getViewableAttributes(port)) {
+		for (Integer port : getPorts()) {
+			for (IViewableAttribute a : getViewableAttributes(port)) {
 				TableItem item = new TableItem(table, SWT.NONE);
 				Button check = new Button(table, SWT.CHECK);
 				check.setData(a);
-				check.setSelection(this.activatedAttributes.contains(a));
+				boolean isSelected = this.activatedAttributes.contains(a);
+				check.setSelection(isSelected);
 				check.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -180,12 +203,13 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		mainComposite.layout();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void updateSelectedAttributes() {
 		Map<Integer, List<IViewableAttribute>> attr = AbstractViewableAttribute.getAttributesAsPortMapList(activatedAttributes);
 		for (Entry<Integer, List<IViewableAttribute>> e : attr.entrySet()) {
-			attributesChangeable.setChoosenAttributes(e.getKey(), e.getValue());
+			dashboardPartChart.setChoosenAttributes(e.getKey(), e.getValue());
 		}
-		attributesChangeable.chartSettingsChanged();				
+		dashboardPartChart.chartSettingsChanged();				
 	}
 
 	private void changeAttributeSelection(boolean select) {
@@ -305,7 +329,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	
 	private void createDropDownField(Table table, TableItem item, final Entry<MethodSetting, Object> entry) {
 		try {
-			List<?> liste = (List<?>) entry.getKey().getListGetter().invoke(this.changeable);
+			List<?> liste = (List<?>) entry.getKey().getListGetter().invoke(this.dashboardPartChart);
 			String name = item.getText();
 			final CCombo combo = new CCombo(table, SWT.READ_ONLY);
 			combo.computeSize(SWT.DEFAULT, table.getItemHeight());
@@ -406,18 +430,18 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 			
 			if(paramType.equals(Double.class) || paramType.equals(double.class)){
 				Double d = Double.parseDouble(val);
-				ms.getSetter().invoke(this.changeable, d);
+				ms.getSetter().invoke(this.dashboardPartChart, d);
 			}else if(paramType.equals(Integer.class) || paramType.equals(int.class)){
 				Integer d = Integer.parseInt(val);
-				ms.getSetter().invoke(this.changeable, d);
+				ms.getSetter().invoke(this.dashboardPartChart, d);
 			}else if(paramType.equals(Boolean.class) || paramType.equals(boolean.class)){
 				Boolean d = Boolean.getBoolean(val);
-				ms.getSetter().invoke(this.changeable, d);
+				ms.getSetter().invoke(this.dashboardPartChart, d);
 			}else{
-				ms.getSetter().invoke(this.changeable, val);
+				ms.getSetter().invoke(this.dashboardPartChart, val);
 			}
 		} else {
-			ms.getSetter().invoke(this.changeable, ob);
+			ms.getSetter().invoke(this.dashboardPartChart, ob);
 		}
 	}
 	

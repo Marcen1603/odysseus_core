@@ -105,9 +105,6 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		} else if (this.timeinputgranularity.equals(TIME_PICO)) {
 			this.timefactor = 1000000000;
 		}
-
-		min = Double.NaN;
-		max = Double.NaN;
 	}
 
 	@Override

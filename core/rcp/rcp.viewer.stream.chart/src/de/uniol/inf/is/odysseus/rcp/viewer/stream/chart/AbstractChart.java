@@ -26,13 +26,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
@@ -55,6 +53,8 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		this.connection = createConnection(observingOperator);
 		initConnection(connection);
 	}
+	
+	protected abstract void initConnection(IStreamConnection<IStreamObject<?>> connection);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static IStreamConnection<IStreamObject<?>> createConnection(IPhysicalOperator operator) {
@@ -64,16 +64,11 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		return new DefaultStreamConnection(operator);
 	}
 
-	protected void initConnection(IStreamConnection<IStreamObject<?>> streamConnection) {
-
-		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
-			this.viewSchema.put(s.getSinkInPort(), new ViewSchema<T>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
-		}
-		if (validate()) {
-			streamConnection.addStreamElementListener(this);
-			streamConnection.connect();
+	protected void reloadChartImpl() {
+		try {
 			reloadChart();
-			init();
+		} catch( Throwable t ) {
+			// expected here
 		}
 	}
 
@@ -135,7 +130,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	@Override
 	public void setChoosenAttributes(int port, List<IViewableAttribute> choosenAttributes) {
 		this.viewSchema.get(port).setChoosenAttributes(choosenAttributes);
-		reloadChart();
+		reloadChartImpl();
 	}
 
 	@Override
