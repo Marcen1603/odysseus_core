@@ -1,9 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.distribution;
 
-import java.util.Map;
-
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
 /**
@@ -20,14 +16,14 @@ public interface IDataFragmentation {
 	/**
 	 * Inserts operators for fragmentation and data reunion into several copies of a logical plan to 
 	 * merge them.
-	 * @param logicalPlans A mapping of all origin logical plans to their query.
+	 * @param fragmentPlan An ADT-class, which provides the situation before a fragmentation.
 	 * @param numFragments The number of fragments.
 	 * @param numReplicates The number of replicates for each fragment.
 	 * @param parameters the {@link QueryBuildConfiguration}.
 	 * @param sourceName The name of the source to be fragmented.
 	 * @return An ADT-class, which provides the result of a fragmentation.
 	 */
-	public IFragmentPlan fragment(Map<ILogicalQuery, ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
+	public IFragmentPlan fragment(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName);
 
 }

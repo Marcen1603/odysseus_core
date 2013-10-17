@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.fragment;
 
-import java.util.Map;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
@@ -27,14 +25,14 @@ public class Replication extends AbstractDataFragmentation {
 	public static final String NAME = "replication";
 	
 	@Override
-	public IFragmentPlan fragment(Map<ILogicalQuery,ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
+	public IFragmentPlan fragment(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName) {
 		
 		// Preconditions
 		Preconditions.checkArgument(numFragments == 1);
 		Preconditions.checkArgument(numReplicates > 0);
 		
-		return super.fragment(logicalPlans, numFragments, numReplicates, parameters, sourceName);
+		return super.fragment(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
 		
 	}
 	

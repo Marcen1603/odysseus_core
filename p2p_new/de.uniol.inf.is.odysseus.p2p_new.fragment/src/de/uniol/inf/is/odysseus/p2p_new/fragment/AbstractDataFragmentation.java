@@ -42,18 +42,14 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	public abstract String getName();
 	
 	@Override
-	public IFragmentPlan fragment(Map<ILogicalQuery,ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
+	public IFragmentPlan fragment(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName) {
 		
 		// Preconditions
-		Preconditions.checkNotNull(logicalPlans);
-		Preconditions.checkArgument(logicalPlans.size() > 1);
+		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkArgument(numFragments > 0);
 		Preconditions.checkArgument(numReplicates > 0);
 		Preconditions.checkNotNull(parameters);
-		
-		// The return value
-		IFragmentPlan fragmentPlan = createFragmentPlan(logicalPlans);
 		
 		// Insert operator for fragmentation
 		fragmentPlan = insertOperatorForFragmentation(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
@@ -68,7 +64,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	/**
 	 * Creates a new fragment plan for the current fragmentation.
 	 */
-	protected IFragmentPlan createFragmentPlan(Map<ILogicalQuery, ILogicalOperator> logicalPlans) {
+	protected static IFragmentPlan createFragmentPlan(Map<ILogicalQuery, ILogicalOperator> logicalPlans) {
 		
 		Preconditions.checkNotNull(logicalPlans);
 		

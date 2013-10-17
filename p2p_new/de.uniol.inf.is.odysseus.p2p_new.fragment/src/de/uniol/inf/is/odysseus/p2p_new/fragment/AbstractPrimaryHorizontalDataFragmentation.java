@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.fragment;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.logicaloperator.ReplicationMergeAO;
@@ -31,14 +33,128 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	public abstract String getName();
 	
 	@Override
-	public IFragmentPlan fragment(Map<ILogicalQuery,ILogicalOperator> logicalPlans, int numFragments, int numReplicates, 
+	public IFragmentPlan fragment(IFragmentPlan fragmentPlan, int numFragments, int numReplicates, 
 			QueryBuildConfiguration parameters, String sourceName) {
 		
 		// Preconditions
 		Preconditions.checkArgument(numFragments > 1);
 		Preconditions.checkArgument(numReplicates > 0);
 		
-		return super.fragment(logicalPlans, numFragments, numReplicates, parameters, sourceName);
+		if(numReplicates > 1) {
+			
+			// Replication of each fragment
+			
+			// The fragment plans for each fragment before replication
+			Collection<IFragmentPlan> subFragmentPlansBeforeReplication = 
+					AbstractPrimaryHorizontalDataFragmentation.splitFragmentPlanPerFragment(fragmentPlan, numReplicates, numFragments);
+			
+			// The fragment plans for each fragment after replication
+			Collection<IFragmentPlan> subFragmentPlansAfterReplication = Lists.newArrayList();
+			for(IFragmentPlan subFragmentPlan : subFragmentPlansBeforeReplication)
+				subFragmentPlansAfterReplication.add(new Replication().fragment(subFragmentPlan, 1, numReplicates, parameters, null));
+			
+			fragmentPlan = AbstractPrimaryHorizontalDataFragmentation.mergeFragmentPlans(subFragmentPlansAfterReplication);
+			
+		}
+		
+		return super.fragment(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
+		
+	}
+	
+	/**
+	 * Splits an {@link IFragmentPlan} into several smaller {@link IFragmentPlan}s. <br />
+	 * NOTE: Neither splitting of fragmentation part nor splitting of reunion part
+	 * @param fragmentPlan The {@link IFragmentPlan} to be splitted.
+	 * @param numReplicates The number of replicates define the number of {@link ILogicalQuery}s per new {@link IFragmentPlan}.
+	 * @param numFragments The number of fragments define the number of new {@link IFragmentPlan}s.
+	 * @return <code>numFragments</code> new {@link IFragmentPlan}s with <code>numReplicates</code> {@link ILogicalQuery}s, 
+	 * but without any part of fragmentation or reunion.
+	 */
+	private static Collection<IFragmentPlan> splitFragmentPlanPerFragment(IFragmentPlan fragmentPlan, int numReplicates, int numFragments) {
+		
+		// Preconditions
+		Preconditions.checkNotNull(fragmentPlan);
+		Preconditions.checkArgument(numReplicates > 1);
+		Preconditions.checkArgument(numFragments > 1);
+		
+		// The return value
+		List<IFragmentPlan> fragmentPlans = Lists.newArrayList();
+		
+		// The operators before fragmentation for each new fragment plan
+		List<Map<ILogicalQuery, List<ILogicalOperator>>> operatorsBeforeFragmentation = Lists.newArrayList();
+		for(int i = 0; i < numFragments; i++)
+			operatorsBeforeFragmentation.add(new HashMap<ILogicalQuery, List<ILogicalOperator>>());
+		
+		// The operators after fragmentation for each new fragment plan.
+		List<Map<ILogicalQuery, List<ILogicalOperator>>> operatorsAfterFragmentation = Lists.newArrayList();
+		for(int i = 0; i < numFragments; i++)
+			operatorsAfterFragmentation.add(new HashMap<ILogicalQuery, List<ILogicalOperator>>());
+		
+		// Counter for the queries and the new fragment plans
+		int replicationNo = 0;
+		int fragmentNo = 0;
+		
+		for(ILogicalQuery query : fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet()) {
+			
+			operatorsBeforeFragmentation.get(fragmentNo).put(query, fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query));
+			operatorsAfterFragmentation.get(fragmentNo).put(query, fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query));
+			
+			if(replicationNo == numReplicates - 1) {
+				
+				replicationNo = 0;
+				fragmentNo++;
+				
+			} else replicationNo++;
+			
+		}
+		
+		for(int planNo = 0; planNo < numFragments; planNo++) {
+			
+			IFragmentPlan plan = new StandardFragmentPlan(operatorsBeforeFragmentation.get(planNo));
+			plan.getOperatorsPerLogicalPlanAfterFragmentation().clear();
+			plan.getOperatorsPerLogicalPlanAfterFragmentation().putAll(operatorsAfterFragmentation.get(planNo));			
+			fragmentPlans.add(plan);
+			
+		}
+		
+		return fragmentPlans;
+		
+	}
+	
+	/**
+	 * Merges several {@link IFragmentPlan}s to a single {@link IFragmentPlan}.
+	 * @param fragmentPlans A collection of {@link IFragmentPlan}s to be merged.
+	 */
+	private static IFragmentPlan mergeFragmentPlans(Collection<IFragmentPlan> fragmentPlans) {
+		
+		// Preconditions
+		Preconditions.checkNotNull(fragmentPlans);
+		
+		// The return value
+		IFragmentPlan fragmentPlan = null;
+		
+		for(IFragmentPlan plan : fragmentPlans) {
+			
+			if(fragmentPlan == null)
+				fragmentPlan = new StandardFragmentPlan(plan.getOperatorsPerLogicalPlanBeforeFragmentation());
+			else {
+				
+				for(ILogicalQuery query : plan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
+					
+					fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().clear();
+					fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().put(query, 
+							plan.getOperatorsPerLogicalPlanAfterFragmentation().get(query));
+					
+				}
+				
+			}
+			
+			fragmentPlan.getOperatorsOfFragmentationPart().addAll(plan.getOperatorsOfFragmentationPart());
+			fragmentPlan.getOperatorsOfReunionPart().addAll(plan.getOperatorsOfReunionPart());
+			
+		}
+		
+		return fragmentPlan;
 		
 	}
 
@@ -135,7 +251,8 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				// Look up, if there is another StreamAO for that source collected before.
 				// Keep only one StreamAO.
 				
-				Optional<ILogicalOperator> streamAO = this.searchStreamAO(operatorsForFragmentationPart, sourceName);
+				Optional<ILogicalOperator> streamAO = 
+						AbstractPrimaryHorizontalDataFragmentation.searchStreamAO(operatorsForFragmentationPart, sourceName);
 				ILogicalOperator operatorForFragmentation = null;
 				
 				if(!streamAO.isPresent()) {
@@ -205,7 +322,8 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				// Look up, if there is another WindowAO for that source collected before.
 				// Keep only one WindowAO.
 				
-				Optional<ILogicalOperator> windowAO = this.searchWindowAO(operatorsForFragmentationPart, sourceName);
+				Optional<ILogicalOperator> windowAO = 
+						AbstractPrimaryHorizontalDataFragmentation.searchWindowAO(operatorsForFragmentationPart, sourceName);
 				ILogicalOperator operatorForFragmentation = null;
 				
 				if(!windowAO.isPresent()) {
@@ -252,7 +370,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	 * @param sourceName The name of a source.
 	 * @return The {@link WindowAO} for <code>sourceName</code>, if <code>operatorsForFragmentationPart</code> contains one.
 	 */
-	private Optional<ILogicalOperator> searchWindowAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
+	private static Optional<ILogicalOperator> searchWindowAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
 		
 		// The return value
 		Optional<ILogicalOperator> windowAO = Optional.absent();
@@ -280,7 +398,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	 * @param sourceName The name of a source.
 	 * @return The {@link StreamAO} for <code>sourceName</code>, if <code>operatorsForFragmentationPart</code> contains one.
 	 */
-	private Optional<ILogicalOperator> searchStreamAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
+	private static Optional<ILogicalOperator> searchStreamAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
 		
 		// The return value
 		Optional<ILogicalOperator> streamAO = Optional.absent();

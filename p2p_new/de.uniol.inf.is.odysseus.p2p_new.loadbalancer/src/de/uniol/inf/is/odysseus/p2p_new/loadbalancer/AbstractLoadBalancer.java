@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.QueryPart;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.FragmentationHelper;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.Replication;
+import de.uniol.inf.is.odysseus.p2p_new.fragment.StandardFragmentPlan;
 
 /**
  * An abstract implementation of a load balancer.
@@ -234,20 +235,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// A list of all copies of the query
 		List<ILogicalQuery> queryCopies = Lists.newArrayList();
 		
-		// A mapping of all logical plans to their queries
-		Map<ILogicalQuery,ILogicalOperator> logicalPlans = Maps.newHashMap();
-		
 		// A mapping of all operators to the copy they are part of.
 		Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap = Maps.newHashMap();
 		
 		// Make copies of the query
-		copyQueryAndCollectCopiesAndLogicalPlans(query, queryCopies, logicalPlans, 
-				operatorsToQueryCopyMap, degreeOfParallelism);
+		copyQueryAndCollectCopiesAndLogicalPlans(query, queryCopies, operatorsToQueryCopyMap, degreeOfParallelism);
 		
 		// Execute fragmentation strategy
 		Optional<IFragmentPlan> fragmentPlan = 
-				executeFragmentationStrategy(fragmentationStrategy, parameters, logicalPlans, 
-				operatorsToQueryCopyMap);
+				executeFragmentationStrategy(fragmentationStrategy, parameters, operatorsToQueryCopyMap);
 		
 		// Create source part and reunion part
 		Optional<QueryPart> dataReunionPart = Optional.absent();
@@ -290,19 +286,15 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * Makes copies of the origin query and collects both copies and the logical plans of the copies.
 	 * @param originQuery The query to be copied.
 	 * @param queryCopies A mutable, empty list of query copies. Will be filled.
-	 * @param logicalPlans A mutable, empty mapping of all origin logical plans to their query. 
-	 * Will be filled.
 	 * @param operatorsToCopyNoMap A mutable, empty mapping of all operators t o the copy they were 
 	 * belonging. Will be filled.
 	 * @param degreeOfParallelism The degree of parallelism is also the number of copies to make.
 	 */
 	protected void copyQueryAndCollectCopiesAndLogicalPlans(ILogicalQuery originQuery, 
-			List<ILogicalQuery> queryCopies, Map<ILogicalQuery,ILogicalOperator> logicalPlans, 
-			Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyNoMap, 
+			List<ILogicalQuery> queryCopies, Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyNoMap, 
 			int degreeOfParallelism) {
 		
 		Preconditions.checkNotNull(queryCopies);
-		Preconditions.checkNotNull(logicalPlans);
 		Preconditions.checkNotNull(originQuery);
 		Preconditions.checkArgument(degreeOfParallelism > 0);
 		Preconditions.checkNotNull(operatorsToQueryCopyNoMap);
@@ -317,7 +309,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
 			
 			queryCopies.add(queryCopy);
-			logicalPlans.put(queryCopy, queryCopy.getLogicalPlan());
 			operatorsToQueryCopyNoMap.put(queryCopy, (List<ILogicalOperator>) operators);		
 			
 		}
@@ -329,38 +320,34 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param fragmentationStrategy The pair of source name and fragmentation strategy for that source, 
 	 * if set.
 	 * @param parameters The {@link QueryBuildConfiguration}.
-	 * @param logicalPlans A mapping of all origin logical plans to their query.
 	 * @param operatorsToQueryCopyMap A mutable, empty mapping of all operators to the copy they were 
 	 * belonging. Will be changed.
 	 * @return An ADT-class, which provides the result of a fragmentation, if present.
 	 */
 	protected Optional<IFragmentPlan> executeFragmentationStrategy(
 			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, 
-			QueryBuildConfiguration parameters, Map<ILogicalQuery, ILogicalOperator> logicalPlans, 
-			Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap) {
+			QueryBuildConfiguration parameters, Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(parameters);
-		Preconditions.checkNotNull(logicalPlans);
-		Preconditions.checkArgument(!logicalPlans.isEmpty());
 		Preconditions.checkNotNull(operatorsToQueryCopyMap);
 		
-		// The fragment plan, if fragmented
-		Optional<IFragmentPlan> fragmentPlan = Optional.absent();
+		// The fragment plan
+		IFragmentPlan fragmentPlan = new StandardFragmentPlan(operatorsToQueryCopyMap);
 		
 		// TODO workaround till Odysseus-Skript is adapted
 		if(fragmentationStrategy.isPresent())
-			fragmentPlan = Optional.of(fragmentationStrategy.get().getE2().fragment(
-					logicalPlans, logicalPlans.size(), 1, parameters, fragmentationStrategy.get().getE1()));
-		else if(logicalPlans.size() > 1)
-			fragmentPlan = Optional.of(new Replication().fragment(logicalPlans, 1, logicalPlans.size(), parameters, null));
-		else return fragmentPlan;
+			fragmentPlan = fragmentationStrategy.get().getE2().fragment(
+					fragmentPlan, operatorsToQueryCopyMap.keySet().size(), 1, parameters, fragmentationStrategy.get().getE1());
+		else if(operatorsToQueryCopyMap.keySet().size() > 1)
+			fragmentPlan = new Replication().fragment(fragmentPlan, 1, operatorsToQueryCopyMap.keySet().size(), parameters, null);
+		else return Optional.absent();
 		
 		// Update  mapping of all operators to the copy they were belonging.
 		for(ILogicalQuery copy : operatorsToQueryCopyMap.keySet())
-			operatorsToQueryCopyMap.put(copy, fragmentPlan.get().getOperatorsPerLogicalPlanAfterFragmentation().get(copy));
+			operatorsToQueryCopyMap.put(copy, fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(copy));
 		
-		return fragmentPlan;
+		return Optional.of(fragmentPlan);
 		
 	}
 	
