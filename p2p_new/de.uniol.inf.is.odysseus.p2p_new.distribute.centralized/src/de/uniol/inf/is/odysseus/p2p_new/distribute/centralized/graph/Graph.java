@@ -54,6 +54,9 @@ public class Graph {
 				nodesGroupedByOpType.put(gn.getOperatorType(), list);
 			}
 		}
+		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
+			System.out.println("GraphNodeID:" + gn.getOperatorID() + ", OperatorType: " + gn.getOperatorType() + ", OperatorHash: " + gn.getOperator().hashCode());
+		}
 		this.createConnections(nodesGroupedByOpType);
 	}
 
@@ -143,12 +146,21 @@ public class Graph {
 				IPhysicalOperator o = gn.getOperator();
 				if(gn.isSink()) {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscriber<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscribedToSource()) {
-						gn.subscribeToSource(this.getGraphNode(sub.getTarget()),sub.getSinkInPort(),sub.getSourceOutPort(),sub.getSchema());
+						GraphNode sourceNode = this.getGraphNode(sub.getTarget());
+						// GraphNode must be in this graph, even if the operator is connected to other sources as well
+						if(sourceNode != null) {
+							gn.subscribeToSource(sourceNode,sub.getSinkInPort(),sub.getSourceOutPort(),sub.getSchema());
+						}
 					}
 				}
 				if(gn.isSource()) {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscribable<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscriptions()) {
-						gn.subscribeSink(this.getGraphNode(sub.getTarget()),sub.getSinkInPort(),sub.getSourceOutPort(),sub.getSchema());
+						System.out.println("Trying to connect sink-GN" + sub.getTarget().hashCode() + " with GN" + gn.getOperatorID());
+						GraphNode sinkNode = this.getGraphNode(sub.getTarget());
+						// GraphNode must be in this graph, even if the operator is connected to other sinks as well
+						if(sinkNode != null) {
+							gn.subscribeSink(sinkNode,sub.getSinkInPort(),sub.getSourceOutPort(),sub.getSchema());
+						}
 					}
 				}
 			}

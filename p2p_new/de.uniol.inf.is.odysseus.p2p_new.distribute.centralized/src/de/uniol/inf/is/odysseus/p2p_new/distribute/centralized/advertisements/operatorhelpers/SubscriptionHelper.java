@@ -41,10 +41,10 @@ public class SubscriptionHelper {
 				sourceSubs.put(o.hashCode(),((ISink)o).getSubscribedToSource());
 			}
 			if(!sourceSubs.isEmpty()) {
-				result.appendChild(result.createElement(SOURCESUBSCRIPTIONS_TAG,createSubscriptionStatements(sourceSubs,mimeType)));
+				result.appendChild(result.createElement(SOURCESUBSCRIPTIONS_TAG,createSubscriptionStatements(sourceSubs,mimeType).toString()));
 			}
 			if(!sinkSubs.isEmpty()) {
-				result.appendChild(result.createElement(SINKSUBSCRIPTIONS_TAG,createSubscriptionStatements(sourceSubs,mimeType)));
+				result.appendChild(result.createElement(SINKSUBSCRIPTIONS_TAG,createSubscriptionStatements(sourceSubs,mimeType).toString()));
 			}
 		}
 		return result;
@@ -58,11 +58,11 @@ public class SubscriptionHelper {
 			for(ISubscription sub : entry.getValue()) {
 				// use the hash of the current operator and of the target as IDs. If the operators are transferred,
 				// this hash will be used for its id as well and associated with the new operator during reconstruction
-				result.appendChild(result.createElement(SUBSCRIPTION_ORIGIN, originatingOperatorId));
-				result.appendChild(result.createElement(SUBSCRIPTION_TARGET, sub.getTarget().hashCode()));
-				result.appendChild(result.createElement(SUBSCRIPTION_SINKINPORT, sub.getSinkInPort()));
-				result.appendChild(result.createElement(SUBSCRIPTION_SOURCEOUTPORT, sub.getSourceOutPort()));
-				result.appendChild(result.createElement(SUBSCRIPTION_SCHEMA, SchemaHelper.createOutputSchemaStatement(sub.getSchema(), mimeType)));
+				result.appendChild(result.createElement(SUBSCRIPTION_ORIGIN, Integer.toString(originatingOperatorId)));
+				result.appendChild(result.createElement(SUBSCRIPTION_TARGET, Integer.toString(sub.getTarget().hashCode())));
+				result.appendChild(result.createElement(SUBSCRIPTION_SINKINPORT, Integer.toString(sub.getSinkInPort())));
+				result.appendChild(result.createElement(SUBSCRIPTION_SOURCEOUTPORT, Integer.toString(sub.getSourceOutPort())));
+				result.appendChild(result.createElement(SUBSCRIPTION_SCHEMA, SchemaHelper.createOutputSchemaStatement(sub.getSchema(), mimeType).toString()));
 			}
 		}
 		return result;

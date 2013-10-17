@@ -40,6 +40,8 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	private static final String PLANINTERSECTIONS_TAG = "planIntersections";
 	private static final String SHARED_QUERY_ID_TAG = "sharedQueryID";
 	private static final String ADVERTISEMENT_TYPE = "jxta:PhysicalQueryPartAdvertisement";
+	
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 
 	private ID id;
 	private ID sharedQueryID;
@@ -151,7 +153,7 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 			IPhysicalOperatorHelper<?> gen = HelperProvider.getInstance().getPhysicalOperatorHelper(o);
 			if(gen != null) {
 				// use the class of the operator as a tag, in order to get the right Helper on the other side to re-assemble it
-				appendElement(doc,gen.getOperatorClass().toString(),gen.generateStatement(o,asMimeType,false));
+				appendElement(doc,gen.getOperatorClass().getName().toString(),gen.generateStatement(o,asMimeType,false).toString());
 			}
 		}
 		setNewOperatorsStatement(doc);
@@ -164,8 +166,7 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 
 	@Override
 	public String[] getIndexFields() {
-		// TODO Auto-generated method stub
-		return null;
+		return INDEX_FIELDS;
 	}
 	
 	public static String getAdvertisementType() {

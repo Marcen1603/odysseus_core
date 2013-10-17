@@ -273,4 +273,44 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 
 	}
 
+	public int getStartTimestampYearPos() {
+		return startTimestampYearPos;
+	}
+
+	public int getStartTimestampMonthPos() {
+		return startTimestampMonthPos;
+	}
+
+	public int getStartTimestampDayPos() {
+		return startTimestampDayPos;
+	}
+
+	public int getStartTimestampHourPos() {
+		return startTimestampHourPos;
+	}
+
+	public int getStartTimestampMinutePos() {
+		return startTimestampMinutePos;
+	}
+
+	public int getStartTimestampSecondPos() {
+		return startTimestampSecondPos;
+	}
+
+	public int getStartTimestampMillisecondPos() {
+		return startTimestampMillisecondPos;
+	}
+
+	public int getFactor() {
+		return factor;
+	}
+
+	public boolean isClearEnd() {
+		return clearEnd;
+	}
+
+	public TimeZone getTimezone() {
+		return timezone;
+	}
+
 }

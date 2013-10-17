@@ -31,12 +31,12 @@ public abstract class AbstractPhysicalOperatorHelper<T extends IPhysicalOperator
 		this.jxtaStartup = startupJxtaConnections;
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		// We need some way of distinguishing the operators, just for the purpose of reconnecting them later. The hashcode will do.
-		result.appendChild(result.createElement(OPERATOR_ID_TAG, o.hashCode()));
+		result.appendChild(result.createElement(OPERATOR_ID_TAG, Integer.toString(o.hashCode())));
 		// The schema of the operator has to be determined
 		if(o.getOutputSchema() != null) {
-			result.appendChild(result.createElement(OUTPUTSCHEMATA_TAG,SchemaHelper.createOutputSchemataStatement(o,mimeType)));
+			result.appendChild(result.createElement(OUTPUTSCHEMATA_TAG,SchemaHelper.createOutputSchemataStatement(o,mimeType).toString()));
 		}
-		result.appendChild(result.createElement(OPERATOR_CONTENT_TAG,createOperatorSpecificStatement(o,mimeType)));
+		result.appendChild(result.createElement(OPERATOR_CONTENT_TAG,createOperatorSpecificStatement(o,mimeType).toString()));
 		
 		return result;
 	}

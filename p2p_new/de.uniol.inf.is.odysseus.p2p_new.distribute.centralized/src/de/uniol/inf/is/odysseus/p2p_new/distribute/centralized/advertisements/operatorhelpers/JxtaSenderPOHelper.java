@@ -28,8 +28,8 @@ public class JxtaSenderPOHelper extends AbstractPhysicalOperatorHelper<JxtaSende
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		JxtaSenderPO<?> jpo = (JxtaSenderPO<?>)o;		
 		result.appendChild(result.createElement(PIPEID_TAG, jpo.getPipeID().toURI().toString()));
-		result.appendChild(result.createElement(JXTA_STARTUP_TAG, this.jxtaStartup));
-		result.appendChild(result.createElement(JXTA_USEUDP_TAG, jpo.isUseUDP()));
+		result.appendChild(result.createElement(JXTA_STARTUP_TAG, Boolean.toString(this.jxtaStartup)));
+		result.appendChild(result.createElement(JXTA_USEUDP_TAG, Boolean.toString(jpo.isUseUDP())));
 		return result;
 	}
 

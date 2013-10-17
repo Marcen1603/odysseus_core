@@ -92,8 +92,8 @@ public class GraphNode {
 			SDFSchema schema) {
 		Subscription<GraphNode> sub = new Subscription<GraphNode>(
 				source, sinkInPort, sourceOutPort, schema);
-		if (!this.sinkSubscriptions.contains(sub)) {
-			this.sinkSubscriptions.add(sub);
+		if (!this.sourceSubscriptions.contains(sub)) {
+			this.sourceSubscriptions.add(sub);
 			source.subscribeSink(this, sinkInPort, sourceOutPort, schema);
 		}
 

@@ -69,4 +69,8 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 		}
 		return false;
 	}
+
+	public IMetadataUpdater<M, T> getMetadataFactory() {
+		return metadataFactory;
+	}
 }

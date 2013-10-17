@@ -2,14 +2,13 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class HelperProvider {
 	private static HelperProvider instance = null;
-	private final Map<Class<? extends IPhysicalOperator>, IPhysicalOperatorHelper<? extends IPhysicalOperator>> helpers = Maps.newHashMap();
+	private final Map<String, IPhysicalOperatorHelper<? extends IPhysicalOperator>> helpers = Maps.newHashMap();
 
 	private HelperProvider() {
 		initialize();
@@ -17,22 +16,34 @@ public class HelperProvider {
 	
 	private void initialize() {
 		IPhysicalOperatorHelper<?> joinTIPOHelper = new JoinTIPOHelper();
-		helpers.put(joinTIPOHelper.getOperatorClass(), joinTIPOHelper);
+		helpers.put(joinTIPOHelper.getOperatorClass().getName(), joinTIPOHelper);
 		
 		IPhysicalOperatorHelper<?> receiverPOHelper = new ReceiverPOHelper();
-		helpers.put(receiverPOHelper.getOperatorClass(), receiverPOHelper);
+		helpers.put(receiverPOHelper.getOperatorClass().getName(), receiverPOHelper);
 		
 		IPhysicalOperatorHelper<?> relationalProjectPOHelper = new RelationalProjectPOHelper();
-		helpers.put(relationalProjectPOHelper.getOperatorClass(), relationalProjectPOHelper);
+		helpers.put(relationalProjectPOHelper.getOperatorClass().getName(), relationalProjectPOHelper);
 		
 		IPhysicalOperatorHelper<?> renamePOHelper = new RenamePOHelper();
-		helpers.put(renamePOHelper.getOperatorClass(), renamePOHelper);
+		helpers.put(renamePOHelper.getOperatorClass().getName(), renamePOHelper);
 		
 		IPhysicalOperatorHelper<?> selectPOHelper = new SelectPOHelper();
-		helpers.put(selectPOHelper.getOperatorClass(), selectPOHelper);
+		helpers.put(selectPOHelper.getOperatorClass().getName(), selectPOHelper);
 		
 		IPhysicalOperatorHelper<?> unionPOHelper = new UnionPOHelper();
-		helpers.put(unionPOHelper.getOperatorClass(), unionPOHelper);
+		helpers.put(unionPOHelper.getOperatorClass().getName(), unionPOHelper);
+		
+		IPhysicalOperatorHelper<?> metadataUpdatePOHelper = new MetadataUpdatePOHelper();
+		helpers.put(metadataUpdatePOHelper.getOperatorClass().getName(), metadataUpdatePOHelper);
+		
+		IPhysicalOperatorHelper<?> metadataCreationPOHelper = new MetadataCreationPOHelper();
+		helpers.put(metadataCreationPOHelper.getOperatorClass().getName(), metadataCreationPOHelper);
+		
+		IPhysicalOperatorHelper<?> jxtaSenderPOHelper = new JxtaSenderPOHelper();
+		helpers.put(jxtaSenderPOHelper.getOperatorClass().getName(), jxtaSenderPOHelper);
+		
+		IPhysicalOperatorHelper<?> jxtaReceiverPOHelper = new JxtaReceiverPOHelper();
+		helpers.put(jxtaReceiverPOHelper.getOperatorClass().getName(), jxtaReceiverPOHelper);
 	}
 	
 	public static HelperProvider getInstance() {
@@ -43,18 +54,14 @@ public class HelperProvider {
 	}
 	
 	public IPhysicalOperatorHelper<? extends IPhysicalOperator> getPhysicalOperatorHelper(IPhysicalOperator operator) {
-		Preconditions.checkNotNull(operator, "Operator mustn't be null");
-		
-		IPhysicalOperatorHelper<? extends IPhysicalOperator> h = helpers.get(operator.getClass());
-		return h;
+		if(operator == null) {
+			return null;
+		} else {
+			return this.getPhysicalOperatorHelper(operator.getClass().getName());
+		}
 	}
 	
 	public IPhysicalOperatorHelper<? extends IPhysicalOperator> getPhysicalOperatorHelper(String className) {
-		for(Class<?> c : helpers.keySet()) {
-			if(c.toString().equals(className)) {
-				return helpers.get(c);
-			}
-		}
-		return null;
+		return helpers.get(className);
 	}
 }

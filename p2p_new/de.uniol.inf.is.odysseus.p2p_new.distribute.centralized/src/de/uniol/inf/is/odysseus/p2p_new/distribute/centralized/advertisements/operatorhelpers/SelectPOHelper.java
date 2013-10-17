@@ -26,7 +26,7 @@ public class SelectPOHelper extends AbstractPhysicalOperatorHelper<SelectPO> {
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		SelectPO<?> spo = (SelectPO<?>)o;
 		IPredicate pred = spo.getPredicate();
-		result.appendChild(result.createElement(PREDICATE_TAG,PredicateHelper.generatePredicateStatement(pred, mimeType)));
+		result.appendChild(result.createElement(PREDICATE_TAG,PredicateHelper.generatePredicateStatement(pred, mimeType).toString()));
 		return result;
 	}
 

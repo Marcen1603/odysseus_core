@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +58,6 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	}
 	
 	public void serviceBound(Object o) {
-		LOG.debug("Someone called? Must be " + Arrays.toString(o.getClass().getInterfaces()));
 		for(Class<?> c : o.getClass().getInterfaces()) {
 			if(c.equals(IP2PDictionary.class)) {
 				LOG.debug("Found P2PDictionary");
@@ -116,10 +114,14 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender,
 			Advertisement a) {
+		if(a.getAdvType().equals("jxta:PhysicalQueryPartAdvertisement")) {
+			System.out.println("received an advertisement of type " + a.getAdvType());
+		}
 		if(processedAdvertisements.contains(a.getID())) {
 			//System.out.println("Discarded Advertisement " + a.getID().toString() + " of type " + a.getAdvType());
 			return;
 		}
+		
 		if(a instanceof PhysicalQueryPlanAdvertisement) {
 			PhysicalQueryPlanAdvertisement adv = (PhysicalQueryPlanAdvertisement) a;
 			// This node is the master and received a PhysicalQueryPlanAdvertisement intended for it
@@ -129,6 +131,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				// This means, that it should already have the connected operators attached to it
 				CentralizedDistributor.getInstance().setPhysicalPlan(adv.getPeerID(), adv.getOpObjects());
 				CentralizedDistributor.getInstance().updatePlanCostEstimateForPeer(adv.getPeerID(), adv.getOpObjects());
+				if(CentralizedDistributor.getInstance().getResourceUsageForPeer(adv.getPeerID()) == null) {
+					CentralizedDistributor.getInstance().setInitialResourceUsageForPeer(adv.getPeerID());
+				}
 			}
 		} else if (a instanceof MasterNotificationAdvertisement) {
 			MasterNotificationAdvertisement adv = (MasterNotificationAdvertisement) a;
@@ -144,7 +149,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) a;
 			// this node is a normal peer and received a physical query-part to place within the local plan
 			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
-
+				LOG.debug("Peer " + this.localID + " received a QueryPart for query " + adv.getSharedQueryID());
 				// Add the operators under the ID they were sent, because this is how the master knows them.
 				// Since master and peer hold their own objects, we have to keep things consistent
 				// and synchronize their references by the communicated IDs.
@@ -167,25 +172,27 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				//LOG.debug(adv.toString());
 				CentralizedDistributor.getInstance().updateResourceUsage(adv);
 			}
+		} else {
+			LOG.debug("I honestly have no idea what exactly this is, but someone sent me this: " + a.getAdvType());
 		}
 		processedAdvertisements.add(a.getID());
 	}
 
 	private void sendQueryPlanToMaster() {
-		final PhysicalQueryPlanAdvertisement adv = (PhysicalQueryPlanAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPlanAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
-		adv.setMasterPeerID(this.masterID);
-		adv.setPeerID(this.localID);
 		if(this.getExecutor() == null) {
 			LOG.debug("no executor!");
 			return;
 		} else if (this.getExecutor().getExecutionPlan() == null) {
 			LOG.debug("no executionPlan!");
 			return;
-		} else if (this.getExecutor().getExecutionPlan().getQueries() == null) {
-			LOG.debug("no queries in the plan");
-			return;
+		} else if (this.getExecutor().getExecutionPlan().getQueries() == null || this.getExecutor().getExecutionPlan().getQueries().isEmpty()) {
+			LOG.debug("no queries in the plan, sending the empty plan anyway to inform master of this peer's status");
 		}
+		final PhysicalQueryPlanAdvertisement adv = (PhysicalQueryPlanAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPlanAdvertisement.getAdvertisementType());
+		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setMasterPeerID(this.masterID);
+		adv.setPeerID(this.localID);
+
 		Collection<IPhysicalQuery> queries = this.getExecutor().getExecutionPlan().getQueries();
 		
 		Map<Integer,IPhysicalOperator> operators = CentralizedDistributor.getInstance().getOperatorPlans().get(this.localID);
@@ -207,6 +214,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	public void sendPhysicalPlanToPeer(SimulationResult r, ID sharedQueryID) {
 		final PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPartAdvertisement.getAdvertisementType());
+		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setPeerID(r.getPeer());
 		adv.setMasterPeerID(this.masterID);

@@ -34,15 +34,15 @@ public class ProtocolHandlerHelper {
 		if(protocolHandler instanceof AbstractProtocolHandler) {
 			AbstractProtocolHandler ph = (AbstractProtocolHandler)protocolHandler;
 			String direction = ph.getDirection().toString();
-			result.appendChild(result.createElement(DIRECTION_TAG,direction));
+			result.appendChild(result.createElement(DIRECTION_TAG,direction.toString()));
 			result.appendChild(result.createElement(PROTOCOL_HANDLER_NAME_TAG,ph.getName()));
-			result.appendChild(result.createElement(ACCESSPATTERN_TAG,ph.getAccess()));
+			result.appendChild(result.createElement(ACCESSPATTERN_TAG,ph.getAccess().toString()));
 			IDataHandler dh = ph.getDataHandler();
 			SDFSchema dataHandlerSchema = dh.getSchema();
 			List<String> supportedDataTypes = dh.getSupportedDataTypes();
 			String supportedDataTypesAsString = Arrays.toString(supportedDataTypes.toArray(new String[0]));
 			result.appendChild(result.createElement(DATAHANDLER_SUPPORTEDTYPES_TAG,supportedDataTypesAsString));
-			result.appendChild(result.createElement(DATAHANDLER_SCHEMA_TAG,SchemaHelper.createOutputSchemaStatement(dataHandlerSchema, mimeType)));
+			result.appendChild(result.createElement(DATAHANDLER_SCHEMA_TAG,SchemaHelper.createOutputSchemaStatement(dataHandlerSchema, mimeType).toString()));
 			result.appendChild(result.createElement(OPTIONS_TAG,ph.getOptionsMap().toString()));
 		}
 		return result;

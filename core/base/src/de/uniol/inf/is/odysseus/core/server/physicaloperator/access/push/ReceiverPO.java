@@ -159,8 +159,9 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		}
 		@SuppressWarnings("rawtypes")
 		ReceiverPO bbrpo = (ReceiverPO) ipo;
-		if (this.objectHandler.equals(bbrpo.objectHandler)
-				&& this.accessHandler.equals(bbrpo.accessHandler)) {
+		if (this.objectHandler.getName().equals(bbrpo.objectHandler.getName())
+				&& this.accessHandler.equals(bbrpo.accessHandler)
+				&& this.protocolHandler.isSemanticallyEqual(bbrpo.getProtocolHandler())) {
 			return true;
 		}
 		return false;

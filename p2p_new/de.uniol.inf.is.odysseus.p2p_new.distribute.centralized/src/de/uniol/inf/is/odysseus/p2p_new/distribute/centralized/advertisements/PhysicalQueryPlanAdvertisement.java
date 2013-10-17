@@ -171,7 +171,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			IPhysicalOperatorHelper<?> gen = HelperProvider.getInstance().getPhysicalOperatorHelper(o);
 			if(gen != null) {
 				// use the class of the operator as a tag, in order to get the right Helper on the other side to re-assemble it
-				appendElement(doc,gen.getOperatorClass().toString(),gen.generateStatement(o,asMimeType,false));
+				appendElement(doc,gen.getOperatorClass().getName().toString(),gen.generateStatement(o,asMimeType,false));
 			}
 		}
 		setOperators(doc);

@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
@@ -45,7 +46,6 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private static CentralizedDistributor instance;
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributor.class);
-	private ICostModel<IPhysicalOperator> costModel = null;
 	protected IQueryOptimizer queryOptimizer = null;
 	private Map<PeerID,ResourceUsage> resourceUsages = new HashMap<PeerID,ResourceUsage>();
 	private Map<PeerID,ICost<IPhysicalOperator>> planCostEstimates =  new HashMap<PeerID,ICost<IPhysicalOperator>>();
@@ -88,7 +88,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					this.getExecutor(),
 					q,
 					new OptimizationConfiguration(parameters),
-					this.getExecutor().getDataDictionary(null)).getAllOperators());
+					this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant())).getAllOperators());
 			newOperators.add(originalPlan);
 			// after the first run through the queryOptimizer, the logical query should have alternative plans,
 			// the first one being the original one
@@ -100,7 +100,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 						this.getExecutor(),
 						q,
 						new OptimizationConfiguration(parameters),
-						this.getExecutor().getDataDictionary(null)).getAllOperators());
+						this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant())).getAllOperators());
 				newOperators.add(tmp);
 			}
 			Map<Integer,List<ILogicalOperator>> requiredLogicalOpsForMaster = new HashMap<Integer, List<ILogicalOperator>>();
@@ -137,6 +137,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					JxtaReceiverAO receiverOp = new JxtaReceiverAO();
 					receiverOp.setPipeID(pipeID.toURI().toString());
 					receiverOp.setOutputSchema(schema);
+					receiverOp.setAssignedSchema(schema);
 					// no GraphNode for the receiver, because it goes to the master
 					// and thus has to find its way into the resulting query as a logical operator
 					newLogicalOps.add(receiverOp);
@@ -147,6 +148,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// simulate the whole plan once and determine if its costs are higher
 				// or lower than the placement of one of the alternative plans
 				SimulationResult result = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
+				if(result == null) {
+					LOG.debug("Couldn't find a non-overloaded peer to place the result");
+					return null;
+				}
 				if(result.getCost().compareTo(bestCost) < 0) {
 					bestResult = result;
 					bestCost = result.getCost();
@@ -175,6 +180,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				}
 				for(SimulationResult s : currentlyUnplaceable) {
 					SplitSimulationResult splitResult = splitGraph(s);
+					if(splitResult == null) {
+						LOG.debug("Can't place Query anywhere.");
+						return null;
+					}
 					Graph newGraph = splitResult.getSurplusNodes();
 					SimulationResult additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
 
@@ -376,7 +385,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	
 	public SimulationResult getMostPromisingPlacement(Graph baseGraph, List<PlanJunction> junctions, QueryBuildConfiguration parameters, List<PeerID> usedPeers) {
 		List<SimulationResult> bestResults = new ArrayList<SimulationResult>();
-		ICost<IPhysicalOperator> bestCost = this.costModel.getMaximumCost();
+		ICost<IPhysicalOperator> bestCost = this.getCostModel().getMaximumCost();
 		for(PeerID peer : getNonOverloadedPeers()) {
 			// skip peers, if they're already supposed to host a part of the query or if it's the master
 			if(usedPeers.contains(peer) || peer.toString().equals(manager.getMasterID().toString())) {
@@ -394,11 +403,16 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
 			Graph graphCopy = baseGraph.clone();
 			graphCopy.addPlan(operatorsOnPeer, false);
-
-			SimulationResult res = this.getQuerySharingSimulator().simulateQuerySharing(graphCopy, new OptimizationConfiguration(parameters));
+			SimulationResult res = null;
+			// only simulate on peers who actually have operators running on them
+			if(operatorsOnPeer.isEmpty()) {
+				res = new SimulationResult(graphCopy);
+			} else {
+				res = this.getQuerySharingSimulator().simulateQuerySharing(graphCopy, new OptimizationConfiguration(parameters));
+			}
 			res.setPeer(peer);
 			Map<Integer,IPhysicalOperator> mergedOps = res.getPlan(true);
-			res.setCost(costModel.estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
+			res.setCost(this.getCostModel().estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
 			if(res.getCost().compareTo(bestCost) < 0) {
 				bestCost = res.getCost();
 				bestResults.add(res);
@@ -462,7 +476,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		ResourceUsage ru = resourceUsages.get(peer);
 		double weightedUsage = ru.getOverallUsage();
 		ICost<IPhysicalOperator> costOfCurrentPlan = planCostEstimates.get(peer);
-		return CostConverter.calculateBearableCost(costOfCurrentPlan, weightedUsage, ru.getCOMBINED_THRESHOLD(), costModel);
+		return CostConverter.calculateBearableCost(costOfCurrentPlan, weightedUsage, ru.getCOMBINED_THRESHOLD(), this.getCostModel());
 	}
 	
 	public boolean isPlaceable(SimulationResult r) {
@@ -551,6 +565,18 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		ru.setTimestamp(adv.getTimestamp());
 		ru.setNetworkUsage(adv.getNetworkUsage());
 		resourceUsages.put(adv.getPeerID(), ru);
+	}
+	
+	public void setInitialResourceUsageForPeer(PeerID peerID) {
+		ResourceUsage ru = new ResourceUsage();
+		ru.setPeerID(peerID);
+		ru.setCpu_usage(0.0);
+		ru.setMem_free(Double.MAX_VALUE);
+		ru.setMem_used(0.0);
+		ru.setMem_total(Double.MAX_VALUE);
+		ru.setTimestamp(System.currentTimeMillis());
+		ru.setNetworkUsage(0.0);
+		resourceUsages.put(peerID, ru);
 	}
 	
 	public ResourceUsage getResourceUsageForPeer(PeerID peerID) {

@@ -119,6 +119,14 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		sb.append("]");
 		return sb.toString();
 	}
+
+	public SDFSchema getAssignedSchema() {
+		return assignedSchema;
+	}
+
+	public void setAssignedSchema(SDFSchema assignedSchema) {
+		this.assignedSchema = assignedSchema;
+	}
 	
 	
 }

@@ -30,7 +30,7 @@ public class SchemaHelper {
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		// Append the output-Schemata individually and tag them with the port number
 		for(Entry<Integer,SDFSchema> schemaEntry : o.getOutputSchemas().entrySet()) {
-			result.appendChild(result.createElement(schemaEntry.getKey(), createOutputSchemaStatement(schemaEntry.getValue(),mimeType)));
+			result.appendChild(result.createElement(Integer.toString(schemaEntry.getKey()), createOutputSchemaStatement(schemaEntry.getValue(),mimeType).toString()));
 		}
 		return result;
 	}
@@ -40,7 +40,7 @@ public class SchemaHelper {
 		
 		// OutputSchemata consist of Attributes, which are added one by one as found
 		for(SDFAttribute attribute : schema.getAttributes()) {
-			result.appendChild(result.createElement(ATTRIBUTE_TAG, createSDFAttributeStatement(attribute,mimeType)));
+			result.appendChild(result.createElement(ATTRIBUTE_TAG, createSDFAttributeStatement(attribute,mimeType).toString()));
 		}
 		// we need the URI as well
 		result.appendChild(result.createElement(OUTPUTSCHEMA_URI_TAG,schema.getURI()));
@@ -55,7 +55,7 @@ public class SchemaHelper {
 		// Attributes are defined by their names, the datatype and the name of the source
 		result.appendChild(result.createElement(ATTRIBUTE_SOURCENAME_TAG,attribute.getSourceName()));
 		result.appendChild(result.createElement(ATTRIBUTENAME_TAG,attribute.getAttributeName()));
-		result.appendChild(result.createElement(ATTRIBUTE_DATATYPE_TAG,attribute.getDatatype().getURI()));
+		result.appendChild(result.createElement(ATTRIBUTE_DATATYPE_TAG,attribute.getDatatype().getURI().toString()));
 		
 		return result;
 	}

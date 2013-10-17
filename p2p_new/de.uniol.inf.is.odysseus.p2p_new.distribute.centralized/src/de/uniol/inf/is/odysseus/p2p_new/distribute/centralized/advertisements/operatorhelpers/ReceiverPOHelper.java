@@ -28,10 +28,10 @@ public class ReceiverPOHelper extends AbstractPhysicalOperatorHelper<ReceiverPO>
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		ReceiverPO<?,?> rpo = (ReceiverPO<?,?>)o;
 		IProtocolHandler protHandler = rpo.getProtocolHandler();
-		result.appendChild(result.createElement(PROTOCOLHANDLER_TAG,ProtocolHandlerHelper.generateProtocolHandlerStatement(protHandler, mimeType)));
+		result.appendChild(result.createElement(PROTOCOLHANDLER_TAG,ProtocolHandlerHelper.generateProtocolHandlerStatement(protHandler, mimeType).toString()));
 		result.appendChild(result.createElement(TRANSPORTHANDLER_TAG,
 				TransportHandlerHelper.generateTransportHandlerStatement(
-						((AbstractProtocolHandler)protHandler).getTransportHandler(), mimeType)));
+						((AbstractProtocolHandler)protHandler).getTransportHandler(), mimeType).toString()));
 		return result;
 	}
 

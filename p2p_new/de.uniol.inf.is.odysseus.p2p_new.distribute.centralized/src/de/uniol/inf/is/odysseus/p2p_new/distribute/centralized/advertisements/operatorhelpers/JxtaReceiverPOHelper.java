@@ -28,7 +28,7 @@ public class JxtaReceiverPOHelper extends AbstractPhysicalOperatorHelper<JxtaRec
 		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
 		JxtaReceiverPO<?> jpo = (JxtaReceiverPO<?>)o;		
 		result.appendChild(result.createElement(PIPEID_TAG, jpo.getPipeID().toURI().toString()));
-		result.appendChild(result.createElement(JXTA_STARTUP_TAG, this.jxtaStartup));
+		result.appendChild(result.createElement(JXTA_STARTUP_TAG, Boolean.toString(this.jxtaStartup)));
 		return result;
 	}
 
