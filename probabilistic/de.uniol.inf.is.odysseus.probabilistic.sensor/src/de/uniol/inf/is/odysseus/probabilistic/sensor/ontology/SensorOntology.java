@@ -27,6 +27,7 @@ import com.hp.hpl.jena.ontology.BooleanClassDescription;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.Restriction;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -51,14 +52,13 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-
 import de.uniol.inf.is.odysseus.probabilistic.sensor.Activator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@SuppressWarnings({"all"})
+@SuppressWarnings({ "all" })
 public class SensorOntology {
 
     private static final String SOURCE = "http://purl.oclc.org/NET/ssnx/ssn";
@@ -218,37 +218,65 @@ public class SensorOntology {
             if (!ontClass.isAnon()) {
                 String label = ontClass.getLabel(null);
                 String comment = ontClass.getComment(null);
-                if (comment != null) {
-                    System.out.println(label + "\n\t" + comment + "...");
+                if (ontClass.getNameSpace().equalsIgnoreCase(SSN.NS)) {
+//                    if (comment != null) {
+//                        System.out.println("/** " + label + ": " + comment.replace("\n", "") + " */");
+//                    }
+//                    else {
+//                        System.out.println("/** " + label + ".*/");
+//                    }
+//                    System.out.println("public static final Resource " + ontClass.getLocalName() + " = m_model.createResource(NS + \"" + ontClass.getLocalName() + "\");");
                 }
-                else {
-                    System.out.println(label);
+                // System.out.println();
+            }
+        }
+        // list the asserted properties
+        ExtendedIterator<OntProperty> properties = ontologyModel.listOntProperties();
+        while (properties.hasNext()) {
+            OntProperty ontProperty = properties.next();
+            if (!ontProperty.isAnon()) {
+                String label = ontProperty.getLabel(null);
+                String comment = ontProperty.getComment(null);
+                if (ontProperty.getNameSpace().equalsIgnoreCase(DUL.NS)) {
+                    if (comment != null) {
+                        System.out.println("/** " + label + ": " + comment.replace("\n", "") + " */");
+                    }
+                    else {
+                        System.out.println("/** " + label + ".*/");
+                    }
+                    System.out.println("public static final Property " + ontProperty.getLocalName() + " = m_model.createProperty(NS + \"" + ontProperty.getLocalName() + "\");");
                 }
-                System.out.println();
+                // System.out.println();
             }
         }
         // m.write(System.out, "Turtle");
-        OntClass accuracy = ontologyModel.getOntClass(NS + "Accuracy");
-        OntClass frequency = ontologyModel.getOntClass(NS + "Frequency");
-        OntClass precision = ontologyModel.getOntClass(NS + "Precision");
-        OntClass resolution = ontologyModel.getOntClass(NS + "Resolution");
-        OntClass drift = ontologyModel.getOntClass(NS + "Drift");
-        OntClass latency = ontologyModel.getOntClass(NS + "Latency");
-        OntClass detectionLimit = ontologyModel.getOntClass(NS + "Detection Limit");
-        OntClass measurementRange = ontologyModel.getOntClass(NS + "Measurement Range");
-        OntClass responseTime = ontologyModel.getOntClass(NS + "Response Time");
-        OntClass sensitivity = ontologyModel.getOntClass(NS + "Sensitivity");
-        OntClass selectivity = ontologyModel.getOntClass(NS + "Selectivity");
-
-        OntClass measurementProperty = ontologyModel.getOntClass(NS + "MeasurementProperty");
-        OntClass sensingDevice = ontologyModel.getOntClass(NS + "SensingDevice");
-        OntClass sensor = ontologyModel.getOntClass(NS + "sensor");
-
-        Property hasMeasurementProperty = ontologyModel.getProperty(NS + "has measurement property");
-
-        sensorOntology.describeClass(System.out, accuracy);
-
-        sensorOntology.describeClass(System.out, sensingDevice);
+        // OntClass accuracy = ontologyModel.getOntClass(NS + "Accuracy");
+        // OntClass frequency = ontologyModel.getOntClass(NS + "Frequency");
+        // OntClass precision = ontologyModel.getOntClass(NS + "Precision");
+        // OntClass resolution = ontologyModel.getOntClass(NS + "Resolution");
+        // OntClass drift = ontologyModel.getOntClass(NS + "Drift");
+        // OntClass latency = ontologyModel.getOntClass(NS + "Latency");
+        // OntClass detectionLimit = ontologyModel.getOntClass(NS +
+        // "Detection Limit");
+        // OntClass measurementRange = ontologyModel.getOntClass(NS +
+        // "Measurement Range");
+        // OntClass responseTime = ontologyModel.getOntClass(NS +
+        // "Response Time");
+        // OntClass sensitivity = ontologyModel.getOntClass(NS + "Sensitivity");
+        // OntClass selectivity = ontologyModel.getOntClass(NS + "Selectivity");
+        //
+        // OntClass measurementProperty = ontologyModel.getOntClass(NS +
+        // "MeasurementProperty");
+        // OntClass sensingDevice = ontologyModel.getOntClass(NS +
+        // "SensingDevice");
+        // OntClass sensor = ontologyModel.getOntClass(NS + "sensor");
+        //
+        // Property hasMeasurementProperty = ontologyModel.getProperty(NS +
+        // "has measurement property");
+        //
+        // sensorOntology.describeClass(System.out, (OntClass) SSN.Accuracy);
+        //
+        // sensorOntology.describeClass(System.out, sensingDevice);
         // m.write(System.out, "Turtle");
         // Create a new query passing a String containing the RDQL to execute
 
@@ -257,25 +285,24 @@ public class SensorOntology {
         ModelMaker maker = ModelFactory.createFileModelMaker(root.getAbsolutePath());
 
         Model model = maker.openModel("sensors", false);
-        model.setNsPrefix("ssn", NS);
+        model.setNsPrefix("ssn", SSN.getURI());
         model.setNsPrefix("xsd", XSD.getURI());
         model.setNsPrefix("rdf", RDF.getURI());
         model.setNsPrefix("rdfs", RDFS.getURI());
         model.setNsPrefix("owl", OWL.getURI());
         // Turtle Format: FileUtils.langTurtle
 
-
         if (model.supportsTransactions()) {
             model.begin();
         }
 
-        Individual mySensor = ontologyModel.createIndividual("http://localhost/mysensor", sensingDevice);
-        model.add(mySensor, RDF.type, sensingDevice);
+        Individual mySensor = ontologyModel.createIndividual("http://localhost/mysensor", SSN.SensingDevice);
+        model.add(mySensor, RDF.type, SSN.SensingDevice);
 
-        Individual myAccurancy = ontologyModel.createIndividual("http://localhost/mysensor/accurancy", accuracy);
-        model.add(myAccurancy, RDF.type, accuracy);
+        Individual myAccurancy = ontologyModel.createIndividual("http://localhost/mysensor/accurancy", SSN.Accuracy);
+        model.add(myAccurancy, RDF.type, SSN.Accuracy);
         model.add(myAccurancy, OWL.hasValue, "1.0");
-        model.add(mySensor, hasMeasurementProperty, myAccurancy);
+        model.add(mySensor, SSN.hasMeasurementProperty, myAccurancy);
 
         if (model.supportsTransactions()) {
             model.commit();
@@ -288,15 +315,16 @@ public class SensorOntology {
         Reasoner wnReasoner = owlReasoner.bindSchema(ontologyModel);
 
         // Use the reasoner to create an inference model
-        InfModel infModel = ModelFactory.createInfModel(wnReasoner, model);
-        Query query = QueryFactory.create("SELECT     ?SensingDevice WHERE { ?SensingDevice  <http://www.w3.org/2001/vcard-rdf/3.0#FN>  \"Arduino\" }");
-        QueryExecution qExec = QueryExecutionFactory.create(query, infModel);
-        ResultSetFormatter.out(System.out, qExec.execSelect(), query);
-        model.write(System.out, FileUtils.langTurtle);
-        System.out.println(infModel.validate());
-        if (model.supportsTransactions()) {
-            model.close();
-        }
-        maker.close();
+        // InfModel infModel = ModelFactory.createInfModel(wnReasoner, model);
+        // Query query =
+        // QueryFactory.create("SELECT     ?SensingDevice WHERE { ?SensingDevice  <http://www.w3.org/2001/vcard-rdf/3.0#FN>  \"Arduino\" }");
+        // QueryExecution qExec = QueryExecutionFactory.create(query, infModel);
+        // ResultSetFormatter.out(System.out, qExec.execSelect(), query);
+        // model.write(System.out, FileUtils.langTurtle);
+        // System.out.println(infModel.validate());
+        // if (model.supportsTransactions()) {
+        // model.close();
+        // }
+        // maker.close();
     }
 }
