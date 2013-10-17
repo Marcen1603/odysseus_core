@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.fragment.logicaloperator.ReplicationMergeAO;
 
@@ -245,7 +246,12 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		
 	}
 
-	// TODO javaDoc
+	/**
+	 * Searches a {@link WindowAO} for a given source within a given collection of {@link ILogicalOperator}s.
+	 * @param operatorsForFragmentationPart A collection of {@link ILogicalOperator}s.
+	 * @param sourceName The name of a source.
+	 * @return The {@link WindowAO} for <code>sourceName</code>, if <code>operatorsForFragmentationPart</code> contains one.
+	 */
 	private Optional<ILogicalOperator> searchWindowAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
 		
 		// The return value
@@ -268,7 +274,12 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		
 	}
 
-	// TODO javaDoc
+	/**
+	 * Searches a {@link StreamAO} for a given source within a given collection of {@link ILogicalOperator}s.
+	 * @param operatorsForFragmentationPart A collection of {@link ILogicalOperator}s.
+	 * @param sourceName The name of a source.
+	 * @return The {@link StreamAO} for <code>sourceName</code>, if <code>operatorsForFragmentationPart</code> contains one.
+	 */
 	private Optional<ILogicalOperator> searchStreamAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
 		
 		// The return value
