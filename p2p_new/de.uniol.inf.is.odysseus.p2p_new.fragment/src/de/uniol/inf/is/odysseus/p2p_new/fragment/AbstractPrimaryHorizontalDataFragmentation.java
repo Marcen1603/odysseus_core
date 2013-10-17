@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -130,12 +131,22 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			if(operator instanceof StreamAO && 
 					((StreamAO) operator).getStreamname().getResourceName().equals(sourceName)) {
 				
-				operatorsForFragmentationPart.add(operator);
+				// Look up, if there is another StreamAO for that source collected before.
+				// Keep only one StreamAO.
 				
-				// The operator for fragmentation to be inserted.
-				// All sinks of the StreamAO will be subscribed to that new operator.
-				// For following WindowAOs other operators for fragmentation will be inserted additional.
-				ILogicalOperator operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
+				Optional<ILogicalOperator> streamAO = this.searchStreamAO(operatorsForFragmentationPart, sourceName);
+				ILogicalOperator operatorForFragmentation = null;
+				
+				if(!streamAO.isPresent()) {
+				
+					operatorsForFragmentationPart.add(operator);
+				
+					// The operator for fragmentation to be inserted.
+					// All sinks of the StreamAO will be subscribed to that new operator.
+					// For following WindowAOs other operators for fragmentation will be inserted additional.
+					operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
+					
+				}
 				
 				// True, if the StreamAO is only subscribed by WindowAOs
 				boolean onlySubscribedByWindows = true;
@@ -147,15 +158,25 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					
 					onlySubscribedByWindows = false;
 					operator.unsubscribeSink(subToSink);
-					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, 
+					
+					if(!streamAO.isPresent()) {
+						
+						operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, 
+								subToSink.getSchema());
+						
+					} else streamAO.get().subscribeSink(subToSink.getTarget(), 0, 0, 
 							subToSink.getSchema());
 					
 				}
 				
 				if(!onlySubscribedByWindows) {
 					
-					operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
-					operatorsForFragmentation.add(operatorForFragmentation);
+					if(!streamAO.isPresent()) {
+						
+						operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
+						operatorsForFragmentation.add(operatorForFragmentation);
+						
+					} else operator.subscribeSink(streamAO.get(), 0, 0, operator.getOutputSchema());
 					
 				}
 				
@@ -180,18 +201,34 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				if(!windowOfSourceToBeFragmented)
 					continue;
 				
-				operatorsForFragmentationPart.add(operator);
+				// Look up, if there is another WindowAO for that source collected before.
+				// Keep only one WindowAO.
 				
-				// The operator for fragmentation to be subscribed.
-				// All sinks of the WindowAO will be subscribed to that new operator.
-				ILogicalOperator operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
-				operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
-				operatorsForFragmentation.add(operatorForFragmentation);
+				Optional<ILogicalOperator> windowAO = this.searchWindowAO(operatorsForFragmentationPart, sourceName);
+				ILogicalOperator operatorForFragmentation = null;
+				
+				if(!windowAO.isPresent()) {
+					
+					operatorsForFragmentationPart.add(operator);
+					
+					// The operator for fragmentation to be subscribed.
+					// All sinks of the WindowAO will be subscribed to that new operator.
+					operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
+					operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
+					operatorsForFragmentation.add(operatorForFragmentation);
+					
+				} else operator.subscribeSink(windowAO.get(), 0, 0, operator.getOutputSchema());
 				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
 					operator.unsubscribeSink(subToSink);
-					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, 
+					
+					if(!windowAO.isPresent()) {
+						
+						operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, 
+								subToSink.getSchema());
+						
+					} else windowAO.get().subscribeSink(subToSink.getTarget(), 0, 0, 
 							subToSink.getSchema());
 					
 				}
@@ -208,6 +245,46 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		
 	}
 
+	// TODO javaDoc
+	private Optional<ILogicalOperator> searchWindowAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
+		
+		// The return value
+		Optional<ILogicalOperator> windowAO = Optional.absent();
+		
+		for(ILogicalOperator operator : operatorsForFragmentationPart) {
+			
+			for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+				
+				if(subToSource.getTarget() instanceof StreamAO && 
+						((StreamAO) subToSource.getTarget()).getStreamname().getResourceName().
+						equals(sourceName))
+					return Optional.of(operator);
+				
+			}
+			
+		}
+		
+		return windowAO;
+		
+	}
+
+	// TODO javaDoc
+	private Optional<ILogicalOperator> searchStreamAO(List<ILogicalOperator> operatorsForFragmentationPart, String sourceName) {
+		
+		// The return value
+		Optional<ILogicalOperator> streamAO = Optional.absent();
+		
+		for(ILogicalOperator operator : operatorsForFragmentationPart) {
+			
+			if(operator instanceof StreamAO && ((StreamAO) operator).getStreamname().getResourceName().equals(sourceName))
+				return Optional.of(operator);
+			
+		}
+		
+		return streamAO;
+		
+	}
+
 	/**
 	 * Subscribes operators for fragmentation, if a source was set by {@link #setSourceName(String)} 
 	 * and deletes the source access of the current logical plan represented by <code>operators</code>.
@@ -220,7 +297,8 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	 * @return The new status of the fragmentation.
 	 */
 	protected IFragmentPlan subscribeOperatorForFragmentation(IFragmentPlan fragmentPlan, 
-			String sourceName, ILogicalQuery query, int fragmentNo, List<ILogicalOperator> operatorsForFragmentation) {
+			String sourceName, ILogicalQuery query, int fragmentNo,  
+			List<ILogicalOperator> operatorsForFragmentation) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
