@@ -24,7 +24,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class DUL {
+public final class DUL {
 
     /**
      * <p>
@@ -60,7 +60,6 @@ public class DUL {
 
     // Vocabulary properties
     // /////////////////////////
-
     /**
      * has region: A relation between entities and regions, e.g. 'the number of
      * wheels of that truck is 12', 'the time of the experiment is August 9th,
@@ -1577,4 +1576,12 @@ public class DUL {
      * PhysicalAgent).
      */
     public static final Resource SocialAgent = m_model.createResource(NS + "SocialAgent");
+
+    /**
+     * Class constructor.
+     * 
+     */
+    private DUL() {
+
+    }
 }

@@ -24,7 +24,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SSN {
+public final class SSN {
     /**
      * <p>
      * The RDF model that holds the vocabulary terms
@@ -215,6 +215,64 @@ public class SSN {
      * which the system was deployed.
      */
     public static final Property deployedOnPlatform = m_model.createProperty(NS + "deployedOnPlatform");
+    /**
+     * in condition: Describes the prevailing environmental conditions for
+     * MeasurementCapabilites, OperatingConditions and SurvivalRanges. Used for
+     * example to say that a sensor has a particular accuracy in particular
+     * conditions. (see also MeasurementCapability)
+     */
+    public static final Property inCondition = m_model.createProperty(NS + "inCondition");
+    /** has input. */
+    public static final Property hasInput = m_model.createProperty(NS + "hasInput");
+    /**
+     * isProxyFor: A relation from a Stimulus to the Property that the Stimulus
+     * is serving as a proxy for. For example, the expansion of the quicksilver
+     * is a stimulus that serves as a proxy for temperature, or an increase or
+     * decrease in the spinning of cups on a wind sensor is serving as a proxy
+     * for wind speed.
+     */
+    public static final Property isProxyFor = m_model.createProperty(NS + "isProxyFor");
+    /**
+     * for property: A relation between some aspect of a sensing entity and a
+     * property. For example, from a sensor to the properties it can observe, or
+     * from a deployment to the properties it was installed to observe. Also
+     * from
+     * a measurement capability to the property the capability is described for.
+     * (Used in conjunction with ofFeature).
+     */
+    public static final Property forProperty = m_model.createProperty(NS + "forProperty");
+    /**
+     * observes: Relation between a Sensor and a Property that the sensor can
+     * observe.Note that, given the DUL modelling of Qualities, a sensor defined
+     * with 'observes only Windspeed' technically links the sensor to particular
+     * instances of Windspeed, not to the concept itself - OWL can't express
+     * concept-concept relations, only individual-individual. The property
+     * composition ensures that if an observation is made of a particular
+     * quality
+     * then one can infer that the sensor observes that quality.
+     */
+    public static final Property observes = m_model.createProperty(NS + "observes");
+    /**
+     * of feature: A relation between some aspect of a sensing entity and a
+     * feature. For example, from a sensor to the features it can observe
+     * properties of, or from a deployment to the features it was installed to
+     * observe. Also from a measurement capability to the feature the capability
+     * is described for. (Used in conjunction with forProperty).
+     */
+    public static final Property ofFeature = m_model.createProperty(NS + "ofFeature");
+    /**
+     * detects: A relation from a sensor to the Stimulus that the sensor can
+     * detect. The Stimulus itself will be serving as a proxy for (see
+     * isProxyOf) some observable property.
+     */
+    public static final Property detects = m_model.createProperty(NS + "detects");
+    /** has output. */
+    public static final Property hasOutput = m_model.createProperty(NS + "hasOutput");
+    /**
+     * is produced by: Relation between a producer and a produced entity: for
+     * example, between a sensor and the produced output.
+     */
+    public static final Property isProducedBy = m_model.createProperty(NS + "isProducedBy");
 
     // Vocabulary classes
     // /////////////////////////
@@ -484,6 +542,14 @@ public class SSN {
      * Platform for an attached sensor.
      */
     public static final Resource Platform = m_model.createResource(NS + "Platform");
+
     // Vocabulary individuals
     // /////////////////////////
+
+    /**
+     * Class constructor.
+     * 
+     */
+    private SSN() {
+    }
 }
