@@ -130,8 +130,9 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					// insert a receive and a send-operator
 					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 					JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
-					GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), true);
+					GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
 					SDFSchema schema = gn.getOperator().getOutputSchema();
+					LOG.debug("Trying to connect a jxtaSender-Node with GraphNode " + gn.getOperatorID() + "of type " + gn.getOperatorType());
 					baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
 
 					JxtaReceiverAO receiverOp = new JxtaReceiverAO();

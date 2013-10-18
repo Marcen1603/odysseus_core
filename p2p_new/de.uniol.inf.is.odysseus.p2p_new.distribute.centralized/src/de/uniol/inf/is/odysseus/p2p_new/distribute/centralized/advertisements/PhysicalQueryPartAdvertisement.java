@@ -1,8 +1,12 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,6 +28,7 @@ import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.StructuredDocumentFactory;
+import net.jxta.document.StructuredDocumentUtils;
 import net.jxta.document.TextElement;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
@@ -50,16 +55,17 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	// information about subscriptions between new operators and operators from the old plan
 	private List<PlanIntersection> intersections;
 	
-	private StructuredDocument<?> newOperatorsStatement;
-	private StructuredDocument<?> subscriptionsStatement;
-	private StructuredDocument<?> planIntersectionsStatement;
+	private StructuredDocument<? extends TextElement<?>> newOperatorsStatement;
+	private StructuredDocument<? extends TextElement<?>> subscriptionsStatement;
+	private StructuredDocument<? extends TextElement<?>> planIntersectionsStatement;
 	
-	private Map<Integer, IPhysicalOperator> queryPartOperatorObjects;
+	private Map<Integer, IPhysicalOperator> queryPartOperatorObjects = new HashMap<Integer, IPhysicalOperator>();
 
 	/**
 	 * This constructor rebuilds the Advertisement from the Document sent by another peer
 	 * @param root the document from which to re-create the Advertisement
 	 */
+	@SuppressWarnings("unchecked")
 	public PhysicalQueryPartAdvertisement(Element<?> root) {
 		if(root != null) {
 			root = (TextElement<?>) root;
@@ -74,46 +80,54 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 			if (elem.getName().equals(ID_TAG)) {
 				this.id = convertToID(elem.getTextValue());
 			} else if (elem.getName().equals(NEW_OPERATORS_TAG)) {
-				handleOperatorStatement(elem);
+				this.setNewOperatorsStatement(StructuredDocumentUtils.copyAsDocument(elem));
+				//System.out.println(this.getNewOperatorsStatement().toString());
 			} else if (elem.getName().equals(PEER_ID_TAG)) {
 				this.peerID = (PeerID)convertToID(elem.getTextValue());
 			} else if (elem.getName().equals(SUBSCRIPTIONS_TAG)) {
 				// it's essential to process the subscriptions last
-				subscriptionElement = elem;
+				this.setSubscriptionsStatement(StructuredDocumentUtils.copyAsDocument(elem));
+				//System.out.println(this.getSubscriptionsStatement().toString());
+				//StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8,SUBSCRIPTIONS_TAG);
 			} else if (elem.getName().equals(MASTER_PEER_ID_TAG)) {
 				this.setMasterPeerID((PeerID)convertToID(elem.getTextValue()));
 			} else if(elem.getName().equals(PLANINTERSECTIONS_TAG)) {
-				this.setIntersections(PlanIntersectionHelper.createPlanIntersectionsFromStatement(elem));
+				this.setPlanIntersectionsStatement(StructuredDocumentUtils.copyAsDocument(elem));
+				//System.out.println(this.getPlanIntersectionsStatement().toString());
 			} else if(elem.getName().equals(SHARED_QUERY_ID_TAG)) {
 				this.setSharedQueryID(convertToID(elem.getTextValue()));
 			}
 		}
-		if(subscriptionElement != null) {
-			handleSubscriptionsStatement(subscriptionElement);
-		}
 	}
-	
+
 	/**
 	 * Generates the connections between the operators based on the given list of subscriptions in textual form
 	 * Since we only provide the new operators at this point, the subscriptions to the old operators are handled separately and via the planIntersections-objects
 	 * @param subscriptionElement the list of subscription-statements
 	 */
-	private void handleSubscriptionsStatement(TextElement<?> subscriptionElement) {
+	public void handleSubscriptionsStatement() {
+		StructuredDocument<? extends TextElement<?>> subscriptionElement = this.getSubscriptionsStatement();
 		SubscriptionHelper.reconnectOperators(this.queryPartOperatorObjects, subscriptionElement);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void handleOperatorStatement(TextElement<?> statement) {
+	public void handleOperatorStatement() {
+		StructuredDocument<? extends TextElement<?>> statement = this.getNewOperatorsStatement().getRoot();
 		Enumeration<? extends TextElement<?>> elements = statement.getChildren();
 		while(elements.hasMoreElements()) {
 			TextElement<? extends TextElement<?>> elem = elements.nextElement();
 			String operatorType = elem.getName();
 			IPhysicalOperatorHelper<?> helper = HelperProvider.getInstance().getPhysicalOperatorHelper(operatorType);
 			if(helper != null) {
-				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((StructuredDocument<? extends TextElement<?>>)elem, false);
+				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement(elem, true);
 				queryPartOperatorObjects.put(e.getKey(),e.getValue());
 			}
 		}
+	}
+	
+	public void handlePlanIntersectionStatement() {
+		StructuredDocument<? extends TextElement<?>> statement = this.getPlanIntersectionsStatement();
+		this.setIntersections(PlanIntersectionHelper.createPlanIntersectionsFromStatement(statement));
 	}
 	
 	public PhysicalQueryPartAdvertisement() {
@@ -125,35 +139,45 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	public Document getDocument(MimeMediaType asMimeType) {
 		StructuredDocument doc =  StructuredDocumentFactory.newStructuredDocument(asMimeType, getAdvertisementType());
 		doc.appendChild(doc.createElement(ID_TAG, id.toString()));
-		generateOperatorsDocument(asMimeType);
-		doc.appendChild(doc.createElement(NEW_OPERATORS_TAG, getNewOperatorsStatement().toString()));
+
+		//System.out.println(getNewOperatorsStatement().getKey());
+		//System.out.println(getNewOperatorsStatement().getValue());
+		//System.out.println(getNewOperatorsStatement().getChildren().nextElement());
+		StructuredDocumentUtils.copyElements(doc,doc.getRoot(),getNewOperatorsStatement());
+
 		doc.appendChild(doc.createElement(PEER_ID_TAG, peerID.toString()));
 		doc.appendChild(doc.createElement(MASTER_PEER_ID_TAG, masterPeerID.toString()));
-		generateSubscriptionsDocument(asMimeType);
-		doc.appendChild(doc.createElement(SUBSCRIPTIONS_TAG, getSubscriptionsStatement().toString()));
-		generatePlanIntersectionsStatement(asMimeType);
-		doc.appendChild(doc.createElement(PLANINTERSECTIONS_TAG, getPlanIntersectionsStatement().toString()));
+		
+		StructuredDocumentUtils.copyElements(doc,doc.getRoot(),getSubscriptionsStatement());
+	
+		StructuredDocumentUtils.copyElements(doc,doc.getRoot(),getPlanIntersectionsStatement());
+		
 		doc.appendChild(doc.createElement(SHARED_QUERY_ID_TAG, sharedQueryID.toString()));
 		return doc;
 	}
 
-	private void generatePlanIntersectionsStatement(MimeMediaType asMimeType) {
-		setPlanIntersectionsStatement(PlanIntersectionHelper.generatePlanIntersectionStatement(asMimeType, this.getIntersections()));
-		
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void generatePlanIntersectionsStatement(MimeMediaType asMimeType) {
+		StructuredDocument doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, PLANINTERSECTIONS_TAG);
+		setPlanIntersectionsStatement(PlanIntersectionHelper.generatePlanIntersectionStatement(asMimeType, this.getIntersections(),doc));
 	}
 
-	private void generateSubscriptionsDocument(MimeMediaType asMimeType) {
-		setSubscriptionsStatement(SubscriptionHelper.generateSubscriptionStatement(asMimeType, this.queryPartOperatorObjects.values()));
-		
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void generateSubscriptionsDocument(MimeMediaType asMimeType) {
+		StructuredDocument doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, SUBSCRIPTIONS_TAG);
+		setSubscriptionsStatement(SubscriptionHelper.generateSubscriptionStatement(asMimeType, this.queryPartOperatorObjects.values(), doc));
 	}
 
-	private void generateOperatorsDocument(MimeMediaType asMimeType) {
-		StructuredDocument<?> doc = StructuredDocumentFactory.newStructuredDocument(asMimeType,getAdvertisementType());
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void generateOperatorsDocument(MimeMediaType asMimeType) {
+		StructuredDocument doc = StructuredDocumentFactory.newStructuredDocument(asMimeType,NEW_OPERATORS_TAG);
 		for(IPhysicalOperator o : this.queryPartOperatorObjects.values()) {
 			IPhysicalOperatorHelper<?> gen = HelperProvider.getInstance().getPhysicalOperatorHelper(o);
 			if(gen != null) {
 				// use the class of the operator as a tag, in order to get the right Helper on the other side to re-assemble it
-				appendElement(doc,gen.getOperatorClass().getName().toString(),gen.generateStatement(o,asMimeType,false).toString());
+				Element opElement = doc.createElement(gen.getOperatorClass().getName().toString());
+				doc.appendChild(opElement);
+				gen.generateStatement(o,asMimeType,true,doc,opElement);
 			}
 		}
 		setNewOperatorsStatement(doc);
@@ -206,16 +230,16 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 		return newOperatorsStatement;
 	}
 
-	public void setNewOperatorsStatement(StructuredDocument<?> newOperatorsStatement) {
+	public void setNewOperatorsStatement(StructuredDocument<? extends TextElement<?>> newOperatorsStatement) {
 		this.newOperatorsStatement = newOperatorsStatement;
 	}
 
-	public StructuredDocument<?> getSubscriptionsStatement() {
+	public StructuredDocument<? extends TextElement<?>> getSubscriptionsStatement() {
 		return subscriptionsStatement;
 	}
 
 	public void setSubscriptionsStatement(
-			StructuredDocument<?> subscriptionsStatement) {
+			StructuredDocument<? extends TextElement<?>> subscriptionsStatement) {
 		this.subscriptionsStatement = subscriptionsStatement;
 	}
 	
@@ -244,12 +268,12 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 		this.intersections = intersections;
 	}
 
-	public StructuredDocument<?> getPlanIntersectionsStatement() {
+	public StructuredDocument<? extends TextElement<?>> getPlanIntersectionsStatement() {
 		return planIntersectionsStatement;
 	}
 
 	public void setPlanIntersectionsStatement(
-			StructuredDocument<?> planIntersectionsStatement) {
+			StructuredDocument<? extends TextElement<?>> planIntersectionsStatement) {
 		this.planIntersectionsStatement = planIntersectionsStatement;
 	}
 

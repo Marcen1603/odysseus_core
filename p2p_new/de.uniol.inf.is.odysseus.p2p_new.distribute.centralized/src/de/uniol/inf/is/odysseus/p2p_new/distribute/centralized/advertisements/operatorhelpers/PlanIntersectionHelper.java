@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.PlanIntersection;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 
 public class PlanIntersectionHelper {
 
@@ -19,37 +19,46 @@ public class PlanIntersectionHelper {
 	private static String SINKINPORT_TAG = "subscription_sinkinport";
 	private static String SCHEMA_TAG = "subscription_schema";
 	private static String NEW_OPERATOR_ID_TAG = "subscription_origin";
+	private static String PLANINTERSECTION_ELEMENT_TAG = "planIntersection";
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static StructuredDocument generatePlanIntersectionStatement(MimeMediaType mimeType, Collection<PlanIntersection> planIntersections) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPartAdvertisement.getAdvertisementType());
+	public static StructuredDocument generatePlanIntersectionStatement(MimeMediaType mimeType, Collection<PlanIntersection> planIntersections, StructuredDocument rootDoc) {
+		if(planIntersections.isEmpty()) {
+			return rootDoc;
+		}
 		for(PlanIntersection pi : planIntersections) {
+			Element planIntersectionElement = rootDoc.createElement(PLANINTERSECTION_ELEMENT_TAG);
+			rootDoc.appendChild(planIntersectionElement);
 			// use the hash of the current operator and of the target as IDs. If the operators are transferred,
 			// this hash will be used for its id as well and associated with the new operator during reconstruction
-			result.appendChild(result.createElement(NEW_OPERATOR_ID_TAG, pi.getNewOperatorID()));
-			result.appendChild(result.createElement(OLD_OPERATOR_ID_TAG, pi.getOldOperatorID()));
-			result.appendChild(result.createElement(SINKINPORT_TAG, pi.getSinkInPort()));
-			result.appendChild(result.createElement(SOURCEOUTPORT_TAG, pi.getSourceOutPort()));
-			result.appendChild(result.createElement(SCHEMA_TAG, SchemaHelper.createOutputSchemaStatement(pi.getSchema(), mimeType)));
+			planIntersectionElement.appendChild(rootDoc.createElement(NEW_OPERATOR_ID_TAG, pi.getNewOperatorID()));
+			planIntersectionElement.appendChild(rootDoc.createElement(OLD_OPERATOR_ID_TAG, pi.getOldOperatorID()));
+			planIntersectionElement.appendChild(rootDoc.createElement(SINKINPORT_TAG, pi.getSinkInPort()));
+			planIntersectionElement.appendChild(rootDoc.createElement(SOURCEOUTPORT_TAG, pi.getSourceOutPort()));
+			Element schemaElement = rootDoc.createElement(SCHEMA_TAG);
+			planIntersectionElement.appendChild(schemaElement);
+			SchemaHelper.createOutputSchemaStatement(pi.getSchema(), mimeType,rootDoc,schemaElement);
 		}
-		return result;
+		return rootDoc;
 	}
 
-	public static List<PlanIntersection> createPlanIntersectionsFromStatement(TextElement<?> statement) {
+	public static List<PlanIntersection> createPlanIntersectionsFromStatement(StructuredDocument<? extends TextElement<?>> statement) {
 		List<PlanIntersection> result = new ArrayList<PlanIntersection>();
 		Enumeration<? extends TextElement<?>> elems = statement.getChildren();
 
+		// iterate over all the planIntersection-Elements
 		while(elems.hasMoreElements()) {
 			TextElement<?> elem = elems.nextElement();
-			Enumeration<? extends TextElement<?>> subscriptionDetails = elem.getChildren();
+			
+			Enumeration<? extends TextElement<?>> planIntersectionDetails = elem.getChildren();
 			int newOperatorID =-1;
 			int oldOperatorID =-1;
 			int sinkInPort = -1;
 			int sourceOutPort = -1;
 			SDFSchema schema = null;
-
-			while(subscriptionDetails.hasMoreElements()) {
-				TextElement<?> subDetailElem = subscriptionDetails.nextElement();
+			// collect necessary information for this element
+			while(planIntersectionDetails.hasMoreElements()) {
+				TextElement<?> subDetailElem = planIntersectionDetails.nextElement();
 				if(subDetailElem.getName().equals(NEW_OPERATOR_ID_TAG)) {
 					newOperatorID = Integer.parseInt(subDetailElem.getTextValue());
 				} else if(subDetailElem.getName().equals(OLD_OPERATOR_ID_TAG)) {

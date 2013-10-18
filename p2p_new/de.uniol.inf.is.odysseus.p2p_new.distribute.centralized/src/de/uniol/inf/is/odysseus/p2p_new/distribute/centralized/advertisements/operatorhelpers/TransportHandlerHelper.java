@@ -3,29 +3,27 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 import java.util.Enumeration;
 import java.util.Map;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 public class TransportHandlerHelper {
 	private final static String TRANSPORT_HANDLER_NAME_TAG = "transporthandlername";
 	private final static String OPTIONS_TAG = "transporthandleroptions";
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static StructuredDocument generateTransportHandlerStatement(ITransportHandler transportHandler, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public static StructuredDocument generateTransportHandlerStatement(ITransportHandler transportHandler, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		if(transportHandler instanceof AbstractTransportHandler) {
 			AbstractTransportHandler th = (AbstractTransportHandler)transportHandler;
-			result.appendChild(result.createElement(TRANSPORT_HANDLER_NAME_TAG,th.getName()));
-			result.appendChild(result.createElement(OPTIONS_TAG,th.getOptionsMap().toString()));
+			toAppendTo.appendChild(rootDoc.createElement(TRANSPORT_HANDLER_NAME_TAG,th.getName()));
+			toAppendTo.appendChild(rootDoc.createElement(OPTIONS_TAG,th.getOptionsMap().toString()));
 		}
-		return result;
+		return rootDoc;
 	}
 	
 	@SuppressWarnings("rawtypes")

@@ -4,12 +4,11 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 
 @SuppressWarnings("rawtypes")
@@ -22,14 +21,13 @@ public class RelationalProjectPOHelper extends AbstractPhysicalOperatorHelper<Re
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		RelationalProjectPO<?> rppo = (RelationalProjectPO<?>)o;
 		// get the restrictlist and append them to the result
 		int[] restrictList = rppo.getRestrictList();
 		String listAsString = Arrays.toString(restrictList);
-		result.appendChild(result.createElement(RESTRICTLIST_TAG,listAsString));
-		return result;
+		toAppendTo.appendChild(rootDoc.createElement(RESTRICTLIST_TAG,listAsString));
+		return rootDoc;
 	}
 
 	@Override

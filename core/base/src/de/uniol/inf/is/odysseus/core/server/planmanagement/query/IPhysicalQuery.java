@@ -163,5 +163,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	 * @return
 	 */
 	public Object getParameter(String name);
+	
+	public void setLogicalQuery(ILogicalQuery q);
 
 }

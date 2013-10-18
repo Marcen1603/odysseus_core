@@ -84,15 +84,15 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 	 * Generates the connections between the operators based on the given list of subscriptions in textual form
 	 * @param subscriptionElement the list of subscription-statements
 	 */
+	@SuppressWarnings("unchecked")
 	private void handleSubscriptionsStatement(TextElement<?> subscriptionElement) {
-		SubscriptionHelper.reconnectOperators(this.opObjects, subscriptionElement);
+		SubscriptionHelper.reconnectOperators(this.opObjects, subscriptionElement.getRoot());
 	}
 
 	/**
 	 * re-creates the operators based on the string-representation in the given document
 	 * @param the operators-statement which contains all operators
 	 */
-	@SuppressWarnings("unchecked")
 	private void handleOperatorStatement(TextElement<?> statement) {
 		Enumeration<? extends TextElement<?>> elements = statement.getChildren();
 		while(elements.hasMoreElements()) {
@@ -100,7 +100,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			String operatorType = elem.getName();
 			IPhysicalOperatorHelper<?> helper = HelperProvider.getInstance().getPhysicalOperatorHelper(operatorType);
 			if(helper != null) {
-				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((StructuredDocument<? extends TextElement<?>>)elem, false);
+				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((TextElement<?>)elem, false);
 				opObjects.put(e.getKey(),e.getValue());
 			}
 		}
@@ -161,8 +161,10 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 		this.subscriptions = subscriptions;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	private void generateSubscriptionsDocument(MimeMediaType asMimeType) {
-		setSubscriptions(SubscriptionHelper.generateSubscriptionStatement(asMimeType, this.opObjects.values()));
+		StructuredDocument doc = StructuredDocumentFactory.newStructuredDocument(asMimeType, SUBSCRIPTIONS_TAG);
+		setSubscriptions(SubscriptionHelper.generateSubscriptionStatement(asMimeType, this.opObjects.values(), doc));
 	}
 	
 	private void generateOperatorsDocument(MimeMediaType asMimeType) {
@@ -171,7 +173,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			IPhysicalOperatorHelper<?> gen = HelperProvider.getInstance().getPhysicalOperatorHelper(o);
 			if(gen != null) {
 				// use the class of the operator as a tag, in order to get the right Helper on the other side to re-assemble it
-				appendElement(doc,gen.getOperatorClass().getName().toString(),gen.generateStatement(o,asMimeType,false));
+				appendElement(doc,gen.getOperatorClass().getName().toString(),gen.generateStatement(o,asMimeType,false,doc,doc.getRoot()));
 			}
 		}
 		setOperators(doc);

@@ -3,15 +3,14 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 @SuppressWarnings("rawtypes")
 public class MetadataCreationPOHelper extends AbstractPhysicalOperatorHelper<MetadataCreationPO> {
@@ -23,11 +22,10 @@ public class MetadataCreationPOHelper extends AbstractPhysicalOperatorHelper<Met
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		MetadataCreationPO<?,?> mdcpo = (MetadataCreationPO<?,?>)o;
-		result.appendChild(result.createElement(METADATA_CREATION_TYPE,mdcpo.getType().toString()));
-		return result;
+		toAppendTo.appendChild(rootDoc.createElement(METADATA_CREATION_TYPE,mdcpo.getType().toString()));
+		return rootDoc;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 
 public class SubscriptionHelper {
@@ -29,8 +28,7 @@ public class SubscriptionHelper {
 	private static String SUBSCRIPTION_ORIGIN = "subscription_origin";
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static StructuredDocument generateSubscriptionStatement(MimeMediaType mimeType, Collection<IPhysicalOperator> ops) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public static StructuredDocument generateSubscriptionStatement(MimeMediaType mimeType, Collection<IPhysicalOperator> ops, StructuredDocument rootDoc) {
 		Map<Integer, Collection<ISubscription>> sourceSubs = new TreeMap<Integer, Collection<ISubscription>>();
 		Map<Integer, Collection<ISubscription>> sinkSubs = new TreeMap<Integer,Collection<ISubscription>>();
 		for(IPhysicalOperator o : ops) {
@@ -40,37 +38,42 @@ public class SubscriptionHelper {
 			if(o.isSink()) {
 				sourceSubs.put(o.hashCode(),((ISink)o).getSubscribedToSource());
 			}
-			if(!sourceSubs.isEmpty()) {
-				result.appendChild(result.createElement(SOURCESUBSCRIPTIONS_TAG,createSubscriptionStatements(sourceSubs,mimeType).toString()));
-			}
-			if(!sinkSubs.isEmpty()) {
-				result.appendChild(result.createElement(SINKSUBSCRIPTIONS_TAG,createSubscriptionStatements(sourceSubs,mimeType).toString()));
-			}
 		}
-		return result;
+		
+		if(!sourceSubs.isEmpty()) {
+			createSubscriptionStatements(sourceSubs,mimeType,rootDoc,rootDoc.getRoot(),SOURCESUBSCRIPTIONS_TAG);
+		}
+		if(!sinkSubs.isEmpty()) {;
+			createSubscriptionStatements(sinkSubs,mimeType,rootDoc,rootDoc.getRoot(),SINKSUBSCRIPTIONS_TAG);
+		}
+		return rootDoc;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static StructuredDocument createSubscriptionStatements(Map<Integer,Collection<ISubscription>> subs, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	private static StructuredDocument createSubscriptionStatements(Map<Integer,Collection<ISubscription>> subs, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo, String tagName) {
+		
 		for(Entry<Integer,Collection<ISubscription>> entry : subs.entrySet()) {
 			int originatingOperatorId = entry.getKey();
 			for(ISubscription sub : entry.getValue()) {
+				Element subscriptionElement = rootDoc.createElement(tagName);
+				toAppendTo.appendChild(subscriptionElement);
 				// use the hash of the current operator and of the target as IDs. If the operators are transferred,
 				// this hash will be used for its id as well and associated with the new operator during reconstruction
-				result.appendChild(result.createElement(SUBSCRIPTION_ORIGIN, Integer.toString(originatingOperatorId)));
-				result.appendChild(result.createElement(SUBSCRIPTION_TARGET, Integer.toString(sub.getTarget().hashCode())));
-				result.appendChild(result.createElement(SUBSCRIPTION_SINKINPORT, Integer.toString(sub.getSinkInPort())));
-				result.appendChild(result.createElement(SUBSCRIPTION_SOURCEOUTPORT, Integer.toString(sub.getSourceOutPort())));
-				result.appendChild(result.createElement(SUBSCRIPTION_SCHEMA, SchemaHelper.createOutputSchemaStatement(sub.getSchema(), mimeType).toString()));
+				subscriptionElement.appendChild(rootDoc.createElement(SUBSCRIPTION_ORIGIN, Integer.toString(originatingOperatorId)));
+				subscriptionElement.appendChild(rootDoc.createElement(SUBSCRIPTION_TARGET, Integer.toString(sub.getTarget().hashCode())));
+				subscriptionElement.appendChild(rootDoc.createElement(SUBSCRIPTION_SINKINPORT, Integer.toString(sub.getSinkInPort())));
+				subscriptionElement.appendChild(rootDoc.createElement(SUBSCRIPTION_SOURCEOUTPORT, Integer.toString(sub.getSourceOutPort())));
+				Element schemaElement = rootDoc.createElement(SUBSCRIPTION_SCHEMA);
+				subscriptionElement.appendChild(schemaElement);
+				SchemaHelper.createOutputSchemaStatement(sub.getSchema(), mimeType,rootDoc,schemaElement);
 			}
 		}
-		return result;
+		return rootDoc;
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked" })
-	public static void reconnectOperators(Map<Integer, IPhysicalOperator> newOperators, TextElement<?> statement) {
-		Enumeration<? extends TextElement<?>> elems = statement.getChildren();
+	public static void reconnectOperators(Map<Integer, IPhysicalOperator> newOperators, StructuredDocument<? extends TextElement<?>> statement) {
+		Enumeration<? extends TextElement> elems = statement.getChildren();
 		
 		while(elems.hasMoreElements()) {
 			TextElement<?> elem = elems.nextElement();

@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class PredicateHelper {
@@ -20,15 +19,14 @@ public class PredicateHelper {
 	private final static String RELATIONALPREDICATE_TYPE_TAG = "RelationalPredicate";
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static StructuredDocument generatePredicateStatement(IPredicate p, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public static StructuredDocument generatePredicateStatement(IPredicate p, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		if(p instanceof RelationalPredicate) {
-			result.appendChild(result.createElement(PREDICATE_TYPE_TAG, RELATIONALPREDICATE_TYPE_TAG));
+			toAppendTo.appendChild(rootDoc.createElement(PREDICATE_TYPE_TAG, RELATIONALPREDICATE_TYPE_TAG));
 			RelationalPredicate pred = (RelationalPredicate)p;
 			String predicateExpressionString = pred.getExpression().getExpressionString();
-			result.appendChild(result.createElement(EXPRESSIONSTRING_TAG, predicateExpressionString));
+			toAppendTo.appendChild(rootDoc.createElement(EXPRESSIONSTRING_TAG, predicateExpressionString));
 		}
-		return result;
+		return rootDoc;
 	}
 	
 	@SuppressWarnings("rawtypes")

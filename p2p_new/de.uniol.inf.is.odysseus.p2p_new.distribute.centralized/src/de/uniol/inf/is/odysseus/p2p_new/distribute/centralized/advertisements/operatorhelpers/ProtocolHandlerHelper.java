@@ -5,9 +5,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 public class ProtocolHandlerHelper {
 	private final static String ACCESSPATTERN_TAG = "accesspattern";
@@ -29,23 +28,24 @@ public class ProtocolHandlerHelper {
 	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static StructuredDocument generateProtocolHandlerStatement(IProtocolHandler protocolHandler, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public static StructuredDocument generateProtocolHandlerStatement(IProtocolHandler protocolHandler, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		if(protocolHandler instanceof AbstractProtocolHandler) {
 			AbstractProtocolHandler ph = (AbstractProtocolHandler)protocolHandler;
 			String direction = ph.getDirection().toString();
-			result.appendChild(result.createElement(DIRECTION_TAG,direction.toString()));
-			result.appendChild(result.createElement(PROTOCOL_HANDLER_NAME_TAG,ph.getName()));
-			result.appendChild(result.createElement(ACCESSPATTERN_TAG,ph.getAccess().toString()));
+			toAppendTo.appendChild(rootDoc.createElement(DIRECTION_TAG,direction.toString()));
+			toAppendTo.appendChild(rootDoc.createElement(PROTOCOL_HANDLER_NAME_TAG,ph.getName()));
+			toAppendTo.appendChild(rootDoc.createElement(ACCESSPATTERN_TAG,ph.getAccess().toString()));
 			IDataHandler dh = ph.getDataHandler();
 			SDFSchema dataHandlerSchema = dh.getSchema();
 			List<String> supportedDataTypes = dh.getSupportedDataTypes();
 			String supportedDataTypesAsString = Arrays.toString(supportedDataTypes.toArray(new String[0]));
-			result.appendChild(result.createElement(DATAHANDLER_SUPPORTEDTYPES_TAG,supportedDataTypesAsString));
-			result.appendChild(result.createElement(DATAHANDLER_SCHEMA_TAG,SchemaHelper.createOutputSchemaStatement(dataHandlerSchema, mimeType).toString()));
-			result.appendChild(result.createElement(OPTIONS_TAG,ph.getOptionsMap().toString()));
+			toAppendTo.appendChild(rootDoc.createElement(DATAHANDLER_SUPPORTEDTYPES_TAG,supportedDataTypesAsString));
+			Element dataHandlerSchemaElement = rootDoc.createElement(DATAHANDLER_SCHEMA_TAG);
+			toAppendTo.appendChild(dataHandlerSchemaElement);
+			SchemaHelper.createOutputSchemaStatement(dataHandlerSchema, mimeType, rootDoc, dataHandlerSchemaElement);
+			toAppendTo.appendChild(rootDoc.createElement(OPTIONS_TAG,ph.getOptionsMap().toString()));
 		}
-		return result;
+		return rootDoc;
 	}
 	
 	@SuppressWarnings("rawtypes")

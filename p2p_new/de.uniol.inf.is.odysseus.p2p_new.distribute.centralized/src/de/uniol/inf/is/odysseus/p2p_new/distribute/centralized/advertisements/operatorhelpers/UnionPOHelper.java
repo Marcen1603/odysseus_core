@@ -2,14 +2,13 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 
@@ -22,11 +21,10 @@ public class UnionPOHelper extends AbstractPhysicalOperatorHelper<UnionPO> {
 	}
 
 	@Override
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		// Since every UnionPO is created the same way via TUnionTIPORule
 		// and doesn't have any remarkable features to speak of, return an empty document
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
-		return result;
+		return rootDoc;
 	}
 
 	@Override

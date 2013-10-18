@@ -2,9 +2,10 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
+
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -13,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SameTimeFactory;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SystemTimeIntervalFactory;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
 
 @SuppressWarnings("rawtypes")
@@ -36,25 +36,24 @@ public class MetadataUpdatePOHelper extends AbstractPhysicalOperatorHelper<Metad
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		MetadataUpdatePO<?,?> mdcpo = (MetadataUpdatePO<?,?>)o;
 		IMetadataUpdater<?,?> updater = mdcpo.getMetadataFactory();
-		result.appendChild(result.createElement(METADATA_FACTORY_TAG,updater.getName()));
+		toAppendTo.appendChild(rootDoc.createElement(METADATA_FACTORY_TAG,updater.getName()));
 		if(updater.getClass().getSimpleName().equals(RelationalTimestampAttributeTimeIntervalMFactory.class.getSimpleName())) {
 			RelationalTimestampAttributeTimeIntervalMFactory r = (RelationalTimestampAttributeTimeIntervalMFactory)updater;
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_YEAR,Integer.toString(r.getStartTimestampYearPos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_MONTH,Integer.toString(r.getStartTimestampMonthPos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_DAY,Integer.toString(r.getStartTimestampDayPos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_HOUR,Integer.toString(r.getStartTimestampHourPos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_MINUTE,Integer.toString(r.getStartTimestampMinutePos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_SECOND,Integer.toString(r.getStartTimestampSecondPos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_MILLISECOND,Integer.toString(r.getStartTimestampMillisecondPos())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_FACTOR,Integer.toString(r.getFactor())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_CLEAREND,Boolean.toString(r.isClearEnd())));
-			result.appendChild(result.createElement(RELATIONAL_TIMESTAMP_FACTORY_TIMEZONE,r.getTimezone().getID()));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_YEAR,Integer.toString(r.getStartTimestampYearPos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_MONTH,Integer.toString(r.getStartTimestampMonthPos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_DAY,Integer.toString(r.getStartTimestampDayPos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_HOUR,Integer.toString(r.getStartTimestampHourPos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_MINUTE,Integer.toString(r.getStartTimestampMinutePos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_SECOND,Integer.toString(r.getStartTimestampSecondPos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_MILLISECOND,Integer.toString(r.getStartTimestampMillisecondPos())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_FACTOR,Integer.toString(r.getFactor())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_CLEAREND,Boolean.toString(r.isClearEnd())));
+			toAppendTo.appendChild(rootDoc.createElement(RELATIONAL_TIMESTAMP_FACTORY_TIMEZONE,r.getTimezone().getID()));
 		}
-		return result;
+		return rootDoc;
 	}
 
 	@SuppressWarnings("unchecked")

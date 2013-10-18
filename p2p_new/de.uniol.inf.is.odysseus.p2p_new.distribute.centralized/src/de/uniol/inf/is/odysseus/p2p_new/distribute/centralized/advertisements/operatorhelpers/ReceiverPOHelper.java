@@ -3,15 +3,14 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 @SuppressWarnings("rawtypes")
 public class ReceiverPOHelper extends AbstractPhysicalOperatorHelper<ReceiverPO> {
@@ -24,15 +23,18 @@ public class ReceiverPOHelper extends AbstractPhysicalOperatorHelper<ReceiverPO>
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		ReceiverPO<?,?> rpo = (ReceiverPO<?,?>)o;
 		IProtocolHandler protHandler = rpo.getProtocolHandler();
-		result.appendChild(result.createElement(PROTOCOLHANDLER_TAG,ProtocolHandlerHelper.generateProtocolHandlerStatement(protHandler, mimeType).toString()));
-		result.appendChild(result.createElement(TRANSPORTHANDLER_TAG,
-				TransportHandlerHelper.generateTransportHandlerStatement(
-						((AbstractProtocolHandler)protHandler).getTransportHandler(), mimeType).toString()));
-		return result;
+		
+		Element protocolHandlerElement = rootDoc.createElement(PROTOCOLHANDLER_TAG);
+		toAppendTo.appendChild(protocolHandlerElement);
+		ProtocolHandlerHelper.generateProtocolHandlerStatement(protHandler, mimeType, rootDoc, protocolHandlerElement);
+		
+		Element transportHandlerElement = rootDoc.createElement(TRANSPORTHANDLER_TAG);
+		toAppendTo.appendChild(transportHandlerElement);
+		TransportHandlerHelper.generateTransportHandlerStatement(((AbstractProtocolHandler)protHandler).getTransportHandler(), mimeType, rootDoc, transportHandlerElement);
+		return rootDoc;
 	}
 
 	@SuppressWarnings("unchecked")

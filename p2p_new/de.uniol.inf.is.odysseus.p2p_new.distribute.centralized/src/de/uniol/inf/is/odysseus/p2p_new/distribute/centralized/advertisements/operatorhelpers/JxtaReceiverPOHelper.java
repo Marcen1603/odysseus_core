@@ -3,13 +3,12 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 
@@ -24,12 +23,11 @@ public class JxtaReceiverPOHelper extends AbstractPhysicalOperatorHelper<JxtaRec
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		JxtaReceiverPO<?> jpo = (JxtaReceiverPO<?>)o;		
-		result.appendChild(result.createElement(PIPEID_TAG, jpo.getPipeID().toURI().toString()));
-		result.appendChild(result.createElement(JXTA_STARTUP_TAG, Boolean.toString(this.jxtaStartup)));
-		return result;
+		toAppendTo.appendChild(rootDoc.createElement(PIPEID_TAG, jpo.getPipeID().toURI().toString()));
+		toAppendTo.appendChild(rootDoc.createElement(JXTA_STARTUP_TAG, Boolean.toString(this.jxtaStartup)));
+		return rootDoc;
 	}
 
 	/**

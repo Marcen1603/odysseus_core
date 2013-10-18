@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 
 @SuppressWarnings("rawtypes")
@@ -30,14 +29,15 @@ public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		JoinTIPO<?,?> jpo = (JoinTIPO<?,?>)o;
 		// get the predicate and append the info for it under the correspondent tag
 		IPredicate pred = jpo.getPredicate();
-		result.appendChild(result.createElement(PREDICATE_TAG,PredicateHelper.generatePredicateStatement(pred, mimeType).toString()));
+		Element predicateElement = rootDoc.createElement(PREDICATE_TAG);
+		toAppendTo.appendChild(predicateElement);
+		PredicateHelper.generatePredicateStatement(pred, mimeType, rootDoc, predicateElement);
 		// append the name of the join
-		result.appendChild(result.createElement(JOINTIPONAME_TAG,jpo.getName()));
+		toAppendTo.appendChild(rootDoc.createElement(JOINTIPONAME_TAG,jpo.getName()));
 		// Consider the type of the sweep-areas and append this information under the transferfunction-tag
 		String transferfunction = "";
 		if(jpo.getTransferFunction() instanceof PersistentTransferArea) {
@@ -45,8 +45,8 @@ public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
 		} else {
 			transferfunction = TITRANSFERAREA_TAG;
 		}
-		result.appendChild(result.createElement(TRANSFER_FUNCTION_TAG,transferfunction));
-		return result;
+		toAppendTo.appendChild(rootDoc.createElement(TRANSFER_FUNCTION_TAG,transferfunction));
+		return rootDoc;
 	}
 
 	@SuppressWarnings("unchecked")

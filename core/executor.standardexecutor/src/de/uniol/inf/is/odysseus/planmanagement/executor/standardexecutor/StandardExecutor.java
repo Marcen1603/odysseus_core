@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -440,7 +441,17 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IPhysicalQuery> newQueries,
 			OptimizationConfiguration conf, ISession session) {
 		// Work in Progress
-		
+		for(IPhysicalQuery q : newQueries) {
+			if(q.getLogicalQuery() == null) {
+				ILogicalQuery emptyLogicalQuery = new LogicalQuery();
+				emptyLogicalQuery.setParserId("");
+				emptyLogicalQuery.setQueryText("");
+				emptyLogicalQuery.setName(q.getName());
+				emptyLogicalQuery.setUser(q.getSession());
+				emptyLogicalQuery.setLogicalPlan(new TopAO(), true);
+				q.setLogicalQuery(emptyLogicalQuery);
+			}
+		}
 		// throw new
 		// RuntimeException("Adding physical query plans is currently not implemented");
 

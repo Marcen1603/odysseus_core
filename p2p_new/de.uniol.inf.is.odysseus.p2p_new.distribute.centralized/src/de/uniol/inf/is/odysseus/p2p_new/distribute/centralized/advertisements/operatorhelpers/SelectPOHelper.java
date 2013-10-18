@@ -3,14 +3,13 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 @SuppressWarnings("rawtypes")
 public class SelectPOHelper extends AbstractPhysicalOperatorHelper<SelectPO> {
@@ -22,12 +21,13 @@ public class SelectPOHelper extends AbstractPhysicalOperatorHelper<SelectPO> {
 	}
 
 	@Override@SuppressWarnings("unchecked")
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		SelectPO<?> spo = (SelectPO<?>)o;
 		IPredicate pred = spo.getPredicate();
-		result.appendChild(result.createElement(PREDICATE_TAG,PredicateHelper.generatePredicateStatement(pred, mimeType).toString()));
-		return result;
+		Element predicateElement = rootDoc.createElement(PREDICATE_TAG);
+		toAppendTo.appendChild(predicateElement);
+		PredicateHelper.generatePredicateStatement(pred, mimeType, rootDoc, predicateElement);
+		return rootDoc;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -2,13 +2,12 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 
+import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
-import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.RenamePO;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 
 @SuppressWarnings("rawtypes")
 public class RenamePOHelper extends AbstractPhysicalOperatorHelper<RenamePO> {
@@ -19,11 +18,10 @@ public class RenamePOHelper extends AbstractPhysicalOperatorHelper<RenamePO> {
 	}
 
 	@Override
-	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType) {
-		StructuredDocument result = StructuredDocumentFactory.newStructuredDocument(mimeType,PhysicalQueryPlanAdvertisement.getAdvertisementType());
+	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc,Element toAppendTo) {
 		// Nothing to do really, the outputschema is all that's relevant for the operator
 		// and this is already taken care of via the AbstractPhysicalOperatorHelper's generateOperatorStatement-method
-		return result;
+		return rootDoc;
 	}
 
 	@Override

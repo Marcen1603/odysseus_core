@@ -788,4 +788,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 		}
 		return 0;
 	}
+	
+	@Override
+	public void setLogicalQuery(ILogicalQuery q) {
+		this.query = q;
+	}
 }

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,8 +37,10 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.Simula
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.AdvertisementFactory;
+import net.jxta.document.MimeMediaType;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+import net.jxta.impl.document.LiteXMLElement;
 import net.jxta.peer.PeerID;
 
 public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener, IServiceStatusListener, IP2PDictionaryListener {
@@ -114,9 +117,6 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender,
 			Advertisement a) {
-		if(a.getAdvType().equals("jxta:PhysicalQueryPartAdvertisement")) {
-			System.out.println("received an advertisement of type " + a.getAdvType());
-		}
 		if(processedAdvertisements.contains(a.getID())) {
 			//System.out.println("Discarded Advertisement " + a.getID().toString() + " of type " + a.getAdvType());
 			return;
@@ -153,12 +153,14 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				// Add the operators under the ID they were sent, because this is how the master knows them.
 				// Since master and peer hold their own objects, we have to keep things consistent
 				// and synchronize their references by the communicated IDs.
+				adv.handleOperatorStatement();
+				adv.handleSubscriptionsStatement();
+				adv.handlePlanIntersectionStatement();
 				Map<Integer, IPhysicalOperator> newOperators = adv.getQueryPartOperatorObjects();
 				CentralizedDistributor.getInstance().addOperators(localID, newOperators);
 				List<PlanIntersection> intersections = adv.getIntersections();
 				CentralizedDistributor.getInstance().processIntersections(adv.getPeerID(),intersections);
-				//TODO: implement starting and registration of the query
-				String queryBuildConfigurationName = "";
+				String queryBuildConfigurationName = "Standard";
 				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 				int queryID = this.getExecutor().addQuery(new ArrayList<IPhysicalOperator>(newOperators.values()), user, queryBuildConfigurationName);
 				ID sharedQueryID = adv.getSharedQueryID();
@@ -220,6 +222,14 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setMasterPeerID(this.masterID);
 		adv.setQueryPartOperatorObjects(r.getPlan(true));
 		adv.setIntersections(r.getIntersections());
+		adv.generateOperatorsDocument(MimeMediaType.XMLUTF8);
+		adv.generateSubscriptionsDocument(MimeMediaType.XMLUTF8);
+		adv.generatePlanIntersectionsStatement(MimeMediaType.XMLUTF8);
+		//LOG.debug("-----------------------------------------------");
+		//LOG.debug(adv.getNewOperatorsStatement().toString());
+		//LOG.debug(adv.getDocument(MimeMediaType.XMLUTF8).toString());
+		Enumeration<LiteXMLElement> lxmle = ((LiteXMLElement)adv.getNewOperatorsStatement().getChildren("de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO").nextElement()).getChildren();
+		LOG.debug("has more elements: " + lxmle.hasMoreElements());
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(r.getPeer().toString(), adv, 15000);
 		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
 		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), sharedQueryID, r.getOperatorIDsOfNewQuery(true));
