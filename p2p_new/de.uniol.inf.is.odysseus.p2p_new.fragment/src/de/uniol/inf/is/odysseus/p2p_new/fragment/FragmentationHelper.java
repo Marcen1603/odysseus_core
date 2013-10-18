@@ -1,5 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.fragment;
 
+import java.util.Collection;
+
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +26,26 @@ import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 public class FragmentationHelper {
 	
 	/**
+	 * The string representation of {@link #MIN_NUM_FRAGMENTS_VALUE}.
+	 */
+	public static final String MIN_NUM_FRAGMENTS_PARAM = "min";
+	
+	/**
+	 * The minimum number of fragmentats.
+	 */
+	public static final int MIN_NUM_FRAGMENTS_VALUE = 2;
+	
+	/**
+	 * The string representation of {@link #MAX_NUM_FRAGMENTS_VALUE}.
+	 */
+	public static final String MAX_NUM_FRAGMENTS_PARAM = "max";
+	
+	/**
+	 * The maximum degree of fragmentation.
+	 */
+	public static final int MAX_NUM_FRAGMENTS_VALUE = Integer.MAX_VALUE;
+	
+	/**
 	 * A list of operator classes which instances shall be part of the query part of data reunion.
 	 */
 	public static final Class<?>[] OPERATOR_CLASSES_DATAREUNION_PART = {
@@ -35,15 +59,82 @@ public class FragmentationHelper {
 	private static final Logger LOG = LoggerFactory.getLogger(FragmentationHelper.class);
 	
 	/**
+	 * TODO javaDoc update
+	 * Determines the degree of parallelism as the minimum of the degree given by the user and the 
+	 * number of available peers.
+	 * @param parameters The {@link QueryBuildConfiguration}.
+	 * @param remotePeerIDs A list of all available peers.
+	 * @return The degree of parallelism.
+	 */
+	public static int determineNumberOfFragments(QueryBuildConfiguration parameters, 
+			Collection<PeerID> remotePeerIDs) {
+		
+		Preconditions.checkNotNull(parameters);
+		Preconditions.checkNotNull(remotePeerIDs);
+		Preconditions.checkArgument(!remotePeerIDs.isEmpty());
+		
+		// The return value
+		int numberOfFragments = 1;
+		
+		if(!parameters.get(ParameterDoDataFragmentation.class).getValue() || !parameters.contains(ParameterFragmentationType.class))
+			return numberOfFragments;
+		
+		// The separator for the parameters
+		final String separator = " ";
+		
+		// The arguments of the parameter ParameterFragmentationType
+		final String[] strParameters = 
+				parameters.get(ParameterFragmentationType.class).getValue().split(separator);
+		
+		// The wanted number of fragments by the user
+		int wantedNumberOfFragments = MIN_NUM_FRAGMENTS_VALUE;
+		
+		// Read out the wanted number of fragments
+		if(strParameters.length > 1) {
+			
+			if(strParameters[1].toLowerCase().equals(MIN_NUM_FRAGMENTS_PARAM))
+				wantedNumberOfFragments = MIN_NUM_FRAGMENTS_VALUE;
+			else if(strParameters[1].toLowerCase().equals(MAX_NUM_FRAGMENTS_PARAM))
+				wantedNumberOfFragments = MAX_NUM_FRAGMENTS_VALUE;
+			else try {
+			
+				wantedNumberOfFragments = Integer.parseInt(strParameters[1]);
+				if(wantedNumberOfFragments < MIN_NUM_FRAGMENTS_VALUE) {
+					
+					LOG.warn("{} is an invalid number of fragments. Number of fragments settet to {}", 
+							strParameters[1], MIN_NUM_FRAGMENTS_VALUE);
+					wantedNumberOfFragments = MIN_NUM_FRAGMENTS_VALUE;
+					
+				}
+				
+			} catch(NumberFormatException e) {
+				
+				e.printStackTrace();
+				LOG.error("Could not parse {} to an integer. Number of fragments settet to {}", 
+						strParameters[1], MIN_NUM_FRAGMENTS_VALUE);
+				
+			}
+			
+		}
+		
+		numberOfFragments = Math.min(wantedNumberOfFragments, Math.max(remotePeerIDs.size(), MIN_NUM_FRAGMENTS_VALUE));
+		LOG.debug("Number of fragments set to '{}'.", numberOfFragments);
+		
+		return numberOfFragments;
+		
+	}
+	
+	/**
+	 * TODO javaDoc update
 	 * Determine the fragmentation strategy given by the parameters.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param executor The {@link IServerExecutor} calling.
-	 * @param degreeOfParallelism The degree of parallelism which is also the number of fragments.
+	 * @param numberOfFragments The degree of parallelism which is also the number of fragments.
 	 * @return A pair of source name and fragmentation strategy for that source, if any is given by 
 	 * the user.
 	 */
 	public static Optional<Pair<String, IDataFragmentation>> determineFragmentationStrategy(
-			QueryBuildConfiguration parameters, IServerExecutor executor, int degreeOfParallelism) {
+			QueryBuildConfiguration parameters, IServerExecutor executor, int numberOfFragments) {
 		
 		// The return value
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
@@ -54,9 +145,9 @@ public class FragmentationHelper {
 		else LOG.debug("Using replication for all sources.");
 		
 		// Check the number of fragments if fragmentation is selected
-		if(fragmentationStrategy.isPresent() && degreeOfParallelism < 2) {
+		if(fragmentationStrategy.isPresent() && numberOfFragments < 2) {
 			
-			LOG.warn("Degree of parallelism must be at least 2 to use data fragmentation. " +
+			LOG.warn("Number of fragments must be at least 2 to use data fragmentation. " +
 					"Turned off data fragmentation.");
 			fragmentationStrategy = Optional.absent();
 			
@@ -113,13 +204,13 @@ public class FragmentationHelper {
 		// The parameters for the strategy
 		String[] fragmentationStrategyParameters = strFragmentationStrategy.split(separator);
 		
-		Preconditions.checkArgument(fragmentationStrategyParameters.length > 1);
+		Preconditions.checkArgument(fragmentationStrategyParameters.length > 2);
 		
 		// The name of the strategy
 		String fragmentationStrategyName = fragmentationStrategyParameters[0];
 		
 		// The name of the source to be fragmented
-		String sourceName = fragmentationStrategyParameters[1];
+		String sourceName = fragmentationStrategyParameters[2];
 		
 		// The data fragmentation strategy
 		Optional<IDataFragmentation> fragmentationStrategy =

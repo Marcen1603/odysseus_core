@@ -46,24 +46,24 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractLoadBalancer.class);
 	
 	/**
-	 * The string representation of {@link #MIN_DEGREE_VALUE}.
+	 * The string representation of {@link #MIN_NUM_REPLICATES_VALUE}.
 	 */
-	public static final String MIN_DEGREE_PARAM = "min";
+	public static final String MIN_NUM_REPLICATES_PARAM = "min";
 	
 	/**
-	 * The minimum degree of parallelism.
+	 * The minimum number of replicates.
 	 */
-	public static final int MIN_DEGREE_VALUE = 1;
+	public static final int MIN_NUM_REPLICATES_VALUE = 1;
 	
 	/**
-	 * The string representation of {@link #MAX_DEGREE_VALUE}.
+	 * The string representation of {@link #MAX_NUM_REPLICATES_VALUE}.
 	 */
-	public static final String MAX_DEGREE_PARAM = "max";
+	public static final String MAX_NUM_REPLICATES_PARAM = "max";
 	
 	/**
-	 * The maximum degree of parallelism.
+	 * The maximum number of replicates.
 	 */
-	public static final int MAX_DEGREE_VALUE = Integer.MAX_VALUE;
+	public static final int MAX_NUM_REPLICATES_VALUE = Integer.MAX_VALUE;
 	
 	@Override
 	public abstract String getName();
@@ -110,13 +110,16 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// The return value
 		List<ILogicalQuery> distributedQueries = Lists.newArrayList();
 		
-		// The degree of parallelism and also the number of fragments, if fragmentation is used
-		int degreeOfParallelism = determineDegreeOfParallelismn(parameters, remotePeerIDs);
+		// The number of replicates
+		int numberOfReplicates = determineNumberOfReplicates(parameters, remotePeerIDs);
+		
+		// The number of fragments
+		int numberOfFragments = FragmentationHelper.determineNumberOfFragments(parameters, remotePeerIDs);
 		
 		// The pair of the source name and the fragmentation strategy or null.
 		Optional<Pair<String, IDataFragmentation>> fragmentationStrategy = 
 				FragmentationHelper.determineFragmentationStrategy(parameters, 
-						(IServerExecutor) executor, degreeOfParallelism);
+						(IServerExecutor) executor, numberOfFragments);
 		
 		// The peer assignment strategy to be used
 		IPeerAssignment peerAssignmentStrategy = 
@@ -126,7 +129,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			
 			// Distribute the single query
 			distributedQueries.add(distributeLogicalQuery(originQuery, parameters, 
-					fragmentationStrategy, degreeOfParallelism, remotePeerIDs, peerAssignmentStrategy));
+					fragmentationStrategy, numberOfReplicates, numberOfFragments, remotePeerIDs, peerAssignmentStrategy));
 			
 		}
 		
@@ -135,13 +138,14 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
+	 * TODO javaDoc update
 	 * Determines the degree of parallelism as the minimum of the degree given by the user and the 
 	 * number of available peers.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param remotePeerIDs A list of all available peers.
 	 * @return The degree of parallelism.
 	 */
-	protected int determineDegreeOfParallelismn(QueryBuildConfiguration parameters, 
+	protected int determineNumberOfReplicates(QueryBuildConfiguration parameters, 
 			Collection<PeerID> remotePeerIDs) {
 		
 		Preconditions.checkNotNull(parameters);
@@ -150,7 +154,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Preconditions.checkArgument(!remotePeerIDs.isEmpty());
 		
 		// The return value
-		int degreeOfParallelism = 1;
+		int numberOfReplicates = 1;
 		
 		// The separator for the parameters
 		final String separator = " ";
@@ -159,45 +163,46 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		final String[] strParameters = 
 				parameters.get(ParameterDistributionType.class).getValue().split(separator);
 		
-		// The wanted degree of parallelism by the user
-		int wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
+		// The wanted number of replicates by the user
+		int wantedNumberOfReplicates = MIN_NUM_REPLICATES_VALUE;
 		
-		// Read out the wanted degree of parallelism
+		// Read out the wanted number of replicates
 		if(strParameters.length > 1) {
 			
-			if(strParameters[1].toLowerCase().equals(MIN_DEGREE_PARAM))
-				wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
-			else if(strParameters[1].toLowerCase().equals(MAX_DEGREE_PARAM))
-				wantedDegreeOfParallelism = MAX_DEGREE_VALUE;
+			if(strParameters[1].toLowerCase().equals(MIN_NUM_REPLICATES_PARAM))
+				wantedNumberOfReplicates = MIN_NUM_REPLICATES_VALUE;
+			else if(strParameters[1].toLowerCase().equals(MAX_NUM_REPLICATES_PARAM))
+				wantedNumberOfReplicates = MAX_NUM_REPLICATES_VALUE;
 			else try {
 			
-				wantedDegreeOfParallelism = Integer.parseInt(strParameters[1]);
-				if(wantedDegreeOfParallelism < MIN_DEGREE_VALUE) {
+				wantedNumberOfReplicates = Integer.parseInt(strParameters[1]);
+				if(wantedNumberOfReplicates < MIN_NUM_REPLICATES_VALUE) {
 					
-					LOG.warn("{} is an invalid degree of parallelism. Degree settet to {}", 
-							strParameters[1], MIN_DEGREE_VALUE);
-					wantedDegreeOfParallelism = MIN_DEGREE_VALUE;
+					LOG.warn("{} is an invalid number of replicates. Number of replicates settet to {}", 
+							strParameters[1], MIN_NUM_REPLICATES_VALUE);
+					wantedNumberOfReplicates = MIN_NUM_REPLICATES_VALUE;
 					
 				}
 				
 			} catch(NumberFormatException e) {
 				
 				e.printStackTrace();
-				LOG.error("Could not parse {} to an integer. Degree settet to {}", 
-						strParameters[1], MIN_DEGREE_VALUE);
+				LOG.error("Could not parse {} to an integer. Number of replicates settet to {}", 
+						strParameters[1], MIN_NUM_REPLICATES_VALUE);
 				
 			}
 			
 		}
 		
-		degreeOfParallelism = Math.min(wantedDegreeOfParallelism, remotePeerIDs.size());
-		LOG.debug("Degree of parallelism set to '{}'.", degreeOfParallelism);
+		numberOfReplicates = Math.min(wantedNumberOfReplicates, remotePeerIDs.size());
+		LOG.debug("Number of replicates set to '{}'.", numberOfReplicates);
 		
-		return degreeOfParallelism;
+		return numberOfReplicates;
 		
 	}
 	
 	/**
+	 * TODO javaDoc update
 	 * Distributes a logical query as follows: <br />
 	 * 1. Make copies of the query. <br />
 	 * 2. Use the fragmentation strategy to merge the copies. <br />
@@ -210,19 +215,20 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param query The logical query to be distributed.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param fragmentationStrategy The pair of source name and fragmentation strategy if set.
-	 * @param degreeOfParallelism The degree of parallelism.
+	 * @param numberOfReplicates The degree of parallelism.
 	 * @param remotePeerIDs A collection of all available peers.
 	 * @param peerAssignmentStrategy The peer assignment strategy.
 	 * @return The logical query to be executed locally.
 	 */
 	protected ILogicalQuery distributeLogicalQuery(ILogicalQuery query, 
 			QueryBuildConfiguration parameters, 
-			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, int degreeOfParallelism, 
-			Collection<PeerID> remotePeerIDs, IPeerAssignment peerAssignmentStrategy) {
+			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, int numberOfReplicates, 
+			int numberOfFragments,Collection<PeerID> remotePeerIDs, IPeerAssignment peerAssignmentStrategy) {
 		
 		Preconditions.checkNotNull(query);
 		Preconditions.checkNotNull(parameters);
-		Preconditions.checkArgument(degreeOfParallelism > 0);
+		Preconditions.checkArgument(numberOfReplicates > 0);
+		Preconditions.checkArgument(numberOfFragments > 0);
 		Preconditions.checkNotNull(remotePeerIDs);
 		Preconditions.checkArgument(!remotePeerIDs.isEmpty());
 		
@@ -239,11 +245,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap = Maps.newHashMap();
 		
 		// Make copies of the query
-		copyQueryAndCollectCopiesAndLogicalPlans(query, queryCopies, operatorsToQueryCopyMap, degreeOfParallelism);
+		copyQueryAndCollectCopiesAndLogicalPlans(query, queryCopies, operatorsToQueryCopyMap, numberOfReplicates, numberOfFragments);
 		
 		// Execute fragmentation strategy
 		Optional<IFragmentPlan> fragmentPlan = 
-				executeFragmentationStrategy(fragmentationStrategy, parameters, operatorsToQueryCopyMap);
+				executeFragmentationStrategy(fragmentationStrategy, parameters, numberOfReplicates, numberOfFragments, operatorsToQueryCopyMap);
 		
 		// Create source part and reunion part
 		Optional<QueryPart> dataReunionPart = Optional.absent();
@@ -283,23 +289,25 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 
 	/**
+	 * TODO javaDoc update
 	 * Makes copies of the origin query and collects both copies and the logical plans of the copies.
 	 * @param originQuery The query to be copied.
 	 * @param queryCopies A mutable, empty list of query copies. Will be filled.
 	 * @param operatorsToCopyNoMap A mutable, empty mapping of all operators t o the copy they were 
 	 * belonging. Will be filled.
-	 * @param degreeOfParallelism The degree of parallelism is also the number of copies to make.
+	 * @param numberOfReplicates The degree of parallelism is also the number of copies to make.
 	 */
 	protected void copyQueryAndCollectCopiesAndLogicalPlans(ILogicalQuery originQuery, 
 			List<ILogicalQuery> queryCopies, Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyNoMap, 
-			int degreeOfParallelism) {
+			int numberOfReplicates, int numberOfFragments) {
 		
 		Preconditions.checkNotNull(queryCopies);
 		Preconditions.checkNotNull(originQuery);
-		Preconditions.checkArgument(degreeOfParallelism > 0);
+		Preconditions.checkArgument(numberOfReplicates > 0);
+		Preconditions.checkArgument(numberOfFragments > 0);
 		Preconditions.checkNotNull(operatorsToQueryCopyNoMap);
 		
-		for(int copyNo = 0; copyNo < degreeOfParallelism; copyNo++) {
+		for(int copyNo = 0; copyNo < numberOfReplicates * numberOfFragments; copyNo++) {
 		
 			// The copy of the query
 			ILogicalQuery queryCopy = DistributionHelper.copyLogicalQuery(originQuery);
@@ -327,7 +335,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	protected Optional<IFragmentPlan> executeFragmentationStrategy(
 			Optional<Pair<String, IDataFragmentation>> fragmentationStrategy, 
-			QueryBuildConfiguration parameters, Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap) {
+			QueryBuildConfiguration parameters, int numberOfReplicates, int numberOfFragments,
+			Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyMap) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(parameters);
@@ -336,12 +345,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// The fragment plan
 		IFragmentPlan fragmentPlan = new StandardFragmentPlan(operatorsToQueryCopyMap);
 		
-		// TODO workaround till Odysseus-Skript is adapted
 		if(fragmentationStrategy.isPresent())
 			fragmentPlan = fragmentationStrategy.get().getE2().fragment(
-					fragmentPlan, operatorsToQueryCopyMap.keySet().size(), 1, parameters, fragmentationStrategy.get().getE1());
+					fragmentPlan, numberOfFragments, numberOfReplicates, parameters, fragmentationStrategy.get().getE1());
 		else if(operatorsToQueryCopyMap.keySet().size() > 1)
-			fragmentPlan = new Replication().fragment(fragmentPlan, 1, operatorsToQueryCopyMap.keySet().size(), parameters, null);
+			fragmentPlan = new Replication().fragment(fragmentPlan, numberOfFragments, numberOfReplicates, parameters, null);
 		else return Optional.absent();
 		
 		// Update  mapping of all operators to the copy they were belonging.

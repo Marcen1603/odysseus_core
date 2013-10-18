@@ -345,13 +345,6 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					// The operator for fragmentation to be subscribed.
 					// All sinks of the WindowAO will be subscribed to that new operator.
 					operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
-					operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
-					operatorsForFragmentation.add(operatorForFragmentation);
-					
-				} else {
-					
-					operator.subscribeSink(windowAO.get(), 0, 0, operator.getOutputSchema());
-					operatorsToDelete.add(operator);
 					
 				}
 				
@@ -366,6 +359,18 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 						
 					} else windowAO.get().subscribeSink(subToSink.getTarget(), 0, 0, 
 							subToSink.getSchema());
+					
+				}
+				
+				if(!windowAO.isPresent()) {
+					
+					operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
+					operatorsForFragmentation.add(operatorForFragmentation);
+					
+				} else {
+					
+					operator.subscribeSink(windowAO.get(), 0, 0, operator.getOutputSchema());
+					operatorsToDelete.add(operator);
 					
 				}
 				
@@ -474,16 +479,16 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				
 				operatorsForFragmentationPart.add(operator);
 				
-				// The operator for fragmentation to be subscribed.
-				// All sinks of the StreamAO will be subscribed to that new operator.
-				// For following WindowAOs other operators for fragmentation will be inserted 
-				// additional.
-				ILogicalOperator operatorForFragmentation = operatorsForFragmentationIter.next();
-				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
 					if(subToSink.getTarget() instanceof AbstractWindowAO)
 						continue;
+					
+					// The operator for fragmentation to be subscribed.
+					// All sinks of the StreamAO will be subscribed to that new operator.
+					// For following WindowAOs other operators for fragmentation will be inserted 
+					// additional.
+					ILogicalOperator operatorForFragmentation = operatorsForFragmentationIter.next();
 										
 					operator.unsubscribeSink(subToSink);
 					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, fragmentNo, 
