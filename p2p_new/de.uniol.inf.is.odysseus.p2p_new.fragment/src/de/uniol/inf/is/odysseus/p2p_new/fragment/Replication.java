@@ -64,7 +64,7 @@ public class Replication extends AbstractDataFragmentation {
 	}
 
 	@Override
-	protected ILogicalOperator createOperatorForDataReunion(int numReplicates) {
+	protected ILogicalOperator createOperatorForDataReunion() {
 		
 		return new ReplicationMergeAO();
 		

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -57,7 +58,7 @@ public class StandardFragmentPlan implements IFragmentPlan {
 		Preconditions.checkNotNull(operatorsPerLogicalPlanBeforeFragmentation);
 		
 		this.operatorsPerLogicalPlanBeforeFragmentation = operatorsPerLogicalPlanBeforeFragmentation;
-		this.operatorsPerLogicalPlanAfterFragmentation = operatorsPerLogicalPlanBeforeFragmentation;
+		this.operatorsPerLogicalPlanAfterFragmentation = Maps.newHashMap(operatorsPerLogicalPlanBeforeFragmentation);
 		this.operatorsOfFragmentationPart = Lists.newArrayList();
 		this.operatorsOfReunionPart = Lists.newArrayList();
 		

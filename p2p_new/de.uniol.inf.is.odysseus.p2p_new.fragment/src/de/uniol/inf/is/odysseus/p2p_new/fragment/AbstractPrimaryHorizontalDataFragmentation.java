@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.fragment.logicaloperator.ReplicationMergeAO;
 
 /**
  * An abstract implementation for primary horizontal fragmentation strategies.
@@ -40,6 +39,9 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		Preconditions.checkArgument(numFragments > 1);
 		Preconditions.checkArgument(numReplicates > 0);
 		
+		// A collection of all operators for the reunion part after fragmentation
+		Collection<ILogicalOperator> operatorsForReunionPart = Lists.newArrayList();
+		
 		if(numReplicates > 1) {
 			
 			// Replication of each fragment
@@ -53,11 +55,17 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			for(IFragmentPlan subFragmentPlan : subFragmentPlansBeforeReplication)
 				subFragmentPlansAfterReplication.add(new Replication().fragment(subFragmentPlan, 1, numReplicates, parameters, null));
 			
-			fragmentPlan = AbstractPrimaryHorizontalDataFragmentation.mergeFragmentPlans(subFragmentPlansAfterReplication);
+			fragmentPlan = AbstractPrimaryHorizontalDataFragmentation.mergeFragmentPlans(subFragmentPlansAfterReplication, operatorsForReunionPart);
 			
 		}
 		
-		return super.fragment(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
+		fragmentPlan =  super.fragment(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
+		
+		for(ILogicalQuery query : fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet())
+			fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForReunionPart);
+		fragmentPlan.getOperatorsOfReunionPart().addAll(operatorsForReunionPart);
+		
+		return fragmentPlan;
 		
 	}
 	
@@ -124,35 +132,31 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 	/**
 	 * Merges several {@link IFragmentPlan}s to a single {@link IFragmentPlan}.
 	 * @param fragmentPlans A collection of {@link IFragmentPlan}s to be merged.
+	 * @param operatorsForReunionPart An empty collection for all {@link ILogicalOperator}s, 
+	 * which shall be part of the reunion part after fragmentation. Will be muted.
 	 */
-	private static IFragmentPlan mergeFragmentPlans(Collection<IFragmentPlan> fragmentPlans) {
+	private static IFragmentPlan mergeFragmentPlans(Collection<IFragmentPlan> fragmentPlans, Collection<ILogicalOperator> operatorsForReunionPart) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlans);
+		Preconditions.checkNotNull(operatorsForReunionPart);
+		Preconditions.checkArgument(operatorsForReunionPart.isEmpty());
 		
 		// The return value
 		IFragmentPlan fragmentPlan = null;
 		
+		Map<ILogicalQuery, List<ILogicalOperator>> operatorsBeforeFragmentation = Maps.newHashMap();
+		
 		for(IFragmentPlan plan : fragmentPlans) {
 			
-			if(fragmentPlan == null)
-				fragmentPlan = new StandardFragmentPlan(plan.getOperatorsPerLogicalPlanBeforeFragmentation());
-			else {
-				
-				for(ILogicalQuery query : plan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
-					
-					fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().clear();
-					fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().put(query, 
-							plan.getOperatorsPerLogicalPlanAfterFragmentation().get(query));
-					
-				}
-				
-			}
-			
-			fragmentPlan.getOperatorsOfFragmentationPart().addAll(plan.getOperatorsOfFragmentationPart());
-			fragmentPlan.getOperatorsOfReunionPart().addAll(plan.getOperatorsOfReunionPart());
+			operatorsBeforeFragmentation.putAll(plan.getOperatorsPerLogicalPlanBeforeFragmentation());
+			operatorsBeforeFragmentation.get(plan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().iterator().next()).addAll(
+					plan.getOperatorsOfReunionPart());
+			operatorsForReunionPart.addAll(plan.getOperatorsOfReunionPart());
 			
 		}
+		
+		fragmentPlan = new StandardFragmentPlan(operatorsBeforeFragmentation);
 		
 		return fragmentPlan;
 		
@@ -179,24 +183,29 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		
 		// Subscribe all other logical plans
 		boolean firstQuery = true;
+		int replicateNo = 0;
 		int fragmentNo = 0;
 		for(ILogicalQuery query : enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
 			
 			if(firstQuery) {
 				
 				firstQuery = false;
-				fragmentNo++;
+				replicateNo++;
 				continue;
 				
 			}
 			
-			if(fragmentNo == numReplicates)
-				fragmentNo = 0;
+			if(replicateNo == numReplicates) {
+				
+				replicateNo = 0;
+				fragmentNo++;
+				
+			}
 			
 			enhancedFragmentPlan = 
 					subscribeOperatorForFragmentation(enhancedFragmentPlan, sourceName, query, fragmentNo, operatorsForFragmentation);
 
-			fragmentNo++;
+			replicateNo++;
 			
 		}
 		
@@ -240,6 +249,9 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		// Operators for the fragmentation part
 		List<ILogicalOperator> operatorsForFragmentationPart = Lists.newArrayList();
 		
+		// Operators to delete
+		List<ILogicalOperator> operatorsToDelete = Lists.newArrayList();
+		
 		for(ILogicalOperator operator : 
 			fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 			
@@ -264,7 +276,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					// For following WindowAOs other operators for fragmentation will be inserted additional.
 					operatorForFragmentation = createOperatorForFragmentation(numFragments, parameters);
 					
-				}
+				} else operatorsToDelete.add(operator);
 				
 				// True, if the StreamAO is only subscribed by WindowAOs
 				boolean onlySubscribedByWindows = true;
@@ -336,7 +348,12 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					operator.subscribeSink(operatorForFragmentation, 0, 0, operator.getOutputSchema());
 					operatorsForFragmentation.add(operatorForFragmentation);
 					
-				} else operator.subscribeSink(windowAO.get(), 0, 0, operator.getOutputSchema());
+				} else {
+					
+					operator.subscribeSink(windowAO.get(), 0, 0, operator.getOutputSchema());
+					operatorsToDelete.add(operator);
+					
+				}
 				
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
@@ -359,6 +376,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 		enhancedFragmentPlan.getOperatorsOfFragmentationPart().addAll(operatorsForFragmentationPart);
 		enhancedFragmentPlan.getOperatorsOfFragmentationPart().addAll(operatorsForFragmentation);
 		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsForFragmentationPart);
+		enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).removeAll(operatorsToDelete);
 		
 		return enhancedFragmentPlan;
 		
@@ -527,13 +545,9 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 			QueryBuildConfiguration parameters);
 	
 	@Override
-	protected ILogicalOperator createOperatorForDataReunion(int numReplicates) {
+	protected ILogicalOperator createOperatorForDataReunion() {
 		
-		Preconditions.checkArgument(numReplicates > 0);
-		
-		if(numReplicates == 1)
-			return new UnionAO();
-		else return new ReplicationMergeAO();
+		return new UnionAO();
 		
 	}
 	

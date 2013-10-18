@@ -124,19 +124,17 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				insertOperatorForDataReunion(enhancedFragmentPlan, numReplicates, operatorsForDataReunion);
 		
 		// Subscribe all other logical plans
-		int planIndex = 0;
+		boolean firstQuery = true;
 		for(ILogicalQuery query : enhancedFragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
 			
-			if(planIndex == 0) {
+			if(firstQuery) {
 				
-				planIndex++;
+				firstQuery = false;
 				continue;
 				
 			}
 			
-			enhancedFragmentPlan = 
-					subscribeOperatorForDataReUnion(enhancedFragmentPlan, operatorsForDataReunion, query, planIndex);
-			planIndex++;
+			enhancedFragmentPlan = subscribeOperatorForDataReUnion(enhancedFragmentPlan, operatorsForDataReunion, query);
 			
 		}
 		
@@ -188,12 +186,11 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 			
 			finished = true;
 			
-			for(ILogicalOperator operator : 
-				fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
+			for(ILogicalOperator operator : fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 				
-				if(operatorsForDataReunionPartToPlaneMap.containsKey(operator))
+ 				if(operatorsForDataReunionPartToPlaneMap.containsKey(operator))
 					continue;
-				else if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
+ 				else if(Arrays.asList(FragmentationHelper.OPERATOR_CLASSES_DATAREUNION_PART).contains(
 						operator.getClass())) {
 					
 					operatorsForDataReunionPartToPlaneMap.put(operator, operatorsToPlaneMap.get(operator));
@@ -218,7 +215,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				} else if(operator.getSubscriptions().isEmpty()) {
 					
 					// The operator for data reunion to be inserted
-					ILogicalOperator operatorForDataReunion = createOperatorForDataReunion(numReplicates);
+					ILogicalOperator operatorForDataReunion = createOperatorForDataReunion();
 					operator.subscribeSink(operatorForDataReunion, 0, 0, operator.getOutputSchema());
 					operatorsForDataReunion.add(operatorForDataReunion);
 					
@@ -282,20 +279,16 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	 * @param fragmentPlan The current status of the fragmentation.
 	 * @param operatorsForDataReunion A list of all created operators for data reunion for the query.
 	 * @param query The query to process.
-	 * @param planIndex The index of the logical plan to process. <br />
 	 * It is also the input port of the inserted operator for data reunion.
 	 * @return The new status of the fragmentation.
 	 */
 	protected IFragmentPlan subscribeOperatorForDataReUnion(IFragmentPlan fragmentPlan, 
-			List<ILogicalOperator> operatorsForDataReunion, ILogicalQuery query, int planIndex) {
+			List<ILogicalOperator> operatorsForDataReunion, ILogicalQuery query) {
 		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(operatorsForDataReunion);
 		Preconditions.checkNotNull(query);
-		Preconditions.checkArgument(planIndex >= 0);
-		Preconditions.checkArgument(
-				planIndex < fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().keySet().size());
 		
 		// The return value
 		IFragmentPlan enhancedFragmentPlan = fragmentPlan.clone();
@@ -315,8 +308,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 			
 			finished = true;
 			
-			for(ILogicalOperator operator : 
-				fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
+			for(ILogicalOperator operator : fragmentPlan.getOperatorsPerLogicalPlanBeforeFragmentation().get(query)) {
 			
 				if(operatorsForReunionPart.contains(operator))
 					continue;
@@ -346,7 +338,7 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 					
 					// The operator for data reunion to be subscribed
 					ILogicalOperator operatorForDataReunion = operatorsForDataReunionIter.next();
-					operator.subscribeSink(operatorForDataReunion, planIndex, 0, 
+					operator.subscribeSink(operatorForDataReunion, operatorForDataReunion.getNumberOfInputs(), 0, 
 							operator.getOutputSchema());
 					
 					finished = false;
@@ -365,9 +357,8 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	
 	/**
 	 * Creates a new operator for data reunion.
-	 * @param numReplicates The number of replicates for each fragment.
 	 */
-	protected abstract ILogicalOperator createOperatorForDataReunion(int numPeplicates);
+	protected abstract ILogicalOperator createOperatorForDataReunion();
 	
 	/**
 	 * Sorts a given mapping of operators and planes.
