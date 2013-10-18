@@ -36,7 +36,7 @@ public final class ODYSSEUS {
      * The namespace of the vocabulary as a string ({@value})
      * </p>
      */
-    public static final String NS = "http://odysseus.uni-oldenburg.de#";
+    public static final String NS = "http://odysseus.uni-oldenburg.de/odysseus#";
 
     /**
      * <p>
