@@ -305,8 +305,9 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			ILogicalQuery queryCopy = DistributionHelper.copyLogicalQuery(originQuery);
 			
 			// A collection of all operators of the query
-			Collection<ILogicalOperator> operators = Lists.newArrayList();
+			List<ILogicalOperator> operators = Lists.newArrayList();
 			RestructHelper.collectOperators(queryCopy.getLogicalPlan(), operators);
+			RestructHelper.removeTopAOs(operators);
 			
 			queryCopies.add(queryCopy);
 			operatorsToQueryCopyNoMap.put(queryCopy, (List<ILogicalOperator>) operators);		
