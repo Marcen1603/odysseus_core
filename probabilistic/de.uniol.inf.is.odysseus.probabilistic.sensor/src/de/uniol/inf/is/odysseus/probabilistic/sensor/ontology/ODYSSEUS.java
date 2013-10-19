@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.vocabulary.RDFS;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -55,6 +57,17 @@ public final class ODYSSEUS {
      * </p>
      */
     public static final Resource NAMESPACE = m_model.createResource(NS);
+
+    // Vocabulary properties
+    // /////////////////////////
+    /**
+     * has Measurement Property Min Value:
+     */
+    public static final Property hasMeasurementPropertyMinValue = m_model.createProperty(NS + "hasMeasurementPropertyMinValue");
+    /**
+     * has Measurement Property Max Value:
+     */
+    public static final Property hasMeasurementPropertyMaxValue = m_model.createProperty(NS + "hasMeasurementPropertyMaxValue");
 
     private ODYSSEUS() {
     }

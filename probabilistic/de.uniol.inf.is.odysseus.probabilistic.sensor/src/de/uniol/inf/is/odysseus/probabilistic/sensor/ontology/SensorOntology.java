@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -67,28 +68,34 @@ public class SensorOntology {
     private static final String QU_PREFIX = "PREFIX qu: <" + QU.getURI() + "> ";
     private static final String ODY_PREFIX = "PREFIX ody: <" + ODYSSEUS.getURI() + "> ";
 
-    public Individual createSensingDeviceWithProperties(String name, List<String> properties) {
-        List<Individual> measurementCapabilities = new ArrayList<Individual>();
-        for (String property : properties) {
-            measurementCapabilities.add(createMeasurementCapabilityFor(name + "_capability_" + property, createProperty(property), null));
-        }
-        return createSensingDevice(name, measurementCapabilities);
-    }
-
     public Individual createSensingDevice(String name) {
-        return createSensingDevice(name, null, new ArrayList<Individual>());
+        return createSensingDevice(name, null, new ArrayList<Individual>(), new ArrayList<Individual>());
     }
 
-    public Individual createSensingDevice(String name, List<Individual> measurementCapabilities) {
-        return createSensingDevice(name, null, measurementCapabilities);
+    public Individual createSensingDevice(String name, String[] propertyNames) {
+        List<Individual> properties = new ArrayList<Individual>();
+        for (String propertyName : propertyNames) {
+            Individual property = createProperty(propertyName);
+            properties.add(property);
+        }
+        return createSensingDevice(name, null, properties, new ArrayList<Individual>());
     }
 
-    public Individual createSensingDevice(String name, String comment, List<Individual> measurementCapabilities) {
+    public Individual createSensingDevice(String name, List<Individual> properties) {
+        return createSensingDevice(name, null, properties, new ArrayList<Individual>());
+    }
+
+    public Individual createSensingDevice(String name, String comment, List<Individual> properties, List<Individual> measurementCapabilities) {
         if (getABox().supportsTransactions()) {
             getABox().begin();
         }
         getABox().createClass(SSN.SensingDevice.getURI());
         Individual sensingDevice = getABox().createIndividual(ODYSSEUS.NS + name, SSN.SensingDevice);
+        getABox().add(sensingDevice, RDFS.subClassOf, SSN.SensingDevice);
+
+        for (Individual property : properties) {
+            getABox().add(sensingDevice, SSN.observes, property);
+        }
 
         for (Individual measurementCapability : measurementCapabilities) {
             getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
@@ -96,7 +103,7 @@ public class SensorOntology {
         if (comment != null) {
             getABox().add(sensingDevice, RDFS.comment, name);
         }
-        getABox().add(sensingDevice, RDFS.subClassOf, SSN.SensingDevice);
+
         if (getABox().supportsTransactions()) {
             getABox().commit();
         }
@@ -123,9 +130,11 @@ public class SensorOntology {
         getABox().add(maxValue, DUL.hasDataValue, max.toString(), TypeMapper.getInstance().getTypeByValue(max));
         getABox().add(maxValue, DUL.isClassifiedBy, unit);
 
-        getABox().add(condition_interval, DUL.hasPart, minValue);
-        getABox().add(condition_interval, DUL.hasPart, maxValue);
+        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, maxValue);
 
+        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
+
+        getABox().createObjectProperty(SSN.hasValue.getURI());
         getABox().add(condition, SSN.hasValue, condition_interval);
 
         if (getABox().supportsTransactions()) {
@@ -134,7 +143,7 @@ public class SensorOntology {
         return condition;
     }
 
-    public Individual createMeasurementCapabilityFor(String name, Individual property, Individual condition) {
+    public Individual addMeasurementCapabilityFor(String name, Individual sensor, Individual property, Individual condition) {
         if (getABox().supportsTransactions()) {
             getABox().begin();
         }
@@ -142,10 +151,15 @@ public class SensorOntology {
         getABox().createClass(SSN.MeasurementCapability.getURI());
         Individual measurementCapability = getABox().createIndividual(ODYSSEUS.NS + name, SSN.MeasurementCapability);
 
+        getABox().createObjectProperty(SSN.forProperty.getURI());
         getABox().add(measurementCapability, SSN.forProperty, property);
+
         if (condition != null) {
+            getABox().createObjectProperty(SSN.inCondition.getURI());
             getABox().add(measurementCapability, SSN.inCondition, condition);
         }
+        getABox().createObjectProperty(SSN.hasMeasurementCapability.getURI());
+        getABox().add(sensor, SSN.hasMeasurementCapability, measurementCapability);
 
         if (getABox().supportsTransactions()) {
             getABox().commit();
@@ -167,7 +181,7 @@ public class SensorOntology {
         return property;
     }
 
-    public void addMeasurementCapability(String name, Individual measurementCapability, Resource resource, Number min, Number max, String unit) {
+    public void addMeasurementProperty(String name, Individual measurementCapability, Resource resource, Number min, Number max, String unit) {
         if (getABox().supportsTransactions()) {
             getABox().begin();
         }
@@ -182,20 +196,32 @@ public class SensorOntology {
         Individual unitOfMeasure = getABox().createIndividual(ODYSSEUS.NS + unit, DUL.UnitOfMeasure);
 
         getABox().createClass(DUL.Amount.getURI());
+
         Individual minValue = getABox().createIndividual(ODYSSEUS.NS + name + "_interval_inf", DUL.Amount);
+        getABox().createDatatypeProperty(DUL.hasDataValue.getURI());
         getABox().add(minValue, DUL.hasDataValue, min.toString(), TypeMapper.getInstance().getTypeByValue(min));
+        getABox().createObjectProperty(DUL.isClassifiedBy.getURI());
         getABox().add(minValue, DUL.isClassifiedBy, unitOfMeasure);
 
         Individual maxValue = getABox().createIndividual(ODYSSEUS.NS + name + "_interval_sup", DUL.Amount);
+        getABox().createDatatypeProperty(DUL.hasDataValue.getURI());
         getABox().add(maxValue, DUL.hasDataValue, max.toString(), TypeMapper.getInstance().getTypeByValue(max));
+        getABox().createObjectProperty(DUL.isClassifiedBy.getURI());
         getABox().add(maxValue, DUL.isClassifiedBy, unitOfMeasure);
 
-        getABox().add(value, DUL.hasPart, minValue);
-        getABox().add(value, DUL.hasPart, maxValue);
+        ObjectProperty minValueProperty = getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMinValue.getURI());
+        minValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
+        getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
 
-        getABox().add(individual, OWL.hasValue, value);
+        ObjectProperty maxValueProperty = getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMaxValue.getURI());
+        maxValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
+        getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue, maxValue);
 
-        getABox().add(measurementCapability, SSN.hasMeasurementCapability, individual);
+        getABox().createObjectProperty(SSN.hasValue.getURI());
+        getABox().add(individual, SSN.hasValue, value);
+
+        getABox().createObjectProperty(SSN.hasMeasurementProperty.getURI());
+        getABox().add(measurementCapability, SSN.hasMeasurementProperty, individual);
 
         if (getABox().supportsTransactions()) {
             getABox().commit();
@@ -203,7 +229,7 @@ public class SensorOntology {
     }
 
     public ResultSet findSensor(String queryString) {
-//        getABox().write(System.out, FileUtils.langXMLAbbrev);
+        // getABox().write(System.out, FileUtils.langXMLAbbrev);
         StringBuilder prefix = new StringBuilder();
         prefix.append(SSN_PREFIX);
         prefix.append(XSD_PREFIX);
@@ -269,15 +295,17 @@ public class SensorOntology {
 
         Individual condition = sensorOntology.createCondition("condition", 2, 3, "Celsius");
 
+        Individual position = sensorOntology.createProperty("position");
+        Individual temperature = sensorOntology.createProperty("temperature");
+
+        Individual sensingDevice = sensorOntology.createSensingDevice("sensor2", Arrays.asList(new Individual[] { position, temperature }));
+
         List<Individual> capabilities = new ArrayList<Individual>();
-        capabilities.add(sensorOntology.createMeasurementCapabilityFor("capability1", sensorOntology.createProperty("temperature"), condition));
-        capabilities.add(sensorOntology.createMeasurementCapabilityFor("capability2", sensorOntology.createProperty("presure"), condition));
+        capabilities.add(sensorOntology.addMeasurementCapabilityFor("capability1", sensingDevice, temperature, condition));
+        capabilities.add(sensorOntology.addMeasurementCapabilityFor("capability2", sensingDevice, position, condition));
 
-        Individual sensingDevice = sensorOntology.createSensingDevice("sensor2", capabilities);
+        sensorOntology.addMeasurementProperty("accuracy", capabilities.get(1), SSN.Accuracy, 3.0, 5.0, "Meter");
 
-        sensorOntology.addMeasurementCapability("accuracy", capabilities.get(0), SSN.Accuracy, 3.0, 5.0, "Meter");
-
-        sensorOntology.createSensingDeviceWithProperties("sensor3", Arrays.asList(new String[] { "position", "temperature" }));
-        sensorOntology.findSensor("SELECT ?uri  WHERE { ?uri rdfs:subClassOf <" + SSN.SensingDevice.getURI() + "> }");
+        sensorOntology.findSensor("SELECT ?uri  WHERE { ?uri ssn:observes ody:temperature }");
     }
 }
