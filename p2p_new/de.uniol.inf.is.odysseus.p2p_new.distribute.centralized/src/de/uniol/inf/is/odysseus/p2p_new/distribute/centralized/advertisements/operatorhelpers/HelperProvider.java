@@ -44,6 +44,9 @@ public class HelperProvider {
 		
 		IPhysicalOperatorHelper<?> jxtaReceiverPOHelper = new JxtaReceiverPOHelper();
 		helpers.put(jxtaReceiverPOHelper.getOperatorClass().getName(), jxtaReceiverPOHelper);
+	
+		IPhysicalOperatorHelper<?> slidingAdvanceTimeWindowTIPOHelper = new SlidingAdvanceTimeWindowTIPOHelper();
+		helpers.put(slidingAdvanceTimeWindowTIPOHelper.getOperatorClass().getName(), slidingAdvanceTimeWindowTIPOHelper);
 	}
 	
 	public static HelperProvider getInstance() {

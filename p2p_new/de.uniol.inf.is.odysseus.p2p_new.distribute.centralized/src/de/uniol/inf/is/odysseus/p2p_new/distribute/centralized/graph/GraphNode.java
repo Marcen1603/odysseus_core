@@ -164,9 +164,6 @@ public class GraphNode {
 	 * @param other another GraphNode, whose Source-connections should be compared to this one's
 	 */
 	public boolean hasSameSources(GraphNode other) {
-		if(!this.isSink() || !other.isSink()) {
-			return false;
-		}
 		Collection<Subscription<GraphNode>> thisSubs = this.getSubscribedToSource();
 		Collection<Subscription<GraphNode>> otherSubs = other.getSubscribedToSource();
 		if (thisSubs.size() != otherSubs.size()) {

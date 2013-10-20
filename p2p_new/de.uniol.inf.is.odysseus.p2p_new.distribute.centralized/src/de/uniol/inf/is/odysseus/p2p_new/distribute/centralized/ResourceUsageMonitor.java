@@ -16,7 +16,7 @@ public class ResourceUsageMonitor extends Thread {
 	private CPUUsage cpuUsage;
 	private NetworkMonitor networkMonitor;
 	private Sigar sigar = new Sigar();
-	private long timeIntervalInMillis = 60000;
+	private long timeIntervalInMillis = 30000;
 	public ResourceUsageMonitor(IResourceUsageUpdateListener caller) {
 		this.caller = caller;
 	}

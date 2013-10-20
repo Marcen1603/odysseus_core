@@ -4,4 +4,5 @@ import org.hyperic.sigar.Mem;
 
 public interface IResourceUsageUpdateListener {
 	void updateResourceUsage(double cpuUsage, Mem mem, double networkUsage);
+	String getPeerName();
 }

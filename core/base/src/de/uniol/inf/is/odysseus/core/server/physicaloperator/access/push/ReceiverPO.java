@@ -157,10 +157,19 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		if (!(ipo instanceof ReceiverPO)) {
 			return false;
 		}
+
 		@SuppressWarnings("rawtypes")
 		ReceiverPO bbrpo = (ReceiverPO) ipo;
-		if (this.objectHandler.getName().equals(bbrpo.objectHandler.getName())
-				&& this.accessHandler.equals(bbrpo.accessHandler)
+		
+		if((this.accessHandler == null && bbrpo.accessHandler != null) ||
+				(this.accessHandler != null && bbrpo.accessHandler == null) ||
+				(this.objectHandler == null && bbrpo.objectHandler != null) ||
+				(this.objectHandler != null && bbrpo.objectHandler == null)) {
+			return false;
+		}
+		if (((this.objectHandler == null && bbrpo.objectHandler == null) ||
+				(this.objectHandler.getName().equals(bbrpo.objectHandler.getName())))
+				&& (this.accessHandler != null && this.accessHandler.equals(bbrpo.accessHandler))
 				&& this.protocolHandler.isSemanticallyEqual(bbrpo.getProtocolHandler())) {
 			return true;
 		}

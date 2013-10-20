@@ -1,10 +1,15 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -23,6 +28,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
  * which can be cloned and reconnected at will without touching the operators or their respective subscriptions/query-ownerships
  */
 public class QSSimulator implements IQuerySharingSimulator {
+	private static final Logger LOG = LoggerFactory.getLogger(QSSimulator.class);
 	private static QSSimulator instance;
 	// Map of the form: replacedNode of the new plan as key, replacementNode of the old plan as value
 	private Map<Integer, Integer> shareableIdenticalNodes = new HashMap<Integer,Integer>();
@@ -51,6 +57,11 @@ public class QSSimulator implements IQuerySharingSimulator {
 		} else {
 			parameterShareSimilarOperators = false;
 		}
+		
+		// FIXME: TESTING
+		parameterShareSimilarOperators = true;
+		
+		mergeNodesWithIdenticalOperatorID(graph);
 		while (removeIdenticalGraphNodes(graph, restructuringAllowed)
 				|| (parameterShareSimilarOperators && reconnectSimilarGraphNodes(graph, restructuringAllowed))) {
 
@@ -61,6 +72,59 @@ public class QSSimulator implements IQuerySharingSimulator {
 		return simRes;
 	}
 	
+	private void mergeNodesWithIdenticalOperatorID(Graph graph) {
+		// get all the nodes
+		Map<String,List<GraphNode>> all = graph.getNodesGroupedByOpType();
+		
+		// key is the graphNode which should be replaced, value is the replacement
+		List<Entry<GraphNode,GraphNode>> toMerge = new ArrayList<Entry<GraphNode,GraphNode>>();
+		
+		// get all duplicates which might exist due to re-usage of source-operators during the plan transformation
+		for(List<GraphNode> nodesWithOpsOfSameType : all.values()) {
+
+			for(int i = 0; i < nodesWithOpsOfSameType.size()-1; i++) {
+				GraphNode gn1 = nodesWithOpsOfSameType.get(i);
+				for(int j = i+1; j < nodesWithOpsOfSameType.size(); j++) {
+					GraphNode gn2 = nodesWithOpsOfSameType.get(j);
+					if(gn1.getOperatorID() == gn2.getOperatorID()) {
+						if(!gn1.isOld() && gn2.isOld()) {
+							toMerge.add(new SimpleImmutableEntry<GraphNode, GraphNode>(gn1,gn2));
+						} else if(gn1.isOld() && !gn2.isOld()) {
+							toMerge.add(new SimpleImmutableEntry<GraphNode, GraphNode>(gn2,gn1));
+						}
+					}
+				}
+			}
+
+		}
+		while(!toMerge.isEmpty()) {
+			// find out, if the nodes have the same sources and begin the replacements at the bottom
+			for(Entry<GraphNode,GraphNode> e : toMerge) {
+				GraphNode gn1 = e.getKey();
+				GraphNode gn2 = e.getValue();
+				if(gn1.hasSameSources(gn2)) {
+					Collection<Subscription<GraphNode>> sinkSubs = gn1.getSinkSubscriptions();
+					// unsubscribe the to-be-replaced node from its sources
+					for(Subscription<GraphNode> sub : gn1.getSubscribedToSource()) {
+						sub.getTarget().unsubscribeSink(sub);
+					}
+					for(Subscription<GraphNode> sub : sinkSubs) {
+						int sinkInPort = sub.getSinkInPort();
+						int sourceOutPort = sub.getSourceOutPort();
+						SDFSchema schema = sub.getSchema();
+						GraphNode sinkNode = sub.getTarget();
+						sinkNode.unsubscribeFromSource(sub);
+						sinkNode.subscribeToSource(gn2, sinkInPort, sourceOutPort, schema);
+						graph.removeNode(gn1);
+					}
+					LOG.debug("replaced duplicate node " + gn2.getOperatorID());
+					toMerge.remove(e);
+					break;
+				}
+			}
+		}
+	}
+
 	private boolean removeIdenticalGraphNodes(Graph graph, boolean restructuringAllowed) {
 		// consider only operators within the same groups, operators with a different type could hardly be identical
 		for(String opType : graph.getNodesGroupedByOpType().keySet()) {
@@ -135,7 +199,8 @@ public class QSSimulator implements IQuerySharingSimulator {
 					GraphNode gn1 = nodes.get(i);
 					GraphNode gn2 = nodes.get(j);
 					if ((!gn1.isOld() || !gn2.isOld() || restructuringAllowed)
-							&& !(gn1.getOperatorID() == gn2.getOperatorID())) {
+							&& !(gn1.getOperatorID() == gn2.getOperatorID())
+							&& gn1.hasSameSources(gn2)) {
 						// IE step 2: Switching of input-Nodes for Nodes, whose Operators can use the results of another GraphNode's operator as a source
 
 						// the operator of GraphNode gn1 is contained in the one of GraphNode gn2

@@ -100,7 +100,9 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		// System.out.println("SAME WINDOWS - Step 2");
 		if (this.windowSize == awtipo.windowSize
 				&& this.windowAdvance == awtipo.windowAdvance
-				&& this.windowType.compareTo(awtipo.windowType) == 0) {
+				&& this.windowType.compareTo(awtipo.windowType) == 0
+				&& this.partitioned == awtipo.isPartitioned()
+				&& this.usesAdvanceParam == awtipo.usesAdvanceParam) {
 			// System.out.println("SAME WINDOWS - Step 3");
 			return true;
 		}

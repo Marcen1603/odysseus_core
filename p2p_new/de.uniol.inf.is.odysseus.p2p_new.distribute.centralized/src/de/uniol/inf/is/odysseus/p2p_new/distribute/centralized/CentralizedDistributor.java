@@ -25,10 +25,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
@@ -135,13 +137,23 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					LOG.debug("Trying to connect a jxtaSender-Node with GraphNode " + gn.getOperatorID() + "of type " + gn.getOperatorType());
 					baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
 
+
+					
 					JxtaReceiverAO receiverOp = new JxtaReceiverAO();
 					receiverOp.setPipeID(pipeID.toURI().toString());
 					receiverOp.setOutputSchema(schema);
 					receiverOp.setAssignedSchema(schema);
+					
+					// Put a selection on top of the receiver, because the query won't start otherwise
+					SelectAO selection = new SelectAO();
+					selection.setPredicate(new TruePredicate());
+					selection.setOutputSchema(schema);
+					
+					selection.subscribeToSource(receiverOp, 0, 0, schema);
+					
 					// no GraphNode for the receiver, because it goes to the master
 					// and thus has to find its way into the resulting query as a logical operator
-					newLogicalOps.add(receiverOp);
+					newLogicalOps.add(selection);
 				}
 				// The receivers for those would be unconnected and thus not transformable in the traditional manner
 				requiredLogicalOpsForMaster.put(x,newLogicalOps);
@@ -403,7 +415,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// this is the graph representing BOTH the old plan, the plan of the new query and their connections "as is",
 			// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
 			Graph graphCopy = baseGraph.clone();
-			graphCopy.addPlan(operatorsOnPeer, false);
+			graphCopy.addPlan(operatorsOnPeer, true);
 			SimulationResult res = null;
 			// only simulate on peers who actually have operators running on them
 			if(operatorsOnPeer.isEmpty()) {

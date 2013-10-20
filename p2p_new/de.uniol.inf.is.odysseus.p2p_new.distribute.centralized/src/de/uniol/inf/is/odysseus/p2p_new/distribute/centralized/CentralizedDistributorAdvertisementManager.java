@@ -165,6 +165,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				int queryID = this.getExecutor().addQuery(new ArrayList<IPhysicalOperator>(newOperators.values()), user, queryBuildConfigurationName);
 				ID sharedQueryID = adv.getSharedQueryID();
 				PhysicalQueryPartController.getInstance().registerAsSlave(new ArrayList<Integer>(queryID), sharedQueryID);
+				this.getExecutor().startQuery(queryID, user);
 				
 			}	
 		} else if (a instanceof ResourceUsageUpdateAdvertisement) {
@@ -228,8 +229,8 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		//LOG.debug("-----------------------------------------------");
 		//LOG.debug(adv.getNewOperatorsStatement().toString());
 		//LOG.debug(adv.getDocument(MimeMediaType.XMLUTF8).toString());
-		Enumeration<LiteXMLElement> lxmle = ((LiteXMLElement)adv.getNewOperatorsStatement().getChildren("de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO").nextElement()).getChildren();
-		LOG.debug("has more elements: " + lxmle.hasMoreElements());
+		//Enumeration<LiteXMLElement> lxmle = ((LiteXMLElement)adv.getNewOperatorsStatement().getChildren("de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO").nextElement()).getChildren();
+		//LOG.debug("has more elements: " + lxmle.hasMoreElements());
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(r.getPeer().toString(), adv, 15000);
 		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
 		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), sharedQueryID, r.getOperatorIDsOfNewQuery(true));
@@ -378,5 +379,10 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		}
 
 		return false;
+	}
+	
+	@Override
+	public String getPeerName() {
+		return P2PDictionaryService.get().getLocalPeerName();
 	}
 }

@@ -7,13 +7,17 @@ import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.TextElement;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 
 @SuppressWarnings("rawtypes")
 public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
@@ -73,7 +77,13 @@ public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
 		//Merge- and creation-functions seem to be fixed according to {@link de.uniol.inf.is.odysseus.interval.transform.join.TJoinAORule}
 		result.setMetadataMerge(new CombinedMergeFunction());
 		result.setCreationFunction(new DefaultTIDummyDataCreation());
-		
+		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+		areas[0] = new JoinTISweepArea();
+		areas[1] = new JoinTISweepArea();
+		result.setAreas(areas);
+		if(!this.schemata.isEmpty()) {
+			result.setDataMerge(new RelationalMergeFunction<ITimeInterval>(this.schemata.get(0).size()));
+		}
 		return new SimpleImmutableEntry<Integer, JoinTIPO>(operatorId,result);
 	}
 

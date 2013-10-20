@@ -31,10 +31,10 @@ public class PlanIntersectionHelper {
 			rootDoc.appendChild(planIntersectionElement);
 			// use the hash of the current operator and of the target as IDs. If the operators are transferred,
 			// this hash will be used for its id as well and associated with the new operator during reconstruction
-			planIntersectionElement.appendChild(rootDoc.createElement(NEW_OPERATOR_ID_TAG, pi.getNewOperatorID()));
-			planIntersectionElement.appendChild(rootDoc.createElement(OLD_OPERATOR_ID_TAG, pi.getOldOperatorID()));
-			planIntersectionElement.appendChild(rootDoc.createElement(SINKINPORT_TAG, pi.getSinkInPort()));
-			planIntersectionElement.appendChild(rootDoc.createElement(SOURCEOUTPORT_TAG, pi.getSourceOutPort()));
+			planIntersectionElement.appendChild(rootDoc.createElement(NEW_OPERATOR_ID_TAG, Integer.toString(pi.getNewOperatorID())));
+			planIntersectionElement.appendChild(rootDoc.createElement(OLD_OPERATOR_ID_TAG, Integer.toString(pi.getOldOperatorID())));
+			planIntersectionElement.appendChild(rootDoc.createElement(SINKINPORT_TAG, Integer.toString(pi.getSinkInPort())));
+			planIntersectionElement.appendChild(rootDoc.createElement(SOURCEOUTPORT_TAG, Integer.toString(pi.getSourceOutPort())));
 			Element schemaElement = rootDoc.createElement(SCHEMA_TAG);
 			planIntersectionElement.appendChild(schemaElement);
 			SchemaHelper.createOutputSchemaStatement(pi.getSchema(), mimeType,rootDoc,schemaElement);
