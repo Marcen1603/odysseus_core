@@ -45,6 +45,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributorAdvertisementManager.class);
 	private static final String MASTER_STATUS_SYS_PROPERTY = "isCentralizedDistributorMaster";
 	private ResourceUsageMonitor monitor;
+	private boolean activated = false;
 	
 	// the PeerID of the Master
 	private PeerID masterID;
@@ -59,6 +60,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	}
 	
 	public void serviceBound(Object o) {
+		if(activated) {
+			return;
+		}
 		for(Class<?> c : o.getClass().getInterfaces()) {
 			if(c.equals(IP2PDictionary.class)) {
 				LOG.debug("Found P2PDictionary");
@@ -74,6 +78,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	}
 	// activator
 	public void activate() {
+		if(activated) {
+			return;
+		}
 		if(!P2PDictionaryService.isBound()) {
 			LOG.debug("No P2P-Dictionary bound yet, delaying activation");
 			P2PDictionaryService.addListener(this);
@@ -110,6 +117,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			monitor.start();
 		}
 		LOG.debug("AdvertisementController for the centralized distributor activated");
+		activated = true;
 	}
 	
 
@@ -171,7 +179,10 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 				int queryID = this.getExecutor().addQuery(new ArrayList<IPhysicalOperator>(newOperators.values()), user, queryBuildConfigurationName);
 				ID sharedQueryID = adv.getSharedQueryID();
-				PhysicalQueryPartController.getInstance().registerAsSlave(new ArrayList<Integer>(queryID), sharedQueryID);
+				LOG.debug("Trying to register Query " + queryID + " as slave under the sharedQueryID " + sharedQueryID);
+				List<Integer> ids = new ArrayList<Integer>();
+				ids.add(queryID);
+				PhysicalQueryPartController.getInstance().registerAsSlave(ids, sharedQueryID);
 				this.getExecutor().startQuery(queryID, user);
 				
 			}	

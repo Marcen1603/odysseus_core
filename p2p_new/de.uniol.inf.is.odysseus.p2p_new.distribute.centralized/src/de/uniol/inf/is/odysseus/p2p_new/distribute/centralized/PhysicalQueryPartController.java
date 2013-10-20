@@ -20,12 +20,18 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartController
 public class PhysicalQueryPartController extends QueryPartController {
 	private static final Logger LOG = LoggerFactory.getLogger(PhysicalQueryPartController.class);
 	private CentralizedDistributor centralizedDistributor;
-
+	private static PhysicalQueryPartController instance;
 	
 	/**
 	 * in addition to the actions of the QueryPartController, the removal of a query on a peer must lead to an update of the
 	 * operators-map.
 	 */
+	
+	private PhysicalQueryPartController() {
+
+		super();
+		LOG.debug("PhysicalQueryPartController started");
+	}
 	
 	@Override
 	// called by executor
@@ -122,5 +128,12 @@ public class PhysicalQueryPartController extends QueryPartController {
 	public void setCentralizedDistributor(
 			CentralizedDistributor centralizedDistributor) {
 		this.centralizedDistributor = centralizedDistributor;
+	}
+
+	public static PhysicalQueryPartController getInstance() {
+		if(instance == null) {
+			instance = new PhysicalQueryPartController();
+		}
+		return instance;
 	}
 }

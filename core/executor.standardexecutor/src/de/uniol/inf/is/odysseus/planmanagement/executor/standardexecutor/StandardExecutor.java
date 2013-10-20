@@ -468,13 +468,16 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		for (IPhysicalQuery query : newQueries) {
 			query.addReoptimizeListener(this);
-			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					PlanModificationEventType.QUERY_ADDED, query));
+			
 			if (query.getLogicalQuery() != null) {
 				getDataDictionary(session.getTenant()).addQuery(
 						query.getLogicalQuery(), query.getSession(),
 						conf.getName());
 			}
+			// add the queries by themselves instead in bulk, the rcp-view doesn't update properly otherwise
+			getExecutionPlan().addQuery(query);
+			firePlanModificationEvent(new QueryPlanModificationEvent(this,
+					PlanModificationEventType.QUERY_ADDED, query));
 		}
 		// TODO: maybe the physical plan could be optimized further,
 		// in which case it should be run through the QuerySharing-Optimizer
@@ -484,7 +487,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		// by the optimizer,
 		// but since we don't need the transformation of a logical query in this
 		// case, we do it here instead.
-		getExecutionPlan().addQueries(newQueries);
+
+
 		this.executionPlanLock.unlock();
 
 		LOG.debug("Optimization of logical queries done");

@@ -7,10 +7,11 @@ import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.TextElement;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
+import de.uniol.inf.is.odysseus.interval_latency.IntervalLatency;
+import de.uniol.inf.is.odysseus.latency.Latency;
 
 @SuppressWarnings("rawtypes")
 public class MetadataCreationPOHelper extends AbstractPhysicalOperatorHelper<MetadataCreationPO> {
@@ -24,7 +25,7 @@ public class MetadataCreationPOHelper extends AbstractPhysicalOperatorHelper<Met
 	@Override@SuppressWarnings("unchecked")
 	public StructuredDocument createOperatorSpecificStatement(IPhysicalOperator o, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		MetadataCreationPO<?,?> mdcpo = (MetadataCreationPO<?,?>)o;
-		toAppendTo.appendChild(rootDoc.createElement(METADATA_CREATION_TYPE,mdcpo.getType().toString()));
+		toAppendTo.appendChild(rootDoc.createElement(METADATA_CREATION_TYPE,mdcpo.getType().getName().toString()));
 		return rootDoc;
 	}
 
@@ -40,10 +41,12 @@ public class MetadataCreationPOHelper extends AbstractPhysicalOperatorHelper<Met
 				typeString = elem.getTextValue();
 			}
 		}
-		if(typeString.equals(ITimeInterval.class.toString())) {
-			type = ITimeInterval.class;
-		} else if (typeString.equals(ILatency.class.toString())) {
-			type = ILatency.class;
+		if(typeString.equals(TimeInterval.class.getName().toString())) {
+			type = TimeInterval.class;
+		} else if (typeString.equals(Latency.class.getName().toString())) {
+			type = Latency.class;
+		} else if (typeString.equals(IntervalLatency.class.getName().toString())) {
+			type = IntervalLatency.class;
 		}
 
 		MetadataCreationPO result = new MetadataCreationPO(type);
