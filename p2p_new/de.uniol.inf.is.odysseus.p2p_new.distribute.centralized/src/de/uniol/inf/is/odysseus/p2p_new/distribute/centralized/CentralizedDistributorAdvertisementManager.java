@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +39,6 @@ import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.MimeMediaType;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import net.jxta.impl.document.LiteXMLElement;
 import net.jxta.peer.PeerID;
 
 public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener, IServiceStatusListener, IP2PDictionaryListener {
@@ -64,11 +62,12 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		for(Class<?> c : o.getClass().getInterfaces()) {
 			if(c.equals(IP2PDictionary.class)) {
 				LOG.debug("Found P2PDictionary");
-				((IP2PDictionary)o).addListener(this);
 				this.activate();
 			} else if(c.equals(IAdvertisementManager.class)) {
 				LOG.debug("Found AdvertisementManager");
-				((IAdvertisementManager)o).addAdvertisementListener(this);
+				this.activate();
+			} else if(ServerExecutorService.isBound()) {
+				LOG.debug("Found IExecutor");
 				this.activate();
 			}
 		}
@@ -83,7 +82,15 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			LOG.debug("No AdvertisementManager bound yet, delaying activation");
 			AdvertisementManagerService.addListener(this);
 			return;
+		} else if(!ServerExecutorService.isBound()) {
+			LOG.debug("No IExecutor bound yet, delaying activation");
+			ServerExecutorService.addListener(this);
+			return;
 		}
+		P2PDictionaryService.get().addListener(this);
+		AdvertisementManagerService.getAdvertisementManager().addAdvertisementListener(this);
+		PhysicalQueryPartController.getInstance().bindExecutor(getExecutor());
+		
 		instance = this;
 		localID = P2PDictionaryService.get().getLocalPeerID();
 		LOG.debug("The local ID of this peer is " + localID);
@@ -268,6 +275,14 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	}
 	
 	public boolean isMaster() {
+//		
+//		if(localID == null) {
+//			localID = P2PDictionaryService.get().getLocalPeerID();
+//			if(determineMasterStatus()) {
+//				masterID = localID;
+//			}
+//		}
+
 		return this.localID.equals(this.masterID);
 	}
 	
