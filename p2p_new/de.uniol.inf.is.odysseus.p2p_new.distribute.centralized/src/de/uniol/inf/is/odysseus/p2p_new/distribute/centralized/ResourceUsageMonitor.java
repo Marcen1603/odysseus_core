@@ -47,7 +47,6 @@ public class ResourceUsageMonitor extends Thread {
 		try {
 			Thread.sleep(timeIntervalInMillis);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

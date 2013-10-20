@@ -325,9 +325,9 @@ public class Graph {
 	 * Returns the Set of GraphNodes, which aren't connected to any other sinks, i.e. are at the top.
 	 * This just returns pipes and sources though, since the point of collecting these is to put JxtaSenderPOs on top.
 	 */
-	public List<GraphNode> getSinkNodes() {
+	public List<GraphNode> getSinkNodes(boolean onlyNew) {
 		List<GraphNode> result = new ArrayList<GraphNode>();
-		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
+		for(GraphNode gn : this.getGraphNodesUngrouped(onlyNew)) {
 			if(gn.isSource() && gn.getSinkSubscriptions().isEmpty()) {
 				result.add(gn);
 			}

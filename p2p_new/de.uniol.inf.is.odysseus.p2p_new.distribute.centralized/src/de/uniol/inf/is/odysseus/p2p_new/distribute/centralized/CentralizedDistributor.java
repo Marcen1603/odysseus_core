@@ -91,7 +91,21 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					q,
 					new OptimizationConfiguration(parameters),
 					this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant())).getAllOperators());
+			// temporary workaround to remove wild jxta-send-operators which get placed on top of a query
+			// once it was already created, removed and then re-added
+			List<IPhysicalOperator> toRemove = new ArrayList<IPhysicalOperator>();
+			for(IPhysicalOperator o : originalPlan) {
+				if(o instanceof JxtaSenderPO) {
+					toRemove.add(o);
+				}
+			}
+			for(IPhysicalOperator jsend : toRemove) {
+				((JxtaSenderPO)jsend).unsubscribeFromAllSources();
+				originalPlan.remove(jsend);
+			}
 			newOperators.add(originalPlan);
+
+			
 			// after the first run through the queryOptimizer, the logical query should have alternative plans,
 			// the first one being the original one
 			int bestAlternative = -1;
@@ -105,12 +119,13 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 						this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant())).getAllOperators());
 				newOperators.add(tmp);
 			}
-			Map<Integer,List<ILogicalOperator>> requiredLogicalOpsForMaster = new HashMap<Integer, List<ILogicalOperator>>();
 			Map<Integer,Graph> baseGraphs = new HashMap<Integer, Graph>();
 			List<SimulationResult> results = new ArrayList<SimulationResult>();
 			List<PeerID> usedPeers = new ArrayList<PeerID>();
 			SimulationResult bestResult = null;
+			PipeID chosenMasterPeerConnectionPipeID = null;
 			ICost<IPhysicalOperator> bestCost = this.getCostModel().getMaximumCost();
+			Map<Integer,PipeID> masterPeerConnectionPipeID = new HashMap<Integer, PipeID>();
 			for(int x = 0; x < newOperators.size(); x++) {
 
 				List<IPhysicalOperator> bla = newOperators.get(x);
@@ -123,40 +138,15 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// we'll work on clones in order to simulate the query-sharing
 				Graph baseGraph = new Graph(null, newOperatorsMap);
 				baseGraphs.put(x,baseGraph);
+				
 				// before we do anything with this graph, let's make sure we get the results back to the masternode.
 				// we can do that, by setting JxtaSenderPOs on all the top-operators (in case they are pipes/sources).
-
-				List<GraphNode> topNodes = baseGraph.getSinkNodes();
-				List<ILogicalOperator> newLogicalOps = new ArrayList<ILogicalOperator>();
-				for(GraphNode gn : topNodes) {
-					// insert a receive and a send-operator
-					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-					JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
-					GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
-					SDFSchema schema = gn.getOperator().getOutputSchema();
-					LOG.debug("Trying to connect a jxtaSender-Node with GraphNode " + gn.getOperatorID() + "of type " + gn.getOperatorType());
-					baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
-
-
-					
-					JxtaReceiverAO receiverOp = new JxtaReceiverAO();
-					receiverOp.setPipeID(pipeID.toURI().toString());
-					receiverOp.setOutputSchema(schema);
-					receiverOp.setAssignedSchema(schema);
-					
-					// Put a selection on top of the receiver, because the query won't start otherwise
-					SelectAO selection = new SelectAO();
-					selection.setPredicate(new TruePredicate());
-					selection.setOutputSchema(schema);
-					
-					selection.subscribeToSource(receiverOp, 0, 0, schema);
-					
-					// no GraphNode for the receiver, because it goes to the master
-					// and thus has to find its way into the resulting query as a logical operator
-					newLogicalOps.add(selection);
-				}
-				// The receivers for those would be unconnected and thus not transformable in the traditional manner
-				requiredLogicalOpsForMaster.put(x,newLogicalOps);
+				// for now, we only generate the PipeID we intend to use in case this SimulationResult will be chosen
+				
+				
+				PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+				
+				masterPeerConnectionPipeID.put(x,pipeID);
 
 				// simulate the whole plan once and determine if its costs are higher
 				// or lower than the placement of one of the alternative plans
@@ -172,17 +162,73 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				}
 			}
 			// at this point, we simulated each of the alternatives once, let's continue with the most
-			// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
+						// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
+			List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true);
+			chosenMasterPeerConnectionPipeID = masterPeerConnectionPipeID.get(bestAlternative);
+			for(GraphNode gn : topNodes) {
+				// insert a receive and a send-operator
+				JxtaSenderPO senderOp = new JxtaSenderPO(chosenMasterPeerConnectionPipeID.toURI().toString(), true);
+				GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
+				SDFSchema schema = gn.getOperator().getOutputSchema();
+				LOG.debug("Trying to connect a jxtaSender-Node with GraphNode " + gn.getOperatorID() + "of type " + gn.getOperatorType());
+				bestResult.getGraph().addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
+				
+				// The receivers for those would be unconnected and thus not transformable in the traditional manner
+				// no GraphNode for the receiver, because it goes to the master
+				// and thus has to find its way into the resulting query as a logical operator
+				JxtaReceiverAO receiverOp = new JxtaReceiverAO();
+				receiverOp.setPipeID(chosenMasterPeerConnectionPipeID.toURI().toString());
+				receiverOp.setOutputSchema(schema);
+				receiverOp.setAssignedSchema(schema);
+				
+				// Put a selection on top of the receiver, because the query won't start otherwise
+				SelectAO selection = new SelectAO();
+				selection.setPredicate(new TruePredicate());
+				selection.setOutputSchema(schema);
+				
+				selection.subscribeToSource(receiverOp, 0, 0, schema);
+				
+				// we can now also set the proper receivers on the master, couldn't do that before
+				// it wasn't yet clear which alternative would be chosen
+				q.setLogicalPlan(selection,true);
+			}
 			
-			// we can now also set the proper receivers on the master, couldn't do that before
-			// it wasn't yet clear which alternative would be chosen
-			q.setLogicalPlan(requiredLogicalOpsForMaster.get(bestAlternative).get(0), true);
-
-
 			results.add(bestResult);
 			usedPeers.add(bestResult.getPeer());
 
 			List<SimulationResult> placeableResults = placeable(results);
+			// the first result is placeable and fully identical to another, already placed query.
+			// this means, we can try and add the receiving operator again on the master, which should merge because of local QS
+			// TODO: Send a message to the peer running the sharedQuery telling it to create an additional query under a different ID
+			// and to associate it with the operators already present in the plan
+			if(placeableResults.size() == results.size() && bestResult.getFullyIdenticalToSharedQuery() != null) {
+				ID pipeID = bestResult.getFullyIdenticalToSharedQuery();
+				SDFSchema schema = null;
+				// iterate over the list of IDs for operators of the shared Query until we find the sender
+				for(int i : this.getOpsForQueriesForPeer(bestResult.getPeer()).get(pipeID)) {
+					IPhysicalOperator o = this.getOperatorPlans().get(bestResult.getPeer()).get(i);
+					if(o instanceof JxtaSenderPO) {
+						schema = ((JxtaSenderPO)o).getOutputSchema();
+					}
+				}
+				JxtaReceiverAO receiverOp = new JxtaReceiverAO();
+				receiverOp.setPipeID(pipeID.toURI().toString());
+				receiverOp.setOutputSchema(schema);
+				receiverOp.setAssignedSchema(schema);
+				
+				// Put a selection on top of the receiver, because the query won't start otherwise
+				SelectAO selection = new SelectAO();
+				selection.setPredicate(new TruePredicate());
+				selection.setOutputSchema(schema);
+				
+				selection.subscribeToSource(receiverOp, 0, 0, schema);
+				
+				// no GraphNode for the receiver, because it goes to the master
+				// and thus has to find its way into the resulting query as a logical operator
+				q.setLogicalPlan(selection, true);
+			}
+			
+			
 			// only stop, if we have successfully placed every result on some peer
 			while(placeableResults.size() != results.size()) {
 				List<SimulationResult> currentlyUnplaceable = new ArrayList<SimulationResult>();
@@ -698,5 +744,16 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 
 	public CentralizedDistributorAdvertisementManager getManager() {
 		return manager;
+	}
+	
+	public boolean isSharedQueryID(ID id) {
+		for(Map<ID,List<Integer>> sharedQueries : this.opsForQueriesForPeer.values()) {
+			for(ID sharedID : sharedQueries.keySet()) {
+				if(sharedID.equals(id)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

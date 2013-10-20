@@ -101,7 +101,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		instance = this;
 		localID = P2PDictionaryService.get().getLocalPeerID();
 		LOG.debug("The local ID of this peer is " + localID);
-		// TODO: check via parameters, if this peer is designated as the master
+		//check via parameters, if this peer is designated as the master
 		boolean isMaster = determineMasterStatus();
 		if(isMaster) {
 			this.masterID = localID;

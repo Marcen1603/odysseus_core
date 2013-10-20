@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.id.ID;
 import net.jxta.peer.PeerID;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
@@ -18,6 +19,8 @@ public class SimulationResult {
 	private PeerID peer;
 	private ICost<IPhysicalOperator> cost;
 	private Graph graph;
+	
+	private ID fullyIdenticalToSharedQuery;
 	
 	// Map of the form: replacedNode of the new plan as key, replacementNode of the old plan as value
 	private Map<Integer,Integer> shareableIdenticalNodes = new HashMap<Integer, Integer>();
@@ -128,6 +131,14 @@ public class SimulationResult {
 			}
 		}
 		return result;
+	}
+
+	public void setFullyIdenticalToSharedQuery(ID sharedQuery) {
+		this.fullyIdenticalToSharedQuery = sharedQuery;
+	}
+
+	public ID getFullyIdenticalToSharedQuery() {
+		return fullyIdenticalToSharedQuery;
 	}
 	
 }

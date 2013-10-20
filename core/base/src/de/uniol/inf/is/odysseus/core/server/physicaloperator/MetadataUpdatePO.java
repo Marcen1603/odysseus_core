@@ -64,7 +64,7 @@ public class MetadataUpdatePO<M extends IClone, T extends IStreamObject<? extend
 			return false;
 		}
 		MetadataUpdatePO<?,?> mdupo = (MetadataUpdatePO<?,?>) ipo;
-		if(this.metadataFactory.equals(mdupo.metadataFactory)) {
+		if(this.metadataFactory.getName().equals(mdupo.metadataFactory.getName())) {
 			return true;
 		}
 		return false;

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.jxta.id.ID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +18,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistributor;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 
 
 /**
@@ -69,6 +73,34 @@ public class QSSimulator implements IQuerySharingSimulator {
 		SimulationResult simRes = new SimulationResult(graph);
 		simRes.setShareableIdenticalNodes(shareableIdenticalNodes);
 		simRes.setShareableSimilarNodes(shareableSimilarNodes);
+		// After sharing operators with other queries, there's only one operator left which happens to be the attached sender
+		// Maybe, the source-operator already feeds its results to another one, in which case we can re-use it
+		List<GraphNode> newNodes = simRes.getGraphNodes(true);
+		if(newNodes.size() == 1 && newNodes.get(0).getOperatorType().equals(JxtaSenderPO.class.getName())) {
+			GraphNode jxtaSenderNew = newNodes.get(0);
+			GraphNode sourceOfNewJxtaSender = null;
+			// A JxtaSenderPO can only have one source
+			for(Subscription<GraphNode> sourceSub : jxtaSenderNew.getSubscribedToSource()) {
+				sourceOfNewJxtaSender = sourceSub.getTarget();
+			}
+			if(sourceOfNewJxtaSender != null) {
+				// iterate over its sinks
+				for(Subscription<GraphNode> sinkSub : sourceOfNewJxtaSender.getSinkSubscriptions()) {
+					GraphNode target = sinkSub.getTarget();
+					// we have found another jxta-sender
+					if(target.getOperatorType().equals(JxtaSenderPO.class.getName())
+							&& target.getOperatorID() != jxtaSenderNew.getOperatorID()) {
+						ID pipeID = ((JxtaSenderPO<?>)target.getOperator()).getPipeID();
+						// we have to check, if the pipe the sender is writing in is actually a sharedQueryID and not just a planjunction
+						if(CentralizedDistributor.getInstance().isSharedQueryID(pipeID)) {
+							// TODO: deactivated until the cross-peer-query-management for identical queries is properly implemented
+							//replaceNode(jxtaSenderNew, target);
+							//simRes.setFullyIdenticalToSharedQuery(pipeID);
+						}
+					}
+				}
+			}
+		}
 		return simRes;
 	}
 	
@@ -145,7 +177,7 @@ public class QSSimulator implements IQuerySharingSimulator {
 						// IE step 1: Removal of identical operators 
 						
 						// the operators of the GraphNodes are semantically equal
-						if (gn1.getOperator().isSemanticallyEqual(gn2.getOperator())) {
+						if (gn1.hasSameSources(gn2) && gn1.getOperator().isSemanticallyEqual(gn2.getOperator())) {
 							// the first operator is old, the second is though and a restructuring of the old plan is prohibited
 							if (!restructuringAllowed && gn1.isOld()) {
 								GraphNode temp = gn1;
