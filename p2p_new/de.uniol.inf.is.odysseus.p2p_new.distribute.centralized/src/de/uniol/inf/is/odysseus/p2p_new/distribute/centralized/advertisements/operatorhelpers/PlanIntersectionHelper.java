@@ -10,7 +10,7 @@ import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.PlanIntersection;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
 
 public class PlanIntersectionHelper {
 

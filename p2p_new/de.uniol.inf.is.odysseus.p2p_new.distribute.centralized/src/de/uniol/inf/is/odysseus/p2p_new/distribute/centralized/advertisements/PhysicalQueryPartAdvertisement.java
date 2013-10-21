@@ -15,12 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.PlanIntersection;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.PlanJunction;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.HelperProvider;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.IPhysicalOperatorHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.PlanIntersectionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.SubscriptionHelper;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanJunction;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;

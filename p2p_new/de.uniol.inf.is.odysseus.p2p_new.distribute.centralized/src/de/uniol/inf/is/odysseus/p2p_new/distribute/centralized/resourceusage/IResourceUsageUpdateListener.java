@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage;
 
 import org.hyperic.sigar.Mem;
 

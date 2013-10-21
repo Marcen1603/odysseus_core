@@ -28,10 +28,13 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.Ma
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.IResourceUsageUpdateListener;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.ResourceUsageMonitor;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.AdvertisementManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 import net.jxta.document.Advertisement;

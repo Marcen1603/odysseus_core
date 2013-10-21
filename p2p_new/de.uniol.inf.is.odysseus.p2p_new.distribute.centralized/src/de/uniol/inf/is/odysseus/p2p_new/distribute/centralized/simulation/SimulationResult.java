@@ -11,7 +11,6 @@ import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.PlanIntersection;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
 

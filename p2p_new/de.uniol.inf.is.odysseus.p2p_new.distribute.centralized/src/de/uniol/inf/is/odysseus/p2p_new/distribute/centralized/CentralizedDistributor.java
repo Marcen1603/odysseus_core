@@ -36,11 +36,15 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.ResourceUsage;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.CostModelService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanJunction;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.QSSimulator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SplitSimulationResult;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaReceiverPO;
 import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
@@ -156,6 +160,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					return null;
 				}
 				if(result.getCost().compareTo(bestCost) < 0) {
+					LOG.debug("Chose a result, because its determined cost of '" + result.getCost().toString() + "' is lower than the previous best cost of '" + bestCost.toString() + "'");
 					bestResult = result;
 					bestCost = result.getCost();
 					bestAlternative = x;
@@ -461,7 +466,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// this is the graph representing BOTH the old plan, the plan of the new query and their connections "as is",
 			// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
 			Graph graphCopy = baseGraph.clone();
-			graphCopy.addPlan(operatorsOnPeer, true);
+			graphCopy.addPlan(operatorsOnPeer, false);
 			SimulationResult res = null;
 			// only simulate on peers who actually have operators running on them
 			if(operatorsOnPeer.isEmpty()) {

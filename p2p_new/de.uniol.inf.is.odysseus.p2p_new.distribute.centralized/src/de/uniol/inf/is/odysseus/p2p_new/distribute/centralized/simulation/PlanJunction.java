@@ -1,10 +1,9 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation;
 
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 public class PlanJunction {
 	// The SimulationResult, from which this junction originates.

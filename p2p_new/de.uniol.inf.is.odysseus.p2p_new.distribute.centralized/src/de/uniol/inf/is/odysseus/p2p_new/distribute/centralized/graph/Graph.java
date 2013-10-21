@@ -112,7 +112,7 @@ public class Graph {
 	public Graph addPlan(Map<Integer,IPhysicalOperator> ops, boolean opsAreNew) {
 		List<GraphNode> temp = new ArrayList<GraphNode>();
 		for(Entry<Integer, IPhysicalOperator> e : ops.entrySet()) {
-			GraphNode gn = new GraphNode(e.getValue(), e.getKey(), opsAreNew);
+			GraphNode gn = new GraphNode(e.getValue(), e.getKey(), !opsAreNew);
 			temp.add(gn);
 		}
 		Map<String,List<GraphNode>> tempMap = new HashMap<String,List<GraphNode>>();

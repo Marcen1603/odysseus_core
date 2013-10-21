@@ -1,10 +1,9 @@
-package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
+package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
 
 public class SplitSimulationResult {
 	private SimulationResult placeableResult;
