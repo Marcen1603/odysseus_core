@@ -198,6 +198,7 @@ public class SDFExpression implements Serializable, IClone {
 				expressionString = expression.toString();
 			} catch (Throwable e) {
 				System.err.println("Expr: " + this.expressionString);
+				e.printStackTrace();
 				throw new SDFExpressionParseException(e);
 			}
 		}

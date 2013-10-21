@@ -44,10 +44,8 @@ public class IsNullFunction extends AbstractFunction<Boolean> {
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
-		// Accept all types ... TODO: Is this a problem?
-        return null;
+        return SDFDatatype.getTypes().toArray(new SDFDatatype[0]);
 	}
-	
 
 	@Override
 	public String toString() {

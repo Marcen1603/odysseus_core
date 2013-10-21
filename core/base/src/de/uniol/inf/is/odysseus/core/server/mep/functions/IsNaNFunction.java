@@ -6,7 +6,9 @@ import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 public class IsNaNFunction extends AbstractFunction<Boolean> {
 
 	private static final long serialVersionUID = -6023606894827478154L;
-
+	private static final SDFDatatype[] acceptedTypes = {SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	
+	
 	@Override
 	public int getArity() {
 		return 1;
@@ -14,7 +16,7 @@ public class IsNaNFunction extends AbstractFunction<Boolean> {
 
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		return null;
+		return acceptedTypes;
 	}
 
 	@Override
