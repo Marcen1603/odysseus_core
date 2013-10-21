@@ -54,6 +54,7 @@ public class AggregateAO extends UnaryLogicalOp {
 	private List<AggregateItem> aggregationItems;
 	private int dumpAtValueCount = -1;
 	private boolean outputPA = false;
+	private boolean drainAtDone = true;
 
 	public AggregateAO() {
 		super();
@@ -72,6 +73,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		outputAttributList = new ArrayList<>(op.outputAttributList);
 		dumpAtValueCount = op.dumpAtValueCount;
 		this.outputPA = op.outputPA;
+		this.drainAtDone = op.drainAtDone;
 	}
 
 	public void addAggregation(SDFAttribute attribute,
@@ -218,5 +220,13 @@ public class AggregateAO extends UnaryLogicalOp {
 	public boolean isOutputPA() {
 		return outputPA;
 	}
+	
+	@Parameter(name="drain", type = BooleanParameter.class, optional = true)
+	public void setDrainAtDone(boolean drainAtDone) {
+		this.drainAtDone = drainAtDone;
+	}
 
+	public boolean isDrainAtDone() {
+		return drainAtDone;
+	}
 }

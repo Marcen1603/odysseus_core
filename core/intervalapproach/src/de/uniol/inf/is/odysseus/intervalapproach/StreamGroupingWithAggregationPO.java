@@ -49,7 +49,8 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
 	private boolean outputPA = false;
-
+	private boolean drainAtDone = true;
+	
 	// public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 	// SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
 	// Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
@@ -90,6 +91,10 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		return outputPA;
 	}
 
+	public void setDrainAtDone(boolean drainAtDone) {
+		this.drainAtDone = drainAtDone;
+	}
+	
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -105,27 +110,28 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_done() {
 		// Drain all groups
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
-				.entrySet()) {
-			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
-					.getValue().iterator();
-			produceResults(results, entry.getKey());
-		}
+		drainGroups();
+	}
 
-		transferArea.done();
+	private void drainGroups() {
+		if (drainAtDone) {
+			for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+					.entrySet()) {
+				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
+						.getValue().iterator();
+				produceResults(results, entry.getKey());
+				entry.getValue().clear();
+			}
+			transferArea.done();
+		}
 	}
 
 	@Override
 	protected void process_close() {
 		super.process_close();
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups.entrySet()) {
-			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry.getValue().iterator();
-			produceResults(results, entry.getKey());
-			entry.getValue().clear();
-		}
-		transferArea.done();
+		drainGroups();
 	}
-	
+
 	@Override
 	protected boolean isDone() {
 		return super.isDone() && transferArea.size() == 0;
@@ -135,7 +141,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	protected synchronized void process_next(R object, int port) {
 
 		// Determine if there is any data from previous runs to write
-		//createOutput(object.getMetadata().getStart());
+		// createOutput(object.getMetadata().getStart());
 
 		// Create group ID from input object
 		Integer groupID = getGroupProcessor().getGroupID(object);
@@ -151,7 +157,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 		// Update sweep area with new element
 		updateSA(sa, object);
-		
+
 		// Is there any new output to write now?
 		createOutput(object.getMetadata().getStart());
 	}
@@ -208,7 +214,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
 			W out = null;
-			if (outputPA) {					
+			if (outputPA) {
 				out = getGroupProcessor().createOutputElement2(groupID, e);
 			} else {
 				PairMap<SDFSchema, AggregateFunction, W, ? extends ITimeInterval> r = calcEval(e);
