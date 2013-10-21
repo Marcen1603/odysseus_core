@@ -175,10 +175,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 *            {@link QueryBuildConfiguration} for creating the query
 	 */
 	public PhysicalQuery(List<IPhysicalOperator> physicalPlan) {
-		// Query created directly from physical plans get a negative query id to
-		// distinct from query created from logical queries (and garantee that
-		// logical and corresponding physical queries have the same id)
-		id = (-1) * idCounter++;
+		id = idCounter++;
 		initializePhysicalRoots(physicalPlan);
 		determineIteratableSourcesAndLeafs(physicalPlan);
 	}
