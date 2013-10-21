@@ -221,7 +221,7 @@ public class AggregateAO extends UnaryLogicalOp {
 		return outputPA;
 	}
 	
-	@Parameter(name="drain", type = BooleanParameter.class, optional = true)
+	@Parameter(name="drain", type = BooleanParameter.class, optional = true, doc="If set to true (default), elements are not yet written will be written at done or close. ")
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
