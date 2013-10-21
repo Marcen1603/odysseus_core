@@ -27,6 +27,14 @@ import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
  * 
  */
 public class TProbabilisticMapAORule extends TMapAORule {
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
 	/*
 	 * (non-Javadoc)

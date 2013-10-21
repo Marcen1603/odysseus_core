@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.EMAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.EMPO;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -32,14 +33,13 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TEMAORule extends AbstractTransformationRule<EMAO> {
-	/*
-	 * (non-Javadoc)
+	/**
 	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 * {@inheritDoc}
 	 */
 	@Override
 	public final int getPriority() {
-		return 1;
+		return TransformationConstants.PRIORITY;
 	}
 
 	/*

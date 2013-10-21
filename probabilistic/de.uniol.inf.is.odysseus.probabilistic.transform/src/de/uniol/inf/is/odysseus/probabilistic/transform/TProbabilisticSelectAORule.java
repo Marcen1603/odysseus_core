@@ -15,16 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.relational.transform.TProjectAORule;
+import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticProjectAORule extends TProjectAORule {
+public class TProbabilisticSelectAORule extends TSelectAORule {
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -38,15 +38,15 @@ public class TProbabilisticProjectAORule extends TProjectAORule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
-		super.execute(projectAO, transformConfig);
+	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
+		super.execute(selectAO, transformConfig);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final boolean isExecutable(final ProjectAO operator, final TransformationConfiguration transformConfig) {
+	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 				return true;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology;
+package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
