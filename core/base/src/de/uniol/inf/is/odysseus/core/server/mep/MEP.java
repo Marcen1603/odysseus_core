@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EvalFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IfFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNaNFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction2;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SMaxFunction;
@@ -236,6 +237,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToDegrees());
 
         registerFunction(new IsNullFunction());
+        registerFunction(new IsNaNFunction());
         
         /** String Functions */
         registerFunction(new LikeFunction());
