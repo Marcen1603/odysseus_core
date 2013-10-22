@@ -1,13 +1,10 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import net.jxta.id.ID;
 
 import org.slf4j.Logger;
@@ -65,7 +62,7 @@ public class QSSimulator implements IQuerySharingSimulator {
 		// FIXME: TESTING
 		parameterShareSimilarOperators = true;
 		
-		mergeNodesWithIdenticalOperatorID(graph);
+		graph.mergeNodesWithIdenticalOperatorID();
 		while (removeIdenticalGraphNodes(graph, restructuringAllowed)
 				|| (parameterShareSimilarOperators && reconnectSimilarGraphNodes(graph, restructuringAllowed))) {
 
@@ -102,59 +99,6 @@ public class QSSimulator implements IQuerySharingSimulator {
 			}
 		}
 		return simRes;
-	}
-	
-	private void mergeNodesWithIdenticalOperatorID(Graph graph) {
-		// get all the nodes
-		Map<String,List<GraphNode>> all = graph.getNodesGroupedByOpType();
-		
-		// key is the graphNode which should be replaced, value is the replacement
-		List<Entry<GraphNode,GraphNode>> toMerge = new ArrayList<Entry<GraphNode,GraphNode>>();
-		
-		// get all duplicates which might exist due to re-usage of source-operators during the plan transformation
-		for(List<GraphNode> nodesWithOpsOfSameType : all.values()) {
-
-			for(int i = 0; i < nodesWithOpsOfSameType.size()-1; i++) {
-				GraphNode gn1 = nodesWithOpsOfSameType.get(i);
-				for(int j = i+1; j < nodesWithOpsOfSameType.size(); j++) {
-					GraphNode gn2 = nodesWithOpsOfSameType.get(j);
-					if(gn1.getOperatorID() == gn2.getOperatorID()) {
-						if(!gn1.isOld() && gn2.isOld()) {
-							toMerge.add(new SimpleImmutableEntry<GraphNode, GraphNode>(gn1,gn2));
-						} else if(gn1.isOld() && !gn2.isOld()) {
-							toMerge.add(new SimpleImmutableEntry<GraphNode, GraphNode>(gn2,gn1));
-						}
-					}
-				}
-			}
-
-		}
-		while(!toMerge.isEmpty()) {
-			// find out, if the nodes have the same sources and begin the replacements at the bottom
-			for(Entry<GraphNode,GraphNode> e : toMerge) {
-				GraphNode gn1 = e.getKey();
-				GraphNode gn2 = e.getValue();
-				if(gn1.hasSameSources(gn2)) {
-					Collection<Subscription<GraphNode>> sinkSubs = gn1.getSinkSubscriptions();
-					// unsubscribe the to-be-replaced node from its sources
-					for(Subscription<GraphNode> sub : gn1.getSubscribedToSource()) {
-						sub.getTarget().unsubscribeSink(sub);
-					}
-					for(Subscription<GraphNode> sub : sinkSubs) {
-						int sinkInPort = sub.getSinkInPort();
-						int sourceOutPort = sub.getSourceOutPort();
-						SDFSchema schema = sub.getSchema();
-						GraphNode sinkNode = sub.getTarget();
-						sinkNode.unsubscribeFromSource(sub);
-						sinkNode.subscribeToSource(gn2, sinkInPort, sourceOutPort, schema);
-						graph.removeNode(gn1);
-					}
-					LOG.debug("replaced duplicate node " + gn2.getOperatorID());
-					toMerge.remove(e);
-					break;
-				}
-			}
-		}
 	}
 
 	private boolean removeIdenticalGraphNodes(Graph graph, boolean restructuringAllowed) {
