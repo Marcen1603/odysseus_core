@@ -61,6 +61,9 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private Map<PeerID,ICost<IPhysicalOperator>> planCostEstimates =  new HashMap<PeerID,ICost<IPhysicalOperator>>();
 	private Map<PeerID,Map<ID, List<Integer>>> opsForQueriesForPeer = new HashMap<>();
 	
+	private ICost<IPhysicalOperator> costsSavedByQuerySharing;
+	private ICost<IPhysicalOperator> costsOfAllDistributedPlans;
+	
 	// a map containing the physical plans for each peer known to the master
 	private Map<PeerID,Map<Integer,IPhysicalOperator>> operatorPlans = new HashMap<PeerID,Map<Integer,IPhysicalOperator>>();
 	private CentralizedDistributorAdvertisementManager manager = CentralizedDistributorAdvertisementManager.getInstance();
@@ -86,6 +89,14 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		} else if(this.getQueryOptimizer() == null) {
 			LOG.debug("The centralized distributor hasn't bound an IQueryOptimizer-instance");
 			return null;
+		} else if(this.getCostModel() == null) {
+			LOG.debug("Centralized distribution not possible without a bound costmodel");
+			return null;
+		}
+		// initialize the cost-counter
+		if(costsSavedByQuerySharing == null) {
+			this.costsSavedByQuerySharing = this.getCostModel().getZeroCost();
+			this.costsOfAllDistributedPlans = this.getCostModel().getZeroCost();
 		}
 
 		for(ILogicalQuery q : queriesToDistribute) {
@@ -103,6 +114,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			for(IPhysicalOperator o : originalPlan) {
 				o.addOwner(physQ);
 			}
+			ICost<IPhysicalOperator> initialCost = this.getCostModel().estimateCost(originalPlan, false);
 
 			// find MetaDataUpdatePOs with sources attached, which are for some reason not part of this query plan
 			// (usually because of a previously removed query, which left only the top operator in the dictionary)
@@ -310,14 +322,18 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			}
 			// if we reached this point, we have one or more results waiting to get placed on their respective peers.
 			ID sharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+			ICost<IPhysicalOperator> endCost = this.getCostModel().getZeroCost();
 			for(SimulationResult sr : placeableResults) {
 				// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
 				// in order to generate the subscription-statements properly.
 				sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
+				endCost = endCost.merge(this.getCostModel().estimateCost(sr.getGraph().getAllOperatorsInvolved(true), false));
 				this.addOperators(sr.getPeer(), sr.getPlan(true));
 				this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
 			}
 			PhysicalQueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
+			this.costsOfAllDistributedPlans = this.costsOfAllDistributedPlans.merge(endCost);
+			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(endCost.substract(initialCost));
 		}
 		return queriesToDistribute;
 	}
@@ -492,10 +508,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			if(operatorsOnPeer == null) {
 				operatorsOnPeer = new HashMap<Integer, IPhysicalOperator>();
 			}
-			if(this.getCostModel() == null) {
-				LOG.debug("Centralized distribution not possible without a bound costmodel");
-				return null;
-			}
+
 			// this is the graph representing BOTH the old plan, the plan of the new query and their connections "as is",
 			// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
 			Graph graphCopy = baseGraph.clone();
@@ -796,11 +809,27 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	}
 	
 	public int getNumberOfRunningQueriesForPeer(PeerID peerID) {
-		return this.opsForQueriesForPeer.get(peerID).keySet().size();
+		if(this.opsForQueriesForPeer.get(peerID) != null) {
+			return this.opsForQueriesForPeer.get(peerID).keySet().size();
+		}
+		return 0;
 	}
 	
 	public int getNumberOfRunningQueries() {
 		return getNumberOfRunningQueriesForPeer(this.getManager().getLocalID());
+	}
+
+	public int getNumberOfRunningOperatorsForPeer(PeerID peerID) {
+		Map<Integer,IPhysicalOperator> operators = this.getOperatorPlans().get(peerID);
+		if(operators != null) {
+			return operators.values().size();
+		} else {
+			return 0;
+		}
+	}
+	
+	public int getNumberOfRunningOperators() {
+		return getNumberOfRunningOperatorsForPeer(this.getManager().getLocalID());
 	}
 	
 }

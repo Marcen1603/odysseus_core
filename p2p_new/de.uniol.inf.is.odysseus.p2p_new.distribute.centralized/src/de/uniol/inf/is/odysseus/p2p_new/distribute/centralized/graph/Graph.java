@@ -269,7 +269,7 @@ public class Graph {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void reconnectAssociatedOperatorsAccordingToGraphLayout(boolean leaveOldOnesAlone) {
 		// unsubscribe all Operators from their sources/sinks
-		for(IPhysicalOperator o : this.getAllOperatorsInvolved()) {
+		for(IPhysicalOperator o : this.getAllOperatorsInvolved(false)) {
 			if(o.isSink()) {
 				((ISink<?>)o).unsubscribeFromAllSources();
 			}
@@ -302,10 +302,12 @@ public class Graph {
 		}
 	}
 	
-	public List<IPhysicalOperator> getAllOperatorsInvolved() {
+	public List<IPhysicalOperator> getAllOperatorsInvolved(boolean onlyNew) {
 		List<IPhysicalOperator> result = new ArrayList<IPhysicalOperator>();
 		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
-			result.add(gn.getOperator());
+			if(!gn.isOld() || !onlyNew) {
+				result.add(gn.getOperator());
+			}
 		}
 		return result;
 	}

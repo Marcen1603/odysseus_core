@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.hyperic.sigar.Mem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -264,11 +263,11 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), sharedQueryID, r.getOperatorIDsOfNewQuery(true));
 	}
 	
-	public void updateResourceUsage(double cpuUsage, Mem memory, double networkUsage) {
-		sendResourceUsageToMaster(cpuUsage, memory, networkUsage);
+	public void updateResourceUsage(double cpuUsage, double mem_free, double mem_total, double mem_used, double networkUsage) {
+		sendResourceUsageToMaster(cpuUsage, mem_free, mem_total, mem_used, networkUsage);
 	}
 	
-	private void sendResourceUsageToMaster(double cpuUsage, Mem memory, double networkUsage) {
+	private void sendResourceUsageToMaster(double cpuUsage, double mem_free, double mem_total, double mem_used, double networkUsage) {
 		if(masterID == null) {
 			return;
 		}
@@ -276,9 +275,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
 		adv.setCpu_usage(cpuUsage);
 		adv.setNetworkUsage(networkUsage);
-		adv.setMem_free(memory.getFree());
-		adv.setMem_total(memory.getTotal());
-		adv.setMem_used(memory.getUsed());
+		adv.setMem_free(mem_free);
+		adv.setMem_total(mem_total);
+		adv.setMem_used(mem_used);
 		adv.setTimestamp(System.currentTimeMillis());
 		adv.setMasterID(this.masterID);
 		adv.setPeerID(this.localID);
