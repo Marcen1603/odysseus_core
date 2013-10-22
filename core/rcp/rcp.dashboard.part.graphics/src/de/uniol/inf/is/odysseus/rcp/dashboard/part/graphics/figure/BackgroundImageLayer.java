@@ -37,7 +37,7 @@ public class BackgroundImageLayer extends FreeformLayer {
 		try {
 			setImage(new Image(PlatformUI.getWorkbench().getDisplay(), new FileInputStream(path)));
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 			setImage(null);
 		}
 	}

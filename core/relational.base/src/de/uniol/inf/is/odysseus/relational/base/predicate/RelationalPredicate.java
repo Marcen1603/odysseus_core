@@ -492,7 +492,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			}
 
 		} catch (Exception e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		return false;
 	}
