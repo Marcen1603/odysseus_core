@@ -212,4 +212,8 @@ public final class QueryPartAdvertisement extends Advertisement implements Seria
 			return null;
 		}
 	}
+	
+	public void setPeerID(String id) {
+		this.peerID = convertToPeerID(id);
+	}
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.AuctionBasedDistributor">
+   <implementation class="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.AuctionBasedDistributor"/>
+	<reference bind="bindAllocator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.allocator.Allocator" name="Allocator" policy="static" unbind="unbindAllocator"/>
+	<reference bind="bindCostCalculator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.calculator.CostCalculator" name="CostCalculator" policy="static" unbind="unbindCostCalculator"/>
+	<reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>	
+	<!--<reference bind="bindPartitioner" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.Partitioner" name="Partitioner" policy="static" unbind="unbindPartitioner" target="(component.name=de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.internal.PlanProOperatorPartitioner)"/>-->
+	<reference bind="bindPartitioner" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.Partitioner" name="Partitioner" policy="static" unbind="unbindPartitioner" target="(component.name=de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.internal.SurveyBasedPartitioner)"/>
+    <reference bind="bindCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.internal.communicator.Communicator" name="Communicator" policy="static" unbind="unbindCommunicator"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor"/>
+   </service>
+</scr:component>

@@ -54,7 +54,7 @@ public class QueryPart {
 	/**
 	 * The destination (peer), where this {@link QueryPart} shall be executed.
 	 */
-	private final String destinationName;
+	private String destinationName;
 
 	/**
 	 * Constructs a new {@link QueryPart} with a specified destination.
@@ -333,6 +333,10 @@ public class QueryPart {
 		
 		return strPart;
 		
+	}
+
+	public void setDestinationName(String destinationName) {
+		this.destinationName = destinationName;
 	}
 
 }

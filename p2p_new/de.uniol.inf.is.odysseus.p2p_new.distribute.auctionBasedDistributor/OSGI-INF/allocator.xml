@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.allocator.internal.DefaultAllocator">
+   <implementation class="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.allocator.internal.DefaultAllocator"/>
+   <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
+   <reference bind="bindCommunicator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.internal.communicator.Communicator" name="Communicator" policy="static" unbind="unbindCommunicator"/>
+   <reference bind="bindCostCalculator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.calculator.CostCalculator" name="CostCalculator" policy="static" unbind="unbindCostCalculator"/>
+   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static" unbind="unbindExecutor"/>      
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.allocator.Allocator"/>
+   </service>
+</scr:component>
