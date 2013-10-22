@@ -89,6 +89,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 			try {
 				out = f.get(pathes[p]);
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new IOException(e);
 			}
 			if (out instanceof ScalarDS) {
