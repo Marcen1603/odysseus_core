@@ -1,12 +1,11 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
 import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
@@ -19,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class SchemaHelper {
 	private static String OUTPUTSCHEMA_URI_TAG = "outputSchemaURI";
-	private static String ATTRIBUTE_TAG = "attribute";
 	private static String ATTRIBUTE_SOURCENAME_TAG = "attribute_sourcename";
 	private static String ATTRIBUTENAME_TAG = "attribute_name";
 	private static String ATTRIBUTE_DATATYPE_TAG = "attribute_datatype";
@@ -37,19 +35,20 @@ public class SchemaHelper {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static StructuredDocument createOutputSchemaStatement(SDFSchema schema, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 
-		// OutputSchemata consist of Attributes, which are added one by one as found
-		for(SDFAttribute attribute : schema.getAttributes()) {
-			Element attribElement = rootDoc.createElement(ATTRIBUTE_TAG);
+		// OutputSchemata consist of Attributes, which are added one by one as found, under the element-tag of their respective positions
+		for(int i = 0; i < schema.getAttributes().size(); i++) {
+			SDFAttribute attribute = schema.getAttribute(i);
+			Element attribElement = rootDoc.createElement(Integer.toString(i));
 			toAppendTo.appendChild(attribElement);
 			createSDFAttributeStatement(attribute,mimeType,rootDoc,attribElement);
 		}
 		// we need the URI as well
 		toAppendTo.appendChild(rootDoc.createElement(OUTPUTSCHEMA_URI_TAG,schema.getURI()));
-		
 		return rootDoc;
 	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+
+		
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static StructuredDocument createSDFAttributeStatement(SDFAttribute attribute, MimeMediaType mimeType, StructuredDocument rootDoc, Element toAppendTo) {
 		// Attributes are defined by their names, the datatype and the name of the source
 		toAppendTo.appendChild(rootDoc.createElement(ATTRIBUTE_SOURCENAME_TAG,attribute.getSourceName()));
@@ -75,16 +74,22 @@ public class SchemaHelper {
 	public static SDFSchema createSchemaFromStatement(TextElement<?> statement) {
 
 		String uri = "";
-		Set<SDFAttribute> attributes = new TreeSet<SDFAttribute>();
+		Map<Integer,SDFAttribute> attributeMap = new TreeMap<Integer,SDFAttribute>();
 		Enumeration<? extends TextElement<?>> elems = statement.getChildren();
 		while(elems.hasMoreElements()) {
 			TextElement<?> elem = elems.nextElement();
 			String tag = elem.getName();
 			if(tag.equals(OUTPUTSCHEMA_URI_TAG)) {
 				uri = elem.getTextValue();
-			} else if(tag.equals(ATTRIBUTE_TAG)) {
-				attributes.add(createAttributeFromStatement(elem));
+			// if it's not the uri, it has to be an attribute
+			} else {
+				int attributeIndex = Integer.parseInt(elem.getName());
+				attributeMap.put(attributeIndex,createAttributeFromStatement(elem));
 			}
+		}
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		for(int i : attributeMap.keySet()) {
+			attributes.add(attributeMap.get(i));
 		}
 		// FIXME: Tuple set a default!
 		SDFSchema schema = new SDFSchema(uri,Tuple.class,attributes);

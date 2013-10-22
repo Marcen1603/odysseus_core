@@ -39,7 +39,7 @@ public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
 		IPredicate pred = jpo.getPredicate();
 		Element predicateElement = rootDoc.createElement(PREDICATE_TAG);
 		toAppendTo.appendChild(predicateElement);
-		PredicateHelper.generatePredicateStatement(pred, mimeType, rootDoc, predicateElement);
+		PredicateHelper.generatePredicateStatement(pred, mimeType, rootDoc, predicateElement, jpo);
 		// append the name of the join
 		toAppendTo.appendChild(rootDoc.createElement(JOINTIPONAME_TAG,jpo.getName()));
 		// Consider the type of the sweep-areas and append this information under the transferfunction-tag

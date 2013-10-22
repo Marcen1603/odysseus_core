@@ -26,7 +26,8 @@ public class SelectPOHelper extends AbstractPhysicalOperatorHelper<SelectPO> {
 		IPredicate pred = spo.getPredicate();
 		Element predicateElement = rootDoc.createElement(PREDICATE_TAG);
 		toAppendTo.appendChild(predicateElement);
-		PredicateHelper.generatePredicateStatement(pred, mimeType, rootDoc, predicateElement);
+		PredicateHelper.generatePredicateStatement(pred, mimeType, rootDoc, predicateElement,spo);
+		System.out.println(rootDoc.toString());
 		return rootDoc;
 	}
 

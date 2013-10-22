@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -26,9 +27,12 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -68,7 +72,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private int maximumConsideredAlternatives = 3;
 	private static final String DISTRIBUTION_TYPE = "centralized";
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<ILogicalQuery> distributeLogicalQueries(IExecutor sender,
 			List<ILogicalQuery> queriesToDistribute,
@@ -90,22 +94,45 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			
 			// convert the operators of the new Queries to physical ones
 			List<IPhysicalOperator> originalPlan = new ArrayList<IPhysicalOperator>();
-			originalPlan.addAll(this.getQueryOptimizer().optimizeQuery(
+			IPhysicalQuery physQ = this.getQueryOptimizer().optimizeQuery(
 					this.getExecutor(),
 					q,
 					new OptimizationConfiguration(parameters),
-					this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant())).getAllOperators());
-			// temporary workaround to remove wild jxta-send-operators which get placed on top of a query
-			// once it was already created, removed and then re-added
-			List<IPhysicalOperator> toRemove = new ArrayList<IPhysicalOperator>();
+					this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant()));
+			originalPlan.addAll(physQ.getAllOperators());
 			for(IPhysicalOperator o : originalPlan) {
-				if(o instanceof JxtaSenderPO) {
-					toRemove.add(o);
+				o.addOwner(physQ);
+			}
+
+			// find MetaDataUpdatePOs with sources attached, which are for some reason not part of this query plan
+			// (usually because of a previously removed query, which left only the top operator in the dictionary)
+			List<IPhysicalOperator> toAdd = new ArrayList<IPhysicalOperator>();
+			for(IPhysicalOperator o : originalPlan) {
+				if(o instanceof MetadataUpdatePO) {
+					MetadataUpdatePO mdupo = (MetadataUpdatePO)o;
+					List<PhysicalSubscription<IPhysicalOperator>> sourceSubs = mdupo.getSubscribedToSource();
+					if(!sourceSubs.isEmpty()) {
+						// there should only be one subscription
+						PhysicalSubscription<IPhysicalOperator> sub = sourceSubs.get(0);
+						IPhysicalOperator source = sub.getTarget();
+						if(!originalPlan.contains(source)) {
+							toAdd.add(source);
+							if(source.isPipe() && !((IPipe)source).getSubscribedToSource().isEmpty()) {
+								sub = (PhysicalSubscription<IPhysicalOperator>) ((IPipe)source).getSubscribedToSource().iterator().next();
+								source = sub.getTarget();
+								if(!originalPlan.contains(source)) {
+									toAdd.add(source);
+								}
+							}
+						}
+					}
 				}
 			}
-			for(IPhysicalOperator jsend : toRemove) {
-				((JxtaSenderPO)jsend).unsubscribeFromAllSources();
-				originalPlan.remove(jsend);
+				
+			for(IPhysicalOperator o : toAdd) {
+				LOG.debug("Added operator " + o + " to the plan, because it was a source of a MetaDataupdatePO");
+				//o.addOwner(physQ);
+				originalPlan.add(o);
 			}
 			newOperators.add(originalPlan);
 
@@ -123,6 +150,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 						this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant())).getAllOperators());
 				newOperators.add(tmp);
 			}
+			
 			Map<Integer,Graph> baseGraphs = new HashMap<Integer, Graph>();
 			List<SimulationResult> results = new ArrayList<SimulationResult>();
 			List<PeerID> usedPeers = new ArrayList<PeerID>();
@@ -149,7 +177,18 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				
 				
 				PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-				
+				// at this point, we simulated each of the alternatives once, let's continue with the most
+				// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
+				List<GraphNode> topNodes = baseGraph.getSinkNodes(true);
+				for(GraphNode gn : topNodes) {
+					// insert a receive and a send-operator
+					JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
+					GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
+					SDFSchema schema = gn.getOperator().getOutputSchema();
+					senderOp.addOwner(physQ);
+					LOG.debug("Trying to connect a jxtaSender-Node with GraphNode " + gn.getOperatorID() + "of type " + gn.getOperatorType());
+					baseGraph.addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
+				}
 				masterPeerConnectionPipeID.put(x,pipeID);
 
 				// simulate the whole plan once and determine if its costs are higher
@@ -167,17 +206,11 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				}
 			}
 			// at this point, we simulated each of the alternatives once, let's continue with the most
-						// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
+			// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
 			List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true);
 			chosenMasterPeerConnectionPipeID = masterPeerConnectionPipeID.get(bestAlternative);
 			for(GraphNode gn : topNodes) {
-				// insert a receive and a send-operator
-				JxtaSenderPO senderOp = new JxtaSenderPO(chosenMasterPeerConnectionPipeID.toURI().toString(), true);
-				GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
 				SDFSchema schema = gn.getOperator().getOutputSchema();
-				LOG.debug("Trying to connect a jxtaSender-Node with GraphNode " + gn.getOperatorID() + "of type " + gn.getOperatorType());
-				bestResult.getGraph().addAdditionalNode(sendGn, gn.getOperatorID(), false, 0, 0, schema.clone());
-				
 				// The receivers for those would be unconnected and thus not transformable in the traditional manner
 				// no GraphNode for the receiver, because it goes to the master
 				// and thus has to find its way into the resulting query as a logical operator
@@ -761,4 +794,13 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		}
 		return false;
 	}
+	
+	public int getNumberOfRunningQueriesForPeer(PeerID peerID) {
+		return this.opsForQueriesForPeer.get(peerID).keySet().size();
+	}
+	
+	public int getNumberOfRunningQueries() {
+		return getNumberOfRunningQueriesForPeer(this.getManager().getLocalID());
+	}
+	
 }

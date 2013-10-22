@@ -34,6 +34,7 @@ public class ReceiverPOHelper extends AbstractPhysicalOperatorHelper<ReceiverPO>
 		Element transportHandlerElement = rootDoc.createElement(TRANSPORTHANDLER_TAG);
 		toAppendTo.appendChild(transportHandlerElement);
 		TransportHandlerHelper.generateTransportHandlerStatement(((AbstractProtocolHandler)protHandler).getTransportHandler(), mimeType, rootDoc, transportHandlerElement);
+		//System.out.println(rootDoc.toString());
 		return rootDoc;
 	}
 

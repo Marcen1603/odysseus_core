@@ -4,8 +4,6 @@ import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 
-import de.uniol.inf.is.odysseus.costmodel.operator.CPUUsage;
-
 /**
  * This monitor collects information about cpu-, network and memory-usage on a peer
  * and periodically triggers an update for the master

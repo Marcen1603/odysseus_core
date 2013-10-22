@@ -15,6 +15,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -49,6 +50,11 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	private static final String MASTER_STATUS_SYS_PROPERTY = "isCentralizedDistributorMaster";
 	private ResourceUsageMonitor monitor;
 	private boolean activated = false;
+	private IDataDictionary dd;
+	// prefer a result of another peer, if the placement of a result would raise
+	// a peer's usage more than this value about all the peer's average usage
+	@SuppressWarnings("unused")
+	private double maxUsageDelta;
 	
 	// the PeerID of the Master
 	private PeerID masterID;
@@ -75,6 +81,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				this.activate();
 			} else if(ServerExecutorService.isBound()) {
 				LOG.debug("Found IExecutor");
+				dd = ServerExecutorService.getServerExecutor().getDataDictionary(UserManagementProvider.getSessionmanagement().loginSuperUser(null,UserManagementProvider.getDefaultTenant().getName()).getTenant());
 				this.activate();
 			}
 		}
@@ -413,5 +420,9 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	@Override
 	public String getPeerName() {
 		return P2PDictionaryService.get().getLocalPeerName();
+	}
+
+	public IDataDictionary getDd() {
+		return dd;
 	}
 }

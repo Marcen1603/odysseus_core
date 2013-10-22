@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 
 public class Graph {
 	Map<String,List<GraphNode>> nodesGroupedByOpType = new HashMap<String, List<GraphNode>>();
@@ -330,6 +331,9 @@ public class Graph {
 		for(GraphNode gn : this.getGraphNodesUngrouped(onlyNew)) {
 			if(gn.isSource() && gn.getSinkSubscriptions().isEmpty()) {
 				result.add(gn);
+			// return the node before it, if the graphnode is a new JxtaSenderPO
+			} else if(gn.getOperator() instanceof JxtaSenderPO) {
+				result.add(gn.getSubscribedToSource().iterator().next().getTarget());
 			}
 		}
 		return result;

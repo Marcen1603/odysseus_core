@@ -262,6 +262,7 @@ public class QSSimulator implements IQuerySharingSimulator {
 	}
 	
 	private void replaceNode(GraphNode toReplace, GraphNode replacement) {
+		LOG.debug("Replacing GraphNode " + toReplace.getOperatorID() + " with GraphNode " + replacement.getOperatorID());
 		// Fetch all sink-subscriptions
 		Collection<Subscription<GraphNode>> sinkSubs = new ArrayList<Subscription<GraphNode>>(toReplace.getSinkSubscriptions());
 
