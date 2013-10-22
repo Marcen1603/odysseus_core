@@ -61,13 +61,23 @@ public class SubPlanManipulatorTest {
 	}
 	
 	@Test
-	public void testMergeQueryParts() {
+	public void testMergeQueryPartsWithCorrectSubPlans() {
 		List<SubPlan> parts = createQueryParts3();
 		manipulator.insertDummyAOs(parts);
 		parts = manipulator.mergeSubPlans(parts);
 		assertEquals(1, parts.size());
 		assertEquals(0, countDummyOperators(parts));
 	}	
+	
+	@Test
+	public void testMergeQueryPartsWithMessySubPlans() {
+		List<SubPlan> parts = createQueryParts4();
+		manipulator.insertDummyAOs(parts);
+		parts = manipulator.mergeSubPlans(parts);
+		assertEquals(1, parts.size());
+		assertEquals(0, countDummyOperators(parts));
+	}	
+		
 	
 	@Test
 	public void testInsertJxtaOperators() {
@@ -156,4 +166,27 @@ public class SubPlanManipulatorTest {
 				
 		return parts;
 	}		
+	
+	private List<SubPlan> createQueryParts4() {
+		ILogicalOperator stream = new StreamAO();
+		ILogicalOperator window = new WindowAO();
+		ILogicalOperator select1 = new SelectAO();
+		ILogicalOperator select2 = new SelectAO();
+		ILogicalOperator union = new UnionAO();
+		ILogicalOperator select3 = new SelectAO();
+		
+		stream.subscribeSink(window, 0, 0, null);
+		window.subscribeSink(select1, 0, 0, null);
+		window.subscribeSink(select2, 0, 1, null);
+		select1.subscribeSink(union, 0, 0, null);
+		select2.subscribeSink(union, 1, 0, null);
+		union.subscribeSink(select3, 0, 0, null);
+		
+		List<SubPlan> parts = Lists.newArrayList();
+		parts.add(new SubPlan("local", stream, window, select1,select3));
+		parts.add(new SubPlan("remoatePeer2", select2));
+		parts.add(new SubPlan("remoatePeer2", union));
+				
+		return parts;
+	}			
 }

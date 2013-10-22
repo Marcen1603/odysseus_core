@@ -20,34 +20,29 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.SubPlan;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.internal.AbstractPartitioner.TargetSize;
 
-public class SurveyBasedPartitionerTest {
+public class FixedSizePartitionerTest {
 	@Test
 	public void testPartitioning() {
 		// scheiß auf die abhängigkeiten, die zu testende methode hat keine
 		SurveyBasedPartitioner partitioner = new SurveyBasedPartitioner();
 		
 		SubPlan plan = createPlan();
-		Map<String, CostSummary> costs = calcCosts(plan.getLogicalPlan());
-		final List<Vote> votes = createVotes();
+		Map<String, CostSummary> costs = calcCosts(plan.getSources().get(0));
+		System.out.println("Costs "+CostSummary.calcSum(costs.values()));
 		List<SubPlan> subplans = partitioner._partition(plan, costs, new TargetSize() {
 
 			@Override
 			public double getNextSize(double totalAbsoluteCosts) {
-				return totalAbsoluteCosts * votes.iterator().next().getPercentageOfBearableCosts();
+				return 0.007;
 			}
 			
 		});
 		
-		assertEquals(2, subplans.size());
-		assertEquals(2, subplans.get(0).getOperators().size());
-		assertEquals(4, subplans.get(1).getOperators().size());
-	}
-	
-	private List<Vote> createVotes() {
-		List<Vote> votes = Lists.newArrayList();
-		votes.add(new Vote(1.6, 0.6, 2));
-		votes.add(new Vote(0.4, 0.5, 1));
-		return votes;
+		assertEquals(4, subplans.size());
+		assertEquals(3, subplans.get(0).getOperators().size());
+		assertEquals(1, subplans.get(1).getOperators().size());
+		assertEquals(1, subplans.get(2).getOperators().size());
+		assertEquals(1, subplans.get(3).getOperators().size());
 	}
 
 	private SubPlan createPlan() {

@@ -21,19 +21,20 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.
 public class PlanProOperatorPartitioner extends AbstractPartitioner {
 	private static final Logger log = LoggerFactory
 			.getLogger(PlanProOperatorPartitioner.class);
-	private SubPlanManipulator partManipulator;
-	
+
 	public void activate() {
-		partManipulator = new SubPlanManipulator();
 	}
 
 	public void deactivate() {
-	}	
-	
+	}		
+
+	public PlanProOperatorPartitioner() {
+		super();
+	}
 	@Override
 	public List<SubPlan> partitionWithDummyOperators(ILogicalOperator query, ID sharedQueryId, QueryBuildConfiguration transCfg) throws CouldNotPartitionException {
 		List<SubPlan> parts = partitionLogical(query, sharedQueryId, transCfg); 
-		partManipulator.insertDummyAOs(parts);
+		manipulator.insertDummyAOs(parts);
 		return parts;
 	}
 

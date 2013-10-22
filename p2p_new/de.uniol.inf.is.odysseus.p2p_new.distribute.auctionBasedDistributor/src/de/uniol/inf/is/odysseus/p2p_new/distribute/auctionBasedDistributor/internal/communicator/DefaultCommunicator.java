@@ -236,7 +236,7 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 					ILogicalQuery query = Helper.getLogicalQuery(executor, adv.getPqlStatement()).get(0);
 					CostSummary costs = calculator.calcCostsForPlan(query, adv.getTransCfgName());
 					
-					double bidValue = calculator.calcBid(query.getLogicalPlan(), costs);	
+					double bidValue = calculator.calcBid(query.getLogicalPlan(), costs)+0.2;	
 					
 					if(bidValue > 0) {
 						final AuctionResponseAdvertisement bid = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());

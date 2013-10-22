@@ -56,10 +56,10 @@ public class CostSummary {
 		double memCosts =  0;
 		ILogicalOperator operator = null;
 		for(CostSummary cost : costs) {
-			cpuCosts += cost.getCpuCost();
+			cpuCosts += cost.getCpuCost()*100; // um fehler bei floatingpoints zu vermeiden (ziemlich dumm diese loesung)
 			memCosts += cost.getMemCost();
 			operator = cost.getPlan();
 		}
-		return new CostSummary(null, cpuCosts, memCosts, operator);
+		return new CostSummary(null, cpuCosts/100, memCosts, operator);
 	}	
 }

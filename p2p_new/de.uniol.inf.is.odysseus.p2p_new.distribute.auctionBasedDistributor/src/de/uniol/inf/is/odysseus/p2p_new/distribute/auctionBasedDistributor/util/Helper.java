@@ -47,10 +47,45 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 public class Helper {
 	private static final Logger log = LoggerFactory.getLogger(Helper.class);
 
-	private static ISession getActiveSession() {
+	/**
+	 * Determines if the target {@link ILogicalOperator} of any {@link LogicalSubscription} is not in a given 
+	 * collection of {@link IlogicalOperator}s.
+	 * @see LogicalSubscription#getTarget()
+	 * @param operators The given collection of {@link IlogicalOperator}s.
+	 * @param subscriptions A collection of {@link LogicalSubscription}s to be checked.
+	 * @return true, if any target {@link ILogicalOperator} of <code>subscriptions</code> is not in 
+	 * <code>operators</code>.
+	 */
+	public static boolean oneTargetNotInList(List<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
+		
+		for(final LogicalSubscription subscription : subscriptions) {
+			
+			if(!operators.contains(subscription.getTarget()))
+				return true;
+			
+		}		
+		return false;		
+	}
+
+	
+	public static ISession getActiveSession() {
 		return UserManagementProvider.getSessionmanagement().loginSuperUser(null,
 				UserManagementProvider.getDefaultTenant().getName());
 	}
+	
+	public static List<ILogicalOperator> allSubscriptions(ILogicalOperator target) {
+		List<ILogicalOperator> operators = Lists.newArrayList();
+		if(target.getSubscriptions().isEmpty()) {
+			operators.add(target);
+		}
+		else {
+			for(LogicalSubscription sub : target.getSubscriptions()) {
+				operators.addAll(allSubscriptions(sub.getTarget()));				
+			}
+		}
+		return operators;
+	}
+
 	
 	public static ILogicalQuery wrapInLogicalQuery(ILogicalOperator plan, String name, String pqlText) {
 		final ILogicalQuery logicalQuery = new LogicalQuery();

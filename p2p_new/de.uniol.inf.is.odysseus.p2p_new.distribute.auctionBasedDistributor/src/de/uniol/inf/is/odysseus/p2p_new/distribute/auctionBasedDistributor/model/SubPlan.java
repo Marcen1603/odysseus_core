@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -9,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.Helper;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
@@ -69,12 +68,12 @@ public class SubPlan {
 			else {				
 				this.operators.add(operator);
 				if((operator.getSubscriptions().isEmpty() || 
-						oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscriptions()))
+						Helper.oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscriptions()))
 						 && !sinks.contains(operator)) {
 					sinks.add(operator);
 				}
 				if((operator.getSubscribedToSource().isEmpty() || 
-						oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscribedToSource()))
+						Helper.oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscribedToSource()))
 						 && !sources.contains(operator)){
 					sources.add(operator);
 				}
@@ -95,27 +94,6 @@ public class SubPlan {
 		_addOperators(all);		
 	}
 	
-
-	/**
-	 * Determines if the target {@link ILogicalOperator} of any {@link LogicalSubscription} is not in a given 
-	 * collection of {@link IlogicalOperator}s.
-	 * @see LogicalSubscription#getTarget()
-	 * @param operators The given collection of {@link IlogicalOperator}s.
-	 * @param subscriptions A collection of {@link LogicalSubscription}s to be checked.
-	 * @return true, if any target {@link ILogicalOperator} of <code>subscriptions</code> is not in 
-	 * <code>operators</code>.
-	 */
-	private boolean oneTargetNotInList(List<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
-		
-		for(final LogicalSubscription subscription : subscriptions) {
-			
-			if(!operators.contains(subscription.getTarget()))
-				return true;
-			
-		}		
-		return false;		
-	}
-
 	public List<ILogicalOperator> getOperators() {
 		return Lists.newArrayList(operators);
 	}
