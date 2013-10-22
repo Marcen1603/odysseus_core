@@ -47,6 +47,9 @@ public class HelperProvider {
 	
 		IPhysicalOperatorHelper<?> slidingAdvanceTimeWindowTIPOHelper = new SlidingAdvanceTimeWindowTIPOHelper();
 		helpers.put(slidingAdvanceTimeWindowTIPOHelper.getOperatorClass().getName(), slidingAdvanceTimeWindowTIPOHelper);
+		
+		IPhysicalOperatorHelper<?> relationalMapPOHelper = new RelationalMapPOHelper();
+		helpers.put(relationalMapPOHelper.getOperatorClass().getName(), relationalMapPOHelper);
 	}
 	
 	public static HelperProvider getInstance() {

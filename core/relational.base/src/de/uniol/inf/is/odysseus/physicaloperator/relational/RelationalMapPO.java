@@ -191,6 +191,14 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 		return statebased;
 	}
 
+	public SDFExpression[] getExpressions() {
+		return expressions;
+	}
+
+	public SDFSchema getInputSchema() {
+		return inputSchema;
+	}
+
 }
 
 class VarHelper {
