@@ -31,7 +31,8 @@ public class OpCountCostModel<T> implements ICostModel<T> {
 
 	@Override
 	public ICost<T> getMaximumCost() {
-		return new OpCountCost<T>(5);
+		// Five seemed awfully low for the maximum possible costs
+		return new OpCountCost<T>(100);
 	}
 
 	@Override

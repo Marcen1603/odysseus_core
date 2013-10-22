@@ -84,8 +84,11 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	}
 	
 	public void disconnect() {
-		connectingSource.disconnectSink(this, 0, 0, connectingSource.getOutputSchema());
-		getLogger().debug("Source {} disconnected", source);
+		if(this.connectingSource != null) {
+			connectingSource.disconnectSink(this, 0, 0, connectingSource.getOutputSchema());
+			getLogger().debug("Source {} disconnected", source);
+		}
+
 	}
 
 	public void addListener( IDataSourceObserverListener listener ) {

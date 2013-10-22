@@ -52,7 +52,8 @@ public class OpCountCost<T> implements ICost<T> {
 	 * @param opCount
 	 */
 	OpCountCost(double opCount) {
-		this.opCount = operators.size();
+		//this.opCount = operators.size();
+		this.opCount = opCount;
 		operators = new ArrayList<T>();
 	}
 
@@ -108,6 +109,10 @@ public class OpCountCost<T> implements ICost<T> {
 	@Override
 	public ICost<T> fraction(double factor) {
 		return new OpCountCost<T>(opCount * factor);
+	}
+
+	public double getOpCount() {
+		return opCount;
 	}
 
 }
