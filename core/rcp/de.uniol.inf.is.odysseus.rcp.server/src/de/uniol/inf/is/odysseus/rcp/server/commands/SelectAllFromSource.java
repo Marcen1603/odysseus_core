@@ -22,6 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -45,7 +46,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 
 		if( !selectedSourceEntries.isEmpty() ) {
 			for( Entry<?, ?> sourceEntry : selectedSourceEntries ) {
-				String sourceName = (String) sourceEntry.getKey();
+				Resource sourceName = (Resource) sourceEntry.getKey();
 				
 				Collection<Integer> queryIDs = createQueryToSelectAllDataFromSource(sourceName, activeUser);
 				startQueries(queryIDs, activeUser);
@@ -56,8 +57,8 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 		return null;
 	}
 
-	private static Collection<Integer> createQueryToSelectAllDataFromSource(String sourceName, ISession caller) {
-		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + getRealSourcename(sourceName) + ";", "CQL", caller, "Standard");
+	private static Collection<Integer> createQueryToSelectAllDataFromSource(Resource sourceName, ISession caller) {
+		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard");
 	}
 
 	private static void startQueries(Collection<Integer> queryIDs, ISession caller) {
@@ -114,14 +115,14 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 		return OdysseusRCPServerPlugIn.getServerExecutor().getExecutionPlan().getQueryById(queryID).getRoots().iterator().next();
 	}
 
-	private static String getRealSourcename(String sourceName) {
-		int pos = sourceName.indexOf(".");
-		if( pos != -1 ) {
-			return sourceName.substring(pos + 1);
-		}
-		
-		return sourceName;
-	}
+//	private static String getRealSourcename(Resource sourceName) {
+//		int pos = sourceName.indexOf(".");
+//		if( pos != -1 ) {
+//			return sourceName.substring(pos + 1);
+//		}
+//		
+//		return sourceName;
+//	}
 
 	private static <T> List<T> getSelection() {
 		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getSelection();
