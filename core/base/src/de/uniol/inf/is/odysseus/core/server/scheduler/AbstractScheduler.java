@@ -83,7 +83,7 @@ public abstract class AbstractScheduler implements
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
 
-	// This is the list of sources that shoud be scheduled
+	// This is the list of sources that should be scheduled
 	final protected List<IIterableSource<?>> sources = new ArrayList<>();
 
 	// This ist the list of partial plans (without sources) that should be scheduled
@@ -282,7 +282,7 @@ public abstract class AbstractScheduler implements
 	@Override
 	public void removeLeafSources(List<IIterableSource<?>> sources) {
 		this.sources.removeAll(sources);
-		process_setLeafSources(sources);
+		process_setLeafSources(this.sources);
 	}
 
 	@Override

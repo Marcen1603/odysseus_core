@@ -832,6 +832,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			} catch (Exception e) {
 				LOG.warn("Query not removed. An Error while optimizing occurd (ID: "
 						+ queryID + ").");
+				e.printStackTrace();
 				throw new PlanManagementException(e);
 			} finally {
 				executionPlanLock.unlock();

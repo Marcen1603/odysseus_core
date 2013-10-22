@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +22,16 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		ISourceExecutor {
 
 	Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
-	boolean alldone = false;
 	private boolean interrupt = false;
 	final private List<IIterableSource<?>> sources = new ArrayList<>();
+	final private List<IIterableSource<?>> toAdd = new CopyOnWriteArrayList<>();
+	final private List<IIterableSource<?>> toRemove = new CopyOnWriteArrayList<>();
+
 	final private Comparator<IIterableSource<?>> sourcesComparator = new Comparator<IIterableSource<?>>() {
 		@Override
 		public int compare(IIterableSource<?> left, IIterableSource<?> right) {
-			long l = left.isOpen()?left.getDelay():0;
-			long r = right.isOpen()?right.getDelay():0;
+			long l = left.isOpen() ? left.getDelay() : 0;
+			long r = right.isOpen() ? right.getDelay() : 0;
 			return Long.compare(l, r);
 		}
 	};
@@ -46,16 +50,113 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	@Override
 	public void run() {
-		interrupt = false;
+		try {
+			interrupt = false;
+			while (!interrupt && !isInterrupted() && caller.isRunning()) {
+				waitForOpen();
+				while (sources.size() > 0) {
+					synchronized (sources) {
+						updateSources();
+						// Need to delay some time to catch an open
+						delay(10);
+						boolean processableSources = processSources();
+						if (!processableSources) {
+							waitForProcessableSources();
+						}
+					} // Synchronized
+				}// while sources.size() > 0
+			} // !interrupt && !isInterrupted() && caller.isRunning()
+		} catch (Exception e) {
+			// TODO: Error Handler
+			e.printStackTrace();
+		}
+
+		// logger.debug("Removing " + this.hashCode() + " Sources " + sources);
+		// caller.removeSourceThread(this);
+
+	}
+
+	private void delay(int t) {
+		try {
+			sources.wait(t);
+		} catch (InterruptedException e) {
+		} catch (IllegalMonitorStateException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void waitForProcessableSources() {
+
+		boolean processableSources = false;
+		while (!processableSources && sources.size() > 0) {
+			for (IIterableSource<?> others : sources) {
+				if (others.isOpen()) {
+					processableSources = true;
+					break;
+				}
+			}
+			try {
+				if (!processableSources) {
+					logger.debug("Waiting for open sources to process "+sources);
+					sources.wait(1000);
+					updateSources();
+				}
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	private boolean processSources() {
+
+		boolean waitedForFirstSource = false;
+
+		boolean processableSources = false;
+		for (IIterableSource<?> s : sources) {
+			if (s.isOpen() && !s.isDone()) {
+				processableSources = true;
+				if (s.hasNext()) {
+					Long lastRun = -1l;
+					lastRun = lastRuns.get(s);
+					// Only delay source with shortest waiting time
+					// all other sources should be testet each time
+					// ... its some kind of busy wait ... :-/
+					if (!waitedForFirstSource) {
+						waitedForFirstSource = true;
+						long ct2 = System.currentTimeMillis();
+						// The first round nobody has to wait
+						if (lastRun != null) {
+							long diff = ct2 - lastRun;
+							try {
+								logger.trace("Sleeping ..." + s);
+								if (s.getDelay() - diff > 0) {
+									Thread.sleep(s.getDelay() - diff);
+								}
+							} catch (InterruptedException e) {
+								// Exception can be ignored
+							}
+						}
+						transfer(s);
+					} else { // Handle all but the first source
+						long ct2 = System.currentTimeMillis();
+						if (lastRun == null || ct2 - lastRun >= s.getDelay()) {
+							transfer(s);
+						}
+					}
+				} // if (s.hasNext())
+			} // if (s.isOpen() && !s.isDone())
+		} // for
+		return processableSources;
+	}
+
+	private void waitForOpen() {
 		boolean open = false;
 		// Wait for at least one open source
-		logger.debug("Waiting for at least one open source");
 		synchronized (sources) {
 
-			for (IIterableSource<?> s : sources) {
-				s.subscribe(this, POEventType.OpenDone);
-			}
 			while (!open) {
+
+				updateSources();
+
 				for (IIterableSource<?> s : sources) {
 					if (s.isOpen()) {
 						logger.debug("Opened " + this.hashCode()
@@ -75,75 +176,16 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			}
 		}
 		logger.debug("At least one source is open");
-		while (!interrupt && !isInterrupted() && caller.isRunning()) {
-			synchronized (sources) { // No interruptions while one run
-				if (this.sourcesChangeRequested) {
-					Collections.sort(sources, sourcesComparator);
-					try {
-						sources.wait(10);
-					} catch (InterruptedException e) {
-					} catch (IllegalMonitorStateException e) {
-						e.printStackTrace();
-					}
-				}
+	}
 
-				boolean waitedForFirstSource = false;
-
-				for (IIterableSource<?> s : sources) {
-					if (s.isOpen() && !s.isDone()) {
-
-						if (s.hasNext()) {
-							Long lastRun = -1l;
-							lastRun = lastRuns.get(s);
-							// Only delay source with shortest waiting time
-							// all other sources should be testet each time
-							// ... its some kind of busy wait ... :-/
-							if (!waitedForFirstSource) {
-								waitedForFirstSource = true;
-								long ct2 = System.currentTimeMillis();
-								// The first round nobody has to wait
-								if (lastRun != null) {
-									long diff = ct2 - lastRun;
-									try {
-										logger.trace("Sleeping ..." + s);
-										if (s.getDelay() - diff > 0) {
-											Thread.sleep(s.getDelay() - diff);
-										}
-									} catch (InterruptedException e) {
-										// Exception can be ignored
-									}
-								}
-								transfer(s);
-							} else { // Handle all but the first source
-								long ct2 = System.currentTimeMillis();
-								if (lastRun == null
-										|| ct2 - lastRun >= s.getDelay()) {
-									transfer(s);
-								}
-							}
-						}
-					} else {
-						alldone = true;
-						while (alldone) {
-							for (IIterableSource<?> others : sources) {
-								if (!others.isDone()) {
-									alldone = false;
-									break;
-								}
-							}
-							try {
-								sources.wait(1000);
-							} catch (InterruptedException e) {
-							}
-						}
-					}
-				}
+	private void updateSources() {
+		synchronized (sources) {
+			if (this.sourcesChangeRequested) {
+				delayedAddSources();
+				delayedRemoveSources();
+				Collections.sort(sources, sourcesComparator);
 			}
 		}
-
-		// logger.debug("Removing " + this.hashCode() + " Sources " + sources);
-		// caller.removeSourceThread(this);
-
 	}
 
 	private void transfer(IIterableSource<?> s) {
@@ -184,23 +226,48 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	}
 
 	public void removeSource(IIterableSource<?> source) {
-		this.sourcesChangeRequested = true;
 		synchronized (sources) {
-			logger.debug("Removing Source " + source);
-			sources.remove(source);
-			this.sourcesChangeRequested = false;
+			this.sourcesChangeRequested = true;
+			toRemove.add(source);
+			source.unsubscribe(this, POEventType.OpenDone);
 			sources.notifyAll();
 		}
 	}
 
 	public synchronized void addSource(IIterableSource<?> source) {
-		this.sourcesChangeRequested = true;
 		synchronized (sources) {
-			sources.add(source);
-			logger.debug("Added Source " + source + " " + sources);
-			alldone = false;
-			this.sourcesChangeRequested = false;
+			this.sourcesChangeRequested = true;
+			toAdd.add(source);
+			source.subscribe(this, POEventType.OpenDone);
 			sources.notifyAll();
+		}
+	}
+
+	private void delayedAddSources() {
+		synchronized (sources) {
+			Iterator<IIterableSource<?>> sourceIter = toAdd.iterator();
+			while (sourceIter.hasNext()) {
+				IIterableSource<?> source = sourceIter.next();
+				sources.add(source);
+				toAdd.remove(source);
+				logger.debug("Added Source " + source + " " + sources);
+			}
+			sources.notifyAll();
+			this.sourcesChangeRequested = false;
+		}
+	}
+
+	private void delayedRemoveSources() {
+		synchronized (sources) {
+			Iterator<IIterableSource<?>> sourceIter = toRemove.iterator();
+			while (sourceIter.hasNext()) {
+				IIterableSource<?> source = sourceIter.next();
+				sources.remove(source);
+				toRemove.remove(source);
+				logger.debug("Removed Source " + source + " " + sources);
+			}
+			sources.notifyAll();
+			this.sourcesChangeRequested = false;
 		}
 	}
 
