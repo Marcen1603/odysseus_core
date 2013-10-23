@@ -5,11 +5,13 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.ScalarDS;
+import ncsa.hdf.object.h5.H5CompoundDS;
 import ncsa.hdf.object.h5.H5File;
 
 import org.slf4j.Logger;
@@ -85,7 +87,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 		H5File f = new H5File(filename, FileFormat.READ);
 		HObject out;
 		String[] pathes = path.split(";");
-		for (int p = 0; p< pathes.length; p++) {
+		for (int p = 0; p < pathes.length; p++) {
 			try {
 				out = f.get(pathes[p]);
 			} catch (Exception e) {
@@ -96,40 +98,65 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 				ScalarDS v = (ScalarDS) out;
 				try {
 					Object data = v.getData();
-					switch (v.getDatatype().getDatatypeClass()) {
-					case Datatype.CLASS_FLOAT:
-						float[] float_values = (float[]) data;
-						readValues(pathes.length, p, float_values);
-						break;
-					case Datatype.CLASS_INTEGER:
-						int[] int_values = (int[]) data;
-						readValues(pathes.length, p, int_values);
-						break;	
-					}
+					readValues(pathes.length, v.getDatatype(), p, data);
 				} catch (OutOfMemoryError | Exception e) {
 					throw new IOException(e);
 				}
+			} else if (out instanceof H5CompoundDS) {
+				H5CompoundDS compound = (H5CompoundDS) out;
+					try {
+						@SuppressWarnings("rawtypes")
+						Vector data = (Vector) compound.getData();
+						Datatype[] types = compound.getMemberTypes();
+						for (int i = 0; i < data.size(); i++) {
+							Object input = data.get(i);
+							readValues(data.size(), types[i], i, input);
+						}
+					} catch (OutOfMemoryError | Exception e) {
+						e.printStackTrace();
+					}
 			} else {
 				throw new IllegalArgumentException(
 						"Unsupported path destination " + path);
 			}
 		}
 	}
-	
+
+	private void readValues(int size, Datatype type, int i, Object input) {
+		switch(type.getDatatypeClass()){
+		case Datatype.CLASS_REFERENCE:
+			long[] long_values = (long[]) input;
+			readValues(size,i,long_values);
+			break;
+		case Datatype.CLASS_STRING:
+			String[] str_values = (String[]) input;
+			readValues(size,i,str_values);							
+			break;
+		case Datatype.CLASS_INTEGER:
+			int[] int_values = (int[]) input;
+			readValues(size,i,int_values);
+			break;
+		case Datatype.CLASS_FLOAT:
+			float[] float_values = (float[]) input;
+			readValues(size,i,float_values);
+			break;
+		}
+	}
+
 	// ----
 	// Grml ... is there a better way than to copy the method ...
-	
+
 	private void readValues(int pathesLength, int p, float[] values) {
 		for (int i = 0; i < values.length; i++) {
 			String[] t;
-			if (p==0) {
+			if (p == 0) {
 				t = new String[pathesLength + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
 				read.add(t);
 			} else {
 				t = read.get(i);
-				t[p+1] = ""+values[i]; 
+				t[p + 1] = "" + values[i];
 			}
 		}
 	}
@@ -138,24 +165,53 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	private void readValues(int pathesLength, int p, int[] values) {
 		for (int i = 0; i < values.length; i++) {
 			String[] t;
-			if (p==0) {
+			if (p == 0) {
 				t = new String[pathesLength + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
 				read.add(t);
 			} else {
 				t = read.get(i);
-				t[p+1] = ""+values[i]; 
+				t[p + 1] = "" + values[i];
 			}
 		}
 	}
 
+	private void readValues(int pathesLength, int p, long[] values) {
+		for (int i = 0; i < values.length; i++) {
+			String[] t;
+			if (p == 0) {
+				t = new String[pathesLength + 1];
+				t[0] = "" + i;
+				t[1] = "" + values[i];
+				read.add(t);
+			} else {
+				t = read.get(i);
+				t[p + 1] = "" + values[i];
+			}
+		}
+	}
+	
+	private void readValues(int pathesLength, int p, String[] values) {
+		for (int i = 0; i < values.length; i++) {
+			String[] t;
+			if (p == 0) {
+				t = new String[pathesLength + 1];
+				t[0] = "" + i;
+				t[1] = "" + values[i];
+				read.add(t);
+			} else {
+				t = read.get(i);
+				t[p + 1] = "" + values[i];
+			}
+		}
+	}
 	
 	@Override
 	public void processInClose() throws IOException {
 		read.clear();
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		return read.size() > 0;
@@ -165,7 +221,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	public String[] getNext() {
 		return read.remove(0);
 	}
-	
+
 	@Override
 	public boolean isDone() {
 		return read.size() == 0;
