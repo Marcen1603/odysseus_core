@@ -126,6 +126,10 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 
 		@SuppressWarnings("unchecked")
 		final Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) element;
+		processElement(port, tuple);
+	}
+
+	private void processElement(final int port, final Tuple<ITimeInterval> tuple) {
 		try {
 			final List<Double> viewableValues = this.viewSchema.get(port).convertToViewableFormat(tuple);
 			final List<?> values = this.viewSchema.get(port).convertToChoosenFormat(viewableValues);
@@ -169,7 +173,6 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		} catch (SWTException swtex) {
 			System.out.println("WARN: SWT Exception " + swtex.getMessage());
 		}
-
 	}
 
 	private void adjust(double value) {
