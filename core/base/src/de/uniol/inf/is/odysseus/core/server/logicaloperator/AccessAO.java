@@ -9,8 +9,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
