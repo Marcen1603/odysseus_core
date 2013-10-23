@@ -30,12 +30,18 @@ public class KeyValueProjectPO<T extends KeyValueObject<?>> extends AbstractPipe
 	protected void process_next(T object, int port) {
 		KeyValueObject<IMetaAttribute> newObject = new KeyValueObject<IMetaAttribute>();
 		for(SDFAttribute path: this.paths) {
-			newObject.addAttributeValue(path.getURI(), object.getAttribute(path.getURI()));
+			// Schöner möglich?
+			String pathURI = path.getURI();
+			String pathQualName = path.getQualName();
+			if(object.getAttribute(pathURI) != null) {
+				newObject.addAttributeValue(pathURI, object.getAttribute(pathURI));
+			} else if(object.getAttribute(pathQualName) != null) {
+				newObject.addAttributeValue(pathQualName, object.getAttribute(pathQualName));
+			}
 		}
-		transfer((T) newObject);
-		//Problem, wenn Projektionsattribut nicht in beiden InputSchemata vorkommt...
-		//de.uniol.inf.is.odysseus.parser.pql.impl.PQLParserImpl.createOperator(PQLParserImpl.java:56)
-		//--> neues "paths" attribut anstelle von "attributes"
+		if(!newObject.isEmpty()) {
+			transfer((T) newObject);
+		}
 	}
 
 	@Override

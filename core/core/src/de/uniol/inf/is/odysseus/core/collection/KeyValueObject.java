@@ -28,12 +28,15 @@ implements Serializable{
 	final private Map<String, Object> attributes = new HashMap<String, Object>();
 	
 	public KeyValueObject(){
-		
 	}
 	
 	public KeyValueObject(KeyValueObject<T> other){
 		super(other);
 		this.attributes.putAll(other.attributes);	
+	}
+	
+	public KeyValueObject(Map<String,Object> map) {
+		this.attributes.putAll(map);
 	}
 	
 	//-----------------------------------------------
@@ -92,6 +95,14 @@ implements Serializable{
 		KeyValueObject<T> merged = new KeyValueObject<T>((KeyValueObject<T>) left);
 		merged.attributes.putAll(((KeyValueObject<T>)right).attributes);
 		return merged;
+	}
+	
+	public boolean isEmpty() {
+		if(attributes.size() <= 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	// ---------------------------------
