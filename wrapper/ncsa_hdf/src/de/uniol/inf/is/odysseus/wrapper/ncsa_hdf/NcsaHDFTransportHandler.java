@@ -146,11 +146,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	// ----
 	// Grml ... is there a better way than to copy the method ...
 
-	private void readValues(int pathesLength, int p, float[] values) {
+	private void readValues(int tupleSize, int p, float[] values) {
 		for (int i = 0; i < values.length; i++) {
 			String[] t;
 			if (p == 0) {
-				t = new String[pathesLength + 1];
+				t = new String[tupleSize + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
 				read.add(t);
@@ -162,11 +162,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	}
 
 	// DO NOT MODIFY CONTENT. COPY FROM ABOVE!!
-	private void readValues(int pathesLength, int p, int[] values) {
+	private void readValues(int tupleSize, int p, int[] values) {
 		for (int i = 0; i < values.length; i++) {
 			String[] t;
 			if (p == 0) {
-				t = new String[pathesLength + 1];
+				t = new String[tupleSize + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
 				read.add(t);
@@ -177,11 +177,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 		}
 	}
 
-	private void readValues(int pathesLength, int p, long[] values) {
+	private void readValues(int tupleSize, int p, long[] values) {
 		for (int i = 0; i < values.length; i++) {
 			String[] t;
 			if (p == 0) {
-				t = new String[pathesLength + 1];
+				t = new String[tupleSize + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
 				read.add(t);
@@ -192,11 +192,11 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 		}
 	}
 	
-	private void readValues(int pathesLength, int p, String[] values) {
+	private void readValues(int tupleSize, int p, String[] values) {
 		for (int i = 0; i < values.length; i++) {
 			String[] t;
 			if (p == 0) {
-				t = new String[pathesLength + 1];
+				t = new String[tupleSize + 1];
 				t[0] = "" + i;
 				t[1] = "" + values[i];
 				read.add(t);
