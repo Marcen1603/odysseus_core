@@ -23,15 +23,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.data.general.SeriesException;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -43,6 +48,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.settings.ChartSetting.Ty
 
 public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double, ITimeInterval> {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractTimeSeriesChart.class);
+	
 	private Map<String, TimeSeries> series = new HashMap<String, TimeSeries>();
 
 	protected TimeSeriesCollection dataset = new TimeSeriesCollection();
@@ -65,14 +72,15 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 
 	// also milli
 	private String dateformat = "HH:mm:ss";
-
 	private int choosenXValue = -1;
-
 	private Integer timefactor = 1;
-
 	private String timeinputgranularity = DEFAULT_TIME_GRANULARITY;
-
 	private Integer choosenXValuePort = 0;
+
+	private long updateIntervalMillis = 0;
+	private final List<Tuple<ITimeInterval>> bufferedTuples = Lists.newArrayList();
+	private final List<Integer> bufferedPorts = Lists.newArrayList();
+	private ChartUpdater chartUpdater;
 
 	@Override
 	public void reloadChart() {
@@ -114,65 +122,88 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 
 	@Override
 	protected void processElement(List<Double> tuple, ITimeInterval metadata, int port) {
-		// this is not needed, since streamElementReceived is overwritten!		
+		// this is not needed, since streamElementReceived is overwritten!
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple<?>)) {
-			System.out.println("Warning: Stream visualization is only for relational tuple!");
+			LOG.warn("Stream visualization is only for relational tuple, not for {}!", element.getClass());
+			return;
+		}
+		
+		if( getChart() == null ) {
 			return;
 		}
 
-		@SuppressWarnings("unchecked")
-		final Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) element;
-		processElement(port, tuple);
+		Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) element;
+
+		if (isAsyncUpdate()) {
+			addToBuffers(port, tuple);
+		} else {
+			processElement(port, tuple, true);
+		}
 	}
 
-	private void processElement(final int port, final Tuple<ITimeInterval> tuple) {
-		try {
-			final List<Double> viewableValues = this.viewSchema.get(port).convertToViewableFormat(tuple);
-			final List<?> values = this.viewSchema.get(port).convertToChoosenFormat(viewableValues);
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						if (choosenXValue == -1) {
-							long time = tuple.getMetadata().getStart().getMainPoint();
-							long millis = time / timefactor;
-							FixedMillisecond ms = new FixedMillisecond(millis);
+	private boolean isAsyncUpdate() {
+		return updateIntervalMillis > 0;
+	}
 
-							for (int i = 0; i < values.size(); i++) {
-								double value = ((Number)values.get(i)).doubleValue();
-								series.get(getChoosenAttributes(port).get(i).getName()).add(ms, value);
-								adjust(value);
-							}
-						} else {
-							for (int i = 0; i < values.size(); i++) {
-								double value = ((Number)values.get(i)).doubleValue();
-								long x = ((Number) viewableValues.get(choosenXValue)).longValue();
-								FixedMillisecond ms = new FixedMillisecond(x);
-								series.get(getChoosenAttributes(port).get(i).getName()).add(ms, value);
-								adjust(value);
-							}
-						}
+	private void processElement(final int port, final Tuple<ITimeInterval> tuple, final boolean update) {
+		final List<Double> viewableValues = this.viewSchema.get(port).convertToViewableFormat(tuple);
+		final List<?> values = this.viewSchema.get(port).convertToChoosenFormat(viewableValues);
+		Display display = PlatformUI.getWorkbench().getDisplay();
 
-					} catch (SWTException ex) {
-						// widget disposed
-						dispose();
-						return;
-					} catch (SeriesException e) {
-						// System.out.println("Warn: " + e.getLocalizedMessage());
-					} catch (Exception e) {
-						e.printStackTrace();
-
-					}
-				}
-
-			});
-		} catch (SWTException swtex) {
-			System.out.println("WARN: SWT Exception " + swtex.getMessage());
+		if (getChartComposite().isDisposed()) {
+			return;
 		}
+		
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (getChartComposite().isDisposed()) {
+					return;
+				}
+				
+				try {
+					if (choosenXValue == -1) {
+						long time = tuple.getMetadata().getStart().getMainPoint();
+						long millis = time / timefactor;
+						FixedMillisecond ms = new FixedMillisecond(millis);
+
+						for (int i = 0; i < values.size(); i++) {
+							double value = ((Number) values.get(i)).doubleValue();
+							addToSeries(port, update, ms, i, value);
+							adjust(value);
+						}
+					} else {
+						for (int i = 0; i < values.size(); i++) {
+							double value = ((Number) values.get(i)).doubleValue();
+							long x = ((Number) viewableValues.get(choosenXValue)).longValue();
+							FixedMillisecond ms = new FixedMillisecond(x);
+							addToSeries(port, update, ms, i, value);
+							adjust(value);
+						}
+					}
+					
+					
+
+				} catch (SWTException ex) {
+					LOG.error("Exception in adding data into chart", ex);
+					
+					dispose();
+					return;
+				}
+			}
+		});
+	}
+	
+	private void addToSeries(int port, boolean update, FixedMillisecond ms, int i, double value) {
+		TimeSeries timeSeries = series.get(getChoosenAttributes(port).get(i).getName());
+		
+		timeSeries.setNotify(update);
+		timeSeries.addOrUpdate(ms, value);
 	}
 
 	private void adjust(double value) {
@@ -314,4 +345,81 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		this.autoadjust = autoadjust;
 	}
 
+	@ChartSetting(name = "Update interval (ms)", type = Type.SET)
+	public void setUpdateIntervalMillis(long millis) {
+		Preconditions.checkArgument(millis >= 0, "Update interval must be zero or positive!");
+		
+		if( millis != updateIntervalMillis ) {
+			if (millis > 0 && updateIntervalMillis == 0) {
+				startUpdater(millis);
+			} else if (millis == 0 && updateIntervalMillis > 0) {
+				stopUpdater();
+			} else {
+				changeUpdater(millis);
+			}
+			
+			this.updateIntervalMillis = millis;
+		}
+	}
+
+	private void startUpdater(long millis) {
+		chartUpdater = new ChartUpdater(millis) {
+			@Override
+			protected void updateChart() {
+				cleanBuffers();
+			}
+
+		};
+
+		chartUpdater.start();
+	}
+
+	private void stopUpdater() {
+		if( chartUpdater != null ) {
+				chartUpdater.stopRunning();
+				chartUpdater = null;
+		}
+
+		cleanBuffers();
+	}
+
+	private void addToBuffers(final int port, Tuple<ITimeInterval> tuple) {
+		synchronized (bufferedTuples) {
+			bufferedTuples.add(tuple);
+			bufferedPorts.add(port);
+		}
+	}
+
+	private void cleanBuffers() {
+		synchronized (bufferedTuples) {
+			if( !bufferedTuples.isEmpty() ) {
+				
+				while (bufferedTuples.size() > 1) {
+					Tuple<ITimeInterval> tuple = bufferedTuples.remove(0);
+					Integer port = bufferedPorts.remove(0);
+	
+					processElement(port, tuple, false);
+				}
+	
+				processElement(bufferedPorts.remove(0), bufferedTuples.remove(0), true);
+			}
+		}
+	}
+
+	private void changeUpdater(long millis) {
+		stopUpdater();
+		startUpdater(millis);
+	}
+
+	@ChartSetting(name = "Update interval (ms)", type = Type.GET)
+	public long getUpdateIntervalMillis() {
+		return updateIntervalMillis;
+	}
+	
+	@Override
+	public void onStop() {
+		stopUpdater();
+		
+		super.onStop();
+	}
 }

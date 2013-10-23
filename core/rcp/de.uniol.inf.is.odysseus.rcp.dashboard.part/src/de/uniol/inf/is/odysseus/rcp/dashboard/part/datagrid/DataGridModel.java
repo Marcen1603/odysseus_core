@@ -189,8 +189,8 @@ public final class DataGridModel {
 	}
 
 	private void checkIndices(int row, int column) {
-		Preconditions.checkArgument(row > 0, "Row index must be positive");
-		Preconditions.checkArgument(column > 0, "Row index must be positive");
+		Preconditions.checkArgument(row >= 0, "Row index must be positive, not %s", row);
+		Preconditions.checkArgument(column >= 0, "Column index must be positive, not %s", column);
 		Preconditions.checkArgument(row < rows.length, "Row must be lower than the maximum row index of %s", rows.length);
 	}
 

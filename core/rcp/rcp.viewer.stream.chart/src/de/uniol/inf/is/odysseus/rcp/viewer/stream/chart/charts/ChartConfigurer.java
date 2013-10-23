@@ -54,6 +54,7 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	private final Map<String, TableEditor> tableEditors = new HashMap<String, TableEditor>();
 
 	private AbstractJFreeChart dashboardPartChart;
+	private boolean startedByThis;
 	
 	private Button saveAsDefaults;
 	private Button loadDefaults;
@@ -75,7 +76,6 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		for (MethodSetting ms : ((IChartSettingChangeable)this.dashboardPartChart).getChartSettings()) {
 			try {
 				Object value = ms.getGetter().invoke(this.dashboardPartChart);
-				System.err.println("Init: " + ms.getName() + " --> " + value.toString());
 				currentValues.put(ms, value);
 			} catch (Exception e) {
 				LOG.error("Could not determine value", e);
@@ -89,9 +89,12 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 		}
 		
 		try {
-			dashboardPartChart.onStart(roots);
+			if( !dashboardPartChart.isStarted() ) {
+				dashboardPartChart.onStart(roots);
+				startedByThis = true;
+			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.error("Exception during starting dashboardpart chart", ex);
 		}
 	}
 	
@@ -410,7 +413,11 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 						if( Boolean.class.isAssignableFrom(type)) {
 							entry.setValue(Boolean.parseBoolean(value));
 						} else {
-							entry.setValue(value);
+							if( Long.class.isAssignableFrom(type)) {
+								entry.setValue(Long.parseLong(value));
+							} else {
+								entry.setValue(value);
+							}
 						}
 					}
 				}
@@ -436,6 +443,9 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 				ms.getSetter().invoke(this.dashboardPartChart, d);
 			}else if(paramType.equals(Boolean.class) || paramType.equals(boolean.class)){
 				Boolean d = Boolean.getBoolean(val);
+				ms.getSetter().invoke(this.dashboardPartChart, d);
+			}else if(paramType.equals(Long.class) || paramType.equals(long.class)){
+				Long d = Long.parseLong(val);
 				ms.getSetter().invoke(this.dashboardPartChart, d);
 			}else{
 				ms.getSetter().invoke(this.dashboardPartChart, val);
@@ -463,7 +473,9 @@ public class ChartConfigurer extends AbstractDashboardPartConfigurer<AbstractJFr
 	
 	@Override
 	public void dispose() {
-
+		if( startedByThis ) {
+			dashboardPartChart.onStop();
+		}
 	}
 
 	public Map<MethodSetting, Object> getCurrentValues() {

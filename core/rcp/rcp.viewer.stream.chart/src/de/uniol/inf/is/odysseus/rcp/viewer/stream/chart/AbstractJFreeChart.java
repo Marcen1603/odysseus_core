@@ -96,6 +96,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps.newHashMap();
 	
 	private List<IDashboardPartListener> listener = new ArrayList<>();
+	private boolean isStarted;
 
 	private static int currentUniqueSecondIdentifer = 0;
 
@@ -112,12 +113,10 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	private void initComposite(Composite parent) {
 		this.chart = createChart();
-		// if(this.chart.getPlot()!=null){
-		// this.chart.getPlot().setBackgroundPaint(DEFAULT_BACKGROUND);
-		// }
+		
 		decorateChart(this.chart);
 
-		ChartComposite chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
+		chartComposite = new ChartComposite(parent, SWT.NONE, this.chart, true);
 		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createActions(parent.getShell());
 	}
@@ -188,6 +187,10 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	public JFreeChart getChart() {
 		return chart;
+	}
+	
+	public ChartComposite getChartComposite() {
+		return chartComposite;
 	}
 
 	public void setChart(JFreeChart chart) {
@@ -270,6 +273,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private boolean opened = false;
 	private String sinkNames;
 	private IWorkbenchPart workbenchpart;
+	private ChartComposite chartComposite;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -345,7 +349,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 				}
 				if (value != null) {
 					toSave.put(ms.getName(), value.toString());
-					System.err.println("Save: " + ms.getName() + " --> " + value.toString());
 				}
 			}
 		}
@@ -374,7 +377,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 			
 			String methodName = values.getKey();
 			String value = values.getValue();
-			System.err.println("Load: " + methodName + " --> " + value);
 			try {
 				for (MethodSetting ms : getChartSettings()) {
 					if (ms.getName().equals(methodName)) {
@@ -387,6 +389,9 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 							ms.getSetter().invoke(this, d);
 						} else if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
 							Boolean d = Boolean.getBoolean(value);
+							ms.getSetter().invoke(this, d);
+						} else if (paramType.equals(Long.class) || paramType.equals(long.class)) {
+							Long d = Long.parseLong(value);
 							ms.getSetter().invoke(this, d);
 						} else {
 							ms.getSetter().invoke(this, value);
@@ -403,6 +408,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		initWithOperator(physicalRoots.iterator().next());
 		opened = true;
+		isStarted = true;
 	}
 	
 	@Override
@@ -425,6 +431,11 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	@Override
 	public void onStop() {
+		isStarted = false;
+	}
+	
+	public boolean isStarted() {
+		return isStarted;
 	}
 
 	@Override

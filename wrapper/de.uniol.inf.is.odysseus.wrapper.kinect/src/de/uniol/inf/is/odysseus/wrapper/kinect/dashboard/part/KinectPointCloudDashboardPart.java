@@ -158,6 +158,8 @@ public class KinectPointCloudDashboardPart extends AbstractDashboardPart
 
     @Override
     public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+    	super.onStart(physicalRoots);
+    	
         findPointCloud(physicalRoots);
         findSkeletonMap(physicalRoots);
     }

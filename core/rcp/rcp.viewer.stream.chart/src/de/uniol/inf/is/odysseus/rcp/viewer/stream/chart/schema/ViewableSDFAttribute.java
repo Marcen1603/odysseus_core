@@ -61,4 +61,9 @@ public class ViewableSDFAttribute extends AbstractViewableAttribute{
 		
 		return other.attribute.equals(this.attribute);
 	}
+
+	@Override
+	public int hashCode() {
+		return attribute.hashCode() + typeName.hashCode() + index * 31;
+	}
 }

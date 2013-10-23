@@ -111,6 +111,8 @@ public class SoccerOverviewDashboardPart extends AbstractDashboardPart implement
 
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		super.onStart(physicalRoots);
+		
 		attributeIndexMap = createAttributeIndexMap(physicalRoots.iterator().next().getOutputSchema());
 
 		xIndex = getAttributeIndex(xPosAttributeName);

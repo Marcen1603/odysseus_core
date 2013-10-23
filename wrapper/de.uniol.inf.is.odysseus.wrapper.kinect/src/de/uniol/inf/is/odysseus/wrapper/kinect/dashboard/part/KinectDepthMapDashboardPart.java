@@ -71,6 +71,8 @@ public class KinectDepthMapDashboardPart extends AbstractDashboardPart
 
     @Override
     public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+    	super.onStart(physicalRoots);
+    	
         for (IPhysicalOperator po : physicalRoots) {
             SDFSchema schema = po.getOutputSchema();
             this.depthMapPos = -1;

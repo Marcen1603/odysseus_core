@@ -71,6 +71,8 @@ public class UrgScannPart extends AbstractDashboardPart implements
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {
+		super.onStart(physicalRoots);
+		
 		for (IPhysicalOperator po : physicalRoots) {
 			SDFSchema schema = po.getOutputSchema();
 			this.urgScannPos = -1;

@@ -39,6 +39,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	
 	private IDashboardActionBarContributor editorActionBarContributor;
 	private IWorkbenchPart workbenchpart;
+	private boolean isStarted;
 
 	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
@@ -64,14 +65,20 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		isStarted = true;
 	}
 
 	@Override
 	public void onStop() {
+		isStarted = false;
 	}
 
 	@Override
 	public void onUnpause() {
+	}
+	
+	public boolean isStarted() {
+		return isStarted;
 	}
 
 	@Override

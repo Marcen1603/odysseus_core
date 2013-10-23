@@ -71,6 +71,8 @@ public class KinectColorMapDashboardPart extends AbstractDashboardPart
 
     @Override
     public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+    	super.onStart(physicalRoots);
+    	
         for (IPhysicalOperator po : physicalRoots) {
             SDFSchema schema = po.getOutputSchema();
             this.colorMapPos = -1;
