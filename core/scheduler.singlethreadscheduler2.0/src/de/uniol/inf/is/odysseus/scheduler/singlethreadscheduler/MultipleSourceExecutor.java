@@ -97,7 +97,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			}
 			try {
 				if (!processableSources) {
-					logger.debug("Waiting for open sources to process "+sources);
+					logger.debug("Waiting for open sources to process "
+							+ sources);
 					sources.wait(1000);
 					updateSources();
 				}
@@ -277,6 +278,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " " + sources;
+		synchronized (sources) {
+			return this.getClass().getSimpleName() + " " + sources;
+		}
 	}
 }
