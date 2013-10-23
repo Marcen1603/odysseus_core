@@ -99,6 +99,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private boolean isStarted;
 
 	private static int currentUniqueSecondIdentifer = 0;
+	
+	private String chartTitle = "";
 
 	public static synchronized String getUniqueSecondIdentifier(String prefix) {
 		currentUniqueSecondIdentifer++;
@@ -113,6 +115,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	private void initComposite(Composite parent) {
 		this.chart = createChart();
+		this.chart.setTitle(chartTitle);		
 		
 		decorateChart(this.chart);
 
@@ -120,6 +123,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		chartComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createActions(parent.getShell());
 	}
+
 
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
@@ -217,7 +221,8 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 
 	public List<MethodSetting> getAnnotatedSettings(Class<?> theclass) {
 		List<MethodSetting> settings = new ArrayList<MethodSetting>();
-		for (Method m : theclass.getMethods()) {
+		Method[] methods = theclass.getMethods();
+		for (Method m : methods) {
 			ChartSetting us = m.getAnnotation(ChartSetting.class);
 			if (us != null) {
 				if (us.type().equals(Type.GET)) {
@@ -472,4 +477,17 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		return null;
 	}
 	
+	@ChartSetting(name = "Chart title", type = Type.SET)
+	public void setChartTitle( String title ) {
+		if( getChart() != null ) {
+			getChart().setTitle(title);
+		}
+		
+		chartTitle = title;
+	}
+	
+	@ChartSetting(name = "Chart title", type = Type.GET)
+	public String getChartTitle() {
+		return chartTitle;
+	}
 }

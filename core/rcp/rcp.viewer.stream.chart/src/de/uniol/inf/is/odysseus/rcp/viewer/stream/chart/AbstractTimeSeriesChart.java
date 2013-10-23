@@ -64,6 +64,8 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	private double min = Double.NaN;
 	private boolean autoadjust = true;
 	private double margin = 0.05; // 5 percent
+	private String xTitle = "";
+	private String yTitle = "";
 
 	private static final int DEFAULT_MAX_NUMBER_OF_ITEMS = 100;
 	private static final String DEFAULT_TIME_GRANULARITY = TIME_MILLI;
@@ -96,7 +98,9 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 				this.dataset.addSeries(serie);
 			}
 		}
+		
 		ValueAxis domainAxis = getChart().getXYPlot().getDomainAxis();
+		domainAxis.setLabel(xTitle);
 		if (domainAxis instanceof NumberAxis) {
 			NumberAxis axis = (NumberAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setNumberFormatOverride(new SimpleNumberToDateFormat(this.dateformat));
@@ -105,6 +109,9 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 			DateAxis axis = (DateAxis) getChart().getXYPlot().getDomainAxis();
 			axis.setDateFormatOverride(new SimpleDateFormat(this.dateformat));
 		}
+		
+		getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
+		
 		if (this.timeinputgranularity.equals(TIME_MILLI)) {
 			this.timefactor = 1;
 		} else if (this.timeinputgranularity.equals(TIME_MICRO)) {
@@ -449,5 +456,31 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 		stopUpdater();
 		
 		super.onStop();
+	}
+	
+	@ChartSetting(name = "X-Axis title", type=Type.SET)
+	public void setXTitle( String xTitle ) {
+		if( getChart() != null ) {
+			getChart().getXYPlot().getDomainAxis().setLabel(xTitle);
+		}
+		this.xTitle = xTitle;
+	}
+	
+	@ChartSetting(name = "X-Axis title", type=Type.GET)
+	public String getXTitle() {
+		return xTitle;
+	}
+	
+	@ChartSetting(name = "Y-Axis title", type=Type.SET)
+	public void setYTitle( String yTitle ) {
+		if( getChart() != null ) {
+			getChart().getXYPlot().getRangeAxis().setLabel(yTitle);
+		}
+		this.yTitle = yTitle;
+	}
+	
+	@ChartSetting(name = "Y-Axis title", type=Type.GET)
+	public String getYTitle() {
+		return yTitle;
 	}
 }
