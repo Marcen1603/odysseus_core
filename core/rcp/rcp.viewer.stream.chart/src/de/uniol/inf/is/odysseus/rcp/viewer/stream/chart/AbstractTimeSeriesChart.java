@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.stream.chart;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -414,6 +415,33 @@ public abstract class AbstractTimeSeriesChart extends AbstractJFreeChart<Double,
 	@ChartSetting(name = "Update interval (ms)", type = Type.GET)
 	public long getUpdateIntervalMillis() {
 		return updateIntervalMillis;
+	}
+	
+	@Override
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		super.onStart(physicalRoots);
+		
+		startUpdaterIfNeeded();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+		stopUpdater();
+	}
+	
+	@Override
+	public void onUnpause() {
+		super.onUnpause();
+		
+		startUpdaterIfNeeded();
+	}
+
+	private void startUpdaterIfNeeded() {
+		if( isAsyncUpdate() ) {
+			startUpdater(updateIntervalMillis);
+		}
 	}
 	
 	@Override
