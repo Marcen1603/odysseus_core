@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import com.google.common.collect.Lists;
@@ -35,6 +36,14 @@ public final class DashboardPartUtil {
 		Text text = new Text(topComposite, SWT.BORDER);
 		text.setText(txt != null ? txt : "");
 		return text;
+	}
+	
+	public static Spinner createSpinner(Composite topComposite, int minValue, int maxValue ) {
+		Spinner spinner = new Spinner(topComposite, SWT.BORDER);
+		spinner.setMinimum(minValue);
+		spinner.setMaximum(maxValue);
+		spinner.setIncrement(1);
+		return spinner;
 	}
 	
 	public static Combo createCombo(Composite topComposite, String[] items){

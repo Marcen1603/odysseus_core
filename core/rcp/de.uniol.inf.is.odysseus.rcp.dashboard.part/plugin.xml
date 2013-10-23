@@ -20,6 +20,11 @@
             configClass="de.uniol.inf.is.odysseus.rcp.dashboard.part.KeyedTableConfigurer"
             name="KeyedTable">
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.part.datagrid.DataGridDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.part.datagrid.DataGridConfigurer"
+            name="DataGrid">
+      </dashboardPart>
    </extension>
 
 </plugin>

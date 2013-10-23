@@ -125,17 +125,11 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 		return this.workbenchpart;		
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public Object getAdapter(Class<?> adapter) {	
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#getEditorActionBarContributor()
-	 */
 	@Override
 	public IDashboardActionBarContributor getEditorActionBarContributor() {
 		return editorActionBarContributor;
