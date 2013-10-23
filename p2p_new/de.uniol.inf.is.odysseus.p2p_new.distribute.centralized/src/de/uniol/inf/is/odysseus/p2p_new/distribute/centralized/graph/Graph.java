@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,7 +254,13 @@ public class Graph {
 			other.subscribeSink(node, sinkInPort, sourceOutPort, schema);
 		}
 	}
-	public void addNode(GraphNode gn) {
+	public void addNode(GraphNode gNode, boolean clone) {
+		GraphNode gn;
+		if(clone) {
+			gn = gNode.clone();
+		} else {
+			gn = gNode;
+		}
 		String type = gn.getOperatorType();
 		if(this.nodesGroupedByOpType.containsKey(type)) {
 			// only add, if it isn't in the Graph already
@@ -333,14 +341,21 @@ public class Graph {
 	 * Returns the Set of GraphNodes, which aren't connected to any other sinks, i.e. are at the top.
 	 * This just returns pipes and sources though, since the point of collecting these is to put JxtaSenderPOs on top.
 	 */
-	public List<GraphNode> getSinkNodes(boolean onlyNew) {
+	public List<GraphNode> getSinkNodes(boolean onlyNew, boolean returnJxtaSenders) {
 		List<GraphNode> result = new ArrayList<GraphNode>();
 		for(GraphNode gn : this.getGraphNodesUngrouped(onlyNew)) {
 			if(gn.isSource() && gn.getSinkSubscriptions().isEmpty()) {
 				result.add(gn);
 			// return the node before it, if the graphnode is a new JxtaSenderPO
 			} else if(gn.getOperator() instanceof JxtaSenderPO) {
-				result.add(gn.getSubscribedToSource().iterator().next().getTarget());
+				if(returnJxtaSenders) {
+					result.add(gn);
+				} else {
+					boolean newTarget = !gn.getSubscribedToSource().iterator().next().getTarget().isOld();
+					if(newTarget || !onlyNew) {
+						result.add(gn.getSubscribedToSource().iterator().next().getTarget());
+					}
+				}
 			}
 		}
 		return result;
@@ -397,5 +412,36 @@ public class Graph {
 				}
 			}
 		}
+	}
+	
+	// tries to extract all new GraphNodes from this graph and the old sources they depend on and marks those as new
+	public Graph extractBaseGraph() {
+		List<GraphNode> newNodes = this.getGraphNodesUngrouped(true);
+		Set<Integer> sourceNodeIDs = new TreeSet<Integer>();
+		for(GraphNode gn : newNodes) {
+			List<Integer> sources = gn.getIDsOfAllSources();
+			for(int i : sources) {
+				if(!sourceNodeIDs.contains(i)) {
+					sourceNodeIDs.add(i);
+				}
+			}
+		}
+		for(int i : sourceNodeIDs) {
+			GraphNode gn = this.getGraphNode(i);
+			gn.setOld(false);
+		}
+		for(GraphNode gn : this.getGraphNodesUngrouped(true)) {
+			// iterate over their sinksubscriptions and unsubscribe from those GraphNodes who are old
+			for(Subscription<GraphNode> sub : gn.getSinkSubscriptions()) {
+				if(sub.getTarget().isOld()) {
+					gn.unsubscribeSink(sub);
+				}
+			}
+		}
+		Graph result = new Graph();
+		for(GraphNode gn : this.getGraphNodesUngrouped(true)) {
+			result.addNode(gn, false);
+		}
+		return result;
 	}
 }

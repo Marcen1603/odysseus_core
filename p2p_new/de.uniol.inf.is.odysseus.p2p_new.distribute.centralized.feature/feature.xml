@@ -59,7 +59,7 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.operator"
+         id="de.uniol.inf.is.odysseus.costmodel.opcount"
          download-size="0"
          install-size="0"
          version="0.0.0"

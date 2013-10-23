@@ -5,7 +5,7 @@ import net.jxta.peer.PeerID;
 public class ResourceUsage {
 	// These factors determine the influence of cpu- and memory-usage on the overall usage-score
 	private final double MEM_USAGE_WEIGHT = 1;
-	private final double CPU_USAGE_WEIGHT = 2;
+	private final double CPU_USAGE_WEIGHT = 1;
 	private final double MEM_USAGE_THRESHOLD = 0.9;
 	private final double CPU_USAGE_THRESHOLD = 0.9;
 	private final double COMBINED_THRESHOLD = 0.9;
@@ -71,7 +71,7 @@ public class ResourceUsage {
 	 * Returns true, if either the cpu- or the memory-usage on the peer surpasses the specified thresholds
 	 */
 	public boolean isOverLoaded() {
-		return mem_free/mem_total > MEM_USAGE_THRESHOLD || cpu_usage > CPU_USAGE_THRESHOLD;
+		return mem_used/mem_total > MEM_USAGE_THRESHOLD || cpu_usage > CPU_USAGE_THRESHOLD;
 	}
 
 	public void setNetworkUsage(double networkUsage) {

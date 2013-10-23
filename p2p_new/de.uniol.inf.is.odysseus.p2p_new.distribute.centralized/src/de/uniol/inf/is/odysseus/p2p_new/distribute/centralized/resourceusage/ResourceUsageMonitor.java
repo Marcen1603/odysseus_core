@@ -12,11 +12,13 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistri
  *
  */
 public class ResourceUsageMonitor extends Thread {
+	// can be used to let a peer report a multiple of its resource consumption for testing purposes
+	private int loadMultiplicationFactor = 20;
 	private IResourceUsageUpdateListener caller;
 	private CPUUsage cpuUsage;
 	private NetworkMonitor networkMonitor;
 	private Sigar sigar = new Sigar();
-	private long timeIntervalInMillis = 30000;
+	private long timeIntervalInMillis = 5000;
 	public ResourceUsageMonitor(IResourceUsageUpdateListener caller) {
 		this.caller = caller;
 	}
@@ -70,20 +72,20 @@ public class ResourceUsageMonitor extends Thread {
 			mem_free = 85;
 			mem_total = 100;
 			mem_used = 15;
-		} else if (caller.getPeerName().toLowerCase().contains("incrementingUsageWithQueryCount")){
+		} else if (caller.getPeerName().toLowerCase().contains("incrementingUsageWithQueryCount".toLowerCase())){
 			int factor = CentralizedDistributor.getInstance().getNumberOfRunningQueries();
-			cpu = 0.05 * factor;
-			net = 0.05 * factor;
-			mem_free = 100 - 5 * factor;
+			cpu = 0.05 * factor * loadMultiplicationFactor;
+			net = 0.05 * factor * loadMultiplicationFactor;
+			mem_free = 100 - 5 * factor * loadMultiplicationFactor;
 			mem_total = 100;
-			mem_used = 5*factor;
-		} else if (caller.getPeerName().toLowerCase().contains("incrementingUsageWithOpCount")){
+			mem_used = 5*factor * loadMultiplicationFactor;
+		} else if (caller.getPeerName().toLowerCase().contains("incrementingUsageWithOpCount".toLowerCase())){
 			int factor = CentralizedDistributor.getInstance().getNumberOfRunningOperators();
-			cpu = 0.01 * factor;
-			net = 0.01 * factor;
-			mem_free = 100 - 1 * factor;
+			cpu = 0.01 * factor * loadMultiplicationFactor;
+			net = 0.01 * factor * loadMultiplicationFactor;
+			mem_free = 100 - 1 * factor * loadMultiplicationFactor;
 			mem_total = 100;
-			mem_used = 1*factor;
+			mem_used = 1*factor * loadMultiplicationFactor;
 		}
 		caller.updateResourceUsage(cpu, mem_free, mem_total, mem_used, net);
 	}

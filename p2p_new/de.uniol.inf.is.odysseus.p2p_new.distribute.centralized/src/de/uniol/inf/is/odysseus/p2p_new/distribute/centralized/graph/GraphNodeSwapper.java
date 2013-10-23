@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindow
 public class GraphNodeSwapper {
 	private static final Logger LOG = LoggerFactory.getLogger(GraphNodeSwapper.class);
 	
-	public Graph pullSelectionsAboveWindows(Graph g) {
+	public static Graph pullSelectionsAboveWindows(Graph g) {
 		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, SlidingAdvanceTimeWindowTIPO.class, SelectPO.class);
 		if(eligiblePairs.isEmpty()) {
 			return null;
@@ -34,7 +34,7 @@ public class GraphNodeSwapper {
 		}
 	}
 	
-	public Graph pullSelectionsAboveJoins(Graph g) {
+	public static Graph pullSelectionsAboveJoins(Graph g) {
 		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, JoinTIPO.class, SelectPO.class);
 		List<Pair<GraphNode,GraphNode>> toRemove = new ArrayList<Pair<GraphNode,GraphNode>>();
 		for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
@@ -68,21 +68,24 @@ public class GraphNodeSwapper {
 	 * which have sources of typeOfSource and return them as pairs in a collection
 	 * Only new GraphNodes can be switched with one another, old ones are being left alone.
 	 */
-	public Collection<Pair<GraphNode,GraphNode>> eligiblePairs(Graph g, Class<?> typeOfSink, Class<?> typeOfSource) {
+	private static Collection<Pair<GraphNode,GraphNode>> eligiblePairs(Graph g, Class<?> typeOfSink, Class<?> typeOfSource) {
 		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = new TreeSet<Pair<GraphNode,GraphNode>>();
 		Collection<GraphNode> matchingSinks = g.getNodesGroupedByOpType().get(typeOfSink.getName());
 		Collection<GraphNode> matchingSources = g.getNodesGroupedByOpType().get(typeOfSource.getName());
 
-		for(GraphNode gn : matchingSinks) {
-			if(!gn.isOld()) {
-				continue;
-			}
-			if(gn.getSubscribedToSource().isEmpty() || gn.getSinkSubscriptions().isEmpty()) {
-				continue;
-			}
-			for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
-				if(matchingSources.contains(sub.getTarget()) && !sub.getTarget().isOld()) {
-					eligiblePairs.add(new Pair<GraphNode,GraphNode>(gn,sub.getTarget()));
+		if(matchingSinks != null && matchingSources != null) {
+			for(GraphNode gn : matchingSinks) {
+
+				if(!gn.isOld()) {
+					continue;
+				}
+				if(gn.getSubscribedToSource().isEmpty() || gn.getSinkSubscriptions().isEmpty()) {
+					continue;
+				}
+				for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
+					if(matchingSources.contains(sub.getTarget()) && !sub.getTarget().isOld()) {
+						eligiblePairs.add(new Pair<GraphNode,GraphNode>(gn,sub.getTarget()));
+					}
 				}
 			}
 		}
@@ -90,7 +93,7 @@ public class GraphNodeSwapper {
 	}
 	
 	// switches two GraphNodes, which must be connected with one another and have only one source- and sinksubscription each
-	public static void switchUnaryGraphNodes(GraphNode originalSink, GraphNode originalSource) {
+	private static void switchUnaryGraphNodes(GraphNode originalSink, GraphNode originalSource) {
 		LOG.debug("Swapping GraphNode of type " + originalSink.getOperatorType() + " with GraphNode of type " + originalSource.getOperatorType());
 		// disconnect the given sink from the given source
 		originalSource.unsubscribeSink(originalSource.getSinkSubscriptions().iterator().next());
@@ -115,7 +118,7 @@ public class GraphNodeSwapper {
 				originalSource.getOperator().getOutputSchema());
 	}
 	
-	public static void switchUnarySourceNodeWithBinarySink(GraphNode originalSink, GraphNode originalSource) {
+	private static void switchUnarySourceNodeWithBinarySink(GraphNode originalSink, GraphNode originalSource) {
 		LOG.debug("Swapping GraphNode of type " + originalSink.getOperatorType() + " with GraphNode of type " + originalSource.getOperatorType());
 		int sinkInPort = originalSource.getSinkSubscriptions().iterator().next().getSinkInPort();
 		// disconnect the given sink from the given source, the source can only have one sinksubscription, this was checked earlier

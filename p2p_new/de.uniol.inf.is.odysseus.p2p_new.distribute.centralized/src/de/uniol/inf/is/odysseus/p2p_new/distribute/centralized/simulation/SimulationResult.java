@@ -18,6 +18,7 @@ public class SimulationResult {
 	private PeerID peer;
 	private ICost<IPhysicalOperator> cost;
 	private Graph graph;
+	private boolean clearedForPlacement = false;
 	
 	private ID fullyIdenticalToSharedQuery;
 	
@@ -138,6 +139,14 @@ public class SimulationResult {
 
 	public ID getFullyIdenticalToSharedQuery() {
 		return fullyIdenticalToSharedQuery;
+	}
+
+	public boolean isClearedForPlacement() {
+		return clearedForPlacement;
+	}
+
+	public void setClearedForPlacement(boolean clearedForPlacement) {
+		this.clearedForPlacement = clearedForPlacement;
 	}
 	
 }

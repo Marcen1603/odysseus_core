@@ -193,12 +193,15 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				ids.add(queryID);
 				PhysicalQueryPartController.getInstance().registerAsSlave(ids, sharedQueryID);
 				this.getExecutor().startQuery(queryID, user);
+				List<Integer> newOpIDs = new ArrayList<Integer>();
+				newOpIDs.addAll(newOperators.keySet());
+				CentralizedDistributor.getInstance().setOpsForQueryForPeer(this.localID, sharedQueryID, newOpIDs);
 				
 			}	
 		} else if (a instanceof ResourceUsageUpdateAdvertisement) {
 			ResourceUsageUpdateAdvertisement adv = (ResourceUsageUpdateAdvertisement) a;
 			if(isMaster() && adv.getMasterID().equals(this.localID)) {
-				LOG.debug("Peer " + this.localID + " received a ResourceUsageUpdateAdvertisement from " + adv.getPeerID());
+				LOG.trace("Peer " + this.localID + " received a ResourceUsageUpdateAdvertisement from " + adv.getPeerID());
 				//LOG.debug(adv.toString());
 				CentralizedDistributor.getInstance().updateResourceUsage(adv);
 			}

@@ -33,7 +33,7 @@ public class CostConverter {
 //		return currentUsage * (cpuFactor+memFactor)/2;
 //	}
 	
-	public static double projectedUsageUsingOpCountCost(OpCountCost<IPhysicalOperator> currentCost, double currentUsage, OpCountCost<IPhysicalOperator> newPlanCost) {
+	public static double projectedUsageUsingOpCountCost(ICost<IPhysicalOperator> currentCost, double currentUsage, ICost<IPhysicalOperator> newPlanCost) {
 		OpCountCost<IPhysicalOperator> merged = (OpCountCost<IPhysicalOperator>) currentCost.merge(newPlanCost);
 		OpCountCost<IPhysicalOperator> currentCostAsOpCountCost = (OpCountCost<IPhysicalOperator>)currentCost;
 		double currentOpCount = currentCostAsOpCountCost.getOpCount();

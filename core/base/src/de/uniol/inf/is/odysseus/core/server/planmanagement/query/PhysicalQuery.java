@@ -468,8 +468,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 			if (curRoot.isSink()) {
 				((ISink<?>) curRoot).open(this);
 			} else {
-				throw new IllegalArgumentException(
-						"Open cannot be called on a source");
+				//throw new IllegalArgumentException(
+				//		"Open cannot be called on a source");
 			}
 		}
 		opened = true;
@@ -486,8 +486,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 					((ISink<?>) curRoot).close(this);
 				}
 			} else {
-				throw new IllegalArgumentException(
-						"Close cannot be called on a a source");
+				//throw new IllegalArgumentException(
+				//		"Close cannot be called on a a source");
 			}
 		}
 		opened = false;

@@ -1,9 +1,17 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class Tools {
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
+
+public class Tools<T extends Object> {
 	/**
 	 *  re-creates an int[]-array which was converted to a String via Arrays.toString()
 	 */
@@ -56,5 +64,27 @@ public class Tools {
 		}
 		return result;
 	}
-	
+
+	public static List<GraphNode> removeDuplicates(List<GraphNode> l) {
+		Set<GraphNode> s = new TreeSet<GraphNode>(new Comparator<GraphNode>() {
+			@Override
+			public int compare(GraphNode gn1, GraphNode gn2) {
+				if(gn1.equals(gn2)) {
+					return 0;
+				} else {
+					return -1;
+				}
+
+			}
+		});
+		List<GraphNode> result = new ArrayList<GraphNode>();
+		s.addAll(l);
+		Iterator<GraphNode> it = s.iterator();
+		while(it.hasNext()) {
+			result.add(it.next());
+		}
+		
+		return result;
+	}
+
 }

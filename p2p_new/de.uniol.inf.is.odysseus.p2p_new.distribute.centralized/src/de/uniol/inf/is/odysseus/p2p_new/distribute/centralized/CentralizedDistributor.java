@@ -38,8 +38,10 @@ import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.Tools;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.Graph;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNodeSwapper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.ResourceUsage;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.CostModelService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
@@ -189,9 +191,8 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				
 				
 				PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-				// at this point, we simulated each of the alternatives once, let's continue with the most
-				// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
-				List<GraphNode> topNodes = baseGraph.getSinkNodes(true);
+
+				List<GraphNode> topNodes = baseGraph.getSinkNodes(true,false);
 				for(GraphNode gn : topNodes) {
 					// insert a receive and a send-operator
 					JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
@@ -219,7 +220,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			}
 			// at this point, we simulated each of the alternatives once, let's continue with the most
 			// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
-			List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true);
+			List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true,false);
 			chosenMasterPeerConnectionPipeID = masterPeerConnectionPipeID.get(bestAlternative);
 			for(GraphNode gn : topNodes) {
 				SDFSchema schema = gn.getOperator().getOutputSchema();
@@ -231,16 +232,16 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				receiverOp.setOutputSchema(schema);
 				receiverOp.setAssignedSchema(schema);
 				
-				// Put a selection on top of the receiver, because the query won't start otherwise
-				SelectAO selection = new SelectAO();
-				selection.setPredicate(new TruePredicate());
-				selection.setOutputSchema(schema);
-				
-				selection.subscribeToSource(receiverOp, 0, 0, schema);
+//				// Put a selection on top of the receiver, because the query won't start otherwise
+//				SelectAO selection = new SelectAO();
+//				selection.setPredicate(new TruePredicate());
+//				selection.setOutputSchema(schema);
+//				
+//				selection.subscribeToSource(receiverOp, 0, 0, schema);
 				
 				// we can now also set the proper receivers on the master, couldn't do that before
 				// it wasn't yet clear which alternative would be chosen
-				q.setLogicalPlan(selection,true);
+				q.setLogicalPlan(receiverOp,true);
 			}
 			
 			results.add(bestResult);
@@ -288,29 +289,46 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					}
 				}
 				for(SimulationResult s : currentlyUnplaceable) {
-					SplitSimulationResult splitResult = splitGraph(s);
-					if(splitResult == null) {
-						LOG.debug("Can't place Query anywhere.");
-						return null;
+					SplitSimulationResult splitResult;
+					List<GraphNode> sinkNodes = s.getGraph().getSinkNodes(true,false);
+					
+					if(sinkNodes.size() == 1 && sinkNodes.get(0).getOperatorType().equals(JxtaSenderPO.class.getName())) {
+						splitResult = null;
+						LOG.debug("Can't split Graph, because there's nothing to split apart from the JxtaSenderPO, trying on other peers instead");
+					} else {
+						LOG.debug("Trying to split Graph");
+						splitResult = splitGraph(s);
 					}
-					Graph newGraph = splitResult.getSurplusNodes();
-					SimulationResult additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
+					SimulationResult additionalResult;
+					if(splitResult == null) {
+						
+						// if we can't split anything and can't place the plan either, we have to place it on another peer completely.
+						// Let's extract the basic graph, i.e. the new node and every source node on its way
+						Graph baseGraph = s.getGraph().extractBaseGraph();
+						additionalResult = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
+						results.remove(s);
+					} else {
+						Graph newGraph = splitResult.getSurplusNodes();
+						additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
+						// it's only a jxta-sender left from the original plan, we don't have to worry about its costs anymore
+						s.setClearedForPlacement(true);
 
-					// currently handled via the splitGraph-method
-					//				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
-					//				for(PlanJunction j : junctions) {
-					//					PeerID targetPeer = s.getPeer();
-					//					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
-					//					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-					//					jxtaSenderLOp.setPipeID(pipeID.toString());
-					//					jxtaSenderLOp.setOutputSchema(j.getJunctionSchema());
-					//					
-					//					JxtaSenderPO jxtaOp = new JxtaSenderPO(jxtaSenderLOp);
-					//					GraphNode jxtaSendNode = new GraphNode(jxtaOp, jxtaOp.hashCode(), false);
-					//					s.getGraph().addAdditionalNode(jxtaSendNode,j.getFlowOriginNode().getOperatorID(), false, j.getJunctionSinkInPort(), j.getJunctionSourceOutPort(), j.getJunctionSchema());
-					//					j.setSendingNode(jxtaSendNode);
-					//					j.setFlowTargetResult(additionalResult);
-					//				}
+						// currently handled via the splitGraph-method
+						//				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
+						//				for(PlanJunction j : junctions) {
+						//					PeerID targetPeer = s.getPeer();
+						//					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
+						//					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+						//					jxtaSenderLOp.setPipeID(pipeID.toString());
+						//					jxtaSenderLOp.setOutputSchema(j.getJunctionSchema());
+						//					
+						//					JxtaSenderPO jxtaOp = new JxtaSenderPO(jxtaSenderLOp);
+						//					GraphNode jxtaSendNode = new GraphNode(jxtaOp, jxtaOp.hashCode(), false);
+						//					s.getGraph().addAdditionalNode(jxtaSendNode,j.getFlowOriginNode().getOperatorID(), false, j.getJunctionSinkInPort(), j.getJunctionSourceOutPort(), j.getJunctionSchema());
+						//					j.setSendingNode(jxtaSendNode);
+						//					j.setFlowTargetResult(additionalResult);
+						//				}
+					}
 					results.add(additionalResult);
 					usedPeers.add(additionalResult.getPeer());
 				}
@@ -350,8 +368,11 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		Graph oldGraph = r.getGraph();
 		List<PlanJunction> junctions = new ArrayList<PlanJunction>();
 		// check, if the SimulationResult in question yielded some shareable nodes on the peer, which would make for a nice cutoff-point
-		if(!r.getShareableIdenticalNodes().isEmpty()) {
+		if(!r.getShareableIdenticalNodes().isEmpty() || !r.getShareableSimilarNodes().isEmpty()) {
 			Map<Integer,Integer> identNodes = r.getShareableIdenticalNodes();
+			for(int i : r.getShareableSimilarNodes().keySet()) {
+				identNodes.put(i, r.getShareableSimilarNodes().get(i));
+			}
 			// key = cutoffoperator-ID, value = depth of the operator in the graph
 			Map<Integer,Integer> cutoffPoints =  new HashMap<Integer,Integer>();
 
@@ -432,15 +453,15 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// insert a receive and a send-operator
 				PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
 				JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
-				GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), true);
+				GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
 				// ports fixed for now, could handle different ports for different outputs
 				// via different JxtaSenderPOs, but let's keep things "simple" for now.
 				SDFSchema schema = subsToNewOps.get(0).getSchema();
 				oldGraph.addAdditionalNode(sendGn, oldShareableNode.getOperatorID(), false, 0, 0, schema.clone());
 				
 				JxtaReceiverPO receiverOp = new JxtaReceiverPO(pipeID.toURI().toString(),schema);
-				GraphNode receiverGn = new GraphNode(receiverOp, receiverOp.hashCode(),true);
-				detachedGraph.addNode(receiverGn);
+				GraphNode receiverGn = new GraphNode(receiverOp, receiverOp.hashCode(),false);
+				detachedGraph.addNode(receiverGn, false);
 				
 				List<GraphNode> flowTargetNodes = new ArrayList<GraphNode>();
 				// at this point we have the sender-operator connected to the old shareable operator,
@@ -474,9 +495,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					gn.collectConnectedGraphNodes(toMove);
 				}
 			}
+			toMove = Tools.removeDuplicates(toMove);
 			for(GraphNode gn : toMove) {
 				oldGraph.removeNode(gn);
-				detachedGraph.addNode(gn);
+				detachedGraph.addNode(gn, false);
 			}
 
 			
@@ -499,7 +521,8 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	public SimulationResult getMostPromisingPlacement(Graph baseGraph, List<PlanJunction> junctions, QueryBuildConfiguration parameters, List<PeerID> usedPeers) {
 		List<SimulationResult> bestResults = new ArrayList<SimulationResult>();
 		ICost<IPhysicalOperator> bestCost = this.getCostModel().getMaximumCost();
-		for(PeerID peer : getNonOverloadedPeers()) {
+		//for(PeerID peer : getNonOverloadedPeers()) {
+		for(PeerID peer : this.operatorPlans.keySet()) {
 			// skip peers, if they're already supposed to host a part of the query or if it's the master
 			if(usedPeers.contains(peer) || peer.toString().equals(manager.getMasterID().toString())) {
 				continue;
@@ -513,19 +536,44 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
 			Graph graphCopy = baseGraph.clone();
 			graphCopy.addPlan(operatorsOnPeer, false);
-			SimulationResult res = null;
-			// only simulate on peers who actually have operators running on them
-			if(operatorsOnPeer.isEmpty()) {
-				res = new SimulationResult(graphCopy);
-			} else {
-				res = this.getQuerySharingSimulator().simulateQuerySharing(graphCopy, new OptimizationConfiguration(parameters));
+			// merge all identical nodes, which would get re-used anyway
+			graphCopy.mergeNodesWithIdenticalOperatorID();
+			
+			// also consider an alternative plan with switched join/windows and selections to maybe increase matches of the QSSimulator
+			List<Graph> graphsToWorkWith = new ArrayList<Graph>();
+			graphsToWorkWith.add(graphCopy);
+			
+			// There isn't much point in switching operators, if there aren't any on the peer already
+			if(!operatorsOnPeer.isEmpty()) {
+				Graph graphWithSwitchedSelectAndWindowOps = GraphNodeSwapper.pullSelectionsAboveWindows(graphCopy);
+				if(graphWithSwitchedSelectAndWindowOps != null) {
+					Graph graphWithSwitchedSelectAndJoinOps = GraphNodeSwapper.pullSelectionsAboveJoins(graphWithSwitchedSelectAndWindowOps);
+					if(graphWithSwitchedSelectAndJoinOps != null) {
+						graphsToWorkWith.add(graphWithSwitchedSelectAndJoinOps);
+						LOG.debug("Was able to create a plan with switched Windows and Selections");
+					} else {
+						graphsToWorkWith.add(graphWithSwitchedSelectAndWindowOps);
+						LOG.debug("Was able to create a plan with switched Joins and Selections");
+					}
+				}
 			}
-			res.setPeer(peer);
-			Map<Integer,IPhysicalOperator> mergedOps = res.getPlan(true);
-			res.setCost(this.getCostModel().estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
-			if(res.getCost().compareTo(bestCost) < 0) {
-				bestCost = res.getCost();
-				bestResults.add(res);
+			for(Graph graphCandidate : graphsToWorkWith) {
+				SimulationResult res = null;
+				// only simulate on peers who actually have operators running on them
+				if(operatorsOnPeer.isEmpty()) {
+					res = new SimulationResult(graphCandidate);
+				} else {
+					res = this.getQuerySharingSimulator().simulateQuerySharing(graphCandidate, new OptimizationConfiguration(parameters));
+				}
+				res.setPeer(peer);
+				Map<Integer,IPhysicalOperator> mergedOps = res.getPlan(true);
+				res.setCost(this.getCostModel().estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
+				// don't add the result, if its execution would probably exceed the peers usage-threshold
+				
+				if(res.getCost().compareTo(bestCost) < 0) {
+					bestCost = res.getCost();
+					bestResults.add(res);
+				}
 			}
 		}
 		// if we have two or more best results with the same estimated costs,
@@ -574,9 +622,14 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// Despite having the best result in terms of cost savings,
 			// the cost of placing this (partial) plan as-is might still be too much given the resources of the peer
 			// just add it to the list of placeable results if it doesn't exceed the peer's resources
-			if(res.getCost().compareTo(determineBearableCost(res.getPeer())) <= 0 ) {
+			if(res.getCost().compareTo(determineBearableCost(res.getPeer())) <= 0 
+					|| res.isClearedForPlacement()) {
 				r.add(res);
 			}
+			double projectedUsage = CostConverter.projectedUsageUsingOpCountCost(this.planCostEstimates.get(res.getPeer()),
+					this.getResourceUsageForPeer(res.getPeer()).getOverallUsage(),
+					res.getCost());
+			System.out.println("Projected usage of " + projectedUsage + " won't exceed the peer's usage threshold of " + this.getResourceUsageForPeer(res.getPeer()).getCOMBINED_THRESHOLD() + ":" + (projectedUsage < this.getResourceUsageForPeer(res.getPeer()).getCOMBINED_THRESHOLD()));
 		}
 		return r;
 	}
@@ -587,14 +640,6 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		double weightedUsage = ru.getOverallUsage();
 		ICost<IPhysicalOperator> costOfCurrentPlan = planCostEstimates.get(peer);
 		return CostConverter.calculateBearableCost(costOfCurrentPlan, weightedUsage, ru.getCOMBINED_THRESHOLD(), this.getCostModel());
-	}
-	
-	public boolean isPlaceable(SimulationResult r) {
-		if(r.getCost().compareTo(determineBearableCost(r.getPeer())) <= 0 ) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	
 	@Override
@@ -698,7 +743,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	 * i.e. peers whose memory- or cpu-usage-thresholds haven't yet been reached
 	 * Only includes peers for which resource-information is available
 	 */
-	private List<PeerID> getNonOverloadedPeers() {
+	protected List<PeerID> getNonOverloadedPeers() {
 		List<PeerID> result = new ArrayList<PeerID>();
 		for(PeerID peerID : operatorPlans.keySet()) {
 			if(!(getResourceUsageForPeer(peerID) == null) && !getResourceUsageForPeer(peerID).isOverLoaded()) {

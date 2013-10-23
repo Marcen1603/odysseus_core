@@ -68,8 +68,19 @@ public class QSSimulator implements IQuerySharingSimulator {
 
 		}
 		SimulationResult simRes = new SimulationResult(graph);
-		simRes.setShareableIdenticalNodes(shareableIdenticalNodes);
-		simRes.setShareableSimilarNodes(shareableSimilarNodes);
+		
+		Map<Integer,Integer> shareableIdenticalNodesCopy = new HashMap<Integer,Integer>();
+		Map<Integer,Integer> tmp = new HashMap<Integer,Integer>(this.shareableIdenticalNodes);
+		tmp.keySet().removeAll(shareableIdenticalNodesCopy.keySet());
+		shareableIdenticalNodesCopy.putAll(tmp);
+
+		simRes.setShareableIdenticalNodes(shareableIdenticalNodesCopy);
+		
+		Map<Integer,Integer> shareableSimilarNodesCopy = new HashMap<Integer,Integer>();
+		tmp = new HashMap<Integer,Integer>(this.shareableSimilarNodes);
+		tmp.keySet().removeAll(shareableSimilarNodesCopy.keySet());
+		shareableSimilarNodesCopy.putAll(tmp);
+		simRes.setShareableSimilarNodes(shareableSimilarNodesCopy);
 		// After sharing operators with other queries, there's only one operator left which happens to be the attached sender
 		// Maybe, the source-operator already feeds its results to another one, in which case we can re-use it
 		List<GraphNode> newNodes = simRes.getGraphNodes(true);

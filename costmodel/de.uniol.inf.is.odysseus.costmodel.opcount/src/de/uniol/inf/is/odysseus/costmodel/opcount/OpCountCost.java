@@ -114,5 +114,10 @@ public class OpCountCost<T> implements ICost<T> {
 	public double getOpCount() {
 		return opCount;
 	}
+	
+	@Override
+	public String toString() {
+		return "" + this.opCount;
+	}
 
 }
