@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UnresolvedSDFAttributeParameter;
 
 /**
  * @author Marco Grawunder
@@ -37,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
 	private List<SDFAttribute> attributes = new ArrayList<>();
-	private List<SDFAttribute> paths;
+	private List<SDFAttribute> paths = new ArrayList<>();
 
 	public ProjectAO() {
 		super();
@@ -59,7 +61,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	// Must be another name than setOutputSchema, else this method is not found!
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true)
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = true, isList = true)
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		attributes = outputSchema;
 	}
@@ -73,7 +75,7 @@ public class ProjectAO extends UnaryLogicalOp {
 		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
 	}
 	
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true)
+	@Parameter(type = UnresolvedSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true)
 	public void setPaths(List<SDFAttribute> paths) {
 		this.paths = paths;
 	}
@@ -114,6 +116,17 @@ public class ProjectAO extends UnaryLogicalOp {
 	@Override
 	public void initialize() {
 		setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
+	}
+	
+	@Override
+	public boolean isValid() {
+		if(!this.attributes.isEmpty() || !this.paths.isEmpty()) {
+			return true;
+		} else {
+			addError(new IllegalParameterException(
+					"either attributes or paths parameter have to be set"));
+			return false;
+		}
 	}
 	
 }
