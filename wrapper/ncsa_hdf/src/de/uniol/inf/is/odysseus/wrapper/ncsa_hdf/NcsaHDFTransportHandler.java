@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.tree.TreeNode;
+
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.HObject;
@@ -85,6 +87,26 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	@Override
 	public void processInOpen() throws IOException {
 		H5File f = new H5File(filename, FileFormat.READ);
+		HObject root;
+		List meta;
+		String start = "";
+		try {
+			f.open();
+			root = f.get("/");
+			meta = root.getMetadata();
+			for (Object o:root.getMetadata()){
+				System.out.println(o+" "+o.getClass());
+				ncsa.hdf.object.Attribute a = (ncsa.hdf.object.Attribute) o;
+				if ("start".equalsIgnoreCase(a.getName())){
+					start = ((String[]) a.getValue())[0];
+				}
+								
+			}
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		HObject out;
 		String[] pathes = path.split(";");
 		for (int p = 0; p < pathes.length; p++) {
