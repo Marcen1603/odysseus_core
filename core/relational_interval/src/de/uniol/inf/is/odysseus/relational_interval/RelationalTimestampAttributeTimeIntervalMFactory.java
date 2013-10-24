@@ -47,13 +47,14 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 	final private int startTimestampSecondPos;
 	final private int startTimestampMillisecondPos;
 	final private int factor;
+	final private long offset;
 
 	final private boolean clearEnd;
 	final private TimeZone timezone;
 
 	public RelationalTimestampAttributeTimeIntervalMFactory(int startAttrPos,
 			int endAttrPos, boolean clearEnd, String dateFormat,
-			String timezone, Locale locale, int factor) {
+			String timezone, Locale locale, int factor, long offset) {
 		this.startAttrPos = startAttrPos;
 		this.endAttrPos = endAttrPos;
 
@@ -80,7 +81,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		startTimestampSecondPos = -1;
 		startTimestampMillisecondPos = -1;
 		this.factor = factor;
-
+		this.offset = offset;
 		this.clearEnd = clearEnd;
 	}
 
@@ -101,6 +102,7 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		this.startTimestampSecondPos = startTimestampSecond;
 		this.startTimestampMillisecondPos = startTimestampMillisecond;
 		this.factor = factor;
+		this.offset = 0;
 
 		this.clearEnd = clearEnd;
 
@@ -142,6 +144,8 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 			if (factor > 0) {
 				ts *= factor;
 			}
+			
+			ts+=offset;
 
 			PointInTime start = new PointInTime(ts);
 			inElem.getMetadata().setStart(start);
@@ -176,6 +180,9 @@ public class RelationalTimestampAttributeTimeIntervalMFactory extends
 		}
 		if (factor != 0){
 			timeN = timeN.longValue() * factor;
+		}
+		if (offset > 0){
+			timeN= timeN.longValue() + offset;
 		}
 		
 		PointInTime time = null;

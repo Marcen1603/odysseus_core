@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -51,6 +53,7 @@ public class TimestampAO extends UnaryLogicalOp {
 	private SDFAttribute startTimestampSecond;
 	private SDFAttribute startTimestampMillisecond;
 	private int factor;
+	private long offset;
 
 	private boolean isUsingSystemTime;
 	private boolean isUsingNoTime;
@@ -73,6 +76,7 @@ public class TimestampAO extends UnaryLogicalOp {
 		setStartTimestampSecond(ao.startTimestampSecond);
 		setStartTimestampMillisecond(ao.startTimestampMillisecond);
 		setFactor(ao.factor);
+		setOffset(ao.offset);
 		this.isUsingSystemTime = ao.isUsingSystemTime;
 		this.isUsingNoTime = ao.isUsingNoTime;
 	}
@@ -228,13 +232,24 @@ public class TimestampAO extends UnaryLogicalOp {
 	public int getFactor() {
 		return factor;
 	}
-
+	
 	@Parameter(type = IntegerParameter.class, name = "FACTOR", isList = false, optional = true, doc ="A multiplication factor for a single attributed timestamp to calc milliseconds (e.g. if input is seconds, use 1000 here)")
 	public void setFactor(int factor) {
 		addParameterInfo("FACTOR", Integer.valueOf(factor));
 		this.factor = factor;
 	}
 
+	public long getOffset() {
+		return offset;
+	}
+
+	@Parameter(type = LongParameter.class, name = "OFFSET", isList = false, optional = true, doc ="An offset in milliseconds that will be added to the timestmap")
+	public void setOffset(long offset) {
+		addParameterInfo("OFFSET", offset);
+		this.offset = offset;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return super.toString() + "s :" + startTimestamp + " e:" + endTimestamp + " " + isUsingSystemTime + " " + isUsingNoTime + " " + clearEnd;
@@ -296,6 +311,11 @@ public class TimestampAO extends UnaryLogicalOp {
 		} else {
 			addParameterInfo(key, null);
 		}
+	}
+	
+	public static void main(String[] args) {
+		Date d = new Date(2010,1,1);
+		System.out.println(d.getTime());
 	}
 
 }
