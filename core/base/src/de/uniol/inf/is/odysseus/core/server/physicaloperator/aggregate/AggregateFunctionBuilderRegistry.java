@@ -47,7 +47,7 @@ public class AggregateFunctionBuilderRegistry {
 		if (!aggFuncNames.containsKey(datamodel)){
 			aggFuncNames.put(datamodel, new LinkedList<String>());
 		}
-		logger.debug("Found new AggregateBuilder " + builder);
+		logger.trace("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
 			Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(datamodel,
 					functionName.toUpperCase());
@@ -56,7 +56,7 @@ public class AggregateFunctionBuilderRegistry {
 				aggregateFunctionNames.add(functionName.toUpperCase());
 				aggFuncNames.get(datamodel).add(functionName.toUpperCase());
 				buildAggregatePattern();
-				logger.debug("Binding " + key);
+				logger.trace("Binding " + key);
 			} else {
 				throw new RuntimeException(datamodel + " and " + functionName
 						+ " already registered!");

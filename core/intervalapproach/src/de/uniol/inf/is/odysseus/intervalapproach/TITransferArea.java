@@ -45,6 +45,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	// remember the last time stamp for each input port
 	// can contain null, if no element is seen
 	final protected Map<Integer, PointInTime> minTs;
+	final private Map<Integer, Boolean> isDone;
 	// states the time stamp of the last send object
 	private PointInTime watermark = null;
 	// the operator that uses this sink
@@ -70,10 +71,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	public TITransferArea() {
 		minTs = new HashMap<>();
+		isDone = new HashMap<>();
 	}
 
 	private TITransferArea(TITransferArea<R, W> tiTransferFunction) {
 		minTs = new HashMap<>(tiTransferFunction.minTs);
+		isDone = new HashMap<>(tiTransferFunction.isDone);
 		outputQueue.addAll(tiTransferFunction.outputQueue);
 	}
 
@@ -83,13 +86,15 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@Override
 	public void init(AbstractPipe<R, W> po) {
-
+		this.minTs.clear();
+		this.isDone.clear();
 		synchronized (outputQueue) {
 			this.watermark = null;
 			this.po = po;
 			for (PhysicalSubscription<ISource<? extends R>> sub : po
 					.getSubscribedToSource()) {
 				this.minTs.put(sub.getSinkInPort(), null);
+				this.isDone.put(sub.getSinkInPort(), false);
 			}
 			this.outputQueue.clear();
 		}
@@ -98,11 +103,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
 		this.minTs.put(sub.getSinkInPort(), null);
+		this.isDone.put(sub.getSinkInPort(), false);
 	}
 
 	@Override
 	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub) {
 		this.minTs.remove(sub.getSinkInPort());
+		this.isDone.remove(sub.getSinkInPort());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -159,18 +166,36 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public void done() {
-		while (!this.outputQueue.isEmpty()) {
-			IStreamable elem = this.outputQueue.poll();
-			if (elem.isPunctuation()) {
-				po.sendPunctuation((IPunctuation) elem);
-			} else {
-				po.transfer((W) this.outputQueue.poll(), outputPort);
+	private void purge() {
+		synchronized (outputQueue) {
+			while (!this.outputQueue.isEmpty()) {
+				IStreamable elem = this.outputQueue.poll();
+				if (elem.isPunctuation()) {
+					po.sendPunctuation((IPunctuation) elem);
+				} else {
+					po.transfer((W) elem, outputPort);
+				}
 			}
 		}
 	}
 
+	@Override
+	public void done(int port) {
+		isDone.put(port, true);
+		if (isAllDone()){
+			purge();
+		}else{
+			sendData();
+		}
+	}
+
+	private boolean isAllDone(){
+		for (Boolean b: isDone.values()){
+			if (!b) return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public int size() {
 		return outputQueue.size();
@@ -194,8 +219,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				minTs.put(inPort, heartbeat);
 			}
 			sendData();
-		}else{
-			logger.warn("Out of order element read "+heartbeat+" before last send element "+watermark+" ! Ignoring");
+		} else {
+			logger.warn("Out of order element read " + heartbeat
+					+ " before last send element " + watermark + " ! Ignoring");
 		}
 	}
 
@@ -271,7 +297,11 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	private PointInTime getMinTs() {
 		synchronized (minTs) {
 			PointInTime minimum = minTs.get(0);
-			for (PointInTime p : minTs.values()) {
+			for (int i = 0; i < minTs.size(); i++) {
+				PointInTime p = minTs.get(i);
+				if (isDone.get(i)) {
+					continue;
+				}
 				// if one element has no value, no element
 				// has been read from this input port
 				// --> no data can be send

@@ -497,7 +497,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			// If all by open connected subscriptions are removed, close
 			// operator
 			if ((activeSinkSubscriptions.size()-1)  == connectedSinks.size()) {
-				getLogger().debug("Closing " + toString());
+				getLogger().trace("Closing " + toString());
 				fire(this.closeInitEvent);
 				this.process_close();
 				open.set(false);
@@ -554,7 +554,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void block() {
 		// synchronized (blocked) {
 		this.blocked.set(true);
-		getLogger().debug("Operator " + this.toString() + " blocked");
+		getLogger().trace("Operator " + this.toString() + " blocked");
 		fire(blockedEvent);
 		// }
 		locker.lock();
@@ -564,7 +564,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void unblock() {
 		// synchronized (blocked) {
 		this.blocked.set(false);
-		getLogger().debug("Operator " + this.toString() + " unblocked");
+		getLogger().trace("Operator " + this.toString() + " unblocked");
 		fire(unblockedEvent);
 		// }
 		locker.unlock();
@@ -604,7 +604,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 				sink, sinkInPort, sourceOutPort, schema);
 		sub.setOpenCalls(openCount);
 		if (!this.sinkSubscriptions.contains(sub)) {
-			// getLogger().debug(
+			// getLogger().trace(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
@@ -666,7 +666,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void unsubscribeSink(
 			PhysicalSubscription<ISink<? super T>> subscription) {
-		getLogger().debug("Unsubscribe from Sink " + subscription.getTarget());
+		getLogger().trace("Unsubscribe from Sink " + subscription.getTarget());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		removeActiveSubscription(subscription);
 		if (subContained) {

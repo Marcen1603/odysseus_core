@@ -97,8 +97,10 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			}
 			try {
 				if (!processableSources) {
-					logger.debug("Waiting for open sources to process "
-							+ sources);
+					if (logger.isTraceEnabled()) {
+						logger.trace("Waiting for open sources to process "
+								+ sources);
+					}
 					sources.wait(1000);
 					updateSources();
 				}
@@ -160,7 +162,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 				for (IIterableSource<?> s : sources) {
 					if (s.isOpen()) {
-						logger.debug("Opened " + this.hashCode()
+						logger.trace("Opened " + this.hashCode()
 								+ "... Start Processing of Source " + s);
 						open = true;
 						break;
@@ -176,7 +178,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 			}
 		}
-		logger.debug("At least one source is open");
+		logger.trace("At least one source is open");
 	}
 
 	private void updateSources() {

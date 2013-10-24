@@ -122,7 +122,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 				produceResults(results, entry.getKey());
 				entry.getValue().clear();
 			}
-			transferArea.done();
+			transferArea.done(0);
 		}
 	}
 

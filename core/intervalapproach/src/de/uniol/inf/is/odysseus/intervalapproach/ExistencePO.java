@@ -256,9 +256,13 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected void process_done() {
-		transferFunction.done();
 		areas[0].clear();
 		areas[1].clear();
+	}
+	
+	@Override
+	protected void process_done(int port) {
+		transferFunction.done(port);
 	}
 
 	@Override

@@ -109,12 +109,10 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		// outputQueue.add(object);
 		// }
 	}
-
+	
 	@Override
-	public void done() {
-		while (!this.outputQueue.isEmpty()) {
-			po.transfer(this.outputQueue.poll());
-		}
+	public void done(int port) {
+		// Nothing to do here
 	}
 
 	@Override

@@ -63,8 +63,8 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * @param punctuation
 	 */
 	public void sendPunctuation(IPunctuation punctuation);		
-
-	public void done();
+	
+	public void done(int port);
 
 	public void init(AbstractPipe<R,W> source);
 	

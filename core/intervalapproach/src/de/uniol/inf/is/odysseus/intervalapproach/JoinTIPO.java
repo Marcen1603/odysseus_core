@@ -240,13 +240,17 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected synchronized void process_done() {
-		transferFunction.done();
 		if (isOpen()) {
 			areas[0].clear();
 			areas[1].clear();
 		}
 	}
 
+	@Override
+	protected void process_done(int port) {
+		transferFunction.done(port);
+	}
+	
 	@Override
 	protected boolean isDone() {
 		try {

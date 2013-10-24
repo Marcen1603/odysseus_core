@@ -114,8 +114,8 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 	
 	@Override
-	protected synchronized void process_done() {
-		this.transferFunction.done();
+	protected synchronized void process_done(int port) {
+		this.transferFunction.done(port);
 	}
 
 	@Override

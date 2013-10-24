@@ -555,13 +555,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 
 	@SuppressWarnings("unchecked")
 	private ILogicalOperator removeStream(Resource stream, ISession caller) {
-		LOG.debug("Try to remove Stream "+stream+" for "+caller);
-		if (LOG.isDebugEnabled()){
+		LOG.trace("Try to remove Stream "+stream+" for "+caller);
+		if (LOG.isTraceEnabled()){
 			StringBuffer buffer = new StringBuffer();
 			streamDefinitions.dumpTo(buffer);
 //			buffer.append("--------------------------------------");
 //			viewOrStreamFromUser.dumpTo(buffer);
-			LOG.debug(buffer.toString());
+			LOG.trace(buffer.toString());
 			
 		}
 		ILogicalOperator op = null;
@@ -714,7 +714,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary,
 	// ----------------------------------------------------------------------------
 
 	private void addDatatype(String name, SDFDatatype dt) {
-		LOG.debug("Add new Datatype " + name + " " + dt);
+		LOG.trace("Add new Datatype " + name + " " + dt);
 		if (!this.datatypes.containsKey(name.toLowerCase())) {
 			this.datatypes.put(name.toLowerCase(), dt);
 			fireDataDictionaryChangedEvent();
