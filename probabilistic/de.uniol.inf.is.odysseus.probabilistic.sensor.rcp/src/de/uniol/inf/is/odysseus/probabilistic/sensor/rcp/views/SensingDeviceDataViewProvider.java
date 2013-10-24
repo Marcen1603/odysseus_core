@@ -87,6 +87,7 @@ public class SensingDeviceDataViewProvider implements ISensingDeviceViewDataProv
         sender.refreshTable();
     }
 
+    @SuppressWarnings("unused")
     private void executeCommand(String cmdID) {
         IHandlerService handlerService = (IHandlerService) view.getSite().getService(IHandlerService.class);
         try {

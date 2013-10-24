@@ -10,12 +10,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 public class ProbabilityChart2DConfigurer extends AbstractDashboardPartConfigurer<ProbabilityChart2DDashboardPart> {
 
 	@Override
-	public void init(ProbabilityChart2DDashboardPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots ) {
+	public void init(final ProbabilityChart2DDashboardPart dashboardPartToConfigure, final Collection<IPhysicalOperator> roots ) {
 		
 	}
 
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(final Composite parent) {
 
 	}
 

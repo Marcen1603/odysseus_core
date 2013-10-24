@@ -96,11 +96,11 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
 	private String attributeList;
 
-	public void setAttributeList( String list ) {
+	public final void setAttributeList( final String list ) {
 		attributeList = list;
 	}
 
-	public String getAttributeList() {
+	public final String getAttributeList() {
 		return attributeList;
 	}
 
@@ -136,7 +136,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * #streamElementRecieved(java.lang.Object, int)
 	 */
 	@Override
-	public final void streamElementRecieved(IPhysicalOperator senderOperator, final IStreamObject<?> element,
+	public final void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element,
 			final int port) {
 		final ProbabilisticTuple<?> probabilisticElement = (ProbabilisticTuple<?>) element;
 		final ProbabilisticTuple<?> restrictedElement = probabilisticElement
@@ -206,7 +206,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation, int)
 	 */
 	@Override
-	public void punctuationElementRecieved(IPhysicalOperator senderOperator, final IPunctuation point,
+	public void punctuationElementRecieved(final IPhysicalOperator senderOperator, final IPunctuation point,
 			final int port) {
 
 	}
@@ -221,7 +221,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 	 * int)
 	 */
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, 
+	public void securityPunctuationElementRecieved(final IPhysicalOperator senderOperator, 
 			final ISecurityPunctuation sp, final int port) {
 
 	}

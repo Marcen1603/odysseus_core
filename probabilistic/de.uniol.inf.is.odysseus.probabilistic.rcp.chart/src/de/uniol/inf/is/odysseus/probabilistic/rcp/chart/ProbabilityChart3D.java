@@ -34,8 +34,6 @@ import org.eclipse.ui.IActionBars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -545,7 +543,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
 	}
 
 	@Override
-	protected void initConnection(IStreamConnection<IStreamObject<?>> streamConnection) {
+	protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
 		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
 			this.viewSchema.put(s.getSinkInPort(), new ViewSchema<NormalDistributionMixture>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
 		}

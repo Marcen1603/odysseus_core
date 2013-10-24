@@ -102,7 +102,7 @@ public class SourceManagerImpl {
         // }
         getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
     }
-
+    @SuppressWarnings("unused")
     private void addMeasurementPropertyToMeasurementCapability(Individual measurementCapability, MeasurementProperty property) {
 
         // getABox().createClass(property.getProperty());

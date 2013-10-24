@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.SSN;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
+
 public class PredicateManagerImpl {
     private final OntModel aBox;
 
@@ -39,13 +40,14 @@ public class PredicateManagerImpl {
 
     }
 
+    @SuppressWarnings("unused")
     public void getConditionPredicates(Resource sensingDevice) {
 
         Resource measurementCapability = sensingDevice.getPropertyResourceValue(SSN.hasMeasurementCapability);
-        
-        
+
     }
 
+    @SuppressWarnings("unused")
     private OntModel getABox() {
         return aBox;
     }

@@ -51,7 +51,7 @@ public class ProbabilisticViewSchema<T> extends ViewSchema<T> {
 	 * de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema#init()
 	 */
 	@Override
-	protected final void init(List<String> preChoosenAttributes) {
+	protected final void init(final List<String> preChoosenAttributes) {
 		int index = 0;
 		for (final SDFAttribute a : this.outputSchema) {
 			if (SchemaUtils.isProbabilisticAttribute(a)) {
