@@ -15,10 +15,22 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor;
 
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public interface SensorOntologyService {
+    List<SensingDevice> getAllSensingDevices();
 
+    /**
+     * @param sensingDevice
+     */
+    void createSensingDevice(SensingDevice sensingDevice);
+
+    List<SDFAttribute> getAllProperties();
 }

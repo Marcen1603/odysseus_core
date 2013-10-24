@@ -15,17 +15,19 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.query.Query;
@@ -34,12 +36,12 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.Reasoner;
+import com.hp.hpl.jena.reasoner.ReasonerException;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.vocabulary.OWL;
@@ -47,9 +49,20 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.Activator;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.manager.impl.PredicateManagerImpl;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.manager.impl.QueryManagerImpl;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.manager.impl.SourceManagerImpl;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.Condition;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementProperty;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.QU;
@@ -74,61 +87,43 @@ public class SensorOntology {
     private static final String QU_PREFIX = "PREFIX qu: <" + QU.getURI() + "> ";
     private static final String ODY_PREFIX = "PREFIX ody: <" + ODYSSEUS.getURI() + "> ";
 
+    private SourceManagerImpl sourceManager;
+    private PredicateManagerImpl predicateManager;
+    private QueryManagerImpl queryManager;
+
     /**
-     * @param name The name of the sensing device
-     * @param schema The schema of the sensing device stream
+     * Class constructor.
+     * 
      */
-    public void createSensingDevice(String name, SDFSchema schema) {
-        List<SDFAttribute> attributes = schema.getAttributes();    
-     for (SDFAttribute attribute: attributes){
-         
-         // Use qual name, getURI may not be useful.
-         Individual property = createProperty(attribute.getQualName());
-         
-     }
-        
-    }
-    
-    public Individual createSensingDevice(String name) {
-        return createSensingDevice(name, null, new ArrayList<Individual>(), new ArrayList<Individual>());
+    public SensorOntology() {
+        this.sourceManager = new SourceManagerImpl(getABox());
+        this.predicateManager = new PredicateManagerImpl(getABox());
+        this.queryManager = new QueryManagerImpl(getABox());
     }
 
-    public Individual createSensingDevice(String name, String[] propertyNames) {
-        List<Individual> properties = new ArrayList<Individual>();
-        for (String propertyName : propertyNames) {
-            Individual property = createProperty(propertyName);
-            properties.add(property);
-        }
-        return createSensingDevice(name, null, properties, new ArrayList<Individual>());
+    /**
+     * @param name
+     *            The name of the sensing device
+     * @param schema
+     *            The schema of the sensing device stream
+     */
+    public void createSensingDevice(SensingDevice sensingDevice) {
+        sourceManager.createSensingDevice(sensingDevice);
+
     }
 
-    public Individual createSensingDevice(String name, List<Individual> properties) {
-        return createSensingDevice(name, null, properties, new ArrayList<Individual>());
-    }
-
-    public Individual createSensingDevice(String name, String comment, List<Individual> properties, List<Individual> measurementCapabilities) {
-        if (getABox().supportsTransactions()) {
-            getABox().begin();
+    public List<SensingDevice> getAllSensingDevices() {
+        List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
+        List<URI> uris = queryManager.getAllSensingDevices();
+        for (URI uri : uris) {
+            List<URI> properties = queryManager.getAllPropertiesObservedBySensingDevice(uri);
+            List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+            for (URI property : properties) {
+                attributes.add(new SDFAttribute("", property.getFragment(), SDFDatatype.OBJECT));
+            }
+            sensingDevices.add(new SensingDevice(uri, new SDFSchema("", ProbabilisticTuple.class, attributes)));
         }
-        getABox().createClass(SSN.SensingDevice.getURI());
-        Individual sensingDevice = getABox().createIndividual(ODYSSEUS.NS + name, SSN.SensingDevice);
-        getABox().add(sensingDevice, RDFS.subClassOf, SSN.SensingDevice);
-
-        for (Individual property : properties) {
-            getABox().add(sensingDevice, SSN.observes, property);
-        }
-
-        for (Individual measurementCapability : measurementCapabilities) {
-            getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
-        }
-        if (comment != null) {
-            getABox().add(sensingDevice, RDFS.comment, name);
-        }
-
-        if (getABox().supportsTransactions()) {
-            getABox().commit();
-        }
-        return sensingDevice;
+        return sensingDevices;
     }
 
     public Individual createCondition(String name, Number min, Number max, String unit) {
@@ -137,7 +132,11 @@ public class SensorOntology {
         }
 
         getABox().createClass(SSN.MeasurementRange.getURI());
-        Individual condition = getABox().createIndividual(ODYSSEUS.NS + name, SSN.MeasurementRange);
+
+        Individual property = getABox().createIndividual(ODYSSEUS.NS + "temperature", SSN.Property);
+        Individual condition = getABox().createIndividual(ODYSSEUS.NS + name, property);
+        getABox().add(condition, RDFS.subClassOf, SSN.Condition);
+        // getABox().add(condition, RDF.type, SSN.MeasurementRange);
 
         getABox().createClass(DUL.Region.getURI());
         Individual condition_interval = getABox().createIndividual(ODYSSEUS.NS + name + "_interval", DUL.Region);
@@ -151,7 +150,7 @@ public class SensorOntology {
         getABox().add(maxValue, DUL.hasDataValue, max.toString(), TypeMapper.getInstance().getTypeByValue(max));
         getABox().add(maxValue, DUL.isClassifiedBy, unit);
 
-        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, maxValue);
+        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
 
         getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
 
@@ -236,7 +235,7 @@ public class SensorOntology {
 
         ObjectProperty maxValueProperty = getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMaxValue.getURI());
         maxValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
-        getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue, maxValue);
+        getABox().add(value, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
 
         getABox().createObjectProperty(SSN.hasValue.getURI());
         getABox().add(individual, SSN.hasValue, value);
@@ -271,17 +270,18 @@ public class SensorOntology {
         return result;
     }
 
-    private Model getTBox() {
+    private Model getTBox() throws IOException {
         if (tBox == null) {
             tBox = ModelFactory.createDefaultModel();
             URL file;
             if (Activator.getContext() != null) {
-                file = Activator.getContext().getBundle().getEntry("SSN.owl");
+                file = Activator.getContext().getBundle().getEntry("owl/SSN.owl");
             }
             else {
-                file = SensorOntology.class.getResource("/SSN.owl");
+                file = SensorOntology.class.getResource("owl/SSN.owl");
             }
-            tBox.read(file.toExternalForm());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file.openConnection().getInputStream()));
+            tBox.read(reader, null);
 
         }
         return tBox;
@@ -295,7 +295,14 @@ public class SensorOntology {
             ModelMaker maker = ModelFactory.createFileModelMaker(root.getAbsolutePath());
             Model aBox = maker.openModel(MODEL, false);
 
-            Reasoner reasoner = ReasonerRegistry.getOWLReasoner().bindSchema(getTBox());
+            Reasoner reasoner = null;
+            try {
+                reasoner = ReasonerRegistry.getOWLReasoner().bindSchema(getTBox());
+            }
+            catch (ReasonerException | IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM_RULE_INF);
             spec.setReasoner(reasoner);
             this.model = ModelFactory.createOntologyModel(spec, aBox);
@@ -311,24 +318,57 @@ public class SensorOntology {
         return model;
     }
 
+    public void out() {
+        getABox().write(System.out, FileUtils.langXMLAbbrev);
+    }
+
     public static void main(String[] args) throws MalformedURLException {
         SensorOntology sensorOntology = new SensorOntology();
 
-        Individual condition = sensorOntology.createCondition("condition", 2, 3, "Celsius");
+        SDFAttribute temperature = new SDFAttribute("sourceName", "temperature", SDFDatatype.DOUBLE);
+        SDFAttribute pressure = new SDFAttribute("sourceName", "temperature", SDFDatatype.DOUBLE);
 
-        Individual position = sensorOntology.createProperty("position");
-        Individual temperature = sensorOntology.createProperty("temperature");
+        Condition temperatureCondition = new Condition("temperatureCondition", temperature, new Interval(2.0, 50.0));
 
-        Individual sensingDevice = sensorOntology.createSensingDevice("sensor2", Arrays.asList(new Individual[] { position, temperature }));
+        MeasurementProperty pressureAccurancy = new MeasurementProperty(MeasurementProperty.Property.Accurancy, new Interval(0.0, 0.5));
 
-        List<Individual> capabilities = new ArrayList<Individual>();
-        capabilities.add(sensorOntology.addMeasurementCapabilityFor("capability1", sensingDevice, temperature, condition));
-        capabilities.add(sensorOntology.addMeasurementCapabilityFor("capability2", sensingDevice, position, condition));
+        MeasurementCapability pressureCapability = new MeasurementCapability("presureCapability", pressure);
+        pressureCapability.addCondition(temperatureCondition);
+        pressureCapability.addMeasurementProperty(pressureAccurancy);
 
-        sensorOntology.addMeasurementProperty("accuracy", capabilities.get(1), SSN.Accuracy, 3.0, 5.0, "Meter");
+        MeasurementCapability temperatureCapability = new MeasurementCapability("temperatureCapability", temperature);
 
-        sensorOntology.findSensor("SELECT ?uri  WHERE { ?uri ssn:observes ody:temperature }");
+        SensingDevice temperatureSensor = new SensingDevice(URI.create(ODYSSEUS.NS + "temperatureSensor"), new SDFSchema("local", Tuple.class, temperature));
+        temperatureSensor.addCapability(temperatureCapability);
+
+        SensingDevice pressureSensor = new SensingDevice(URI.create(ODYSSEUS.NS + "pressureSensor"), new SDFSchema("local", Tuple.class, pressure));
+        pressureSensor.addCapability(pressureCapability);
+
+        sensorOntology.createSensingDevice(temperatureSensor);
+        sensorOntology.createSensingDevice(pressureSensor);
+        //
+        // Individual condition = sensorOntology.createCondition("condition", 2,
+        // 3, "Celsius");
+        //
+        // Individual position = sensorOntology.createProperty("position");
+        // Individual temperature =
+        // sensorOntology.createProperty("temperature");
+        //
+        // Individual sensingDevice =
+        // sensorOntology.createSensingDevice("sensor2", Arrays.asList(new
+        // Individual[] { position, temperature }));
+        //
+        // List<Individual> capabilities = new ArrayList<Individual>();
+        // capabilities.add(sensorOntology.addMeasurementCapabilityFor("capability1",
+        // sensingDevice, temperature, condition));
+        // capabilities.add(sensorOntology.addMeasurementCapabilityFor("capability2",
+        // sensingDevice, position, condition));
+        //
+        // sensorOntology.addMeasurementProperty("accuracy",
+        // capabilities.get(1), SSN.Accuracy, 3.0, 5.0, "Meter");
+        sensorOntology.out();
+        // sensorOntology.findSensor("SELECT ?uri  WHERE { ?uri ssn:observes ody:temperature }");
+        // sensorOntology.findSensor("SELECT ?uri  WHERE { ?uri ssn:inCondition ody:temperature }");
     }
-
 
 }

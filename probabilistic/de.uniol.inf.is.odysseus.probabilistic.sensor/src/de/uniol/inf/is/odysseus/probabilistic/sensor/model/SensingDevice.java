@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.model;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * 
  */
 public class SensingDevice {
-    private final String name;
+    private final URI uri;
     private final SDFSchema schema;
     private final List<MeasurementCapability> capabilities = new ArrayList<MeasurementCapability>();
 
@@ -33,8 +34,8 @@ public class SensingDevice {
      * Class constructor.
      * 
      */
-    public SensingDevice(String name, SDFSchema schema) {
-        this.name = name;
+    public SensingDevice(URI uri, SDFSchema schema) {
+        this.uri = uri;
         this.schema = schema;
     }
 
@@ -42,7 +43,14 @@ public class SensingDevice {
      * @return the name
      */
     public String getName() {
-        return this.name;
+        return this.uri.getFragment();
+    }
+
+    /**
+     * @return the uri
+     */
+    public URI getUri() {
+        return this.uri;
     }
 
     /**

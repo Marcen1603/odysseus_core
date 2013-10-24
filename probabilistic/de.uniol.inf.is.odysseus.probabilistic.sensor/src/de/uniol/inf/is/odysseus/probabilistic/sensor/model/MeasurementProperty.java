@@ -23,7 +23,8 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  */
 public class MeasurementProperty {
     public static enum Property {
-        Accuracy;
+        Accurancy;
+
     }
 
     private final Property property;

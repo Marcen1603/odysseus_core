@@ -20,12 +20,13 @@ import java.util.List;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.Condition;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementProperty;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.ODYSSEUS;
@@ -46,161 +47,169 @@ public class SourceManagerImpl {
         this.aBox = aBox;
     }
 
-    public void createSensingDevice(SensingDevice sensingDevice) {
-
-    }
-
-    public void addMeasurementCapability(String sensingDevice, MeasurementCapability measurementCapability) {
-
-    }
-
-    private Individual createSensingDevice(String name) {
-        return createSensingDevice(name, null, new ArrayList<Individual>(), new ArrayList<Individual>());
-    }
-
-
-
-    private Individual createSensingDevice(String name, String comment, List<Individual> properties, List<Individual> measurementCapabilities) {
+    public void createSensingDevice(SensingDevice source) {
         if (getABox().supportsTransactions()) {
             getABox().begin();
         }
-        getABox().createClass(SSN.SensingDevice.getURI());
-        Individual sensingDevice = getABox().createIndividual(ODYSSEUS.NS + name, SSN.SensingDevice);
-        getABox().add(sensingDevice, RDFS.subClassOf, SSN.SensingDevice);
 
-        for (Individual property : properties) {
-            getABox().add(sensingDevice, SSN.observes, property);
+        Individual sensingDevice = this.createSensingDevice(source.getName());
+        List<Individual> properties = new ArrayList<Individual>();
+        for (SDFAttribute attribute : source.getSchema().getAttributes()) {
+            Individual property = createProperty(attribute.getAttributeName());
+            this.addPropertyToSensingDevice(sensingDevice, property);
+            properties.add(property);
         }
+        if (!source.getCapabilities().isEmpty()) {
+            for (MeasurementCapability capability : source.getCapabilities()) {
+                this.addMeasurementCapabilityToSensingDevice(sensingDevice, capability);
+            }
+        }
+        if (getABox().supportsTransactions()) {
+            getABox().commit();
+        }
+    }
 
-        for (Individual measurementCapability : measurementCapabilities) {
-            getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
-        }
-        if (comment != null) {
-            getABox().add(sensingDevice, RDFS.comment, name);
+    public void addMeasurementCapability(String sensingDevice, MeasurementCapability measurementCapability) {
+        if (getABox().supportsTransactions()) {
+            getABox().begin();
         }
 
         if (getABox().supportsTransactions()) {
             getABox().commit();
         }
-        return sensingDevice;
     }
 
-    private Individual createCondition(String name, Number min, Number max, String unit) {
-        if (getABox().supportsTransactions()) {
-            getABox().begin();
-        }
+    private void addMeasurementCapabilityToSensingDevice(Individual sensingDevice, MeasurementCapability capability) {
+        getABox().createClass(SSN.MeasurementCapability.getURI());
+        Individual measurementCapability = getABox().createIndividual(ODYSSEUS.NS + capability.getName(), SSN.MeasurementCapability);
 
-        getABox().createClass(SSN.MeasurementRange.getURI());
-        Individual condition = getABox().createIndividual(ODYSSEUS.NS + name, SSN.MeasurementRange);
+        SDFAttribute attribute = capability.getAttribute();
+        Individual property = createProperty(attribute.getAttributeName());
+        getABox().createObjectProperty(SSN.forProperty.getURI());
+        getABox().add(measurementCapability, SSN.forProperty, property);
+
+        if (!capability.getConditions().isEmpty()) {
+            for (Condition condition : capability.getConditions()) {
+                this.addConditionToMeasurementCapability(measurementCapability, condition);
+            }
+        }
+        // if (!capability.getMeasurementProperties().isEmpty()) {
+        // for (MeasurementProperty measurementProperty :
+        // capability.getMeasurementProperties()) {
+        // this.addMeasurementPropertyToMeasurementCapability(measurementCapability,
+        // measurementProperty);
+        // }
+        // }
+        getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
+    }
+
+    private void addMeasurementPropertyToMeasurementCapability(Individual measurementCapability, MeasurementProperty property) {
+
+        // getABox().createClass(property.getProperty());
+        // Individual individual = getABox().createIndividual(ODYSSEUS.NS +
+        // property.getName(), property.getProperty());
+        // getABox().createResource(ODYSSEUS.NS + name, resource);
+
+        // getABox().createClass(DUL.Region.getURI());
+        // Individual value = getABox().createIndividual(ODYSSEUS.NS +
+        // property.getName() + "_interval", DUL.Region);
+        //
+        // getABox().createClass(DUL.UnitOfMeasure.getURI());
+        // Individual unitOfMeasure = getABox().createIndividual(ODYSSEUS.NS +
+        // property.getUnit(), DUL.UnitOfMeasure);
+        //
+        // getABox().createClass(DUL.Amount.getURI());
+        //
+        // Individual minValue = getABox().createIndividual(ODYSSEUS.NS +
+        // property.getName() + "_interval_inf", DUL.Amount);
+        // getABox().createDatatypeProperty(DUL.hasDataValue.getURI());
+        // getABox().add(minValue, DUL.hasDataValue, min.toString(),
+        // TypeMapper.getInstance().getTypeByValue(min));
+        // getABox().createObjectProperty(DUL.isClassifiedBy.getURI());
+        // getABox().add(minValue, DUL.isClassifiedBy, unitOfMeasure);
+        //
+        // Individual maxValue = getABox().createIndividual(ODYSSEUS.NS +
+        // property.getName() + "_interval_sup", DUL.Amount);
+        // getABox().createDatatypeProperty(DUL.hasDataValue.getURI());
+        // getABox().add(maxValue, DUL.hasDataValue, max.toString(),
+        // TypeMapper.getInstance().getTypeByValue(max));
+        // getABox().createObjectProperty(DUL.isClassifiedBy.getURI());
+        // getABox().add(maxValue, DUL.isClassifiedBy, unitOfMeasure);
+        //
+        // ObjectProperty minValueProperty =
+        // getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMinValue.getURI());
+        // minValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
+        // getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue,
+        // minValue);
+        //
+        // ObjectProperty maxValueProperty =
+        // getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMaxValue.getURI());
+        // maxValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
+        // getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue,
+        // maxValue);
+        //
+        // getABox().createObjectProperty(SSN.hasValue.getURI());
+        // getABox().add(individual, SSN.hasValue, value);
+        //
+        // getABox().createObjectProperty(SSN.hasMeasurementProperty.getURI());
+        // getABox().add(measurementCapability, SSN.hasMeasurementProperty,
+        // individual);
+
+    }
+
+    private void addConditionToMeasurementCapability(Individual measurementCapability, Condition c) {
+        SDFAttribute attribute = c.getAttribute();
+        Individual property = createProperty(attribute.getAttributeName());
+
+        Individual condition = getABox().createIndividual(ODYSSEUS.NS + c.getName(), SSN.Condition);
+        getABox().add(condition, RDFS.subClassOf, property.asResource());
 
         getABox().createClass(DUL.Region.getURI());
-        Individual condition_interval = getABox().createIndividual(ODYSSEUS.NS + name + "_interval", DUL.Region);
+        Individual condition_interval = getABox().createIndividual(ODYSSEUS.NS + c.getName() + "_interval", DUL.Region);
 
         getABox().createClass(DUL.Amount.getURI());
-        Individual minValue = getABox().createIndividual(ODYSSEUS.NS + name + "_interval_inf", DUL.Amount);
-        getABox().add(minValue, DUL.hasDataValue, min.toString(), TypeMapper.getInstance().getTypeByValue(min));
-        getABox().add(minValue, DUL.isClassifiedBy, unit);
+        Individual minValue = getABox().createIndividual(ODYSSEUS.NS + c.getName() + "_interval_inf", DUL.Amount);
+        getABox().add(minValue, DUL.hasDataValue, new Double(c.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().inf()));
 
-        Individual maxValue = getABox().createIndividual(ODYSSEUS.NS + name + "_interval_sup", DUL.Amount);
-        getABox().add(maxValue, DUL.hasDataValue, max.toString(), TypeMapper.getInstance().getTypeByValue(max));
-        getABox().add(maxValue, DUL.isClassifiedBy, unit);
-
-        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, maxValue);
+        Individual maxValue = getABox().createIndividual(ODYSSEUS.NS + c.getName() + "_interval_sup", DUL.Amount);
+        getABox().add(maxValue, DUL.hasDataValue, new Double(c.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().sup()));
+        if (c.getUnit() != null) {
+            getABox().add(minValue, DUL.isClassifiedBy, c.getUnit());
+            getABox().add(maxValue, DUL.isClassifiedBy, c.getUnit());
+        }
+        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
 
         getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
 
         getABox().createObjectProperty(SSN.hasValue.getURI());
         getABox().add(condition, SSN.hasValue, condition_interval);
 
-        if (getABox().supportsTransactions()) {
-            getABox().commit();
-        }
-        return condition;
+        getABox().add(measurementCapability, SSN.inCondition, condition);
     }
 
-    private Individual addMeasurementCapabilityFor(String name, Individual sensor, Individual property, Individual condition) {
-        if (getABox().supportsTransactions()) {
-            getABox().begin();
-        }
+    private void addPropertyToSensingDevice(Individual sensingDevice, Individual property) {
+        getABox().createObjectProperty(SSN.observes.getURI());
+        getABox().add(sensingDevice, SSN.observes, property);
+    }
 
-        getABox().createClass(SSN.MeasurementCapability.getURI());
-        Individual measurementCapability = getABox().createIndividual(ODYSSEUS.NS + name, SSN.MeasurementCapability);
+    private Individual createSensingDevice(String name) {
+        return this.createSensingDeviceNS(name, ODYSSEUS.NS);
+    }
 
-        getABox().createObjectProperty(SSN.forProperty.getURI());
-        getABox().add(measurementCapability, SSN.forProperty, property);
-
-        if (condition != null) {
-            getABox().createObjectProperty(SSN.inCondition.getURI());
-            getABox().add(measurementCapability, SSN.inCondition, condition);
-        }
-        getABox().createObjectProperty(SSN.hasMeasurementCapability.getURI());
-        getABox().add(sensor, SSN.hasMeasurementCapability, measurementCapability);
-
-        if (getABox().supportsTransactions()) {
-            getABox().commit();
-        }
-        return measurementCapability;
+    private Individual createSensingDeviceNS(String name, String namespace) {
+        getABox().createClass(SSN.SensingDevice.getURI());
+        Individual sensingDevice = getABox().createIndividual(namespace + name, SSN.SensingDevice);
+        return sensingDevice;
     }
 
     private Individual createProperty(String name) {
-        if (getABox().supportsTransactions()) {
-            getABox().begin();
-        }
-
-        getABox().createClass(SSN.Property.getURI());
-        Individual property = getABox().createIndividual(ODYSSEUS.NS + name, SSN.Property);
-
-        if (getABox().supportsTransactions()) {
-            getABox().commit();
-        }
-        return property;
+        return createPropertyNS(name, ODYSSEUS.NS);
     }
 
-    private void addMeasurementProperty(String name, Individual measurementCapability, Resource resource, Number min, Number max, String unit) {
-        if (getABox().supportsTransactions()) {
-            getABox().begin();
-        }
-        getABox().createClass(resource.getURI());
-        Individual individual = getABox().createIndividual(ODYSSEUS.NS + name, resource);
-        getABox().createResource(ODYSSEUS.NS + name, resource);
-
-        getABox().createClass(DUL.Region.getURI());
-        Individual value = getABox().createIndividual(ODYSSEUS.NS + name + "_interval", DUL.Region);
-
-        getABox().createClass(DUL.UnitOfMeasure.getURI());
-        Individual unitOfMeasure = getABox().createIndividual(ODYSSEUS.NS + unit, DUL.UnitOfMeasure);
-
-        getABox().createClass(DUL.Amount.getURI());
-
-        Individual minValue = getABox().createIndividual(ODYSSEUS.NS + name + "_interval_inf", DUL.Amount);
-        getABox().createDatatypeProperty(DUL.hasDataValue.getURI());
-        getABox().add(minValue, DUL.hasDataValue, min.toString(), TypeMapper.getInstance().getTypeByValue(min));
-        getABox().createObjectProperty(DUL.isClassifiedBy.getURI());
-        getABox().add(minValue, DUL.isClassifiedBy, unitOfMeasure);
-
-        Individual maxValue = getABox().createIndividual(ODYSSEUS.NS + name + "_interval_sup", DUL.Amount);
-        getABox().createDatatypeProperty(DUL.hasDataValue.getURI());
-        getABox().add(maxValue, DUL.hasDataValue, max.toString(), TypeMapper.getInstance().getTypeByValue(max));
-        getABox().createObjectProperty(DUL.isClassifiedBy.getURI());
-        getABox().add(maxValue, DUL.isClassifiedBy, unitOfMeasure);
-
-        ObjectProperty minValueProperty = getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMinValue.getURI());
-        minValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
-        getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
-
-        ObjectProperty maxValueProperty = getABox().createObjectProperty(ODYSSEUS.hasMeasurementPropertyMaxValue.getURI());
-        maxValueProperty.addProperty(RDFS.subPropertyOf, DUL.hasPart);
-        getABox().add(value, ODYSSEUS.hasMeasurementPropertyMinValue, maxValue);
-
-        getABox().createObjectProperty(SSN.hasValue.getURI());
-        getABox().add(individual, SSN.hasValue, value);
-
-        getABox().createObjectProperty(SSN.hasMeasurementProperty.getURI());
-        getABox().add(measurementCapability, SSN.hasMeasurementProperty, individual);
-
-        if (getABox().supportsTransactions()) {
-            getABox().commit();
-        }
+    private Individual createPropertyNS(String name, String namespace) {
+        getABox().createClass(SSN.Property.getURI());
+        Individual property = getABox().createIndividual(namespace + name, SSN.Property);
+        return property;
     }
 
     private OntModel getABox() {

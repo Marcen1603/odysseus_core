@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.manager.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +26,12 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
+import de.uniol.inf.is.odysseus.probabilistic.sensor.manager.QueryManager;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.QU;
@@ -40,7 +41,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.SSN;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class QueryManagerImpl {
+public class QueryManagerImpl implements QueryManager {
     private static final String SSN_PREFIX = "PREFIX ssn: <" + SSN.getURI() + "> ";
     private static final String XSD_PREFIX = "PREFIX xsd: <" + XSD.getURI() + "> ";
     private static final String RDF_PREFIX = "PREFIX rdf: <" + RDF.getURI() + "> ";
@@ -59,14 +60,62 @@ public class QueryManagerImpl {
         this.aBox = aBox;
     }
 
-    public List<String> getSensingDevicesByObservedProperty(String qualName) {
-        String query = "SELECT ?uri  WHERE { ?uri ssn:observes ody:" + qualName + " }";
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<URI> getAllSensingDevices() {
+        String query = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " }";
         ResultSet result = executeQuery(query);
-        List<String> uris = new ArrayList<String>();
+        List<URI> uris = new ArrayList<URI>();
         while (result.hasNext()) {
             QuerySolution solution = result.next();
-            RDFNode uri = solution.get("uri");
-            uris.add(uri.asResource().getURI());
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        }
+        return uris;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<URI> getAllProperties() {
+        String query = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.Property.getLocalName() + " }";
+        ResultSet result = executeQuery(query);
+        List<URI> uris = new ArrayList<URI>();
+        while (result.hasNext()) {
+            QuerySolution solution = result.next();
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        }
+        return uris;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<URI> getSensingDevicesByObservedProperty(URI uri) {
+        String query = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.observes.getLocalName() + " <" + uri.toString() + "> }";
+        ResultSet result = executeQuery(query);
+        List<URI> uris = new ArrayList<URI>();
+        while (result.hasNext()) {
+            QuerySolution solution = result.next();
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        }
+        return uris;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<URI> getAllPropertiesObservedBySensingDevice(URI uri) {
+        String query = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.observedBy.getLocalName() + " <" + uri.toString() + "> }";
+        ResultSet result = executeQuery(query);
+        List<URI> uris = new ArrayList<URI>();
+        while (result.hasNext()) {
+            QuerySolution solution = result.next();
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
         }
         return uris;
     }
@@ -91,4 +140,5 @@ public class QueryManagerImpl {
     private OntModel getABox() {
         return aBox;
     }
+
 }

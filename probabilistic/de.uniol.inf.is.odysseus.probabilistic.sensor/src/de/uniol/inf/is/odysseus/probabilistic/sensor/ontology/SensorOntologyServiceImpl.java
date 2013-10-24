@@ -15,7 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -41,8 +42,8 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.SensorOntologyService;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -52,8 +53,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     private static final Logger LOG = LoggerFactory.getLogger(SensorOntologyServiceImpl.class);
     private static IServerExecutor executor;
     private static IUserManagement userManagement;
-    private Set<ITenant> tenants = new HashSet<ITenant>();
-    // private final SensorOntology ontology;
+    private SensorOntology ontology;
     private static ISession session;
 
     /**
@@ -61,7 +61,33 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * 
      */
     public SensorOntologyServiceImpl() {
-        // ontology = new SensorOntology();
+        ontology = new SensorOntology();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<SensingDevice> getAllSensingDevices() {
+        List<SensingDevice> sensingDevices = ontology.getAllSensingDevices();
+        return sensingDevices;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createSensingDevice(SensingDevice sensingDevice) {
+        ontology.createSensingDevice(sensingDevice);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<SDFAttribute> getAllProperties() {
+        List<SDFAttribute> properties = new ArrayList<SDFAttribute>();
+        return properties;
     }
 
     public void bindExecutor(IExecutor executor) {
@@ -141,9 +167,9 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
             for (Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
                 String uri = streamAndView.getKey().getResourceName();
                 SDFSchema schema = streamAndView.getValue().getOutputSchema();
-               LOG.debug( streamAndView.getValue().getName());
-                for (SDFAttribute attr: schema.getAttributes()){
-                    LOG.debug(attr.getSourceName()+" "+attr.getQualName()+" "+attr.getAttributeName());
+                LOG.debug(streamAndView.getValue().getName());
+                for (SDFAttribute attr : schema.getAttributes()) {
+                    LOG.debug(attr.getSourceName() + " " + attr.getQualName() + " " + attr.getAttributeName());
                 }
                 LOG.debug(uri + " " + schema.toString());
             }

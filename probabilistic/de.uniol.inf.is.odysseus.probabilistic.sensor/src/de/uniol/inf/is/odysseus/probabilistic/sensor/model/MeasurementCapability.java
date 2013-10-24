@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 public class MeasurementCapability {
     private final String name;
     private final SDFAttribute attribute;
-    private Condition condition;
+    private final List<Condition> conditions = new ArrayList<Condition>();
     private final List<MeasurementProperty> measurementProperties = new ArrayList<MeasurementProperty>();
 
     /**
@@ -43,21 +43,6 @@ public class MeasurementCapability {
     }
 
     /**
-     * @return the condition
-     */
-    public Condition getCondition() {
-        return this.condition;
-    }
-
-    /**
-     * @param condition
-     *            the condition to set
-     */
-    public void setCondition(Condition condition) {
-        this.condition = condition;
-    }
-
-    /**
      * @return the name
      */
     public String getName() {
@@ -69,6 +54,21 @@ public class MeasurementCapability {
      */
     public SDFAttribute getAttribute() {
         return this.attribute;
+    }
+
+    /**
+     * @return the conditions
+     */
+    public List<Condition> getConditions() {
+        return this.conditions;
+    }
+
+    public void addCondition(Condition condition) {
+        this.conditions.add(condition);
+    }
+
+    public void removeCondition(Condition condition) {
+        this.conditions.remove(condition);
     }
 
     /**
