@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNode;
 
 public class Tools<T extends Object> {
@@ -85,6 +87,25 @@ public class Tools<T extends Object> {
 		}
 		
 		return result;
+	}
+	
+	public static void collectGraphNodes(GraphNode currentOperator,
+			Collection<GraphNode> list) {
+
+		if (!list.contains(currentOperator)) {
+
+			list.add(currentOperator);
+
+			for (final Subscription<GraphNode> subscription : currentOperator
+					.getSinkSubscriptions())
+				Tools.collectGraphNodes(subscription.getTarget(), list);
+
+			for (final Subscription<GraphNode> subscription : currentOperator
+					.getSubscribedToSource())
+				Tools.collectGraphNodes(subscription.getTarget(), list);
+
+		}
+
 	}
 
 }

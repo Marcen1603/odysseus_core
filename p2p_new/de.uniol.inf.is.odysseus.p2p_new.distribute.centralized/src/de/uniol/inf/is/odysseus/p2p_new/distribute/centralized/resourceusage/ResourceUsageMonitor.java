@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistri
  */
 public class ResourceUsageMonitor extends Thread {
 	// can be used to let a peer report a multiple of its resource consumption for testing purposes
-	private int loadMultiplicationFactor = 1;
+	private int loadMultiplicationFactor = 10;
 	private IResourceUsageUpdateListener caller;
 	private CPUUsage cpuUsage;
 	private NetworkMonitor networkMonitor;

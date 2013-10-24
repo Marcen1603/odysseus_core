@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
@@ -17,12 +18,12 @@ public class GraphNodeSwapper {
 	private static final Logger LOG = LoggerFactory.getLogger(GraphNodeSwapper.class);
 	
 	public static Graph pullSelectionsAboveWindows(Graph g) {
-		Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, SlidingAdvanceTimeWindowTIPO.class, SelectPO.class);
+		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, SlidingAdvanceTimeWindowTIPO.class, SelectPO.class);
 		if(eligiblePairs.isEmpty()) {
 			return null;
 		} else {
 			Graph graphCopy = g.clone();
-			for(GraphNodePair<GraphNode,GraphNode> pair : eligiblePairs) {
+			for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
 				// since we found the eligible pairs in the old graph but are now working on a copy of the graph,
 				// we have to get the corresponding Nodes of this new graph via their associated IDs
 				GraphNode windowNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
@@ -34,22 +35,22 @@ public class GraphNodeSwapper {
 	}
 	
 	public static Graph pullSelectionsAboveJoins(Graph g) {
-		Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, JoinTIPO.class, SelectPO.class);
-		List<GraphNodePair<GraphNode,GraphNode>> toRemove = new ArrayList<GraphNodePair<GraphNode,GraphNode>>();
-		for(GraphNodePair<GraphNode,GraphNode> pair : eligiblePairs) {
+		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, JoinTIPO.class, SelectPO.class);
+		List<Pair<GraphNode,GraphNode>> toRemove = new ArrayList<Pair<GraphNode,GraphNode>>();
+		for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
 			// the SelectPO's subscription to the JoinTIPO has to be its ONLY sink-subscription, since we can't swap otherwise
 			if(pair.getE2().getSinkSubscriptions().size() > 1) {
 				toRemove.add(pair);
 			}
 		}
-		for(GraphNodePair<GraphNode,GraphNode> removed: toRemove) {
+		for(Pair<GraphNode,GraphNode> removed: toRemove) {
 			eligiblePairs.remove(removed);
 		}
 		if(eligiblePairs.isEmpty()) {
 			return null;
 		} else {
 			Graph graphCopy = g.clone();
-			for(GraphNodePair<GraphNode,GraphNode> pair : eligiblePairs) {
+			for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
 				// since we found the eligible pairs in the old graph but are now working on a copy of the graph,
 				// we have to get the corresponding Nodes of this new graph via their associated IDs
 				GraphNode joinNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
@@ -67,8 +68,8 @@ public class GraphNodeSwapper {
 	 * which have sources of typeOfSource and return them as pairs in a collection
 	 * Only new GraphNodes can be switched with one another, old ones are being left alone.
 	 */
-	private static Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs(Graph g, Class<?> typeOfSink, Class<?> typeOfSource) {
-		Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs = new HashSet<GraphNodePair<GraphNode,GraphNode>>();
+	private static Collection<Pair<GraphNode,GraphNode>> eligiblePairs(Graph g, Class<?> typeOfSink, Class<?> typeOfSource) {
+		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = new HashSet<Pair<GraphNode,GraphNode>>();
 		Collection<GraphNode> matchingSinks = g.getNodesGroupedByOpType().get(typeOfSink.getName());
 		Collection<GraphNode> matchingSources = g.getNodesGroupedByOpType().get(typeOfSource.getName());
 
@@ -83,7 +84,7 @@ public class GraphNodeSwapper {
 				}
 				for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
 					if(matchingSources.contains(sub.getTarget()) && !sub.getTarget().isOld()) {
-						eligiblePairs.add(new GraphNodePair<GraphNode,GraphNode>(gn,sub.getTarget()));
+						eligiblePairs.add(new Pair<GraphNode,GraphNode>(gn,sub.getTarget()));
 					}
 				}
 			}

@@ -287,6 +287,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		adv.setPeerID(this.localID);
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(this.masterID.toString(), adv, 15000);
 		LOG.debug("Sent ResourceUsageUpdateAdvertisement to peer " + masterID.toString());
+		LOG.debug("CPU-Usage: " + cpuUsage + ", Mem-Usage: " + (mem_used/mem_total));
 	}
 
 

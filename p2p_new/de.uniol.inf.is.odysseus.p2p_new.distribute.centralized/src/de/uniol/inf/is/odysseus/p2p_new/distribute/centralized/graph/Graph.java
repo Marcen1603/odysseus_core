@@ -92,6 +92,9 @@ public class Graph {
 					for(ISubscription<GraphNode> sub : oldGn.getSubscribedToSource()) {
 						GraphNode oldSource = sub.getTarget();
 						GraphNode newSource = this.getGraphNode(oldSource.getOperatorID());
+						if(newSource == null) {
+							continue;
+						}
 						int sinkInPort = sub.getSinkInPort();
 						int sourceOutPort = sub.getSourceOutPort();
 						SDFSchema schema = sub.getSchema();
@@ -102,6 +105,9 @@ public class Graph {
 					for(ISubscription<GraphNode> sub : oldGn.getSinkSubscriptions()) {
 						GraphNode oldSink = sub.getTarget();
 						GraphNode newSink = this.getGraphNode(oldSink.getOperatorID());
+						if(newSink == null) {
+							continue;
+						}
 						int sinkInPort = sub.getSinkInPort();
 						int sourceOutPort = sub.getSourceOutPort();
 						SDFSchema schema = sub.getSchema();
@@ -414,7 +420,10 @@ public class Graph {
 				GraphNode gn1 = e.getKey();
 				GraphNode gn2 = e.getValue();
 				if(gn1.hasSameSources(gn2)) {
-					Collection<Subscription<GraphNode>> sinkSubs = gn1.getSinkSubscriptions();
+					Collection<Subscription<GraphNode>> sinkSubs = new ArrayList<Subscription<GraphNode>>();
+					for(Subscription<GraphNode> sub: gn1.getSinkSubscriptions()) {
+						sinkSubs.add(sub);
+					}
 					// unsubscribe the to-be-replaced node from its sources
 					for(Subscription<GraphNode> sub : gn1.getSubscribedToSource()) {
 						sub.getTarget().unsubscribeSink(sub);
@@ -454,11 +463,16 @@ public class Graph {
 		}
 		for(GraphNode gn : this.getGraphNodesUngrouped(true)) {
 			// iterate over their sinksubscriptions and unsubscribe from those GraphNodes who are old
+			List<Subscription<GraphNode>> toUnsubscribe = new ArrayList<Subscription<GraphNode>>();
 			for(Subscription<GraphNode> sub : gn.getSinkSubscriptions()) {
 				if(sub.getTarget().isOld()) {
-					gn.unsubscribeSink(sub);
+					toUnsubscribe.add(sub);
 				}
 			}
+			for(Subscription<GraphNode> sub : toUnsubscribe) {
+				sub.getTarget().unsubscribeSink(sub);
+			}
+			
 		}
 		Graph result = new Graph();
 		for(GraphNode gn : this.getGraphNodesUngrouped(true)) {

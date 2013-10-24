@@ -101,7 +101,8 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			this.costsSavedByQuerySharing = this.getCostModel().getZeroCost();
 			this.costsOfAllDistributedPlans = this.getCostModel().getZeroCost();
 		}
-
+		
+		long timeStart = System.currentTimeMillis();
 		for(ILogicalQuery q : queriesToDistribute) {
 
 			List<List<IPhysicalOperator>> newOperators = new ArrayList<List<IPhysicalOperator>>();
@@ -366,6 +367,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(initialCost.substract(endCost));
 		}
 		LOG.debug("Costs of all distributed Plans: " + this.costsOfAllDistributedPlans + ", Costs saved by sharing query-operators: " + this.costsSavedByQuerySharing);
+		LOG.debug("It took " + ((System.currentTimeMillis() - timeStart)/60) + " seconds to optimize and distribute this Query.");
 		return queriesToDistribute;
 	}
 	
@@ -452,7 +454,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// We should have found all the shareable nodes farthest away from the source(s) and could cut it off right there.
 			// This would mean, that all we had to do was attach a send-operator to the shared operators
 			// and leave the rest of the plan for another peer
-			
+			LOG.debug("Found " + cutoffPoints.size() + " cutoffPoints.");
 			Graph detachedGraph = new Graph();
 			for(Entry<Integer,Integer> e : cutoffPoints.entrySet()) {
 				// find out which old operator we're dealing with and get its sinksubscriptions
@@ -505,7 +507,8 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// the flowTargetNodes are the nodes in the new plan who receive the data sent via a jxta-connection.
 				// They and every other node connected to them should be moved to the new Graph
 				for(GraphNode gn : pj.getFlowTargetNodes()) {
-					gn.collectConnectedGraphNodes(toMove);
+					Tools.collectGraphNodes(gn, toMove);
+					//gn.collectConnectedGraphNodes(toMove);
 				}
 			}
 			toMove = Tools.removeDuplicates(toMove);
@@ -581,15 +584,16 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				res.setPeer(peer);
 				Map<Integer,IPhysicalOperator> mergedOps = res.getPlan(true);
 				res.setCost(this.getCostModel().estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
-				// don't add the result, if its execution would probably exceed the peers usage-threshold
-				
-				if(res.getCost().compareTo(bestCost) == 0) {
-					bestCost = res.getCost();
-					bestResults.add(res);
-				} else if(res.getCost().compareTo(bestCost) < 0) {
-					bestCost = res.getCost();
-					bestResults.clear();
-					bestResults.add(res);
+				// don't add the result, if the peer is already over its capacity
+				if(this.getResourceUsageForPeer(res.getPeer()).getOverallUsage() < this.getResourceUsageForPeer(res.getPeer()).getCOMBINED_THRESHOLD()) {
+					if(res.getCost().compareTo(bestCost) == 0) {
+						bestCost = res.getCost();
+						bestResults.add(res);
+					} else if(res.getCost().compareTo(bestCost) < 0) {
+						bestCost = res.getCost();
+						bestResults.clear();
+						bestResults.add(res);
+					}
 				}
 			}
 		}
@@ -643,6 +647,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					|| res.isClearedForPlacement()) {
 				r.add(res);
 			}
+			System.out.println("Cost of current result: " + res.getCost() + ", Determined bearable Cost of Peer: " + determineBearableCost(res.getPeer()));
 			double projectedUsage = CostConverter.projectedUsageUsingOpCountCost(this.planCostEstimates.get(res.getPeer()),
 					this.getResourceUsageForPeer(res.getPeer()).getOverallUsage(),
 					res.getCost());
