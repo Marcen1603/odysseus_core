@@ -2,14 +2,13 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
@@ -18,12 +17,12 @@ public class GraphNodeSwapper {
 	private static final Logger LOG = LoggerFactory.getLogger(GraphNodeSwapper.class);
 	
 	public static Graph pullSelectionsAboveWindows(Graph g) {
-		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, SlidingAdvanceTimeWindowTIPO.class, SelectPO.class);
+		Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, SlidingAdvanceTimeWindowTIPO.class, SelectPO.class);
 		if(eligiblePairs.isEmpty()) {
 			return null;
 		} else {
 			Graph graphCopy = g.clone();
-			for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
+			for(GraphNodePair<GraphNode,GraphNode> pair : eligiblePairs) {
 				// since we found the eligible pairs in the old graph but are now working on a copy of the graph,
 				// we have to get the corresponding Nodes of this new graph via their associated IDs
 				GraphNode windowNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
@@ -35,22 +34,22 @@ public class GraphNodeSwapper {
 	}
 	
 	public static Graph pullSelectionsAboveJoins(Graph g) {
-		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, JoinTIPO.class, SelectPO.class);
-		List<Pair<GraphNode,GraphNode>> toRemove = new ArrayList<Pair<GraphNode,GraphNode>>();
-		for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
+		Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, JoinTIPO.class, SelectPO.class);
+		List<GraphNodePair<GraphNode,GraphNode>> toRemove = new ArrayList<GraphNodePair<GraphNode,GraphNode>>();
+		for(GraphNodePair<GraphNode,GraphNode> pair : eligiblePairs) {
 			// the SelectPO's subscription to the JoinTIPO has to be its ONLY sink-subscription, since we can't swap otherwise
 			if(pair.getE2().getSinkSubscriptions().size() > 1) {
 				toRemove.add(pair);
 			}
 		}
-		for(Pair<GraphNode,GraphNode> removed: toRemove) {
+		for(GraphNodePair<GraphNode,GraphNode> removed: toRemove) {
 			eligiblePairs.remove(removed);
 		}
 		if(eligiblePairs.isEmpty()) {
 			return null;
 		} else {
 			Graph graphCopy = g.clone();
-			for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
+			for(GraphNodePair<GraphNode,GraphNode> pair : eligiblePairs) {
 				// since we found the eligible pairs in the old graph but are now working on a copy of the graph,
 				// we have to get the corresponding Nodes of this new graph via their associated IDs
 				GraphNode joinNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
@@ -68,15 +67,15 @@ public class GraphNodeSwapper {
 	 * which have sources of typeOfSource and return them as pairs in a collection
 	 * Only new GraphNodes can be switched with one another, old ones are being left alone.
 	 */
-	private static Collection<Pair<GraphNode,GraphNode>> eligiblePairs(Graph g, Class<?> typeOfSink, Class<?> typeOfSource) {
-		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = new TreeSet<Pair<GraphNode,GraphNode>>();
+	private static Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs(Graph g, Class<?> typeOfSink, Class<?> typeOfSource) {
+		Collection<GraphNodePair<GraphNode,GraphNode>> eligiblePairs = new HashSet<GraphNodePair<GraphNode,GraphNode>>();
 		Collection<GraphNode> matchingSinks = g.getNodesGroupedByOpType().get(typeOfSink.getName());
 		Collection<GraphNode> matchingSources = g.getNodesGroupedByOpType().get(typeOfSource.getName());
 
 		if(matchingSinks != null && matchingSources != null) {
 			for(GraphNode gn : matchingSinks) {
 
-				if(!gn.isOld()) {
+				if(gn.isOld()) {
 					continue;
 				}
 				if(gn.getSubscribedToSource().isEmpty() || gn.getSinkSubscriptions().isEmpty()) {
@@ -84,7 +83,7 @@ public class GraphNodeSwapper {
 				}
 				for(Subscription<GraphNode> sub : gn.getSubscribedToSource()) {
 					if(matchingSources.contains(sub.getTarget()) && !sub.getTarget().isOld()) {
-						eligiblePairs.add(new Pair<GraphNode,GraphNode>(gn,sub.getTarget()));
+						eligiblePairs.add(new GraphNodePair<GraphNode,GraphNode>(gn,sub.getTarget()));
 					}
 				}
 			}
@@ -130,7 +129,13 @@ public class GraphNodeSwapper {
 
 		// save the sink-subscriptions of the sink-node and disconnect it
 		Collection<Subscription<GraphNode>> sinkSubsFromOriginalSink = originalSink.getSinkSubscriptions();
+		// deep copy because of concurrent modification exceptions
+		List<Subscription<GraphNode>> secondList = new ArrayList<Subscription<GraphNode>>();
 		for(Subscription<GraphNode> sinkSub : sinkSubsFromOriginalSink) {
+			secondList.add(sinkSub);
+		}
+		
+		for(Subscription<GraphNode> sinkSub : secondList) {
 			originalSink.unsubscribeSink(sinkSub);
 		}
 
@@ -142,7 +147,7 @@ public class GraphNodeSwapper {
 		originalSink.subscribeSink(originalSource, 0, 0, originalSink.getOperator().getOutputSchema());
 
 		// connect the original source, i.e. the new sink to the original sink's sinks
-		for(Subscription<GraphNode> sinkSub : sinkSubsFromOriginalSink) {
+		for(Subscription<GraphNode> sinkSub : secondList) {
 			originalSource.subscribeSink(sinkSub.getTarget(), sinkSub.getSinkInPort(), 0,sinkSub.getSchema());
 		}
 				

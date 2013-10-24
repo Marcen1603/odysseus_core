@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class GraphNode {
+public class GraphNode implements Comparable<GraphNode> {
 	private String operatorType = "";
 	private int operatorID = -1;
 	private IPhysicalOperator operator = null;
@@ -237,5 +237,13 @@ public class GraphNode {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public int compareTo(GraphNode o) {
+		if(this.equals(o)) {
+			return 0;
+		}
+		return -1;
 	}
 }

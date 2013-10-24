@@ -65,6 +65,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	
 	private ICost<IPhysicalOperator> costsSavedByQuerySharing;
 	private ICost<IPhysicalOperator> costsOfAllDistributedPlans;
+	private List<IPhysicalQuery> physicalQueries = new ArrayList<IPhysicalQuery>();
 	
 	// a map containing the physical plans for each peer known to the master
 	private Map<PeerID,Map<Integer,IPhysicalOperator>> operatorPlans = new HashMap<PeerID,Map<Integer,IPhysicalOperator>>();
@@ -112,6 +113,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					q,
 					new OptimizationConfiguration(parameters),
 					this.getExecutor().getDataDictionary(UserManagementProvider.getDefaultTenant()));
+			this.physicalQueries.add(physQ);
 			originalPlan.addAll(physQ.getAllOperators());
 			for(IPhysicalOperator o : originalPlan) {
 				o.addOwner(physQ);
@@ -232,16 +234,16 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				receiverOp.setOutputSchema(schema);
 				receiverOp.setAssignedSchema(schema);
 				
-//				// Put a selection on top of the receiver, because the query won't start otherwise
-//				SelectAO selection = new SelectAO();
-//				selection.setPredicate(new TruePredicate());
-//				selection.setOutputSchema(schema);
-//				
-//				selection.subscribeToSource(receiverOp, 0, 0, schema);
+				// Put a selection on top of the receiver, because the query won't start otherwise
+				SelectAO selection = new SelectAO();
+				selection.setPredicate(new TruePredicate());
+				selection.setOutputSchema(schema);
+				
+				selection.subscribeToSource(receiverOp, 0, 0, schema);
 				
 				// we can now also set the proper receivers on the master, couldn't do that before
 				// it wasn't yet clear which alternative would be chosen
-				q.setLogicalPlan(receiverOp,true);
+				q.setLogicalPlan(selection,true);
 			}
 			
 			results.add(bestResult);
@@ -329,6 +331,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 						//					j.setFlowTargetResult(additionalResult);
 						//				}
 					}
+					if(additionalResult == null) {
+						LOG.debug("Can't split plan any more and can't place it anywhere else either, distribution impossible.");
+						return new ArrayList<ILogicalQuery>();
+					}
 					results.add(additionalResult);
 					usedPeers.add(additionalResult.getPeer());
 				}
@@ -345,14 +351,21 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
 				// in order to generate the subscription-statements properly.
 				sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
-				endCost = endCost.merge(this.getCostModel().estimateCost(sr.getGraph().getAllOperatorsInvolved(true), false));
+				List<IPhysicalOperator> remainingNewOperators = sr.getGraph().getAllOperatorsInvolved(true);
+				endCost = endCost.merge(this.getCostModel().estimateCost(remainingNewOperators, false));
+				// there's a chance, that graphs were split and that the new operators added
+				// don't have an owner yet
+				for(IPhysicalOperator o : remainingNewOperators) {
+					o.addOwner(physQ);
+				}
 				this.addOperators(sr.getPeer(), sr.getPlan(true));
 				this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
 			}
 			PhysicalQueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
 			this.costsOfAllDistributedPlans = this.costsOfAllDistributedPlans.merge(endCost);
-			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(endCost.substract(initialCost));
+			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(initialCost.substract(endCost));
 		}
+		LOG.debug("Costs of all distributed Plans: " + this.costsOfAllDistributedPlans + ", Costs saved by sharing query-operators: " + this.costsSavedByQuerySharing);
 		return queriesToDistribute;
 	}
 	
@@ -550,10 +563,10 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					Graph graphWithSwitchedSelectAndJoinOps = GraphNodeSwapper.pullSelectionsAboveJoins(graphWithSwitchedSelectAndWindowOps);
 					if(graphWithSwitchedSelectAndJoinOps != null) {
 						graphsToWorkWith.add(graphWithSwitchedSelectAndJoinOps);
-						LOG.debug("Was able to create a plan with switched Windows and Selections");
+						LOG.debug("Was able to create a plan with switched Joins and Selections");
 					} else {
 						graphsToWorkWith.add(graphWithSwitchedSelectAndWindowOps);
-						LOG.debug("Was able to create a plan with switched Joins and Selections");
+						LOG.debug("Was able to create a plan with switched Windows and Selections");
 					}
 				}
 			}
@@ -570,8 +583,12 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				res.setCost(this.getCostModel().estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
 				// don't add the result, if its execution would probably exceed the peers usage-threshold
 				
-				if(res.getCost().compareTo(bestCost) < 0) {
+				if(res.getCost().compareTo(bestCost) == 0) {
 					bestCost = res.getCost();
+					bestResults.add(res);
+				} else if(res.getCost().compareTo(bestCost) < 0) {
+					bestCost = res.getCost();
+					bestResults.clear();
 					bestResults.add(res);
 				}
 			}

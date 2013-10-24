@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.evaluation.AddManyBadlyShareableQueriesCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.AddManyBadlyShareableQueriesCommand"
+            name="AddBadlyShareableQueries">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.AddManyBadlyShareableQueriesCommand"
+               icon="icons/button.png"
+               label="Add Many Badly Shareable Queries"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

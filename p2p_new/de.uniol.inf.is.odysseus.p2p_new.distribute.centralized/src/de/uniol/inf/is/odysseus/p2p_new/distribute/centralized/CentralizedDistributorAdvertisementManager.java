@@ -263,6 +263,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		//LOG.debug("has more elements: " + lxmle.hasMoreElements());
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(r.getPeer().toString(), adv, 15000);
 		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
+		//LOG.debug(adv.toString());
 		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), sharedQueryID, r.getOperatorIDsOfNewQuery(true));
 	}
 	

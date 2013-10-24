@@ -26,11 +26,11 @@ import de.uniol.inf.is.odysseus.p2p_new.physicaloperator.JxtaSenderPO;
 public class Graph {
 	private static final Logger LOG = LoggerFactory.getLogger(Graph.class);
 	Map<String,List<GraphNode>> nodesGroupedByOpType = new HashMap<String, List<GraphNode>>();
-	
+
 	public Graph() {
 
 	}
-	
+
 	/**
 	 * 
 	 * @param oldPlan running operators, which are considered old
@@ -111,7 +111,7 @@ public class Graph {
 			}
 		}
 	}
-	
+
 	/**
 	 *  adds a new plan to the current graph
 	 *  @Param opsAreNew specifies whether or not the nodes based on the provided operators should be marked as new or old
@@ -155,6 +155,17 @@ public class Graph {
 				if(gn.isSink()) {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscriber<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscribedToSource()) {
 						GraphNode sourceNode = this.getGraphNode(sub.getTarget());
+						if(sourceNode == null && sub.getTarget() != null) {
+							List<GraphNode> matchingNodes = nodes.get(sub.getTarget().getClass().getName());
+							if(matchingNodes != null) {
+								for(GraphNode gn2 : matchingNodes) {
+									if(gn2.getOperator().equals(sub.getTarget())) {
+										sourceNode = gn2;
+										break;
+									}
+								}
+							}
+						}
 						// GraphNode must be in this graph, even if the operator is connected to other sources as well
 						if(sourceNode != null) {
 							gn.subscribeToSource(sourceNode,sub.getSinkInPort(),sub.getSourceOutPort(),sub.getSchema());
@@ -165,6 +176,17 @@ public class Graph {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscribable<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscriptions()) {
 						System.out.println("Trying to connect sink-GN" + sub.getTarget().hashCode() + " with GN" + gn.getOperatorID());
 						GraphNode sinkNode = this.getGraphNode(sub.getTarget());
+						if(sinkNode == null && sub.getTarget() != null) {
+							List<GraphNode> matchingNodes = nodes.get(sub.getTarget().getClass().getName());
+							if(matchingNodes != null) {
+								for(GraphNode gn2 : matchingNodes) {
+									if(gn2.getOperator().equals(sub.getTarget())) {
+										sinkNode = gn2;
+										break;
+									}
+								}
+							}
+						}
 						// GraphNode must be in this graph, even if the operator is connected to other sinks as well
 						if(sinkNode != null) {
 							gn.subscribeSink(sinkNode,sub.getSinkInPort(),sub.getSourceOutPort(),sub.getSchema());
@@ -185,7 +207,7 @@ public class Graph {
 		}
 		return null;
 	}
-	
+
 	public GraphNode getGraphNode(int operatorID) {
 		for(String opType : nodesGroupedByOpType.keySet()) {
 			for(GraphNode gn : nodesGroupedByOpType.get(opType)) {
@@ -205,12 +227,12 @@ public class Graph {
 			Map<String, List<GraphNode>> nodesGroupedByOpType) {
 		this.nodesGroupedByOpType = nodesGroupedByOpType;
 	}
-	
+
 	public Graph clone() {
 		return new Graph(this);
 	}
 
-	
+
 	/**
 	 * This method removes a node from the Graph, but doesn't touch the GraphNode-object or its associations with other GraphNodes
 	 * Its subscriptions have thus to be handled separately!
@@ -314,7 +336,7 @@ public class Graph {
 			}
 		}
 	}
-	
+
 	public List<IPhysicalOperator> getAllOperatorsInvolved(boolean onlyNew) {
 		List<IPhysicalOperator> result = new ArrayList<IPhysicalOperator>();
 		for(GraphNode gn : this.getGraphNodesUngrouped(false)) {
@@ -324,7 +346,7 @@ public class Graph {
 		}
 		return result;
 	}
-	
+
 	public List<GraphNode> getGraphNodesUngrouped(boolean onlyNew) {
 		List<GraphNode> result = new ArrayList<GraphNode>();
 		for(String s : this.getNodesGroupedByOpType().keySet()) {
@@ -336,7 +358,7 @@ public class Graph {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns the Set of GraphNodes, which aren't connected to any other sinks, i.e. are at the top.
 	 * This just returns pipes and sources though, since the point of collecting these is to put JxtaSenderPOs on top.
@@ -346,7 +368,7 @@ public class Graph {
 		for(GraphNode gn : this.getGraphNodesUngrouped(onlyNew)) {
 			if(gn.isSource() && gn.getSinkSubscriptions().isEmpty()) {
 				result.add(gn);
-			// return the node before it, if the graphnode is a new JxtaSenderPO
+				// return the node before it, if the graphnode is a new JxtaSenderPO
 			} else if(gn.getOperator() instanceof JxtaSenderPO) {
 				if(returnJxtaSenders) {
 					result.add(gn);
@@ -360,14 +382,14 @@ public class Graph {
 		}
 		return result;
 	}
-	
+
 	public void mergeNodesWithIdenticalOperatorID() {
 		// get all the nodes
 		Map<String,List<GraphNode>> all = this.getNodesGroupedByOpType();
-		
+
 		// key is the graphNode which should be replaced, value is the replacement
 		List<Entry<GraphNode,GraphNode>> toMerge = new ArrayList<Entry<GraphNode,GraphNode>>();
-		
+
 		// get all duplicates which might exist due to re-usage of source-operators during the plan transformation
 		for(List<GraphNode> nodesWithOpsOfSameType : all.values()) {
 
@@ -413,7 +435,7 @@ public class Graph {
 			}
 		}
 	}
-	
+
 	// tries to extract all new GraphNodes from this graph and the old sources they depend on and marks those as new
 	public Graph extractBaseGraph() {
 		List<GraphNode> newNodes = this.getGraphNodesUngrouped(true);

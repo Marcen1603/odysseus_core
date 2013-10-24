@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.evaluation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -15,6 +16,7 @@ public class AddManyBadlyShareableQueries extends Thread {
 	private static final long timeIntervalInMillis = 10000;
 	private static int counter = 0;
 	private static final int iterations = 100;
+	private static int windowSize = 5;
 	
 	public void run() {
 		IServerExecutor executor = ServerExecutorService.getServerExecutor();
@@ -25,8 +27,13 @@ public class AddManyBadlyShareableQueries extends Thread {
 		ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 		
 		while(counter < iterations) {
-			String pqlQuery = "";
-			executor.addQuery(pqlQuery, "PQL", user, "Standard", newSettings);
+			windowSize = counter % 3 == 0 ? windowSize * 2 : windowSize;
+			String source1 = counter%2 == 0 ? "auction" : "SELECT({predicate=RelationalPredicate('initialbid > 10')}, auction)";
+			String pqlQuery = "s" + counter + " = join({predicate = RelationalPredicate('id = auction')}, WINDOW({size = " + windowSize + ",advance = 1,type = 'time'}, " + source1 + "), WINDOW({size = " + windowSize + ",advance = 1,type = 'time'}, bid))";
+			Iterator<Integer> it = executor.addQuery(pqlQuery, "PQL", user, "Standard", newSettings).iterator();
+			while(it.hasNext()) {
+				executor.startQuery(it.next(), user);
+			}
 			counter++;
 			waitASecond();
 		}
