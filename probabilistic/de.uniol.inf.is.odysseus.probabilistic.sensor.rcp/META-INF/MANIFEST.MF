@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Sensor Registry RCP
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.probabilistic.sensor.rcp;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.SensorRegistryPlugIn
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ de.uniol.inf.is.odysseus.core,
+ org.eclipse.ui,
+ org.eclipse.ui.workbench
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: com.google.common.base,
+ com.google.common.collect,
+ de.uniol.inf.is.odysseus.probabilistic.base,
+ de.uniol.inf.is.odysseus.probabilistic.math,
+ de.uniol.inf.is.odysseus.probabilistic.sensor,
+ de.uniol.inf.is.odysseus.probabilistic.sensor.model,
+ de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary,
+ de.uniol.inf.is.odysseus.rcp.util,
+ org.slf4j
+Service-Component: OSGI-INF/SensorOntologyService.xml

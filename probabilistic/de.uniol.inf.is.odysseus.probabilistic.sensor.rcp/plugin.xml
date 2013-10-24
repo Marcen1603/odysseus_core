@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="Odyseus"
+            name="Odysseus">
+      </category>
+      <view
+            category="Odysseus"
+            class="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.SensorRegistryView"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.SensorRegistryView"
+            name="SensorRegistry"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+     <command
+            defaultHandler="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
+            name="Refresh Sensor Registry">
+      </command>
+           <command
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
+            name="Create Sensing Device">
+      </command>
+      </extension>
+      <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views.SensorRegistryView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.base.separator1"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
+               icon="icons/one-query-start.png"
+               label="Create Sensing Device"
+               style="push">
+         </command>
+      </menuContribution>
+        </extension>
+           <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.SensingDeviceWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/OdysseusProjectIcon.png"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.SensingDeviceWizard"
+            name="Sensing Device"
+            project="true">
+      </wizard>
+      <category
+            id="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            name="Odysseus">
+      </category>
+   </extension>
+</plugin>
