@@ -75,6 +75,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private ICost<IPhysicalOperator> costsSavedByQuerySharing;
 	private ICost<IPhysicalOperator> costsOfAllDistributedPlans;
 	private long totalTimeUsedOnOptimizing = 0;
+	private int successfullyDistributedQueries = 0;
 	private boolean evaluationFinished = false;;
 	/////////////////////////////////////////////////////////////////////////////
 	/////							</Evaluation>							/////
@@ -147,7 +148,6 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			for(IPhysicalOperator o : originalPlan) {
 				o.addOwner(physQ);
 			}
-			ICost<IPhysicalOperator> initialCost = this.getCostModel().estimateCost(originalPlan, false);
 
 			// find MetaDataUpdatePOs with sources attached, which are for some reason not part of this query plan
 			// (usually because of a previously removed query, which left only the top operator in the dictionary)
@@ -196,6 +196,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				o.addOwner(physQ);
 				originalPlan.add(o);
 			}
+			ICost<IPhysicalOperator> initialCost = this.getCostModel().estimateCost(originalPlan, false);
 			newOperators.add(originalPlan);
 
 			
@@ -427,6 +428,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		long timeToOptimize = (System.currentTimeMillis() - timeStart)/60;
 		LOG.debug("It took " + timeToOptimize + " seconds to optimize and distribute this Query.");
 		totalTimeUsedOnOptimizing += timeToOptimize;
+		successfullyDistributedQueries++;
 		return queriesToDistribute;
 	}
 	
@@ -960,8 +962,8 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 
 
 
-	public long getTotalTimeUsedOnOptimizing() {
-		return totalTimeUsedOnOptimizing;
+	public long getTotalTimeUsedOnOptimizingInSeconds() {
+		return totalTimeUsedOnOptimizing/60;
 	}
 
 
@@ -1035,6 +1037,13 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	    while (iter.hasNext())
 	        copy.add(iter.next());
 	    return copy;
+	}
+	
+	public String evaluationToString() {
+		String result = "";
+		result += "Costs of all distributed Plans: " + this.costsOfAllDistributedPlans + ", Costs saved by sharing query-operators: " + this.costsSavedByQuerySharing + "\n";
+		result += "It took " + this.getTotalTimeUsedOnOptimizingInSeconds() + " seconds to optimize and distribute all " + this.successfullyDistributedQueries + " Queries.";
+		return result;
 	}
 	/////////////////////////////////////////////////////////////////////////////
 	/////							</Evaluation>							/////

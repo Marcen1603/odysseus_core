@@ -38,7 +38,7 @@ public class AddManyBadlyShareableQueries extends Thread {
 			counter++;
 			waitASecond();
 		}
-		
+		System.out.println(CentralizedDistributor.getInstance().evaluationToString());
 	}
 	
 	private void waitASecond() {
