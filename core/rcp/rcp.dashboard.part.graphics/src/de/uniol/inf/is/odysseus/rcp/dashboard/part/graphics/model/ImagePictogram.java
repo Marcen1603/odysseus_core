@@ -88,10 +88,10 @@ public class ImagePictogram extends Pictogram {
 	 * @param predicate
 	 */
 	public void setPredicate(String predicate) {
-		if (predicate == null) {
+		if (predicate == null || predicate.isEmpty()) {
 			predicate = "true";
-		}
-		this.predicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));		
+		}		
+		this.predicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
 		initPredicate();
 	}
 
@@ -105,25 +105,27 @@ public class ImagePictogram extends Pictogram {
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#init(java.util.Collection)
 	 */
 	@Override
-	protected void init(Collection<IPhysicalOperator> roots) {		
+	protected void init(Collection<IPhysicalOperator> roots) {
 		this.roots = roots;
 		initPredicate();
 	}
-	
-	
-	private void initPredicate(){
+
+	private void initPredicate() {
 		// TODO: this is only working with one root!!
 		if (roots != null) {
-			this.predicate.init(roots.iterator().next().getOutputSchema(), null);
+			try {
+				this.predicate.init(roots.iterator().next().getOutputSchema(), null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-
 
 	public boolean isStretch() {
 		return this.stretch;
 	}
-	
-	public void setStretch(boolean stretch){
+
+	public void setStretch(boolean stretch) {
 		this.stretch = stretch;
 	}
 

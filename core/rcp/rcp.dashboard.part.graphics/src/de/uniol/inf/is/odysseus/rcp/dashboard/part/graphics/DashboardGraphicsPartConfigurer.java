@@ -41,10 +41,11 @@ public class DashboardGraphicsPartConfigurer extends AbstractDashboardPartConfig
 		gd_dataFolderText.widthHint = 287;
 		backgroundImageText.setLayoutData(gd_dataFolderText);
 		String folder = "";
-		if(dashboardPart.getBackgroundFile()==null){
+		if(dashboardPart.getBackgroundFile()!=null){
 			folder = dashboardPart.getBackgroundFile();
+			backgroundImageText.setText(folder);
 		}		
-		backgroundImageText.setText(folder);
+		
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {

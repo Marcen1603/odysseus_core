@@ -84,7 +84,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	private String backgroundfile;
 	private Display display;
 	private ActionRegistry actionRegistry;
-//	private Collection<IPhysicalOperator> roots;
+	// private Collection<IPhysicalOperator> roots;
 	private Canvas mainContainer;
 
 	private EditDomain editDomain;
@@ -93,7 +93,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	private boolean backgroundFileStretch = true;
 	private boolean inEditMode = true;
 	private PaletteViewer paletteViewer;
-	private SashForm shashform;	
+	private SashForm shashform;
+	private boolean isModelInitialized = false;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -104,34 +105,28 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		mainContainer.setLayout(new FillLayout());
 		mainContainer.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
 
-		editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
-		
+		initModel();
+
 		shashform = new SashForm(mainContainer, SWT.HORIZONTAL);
 		createPaletteViewer(shashform);
 		createGraphViewer(shashform);
-		shashform.setWeights(new int[] { 15, 85 });		
-		
-		initActionRegistry();
-	//	setEditorActionBarContributor(new GprahicsActionBarContributor());
-		editDomain.getCommandStack().addCommandStackListener(this);		
-		getWorkbenchPart().getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
-		
+		shashform.setWeights(new int[] { 15, 85 });
+
 		final ToolItem toolItem = new ToolItem(toolbar, SWT.CHECK);
-		//toolItem.setImage(action.getImageDescriptor().createImage());
+		// toolItem.setImage(action.getImageDescriptor().createImage());
 		toolItem.setText("Edit Mode");
 		toolItem.setToolTipText("");
 		toolItem.setWidth(200);
 		toolItem.addSelectionListener(new SelectionAdapter() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				switchEditMode();				
+				switchEditMode();
 			}
 		});
 		switchEditMode();
 	}
-	
-		
+
 	private void createGraphViewer(Composite parent) {
 		viewer = new ScrollingGraphicalViewer();
 		viewer.setRootEditPart(new ScalableFreeformRootEditPart());
@@ -155,19 +150,18 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		super.dispose();
 	}
 
-
-	private void switchEditMode(){
-		if(inEditMode){
-			shashform.setWeights(new int[] { 0, 100 });	
+	private void switchEditMode() {
+		if (inEditMode) {
+			shashform.setWeights(new int[] { 0, 100 });
 			paletteViewer.getControl().setVisible(false);
-		}else{			
+		} else {
 			paletteViewer.getControl().setVisible(true);
-			shashform.setWeights(new int[] { 15, 85 });				
-		}		
+			shashform.setWeights(new int[] { 15, 85 });
+		}
 		inEditMode = !inEditMode;
-	
+
 	}
-	
+
 	private PictogramGroup getRootPictogramGroup() {
 		return pictogramGroup;
 	}
@@ -191,7 +185,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 	protected void processElement(IStreamObject<?> element, int port) {
 		System.out.println(element);
-		Tuple<?> tuple = (Tuple<?>) element;		
+		Tuple<?> tuple = (Tuple<?>) element;
 		this.pictogramGroup.processTuple(tuple);
 	}
 
@@ -242,21 +236,23 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		try {
 			docBuilder = docFactory.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
-			PictogramGroup model = (PictogramGroup) viewer.getContents().getModel();
 			Element root = doc.createElement("pictogramgroup");
 			doc.appendChild(root);
-			for (Pictogram p : model.getPictograms()) {
-				Element picNode = doc.createElement("pictogram");
-				p.getXML(picNode, doc);
-				root.appendChild(picNode);
+			if (viewer != null) {
+				PictogramGroup model = (PictogramGroup) viewer.getContents().getModel();
+				for (Pictogram p : model.getPictograms()) {
+					Element picNode = doc.createElement("pictogram");
+					p.getXML(picNode, doc);
+					root.appendChild(picNode);
+				}
 			}
-			
+
 			StringWriter sw = new StringWriter();
 			StreamResult result = new StreamResult(sw);
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			transformer.transform(source, result);			
+			transformer.transform(source, result);
 			save.put(GRAPHICS_CONTENT, sw.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -264,7 +260,9 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 		save.put(BACKGROUND_FILE, this.backgroundfile);
 		save.put(BACKGROUND_FILE_STRETCH, Boolean.toString(this.backgroundFileStretch));
-		editDomain.getCommandStack().markSaveLocation();
+		if(editDomain!=null){
+			editDomain.getCommandStack().markSaveLocation();
+		}
 		return save;
 	}
 
@@ -276,31 +274,43 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		this.backgroundfile = backgroundfile;
 		repaintBackground();
 	}
-	
+
 	/**
 	 * 
 	 */
 	private void repaintBackground() {
-		if(this.pictogramGroup!=null){
+		if (this.pictogramGroup != null) {
 			this.pictogramGroup.setBackgroundImagePath(backgroundfile);
 			this.pictogramGroup.setBackgroundImageStretch(backgroundFileStretch);
-		}		
+		}
 	}
 
 	/**
 	 * @param selection
 	 */
 	public void setBackgroundFileStretch(boolean selection) {
-		this.backgroundFileStretch = selection;		
+		this.backgroundFileStretch = selection;
 		repaintBackground();
 	}
-	
-	public boolean isBackgroundFileStretch(){
+
+	public boolean isBackgroundFileStretch() {
 		return this.backgroundFileStretch;
 	}
 
-	public void setRoots(Collection<IPhysicalOperator> roots) {		
-		this.pictogramGroup.init(roots);
+	public void setRoots(Collection<IPhysicalOperator> roots) {
+		if (this.pictogramGroup != null) {
+			this.pictogramGroup.init(roots);
+		}
+	}
+
+	private void initModel() {
+		if (!isModelInitialized) {
+			editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
+			initActionRegistry();
+			// setEditorActionBarContributor(new GprahicsActionBarContributor());
+			editDomain.getCommandStack().addCommandStackListener(this);
+			getWorkbenchPart().getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+		}
 	}
 
 	private void initActionRegistry() {
@@ -332,14 +342,14 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		Iterator<?> iterator = actionRegistry.getActions();
 		while (iterator.hasNext()) {
 			Object action = iterator.next();
-			if (action instanceof UpdateAction && inEditMode){
+			if (action instanceof UpdateAction && inEditMode) {
 				((UpdateAction) action).update();
 			}
 		}
-		if (editDomain.getCommandStack().isDirty()) {			
+		if (editDomain.getCommandStack().isDirty()) {
 			fireChangeEvent();
 		}
-		
+
 	}
 
 	public Object getAdapter(Class<?> adapter) {
@@ -352,15 +362,14 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {		
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		updateActions();
 	}
 
-	
-	
-	
 }
