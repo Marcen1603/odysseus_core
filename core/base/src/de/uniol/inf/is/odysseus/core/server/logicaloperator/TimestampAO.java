@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -313,9 +312,4 @@ public class TimestampAO extends UnaryLogicalOp {
 		}
 	}
 	
-	public static void main(String[] args) {
-		Date d = new Date(2010,1,1);
-		System.out.println(d.getTime());
-	}
-
 }
