@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -183,7 +185,9 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	}
 
 	private static List<String> determineDashboardPartNames() {
-		return DashboardPartRegistry.getDashboardPartNames();
+		List<String> names =  new ArrayList<String>(DashboardPartRegistry.getDashboardPartNames());
+		Collections.sort(names);
+		return names;
 	}
 
 	public IDashboardPart getDashboardPart() {
