@@ -25,7 +25,7 @@ import java.io.Serializable;
  */
 public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 	/** Infinity interval. */
-	public static final Interval INFINITY = new Interval(Double.MIN_VALUE, Double.MAX_VALUE);
+	public static final Interval MAX = new Interval(Double.MIN_VALUE, Double.MAX_VALUE);
 
 	/**
 	 * 

@@ -18,6 +18,11 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.manager;
 import java.net.URI;
 import java.util.List;
 
+import com.hp.hpl.jena.query.ResultSet;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
+
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
@@ -28,14 +33,18 @@ public interface QueryManager {
      * 
      * @return A list of URIs
      */
-    List<URI> getAllSensingDevices();
+    List<URI> getAllSensingDeviceURIs();
+
+    List<SensingDevice> getAllSensingDevices();
+
+    SensingDevice getSensingDevice(URI uri);
 
     /**
      * Gets all sensing devices from the ontology.
      * 
      * @return A list of URIs
      */
-    List<URI> getAllProperties();
+    List<URI> getAllPropertyURIs();
 
     /**
      * Gets all sensing devices from the ontology that observe the given
@@ -45,7 +54,19 @@ public interface QueryManager {
      *            The URI of the property
      * @return A list of URIs
      */
-    List<URI> getSensingDevicesByObservedProperty(URI uri);
+    List<URI> getSensingDeviceURIsByObservedProperty(URI uri);
+
+    /**
+     * Gets all sensing devices from the ontology that observe the given
+     * property.
+     * 
+     * @param uri
+     *            The URI of the property
+     * @return A list of URIs
+     */
+    List<SensingDevice> getSensingDevicesByObservedProperty(URI uri);
+
+    List<SensingDevice> getSensingDevicesByObservedProperty(SDFAttribute attribute);
 
     /**
      * Gets all properties from the ontology that are observed by the given
@@ -53,5 +74,7 @@ public interface QueryManager {
      * 
      * @return A list of URIs
      */
-    List<URI> getAllPropertiesObservedBySensingDevice(URI uri);
+    List<URI> getAllPropertyURIsObservedBySensingDevice(URI uri);
+
+    ResultSet executeQuery(final String queryString);
 }

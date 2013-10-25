@@ -17,8 +17,11 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.model;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -28,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class SensingDevice {
     private final URI uri;
     private final SDFSchema schema;
-    private final List<MeasurementCapability> capabilities = new ArrayList<MeasurementCapability>();
+    private final Map<SDFAttribute, List<MeasurementCapability>> capabilities = new HashMap<SDFAttribute, List<MeasurementCapability>>();
 
     /**
      * Class constructor.
@@ -36,7 +39,7 @@ public class SensingDevice {
      */
     public SensingDevice(URI uri, SDFSchema schema) {
         this.uri = uri;
-        this.schema = schema;
+        this.schema = schema.clone();
     }
 
     /**
@@ -63,15 +66,39 @@ public class SensingDevice {
     /**
      * @return the capabilities
      */
-    public List<MeasurementCapability> getCapabilities() {
+    public Map<SDFAttribute, List<MeasurementCapability>> getCapabilities() {
         return this.capabilities;
     }
 
-    public void addCapability(MeasurementCapability capability) {
-        this.capabilities.add(capability);
+    /**
+     * @param attribute
+     *            the attribute
+     * @return the capabilities
+     */
+    public List<MeasurementCapability> getCapabilities(SDFAttribute attribute) {
+        return this.capabilities.get(attribute);
+    }
+
+    /**
+     * @return
+     */
+    public List<MeasurementCapability> getAllCapabilities() {
+        List<MeasurementCapability> capabilities = new ArrayList<MeasurementCapability>();
+        for (List<MeasurementCapability> attributeCapability : this.capabilities.values()) {
+            capabilities.addAll(attributeCapability);
+        }
+        return capabilities;
+    }
+
+    public void addMeasurementCapability(MeasurementCapability capability) {
+        if (!this.capabilities.containsKey(capability.getAttribute())) {
+            this.capabilities.put(capability.getAttribute(), new ArrayList<MeasurementCapability>());
+        }
+        this.capabilities.get(capability.getAttribute()).add(capability);
     }
 
     public void removeCapability(MeasurementCapability capability) {
-        this.capabilities.remove(capability);
+        this.capabilities.get(capability.getAttribute()).remove(capability);
     }
+
 }

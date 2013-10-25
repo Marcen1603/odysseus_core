@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.dialogs;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.SensorOntologyService;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.model.Condition;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementProperty;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.l10n.OdysseusNLS;
 
@@ -135,7 +137,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
         double attributeMaxValue = Double.parseDouble(txtAttributeValueMax.getText());
         Interval attributeInterval = new Interval(attributeMinValue, attributeMaxValue);
 
-        condition = new Condition(name, attribute, attributeInterval);
+        condition = new Condition(URI.create(ODYSSEUS.NS + name), attribute, attributeInterval);
 
         MeasurementProperty.Property property = (MeasurementProperty.Property) cmbProperty.getData(cmbProperty.getItem(cmbProperty.getSelectionIndex()));
         double propertyMinValue = Double.parseDouble(txtPropertyValueMin.getText());

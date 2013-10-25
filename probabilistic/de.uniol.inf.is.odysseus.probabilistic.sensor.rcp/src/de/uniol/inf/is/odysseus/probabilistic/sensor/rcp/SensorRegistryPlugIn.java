@@ -4,6 +4,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.probabilistic.sensor.SensorOntologyService;
+import de.uniol.inf.is.odysseus.rcp.ImageManager;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -22,6 +23,7 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
     private static SensorRegistryPlugIn plugin;
 
     private static SensorOntologyService sensorOntologyService;
+    private static ImageManager imageManager;
 
     /**
      * The constructor
@@ -39,6 +41,14 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        imageManager = new ImageManager(context.getBundle());
+        imageManager.register("source", "icons/sources.png");
+        imageManager.register("sink", "icons/sinks.png");
+        imageManager.register("attribute", "icons/status.png");
+        imageManager.register("loggedinuser", "icons/user--plus.png");
+        imageManager.register("user", "icons/user.png");
+        imageManager.register("role", "icons/tick-small-circle.png");
+        imageManager.register("function", "icons/function.png");
     }
 
     /*
@@ -49,8 +59,13 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
      * )
      */
     public void stop(BundleContext context) throws Exception {
+        imageManager.disposeAll();
         plugin = null;
         super.stop(context);
+    }
+
+    public static ImageManager getImageManager() {
+        return imageManager;
     }
 
     /**

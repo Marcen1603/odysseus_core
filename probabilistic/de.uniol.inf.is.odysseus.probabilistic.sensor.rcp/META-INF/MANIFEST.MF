@@ -13,11 +13,15 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.base,
  com.google.common.collect,
+ de.uniol.inf.is.odysseus.core.server.datadictionary,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.probabilistic.base,
  de.uniol.inf.is.odysseus.probabilistic.math,
  de.uniol.inf.is.odysseus.probabilistic.sensor,
  de.uniol.inf.is.odysseus.probabilistic.sensor.model,
  de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary,
+ de.uniol.inf.is.odysseus.rcp,
+ de.uniol.inf.is.odysseus.rcp.server.views,
  de.uniol.inf.is.odysseus.rcp.util,
  org.slf4j
 Service-Component: OSGI-INF/SensorOntologyService.xml

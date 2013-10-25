@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.model;
 
+import java.net.URI;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
@@ -23,7 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class Condition {
-    private final String name;
+    private final URI uri;
     private final SDFAttribute attribute;
     private final Interval interval;
     private String unit;
@@ -35,18 +37,25 @@ public class Condition {
      * @param attribute
      * @param interval
      */
-    public Condition(String name, SDFAttribute attribute, Interval interval) {
+    public Condition(URI uri, SDFAttribute attribute, Interval interval) {
         super();
-        this.name = name;
+        this.uri = uri;
         this.attribute = attribute;
         this.interval = interval;
+    }
+
+    /**
+     * @return the uri
+     */
+    public URI getUri() {
+        return this.uri;
     }
 
     /**
      * @return the name
      */
     public String getName() {
-        return this.name;
+        return this.uri.getFragment();
     }
 
     /**
@@ -71,7 +80,8 @@ public class Condition {
     }
 
     /**
-     * @param unit the unit to set
+     * @param unit
+     *            the unit to set
      */
     public void setUnit(String unit) {
         this.unit = unit;

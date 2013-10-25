@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.ontology;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -42,8 +43,12 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.SensorOntologyService;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.Condition;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.ODYSSEUS;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -53,7 +58,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     private static final Logger LOG = LoggerFactory.getLogger(SensorOntologyServiceImpl.class);
     private static IServerExecutor executor;
     private static IUserManagement userManagement;
-    private SensorOntology ontology;
+    private static SensorOntology ontology;
     private static ISession session;
 
     /**
@@ -96,7 +101,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
             LOG.debug("Executor " + executor + " bound");
             prepareExecutor();
         }
-
+        registerDataDictionaryListener();
     }
 
     public void unbindExecutor(IExecutor executor) {
@@ -109,6 +114,8 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     public void bindUserManagement(IUserManagement userManagement) {
         SensorOntologyServiceImpl.userManagement = userManagement;
         SensorOntologyServiceImpl.session = getUserManagement().getSessionManagement().loginSuperUser(null);
+        LOG.debug("UserManagement " + userManagement + " bound");
+        prepareUserManagement();
         registerDataDictionaryListener();
     }
 
@@ -123,6 +130,10 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
 
     public static IUserManagement getUserManagement() {
         return SensorOntologyServiceImpl.userManagement;
+    }
+
+    public static SensorOntology getOntology() {
+        return ontology;
     }
 
     public static ISession getActiveSession() {
@@ -143,7 +154,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
         if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED || event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED
                 || event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
             try {
-                registerDataDictionaryListener();
+                createStreamsAndViewsInOntology();
             }
             catch (PlanManagementException e) {
                 e.printStackTrace();
@@ -159,38 +170,23 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
         registerDataDictionaryListener();
     }
 
+    private void prepareUserManagement() {
+        getUserManagement().getSessionManagement().subscribe(this);
+    }
+
     private void registerDataDictionaryListener() {
-        if (getActiveSession() != null) {
-            IDataDictionaryWritable dataDictionary = getExecutor().getDataDictionary(getActiveSession().getTenant());
-            Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dataDictionary.getStreamsAndViews(getActiveSession());
-            getUserManagement().getSessionManagement().subscribe(this);
-            for (Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
-                String uri = streamAndView.getKey().getResourceName();
-                SDFSchema schema = streamAndView.getValue().getOutputSchema();
-                LOG.debug(streamAndView.getValue().getName());
-                for (SDFAttribute attr : schema.getAttributes()) {
-                    LOG.debug(attr.getSourceName() + " " + attr.getQualName() + " " + attr.getAttributeName());
-                }
-                LOG.debug(uri + " " + schema.toString());
-            }
-            // // FIXME Need to get the registered streams and views!!
-            // Collection<Integer> ids = getExecutor().getLogicalQueryIds();
-            // Set<ITenant> tenantsToRemove = new
-            // HashSet<ITenant>(this.tenants);
-            // for (Integer id : ids) {
-            //
-            // ILogicalQuery query = getExecutor().getLogicalQueryById(id);
-            // ITenant tenant = query.getUser().getTenant();
-            // if (!this.tenants.contains(tenant)) {
-            // LOG.debug("Register listener for " + tenant);
-            // getExecutor().getDataDictionary(tenant).addListener(this);
-            // this.tenants.add(tenant);
-            // }
-            // tenantsToRemove.remove(tenant);
-            // }
-            // for (ITenant tenant : tenantsToRemove) {
-            // getExecutor().getDataDictionary(tenant).removeListener(this);
-            // }
+        if ((getExecutor() != null) && (getActiveSession() != null)) {
+            getExecutor().getDataDictionary(getActiveSession().getTenant()).addListener(this);
+        }
+    }
+
+    private void createStreamsAndViewsInOntology() {
+        IDataDictionaryWritable dataDictionary = getExecutor().getDataDictionary(getActiveSession().getTenant());
+        Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dataDictionary.getStreamsAndViews(getActiveSession());
+        for (Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
+            String name = streamAndView.getKey().getResourceName();
+            SDFSchema schema = streamAndView.getValue().getOutputSchema();
+            createSensingDevice(name, schema);
         }
     }
 
@@ -199,10 +195,9 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      */
     @Override
     public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-        SDFSchema schema = op.getOutputSchema();
+        LOG.debug("Add view " + name + " to ontology");
+        createSensingDevice(name, op.getOutputSchema());
 
-        // ontology.createSensingDevice(name, schema);
-        LOG.debug("Add view: " + name + " " + schema);
     }
 
     /**
@@ -220,8 +215,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      */
     @Override
     public void dataDictionaryChanged(IDataDictionary sender) {
-        registerDataDictionaryListener();
-
+        LOG.debug("Datadictionary changed");
     }
 
     /**
@@ -229,7 +223,17 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      */
     @Override
     public void sessionEventOccured(ISessionEvent event) {
-        registerDataDictionaryListener();
+        LOG.debug("SessionEvent occured");
+    }
 
+    private void createSensingDevice(String name, SDFSchema schema) {
+        SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name), schema);
+        for (SDFAttribute attribute : schema.getAttributes()) {
+            MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + attribute.getAttributeName()), attribute);
+            Condition condition = new Condition(URI.create(ODYSSEUS.NS + attribute.getAttributeName() + "/" + name), attribute, Interval.MAX);
+            measurementCapability.addCondition(condition);
+            sensingDevice.addMeasurementCapability(measurementCapability);
+        }
+        ontology.createSensingDevice(sensingDevice);
     }
 }

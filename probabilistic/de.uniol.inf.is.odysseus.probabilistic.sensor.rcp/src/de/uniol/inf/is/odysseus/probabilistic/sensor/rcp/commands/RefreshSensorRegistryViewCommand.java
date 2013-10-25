@@ -35,7 +35,7 @@ public class RefreshSensorRegistryViewCommand extends AbstractHandler implements
         SensorRegistryView part = ViewHelper.getView(SensorRegistryPlugIn.SENSOR_REGISTRY_VIEW_ID, event);
 
         if (part != null) {
-            part.refreshTable();
+            part.refresh();
             return true;
         }
 

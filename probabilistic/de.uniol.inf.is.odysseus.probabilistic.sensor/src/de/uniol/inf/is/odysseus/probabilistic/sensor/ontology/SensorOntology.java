@@ -112,18 +112,16 @@ public class SensorOntology {
 
     }
 
+    public List<SensingDevice> getSensingdeviceByProperty(SDFAttribute attribute) {
+        return queryManager.getSensingDevicesByObservedProperty(attribute);
+    }
+
     public List<SensingDevice> getAllSensingDevices() {
-        List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
-        List<URI> uris = queryManager.getAllSensingDevices();
-        for (URI uri : uris) {
-            List<URI> properties = queryManager.getAllPropertiesObservedBySensingDevice(uri);
-            List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-            for (URI property : properties) {
-                attributes.add(new SDFAttribute("", property.getFragment(), SDFDatatype.OBJECT));
-            }
-            sensingDevices.add(new SensingDevice(uri, new SDFSchema("", ProbabilisticTuple.class, attributes)));
-        }
-        return sensingDevices;
+        return queryManager.getAllSensingDevices();
+    }
+
+    public SensingDevice getSensingDevice(String name) {
+        return queryManager.getSensingDevice(URI.create(ODYSSEUS.NS + name));
     }
 
     public Individual createCondition(String name, Number min, Number max, String unit) {
@@ -328,21 +326,21 @@ public class SensorOntology {
         SDFAttribute temperature = new SDFAttribute("sourceName", "temperature", SDFDatatype.DOUBLE);
         SDFAttribute pressure = new SDFAttribute("sourceName", "temperature", SDFDatatype.DOUBLE);
 
-        Condition temperatureCondition = new Condition("temperatureCondition", temperature, new Interval(2.0, 50.0));
+        Condition temperatureCondition = new Condition(URI.create(ODYSSEUS.NS + "temperatureCondition"), temperature, new Interval(2.0, 50.0));
 
         MeasurementProperty pressureAccurancy = new MeasurementProperty(MeasurementProperty.Property.Accurancy, new Interval(0.0, 0.5));
 
-        MeasurementCapability pressureCapability = new MeasurementCapability("presureCapability", pressure);
+        MeasurementCapability pressureCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + "presureCapability"), pressure);
         pressureCapability.addCondition(temperatureCondition);
         pressureCapability.addMeasurementProperty(pressureAccurancy);
 
-        MeasurementCapability temperatureCapability = new MeasurementCapability("temperatureCapability", temperature);
+        MeasurementCapability temperatureCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + "temperatureCapability"), temperature);
 
         SensingDevice temperatureSensor = new SensingDevice(URI.create(ODYSSEUS.NS + "temperatureSensor"), new SDFSchema("local", Tuple.class, temperature));
-        temperatureSensor.addCapability(temperatureCapability);
+        temperatureSensor.addMeasurementCapability(temperatureCapability);
 
         SensingDevice pressureSensor = new SensingDevice(URI.create(ODYSSEUS.NS + "pressureSensor"), new SDFSchema("local", Tuple.class, pressure));
-        pressureSensor.addCapability(pressureCapability);
+        pressureSensor.addMeasurementCapability(pressureCapability);
 
         sensorOntology.createSensingDevice(temperatureSensor);
         sensorOntology.createSensingDevice(pressureSensor);

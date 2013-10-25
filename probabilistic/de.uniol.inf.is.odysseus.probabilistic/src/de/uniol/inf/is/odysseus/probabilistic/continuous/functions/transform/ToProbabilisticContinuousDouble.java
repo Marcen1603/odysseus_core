@@ -72,7 +72,7 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
 		NormalDistributionMixture result = new NormalDistributionMixture(mvns);
 		final Interval[] support = new Interval[result.getSupport().length];
 		for (int i = 0; i < result.getSupport().length; i++) {
-			support[i] = Interval.INFINITY;
+			support[i] = Interval.MAX;
 		}
 		result.setSupport(support);
 		return result;

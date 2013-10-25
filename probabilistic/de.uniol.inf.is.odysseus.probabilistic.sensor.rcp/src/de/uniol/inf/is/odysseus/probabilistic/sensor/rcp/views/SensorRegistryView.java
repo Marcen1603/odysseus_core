@@ -18,155 +18,184 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views;
 import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.model.SensingDevice;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.SensorRegistryPlugIn;
+import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SensorRegistryView extends ViewPart {
-    private final List<ISensingDeviceViewData> data = Lists.newArrayList();
-    private SensingDeviceTableViewer tableViewer;
-    private boolean refreshing;
-    private ISensingDeviceViewDataProvider dataProvider;
+public class SensorRegistryView extends ViewPart implements IDataDictionaryListener, IUserManagementListener, ISessionListener {
+    private static final Logger LOG = LoggerFactory.getLogger(SensorRegistryView.class);
+
+    private Composite parent;
+    private TreeViewer viewer;
+    private StackLayout stackLayout;
+    private Label label;
+
+    volatile boolean isRefreshing;
+    private boolean refreshEnabled = true;
 
     @Override
     public void createPartControl(Composite parent) {
+        this.parent = parent;
 
-        final Composite tableComposite = new Composite(parent, SWT.NONE);
-        final TableColumnLayout tableColumnLayout = new TableColumnLayout();
-        tableComposite.setLayout(tableColumnLayout);
+        stackLayout = new StackLayout();
+        parent.setLayout(stackLayout);
 
-        tableViewer = new SensingDeviceTableViewer(tableComposite, SWT.MULTI | SWT.FULL_SELECTION);
-        tableViewer.setInput(data);
-        getSite().setSelectionProvider(tableViewer);
+        setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
+        getTreeViewer().setContentProvider(new SensingDeviceContentProvider());
+        getTreeViewer().setLabelProvider(new SensingDeviceContentLabelProvider("source"));
 
-        createContextMenu();
+        int operations = DND.DROP_MOVE;
+        Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
+        getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(getTreeViewer(), "STREAM"));
 
-        dataProvider = new SensingDeviceDataViewProvider();
-        dataProvider.init(this);
+        refresh();
+
+        // UserManagement.getInstance().addUserManagementListener(this);
+        getSite().setSelectionProvider(getTreeViewer());
+
+        // Contextmenu
+        MenuManager menuManager = new MenuManager();
+        Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+        // Set the MenuManager
+        getTreeViewer().getControl().setMenu(contextMenu);
+        getSite().registerContextMenu(menuManager, getTreeViewer());
+
+        label = new Label(parent, SWT.NONE);
+        label.setText("No sources available");
+
+        stackLayout.topControl = label;
+        parent.layout();
+
     }
 
     @Override
     public void dispose() {
-        try {
-            dataProvider.dispose();
-            dataProvider = null;
-        }
-        catch (final Exception ex) {
-            // ignore
-        }
 
         super.dispose();
     }
 
-    public SensingDeviceTableViewer getTableViewer() {
-        return tableViewer;
-    }
-
-    public void refreshData(String url) {
-        Preconditions.checkArgument(url != null, "URL to update sesning device view data must be non-null");
-
-        final Optional<ISensingDeviceViewData> optElement = getData(url);
-
-        if (optElement.isPresent()) {
-            if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
-                PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (!tableViewer.getControl().isDisposed()) {
-                            tableViewer.refresh(optElement.get());
-                        }
-                    }
-
-                });
-            }
-        }
-        else {
-            throw new IllegalArgumentException("Element " + url + " is not known in sensing device view");
-        }
-    }
-
-    public void addData(final ISensingDeviceViewData element) {
-        Preconditions.checkNotNull(element, "SensingDeviceViewData to add must not be null!");
-        Preconditions.checkArgument(!data.contains(element), "SensingDeviceViewData-instance is already added");
-        Preconditions.checkArgument(!getData(element.getURL()).isPresent(), "SensingDeviceViewData with URL %s  is already added", element.getURL());
-
-        data.add(element);
-    }
-
-    public void removeData(String url) {
-        Preconditions.checkArgument(url != null, "URL to remove sensing device view data must be non-null");
-
-        Optional<ISensingDeviceViewData> optData = getData(url);
-        if (optData.isPresent()) {
-            data.remove(optData.get());
-        }
-        else {
-            throw new IllegalArgumentException("Element with url " + url + " is not known in sensing device view");
-        }
-    }
-
-    public Optional<ISensingDeviceViewData> getData(String url) {
-        Preconditions.checkArgument(url != null, "URL to get sensing device view data must be non-null");
-
-        for (ISensingDeviceViewData dat : data) {
-            if (dat.getURL().equals(url)) {
-                return Optional.of(dat);
-            }
-        }
-
-        return Optional.absent();
-    }
-
     @Override
     public void setFocus() {
-        tableViewer.getTable().setFocus();
+        getTreeViewer().getControl().setFocus();
     }
 
-    public void refreshTable() {
-        if (refreshing) {
-            return;
-        }
+    public TreeViewer getTreeViewer() {
+        return viewer;
+    }
 
-        if (!PlatformUI.getWorkbench().getDisplay().isDisposed()) {
-            refreshing = true;
-            dataProvider.onRefresh(this);
+    public final void setSorting(boolean doSorting) {
+        if (doSorting) {
+            viewer.setSorter(new ViewerSorter());
+        }
+        else {
+            viewer.setSorter(null);
+        }
+    }
+
+    public final boolean isSorting() {
+        return viewer.getSorter() != null;
+    }
+
+    public void refresh() {
+
+        if (refreshEnabled) {
+            if (isRefreshing) {
+                return;
+            }
+            isRefreshing = true;
             PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
                 @Override
                 public void run() {
-                    if (!tableViewer.getControl().isDisposed()) {
-                        tableViewer.refresh();
+                    try {
+                        isRefreshing = false;
+                        if (!getTreeViewer().getTree().isDisposed()) {
+                            List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().getAllSensingDevices();
+                            getTreeViewer().setInput(sensingDevices);
+
+                            if (!sensingDevices.isEmpty()) {
+                                stackLayout.topControl = getTreeViewer().getTree();
+                            }
+                            else {
+                                stackLayout.topControl = label;
+                            }
+                            parent.layout();
+                        }
                     }
-                    refreshing = false;
+                    catch (Exception e) {
+                        LOG.error("Exception during setting input for treeViewer in sourcesView", e);
+                    }
                 }
 
             });
         }
     }
 
-    public void clear() {
-        data.clear();
+    protected void setTreeViewer(TreeViewer viewer) {
+        this.viewer = viewer;
     }
 
-    private void createContextMenu() {
-        // Contextmenu
-        final MenuManager menuManager = new MenuManager();
-        final Menu contextMenu = menuManager.createContextMenu(tableViewer.getTable());
-        // Set the MenuManager
-        tableViewer.getTable().setMenu(contextMenu);
-        getSite().registerContextMenu(menuManager, tableViewer);
+    @Override
+    public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+        refresh();
+    }
+
+    @Override
+    public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+        refresh();
+    }
+
+    @Override
+    public void usersChangedEvent() {
+        refresh();
+    }
+
+    @Override
+    public void roleChangedEvent() {
+        refresh();
+    }
+
+    @Override
+    public void dataDictionaryChanged(IDataDictionary sender) {
+        refresh();
+    }
+
+    public boolean isRefreshEnabled() {
+        return refreshEnabled;
+    }
+
+    public void setRefreshEnabled(boolean refreshEnabled) {
+        this.refreshEnabled = refreshEnabled;
+    }
+
+    @Override
+    public void sessionEventOccured(ISessionEvent event) {
+        refresh();
     }
 
 }

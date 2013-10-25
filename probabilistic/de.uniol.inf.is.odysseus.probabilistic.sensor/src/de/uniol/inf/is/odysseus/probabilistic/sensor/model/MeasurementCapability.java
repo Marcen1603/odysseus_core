@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.model;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * 
  */
 public class MeasurementCapability {
-    private final String name;
+    private final URI uri;
     private final SDFAttribute attribute;
     private final List<Condition> conditions = new ArrayList<Condition>();
     private final List<MeasurementProperty> measurementProperties = new ArrayList<MeasurementProperty>();
@@ -36,17 +37,23 @@ public class MeasurementCapability {
      * @param name
      * @param attribute
      */
-    public MeasurementCapability(String name, SDFAttribute attribute) {
+    public MeasurementCapability(URI uri, SDFAttribute attribute) {
         super();
-        this.name = name;
+        this.uri = uri;
         this.attribute = attribute;
     }
 
     /**
+     * @return the uri
+     */
+    public URI getUri() {
+        return this.uri;
+    }
+    /**
      * @return the name
      */
     public String getName() {
-        return this.name;
+        return this.uri.getFragment();
     }
 
     /**

@@ -95,7 +95,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
             // this.getContainer().run(false, false, operation);
             SensingDevice device = new SensingDevice(URI.create(ODYSSEUS.NS + sensingDevicePage.getSensingDeviceName()), new SDFSchema("", ProbabilisticTuple.class, sensingDevicePage.getAttributes()));
             for (MeasurementCapability capability : measurementCapabilitiesPage.getMeasurementCapabilities()) {
-                device.addCapability(capability);
+                device.addMeasurementCapability(capability);
             }
 
             SensorRegistryPlugIn.getSensorOntologyService().createSensingDevice(device);

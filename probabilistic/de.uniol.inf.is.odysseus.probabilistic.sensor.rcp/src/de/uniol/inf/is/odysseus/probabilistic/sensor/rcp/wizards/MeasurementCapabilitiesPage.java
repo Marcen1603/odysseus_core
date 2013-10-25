@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.probabilistic.sensor.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.dialogs.MeasurementCapabiltyDialog;
 import de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.l10n.OdysseusNLS;
 
@@ -119,7 +121,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
                 item.setText(1, measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
                 SDFAttribute attribute = (SDFAttribute) cmbAttribute.getData(cmbAttribute.getItem(cmbAttribute.getSelectionIndex()));
 
-                MeasurementCapability capability = new MeasurementCapability("", attribute);
+                MeasurementCapability capability = new MeasurementCapability(URI.create(ODYSSEUS.NS + sensingDevicePage.getSensingDeviceName() + "_" + attribute + "_capability"), attribute);
                 capability.addCondition(measurementCapabilityDialog.getCondition());
                 capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
                 if (!attributeCapabilities.containsKey(attribute)) {
@@ -176,6 +178,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         }
     }
 
+    @SuppressWarnings("unused")
     private void finishCreation(Composite rootComposite) {
         setErrorMessage(null);
         setMessage(null);

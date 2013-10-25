@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.views;
+package de.uniol.inf.is.odysseus.probabilistic.sensor.logicaloperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-public interface ISensingDeviceViewDataProvider {
+public final class LogicalOperatorCategory {
+    /** The logical operator category for operators working with probabilistic values. */
+    public static final String ONTOLOGY = "Ontology";
 
-    public void init(SensorRegistryView view);
-
-    public void onRefresh(SensorRegistryView sender);
-
-    public void dispose();
+    /**
+     * Class constructor.
+     * 
+     */
+    private LogicalOperatorCategory() {
+    }
 }
