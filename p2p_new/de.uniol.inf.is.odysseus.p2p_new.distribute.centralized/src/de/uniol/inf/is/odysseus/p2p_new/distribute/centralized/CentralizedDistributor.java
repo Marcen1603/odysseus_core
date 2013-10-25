@@ -576,6 +576,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			toMove = Tools.removeDuplicates(toMove);
 			for(GraphNode gn : toMove) {
 				oldGraph.removeNode(gn);
+				gn.setOld(false);
 				detachedGraph.addNode(gn, false);
 			}
 
