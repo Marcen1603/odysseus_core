@@ -160,7 +160,7 @@ public class Graph {
 				IPhysicalOperator o = gn.getOperator();
 				if(gn.isSink()) {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscriber<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscribedToSource()) {
-						GraphNode sourceNode = this.getGraphNode(sub.getTarget());
+						GraphNode sourceNode = null;// this.getGraphNode(sub.getTarget());
 						if(sourceNode == null && sub.getTarget() != null) {
 							List<GraphNode> matchingNodes = nodes.get(sub.getTarget().getClass().getName());
 							if(matchingNodes != null) {
@@ -181,7 +181,7 @@ public class Graph {
 				if(gn.isSource()) {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscribable<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscriptions()) {
 						System.out.println("Trying to connect sink-GN" + sub.getTarget().hashCode() + " with GN" + gn.getOperatorID());
-						GraphNode sinkNode = this.getGraphNode(sub.getTarget());
+						GraphNode sinkNode = null;//this.getGraphNode(sub.getTarget());
 						if(sinkNode == null && sub.getTarget() != null) {
 							List<GraphNode> matchingNodes = nodes.get(sub.getTarget().getClass().getName());
 							if(matchingNodes != null) {
@@ -416,6 +416,7 @@ public class Graph {
 		}
 		while(!toMerge.isEmpty()) {
 			// find out, if the nodes have the same sources and begin the replacements at the bottom
+			List<Entry<GraphNode,GraphNode>> toRemove = new ArrayList<Map.Entry<GraphNode,GraphNode>>();
 			for(Entry<GraphNode,GraphNode> e : toMerge) {
 				GraphNode gn1 = e.getKey();
 				GraphNode gn2 = e.getValue();
@@ -425,22 +426,28 @@ public class Graph {
 						sinkSubs.add(sub);
 					}
 					// unsubscribe the to-be-replaced node from its sources
+					List<Subscription<GraphNode>> toUnsub = new ArrayList<Subscription<GraphNode>>();
 					for(Subscription<GraphNode> sub : gn1.getSubscribedToSource()) {
-						sub.getTarget().unsubscribeSink(sub);
+						toUnsub.add(sub);
+					}
+					for(Subscription<GraphNode> sub : toUnsub) {
+						sub.getTarget().unsubscribeSink(gn1, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 					}
 					for(Subscription<GraphNode> sub : sinkSubs) {
 						int sinkInPort = sub.getSinkInPort();
 						int sourceOutPort = sub.getSourceOutPort();
 						SDFSchema schema = sub.getSchema();
 						GraphNode sinkNode = sub.getTarget();
-						sinkNode.unsubscribeFromSource(sub);
+						gn1.unsubscribeSink(sub);
 						sinkNode.subscribeToSource(gn2, sinkInPort, sourceOutPort, schema);
 						this.removeNode(gn1);
 					}
 					LOG.debug("replaced duplicate node " + gn2.getOperatorID());
-					toMerge.remove(e);
-					break;
+					toRemove.add(e);
 				}
+			}
+			for(Entry<GraphNode,GraphNode> e : toRemove) {
+				toMerge.remove(e);
 			}
 		}
 	}

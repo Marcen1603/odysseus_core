@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,8 +28,9 @@ import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
@@ -62,10 +64,25 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	private Map<PeerID,ResourceUsage> resourceUsages = new HashMap<PeerID,ResourceUsage>();
 	private Map<PeerID,ICost<IPhysicalOperator>> planCostEstimates =  new HashMap<PeerID,ICost<IPhysicalOperator>>();
 	private Map<PeerID,Map<ID, List<Integer>>> opsForQueriesForPeer = new HashMap<>();
+
+	/////////////////////////////////////////////////////////////////////////////
+	/////							<Evaluation>							/////
+	/////////////////////////////////////////////////////////////////////////////
+	private boolean roundRobin = false;
+	private int currentRoundRobinPeer = 0;
+	private List<PeerID> roundRobinPeers = new ArrayList<PeerID>();
 	
 	private ICost<IPhysicalOperator> costsSavedByQuerySharing;
 	private ICost<IPhysicalOperator> costsOfAllDistributedPlans;
+	private long totalTimeUsedOnOptimizing = 0;
+	private boolean evaluationFinished = false;;
+	/////////////////////////////////////////////////////////////////////////////
+	/////							</Evaluation>							/////
+	/////////////////////////////////////////////////////////////////////////////
+	
 	private List<IPhysicalQuery> physicalQueries = new ArrayList<IPhysicalQuery>();
+	@SuppressWarnings("rawtypes")
+	private Map<MetadataUpdatePO,SourceTriplet> sourceOperators = new HashMap<MetadataUpdatePO, SourceTriplet>();
 	
 	// a map containing the physical plans for each peer known to the master
 	private Map<PeerID,Map<Integer,IPhysicalOperator>> operatorPlans = new HashMap<PeerID,Map<Integer,IPhysicalOperator>>();
@@ -102,6 +119,17 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			this.costsOfAllDistributedPlans = this.getCostModel().getZeroCost();
 		}
 		
+		
+		/////////////////////////////////////////////////////////////////////////////
+		/////							<Evaluation>							/////
+		/////////////////////////////////////////////////////////////////////////////
+		if(roundRobin) {
+			roundRobinPeers = copyIterator(this.operatorPlans.keySet().iterator());
+		}
+		/////////////////////////////////////////////////////////////////////////////
+		/////							<!Evaluation>							/////
+		/////////////////////////////////////////////////////////////////////////////
+		
 		long timeStart = System.currentTimeMillis();
 		for(ILogicalQuery q : queriesToDistribute) {
 
@@ -127,20 +155,37 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			for(IPhysicalOperator o : originalPlan) {
 				if(o instanceof MetadataUpdatePO) {
 					MetadataUpdatePO mdupo = (MetadataUpdatePO)o;
-					List<PhysicalSubscription<IPhysicalOperator>> sourceSubs = mdupo.getSubscribedToSource();
-					if(!sourceSubs.isEmpty()) {
-						// there should only be one subscription
-						PhysicalSubscription<IPhysicalOperator> sub = sourceSubs.get(0);
-						IPhysicalOperator source = sub.getTarget();
-						if(!originalPlan.contains(source)) {
-							toAdd.add(source);
-							if(source.isPipe() && !((IPipe)source).getSubscribedToSource().isEmpty()) {
-								sub = (PhysicalSubscription<IPhysicalOperator>) ((IPipe)source).getSubscribedToSource().iterator().next();
-								source = sub.getTarget();
-								if(!originalPlan.contains(source)) {
-									toAdd.add(source);
-								}
+					if(this.sourceOperators.get(mdupo) == null) {
+						List<PhysicalSubscription<IPhysicalOperator>> sourceSubs = mdupo.getSubscribedToSource();
+						if(!sourceSubs.isEmpty()) {
+
+							PhysicalSubscription<IPhysicalOperator> sub = sourceSubs.get(0);
+							MetadataCreationPO mdcpo = (MetadataCreationPO)sub.getTarget();
+							if(!originalPlan.contains(mdcpo)) {
+								toAdd.add(mdcpo);
 							}
+							if(!mdcpo.getSubscribedToSource().isEmpty()) {
+								sub = (PhysicalSubscription<IPhysicalOperator>) mdcpo.getSubscribedToSource().iterator().next();
+								ReceiverPO rpo = (ReceiverPO)sub.getTarget();
+								SourceTriplet newSource = new SourceTriplet(rpo,mdcpo,mdupo);
+								if(!originalPlan.contains(rpo)) {
+									toAdd.add(rpo);
+								}
+								this.sourceOperators.put(mdupo, newSource);
+							} else {
+								LOG.debug("Found a MetadataUpdatePO and a MetadataCreationPO which aren't logged yet, but the latter has no source!");
+							}
+						} else {
+							LOG.debug("Found a MetadataUpdatePO which isn't logged yet but has no sources either!");
+						}
+					} else {
+						SourceTriplet sourceTriplet = this.sourceOperators.get(mdupo);
+						sourceTriplet.reconnect();
+						if(!originalPlan.contains(sourceTriplet.getMetadataCreation())) {
+							toAdd.add(sourceTriplet.getMetadataCreation());
+						}
+						if(!originalPlan.contains(sourceTriplet.getReceiver())) {
+							toAdd.add(sourceTriplet.getReceiver());
 						}
 					}
 				}
@@ -148,7 +193,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				
 			for(IPhysicalOperator o : toAdd) {
 				LOG.debug("Added operator " + o + " to the plan, because it was a source of a MetaDataupdatePO");
-				//o.addOwner(physQ);
+				o.addOwner(physQ);
 				originalPlan.add(o);
 			}
 			newOperators.add(originalPlan);
@@ -209,10 +254,21 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 
 				// simulate the whole plan once and determine if its costs are higher
 				// or lower than the placement of one of the alternative plans
-				SimulationResult result = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
+				SimulationResult result = null;
+				if(roundRobin) {
+					result = getValidRoundRobinPlacement(baseGraph, parameters, new ArrayList<PeerID>());
+					if(result == null) {
+						LOG.debug("couldn't place this query anywhere using Round Robin, since no peer has enough resources.\nEnding Evaluation.");
+						this.evaluationFinished = true;
+						return new ArrayList<ILogicalQuery>();
+					}
+				} else {
+					result = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
+				}
 				if(result == null) {
 					LOG.debug("Couldn't find a non-overloaded peer to place the result");
-					return null;
+					this.evaluationFinished = true;
+					return new ArrayList<ILogicalQuery>();
 				}
 				if(result.getCost().compareTo(bestCost) < 0) {
 					LOG.debug("Chose a result, because its determined cost of '" + result.getCost().toString() + "' is lower than the previous best cost of '" + bestCost.toString() + "'");
@@ -334,6 +390,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					}
 					if(additionalResult == null) {
 						LOG.debug("Can't split plan any more and can't place it anywhere else either, distribution impossible.");
+						this.evaluationFinished = true;
 						return new ArrayList<ILogicalQuery>();
 					}
 					results.add(additionalResult);
@@ -367,7 +424,9 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(initialCost.substract(endCost));
 		}
 		LOG.debug("Costs of all distributed Plans: " + this.costsOfAllDistributedPlans + ", Costs saved by sharing query-operators: " + this.costsSavedByQuerySharing);
-		LOG.debug("It took " + ((System.currentTimeMillis() - timeStart)/60) + " seconds to optimize and distribute this Query.");
+		long timeToOptimize = (System.currentTimeMillis() - timeStart)/60;
+		LOG.debug("It took " + timeToOptimize + " seconds to optimize and distribute this Query.");
+		totalTimeUsedOnOptimizing += timeToOptimize;
 		return queriesToDistribute;
 	}
 	
@@ -381,6 +440,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	public SplitSimulationResult splitGraph(SimulationResult r) {
 
 		Graph oldGraph = r.getGraph();
+		oldGraph.mergeNodesWithIdenticalOperatorID();
 		List<PlanJunction> junctions = new ArrayList<PlanJunction>();
 		// check, if the SimulationResult in question yielded some shareable nodes on the peer, which would make for a nice cutoff-point
 		if(!r.getShareableIdenticalNodes().isEmpty() || !r.getShareableSimilarNodes().isEmpty()) {
@@ -633,7 +693,6 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			}
 		}
 		return bestResult;
-
 	}
 	
 	// From a list of SimulationResults, return only those whose costs don't exceed the capacity of their peers
@@ -898,5 +957,87 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	public int getNumberOfRunningOperators() {
 		return getNumberOfRunningOperatorsForPeer(this.getManager().getLocalID());
 	}
+
+
+
+	public long getTotalTimeUsedOnOptimizing() {
+		return totalTimeUsedOnOptimizing;
+	}
+
+
+
+	public boolean isEvaluationFinished() {
+		return evaluationFinished;
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////
+	/////							<Evaluation>							/////
+	/////////////////////////////////////////////////////////////////////////////
+	public SimulationResult getValidRoundRobinPlacement(Graph baseGraph, QueryBuildConfiguration parameters, List<PeerID> usedPeers) {
+
+		PeerID peer = this.roundRobinPeers.get(currentRoundRobinPeer);
+		// return null, if the current peer was already used and this was a recursive call
+		if(usedPeers.contains(peer)) {
+			return null;
+		}
+		usedPeers.add(peer);
+		currentRoundRobinPeer = currentRoundRobinPeer == roundRobinPeers.size()- 1 ? 0 : currentRoundRobinPeer + 1;
+		while(this.getResourceUsageForPeer(peer).getOverallUsage() >= this.getResourceUsageForPeer(peer).getCOMBINED_THRESHOLD()
+				&& usedPeers.size() != this.roundRobinPeers.size()) {
+			peer = this.roundRobinPeers.get(currentRoundRobinPeer);
+			usedPeers.add(peer);
+			currentRoundRobinPeer = currentRoundRobinPeer == roundRobinPeers.size()- 1 ? 0 : currentRoundRobinPeer + 1;
+		}
+		// haven't found a single remaining peer with resources to answer the query
+		if(this.getResourceUsageForPeer(peer).getOverallUsage() >= this.getResourceUsageForPeer(peer).getCOMBINED_THRESHOLD()) {
+			return null;
+		}
+
+		Map<Integer,IPhysicalOperator> operatorsOnPeer = operatorPlans.get(peer);
+		if(operatorsOnPeer == null) {
+			operatorsOnPeer = new HashMap<Integer, IPhysicalOperator>();
+		}
+
+		// this is the graph representing BOTH the old plan, the plan of the new query and their connections "as is",
+		// we have to copy the baseGraph of the new Query and add the operators of the current Plan to it
+		Graph graphCopy = baseGraph.clone();
+		graphCopy.addPlan(operatorsOnPeer, false);
+		// merge all identical nodes, which would get re-used anyway
+		graphCopy.mergeNodesWithIdenticalOperatorID();
+
+		SimulationResult res = null;
+		// only simulate on peers who actually have operators running on them
+		if(operatorsOnPeer.isEmpty()) {
+			res = new SimulationResult(graphCopy);
+		} else {
+			res = this.getQuerySharingSimulator().simulateQuerySharing(graphCopy, new OptimizationConfiguration(parameters));
+		}
+		res.setPeer(peer);
+		Map<Integer,IPhysicalOperator> mergedOps = res.getPlan(true);
+		res.setCost(this.getCostModel().estimateCost(new ArrayList<IPhysicalOperator>(mergedOps.values()), false));
+		// don't add the result, if the peer is already over its capacity
+		if(this.getResourceUsageForPeer(res.getPeer()).getOverallUsage() < this.getResourceUsageForPeer(res.getPeer()).getCOMBINED_THRESHOLD()) {
+			double projectedUsage = CostConverter.projectedUsageUsingOpCountCost(this.planCostEstimates.get(res.getPeer()),
+					this.getResourceUsageForPeer(res.getPeer()).getOverallUsage(),
+					res.getCost());
+			if(projectedUsage < this.getResourceUsageForPeer(res.getPeer()).getCOMBINED_THRESHOLD()) {
+				return res;
+			} else {
+				// recursive call, will return null if no peers are left to try or placement isn't possible anywhere.
+				return getValidRoundRobinPlacement(baseGraph, parameters, usedPeers);
+			}
+		}
+		return null;
+	}
+	
+	private <T> List<T> copyIterator(Iterator<T> iter) {
+	    List<T> copy = new ArrayList<T>();
+	    while (iter.hasNext())
+	        copy.add(iter.next());
+	    return copy;
+	}
+	/////////////////////////////////////////////////////////////////////////////
+	/////							</Evaluation>							/////
+	/////////////////////////////////////////////////////////////////////////////
 	
 }

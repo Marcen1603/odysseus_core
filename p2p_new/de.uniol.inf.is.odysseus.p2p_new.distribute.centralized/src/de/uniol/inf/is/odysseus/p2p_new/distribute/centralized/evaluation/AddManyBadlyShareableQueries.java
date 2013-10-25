@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.CentralizedDistributor;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
 
 public class AddManyBadlyShareableQueries extends Thread {
@@ -26,7 +27,7 @@ public class AddManyBadlyShareableQueries extends Thread {
 		
 		ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 		
-		while(counter < iterations) {
+		while(counter < iterations && !CentralizedDistributor.getInstance().isEvaluationFinished()) {
 			windowSize = counter % 3 == 0 ? windowSize * 2 : windowSize;
 			String source1 = counter%2 == 0 ? "auction" : "SELECT({predicate=RelationalPredicate('initialbid > 10')}, auction)";
 			String pqlQuery = "s" + counter + " = join({predicate = RelationalPredicate('id = auction')}, WINDOW({size = " + windowSize + ",advance = 1,type = 'time'}, " + source1 + "), WINDOW({size = " + windowSize + ",advance = 1,type = 'time'}, bid))";

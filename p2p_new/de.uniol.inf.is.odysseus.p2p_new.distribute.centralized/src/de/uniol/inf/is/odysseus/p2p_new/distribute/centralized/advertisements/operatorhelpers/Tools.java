@@ -98,7 +98,9 @@ public class Tools<T extends Object> {
 
 			for (final Subscription<GraphNode> subscription : currentOperator
 					.getSinkSubscriptions())
-				Tools.collectGraphNodes(subscription.getTarget(), list);
+				if(!subscription.getTarget().isOld()) {
+					Tools.collectGraphNodes(subscription.getTarget(), list);
+				}
 
 			for (final Subscription<GraphNode> subscription : currentOperator
 					.getSubscribedToSource())
