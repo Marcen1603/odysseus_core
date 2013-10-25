@@ -90,23 +90,23 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 * @return The average.
 	 */
 	public final NormalDistributionMixture getAvg() {
-		final NormalDistributionMixture result = sum.clone();
+		final NormalDistributionMixture result = this.sum.clone();
 		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		for (final Pair<Double, MultivariateNormalDistribution> entry : sum.getMixtures().getComponents()) {
+		for (final Pair<Double, MultivariateNormalDistribution> entry : this.sum.getMixtures().getComponents()) {
 			final MultivariateNormalDistribution normalDistribution = entry.getValue();
 			final Double weight = entry.getKey();
 			final double[] means = normalDistribution.getMeans();
 			for (int i = 0; i < means.length; i++) {
-				means[i] /= count;
+				means[i] /= this.count;
 			}
-			final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(1.0 / (count * count));
-			MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
+			final RealMatrix covariances = normalDistribution.getCovariances().scalarMultiply(1.0 / (this.count * this.count));
+			final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
 			mvns.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
 		}
 		result.setMixtures(new MixtureMultivariateNormalDistribution(mvns));
 		final Interval[] support = new Interval[result.getSupport().length];
 		for (int i = 0; i < result.getSupport().length; i++) {
-			support[i] = result.getSupport(i).div(count);
+			support[i] = result.getSupport(i).div(this.count);
 		}
 		result.setSupport(support);
 
@@ -121,7 +121,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 	 */
 	public final void add(final NormalDistributionMixture value) {
 		final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		for (final Pair<Double, MultivariateNormalDistribution> sumEntry : sum.getMixtures().getComponents()) {
+		for (final Pair<Double, MultivariateNormalDistribution> sumEntry : this.sum.getMixtures().getComponents()) {
 			final RealMatrix sumMean = MatrixUtils.createColumnRealMatrix(sumEntry.getValue().getMeans());
 			final RealMatrix sumCovarianceMatrix = sumEntry.getValue().getCovariances();
 
@@ -135,12 +135,12 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		}
 
 		final NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
-		final Interval[] support = new Interval[sum.getSupport().length];
-		for (int i = 0; i < sum.getSupport().length; i++) {
-			support[i] = sum.getSupport(i).add(value.getSupport(i));
+		final Interval[] support = new Interval[this.sum.getSupport().length];
+		for (int i = 0; i < this.sum.getSupport().length; i++) {
+			support[i] = this.sum.getSupport(i).add(value.getSupport(i));
 		}
 		result.setSupport(support);
-		result.setScale(sum.getScale() * value.getScale());
+		result.setScale(this.sum.getScale() * value.getScale());
 		this.count++;
 		this.sum = result;
 	}

@@ -80,7 +80,7 @@ public class SumPartialAggregate<T> implements IPartialAggregate<T> {
 	 */
 	public final void add(final NormalDistributionMixture value) {
 		final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		for (final Pair<Double, MultivariateNormalDistribution> sumEntry : sum.getMixtures().getComponents()) {
+		for (final Pair<Double, MultivariateNormalDistribution> sumEntry : this.sum.getMixtures().getComponents()) {
 			final RealMatrix sumMean = MatrixUtils.createColumnRealMatrix(sumEntry.getValue().getMeans());
 			final RealMatrix sumCovarianceMatrix = sumEntry.getValue().getCovariances();
 
@@ -94,12 +94,12 @@ public class SumPartialAggregate<T> implements IPartialAggregate<T> {
 		}
 
 		final NormalDistributionMixture result = new NormalDistributionMixture(mixtures);
-		final Interval[] support = new Interval[sum.getSupport().length];
-		for (int i = 0; i < sum.getSupport().length; i++) {
-			support[i] = sum.getSupport(i).add(value.getSupport(i));
+		final Interval[] support = new Interval[this.sum.getSupport().length];
+		for (int i = 0; i < this.sum.getSupport().length; i++) {
+			support[i] = this.sum.getSupport(i).add(value.getSupport(i));
 		}
 		result.setSupport(support);
-		result.setScale(sum.getScale() * value.getScale());
+		result.setScale(this.sum.getScale() * value.getScale());
 		this.sum = result;
 	}
 

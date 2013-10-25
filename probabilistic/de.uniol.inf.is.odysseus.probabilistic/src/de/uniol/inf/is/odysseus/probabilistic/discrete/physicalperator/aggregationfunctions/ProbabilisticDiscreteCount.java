@@ -73,7 +73,7 @@ public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<Probab
 	 */
 	@Override
 	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-		final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(datatype);
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.add(value.getValue());
 		}
@@ -88,7 +88,7 @@ public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<Probab
 	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
 		CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
 		if (createNew) {
-			pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), datatype);
+			pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
 		} else {
 			pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
 		}

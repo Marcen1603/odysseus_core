@@ -108,11 +108,11 @@ public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTup
 	 */
 	private Object[] computeBins() {
 		final Object[] bins = new Object[] {};
-//		final int[] p = new int[] {};
-//		final int[] b = new int[] {};
-//		int i = 1;
-//		final int l = 0;
-//		final int e = 1;
+		// final int[] p = new int[] {};
+		// final int[] b = new int[] {};
+		// int i = 1;
+		// final int l = 0;
+		// final int e = 1;
 		// while (i < l) {
 		// final double k = Math.log(b[i]) / Math.log(1 + e);
 		// int q = 0;
