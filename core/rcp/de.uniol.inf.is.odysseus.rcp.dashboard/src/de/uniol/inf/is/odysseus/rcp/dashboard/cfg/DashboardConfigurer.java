@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.cfg;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.window.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardSettings;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.windows.DashboardConfigWindow;
 
 public class DashboardConfigurer {
@@ -50,8 +48,8 @@ public class DashboardConfigurer {
 
 	private static void trySaveDashboard(Dashboard dashboard, IFile dashboardFile) {
 		try {
-			FileUtil.write(DASHBOARD_LOADER.save(dashboard), dashboardFile);
-		} catch (DashboardHandlerException | CoreException e) {
+			DASHBOARD_LOADER.save(dashboard, dashboardFile);
+		} catch (DashboardHandlerException e) {
 			LOG.error("Could not save dashboard", e);
 		}
 	}

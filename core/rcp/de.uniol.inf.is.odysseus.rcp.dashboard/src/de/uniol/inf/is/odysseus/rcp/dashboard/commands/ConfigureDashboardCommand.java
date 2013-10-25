@@ -8,7 +8,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -30,7 +29,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.EditorUtil;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class ConfigureDashboardCommand extends AbstractHandler implements IHandler {
 
@@ -121,10 +119,10 @@ public class ConfigureDashboardCommand extends AbstractHandler implements IHandl
 	
 	private static Optional<Dashboard> tryLoadDashboard(IFile dashboardFile) {
 		try {
-			Dashboard dashboard = DASHBOARD_LOADER.load(FileUtil.read(dashboardFile), DASHBOARD_PART_HANDLER);
+			Dashboard dashboard = DASHBOARD_LOADER.load(dashboardFile, DASHBOARD_PART_HANDLER);
 			return Optional.of(dashboard);
 
-		} catch (FileNotFoundException | DashboardHandlerException | CoreException e) {
+		} catch (FileNotFoundException | DashboardHandlerException e) {
 			LOG.error("Could not load dashboard from file {}", dashboardFile.getName(), e);
 			MessageDialog.openError(null, "Dashboard configuration", "Could not load dashboard");
 		}

@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -56,7 +55,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class DashboardEditor extends EditorPart implements IDashboardListener, IDashboardPartListener {
 
@@ -139,15 +137,12 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 	public void doSave(IProgressMonitor monitor) {
 
 		try {
-			FileUtil.write(DASHBOARD_HANDLER.save(dashboard), this.input.getFile());
+			DASHBOARD_HANDLER.save(dashboard, this.input.getFile());
 			setDirty(false);
-		} catch (final DashboardHandlerException ex) {
+		} catch (DashboardHandlerException ex) {
 			LOG.error("Could not save Dashboard!", ex);
 			throw new RuntimeException("Could not save Dashboard!", ex);
-		} catch (final CoreException ex) {
-			LOG.error("Could not save Dashboard!", ex);
-			throw new RuntimeException("Could not save Dashboard!", ex);
-		}
+		} 
 	}
 
 	@Override
@@ -188,19 +183,16 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboard = DASHBOARD_HANDLER.load(FileUtil.read(this.input.getFile()), DASHBOARD_PART_HANDLER);
+			dashboard = DASHBOARD_HANDLER.load(this.input.getFile(), DASHBOARD_PART_HANDLER);
 			dashboard.addListener(this);
 			controllers = createDashboardPartControllers(dashboard.getDashboardPartPlacements());
-		} catch (final DashboardHandlerException ex) {
+		} catch (DashboardHandlerException ex) {
 			LOG.error("Could not load Dashboard!", ex);
 			throw new PartInitException("Could not load Dashboard!", ex);
-		} catch (final FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			LOG.error("Could not load query file!", ex);
 			throw new PartInitException("Could not load query file!", ex);
-		} catch (final CoreException ex) {
-			LOG.error("Could not load Dashboard!", ex);
-			throw new PartInitException("Could not load Dashboard!", ex);
-		}
+		} 
 	}
 	
 	public final DashboardPartController getDashboardPartController(IDashboardPart dashboardPart) {

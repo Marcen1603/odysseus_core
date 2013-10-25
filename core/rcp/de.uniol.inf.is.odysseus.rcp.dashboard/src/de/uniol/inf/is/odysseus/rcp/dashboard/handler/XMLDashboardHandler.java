@@ -77,11 +77,12 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	private static final String BG_IMAGE_STRETCHED_ATTRIBUTE_NAME = "stretched";
 
 	@Override
-	public Dashboard load(List<String> lines, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException {
-		Preconditions.checkNotNull(lines, "Dashboard-File to load must not be null!");
+	public Dashboard load(IFile fileToLoad, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException {
+		Preconditions.checkNotNull(fileToLoad, "Dashboard-File to load must not be null!");
 		Preconditions.checkNotNull(partHandler, "Dashboard part handler must not be null!");
-
+		
 		try {
+			List<String> lines = FileUtil.read(fileToLoad);
 
 			final Dashboard dashboard = new Dashboard();
 
@@ -113,7 +114,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 					final IPath queryFilePath = new Path(fileName);
 					final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 
-					final IDashboardPart dashboardPart = partHandler.load(FileUtil.read(dashboardPartFile));
+					final IDashboardPart dashboardPart = partHandler.load(dashboardPartFile);
 					final DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
 					applySettingsToDashboardPart(settingsMap, dashboardPart);			
 					
@@ -160,7 +161,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		return settingsMap;
 	}
 	@Override
-	public List<String> save(Dashboard board) throws DashboardHandlerException {
+	public void save(Dashboard board, IFile fileToSave) throws DashboardHandlerException {
 		Preconditions.checkNotNull(board, "Dashboard to be saved must not be null!");
 
 		try {
@@ -177,7 +178,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 				createDashboardPartElement(doc, rootElement, partPlacement);
 			}
 
-			return saveImpl(doc);
+			saveImpl(doc, fileToSave);
 
 		} catch (final ParserConfigurationException ex) {
 			LOG.error("Could not save Dashboard!", ex);
@@ -262,7 +263,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 		return nodes.item(0);
 	}
 
-	private static List<String> saveImpl(Document doc) throws DashboardHandlerException {
+	private static void saveImpl(Document doc, IFile fileToSave) throws DashboardHandlerException {
 		try {
 			final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			final Transformer transformer = transformerFactory.newTransformer();
@@ -271,7 +272,8 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			final StreamResult result = new StreamResult(baos);
 
 			transformer.transform(source, result);
-			return FileUtil.separateLines(baos.toString("UTF-8"));
+			List<String> lines = FileUtil.separateLines(baos.toString("UTF-8"));
+			FileUtil.write(lines, fileToSave);
 
 		} catch (final TransformerConfigurationException e) {
 			LOG.error("Could not save DashboardPart", e);
@@ -280,6 +282,9 @@ public class XMLDashboardHandler implements IDashboardHandler {
 			LOG.error("Could not save DashboardPart", e);
 			throw new DashboardHandlerException("Could not save DashboardPart", e);
 		} catch (final UnsupportedEncodingException ex) {
+			LOG.error("Could not save DashboardPart", ex);
+			throw new DashboardHandlerException("Could not save DashboardPart", ex);
+		} catch (CoreException ex) {
 			LOG.error("Could not save DashboardPart", ex);
 			throw new DashboardHandlerException("Could not save DashboardPart", ex);
 		}

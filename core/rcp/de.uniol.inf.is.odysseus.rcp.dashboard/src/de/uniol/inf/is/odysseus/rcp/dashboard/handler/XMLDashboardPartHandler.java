@@ -35,6 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.slf4j.Logger;
@@ -79,11 +80,12 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(XMLDashboardPartHandler.class);
 
 	@Override
-	public IDashboardPart load(List<String> lines) throws DashboardHandlerException {
-		Preconditions.checkNotNull(lines, "Array of lines from must not be null!");
-		Preconditions.checkArgument(!lines.isEmpty(), "Array of lines must not be empty!");
-
+	public IDashboardPart load(IFile fileToLoad) throws DashboardHandlerException {
+		Preconditions.checkNotNull(fileToLoad, "Array of lines from must not be null!");
+		
 		try {
+			List<String> lines = FileUtil.read(fileToLoad);
+			
 			Document doc = getDocument(lines);
 			Node rootNode = getRootNode(doc);
 
@@ -93,13 +95,16 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 			return buildDashboardPart(partName, queryTextProvider, customSettings);
 
-		} catch (final ParserConfigurationException e) {
+		} catch (ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
-		} catch (final SAXException e) {
+		} catch (SAXException e) {
 			LOG.error("Could not load DashboardPart", e);
 			throw new DashboardHandlerException("Could not load DashboardPart", e);
-		} catch (final IOException ex) {
+		} catch (IOException ex) {
+			LOG.error("Could not load DashboardPart", ex);
+			throw new DashboardHandlerException("Could not load DashboardPart", ex);
+		} catch (CoreException ex) {
 			LOG.error("Could not load DashboardPart", ex);
 			throw new DashboardHandlerException("Could not load DashboardPart", ex);
 		}
@@ -110,8 +115,9 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	}
 
 	@Override
-	public List<String> save(IDashboardPart part) throws DashboardHandlerException {
+	public void save(IDashboardPart part, IFile fileToSave) throws DashboardHandlerException {
 		Preconditions.checkNotNull(part, "Part to save must not be null!");
+		Preconditions.checkNotNull(fileToSave, "File to save dashboard part must not be null!");
 
 		try {
 			final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -123,12 +129,12 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			appendDashboardPartName( DashboardPartRegistry.getRegistrationName(part.getClass()).get(), rootElement);
 			appendQueryTextProvider(part.getQueryTextProvider(), doc, rootElement);
 			appendCustoms(part, doc, rootElement);
-			return save(doc);
+			FileUtil.write(save(doc), fileToSave);
 
-		} catch (final ParserConfigurationException e) {
+		} catch (final ParserConfigurationException | CoreException e) {
 			LOG.error("Could not save DashboardPart " + part.getClass(), e);
 			throw new DashboardHandlerException("Could not save DashboardPart " + part.getClass(), e);
-		}
+		} 
 	}
 
 	private static void appendDashboardPartName(String dashboardPartName, Element rootElement) {

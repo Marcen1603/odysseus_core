@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.views;
 import java.io.FileNotFoundException;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -19,7 +18,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class DashboardPartView extends ViewPart {
 
@@ -57,7 +55,7 @@ public class DashboardPartView extends ViewPart {
 		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 		
 		try {
-			dashboardPart = DASHBOARD_PART_HANDLER.load(FileUtil.read(dashboardPartFile));
+			dashboardPart = DASHBOARD_PART_HANDLER.load(dashboardPartFile);
 			dashboardPart.setWorkbenchPart(this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
 
@@ -70,7 +68,7 @@ public class DashboardPartView extends ViewPart {
 			isShowing = true;
 			setPartName(dashboardPartFile.getName());
 			
-		} catch (FileNotFoundException | DashboardHandlerException | CoreException | ControllerException e) {
+		} catch (FileNotFoundException | DashboardHandlerException | ControllerException e) {
 			LOG.error("Could not load and start dashboard part", e);
 		}
 	}

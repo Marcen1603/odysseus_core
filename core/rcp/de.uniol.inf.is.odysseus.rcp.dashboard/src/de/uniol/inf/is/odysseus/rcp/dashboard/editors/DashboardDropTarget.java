@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public abstract class DashboardDropTarget {
 
@@ -60,7 +59,7 @@ public abstract class DashboardDropTarget {
 		if (optDashboardPartFile.isPresent()) {
 			IFile dashboardPartFile = optDashboardPartFile.get();
 			try {
-				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(FileUtil.read(dashboardPartFile));
+				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile);
 				final Point position = composite.toControl(event.x, event.y);
 				final DashboardPartPlacement place = new DashboardPartPlacement(part, dashboardPartFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH, DEFAULT_PART_HEIGHT);
 	

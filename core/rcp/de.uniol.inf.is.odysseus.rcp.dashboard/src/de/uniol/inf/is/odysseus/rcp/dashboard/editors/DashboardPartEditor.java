@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.io.FileNotFoundException;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -48,7 +47,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartListener;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.DashboardPartController;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class DashboardPartEditor extends EditorPart implements IDashboardPartListener, IConfigurerListener {
 
@@ -94,15 +92,13 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		try {
-			FileUtil.write(DASHBOARD_PART_HANDLER.save(dashboardPart), this.input.getFile());
+			DASHBOARD_PART_HANDLER.save(dashboardPart, this.input.getFile());
 
 			setDirty(false);
 
-		} catch (final DashboardHandlerException e) {
+		} catch (DashboardHandlerException e) {
 			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), e);
-		} catch (final CoreException ex) {
-			LOG.error("Could not save DashboardPart to file {}.", input.getFile().getName(), ex);
-		}
+		} 
 	}
 
 	@Override
@@ -139,20 +135,17 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboardPart = DASHBOARD_PART_HANDLER.load(FileUtil.read(this.input.getFile()));
+			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile());
 			dashboardPart.setWorkbenchPart(this);
 			dashboardPart.addListener(this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
-		} catch (final DashboardHandlerException e) {
+		} catch (DashboardHandlerException e) {
 			LOG.error("Could not load DashboardPart for editor from file {}!", this.input.getFile().getName(), e);
 			throw new PartInitException("Could not load DashboardPart from file " + this.input.getFile().getName(), e);
-		} catch (final FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			LOG.error("Could not load corresponding query file!", ex);
 			throw new PartInitException("Could not load corresponding query file!", ex);
-		} catch (final CoreException ex) {
-			LOG.error("Could not load corresponding query file!", ex);
-			throw new PartInitException("Could not load corresponding query file!", ex);
-		}
+		} 
 	}
 
 	@Override

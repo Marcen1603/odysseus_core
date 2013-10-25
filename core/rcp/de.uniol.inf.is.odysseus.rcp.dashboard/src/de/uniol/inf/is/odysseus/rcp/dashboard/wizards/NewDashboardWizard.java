@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.Dashboard;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardHandler;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class NewDashboardWizard extends Wizard implements INewWizard {
 
@@ -55,7 +54,7 @@ public class NewDashboardWizard extends Wizard implements INewWizard {
 			dashboardFile.create(null, IResource.NONE, null);
 
 			final Dashboard dashboard = new Dashboard();
-			FileUtil.write(DASHBOARD_HANDLER.save(dashboard), dashboardFile);
+			DASHBOARD_HANDLER.save(dashboard, dashboardFile);
 
 			return true;
 		} catch (final CancelException ex) {

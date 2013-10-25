@@ -8,7 +8,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -28,7 +27,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardEditor;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.DashboardPartPlacement;
 import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.EditorUtil;
-import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 
 public class AddDashboardPartCommand extends AbstractHandler {
 
@@ -108,9 +106,9 @@ public class AddDashboardPartCommand extends AbstractHandler {
 
 		for (final IFile dashboardPartFile : dashboardPartFiles) {
 			try {
-				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(FileUtil.read(dashboardPartFile));
+				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile);
 				parts.put(dashboardPartFile, part);
-			} catch (FileNotFoundException | DashboardHandlerException | CoreException ex) {
+			} catch (FileNotFoundException | DashboardHandlerException ex) {
 				LOG.error("Could not load dashboardPart from file {}!", dashboardPartFile, ex);
 			}
 		}
