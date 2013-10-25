@@ -359,13 +359,13 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 				for (final Pair<Double, MultivariateNormalDistribution> entry : this.distributions[oldLayerIndex].getMixtures().getComponents()) {
 					final MultivariateNormalDistribution mixture = entry.getValue();
 
-					RealMatrix meansMatrix = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose());
+					final RealMatrix meansMatrix = restrictMatrix[oldLayerIndex].multiply(MatrixUtils.createRealDiagonalMatrix(mixture.getMeans())).multiply(restrictMatrix[oldLayerIndex].transpose());
 					final double[] means = new double[newDimension];
 					for (int d = 0; d < meansMatrix.getRowDimension(); d++) {
 						means[d] = meansMatrix.getEntry(d, d);
 					}
 					final RealMatrix covariances = restrictMatrix[oldLayerIndex].multiply(mixture.getCovariances()).multiply(restrictMatrix[oldLayerIndex].transpose());
-					MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
+					final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, covariances.getData());
 					mvns.add(new Pair<Double, MultivariateNormalDistribution>(entry.getKey(), component));
 				}
 				newDistributions[newLayerIndex].setMixtures(new MixtureMultivariateNormalDistribution(mvns));

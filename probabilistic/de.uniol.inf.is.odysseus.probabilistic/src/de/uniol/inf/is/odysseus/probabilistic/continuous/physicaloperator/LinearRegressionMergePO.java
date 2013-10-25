@@ -145,7 +145,7 @@ public class LinearRegressionMergePO<T extends ITimeInterval> extends AbstractPi
 				Arrays.fill(diagonal, 10E-5);
 				newCovarianceMatrix = newCovarianceMatrix.add(MatrixUtils.createRealDiagonalMatrix(diagonal));
 				newMixtureComponents.add(new Pair<Double, MultivariateNormalDistribution>(weight, new MultivariateNormalDistribution(newMean, newCovarianceMatrix.getData())));
-				LOG.warn(e.getMessage(), e);
+				LinearRegressionMergePO.LOG.warn(e.getMessage(), e);
 			}
 		}
 

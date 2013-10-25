@@ -120,9 +120,9 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	@GetParameter(name = "TRANSITION")
 	public final double[][] getStateTransition() {
 		if (this.stateTransition == null) {
-			return MatrixUtils.createRealIdentityMatrix(getAttributes().size()).getData();
+			return MatrixUtils.createRealIdentityMatrix(this.getAttributes().size()).getData();
 		}
-		return stateTransition;
+		return this.stateTransition;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	@GetParameter(name = "PROCESSNOISE")
 	public final double[][] getProcessNoise() {
 		if (this.processNoise == null) {
-			return MatrixUtils.createRealIdentityMatrix(getAttributes().size()).getData();
+			return MatrixUtils.createRealIdentityMatrix(this.getAttributes().size()).getData();
 		}
 		return this.processNoise;
 	}
@@ -189,7 +189,7 @@ public class KalmanFilterAO extends UnaryLogicalOp {
 	@GetParameter(name = "MEASUREMENT")
 	public final double[][] getMeasurement() {
 		if (this.measurement == null) {
-			return MatrixUtils.createRealIdentityMatrix(getAttributes().size()).getData();
+			return MatrixUtils.createRealIdentityMatrix(this.getAttributes().size()).getData();
 		}
 		return this.measurement;
 	}

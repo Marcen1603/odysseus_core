@@ -113,7 +113,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 
 			// Construct the multivariate distribution
 			final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-			MixtureMultivariateNormalDistribution model = emArea.getModel();
+			final MixtureMultivariateNormalDistribution model = emArea.getModel();
 			if (model != null) {
 				final NormalDistributionMixture mixture = new NormalDistributionMixture(model.getComponents());
 				mixture.setAttributes(this.attributes);
@@ -131,7 +131,7 @@ public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTup
 				this.transfer(outputVal);
 			}
 		} catch (MathIllegalArgumentException | MaxCountExceededException | ConvergenceException e) {
-			LOG.debug(e.getMessage(), e);
+			EMPO.LOG.debug(e.getMessage(), e);
 		}
 	}
 

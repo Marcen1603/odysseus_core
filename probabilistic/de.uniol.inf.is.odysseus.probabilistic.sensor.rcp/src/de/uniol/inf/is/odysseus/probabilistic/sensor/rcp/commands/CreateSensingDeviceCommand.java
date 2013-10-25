@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public class CreateSensingDeviceCommand {
 

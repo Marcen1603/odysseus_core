@@ -51,28 +51,31 @@ public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
      */
     @Override
     public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
-        SDFSchema schema = operator.getInputSchema();
+        final SDFSchema schema = operator.getInputSchema();
 
-        Object[] expressions = new Object[schema.getAttributes().size()];
+        final Object[] expressions = new Object[schema.getAttributes().size()];
         for (int i = 0; i < schema.getAttributes().size(); i++) {
-            SDFAttribute attribute = schema.getAttribute(i);
-            SensingDevice thisSensingDevice = SensorOntologyServiceImpl.getOntology().getSensingDevice(attribute.getQualName());
+            final SDFAttribute attribute = schema.getAttribute(i);
+            final SensingDevice thisSensingDevice = SensorOntologyServiceImpl.getOntology().getSensingDevice(attribute.getQualName());
             if (thisSensingDevice != null) {
-                List<MeasurementCapability> measurementCapabilities = thisSensingDevice.getCapabilities(attribute);
+                final List<MeasurementCapability> measurementCapabilities = thisSensingDevice.getCapabilities(attribute);
 
                 if (measurementCapabilities != null) {
-                    for (MeasurementCapability measurementCapability : measurementCapabilities) {
-                        List<Condition> conditions = measurementCapability.getConditions();
-                        for (Condition condition : conditions) {
-                            List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.getOntology().getSensingdeviceByProperty(condition.getAttribute());
+                    for (final MeasurementCapability measurementCapability : measurementCapabilities) {
+                        final List<Condition> conditions = measurementCapability.getConditions();
+                        for (final Condition condition : conditions) {
+                            final List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.getOntology().getSensingdeviceByProperty(condition.getAttribute());
                             if (!sensingDevices.isEmpty()) {
                                 // TODO join sensingDevice to the current stream
-                                String attributeName = condition.getAttribute().getAttributeName();
+                                final String attributeName = condition.getAttribute().getAttributeName();
                                 expressions[i] = attributeName + ">" + condition.getInterval().inf() + " AND " + attributeName + "<" + condition.getInterval().sup();
                             }
                         }
                     }
                 }
+            }
+            else {
+                LOG.debug("No sensing device found");
             }
         }
     }

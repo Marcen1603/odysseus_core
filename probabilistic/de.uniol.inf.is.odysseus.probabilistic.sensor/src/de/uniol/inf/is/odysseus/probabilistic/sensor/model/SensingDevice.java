@@ -37,7 +37,7 @@ public class SensingDevice {
      * Class constructor.
      * 
      */
-    public SensingDevice(URI uri, SDFSchema schema) {
+    public SensingDevice(final URI uri, final SDFSchema schema) {
         this.uri = uri;
         this.schema = schema.clone();
     }
@@ -75,7 +75,7 @@ public class SensingDevice {
      *            the attribute
      * @return the capabilities
      */
-    public List<MeasurementCapability> getCapabilities(SDFAttribute attribute) {
+    public List<MeasurementCapability> getCapabilities(final SDFAttribute attribute) {
         return this.capabilities.get(attribute);
     }
 
@@ -83,21 +83,21 @@ public class SensingDevice {
      * @return
      */
     public List<MeasurementCapability> getAllCapabilities() {
-        List<MeasurementCapability> capabilities = new ArrayList<MeasurementCapability>();
-        for (List<MeasurementCapability> attributeCapability : this.capabilities.values()) {
+        final List<MeasurementCapability> capabilities = new ArrayList<MeasurementCapability>();
+        for (final List<MeasurementCapability> attributeCapability : this.capabilities.values()) {
             capabilities.addAll(attributeCapability);
         }
         return capabilities;
     }
 
-    public void addMeasurementCapability(MeasurementCapability capability) {
+    public void addMeasurementCapability(final MeasurementCapability capability) {
         if (!this.capabilities.containsKey(capability.getAttribute())) {
             this.capabilities.put(capability.getAttribute(), new ArrayList<MeasurementCapability>());
         }
         this.capabilities.get(capability.getAttribute()).add(capability);
     }
 
-    public void removeCapability(MeasurementCapability capability) {
+    public void removeCapability(final MeasurementCapability capability) {
         this.capabilities.get(capability.getAttribute()).remove(capability);
     }
 

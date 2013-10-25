@@ -216,7 +216,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 	 */
 	@Override
 	public final ProbabilisticTuple<?> readData(final String string) {
-		return readData(new String[] { string });
+		return this.readData(new String[] { string });
 	}
 
 	/*

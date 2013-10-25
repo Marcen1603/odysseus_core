@@ -19,7 +19,6 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
@@ -28,6 +27,7 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 	/** The bundle context. */
 	private static BundleContext context;
+
 	/** The aggregate function builder registry. */
 
 	/**
@@ -38,7 +38,6 @@ public class Activator implements BundleActivator {
 	static BundleContext getContext() {
 		return Activator.context;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -59,6 +58,5 @@ public class Activator implements BundleActivator {
 	public final void stop(final BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
-
 
 }

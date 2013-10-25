@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilisti
 /**
  * 
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  * @param <T>
  */
 public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
@@ -83,14 +83,14 @@ public class ProbabilisticDiscreteUnNestPO<T extends ITimeIntervalProbabilistic>
 	protected final void process_next(final ProbabilisticTuple<T> tuple, final int port) {
 		try {
 			final AbstractProbabilisticValue<?> probabilisticValue = (AbstractProbabilisticValue<?>) tuple.getAttribute(this.probabilisticAttributePos);
-			for (Map.Entry<?, Double> entry : probabilisticValue.getValues().entrySet()) {
+			for (final Map.Entry<?, Double> entry : probabilisticValue.getValues().entrySet()) {
 				final ProbabilisticTuple<T> outputTuple = new ProbabilisticTuple<T>(tuple);
 				outputTuple.getMetadata().setExistence(tuple.getMetadata().getExistence() * entry.getValue());
 				outputTuple.setAttribute(this.probabilisticAttributePos, entry.getKey());
 				this.transfer(outputTuple);
 			}
-		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+		} catch (final Exception e) {
+			ProbabilisticDiscreteUnNestPO.LOG.error(e.getMessage(), e);
 		}
 	}
 

@@ -17,10 +17,13 @@ package de.uniol.inf.is.odysseus.probabilistic.sensor.logicaloperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public final class LogicalOperatorCategory {
-    /** The logical operator category for operators working with probabilistic values. */
+    /**
+     * The logical operator category for operators working with probabilistic
+     * values.
+     */
     public static final String ONTOLOGY = "Ontology";
 
     /**

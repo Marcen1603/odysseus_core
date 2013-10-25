@@ -49,20 +49,20 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
 
     public SensingDeviceWizard() {
         super();
-        setWindowTitle("New Sensing Device");
+        this.setWindowTitle("New Sensing Device");
     }
 
     @Override
     public void addPages() {
-        addPage(sensingDevicePage);
-        addPage(measurementCapabilitiesPage);
+        this.addPage(this.sensingDevicePage);
+        this.addPage(this.measurementCapabilitiesPage);
     }
 
     @Override
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
+    public void init(final IWorkbench workbench, final IStructuredSelection selection) {
         this.workbench = workbench;
-        sensingDevicePage = new SensingDevicePage("Select file name", selection);
-        measurementCapabilitiesPage = new MeasurementCapabilitiesPage("Add measurement capabilities", selection, sensingDevicePage);
+        this.sensingDevicePage = new SensingDevicePage("Select file name", selection);
+        this.measurementCapabilitiesPage = new MeasurementCapabilitiesPage("Add measurement capabilities", selection, this.sensingDevicePage);
     }
 
     @Override
@@ -93,8 +93,9 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
             // };
 
             // this.getContainer().run(false, false, operation);
-            SensingDevice device = new SensingDevice(URI.create(ODYSSEUS.NS + sensingDevicePage.getSensingDeviceName()), new SDFSchema("", ProbabilisticTuple.class, sensingDevicePage.getAttributes()));
-            for (MeasurementCapability capability : measurementCapabilitiesPage.getMeasurementCapabilities()) {
+            final SensingDevice device = new SensingDevice(URI.create(ODYSSEUS.NS + this.sensingDevicePage.getSensingDeviceName()), new SDFSchema("", ProbabilisticTuple.class,
+                    this.sensingDevicePage.getAttributes()));
+            for (final MeasurementCapability capability : this.measurementCapabilitiesPage.getMeasurementCapabilities()) {
                 device.addMeasurementCapability(capability);
             }
 
@@ -103,7 +104,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
         }
         catch (final Exception e) {
             MessageDialog.openError(workbenchWindow.getShell(), OdysseusNLS.Error, e.getMessage());
-            LOG.error(e.getMessage(), e);
+            SensingDeviceWizard.LOG.error(e.getMessage(), e);
         }
         return false;
 
@@ -111,6 +112,10 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
 
 }
 
-@SuppressWarnings("serial")
 class CancelException extends Exception {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4072657522498739025L;
 };

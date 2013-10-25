@@ -60,7 +60,7 @@ public class TProbabilisiticDiscreteMapAORule extends TMapAORule {
 	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-			
+
 				boolean isProbabilisticDiscrete = false;
 				for (final SDFExpression expr : operator.getExpressions()) {
 					if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {

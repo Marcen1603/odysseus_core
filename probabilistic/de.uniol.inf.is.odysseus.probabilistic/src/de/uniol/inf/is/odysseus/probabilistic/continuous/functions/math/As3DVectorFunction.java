@@ -80,7 +80,7 @@ public class As3DVectorFunction extends AbstractProbabilisticFunction<NormalDist
 		if (argPos < 0) {
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if (argPos > getArity()) {
+		if (argPos > this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
 		}
 		return As3DVectorFunction.ACC_TYPES[argPos];

@@ -106,8 +106,11 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends Abstra
 
 	/**
 	 * Initialize the operator with the given expressions.
-	 * @param schema The schema
-	 * @param expressionsList The expressions
+	 * 
+	 * @param schema
+	 *            The schema
+	 * @param expressionsList
+	 *            The expressions
 	 */
 	private void init(final SDFSchema schema, final SDFExpression[] expressionsList) {
 		this.probabilisticAttributePos = this.determineProbabilisticAttributePos(expressionsList);
@@ -199,7 +202,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends Abstra
 				} catch (final Exception e) {
 					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
-						LOG.error("Cannot calc result ", e);
+						ProbabilisticDiscreteMapPO.LOG.error("Cannot calc result ", e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
@@ -223,8 +226,8 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends Abstra
 				((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
 				// KTHXBYE
 				this.transfer(outputVal);
-			} else if (LOG.isTraceEnabled()) {
-				LOG.trace("Drop tuple: " + outputVal.toString());
+			} else if (ProbabilisticDiscreteMapPO.LOG.isTraceEnabled()) {
+				ProbabilisticDiscreteMapPO.LOG.trace("Drop tuple: " + outputVal.toString());
 			}
 		}
 	}

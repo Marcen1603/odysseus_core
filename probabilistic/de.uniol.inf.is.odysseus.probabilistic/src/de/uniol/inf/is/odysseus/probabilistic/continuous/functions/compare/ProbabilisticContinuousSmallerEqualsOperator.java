@@ -140,6 +140,7 @@ public class ProbabilisticContinuousSmallerEqualsOperator extends AbstractProbab
 	public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
+
 	/**
 	 * Accepted data types.
 	 */

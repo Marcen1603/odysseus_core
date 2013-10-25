@@ -154,7 +154,7 @@ public class TestDouble {
 	@Test(dataProvider = "continuousPlusDoubleNumber")
 	public final void testDoubleNumberPlus(final NormalDistributionMixture mixture, final double value, final NormalDistributionMixture result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousPlusNumberRHSOperator();
-		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFProbabilisticDatatype.DOUBLE));
+		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
 		Assert.assertNotEquals(function.getValue(), mixture);
 	}
@@ -172,7 +172,7 @@ public class TestDouble {
 	@Test(dataProvider = "continuousMinusDoubleNumber")
 	public final void testDoubleNumberMinus(final NormalDistributionMixture mixture, final double value, final NormalDistributionMixture result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousMinusNumberRHSOperator();
-		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFProbabilisticDatatype.DOUBLE));
+		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
 		Assert.assertNotEquals(function.getValue(), mixture);
 	}
@@ -190,7 +190,7 @@ public class TestDouble {
 	@Test(dataProvider = "continuousMultiplicationDoubleNumber")
 	public final void testDoubleNumberMultiplication(final NormalDistributionMixture mixture, final double value, final NormalDistributionMixture result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousMultiplicationNumberRHSOperator();
-		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFProbabilisticDatatype.DOUBLE));
+		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
 		Assert.assertNotEquals(function.getValue(), mixture);
 	}
@@ -208,7 +208,7 @@ public class TestDouble {
 	@Test(dataProvider = "continuousDivisionDoubleNumber")
 	public final void testDoubleNumberDivision(final NormalDistributionMixture mixture, final double value, final NormalDistributionMixture result) {
 		final IFunction<NormalDistributionMixture> function = new ProbabilisticContinuousDivisionNumberRHSOperator();
-		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFProbabilisticDatatype.DOUBLE));
+		function.setArguments(new Constant<NormalDistributionMixture>(mixture, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE), new Constant<Double>(value, SDFDatatype.DOUBLE));
 		Assert.assertEquals(function.getValue(), result);
 		Assert.assertNotEquals(function.getValue(), mixture);
 	}

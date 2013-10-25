@@ -36,7 +36,7 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
 	@Override
 	public final void execute(final UnNestAO operator, final TransformationConfiguration config) {
 		final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<ITimeIntervalProbabilistic>(operator.getAttributePosition());
-		defaultExecute(operator, po, config, true, true);
+		this.defaultExecute(operator, po, config, true, true);
 	}
 
 	/**

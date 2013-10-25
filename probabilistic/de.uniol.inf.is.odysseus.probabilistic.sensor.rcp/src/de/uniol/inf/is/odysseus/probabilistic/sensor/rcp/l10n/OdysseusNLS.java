@@ -45,7 +45,7 @@ public class OdysseusNLS extends NLS {
     public static String MeasurementProperties;
 
     static {
-        NLS.initializeMessages(BUNDLE_NAME, OdysseusNLS.class);
+        NLS.initializeMessages(OdysseusNLS.BUNDLE_NAME, OdysseusNLS.class);
     }
 
     private OdysseusNLS() {

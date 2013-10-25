@@ -183,8 +183,8 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 		if (jointProbability > 0.0) {
 			// KTHXBYE
 			this.transfer(outputVal);
-		} else if (LOG.isTraceEnabled()) {
-			LOG.trace("Drop tuple: " + outputVal.toString());
+		} else if (ProbabilisticContinuousSelectPO.LOG.isTraceEnabled()) {
+			ProbabilisticContinuousSelectPO.LOG.trace("Drop tuple: " + outputVal.toString());
 		}
 	}
 

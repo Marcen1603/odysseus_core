@@ -135,7 +135,7 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 	public final int memSize(final Object attribute) {
 		return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return ProbabilisticDouble.class;

@@ -20,8 +20,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
  * Probabilistic meta data for probabilistic realtional tuple.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public interface IProbabilistic extends IMetaAttribute, IClone {
 	/**
@@ -44,6 +45,7 @@ public interface IProbabilistic extends IMetaAttribute, IClone {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#clone()
 	 */
-	@Override IProbabilistic clone();
+	@Override
+	IProbabilistic clone();
 
 }

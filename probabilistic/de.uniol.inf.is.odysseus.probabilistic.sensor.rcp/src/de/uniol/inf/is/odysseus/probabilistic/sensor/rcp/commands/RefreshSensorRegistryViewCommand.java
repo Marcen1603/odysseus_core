@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.rcp.util.ViewHelper;
 public class RefreshSensorRegistryViewCommand extends AbstractHandler implements IHandler {
 
     @Override
-    public Object execute(ExecutionEvent event) throws ExecutionException {
-        SensorRegistryView part = ViewHelper.getView(SensorRegistryPlugIn.SENSOR_REGISTRY_VIEW_ID, event);
+    public Object execute(final ExecutionEvent event) throws ExecutionException {
+        final SensorRegistryView part = ViewHelper.getView(SensorRegistryPlugIn.SENSOR_REGISTRY_VIEW_ID, event);
 
         if (part != null) {
             part.refresh();

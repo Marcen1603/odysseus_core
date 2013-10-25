@@ -38,17 +38,18 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
      * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
      * )
      */
-    public void start(BundleContext context) throws Exception {
+    @Override
+    public void start(final BundleContext context) throws Exception {
         super.start(context);
-        plugin = this;
-        imageManager = new ImageManager(context.getBundle());
-        imageManager.register("source", "icons/sources.png");
-        imageManager.register("sink", "icons/sinks.png");
-        imageManager.register("attribute", "icons/status.png");
-        imageManager.register("loggedinuser", "icons/user--plus.png");
-        imageManager.register("user", "icons/user.png");
-        imageManager.register("role", "icons/tick-small-circle.png");
-        imageManager.register("function", "icons/function.png");
+        SensorRegistryPlugIn.plugin = this;
+        SensorRegistryPlugIn.imageManager = new ImageManager(context.getBundle());
+        SensorRegistryPlugIn.imageManager.register("source", "icons/sources.png");
+        SensorRegistryPlugIn.imageManager.register("sink", "icons/sinks.png");
+        SensorRegistryPlugIn.imageManager.register("attribute", "icons/status.png");
+        SensorRegistryPlugIn.imageManager.register("loggedinuser", "icons/user--plus.png");
+        SensorRegistryPlugIn.imageManager.register("user", "icons/user.png");
+        SensorRegistryPlugIn.imageManager.register("role", "icons/tick-small-circle.png");
+        SensorRegistryPlugIn.imageManager.register("function", "icons/function.png");
     }
 
     /*
@@ -58,14 +59,15 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
      * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
      * )
      */
-    public void stop(BundleContext context) throws Exception {
-        imageManager.disposeAll();
-        plugin = null;
+    @Override
+    public void stop(final BundleContext context) throws Exception {
+        SensorRegistryPlugIn.imageManager.disposeAll();
+        SensorRegistryPlugIn.plugin = null;
         super.stop(context);
     }
 
     public static ImageManager getImageManager() {
-        return imageManager;
+        return SensorRegistryPlugIn.imageManager;
     }
 
     /**
@@ -74,18 +76,18 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
      * @return the shared instance
      */
     public static SensorRegistryPlugIn getDefault() {
-        return plugin;
+        return SensorRegistryPlugIn.plugin;
     }
 
-    protected void bindSensorOntologyService(SensorOntologyService service) {
-        sensorOntologyService = service;
+    protected void bindSensorOntologyService(final SensorOntologyService service) {
+        SensorRegistryPlugIn.sensorOntologyService = service;
     }
 
-    protected void unbindSensorOntologyService(SensorOntologyService service) {
-        sensorOntologyService = null;
+    protected void unbindSensorOntologyService(final SensorOntologyService service) {
+        SensorRegistryPlugIn.sensorOntologyService = null;
     }
 
     public static SensorOntologyService getSensorOntologyService() {
-        return sensorOntologyService;
+        return SensorRegistryPlugIn.sensorOntologyService;
     }
 }

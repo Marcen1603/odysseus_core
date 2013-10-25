@@ -74,7 +74,7 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
 	@Override
 	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
 		final NormalDistributionMixture distribution = in.getDistribution(((ProbabilisticContinuousDouble) in.getAttribute(this.pos)).getDistribution());
-		final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(distribution, datatype);
+		final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(distribution, this.datatype);
 		return pa;
 	}
 
@@ -86,7 +86,7 @@ public class ProbabilisticContinuousSum extends AbstractAggregateFunction<Probab
 	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
 		SumPartialAggregate<ProbabilisticTuple<?>> pa = null;
 		if (createNew) {
-			pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), datatype);
+			pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), this.datatype);
 		} else {
 			pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
 		}

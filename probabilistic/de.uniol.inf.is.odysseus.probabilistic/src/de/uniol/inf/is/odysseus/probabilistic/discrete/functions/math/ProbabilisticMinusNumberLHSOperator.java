@@ -31,33 +31,37 @@ public class ProbabilisticMinusNumberLHSOperator extends ProbabilisticMinusOpera
 	 * 
 	 */
 	private static final long serialVersionUID = -8250027847234930993L;
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator#getValue()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator#getValue()
+	 */
 	@Override
 	public final ProbabilisticDouble getValue() {
 		final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
 		final AbstractProbabilisticValue<?> b = this.getInputValue(1);
 		return this.getValueInternal(a, b);
 	}
+
 	/**
 	 * Accepted data types.
 	 */
 	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
 			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator#isCommutative()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator#isCommutative()
+	 */
 	@Override
 	public final boolean isCommutative() {
 		return false;
 	}
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator#getAcceptedTypes(int)
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator#getAcceptedTypes(int)
+	 */
 	@Override
 	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {

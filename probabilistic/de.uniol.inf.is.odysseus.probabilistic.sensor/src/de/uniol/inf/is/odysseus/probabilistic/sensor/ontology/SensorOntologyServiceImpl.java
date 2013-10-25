@@ -66,7 +66,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * 
      */
     public SensorOntologyServiceImpl() {
-        ontology = new SensorOntology();
+        SensorOntologyServiceImpl.ontology = new SensorOntology();
     }
 
     /**
@@ -74,7 +74,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      */
     @Override
     public List<SensingDevice> getAllSensingDevices() {
-        List<SensingDevice> sensingDevices = ontology.getAllSensingDevices();
+        final List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.ontology.getAllSensingDevices();
         return sensingDevices;
     }
 
@@ -82,8 +82,8 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public void createSensingDevice(SensingDevice sensingDevice) {
-        ontology.createSensingDevice(sensingDevice);
+    public void createSensingDevice(final SensingDevice sensingDevice) {
+        SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
     }
 
     /**
@@ -91,35 +91,35 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      */
     @Override
     public List<SDFAttribute> getAllProperties() {
-        List<SDFAttribute> properties = new ArrayList<SDFAttribute>();
+        final List<SDFAttribute> properties = new ArrayList<SDFAttribute>();
         return properties;
     }
 
-    public void bindExecutor(IExecutor executor) {
+    public void bindExecutor(final IExecutor executor) {
         if (executor instanceof IServerExecutor) {
             SensorOntologyServiceImpl.executor = (IServerExecutor) executor;
-            LOG.debug("Executor " + executor + " bound");
-            prepareExecutor();
+            SensorOntologyServiceImpl.LOG.debug("Executor " + executor + " bound");
+            this.prepareExecutor();
         }
-        registerDataDictionaryListener();
+        this.registerDataDictionaryListener();
     }
 
-    public void unbindExecutor(IExecutor executor) {
+    public void unbindExecutor(final IExecutor executor) {
         if (SensorOntologyServiceImpl.executor == executor) {
             SensorOntologyServiceImpl.executor = null;
-            LOG.debug("Executor " + executor + " unbound.");
+            SensorOntologyServiceImpl.LOG.debug("Executor " + executor + " unbound.");
         }
     }
 
-    public void bindUserManagement(IUserManagement userManagement) {
+    public void bindUserManagement(final IUserManagement userManagement) {
         SensorOntologyServiceImpl.userManagement = userManagement;
-        SensorOntologyServiceImpl.session = getUserManagement().getSessionManagement().loginSuperUser(null);
-        LOG.debug("UserManagement " + userManagement + " bound");
-        prepareUserManagement();
-        registerDataDictionaryListener();
+        SensorOntologyServiceImpl.session = SensorOntologyServiceImpl.getUserManagement().getSessionManagement().loginSuperUser(null);
+        SensorOntologyServiceImpl.LOG.debug("UserManagement " + userManagement + " bound");
+        this.prepareUserManagement();
+        this.registerDataDictionaryListener();
     }
 
-    public void unbindUserManagement(IUserManagement userManagement) {
+    public void unbindUserManagement(final IUserManagement userManagement) {
         SensorOntologyServiceImpl.session = null;
         SensorOntologyServiceImpl.userManagement = null;
     }
@@ -133,17 +133,17 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     }
 
     public static SensorOntology getOntology() {
-        return ontology;
+        return SensorOntologyServiceImpl.ontology;
     }
 
     public static ISession getActiveSession() {
-        return session;
+        return SensorOntologyServiceImpl.session;
     }
 
     @Override
-    public void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
-        LOG.debug(event.toString());
-        registerDataDictionaryListener();
+    public void eventOccured(final IEvent<?, ?> event, final long nanoTimestamp) {
+        SensorOntologyServiceImpl.LOG.debug(event.toString());
+        this.registerDataDictionaryListener();
         if (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED) {
             ((SchedulerManagerEvent) event).getValue().unSubscribeFromAll(this);
         }
@@ -151,42 +151,42 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
             ((SchedulerManagerEvent) event).getValue().subscribeToAll(this);
         }
 
-        if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED || event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED
-                || event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
+        if ((event.getEventType() == SchedulingEventType.SCHEDULING_STARTED) || (event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED)
+                || (event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED) || (event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET)) {
             try {
-                createStreamsAndViewsInOntology();
+                this.createStreamsAndViewsInOntology();
             }
-            catch (PlanManagementException e) {
+            catch (final PlanManagementException e) {
                 e.printStackTrace();
             }
         }
     }
 
     private void prepareExecutor() {
-        if (getExecutor().getSchedulerManager() != null) {
-            getExecutor().getSchedulerManager().subscribeToAll(this);
-            getExecutor().getSchedulerManager().getActiveScheduler().subscribeToAll(this);
+        if (SensorOntologyServiceImpl.getExecutor().getSchedulerManager() != null) {
+            SensorOntologyServiceImpl.getExecutor().getSchedulerManager().subscribeToAll(this);
+            SensorOntologyServiceImpl.getExecutor().getSchedulerManager().getActiveScheduler().subscribeToAll(this);
         }
-        registerDataDictionaryListener();
+        this.registerDataDictionaryListener();
     }
 
     private void prepareUserManagement() {
-        getUserManagement().getSessionManagement().subscribe(this);
+        SensorOntologyServiceImpl.getUserManagement().getSessionManagement().subscribe(this);
     }
 
     private void registerDataDictionaryListener() {
-        if ((getExecutor() != null) && (getActiveSession() != null)) {
-            getExecutor().getDataDictionary(getActiveSession().getTenant()).addListener(this);
+        if ((SensorOntologyServiceImpl.getExecutor() != null) && (SensorOntologyServiceImpl.getActiveSession() != null)) {
+            SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession().getTenant()).addListener(this);
         }
     }
 
     private void createStreamsAndViewsInOntology() {
-        IDataDictionaryWritable dataDictionary = getExecutor().getDataDictionary(getActiveSession().getTenant());
-        Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dataDictionary.getStreamsAndViews(getActiveSession());
-        for (Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
-            String name = streamAndView.getKey().getResourceName();
-            SDFSchema schema = streamAndView.getValue().getOutputSchema();
-            createSensingDevice(name, schema);
+        final IDataDictionaryWritable dataDictionary = SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession().getTenant());
+        final Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dataDictionary.getStreamsAndViews(SensorOntologyServiceImpl.getActiveSession());
+        for (final Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
+            final String name = streamAndView.getKey().getResourceName();
+            final SDFSchema schema = streamAndView.getValue().getOutputSchema();
+            this.createSensingDevice(name, schema);
         }
     }
 
@@ -194,9 +194,9 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-        LOG.debug("Add view " + name + " to ontology");
-        createSensingDevice(name, op.getOutputSchema());
+    public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
+        SensorOntologyServiceImpl.LOG.debug("Add view " + name + " to ontology");
+        this.createSensingDevice(name, op.getOutputSchema());
 
     }
 
@@ -204,9 +204,9 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-        SDFSchema schema = op.getOutputSchema();
-        LOG.debug("Remove view: " + name + " " + schema);
+    public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
+        final SDFSchema schema = op.getOutputSchema();
+        SensorOntologyServiceImpl.LOG.debug("Remove view: " + name + " " + schema);
 
     }
 
@@ -214,26 +214,26 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public void dataDictionaryChanged(IDataDictionary sender) {
-        LOG.debug("Datadictionary changed");
+    public void dataDictionaryChanged(final IDataDictionary sender) {
+        SensorOntologyServiceImpl.LOG.debug("Datadictionary changed");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void sessionEventOccured(ISessionEvent event) {
-        LOG.debug("SessionEvent occured");
+    public void sessionEventOccured(final ISessionEvent event) {
+        SensorOntologyServiceImpl.LOG.debug("SessionEvent occured");
     }
 
-    private void createSensingDevice(String name, SDFSchema schema) {
-        SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name), schema);
-        for (SDFAttribute attribute : schema.getAttributes()) {
-            MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + attribute.getAttributeName()), attribute);
-            Condition condition = new Condition(URI.create(ODYSSEUS.NS + attribute.getAttributeName() + "/" + name), attribute, Interval.MAX);
+    private void createSensingDevice(final String name, final SDFSchema schema) {
+        final SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name), schema);
+        for (final SDFAttribute attribute : schema.getAttributes()) {
+            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + attribute.getAttributeName()), attribute);
+            final Condition condition = new Condition(URI.create(ODYSSEUS.NS + attribute.getAttributeName() + "/" + name), attribute, Interval.MAX);
             measurementCapability.addCondition(condition);
             sensingDevice.addMeasurementCapability(measurementCapability);
         }
-        ontology.createSensingDevice(sensingDevice);
+        SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
     }
 }

@@ -47,7 +47,7 @@ public final class SSN {
      * @see #NS
      */
     public static String getURI() {
-        return NS;
+        return SSN.NS;
     }
 
     /**
@@ -55,7 +55,7 @@ public final class SSN {
      * The namespace of the vocabulary as a resource
      * </p>
      */
-    public static final Resource NAMESPACE = m_model.createResource(NS);
+    public static final Resource NAMESPACE = SSN.m_model.createResource(SSN.NS);
 
     // Vocabulary properties
     // /////////////////////////
@@ -63,77 +63,77 @@ public final class SSN {
      * has property: A relation between a FeatureOfInterest and a Property of
      * that feature.
      */
-    public static final Property hasProperty = m_model.createProperty(NS + "hasProperty");
+    public static final Property hasProperty = SSN.m_model.createProperty(SSN.NS + "hasProperty");
     /**
      * made observation: Relation between a Sensor and Observations it has made.
      */
-    public static final Property madeObservation = m_model.createProperty(NS + "madeObservation");
+    public static final Property madeObservation = SSN.m_model.createProperty(SSN.NS + "madeObservation");
     /**
      * sensing method used: A (measurement) procedure is a detailed description
      * of a measurement according to one or more measurement principles and to a
      * given measurement method, based on a measurement model and including any
      * calculation to obtain a measurement result [VIM 2.6]
      */
-    public static final Property sensingMethodUsed = m_model.createProperty(NS + "sensingMethodUsed");
+    public static final Property sensingMethodUsed = SSN.m_model.createProperty(SSN.NS + "sensingMethodUsed");
     /**
      * has measurement capability: Relation from a Sensor to a
      * MeasurementCapability describing the measurement properties of the
      * sensor.
      */
-    public static final Property hasMeasurementCapability = m_model.createProperty(NS + "hasMeasurementCapability");
+    public static final Property hasMeasurementCapability = SSN.m_model.createProperty(SSN.NS + "hasMeasurementCapability");
     /** has value. */
-    public static final Property hasValue = m_model.createProperty(NS + "hasValue");
+    public static final Property hasValue = SSN.m_model.createProperty(SSN.NS + "hasValue");
     /**
      * observation sampling time: The sampling time is the time that the result
      * applies to the feature-of-interest. This is the time usually required for
      * geospatial analysis of the result.
      */
-    public static final Property observationSamplingTime = m_model.createProperty(NS + "observationSamplingTime");
+    public static final Property observationSamplingTime = SSN.m_model.createProperty(SSN.NS + "observationSamplingTime");
     /** null. */
-    public static final Property observedBy = m_model.createProperty(NS + "observedBy");
+    public static final Property observedBy = SSN.m_model.createProperty(SSN.NS + "observedBy");
     /**
      * attached system: Relation between a Platform and any Systems (e.g.,
      * Sensors) that are attached to the Platform.
      */
-    public static final Property attachedSystem = m_model.createProperty(NS + "attachedSystem");
+    public static final Property attachedSystem = SSN.m_model.createProperty(SSN.NS + "attachedSystem");
     /**
      * has measurement property: Relation from a MeasurementCapability to a
      * MeasurementProperty. For example, to an accuracy (see notes at
      * MeasurementCapability).
      */
-    public static final Property hasMeasurementProperty = m_model.createProperty(NS + "hasMeasurementProperty");
+    public static final Property hasMeasurementProperty = SSN.m_model.createProperty(SSN.NS + "hasMeasurementProperty");
     /** end time. */
-    public static final Property endTime = m_model.createProperty(NS + "endTime");
+    public static final Property endTime = SSN.m_model.createProperty(SSN.NS + "endTime");
     /**
      * deployment process part: Has part relation between a deployment process
      * and its constituent processes.
      */
-    public static final Property deploymentProcessPart = m_model.createProperty(NS + "deploymentProcessPart");
+    public static final Property deploymentProcessPart = SSN.m_model.createProperty(SSN.NS + "deploymentProcessPart");
     /**
      * observation result: Relation linking an Observation (i.e., a description
      * of the context, the Situation, in which the observatioin was made) and a
      * Result, which contains a value representing the value associated with the
      * observed Property.
      */
-    public static final Property observationResult = m_model.createProperty(NS + "observationResult");
+    public static final Property observationResult = SSN.m_model.createProperty(SSN.NS + "observationResult");
     /**
      * in deployment: Relation between a Platform and a Deployment, recording
      * that the object was used as a platform for a system/sensor for a
      * particular deployment: as in this PhysicalObject is acting as a Platform
      * inDeployment Deployment.
      */
-    public static final Property inDeployment = m_model.createProperty(NS + "inDeployment");
+    public static final Property inDeployment = SSN.m_model.createProperty(SSN.NS + "inDeployment");
     /**
      * has deployment: Relation between a System and a Deployment, recording
      * that the System/Sensor was deployed in that Deployment.
      */
-    public static final Property hasDeployment = m_model.createProperty(NS + "hasDeployment");
+    public static final Property hasDeployment = SSN.m_model.createProperty(SSN.NS + "hasDeployment");
     /**
      * has survival property: Relation from a SurvivalRange to a Property
      * describing the survial range of a system. For example, to the temperature
      * extreme that a system can withstand before being considered damaged.
      */
-    public static final Property hasSurvivalProperty = m_model.createProperty(NS + "hasSurvivalProperty");
+    public static final Property hasSurvivalProperty = SSN.m_model.createProperty(SSN.NS + "hasSurvivalProperty");
     /**
      * implements: A relation between an entity that implements a method in some
      * executable way and the description of an algorithm, procedure or method.
@@ -141,7 +141,7 @@ public final class SSN {
      * the
      * Sensor uses to observe a Property.
      */
-    public static final Property implement = m_model.createProperty(NS + "implements");
+    public static final Property implement = SSN.m_model.createProperty(SSN.NS + "implements");
     /**
      * on platform: Relation between a System (e.g., a Sensor) and a Platform.
      * The relation locates the sensor relative to other described entities
@@ -151,50 +151,50 @@ public final class SSN {
      * to another entity, or in 3D space) are made using DOLCE's Regions
      * (SpaceRegion).
      */
-    public static final Property onPlatform = m_model.createProperty(NS + "onPlatform");
+    public static final Property onPlatform = SSN.m_model.createProperty(SSN.NS + "onPlatform");
     /** has survival range: A Relation from a System to a SurvivalRange. */
-    public static final Property hasSurvivalRange = m_model.createProperty(NS + "hasSurvivalRange");
+    public static final Property hasSurvivalRange = SSN.m_model.createProperty(SSN.NS + "hasSurvivalRange");
     /** deployed system: Relation between a deployment and the deployed system. */
-    public static final Property deployedSystem = m_model.createProperty(NS + "deployedSystem");
+    public static final Property deployedSystem = SSN.m_model.createProperty(SSN.NS + "deployedSystem");
     /**
      * observed property: Relation linking an Observation to the Property that
      * was observed. The observedProperty should be a Property (hasProperty) of
      * the FeatureOfInterest (linked by featureOfInterest) of this observation.
      */
-    public static final Property observedProperty = m_model.createProperty(NS + "observedProperty");
+    public static final Property observedProperty = SSN.m_model.createProperty(SSN.NS + "observedProperty");
     /**
      * has operating range: Relation from a System to an OperatingRange
      * describing the normal operating environment of the System.
      */
-    public static final Property hasOperatingRange = m_model.createProperty(NS + "hasOperatingRange");
+    public static final Property hasOperatingRange = SSN.m_model.createProperty(SSN.NS + "hasOperatingRange");
     /**
      * quality of observation: Relation linking an Observation to the adjudged
      * quality of the result. This is of course complimentary to the
      * MeasurementCapability information recorded for the Sensor that made the
      * Observation.
      */
-    public static final Property qualityOfObservation = m_model.createProperty(NS + "qualityOfObservation");
+    public static final Property qualityOfObservation = SSN.m_model.createProperty(SSN.NS + "qualityOfObservation");
     /**
      * has operating property: Relation from an OperatingRange to a Property.
      * For example, to a battery lifetime.
      */
-    public static final Property hasOperatingProperty = m_model.createProperty(NS + "hasOperatingProperty");
+    public static final Property hasOperatingProperty = SSN.m_model.createProperty(SSN.NS + "hasOperatingProperty");
     /**
      * feature of interest: A relation between an observation and the entity
      * whose quality was observed. For example, in an observation of the weight
      * of a person, the feature of interest is the person and the quality is
      * weight.
      */
-    public static final Property featureOfInterest = m_model.createProperty(NS + "featureOfInterest");
+    public static final Property featureOfInterest = SSN.m_model.createProperty(SSN.NS + "featureOfInterest");
     /**
      * implemented by: A relation between the description of an algorithm,
      * procedure or method and an entity that implements that method in some
      * executable way. For example, between a scientific measuring method and a
      * sensor the senses via that method.
      */
-    public static final Property implementedBy = m_model.createProperty(NS + "implementedBy");
+    public static final Property implementedBy = SSN.m_model.createProperty(SSN.NS + "implementedBy");
     /** has subsystem: Haspart relation between a system and its parts. */
-    public static final Property hasSubSystem = m_model.createProperty(NS + "hasSubSystem");
+    public static final Property hasSubSystem = SSN.m_model.createProperty(SSN.NS + "hasSubSystem");
     /**
      * observation result time: The result time shall describe the time when the
      * result became available, typically when the procedure associated with the
@@ -202,28 +202,28 @@ public final class SSN {
      * phenomenonTime. However, there are important cases where they
      * differ.[O&M]
      */
-    public static final Property observationResultTime = m_model.createProperty(NS + "observationResultTime");
+    public static final Property observationResultTime = SSN.m_model.createProperty(SSN.NS + "observationResultTime");
     /** start time. */
-    public static final Property startTime = m_model.createProperty(NS + "startTime");
+    public static final Property startTime = SSN.m_model.createProperty(SSN.NS + "startTime");
     /**
      * is property of: Relation between a FeatureOfInterest and a Property (a
      * Quality observable by a sensor) of that feature.
      */
-    public static final Property isPropertyOf = m_model.createProperty(NS + "isPropertyOf");
+    public static final Property isPropertyOf = SSN.m_model.createProperty(SSN.NS + "isPropertyOf");
     /**
      * deployed on platform: Relation between a deployment and the platform on
      * which the system was deployed.
      */
-    public static final Property deployedOnPlatform = m_model.createProperty(NS + "deployedOnPlatform");
+    public static final Property deployedOnPlatform = SSN.m_model.createProperty(SSN.NS + "deployedOnPlatform");
     /**
      * in condition: Describes the prevailing environmental conditions for
      * MeasurementCapabilites, OperatingConditions and SurvivalRanges. Used for
      * example to say that a sensor has a particular accuracy in particular
      * conditions. (see also MeasurementCapability)
      */
-    public static final Property inCondition = m_model.createProperty(NS + "inCondition");
+    public static final Property inCondition = SSN.m_model.createProperty(SSN.NS + "inCondition");
     /** has input. */
-    public static final Property hasInput = m_model.createProperty(NS + "hasInput");
+    public static final Property hasInput = SSN.m_model.createProperty(SSN.NS + "hasInput");
     /**
      * isProxyFor: A relation from a Stimulus to the Property that the Stimulus
      * is serving as a proxy for. For example, the expansion of the quicksilver
@@ -231,7 +231,7 @@ public final class SSN {
      * decrease in the spinning of cups on a wind sensor is serving as a proxy
      * for wind speed.
      */
-    public static final Property isProxyFor = m_model.createProperty(NS + "isProxyFor");
+    public static final Property isProxyFor = SSN.m_model.createProperty(SSN.NS + "isProxyFor");
     /**
      * for property: A relation between some aspect of a sensing entity and a
      * property. For example, from a sensor to the properties it can observe, or
@@ -240,7 +240,7 @@ public final class SSN {
      * a measurement capability to the property the capability is described for.
      * (Used in conjunction with ofFeature).
      */
-    public static final Property forProperty = m_model.createProperty(NS + "forProperty");
+    public static final Property forProperty = SSN.m_model.createProperty(SSN.NS + "forProperty");
     /**
      * observes: Relation between a Sensor and a Property that the sensor can
      * observe.Note that, given the DUL modelling of Qualities, a sensor defined
@@ -251,7 +251,7 @@ public final class SSN {
      * quality
      * then one can infer that the sensor observes that quality.
      */
-    public static final Property observes = m_model.createProperty(NS + "observes");
+    public static final Property observes = SSN.m_model.createProperty(SSN.NS + "observes");
     /**
      * of feature: A relation between some aspect of a sensing entity and a
      * feature. For example, from a sensor to the features it can observe
@@ -259,20 +259,20 @@ public final class SSN {
      * observe. Also from a measurement capability to the feature the capability
      * is described for. (Used in conjunction with forProperty).
      */
-    public static final Property ofFeature = m_model.createProperty(NS + "ofFeature");
+    public static final Property ofFeature = SSN.m_model.createProperty(SSN.NS + "ofFeature");
     /**
      * detects: A relation from a sensor to the Stimulus that the sensor can
      * detect. The Stimulus itself will be serving as a proxy for (see
      * isProxyOf) some observable property.
      */
-    public static final Property detects = m_model.createProperty(NS + "detects");
+    public static final Property detects = SSN.m_model.createProperty(SSN.NS + "detects");
     /** has output. */
-    public static final Property hasOutput = m_model.createProperty(NS + "hasOutput");
+    public static final Property hasOutput = SSN.m_model.createProperty(SSN.NS + "hasOutput");
     /**
      * is produced by: Relation between a producer and a produced entity: for
      * example, between a sensor and the produced output.
      */
-    public static final Property isProducedBy = m_model.createProperty(NS + "isProducedBy");
+    public static final Property isProducedBy = SSN.m_model.createProperty(SSN.NS + "isProducedBy");
 
     // Vocabulary classes
     // /////////////////////////
@@ -281,18 +281,18 @@ public final class SSN {
      * Accuracy: The closeness of agreement between the value of an observation
      * and the true value of the observed quality.
      */
-    public static final Resource Accuracy = m_model.createResource(NS + "Accuracy");
+    public static final Resource Accuracy = SSN.m_model.createResource(SSN.NS + "Accuracy");
     /**
      * detection limit: An observed value for which the probability of falsely
      * claiming the absence of a component in a material is Î², given a
      * probability Î± of falsely claiming its presence.
      */
-    public static final Resource DetectionLimit = m_model.createResource(NS + "DetectionLimit");
+    public static final Resource DetectionLimit = SSN.m_model.createResource(SSN.NS + "DetectionLimit");
     /**
      * Frequency: The smallest possible time between one observation and the
      * next.
      */
-    public static final Resource Frequency = m_model.createResource(NS + "Frequency");
+    public static final Resource Frequency = SSN.m_model.createResource(SSN.NS + "Frequency");
     /**
      * Condition: Used to specify ranges for qualities that act as conditions on
      * a system/sensor's operation. For example, wind speed of 10-60m/s is
@@ -302,29 +302,29 @@ public final class SSN {
      * that
      * a sensor has a particular accuracy in that condition.
      */
-    public static final Resource Condition = m_model.createResource(NS + "Condition");
+    public static final Resource Condition = SSN.m_model.createResource(SSN.NS + "Condition");
     /**
      * Sensor Output: A sensor outputs a piece of information (an observed
      * value), the value itself being represented by an ObservationValue.
      */
-    public static final Resource SensorOutput = m_model.createResource(NS + "SensorOutput");
+    public static final Resource SensorOutput = SSN.m_model.createResource(SSN.NS + "SensorOutput");
     /**
      * Precision: The closeness of agreement between replicate observations on
      * an unchanged or similar quality value: i.e., a measure of a sensor's
      * ability to consitently reproduce an observation.
      */
-    public static final Resource Precision = m_model.createResource(NS + "Precision");
+    public static final Resource Precision = SSN.m_model.createResource(SSN.NS + "Precision");
     /**
      * Resolution: The smallest difference in the value of a quality being
      * observed that would result in perceptably different values of observation
      * results.
      */
-    public static final Resource Resolution = m_model.createResource(NS + "Resolution");
+    public static final Resource Resolution = SSN.m_model.createResource(SSN.NS + "Resolution");
     /**
      * Feature of Interest: A feature is an abstraction of real world phenomena
      * (thing, person, event, etc).
      */
-    public static final Resource FeatureOfInterest = m_model.createResource(NS + "FeatureOfInterest");
+    public static final Resource FeatureOfInterest = SSN.m_model.createResource(SSN.NS + "FeatureOfInterest");
     /**
      * Sensor: A sensor can do (implements) sensing: that is, a sensor is any
      * entity that can follow a sensing method and thus observe some Property of
@@ -333,34 +333,34 @@ public final class SSN {
      * other
      * thing that can follow a Sensing Method to observe a Property.
      */
-    public static final Resource Sensor = m_model.createResource(NS + "Sensor");
+    public static final Resource Sensor = SSN.m_model.createResource(SSN.NS + "Sensor");
     /**
      * Operating Property: An identifiable characteristic of the environmental
      * and other conditions in which the sensor is intended to operate. May
      * include power ranges, power sources, standard configurations, attachments
      * and the like.
      */
-    public static final Resource OperatingProperty = m_model.createResource(NS + "OperatingProperty");
+    public static final Resource OperatingProperty = SSN.m_model.createResource(SSN.NS + "OperatingProperty");
     /**
      * Operating Power Range: Power range in which system/sensor is expected to
      * operate.
      */
-    public static final Resource OperatingPowerRange = m_model.createResource(NS + "OperatingPowerRange");
+    public static final Resource OperatingPowerRange = SSN.m_model.createResource(SSN.NS + "OperatingPowerRange");
     /**
      * Maintenance Schedule: Schedule of maintenance for a system/sensor in the
      * specified conditions.
      */
-    public static final Resource MaintenanceSchedule = m_model.createResource(NS + "MaintenanceSchedule");
+    public static final Resource MaintenanceSchedule = SSN.m_model.createResource(SSN.NS + "MaintenanceSchedule");
     /**
      * Sensing: Sensing is a process that results in the estimation, or
      * calculation, of the value of a phenomenon.
      */
-    public static final Resource Sensing = m_model.createResource(NS + "Sensing");
+    public static final Resource Sensing = SSN.m_model.createResource(SSN.NS + "Sensing");
     /**
      * Latency: The time between a request for an observation and the sensor
      * providing a result.
      */
-    public static final Resource Latency = m_model.createResource(NS + "Latency");
+    public static final Resource Latency = SSN.m_model.createResource(SSN.NS + "Latency");
     /**
      * Survival Range: The conditions a sensor can be exposed to without damage:
      * i.e., the sensor continues to operate as defined using
@@ -369,22 +369,22 @@ public final class SSN {
      * longer
      * hold.
      */
-    public static final Resource SurvivalRange = m_model.createResource(NS + "SurvivalRange");
+    public static final Resource SurvivalRange = SSN.m_model.createResource(SSN.NS + "SurvivalRange");
     /** Sensing Device: A sensing device is a device that implements sensing. */
-    public static final Resource SensingDevice = m_model.createResource(NS + "SensingDevice");
+    public static final Resource SensingDevice = SSN.m_model.createResource(SSN.NS + "SensingDevice");
     /**
      * Sensitivity: Sensitivity is the quotient of the change in a result of
      * sensor and the corresponding change in a value of a quality being
      * observed.
      */
-    public static final Resource Sensitivity = m_model.createResource(NS + "Sensitivity");
+    public static final Resource Sensitivity = SSN.m_model.createResource(SSN.NS + "Sensitivity");
     /**
      * Stimulus: An Event in the real world that 'triggers' the sensor. The
      * properties associated to the stimulus may be different to eventual
      * observed property. It is the event, not the object that triggers the
      * sensor.
      */
-    public static final Resource Stimulus = m_model.createResource(NS + "Stimulus");
+    public static final Resource Stimulus = SSN.m_model.createResource(SSN.NS + "Stimulus");
     /**
      * Measurement Range: The set of values that the sensor can return as the
      * result of an observation under the defined conditions with the defined
@@ -392,36 +392,36 @@ public final class SSN {
      * do not specify a range for the observed qualities, the measurement range
      * is to be taken as the condition for the observed qualities.)
      */
-    public static final Resource MeasurementRange = m_model.createResource(NS + "MeasurementRange");
+    public static final Resource MeasurementRange = SSN.m_model.createResource(SSN.NS + "MeasurementRange");
     /**
      * System: System is a unit of abstraction for pieces of infrastructure (and
      * we largely care that they are) for sensing. A system has components, its
      * subsystems, which are other systems.
      */
-    public static final Resource System = m_model.createResource(NS + "System");
+    public static final Resource System = SSN.m_model.createResource(SSN.NS + "System");
     /**
      * System Lifetime: Total useful life of a sensor/system (expressed as total
      * life since manufacture, time in use, number of operations, etc.).
      */
-    public static final Resource SystemLifetime = m_model.createResource(NS + "SystemLifetime");
+    public static final Resource SystemLifetime = SSN.m_model.createResource(SSN.NS + "SystemLifetime");
     /**
      * Property: An observable Quality of an Event or Object. That is, not a
      * quality of an abstract entity as is also allowed by DUL's Quality, but
      * rather an aspect of an entity that is intrinsic to and cannot exist
      * without the entity and is observable by a sensor.
      */
-    public static final Resource Property = m_model.createResource(NS + "Property");
+    public static final Resource Property = SSN.m_model.createResource(SSN.NS + "Property");
     /**
      * Measurement Property: An identifiable and observable characteristic of a
      * sensor's observations or ability to make observations.
      */
-    public static final Resource MeasurementProperty = m_model.createResource(NS + "MeasurementProperty");
+    public static final Resource MeasurementProperty = SSN.m_model.createResource(SSN.NS + "MeasurementProperty");
     /**
      * Process: A process has an output and possibly inputs and, for a composite
      * process, describes the temporal and dataflow dependencies and
      * relationships amongst its parts. [SSN XG]
      */
-    public static final Resource Process = m_model.createResource(NS + "Process");
+    public static final Resource Process = SSN.m_model.createResource(SSN.NS + "Process");
     /**
      * Deployment: The ongoing Process of Entities (for the purposes of this
      * ontology, mainly sensors) deployed for a particular purpose. For example,
@@ -431,7 +431,7 @@ public final class SSN {
      * decomissioning
      * and removal.
      */
-    public static final Resource Deployment = m_model.createResource(NS + "Deployment");
+    public static final Resource Deployment = SSN.m_model.createResource(SSN.NS + "Deployment");
     /**
      * Measurement Capability: Collects together measurement properties
      * (accuracy, range, precision, etc) and the environmental conditions in
@@ -442,45 +442,45 @@ public final class SSN {
      * conditions
      * that don't affect the observations.
      */
-    public static final Resource MeasurementCapability = m_model.createResource(NS + "MeasurementCapability");
+    public static final Resource MeasurementCapability = SSN.m_model.createResource(SSN.NS + "MeasurementCapability");
     /** Battery Lifetime: Total useful life of a battery. */
-    public static final Resource BatteryLifetime = m_model.createResource(NS + "BatteryLifetime");
+    public static final Resource BatteryLifetime = SSN.m_model.createResource(SSN.NS + "BatteryLifetime");
     /**
      * Input: Any information that is provided to a process for its use [MMI
      * OntDev]
      */
-    public static final Resource Input = m_model.createResource(NS + "Input");
+    public static final Resource Input = SSN.m_model.createResource(SSN.NS + "Input");
     /**
      * Drift: A, continuous or incremental, change in the reported values of
      * observations over time for an unchanging quality.
      */
-    public static final Resource Drift = m_model.createResource(NS + "Drift");
+    public static final Resource Drift = SSN.m_model.createResource(SSN.NS + "Drift");
     /**
      * Deployment-related Process: Place to group all the various Processes
      * related to Deployment. For example, as well as Deplyment, installation,
      * maintenance, deployment of further sensors and the like would all be
      * classified under DeploymentRelatedProcess.
      */
-    public static final Resource DeploymentRelatedProcess = m_model.createResource(NS + "DeploymentRelatedProcess");
+    public static final Resource DeploymentRelatedProcess = SSN.m_model.createResource(SSN.NS + "DeploymentRelatedProcess");
     /**
      * Sensor Input: An Event in the real world that 'triggers' the sensor. The
      * properties associated to the stimulus may be different to eventual
      * observed property. It is the event, not the object that triggers the
      * sensor.
      */
-    public static final Resource SensorInput = m_model.createResource(NS + "SensorInput");
+    public static final Resource SensorInput = SSN.m_model.createResource(SSN.NS + "SensorInput");
     /**
      * Response time: The time between a (step) change inthe value of an
      * observed quality and a sensor (possibly with specified error) 'settling'
      * on an observed value.
      */
-    public static final Resource ResponseTime = m_model.createResource(NS + "ResponseTime");
+    public static final Resource ResponseTime = SSN.m_model.createResource(SSN.NS + "ResponseTime");
     /**
      * Observation Value: The value of the result of an Observation. An
      * Observation has a result which is the output of some sensor, the result
      * is an information object that encodes some value for a Feature.
      */
-    public static final Resource ObservationValue = m_model.createResource(NS + "ObservationValue");
+    public static final Resource ObservationValue = SSN.m_model.createResource(SSN.NS + "ObservationValue");
     /**
      * Sensor Data Sheet: A data sheet records properties of a sensor. A data
      * sheet might describe for example the accuracy in various conditions, the
@@ -492,7 +492,7 @@ public final class SSN {
      * information object about the sensor's properties, rather than a direct
      * link to the actual properties themselves.
      */
-    public static final Resource SensorDataSheet = m_model.createResource(NS + "SensorDataSheet");
+    public static final Resource SensorDataSheet = SSN.m_model.createResource(SSN.NS + "SensorDataSheet");
     /**
      * Observation: An Observation is a Situation in which a Sensing method has
      * been used to estimate or calculate a value of a Property of a
@@ -501,14 +501,14 @@ public final class SSN {
      * sensed;
      * the result is the output of a Sensor; other metadata details times etc.
      */
-    public static final Resource Observation = m_model.createResource(NS + "Observation");
+    public static final Resource Observation = SSN.m_model.createResource(SSN.NS + "Observation");
     /**
      * Selectivity: Selectivity is a property of a sensor whereby it provides
      * observed values for one or more qualities such that the values of each
      * quality are independent of other qualities in the phenomenon, body, or
      * substance being investigated.
      */
-    public static final Resource Selectivity = m_model.createResource(NS + "Selectivity");
+    public static final Resource Selectivity = SSN.m_model.createResource(SSN.NS + "Selectivity");
     /**
      * Survival Property: An identifiable characteristic that represents the
      * extent of the sensors useful life. Might include for example total
@@ -516,13 +516,13 @@ public final class SSN {
      * fixed number of times, the number of observations that can be made before
      * the sensing capability is depleted.
      */
-    public static final Resource SurvivalProperty = m_model.createResource(NS + "SurvivalProperty");
+    public static final Resource SurvivalProperty = SSN.m_model.createResource(SSN.NS + "SurvivalProperty");
     /**
      * Device: A device is a physical piece of technology - a system in a box.
      * Devices may of course be built of smaller devices and software components
      * (i.e. systems have components).
      */
-    public static final Resource Device = m_model.createResource(NS + "Device");
+    public static final Resource Device = SSN.m_model.createResource(SSN.NS + "Device");
     /**
      * Operating Range: The environmental conditions and characteristics of a
      * system/sensor's normal operating environment. Can be used to specify for
@@ -532,16 +532,16 @@ public final class SSN {
      * maintenance schedule or power requirements differ according to the
      * conditions.
      */
-    public static final Resource OperatingRange = m_model.createResource(NS + "OperatingRange");
+    public static final Resource OperatingRange = SSN.m_model.createResource(SSN.NS + "OperatingRange");
     /** Output: Any information that is reported from a process. [MMI OntDev] */
-    public static final Resource Output = m_model.createResource(NS + "Output");
+    public static final Resource Output = SSN.m_model.createResource(SSN.NS + "Output");
     /**
      * Platform: An Entity to which other Entities can be attached - particuarly
      * Sensors and other Platforms. For example, a post might act as the
      * Platform, a bouy might act as a Platform, or a fish might act as a
      * Platform for an attached sensor.
      */
-    public static final Resource Platform = m_model.createResource(NS + "Platform");
+    public static final Resource Platform = SSN.m_model.createResource(SSN.NS + "Platform");
 
     // Vocabulary individuals
     // /////////////////////////

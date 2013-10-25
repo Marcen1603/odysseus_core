@@ -49,20 +49,20 @@ public class MeasurementCapabilitiesPage extends WizardPage {
     private final SensingDevicePage sensingDevicePage;
     private Combo cmbAttribute;
     private Table tblCapabilities;
-    private Map<SDFAttribute, List<MeasurementCapability>> attributeCapabilities = new HashMap<SDFAttribute, List<MeasurementCapability>>();
+    private final Map<SDFAttribute, List<MeasurementCapability>> attributeCapabilities = new HashMap<SDFAttribute, List<MeasurementCapability>>();
 
-    public MeasurementCapabilitiesPage(String pageName, IStructuredSelection selection, SensingDevicePage sensingDevicePage) {
+    public MeasurementCapabilitiesPage(final String pageName, final IStructuredSelection selection, final SensingDevicePage sensingDevicePage) {
         super(pageName);
         this.sensingDevicePage = sensingDevicePage;
-        setTitle("Set measurement capabilities");
-        setDescription("Set the attribute and the condition in which the property holds");
+        this.setTitle("Set measurement capabilities");
+        this.setDescription("Set the attribute and the condition in which the property holds");
     }
 
     @Override
-    public void createControl(Composite parent) {
-        initializeDialogUnits(parent);
+    public void createControl(final Composite parent) {
+        this.initializeDialogUnits(parent);
 
-        initializeDialogUnits(parent);
+        this.initializeDialogUnits(parent);
 
         final Composite container = new Composite(parent, SWT.NULL);
         container.setFont(parent.getFont());
@@ -75,15 +75,16 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         lblAttribute.setText(OdysseusNLS.Attribute + ":");
 
         this.cmbAttribute = new Combo(container, SWT.BORDER);
-        fillAttributes(this.cmbAttribute);
+        this.fillAttributes(this.cmbAttribute);
         this.cmbAttribute.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                SDFAttribute attribute = (SDFAttribute) cmbAttribute.getData(cmbAttribute.getItem(cmbAttribute.getSelectionIndex()));
-                tblCapabilities.removeAll();
+                final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
+                        .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
+                MeasurementCapabilitiesPage.this.tblCapabilities.removeAll();
 
-                for (MeasurementCapability capability : attributeCapabilities.get(attribute)) {
-                    TableItem item = new TableItem(tblCapabilities, SWT.NONE);
+                for (final MeasurementCapability capability : MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute)) {
+                    final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
                     item.setText(0, capability.getConditions().get(0).getName());
                     item.setText(1, capability.getMeasurementProperties().get(0).getProperty().toString());
                 }
@@ -103,7 +104,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         gd_propertyTableViewer.widthHint = 328;
         this.tblCapabilities.setLayoutData(gd_propertyTableViewer);
 
-        Composite btnComposite = new Composite(container, SWT.NULL);
+        final Composite btnComposite = new Composite(container, SWT.NULL);
         btnComposite.setLayout(new GridLayout(1, false));
         final Button btnAdd = new Button(btnComposite, SWT.NONE);
         final GridData gd_btnAdd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -111,23 +112,26 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         btnAdd.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                final MeasurementCapabiltyDialog measurementCapabilityDialog = new MeasurementCapabiltyDialog(btnAdd.getShell(), sensingDevicePage.getAttributes());
+                final MeasurementCapabiltyDialog measurementCapabilityDialog = new MeasurementCapabiltyDialog(btnAdd.getShell(), MeasurementCapabilitiesPage.this.sensingDevicePage.getAttributes());
 
                 measurementCapabilityDialog.open();
-                if (tblCapabilities.isDisposed())
+                if (MeasurementCapabilitiesPage.this.tblCapabilities.isDisposed()) {
                     return;
-                TableItem item = new TableItem(tblCapabilities, SWT.NONE);
+                }
+                final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
                 item.setText(0, measurementCapabilityDialog.getCondition().getName());
                 item.setText(1, measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
-                SDFAttribute attribute = (SDFAttribute) cmbAttribute.getData(cmbAttribute.getItem(cmbAttribute.getSelectionIndex()));
+                final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
+                        .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
 
-                MeasurementCapability capability = new MeasurementCapability(URI.create(ODYSSEUS.NS + sensingDevicePage.getSensingDeviceName() + "_" + attribute + "_capability"), attribute);
+                final MeasurementCapability capability = new MeasurementCapability(URI.create(ODYSSEUS.NS + MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceName() + "_" + attribute
+                        + "_capability"), attribute);
                 capability.addCondition(measurementCapabilityDialog.getCondition());
                 capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
-                if (!attributeCapabilities.containsKey(attribute)) {
-                    attributeCapabilities.put(attribute, new ArrayList<MeasurementCapability>());
+                if (!MeasurementCapabilitiesPage.this.attributeCapabilities.containsKey(attribute)) {
+                    MeasurementCapabilitiesPage.this.attributeCapabilities.put(attribute, new ArrayList<MeasurementCapability>());
                 }
-                attributeCapabilities.get(attribute).add(capability);
+                MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute).add(capability);
                 item.setData(capability);
             }
         });
@@ -138,13 +142,14 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         btnRemove.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                int index = tblCapabilities.getSelectionIndex();
-                MeasurementCapability capability = (MeasurementCapability) tblCapabilities.getItem(index).getData();
+                final int index = MeasurementCapabilitiesPage.this.tblCapabilities.getSelectionIndex();
+                final MeasurementCapability capability = (MeasurementCapability) MeasurementCapabilitiesPage.this.tblCapabilities.getItem(index).getData();
 
-                SDFAttribute attribute = (SDFAttribute) cmbAttribute.getData(cmbAttribute.getItem(cmbAttribute.getSelectionIndex()));
-                attributeCapabilities.get(attribute).remove(capability);
+                final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
+                        .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
+                MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute).remove(capability);
 
-                tblCapabilities.remove(index);
+                MeasurementCapabilitiesPage.this.tblCapabilities.remove(index);
             }
         });
         btnRemove.setText(OdysseusNLS.Remove);
@@ -153,16 +158,16 @@ public class MeasurementCapabilitiesPage extends WizardPage {
     }
 
     public List<MeasurementCapability> getMeasurementCapabilities() {
-        List<MeasurementCapability> measurementCapabilities = new ArrayList<MeasurementCapability>();
-        for (SDFAttribute attribute : attributeCapabilities.keySet()) {
-            measurementCapabilities.addAll(attributeCapabilities.get(attribute));
+        final List<MeasurementCapability> measurementCapabilities = new ArrayList<MeasurementCapability>();
+        for (final SDFAttribute attribute : this.attributeCapabilities.keySet()) {
+            measurementCapabilities.addAll(this.attributeCapabilities.get(attribute));
         }
         return measurementCapabilities;
     }
 
-    private void fillAttributes(Combo combo) {
+    private void fillAttributes(final Combo combo) {
         combo.removeAll();
-        for (SDFAttribute attribute : sensingDevicePage.getAttributes()) {
+        for (final SDFAttribute attribute : this.sensingDevicePage.getAttributes()) {
             combo.add(attribute.getAttributeName());
             combo.setData(attribute.getAttributeName(), attribute);
         }
@@ -170,20 +175,20 @@ public class MeasurementCapabilitiesPage extends WizardPage {
     }
 
     @Override
-    public void setVisible(boolean visible) {
+    public void setVisible(final boolean visible) {
         super.setVisible(visible);
 
         if (visible == true) {
-            fillAttributes(this.cmbAttribute);
+            this.fillAttributes(this.cmbAttribute);
         }
     }
 
     @SuppressWarnings("unused")
-    private void finishCreation(Composite rootComposite) {
-        setErrorMessage(null);
-        setMessage(null);
-        setControl(rootComposite);
-        setPageComplete(false);
+    private void finishCreation(final Composite rootComposite) {
+        this.setErrorMessage(null);
+        this.setMessage(null);
+        this.setControl(rootComposite);
+        this.setPageComplete(false);
     }
 
 }

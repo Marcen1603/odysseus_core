@@ -43,7 +43,7 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	/** The fitted model. */
 	private MixtureMultivariateNormalDistribution model;
 	/** Using adaptive mode and model has to be normalized. */
-	private boolean normalizeModel = false;
+	private final boolean normalizeModel = false;
 
 	/**
 	 * Creates a new sweep area for Expectation Maximization (EM) classification.
@@ -101,10 +101,10 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	 */
 	@Override
 	public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {
-		ProbabilisticTuple<? extends ITimeInterval> restricted = s.restrict(this.attributes, true);
+		final ProbabilisticTuple<? extends ITimeInterval> restricted = s.restrict(this.attributes, true);
 		super.insert(restricted);
-		if (getModel() != null) {
-			setModel(estimateModel(getModel()));
+		if (this.getModel() != null) {
+			this.setModel(this.estimateModel(this.getModel()));
 		}
 	}
 
@@ -197,9 +197,9 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	 * @return The weights.
 	 */
 	public final double[] getWeights() {
-		double[] weights = new double[getDimension()];
+		final double[] weights = new double[this.getDimension()];
 		for (int c = 0; c < this.model.getComponents().size(); c++) {
-			Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+			final Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
 			weights[c] = component.getFirst();
 		}
 
@@ -226,9 +226,9 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	 * @return The means vectors
 	 */
 	public final RealMatrix[] getMeans() {
-		RealMatrix[] means = new RealMatrix[getDimension()];
+		final RealMatrix[] means = new RealMatrix[this.getDimension()];
 		for (int c = 0; c < this.model.getComponents().size(); c++) {
-			Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+			final Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
 			means[c] = MatrixUtils.createColumnRealMatrix(component.getValue().getMeans());
 		}
 		return means;
@@ -255,9 +255,9 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	 * @return The covariance matrixes
 	 */
 	public final RealMatrix[] getCovarianceMatrices() {
-		RealMatrix[] covariances = new RealMatrix[getDimension()];
+		final RealMatrix[] covariances = new RealMatrix[this.getDimension()];
 		for (int c = 0; c < this.model.getComponents().size(); c++) {
-			Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
+			final Pair<Double, MultivariateNormalDistribution> component = this.model.getComponents().get(c);
 			covariances[c] = component.getValue().getCovariances();
 		}
 		return covariances;
@@ -312,7 +312,7 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	 * @return The average of each dimension
 	 */
 	private double[] getAvg() {
-		double[] avg = new double[this.getDimension()];
+		final double[] avg = new double[this.getDimension()];
 		for (int i = 0; i < this.getElements().size(); i++) {
 			for (int d = 0; d < this.getDimension(); d++) {
 				avg[d] += ((Number) this.getElements().get(i).getAttribute(d)).doubleValue();
@@ -324,8 +324,8 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 		return avg;
 	}
 
-	private MixtureMultivariateNormalDistribution estimateModel(MixtureMultivariateNormalDistribution initialMixture) {
-		double[][] data = getData();
+	private MixtureMultivariateNormalDistribution estimateModel(final MixtureMultivariateNormalDistribution initialMixture) {
+		final double[][] data = this.getData();
 		final int n = data.length;
 		if (data.length < 1) {
 			throw new NotStrictlyPositiveException(data.length);
@@ -345,7 +345,7 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 		// Initialize model to fit to initial mixture.
 		MixtureMultivariateNormalDistribution fittedModel = new MixtureMultivariateNormalDistribution(initialMixture.getComponents());
 
-		while (numIterations++ <= getIterations() && Math.abs(previousLogLikelihood - logLikelihood) > threshold) {
+		while ((numIterations++ <= this.getIterations()) && (Math.abs(previousLogLikelihood - logLikelihood) > this.threshold)) {
 			previousLogLikelihood = logLikelihood;
 			double sumLogLikelihood = 0d;
 
@@ -379,7 +379,7 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 				sumLogLikelihood += Math.log(rowDensity);
 
 				for (int j = 0; j < k; j++) {
-					gamma[i][j] = weights[j] * mvns[j].density(data[i]) / rowDensity;
+					gamma[i][j] = (weights[j] * mvns[j].density(data[i])) / rowDensity;
 					gammaSums[j] += gamma[i][j];
 
 					for (int col = 0; col < numCols; col++) {

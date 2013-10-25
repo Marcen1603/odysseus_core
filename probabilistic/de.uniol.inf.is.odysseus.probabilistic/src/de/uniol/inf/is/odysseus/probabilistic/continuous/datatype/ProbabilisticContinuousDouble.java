@@ -43,7 +43,8 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	/**
 	 * Clone constructor.
 	 * 
-	 * @param copy The object to clone from
+	 * @param copy
+	 *            The object to clone from
 	 */
 	public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble copy) {
 		this.distribution = copy.distribution;

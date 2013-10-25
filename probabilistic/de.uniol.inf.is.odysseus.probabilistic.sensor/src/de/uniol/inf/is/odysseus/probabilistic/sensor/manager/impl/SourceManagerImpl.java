@@ -43,43 +43,43 @@ public class SourceManagerImpl {
      * Class constructor.
      * 
      */
-    public SourceManagerImpl(OntModel aBox) {
+    public SourceManagerImpl(final OntModel aBox) {
         this.aBox = aBox;
     }
 
-    public void createSensingDevice(SensingDevice source) {
-        if (getABox().supportsTransactions()) {
-            getABox().begin();
+    public void createSensingDevice(final SensingDevice source) {
+        if (this.getABox().supportsTransactions()) {
+            this.getABox().begin();
         }
 
-        Individual sensingDevice = this.createSensingDevice(source.getUri());
-        List<Individual> properties = new ArrayList<Individual>();
-        for (SDFAttribute attribute : source.getSchema().getAttributes()) {
-            Individual property = createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
+        final Individual sensingDevice = this.createSensingDevice(source.getUri());
+        final List<Individual> properties = new ArrayList<Individual>();
+        for (final SDFAttribute attribute : source.getSchema().getAttributes()) {
+            final Individual property = this.createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
             this.addPropertyToSensingDevice(sensingDevice, property);
             properties.add(property);
         }
         if (!source.getCapabilities().isEmpty()) {
-            for (MeasurementCapability capability : source.getAllCapabilities()) {
+            for (final MeasurementCapability capability : source.getAllCapabilities()) {
                 this.addMeasurementCapabilityToSensingDevice(sensingDevice, capability);
             }
         }
-        if (getABox().supportsTransactions()) {
-            getABox().commit();
+        if (this.getABox().supportsTransactions()) {
+            this.getABox().commit();
         }
     }
 
-    private void addMeasurementCapabilityToSensingDevice(Individual sensingDevice, MeasurementCapability capability) {
-        getABox().createClass(SSN.MeasurementCapability.getURI());
-        Individual measurementCapability = getABox().createIndividual(capability.getUri().toString(), SSN.MeasurementCapability);
+    private void addMeasurementCapabilityToSensingDevice(final Individual sensingDevice, final MeasurementCapability capability) {
+        this.getABox().createClass(SSN.MeasurementCapability.getURI());
+        final Individual measurementCapability = this.getABox().createIndividual(capability.getUri().toString(), SSN.MeasurementCapability);
 
-        SDFAttribute attribute = capability.getAttribute();
-        Individual property = createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
-        getABox().createObjectProperty(SSN.forProperty.getURI());
-        getABox().add(measurementCapability, SSN.forProperty, property);
+        final SDFAttribute attribute = capability.getAttribute();
+        final Individual property = this.createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
+        this.getABox().createObjectProperty(SSN.forProperty.getURI());
+        this.getABox().add(measurementCapability, SSN.forProperty, property);
 
         if (!capability.getConditions().isEmpty()) {
-            for (Condition condition : capability.getConditions()) {
+            for (final Condition condition : capability.getConditions()) {
                 this.addConditionToMeasurementCapability(measurementCapability, condition);
             }
         }
@@ -90,66 +90,66 @@ public class SourceManagerImpl {
         // measurementProperty);
         // }
         // }
-        getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
+        this.getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
     }
 
-    private void addConditionToMeasurementCapability(Individual measurementCapability, Condition c) {
-        SDFAttribute attribute = c.getAttribute();
-        Individual property = createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
+    private void addConditionToMeasurementCapability(final Individual measurementCapability, final Condition c) {
+        final SDFAttribute attribute = c.getAttribute();
+        final Individual property = this.createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
 
-        Individual condition = getABox().createIndividual(ODYSSEUS.NS + c.getName(), SSN.Condition);
-        getABox().add(condition, RDFS.subClassOf, property.asResource());
+        final Individual condition = this.getABox().createIndividual(ODYSSEUS.NS + c.getName(), SSN.Condition);
+        this.getABox().add(condition, RDFS.subClassOf, property.asResource());
 
-        getABox().createClass(DUL.Region.getURI());
-        Individual condition_interval = getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval", DUL.Region);
+        this.getABox().createClass(DUL.Region.getURI());
+        final Individual condition_interval = this.getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval", DUL.Region);
 
-        getABox().createClass(DUL.Amount.getURI());
-        Individual minValue = getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval/inf", DUL.Amount);
-        getABox().add(minValue, DUL.hasDataValue, new Double(c.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().inf()));
+        this.getABox().createClass(DUL.Amount.getURI());
+        final Individual minValue = this.getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval/inf", DUL.Amount);
+        this.getABox().add(minValue, DUL.hasDataValue, new Double(c.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().inf()));
 
-        Individual maxValue = getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval/sup", DUL.Amount);
-        getABox().add(maxValue, DUL.hasDataValue, new Double(c.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().sup()));
+        final Individual maxValue = this.getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval/sup", DUL.Amount);
+        this.getABox().add(maxValue, DUL.hasDataValue, new Double(c.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().sup()));
         if (c.getUnit() != null) {
-            getABox().add(minValue, DUL.isClassifiedBy, c.getUnit());
-            getABox().add(maxValue, DUL.isClassifiedBy, c.getUnit());
+            this.getABox().add(minValue, DUL.isClassifiedBy, c.getUnit());
+            this.getABox().add(maxValue, DUL.isClassifiedBy, c.getUnit());
         }
-        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
+        this.getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
 
-        getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
+        this.getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
 
-        getABox().createObjectProperty(SSN.hasValue.getURI());
-        getABox().add(condition, SSN.hasValue, condition_interval);
+        this.getABox().createObjectProperty(SSN.hasValue.getURI());
+        this.getABox().add(condition, SSN.hasValue, condition_interval);
 
-        getABox().add(measurementCapability, SSN.inCondition, condition);
+        this.getABox().add(measurementCapability, SSN.inCondition, condition);
     }
 
-    private void addPropertyToSensingDevice(Individual sensingDevice, Individual property) {
-        getABox().createObjectProperty(SSN.observes.getURI());
-        getABox().add(sensingDevice, SSN.observes, property);
+    private void addPropertyToSensingDevice(final Individual sensingDevice, final Individual property) {
+        this.getABox().createObjectProperty(SSN.observes.getURI());
+        this.getABox().add(sensingDevice, SSN.observes, property);
     }
 
-    private Individual createSensingDevice(URI uri) {
-        getABox().createClass(SSN.SensingDevice.getURI());
-        Individual sensingDevice = getABox().createIndividual(uri.toString(), SSN.SensingDevice);
+    private Individual createSensingDevice(final URI uri) {
+        this.getABox().createClass(SSN.SensingDevice.getURI());
+        final Individual sensingDevice = this.getABox().createIndividual(uri.toString(), SSN.SensingDevice);
         return sensingDevice;
     }
 
     @SuppressWarnings("unused")
-    private Individual createSensingDeviceNS(String name, String namespace) {
-        return createSensingDevice(URI.create(namespace + name));
+    private Individual createSensingDeviceNS(final String name, final String namespace) {
+        return this.createSensingDevice(URI.create(namespace + name));
     }
 
-    private Individual createProperty(URI uri) {
-        getABox().createClass(SSN.Property.getURI());
-        Individual property = getABox().createIndividual(uri.toString(), SSN.Property);
+    private Individual createProperty(final URI uri) {
+        this.getABox().createClass(SSN.Property.getURI());
+        final Individual property = this.getABox().createIndividual(uri.toString(), SSN.Property);
         return property;
     }
 
-    private Individual createPropertyNS(String name, String namespace) {
-        return createProperty(URI.create(namespace + name));
+    private Individual createPropertyNS(final String name, final String namespace) {
+        return this.createProperty(URI.create(namespace + name));
     }
 
     private OntModel getABox() {
-        return aBox;
+        return this.aBox;
     }
 }

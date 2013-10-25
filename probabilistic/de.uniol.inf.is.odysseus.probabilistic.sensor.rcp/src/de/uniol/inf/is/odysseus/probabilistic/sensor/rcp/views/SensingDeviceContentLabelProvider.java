@@ -30,38 +30,38 @@ import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
  */
 public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider {
 
-    private String operatorImage;
+    private final String operatorImage;
 
-    public SensingDeviceContentLabelProvider(String operatorImage) {
+    public SensingDeviceContentLabelProvider(final String operatorImage) {
         this.operatorImage = operatorImage;
     }
 
     @Override
-    public Image getImage(Object element) {
+    public Image getImage(final Object element) {
         if (element instanceof SensingDevice) {
-            return SensorRegistryPlugIn.getImageManager().get(operatorImage);
+            return SensorRegistryPlugIn.getImageManager().get(this.operatorImage);
         }
         return super.getImage(element);
     }
 
     @Override
-    public String getText(Object element) {
+    public String getText(final Object element) {
         if (element instanceof SensingDevice) {
-            SensingDevice sensingDevice = (SensingDevice) element;
-            StringBuilder sb = new StringBuilder();
+            final SensingDevice sensingDevice = (SensingDevice) element;
+            final StringBuilder sb = new StringBuilder();
             sb.append(sensingDevice.getName()).append(" [").append(sensingDevice.getUri().toString()).append("]");
             return sb.toString();
         }
         else if (element instanceof MeasurementCapability) {
-            MeasurementCapability measurementCapability = (MeasurementCapability) element;
-            SDFAttribute attribute = measurementCapability.getAttribute();
-            StringBuilder sb = new StringBuilder();
+            final MeasurementCapability measurementCapability = (MeasurementCapability) element;
+            final SDFAttribute attribute = measurementCapability.getAttribute();
+            final StringBuilder sb = new StringBuilder();
             sb.append(attribute.getAttributeName()).append(" [").append(attribute.getURI().toString()).append("]");
             return sb.toString();
         }
         else if (element instanceof Condition) {
-            Condition condition = (Condition) element;
-            StringBuilder sb = new StringBuilder();
+            final Condition condition = (Condition) element;
+            final StringBuilder sb = new StringBuilder();
             sb.append(condition.getAttribute().getAttributeName()).append(" [").append(condition.getAttribute().getURI().toString()).append("]").append(" [").append(condition.getInterval())
                     .append("]");
             return sb.toString();

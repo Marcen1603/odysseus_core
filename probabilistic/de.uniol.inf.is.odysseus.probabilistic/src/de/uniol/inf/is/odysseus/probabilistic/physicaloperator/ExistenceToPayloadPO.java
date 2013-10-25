@@ -27,9 +27,9 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
  * @param <T>
  */
 public abstract class ExistenceToPayloadPO<K extends IProbabilistic, T extends IStreamObject<K>> extends AbstractPipe<T, T> {
-/**
- * Default constructor.
- */
+	/**
+	 * Default constructor.
+	 */
 	public ExistenceToPayloadPO() {
 	}
 
@@ -42,10 +42,11 @@ public abstract class ExistenceToPayloadPO<K extends IProbabilistic, T extends I
 	public ExistenceToPayloadPO(final ExistenceToPayloadPO<K, T> existenceToPayloadPO) {
 		super(existenceToPayloadPO);
 	}
-/*
- * 
- * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
+	 */
 	@Override
 	public final de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
 		return OutputMode.MODIFIED_INPUT;

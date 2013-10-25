@@ -80,8 +80,8 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
 			} catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
 				solver = new LUDecomposition(aCovariance).getSolver();
 			}
-			RealMatrix aCovarianceInverse = solver.getInverse();
-			double mahalanobisDistance = FastMath.sqrt((b.subtract(aMean).transpose().multiply(aCovarianceInverse).multiply(b.subtract(aMean))).getEntry(0, 0));
+			final RealMatrix aCovarianceInverse = solver.getInverse();
+			final double mahalanobisDistance = FastMath.sqrt((b.subtract(aMean).transpose().multiply(aCovarianceInverse).multiply(b.subtract(aMean))).getEntry(0, 0));
 			weightedMahalanobisDistance += mahalanobisDistance * aEntry.getKey();
 		}
 		return weightedMahalanobisDistance;

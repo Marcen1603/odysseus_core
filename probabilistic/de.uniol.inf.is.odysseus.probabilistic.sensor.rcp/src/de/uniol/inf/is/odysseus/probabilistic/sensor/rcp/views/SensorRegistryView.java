@@ -59,36 +59,36 @@ public class SensorRegistryView extends ViewPart implements IDataDictionaryListe
     private boolean refreshEnabled = true;
 
     @Override
-    public void createPartControl(Composite parent) {
+    public void createPartControl(final Composite parent) {
         this.parent = parent;
 
-        stackLayout = new StackLayout();
-        parent.setLayout(stackLayout);
+        this.stackLayout = new StackLayout();
+        parent.setLayout(this.stackLayout);
 
-        setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-        getTreeViewer().setContentProvider(new SensingDeviceContentProvider());
-        getTreeViewer().setLabelProvider(new SensingDeviceContentLabelProvider("source"));
+        this.setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
+        this.getTreeViewer().setContentProvider(new SensingDeviceContentProvider());
+        this.getTreeViewer().setLabelProvider(new SensingDeviceContentLabelProvider("source"));
 
-        int operations = DND.DROP_MOVE;
-        Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
-        getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(getTreeViewer(), "STREAM"));
+        final int operations = DND.DROP_MOVE;
+        final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
+        this.getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(this.getTreeViewer(), "STREAM"));
 
-        refresh();
+        this.refresh();
 
         // UserManagement.getInstance().addUserManagementListener(this);
-        getSite().setSelectionProvider(getTreeViewer());
+        this.getSite().setSelectionProvider(this.getTreeViewer());
 
         // Contextmenu
-        MenuManager menuManager = new MenuManager();
-        Menu contextMenu = menuManager.createContextMenu(getTreeViewer().getControl());
+        final MenuManager menuManager = new MenuManager();
+        final Menu contextMenu = menuManager.createContextMenu(this.getTreeViewer().getControl());
         // Set the MenuManager
-        getTreeViewer().getControl().setMenu(contextMenu);
-        getSite().registerContextMenu(menuManager, getTreeViewer());
+        this.getTreeViewer().getControl().setMenu(contextMenu);
+        this.getSite().registerContextMenu(menuManager, this.getTreeViewer());
 
-        label = new Label(parent, SWT.NONE);
-        label.setText("No sources available");
+        this.label = new Label(parent, SWT.NONE);
+        this.label.setText("No sources available");
 
-        stackLayout.topControl = label;
+        this.stackLayout.topControl = this.label;
         parent.layout();
 
     }
@@ -101,54 +101,54 @@ public class SensorRegistryView extends ViewPart implements IDataDictionaryListe
 
     @Override
     public void setFocus() {
-        getTreeViewer().getControl().setFocus();
+        this.getTreeViewer().getControl().setFocus();
     }
 
     public TreeViewer getTreeViewer() {
-        return viewer;
+        return this.viewer;
     }
 
-    public final void setSorting(boolean doSorting) {
+    public final void setSorting(final boolean doSorting) {
         if (doSorting) {
-            viewer.setSorter(new ViewerSorter());
+            this.viewer.setSorter(new ViewerSorter());
         }
         else {
-            viewer.setSorter(null);
+            this.viewer.setSorter(null);
         }
     }
 
     public final boolean isSorting() {
-        return viewer.getSorter() != null;
+        return this.viewer.getSorter() != null;
     }
 
     public void refresh() {
 
-        if (refreshEnabled) {
-            if (isRefreshing) {
+        if (this.refreshEnabled) {
+            if (this.isRefreshing) {
                 return;
             }
-            isRefreshing = true;
+            this.isRefreshing = true;
             PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
                 @Override
                 public void run() {
                     try {
-                        isRefreshing = false;
-                        if (!getTreeViewer().getTree().isDisposed()) {
-                            List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().getAllSensingDevices();
-                            getTreeViewer().setInput(sensingDevices);
+                        SensorRegistryView.this.isRefreshing = false;
+                        if (!SensorRegistryView.this.getTreeViewer().getTree().isDisposed()) {
+                            final List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().getAllSensingDevices();
+                            SensorRegistryView.this.getTreeViewer().setInput(sensingDevices);
 
                             if (!sensingDevices.isEmpty()) {
-                                stackLayout.topControl = getTreeViewer().getTree();
+                                SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this.getTreeViewer().getTree();
                             }
                             else {
-                                stackLayout.topControl = label;
+                                SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this.label;
                             }
-                            parent.layout();
+                            SensorRegistryView.this.parent.layout();
                         }
                     }
-                    catch (Exception e) {
-                        LOG.error("Exception during setting input for treeViewer in sourcesView", e);
+                    catch (final Exception e) {
+                        SensorRegistryView.LOG.error("Exception during setting input for treeViewer in sourcesView", e);
                     }
                 }
 
@@ -156,46 +156,46 @@ public class SensorRegistryView extends ViewPart implements IDataDictionaryListe
         }
     }
 
-    protected void setTreeViewer(TreeViewer viewer) {
+    protected void setTreeViewer(final TreeViewer viewer) {
         this.viewer = viewer;
     }
 
     @Override
-    public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-        refresh();
+    public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
+        this.refresh();
     }
 
     @Override
-    public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
-        refresh();
+    public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
+        this.refresh();
     }
 
     @Override
     public void usersChangedEvent() {
-        refresh();
+        this.refresh();
     }
 
     @Override
     public void roleChangedEvent() {
-        refresh();
+        this.refresh();
     }
 
     @Override
-    public void dataDictionaryChanged(IDataDictionary sender) {
-        refresh();
+    public void dataDictionaryChanged(final IDataDictionary sender) {
+        this.refresh();
     }
 
     public boolean isRefreshEnabled() {
-        return refreshEnabled;
+        return this.refreshEnabled;
     }
 
-    public void setRefreshEnabled(boolean refreshEnabled) {
+    public void setRefreshEnabled(final boolean refreshEnabled) {
         this.refreshEnabled = refreshEnabled;
     }
 
     @Override
-    public void sessionEventOccured(ISessionEvent event) {
-        refresh();
+    public void sessionEventOccured(final ISessionEvent event) {
+        this.refresh();
     }
 
 }

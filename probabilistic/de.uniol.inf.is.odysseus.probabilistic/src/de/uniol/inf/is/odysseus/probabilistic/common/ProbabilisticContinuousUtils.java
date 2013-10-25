@@ -48,8 +48,8 @@ public final class ProbabilisticContinuousUtils {
 	public static double cumulativeProbability(final NormalDistributionMixture mixtures, final RealVector lowerBound, final RealVector upperBound) {
 
 		double probability = 0.0;
-		RealVector maxLowerBound = lowerBound.copy();
-		RealVector minUpperBound = upperBound.copy();
+		final RealVector maxLowerBound = lowerBound.copy();
+		final RealVector minUpperBound = upperBound.copy();
 		for (int i = 0; i < mixtures.getDimension(); i++) {
 			maxLowerBound.setEntry(i, FastMath.max(lowerBound.getEntry(i), mixtures.getSupport(i).inf()));
 			minUpperBound.setEntry(i, FastMath.min(upperBound.getEntry(i), mixtures.getSupport(i).sup()));
@@ -104,7 +104,7 @@ public final class ProbabilisticContinuousUtils {
 			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
 			final Matrix lower = new Matrix(new double[][] { lowerBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
 			final Matrix upper = new Matrix(new double[][] { upperBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
-			QSIMVNResult result = QSIMVN.cumulativeProbability(ProbabilisticConstants.SAMPLES, covarianceMatrix, lower, upper);
+			final QSIMVNResult result = QSIMVN.cumulativeProbability(ProbabilisticConstants.SAMPLES, covarianceMatrix, lower, upper);
 			probability += result.p * weight;
 		}
 		return probability;

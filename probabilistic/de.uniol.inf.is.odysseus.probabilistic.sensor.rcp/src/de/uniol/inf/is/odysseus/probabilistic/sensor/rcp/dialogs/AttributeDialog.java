@@ -44,18 +44,18 @@ public class AttributeDialog extends Dialog {
      * 
      * @param parentShell
      */
-    public AttributeDialog(Shell parent) {
+    public AttributeDialog(final Shell parent) {
         super(parent);
     }
 
     @Override
-    protected Control createDialogArea(Composite parent) {
+    protected Control createDialogArea(final Composite parent) {
         final Composite container = (Composite) super.createDialogArea(parent);
 
-        Monitor monitor = parent.getMonitor();
-        int maxWidth = monitor.getBounds().width * 2 / 3;
+        final Monitor monitor = parent.getMonitor();
+        final int maxWidth = (monitor.getBounds().width * 2) / 3;
 
-        Label lblName = new Label(container, SWT.WRAP);
+        final Label lblName = new Label(container, SWT.WRAP);
         lblName.setText(OdysseusNLS.Attribute);
         GridData gd = new GridData();
         int attributeWidth = lblName.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -64,16 +64,17 @@ public class AttributeDialog extends Dialog {
         gd.grabExcessHorizontalSpace = true;
         lblName.setLayoutData(gd);
 
-        txtName = new Text(container, SWT.BORDER);
+        this.txtName = new Text(container, SWT.BORDER);
         gd = new GridData();
-        attributeWidth = txtName.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        if (attributeWidth > maxWidth)
+        attributeWidth = this.txtName.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        if (attributeWidth > maxWidth) {
             gd.widthHint = maxWidth;
+        }
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
-        txtName.setLayoutData(gd);
+        this.txtName.setLayoutData(gd);
 
-        Label lblDatatype = new Label(container, SWT.WRAP);
+        final Label lblDatatype = new Label(container, SWT.WRAP);
         lblDatatype.setText(OdysseusNLS.Datatype);
         gd = new GridData();
         int datatypeWidth = lblDatatype.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -82,57 +83,58 @@ public class AttributeDialog extends Dialog {
         gd.grabExcessHorizontalSpace = true;
         lblDatatype.setLayoutData(gd);
 
-        cmbDatatype = new Combo(container, SWT.BORDER);
-        cmbDatatype.add(SDFDatatype.BOOLEAN.getQualName());
-        cmbDatatype.add(SDFDatatype.BYTE.getQualName());
-        cmbDatatype.add(SDFDatatype.SHORT.getQualName());
-        cmbDatatype.add(SDFDatatype.INTEGER.getQualName());
-        cmbDatatype.add(SDFDatatype.LONG.getQualName());
-        cmbDatatype.add(SDFDatatype.FLOAT.getQualName());
-        cmbDatatype.add(SDFDatatype.DOUBLE.getQualName());
-        
-        cmbDatatype.setData(SDFDatatype.BOOLEAN.getQualName(), SDFDatatype.BOOLEAN);
-        cmbDatatype.setData(SDFDatatype.BYTE.getQualName(), SDFDatatype.BYTE);
-        cmbDatatype.setData(SDFDatatype.SHORT.getQualName(), SDFDatatype.SHORT);
-        cmbDatatype.setData(SDFDatatype.INTEGER.getQualName(), SDFDatatype.INTEGER);
-        cmbDatatype.setData(SDFDatatype.LONG.getQualName(), SDFDatatype.LONG);
-        cmbDatatype.setData(SDFDatatype.FLOAT.getQualName(), SDFDatatype.FLOAT);
-        cmbDatatype.setData(SDFDatatype.DOUBLE.getQualName(), SDFDatatype.DOUBLE);
+        this.cmbDatatype = new Combo(container, SWT.BORDER);
+        this.cmbDatatype.add(SDFDatatype.BOOLEAN.getQualName());
+        this.cmbDatatype.add(SDFDatatype.BYTE.getQualName());
+        this.cmbDatatype.add(SDFDatatype.SHORT.getQualName());
+        this.cmbDatatype.add(SDFDatatype.INTEGER.getQualName());
+        this.cmbDatatype.add(SDFDatatype.LONG.getQualName());
+        this.cmbDatatype.add(SDFDatatype.FLOAT.getQualName());
+        this.cmbDatatype.add(SDFDatatype.DOUBLE.getQualName());
 
-        cmbDatatype.select(0);
+        this.cmbDatatype.setData(SDFDatatype.BOOLEAN.getQualName(), SDFDatatype.BOOLEAN);
+        this.cmbDatatype.setData(SDFDatatype.BYTE.getQualName(), SDFDatatype.BYTE);
+        this.cmbDatatype.setData(SDFDatatype.SHORT.getQualName(), SDFDatatype.SHORT);
+        this.cmbDatatype.setData(SDFDatatype.INTEGER.getQualName(), SDFDatatype.INTEGER);
+        this.cmbDatatype.setData(SDFDatatype.LONG.getQualName(), SDFDatatype.LONG);
+        this.cmbDatatype.setData(SDFDatatype.FLOAT.getQualName(), SDFDatatype.FLOAT);
+        this.cmbDatatype.setData(SDFDatatype.DOUBLE.getQualName(), SDFDatatype.DOUBLE);
+
+        this.cmbDatatype.select(0);
 
         gd = new GridData();
-        datatypeWidth = cmbDatatype.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        if (datatypeWidth > maxWidth)
+        datatypeWidth = this.cmbDatatype.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        if (datatypeWidth > maxWidth) {
             gd.widthHint = maxWidth;
+        }
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
-        cmbDatatype.setLayoutData(gd);
+        this.cmbDatatype.setLayoutData(gd);
 
         return container;
     }
 
     @Override
-    protected void configureShell(Shell newShell) {
+    protected void configureShell(final Shell newShell) {
         super.configureShell(newShell);
         newShell.setText("Selection dialog");
     }
 
     private void saveInput() {
-        String name = txtName.getText();
-        String item = cmbDatatype.getItem(cmbDatatype.getSelectionIndex());
-        SDFDatatype datatype = (SDFDatatype) cmbDatatype.getData(item);
+        final String name = this.txtName.getText();
+        final String item = this.cmbDatatype.getItem(this.cmbDatatype.getSelectionIndex());
+        final SDFDatatype datatype = (SDFDatatype) this.cmbDatatype.getData(item);
         this.attribute = new SDFAttribute("", name, datatype);
     }
 
     @Override
     protected void okPressed() {
-        saveInput();
+        this.saveInput();
         super.okPressed();
     }
 
     public SDFAttribute getAttribute() {
-        return attribute;
+        return this.attribute;
     }
 
 }

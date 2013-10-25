@@ -37,7 +37,7 @@ public class Condition {
      * @param attribute
      * @param interval
      */
-    public Condition(URI uri, SDFAttribute attribute, Interval interval) {
+    public Condition(final URI uri, final SDFAttribute attribute, final Interval interval) {
         super();
         this.uri = uri;
         this.attribute = attribute;
@@ -83,7 +83,7 @@ public class Condition {
      * @param unit
      *            the unit to set
      */
-    public void setUnit(String unit) {
+    public void setUnit(final String unit) {
         this.unit = unit;
     }
 

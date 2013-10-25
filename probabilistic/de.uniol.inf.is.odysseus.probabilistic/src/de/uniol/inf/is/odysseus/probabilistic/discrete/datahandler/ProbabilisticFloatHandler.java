@@ -137,7 +137,7 @@ public class ProbabilisticFloatHandler extends AbstractDataHandler<Probabilistic
 	public final int memSize(final Object attribute) {
 		return (((ProbabilisticFloat) attribute).getValues().size() * (Float.SIZE + Double.SIZE)) / 8;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return ProbabilisticFloat.class;

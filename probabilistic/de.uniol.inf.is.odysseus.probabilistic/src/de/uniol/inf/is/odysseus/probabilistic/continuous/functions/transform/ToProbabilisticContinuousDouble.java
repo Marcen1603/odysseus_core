@@ -66,10 +66,10 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
 		final double[][] variances = (double[][]) this.getInputValue(1);
 
 		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
+		final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
 		mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
 
-		NormalDistributionMixture result = new NormalDistributionMixture(mvns);
+		final NormalDistributionMixture result = new NormalDistributionMixture(mvns);
 		final Interval[] support = new Interval[result.getSupport().length];
 		for (int i = 0; i < result.getSupport().length; i++) {
 			support[i] = Interval.MAX;

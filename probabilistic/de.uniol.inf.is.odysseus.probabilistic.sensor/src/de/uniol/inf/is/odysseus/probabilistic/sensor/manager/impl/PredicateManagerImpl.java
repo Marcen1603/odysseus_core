@@ -32,7 +32,7 @@ public class PredicateManagerImpl {
      * Class constructor.
      * 
      */
-    public PredicateManagerImpl(OntModel aBox) {
+    public PredicateManagerImpl(final OntModel aBox) {
         this.aBox = aBox;
     }
 
@@ -41,14 +41,14 @@ public class PredicateManagerImpl {
     }
 
     @SuppressWarnings("unused")
-    public void getConditionPredicates(Resource sensingDevice) {
+    public void getConditionPredicates(final Resource sensingDevice) {
 
-        Resource measurementCapability = sensingDevice.getPropertyResourceValue(SSN.hasMeasurementCapability);
+        final Resource measurementCapability = sensingDevice.getPropertyResourceValue(SSN.hasMeasurementCapability);
 
     }
 
     @SuppressWarnings("unused")
     private OntModel getABox() {
-        return aBox;
+        return this.aBox;
     }
 }

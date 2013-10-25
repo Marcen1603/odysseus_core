@@ -39,52 +39,52 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
 
 	public TimeIntervalProbabilisticLatency() {
 		super();
-		latency = new Latency();
+		this.latency = new Latency();
 	}
 
-	public TimeIntervalProbabilisticLatency(TimeIntervalProbabilisticLatency clone) {
+	public TimeIntervalProbabilisticLatency(final TimeIntervalProbabilisticLatency clone) {
 		super(clone);
 		this.latency = clone.latency.clone();
 	}
 
 	@Override
 	public final long getLatency() {
-		return latency.getLatency();
+		return this.latency.getLatency();
 	}
 
 	@Override
 	public long getMaxLatency() {
-		return latency.getMaxLatency();
+		return this.latency.getMaxLatency();
 	}
 
 	@Override
 	public final long getLatencyEnd() {
-		return latency.getLatencyEnd();
+		return this.latency.getLatencyEnd();
 	}
 
 	@Override
 	public final long getLatencyStart() {
-		return latency.getLatencyStart();
+		return this.latency.getLatencyStart();
 	}
 
 	@Override
 	public long getMaxLatencyStart() {
-		return latency.getMaxLatencyStart();
+		return this.latency.getMaxLatencyStart();
 	}
 
 	@Override
-	public final void setLatencyEnd(long timestamp) {
-		latency.setLatencyEnd(timestamp);
+	public final void setLatencyEnd(final long timestamp) {
+		this.latency.setLatencyEnd(timestamp);
 	}
 
 	@Override
-	public final void setMinLatencyStart(long timestamp) {
-		latency.setMinLatencyStart(timestamp);
+	public final void setMinLatencyStart(final long timestamp) {
+		this.latency.setMinLatencyStart(timestamp);
 	}
 
 	@Override
-	public void setMaxLatencyStart(long timestamp) {
-		latency.setMaxLatencyStart(timestamp);
+	public void setMaxLatencyStart(final long timestamp) {
+		this.latency.setMaxLatencyStart(timestamp);
 	}
 
 	@Override
@@ -98,17 +98,17 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
 	}
 
 	@Override
-	public String csvToString(char delimiter, Character textSeperator, NumberFormat floatingFormatter, NumberFormat numberFormatter, boolean withMetadata) {
+	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
 	@Override
-	public String getCSVHeader(char delimiter) {
+	public String getCSVHeader(final char delimiter) {
 		return super.getCSVHeader(delimiter) + "+delimiter+" + this.latency.getCSVHeader(delimiter);
 	}
 
 	@Override
 	public Class<? extends IMetaAttribute>[] getClasses() {
-		return classes;
+		return TimeIntervalProbabilisticLatency.classes;
 	}
 }

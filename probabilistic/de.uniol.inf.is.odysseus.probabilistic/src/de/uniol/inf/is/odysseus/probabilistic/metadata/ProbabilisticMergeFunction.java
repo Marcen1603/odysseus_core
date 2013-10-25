@@ -32,7 +32,8 @@ public class ProbabilisticMergeFunction<T extends Tuple<K>, K extends ITimeInter
 	/**
 	 * Default constructor.
 	 * 
-	 * @param resultSchemaSize The size of the result schema
+	 * @param resultSchemaSize
+	 *            The size of the result schema
 	 */
 	public ProbabilisticMergeFunction(final int resultSchemaSize) {
 		super(resultSchemaSize);
@@ -41,7 +42,8 @@ public class ProbabilisticMergeFunction<T extends Tuple<K>, K extends ITimeInter
 	/**
 	 * Clone constructor.
 	 * 
-	 * @param original The object to copy from
+	 * @param original
+	 *            The object to copy from
 	 */
 	protected ProbabilisticMergeFunction(final ProbabilisticMergeFunction<T, K> original) {
 		super(original.schemaSize);

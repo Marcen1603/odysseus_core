@@ -73,7 +73,7 @@ public class ProbabilisticDiscreteSum extends AbstractAggregateFunction<Probabil
 	 */
 	@Override
 	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-		final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(datatype);
+		final SumPartialAggregate<ProbabilisticTuple<?>> pa = new SumPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
 
 		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
 			pa.add(value.getKey(), value.getValue());
@@ -89,7 +89,7 @@ public class ProbabilisticDiscreteSum extends AbstractAggregateFunction<Probabil
 	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
 		SumPartialAggregate<ProbabilisticTuple<?>> pa = null;
 		if (createNew) {
-			pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), datatype);
+			pa = new SumPartialAggregate<ProbabilisticTuple<?>>(((SumPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), this.datatype);
 		} else {
 			pa = (SumPartialAggregate<ProbabilisticTuple<?>>) p;
 		}

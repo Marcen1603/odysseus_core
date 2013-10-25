@@ -78,7 +78,7 @@ public abstract class AbstractProbabilisticContinuousPlusNumberOperator extends 
 			for (int i = 0; i < means.length; i++) {
 				means[i] += b;
 			}
-			MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, normalDistribution.getCovariances().getData());
+			final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, normalDistribution.getCovariances().getData());
 			mvns.add(new Pair<Double, MultivariateNormalDistribution>(weight, component));
 		}
 		result.setMixtures(new MixtureMultivariateNormalDistribution(mvns));

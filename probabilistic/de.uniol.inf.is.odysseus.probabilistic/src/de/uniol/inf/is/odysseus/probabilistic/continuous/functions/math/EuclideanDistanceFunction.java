@@ -54,8 +54,8 @@ public class EuclideanDistanceFunction extends AbstractEuclideanDistanceFunction
 	 */
 	@Override
 	public final Double getValue() {
-		final RealMatrix a = MatrixUtils.createColumnRealMatrix(new double[]  { this.getNumericalInputValue(0)  });
-		final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(1)  });
+		final RealMatrix a = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(0) });
+		final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(1) });
 		return this.getValueInternal(a, b);
 	}
 }

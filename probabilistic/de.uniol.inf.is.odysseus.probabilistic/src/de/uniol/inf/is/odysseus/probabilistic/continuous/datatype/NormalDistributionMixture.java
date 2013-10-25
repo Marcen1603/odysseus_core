@@ -431,8 +431,8 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		}
 		long temp;
 		temp = Double.doubleToLongBits(this.scale);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + Arrays.hashCode(this.support);
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + Arrays.hashCode(this.support);
 		return result;
 	}
 
@@ -448,10 +448,10 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		NormalDistributionMixture other = (NormalDistributionMixture) obj;
+		final NormalDistributionMixture other = (NormalDistributionMixture) obj;
 		if (Double.doubleToLongBits(this.scale) != Double.doubleToLongBits(other.scale)) {
 			return false;
 		}
@@ -465,13 +465,13 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 		} else {
 			boolean foundCompoenent = false;
 			for (final Pair<Double, MultivariateNormalDistribution> thisMixture : this.mixtures.getComponents()) {
-				Double thisWeights = thisMixture.getKey();
-				double[] thisMean = thisMixture.getValue().getMeans();
-				RealMatrix thisCovariance = thisMixture.getValue().getCovariances();
+				final Double thisWeights = thisMixture.getKey();
+				final double[] thisMean = thisMixture.getValue().getMeans();
+				final RealMatrix thisCovariance = thisMixture.getValue().getCovariances();
 				for (final Pair<Double, MultivariateNormalDistribution> otherMixture : other.getMixtures().getComponents()) {
-					Double otherWeights = otherMixture.getKey();
-					double[] otherMean = otherMixture.getValue().getMeans();
-					RealMatrix otherCovariance = otherMixture.getValue().getCovariances();
+					final Double otherWeights = otherMixture.getKey();
+					final double[] otherMean = otherMixture.getValue().getMeans();
+					final RealMatrix otherCovariance = otherMixture.getValue().getCovariances();
 					if ((Math.abs(thisWeights - otherWeights) <= ProbabilisticConstants.EPSILON) && (Arrays.equals(thisMean, otherMean)) && (Arrays.equals(CovarianceMatrixUtils.fromMatrix(thisCovariance), CovarianceMatrixUtils.fromMatrix(otherCovariance)))) {
 						foundCompoenent = true;
 					}
@@ -481,13 +481,13 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 				}
 			}
 			for (final Pair<Double, MultivariateNormalDistribution> otherMixture : this.mixtures.getComponents()) {
-				Double otherWeights = otherMixture.getKey();
-				double[] otherMean = otherMixture.getValue().getMeans();
-				RealMatrix otherCovariance = otherMixture.getValue().getCovariances();
+				final Double otherWeights = otherMixture.getKey();
+				final double[] otherMean = otherMixture.getValue().getMeans();
+				final RealMatrix otherCovariance = otherMixture.getValue().getCovariances();
 				for (final Pair<Double, MultivariateNormalDistribution> thisMixture : other.getMixtures().getComponents()) {
-					Double thisWeights = thisMixture.getKey();
-					double[] thisMean = thisMixture.getValue().getMeans();
-					RealMatrix thisCovariance = thisMixture.getValue().getCovariances();
+					final Double thisWeights = thisMixture.getKey();
+					final double[] thisMean = thisMixture.getValue().getMeans();
+					final RealMatrix thisCovariance = thisMixture.getValue().getCovariances();
 					if ((Math.abs(thisWeights - otherWeights) <= ProbabilisticConstants.EPSILON) && (Arrays.equals(thisMean, otherMean)) && (Arrays.equals(CovarianceMatrixUtils.fromMatrix(thisCovariance), CovarianceMatrixUtils.fromMatrix(otherCovariance)))) {
 						foundCompoenent = true;
 					}

@@ -90,7 +90,7 @@ public class AssignDistributionPO<T extends ITimeInterval> extends AbstractPipe<
 		final double[][] variances = (double[][]) object.getAttribute(this.variance);
 
 		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
+		final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
 		mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
 
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);

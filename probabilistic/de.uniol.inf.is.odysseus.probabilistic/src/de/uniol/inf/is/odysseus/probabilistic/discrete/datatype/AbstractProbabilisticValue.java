@@ -36,7 +36,7 @@ public abstract class AbstractProbabilisticValue<V> implements Serializable, ICl
 	 */
 	private static final long serialVersionUID = -8024287769210294227L;
 	/** The values. */
-	private Map<V, Double> values = new HashMap<V, Double>();
+	private final Map<V, Double> values = new HashMap<V, Double>();
 
 	/**
 	 * Default constructor.

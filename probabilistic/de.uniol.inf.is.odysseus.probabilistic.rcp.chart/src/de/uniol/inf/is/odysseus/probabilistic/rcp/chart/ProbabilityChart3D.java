@@ -104,7 +104,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
 		double minX = Double.POSITIVE_INFINITY;
 		double minY = Double.POSITIVE_INFINITY;
 		double standardDeviationY = 0.0;
-		for (Pair<Double, MultivariateNormalDistribution> component : mixture.getMixtures().getComponents()) {
+		for (final Pair<Double, MultivariateNormalDistribution> component : mixture.getMixtures().getComponents()) {
 			maxX = Math.max(maxX, component.getValue().getMeans()[0]);
 			minX = Math.min(minX, component.getValue().getMeans()[0]);
 			standardDeviationX = Math.max(standardDeviationX, component.getValue().getStandardDeviations()[0]);
@@ -544,7 +544,7 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<NormalDistribut
 
 	@Override
 	protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
-		for (ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
+		for (final ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
 			this.viewSchema.put(s.getSinkInPort(), new ViewSchema<NormalDistributionMixture>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
 		}
 		

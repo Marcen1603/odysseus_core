@@ -31,6 +31,7 @@ public interface ITimeIntervalProbabilistic extends ITimeInterval, IProbabilisti
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.metadata.ITimeInterval#clone()
 	 */
-	@Override ITimeIntervalProbabilistic clone();
+	@Override
+	ITimeIntervalProbabilistic clone();
 
 }

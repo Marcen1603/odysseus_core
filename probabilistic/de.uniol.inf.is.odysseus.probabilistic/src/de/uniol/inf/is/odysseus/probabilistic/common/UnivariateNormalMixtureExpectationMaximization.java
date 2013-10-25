@@ -103,11 +103,11 @@ public class UnivariateNormalMixtureExpectationMaximization {
 			throw new NotStrictlyPositiveException(threshold);
 		}
 
-		final int n = data.length;
+		final int n = this.data.length;
 
 		// Number of data columns. Jagged data already rejected in constructor,
 		// so we can assume the lengths of each row are equal.
-		final int numCols = data[0].length;
+		final int numCols = this.data[0].length;
 		final int k = initialMixture.getComponents().size();
 
 		final int numMeanColumns = initialMixture.getComponents().get(0).getSecond().getMeans().length;
@@ -119,17 +119,17 @@ public class UnivariateNormalMixtureExpectationMaximization {
 		int numIterations = 0;
 		double previousLogLikelihood = 0d;
 
-		logLikelihood = Double.NEGATIVE_INFINITY;
+		this.logLikelihood = Double.NEGATIVE_INFINITY;
 
 		// Initialize model to fit to initial mixture.
-		fittedModel = new MixtureMultivariateNormalDistribution(initialMixture.getComponents());
+		this.fittedModel = new MixtureMultivariateNormalDistribution(initialMixture.getComponents());
 
-		while (numIterations++ <= maxIterations && Math.abs(previousLogLikelihood - logLikelihood) > threshold) {
-			previousLogLikelihood = logLikelihood;
+		while ((numIterations++ <= maxIterations) && (Math.abs(previousLogLikelihood - this.logLikelihood) > threshold)) {
+			previousLogLikelihood = this.logLikelihood;
 			double sumLogLikelihood = 0d;
 
 			// Mixture components
-			final List<Pair<Double, MultivariateNormalDistribution>> components = fittedModel.getComponents();
+			final List<Pair<Double, MultivariateNormalDistribution>> components = this.fittedModel.getComponents();
 
 			// Weight and distribution of each component
 			final double[] weights = new double[k];
@@ -154,20 +154,20 @@ public class UnivariateNormalMixtureExpectationMaximization {
 			final double[][] gammaDataProdSums = new double[k][numCols];
 
 			for (int i = 0; i < n; i++) {
-				final double rowDensity = fittedModel.density(data[i]);
+				final double rowDensity = this.fittedModel.density(this.data[i]);
 				sumLogLikelihood += Math.log(rowDensity);
 
 				for (int j = 0; j < k; j++) {
-					gamma[i][j] = weights[j] * mvns[j].density(data[i]) / rowDensity;
+					gamma[i][j] = (weights[j] * mvns[j].density(this.data[i])) / rowDensity;
 					gammaSums[j] += gamma[i][j];
 
 					for (int col = 0; col < numCols; col++) {
-						gammaDataProdSums[j][col] += gamma[i][j] * data[i][col];
+						gammaDataProdSums[j][col] += gamma[i][j] * this.data[i][col];
 					}
 				}
 			}
 
-			logLikelihood = sumLogLikelihood / n;
+			this.logLikelihood = sumLogLikelihood / n;
 
 			// M-step: compute the new parameters based on the expectation
 			// function.
@@ -188,7 +188,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 			}
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < k; j++) {
-					final RealMatrix vec = new Array2DRowRealMatrix(MathArrays.ebeSubtract(data[i], newMeans[j]));
+					final RealMatrix vec = new Array2DRowRealMatrix(MathArrays.ebeSubtract(this.data[i], newMeans[j]));
 					final RealMatrix dataCov = vec.multiply(vec.transpose()).scalarMultiply(gamma[i][j]);
 					newCovMats[j] = newCovMats[j].add(dataCov);
 				}
@@ -202,10 +202,10 @@ public class UnivariateNormalMixtureExpectationMaximization {
 			}
 
 			// Update current model
-			fittedModel = new MixtureMultivariateNormalDistribution(newWeights, newMeans, newCovMatArrays);
+			this.fittedModel = new MixtureMultivariateNormalDistribution(newWeights, newMeans, newCovMatArrays);
 		}
 
-		if (Math.abs(previousLogLikelihood - logLikelihood) > threshold) {
+		if (Math.abs(previousLogLikelihood - this.logLikelihood) > threshold) {
 			// Did not converge before the maximum number of iterations
 			throw new ConvergenceException();
 		}
@@ -221,7 +221,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 *            Model containing initial values of weights and multivariate normals
 	 */
 	public final void fit(final MixtureMultivariateNormalDistribution initialMixture) {
-		fit(initialMixture, DEFAULT_MAX_ITERATIONS, DEFAULT_THRESHOLD);
+		this.fit(initialMixture, UnivariateNormalMixtureExpectationMaximization.DEFAULT_MAX_ITERATIONS, UnivariateNormalMixtureExpectationMaximization.DEFAULT_THRESHOLD);
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * @return Log likelihood of data or zero of no data has been fit
 	 */
 	public final double getLogLikelihood() {
-		return logLikelihood;
+		return this.logLikelihood;
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 	 * @return fitted model or {@code null} if no fit has been performed yet.
 	 */
 	public final MixtureMultivariateNormalDistribution getFittedModel() {
-		return new MixtureMultivariateNormalDistribution(fittedModel.getComponents());
+		return new MixtureMultivariateNormalDistribution(this.fittedModel.getComponents());
 	}
 
 	/**
@@ -335,13 +335,13 @@ public class UnivariateNormalMixtureExpectationMaximization {
 		 */
 		DataRow(final double[] data) {
 			// Store reference.
-			row = data;
+			this.row = data;
 			// Compute mean.
-			mean = 0d;
-			for (int i = 0; i < data.length; i++) {
-				mean += data[i];
+			this.mean = 0d;
+			for (final double element : data) {
+				this.mean += element;
 			}
-			mean /= data.length;
+			this.mean /= data.length;
 		}
 
 		/**
@@ -351,8 +351,9 @@ public class UnivariateNormalMixtureExpectationMaximization {
 		 *            The other row
 		 * @return int for sorting
 		 */
+		@Override
 		public int compareTo(final DataRow other) {
-			return mean.compareTo(other.mean);
+			return this.mean.compareTo(other.mean);
 		}
 
 		/** {@inheritDoc} */
@@ -364,7 +365,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 			}
 
 			if (other instanceof DataRow) {
-				return MathArrays.equals(row, ((DataRow) other).row);
+				return MathArrays.equals(this.row, ((DataRow) other).row);
 			}
 
 			return false;
@@ -374,7 +375,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 		/** {@inheritDoc} */
 		@Override
 		public int hashCode() {
-			return Arrays.hashCode(row);
+			return Arrays.hashCode(this.row);
 		}
 
 		/**
@@ -383,7 +384,7 @@ public class UnivariateNormalMixtureExpectationMaximization {
 		 * @return data row array
 		 */
 		public double[] getRow() {
-			return row;
+			return this.row;
 		}
 	}
 }

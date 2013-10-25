@@ -42,8 +42,10 @@ public class QualityAO extends UnaryLogicalOp {
     /**
      * Clone constructor.
      * 
+     * @param qualityAO
+     *            The instance to clone from
      */
-    public QualityAO(QualityAO qualityAO) {
+    public QualityAO(final QualityAO qualityAO) {
 
     }
 

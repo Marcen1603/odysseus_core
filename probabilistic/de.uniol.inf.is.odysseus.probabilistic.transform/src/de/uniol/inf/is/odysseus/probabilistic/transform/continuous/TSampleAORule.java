@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@SuppressWarnings({"all"})
+@SuppressWarnings({ "all" })
 public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
 	/*
 	 * (non-Javadoc)

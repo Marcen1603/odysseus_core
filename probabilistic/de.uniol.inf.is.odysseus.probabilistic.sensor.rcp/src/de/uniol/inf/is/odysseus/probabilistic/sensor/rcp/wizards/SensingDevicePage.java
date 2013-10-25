@@ -44,17 +44,17 @@ public class SensingDevicePage extends WizardPage {
     private Text txtName;
     private Table tblAttributes;
 
-    public SensingDevicePage(String pageName, IStructuredSelection selection) {
+    public SensingDevicePage(final String pageName, final IStructuredSelection selection) {
         super(pageName);
 
-        setTitle("Define the sensing device");
-        setDescription("Set the sensing device name and observed properties.");
+        this.setTitle("Define the sensing device");
+        this.setDescription("Set the sensing device name and observed properties.");
 
     }
 
     @Override
-    public void createControl(Composite parent) {
-        initializeDialogUnits(parent);
+    public void createControl(final Composite parent) {
+        this.initializeDialogUnits(parent);
 
         final Composite container = new Composite(parent, SWT.NULL);
         container.setFont(parent.getFont());
@@ -82,7 +82,7 @@ public class SensingDevicePage extends WizardPage {
         gd_propertyTableViewer.widthHint = 328;
         this.tblAttributes.setLayoutData(gd_propertyTableViewer);
 
-        Composite btnComposite = new Composite(container, SWT.NULL);
+        final Composite btnComposite = new Composite(container, SWT.NULL);
         btnComposite.setLayout(new GridLayout(1, false));
         final Button btnAdd = new Button(btnComposite, SWT.NONE);
         final GridData gd_btnAdd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
@@ -93,9 +93,10 @@ public class SensingDevicePage extends WizardPage {
                 final AttributeDialog attributeDialog = new AttributeDialog(btnAdd.getShell());
 
                 attributeDialog.open();
-                if (tblAttributes.isDisposed())
+                if (SensingDevicePage.this.tblAttributes.isDisposed()) {
                     return;
-                TableItem item = new TableItem(tblAttributes, SWT.NONE);
+                }
+                final TableItem item = new TableItem(SensingDevicePage.this.tblAttributes, SWT.NONE);
                 item.setText(0, attributeDialog.getAttribute().getAttributeName());
                 item.setText(1, attributeDialog.getAttribute().getDatatype().getQualName());
                 item.setData(attributeDialog.getAttribute());
@@ -108,21 +109,21 @@ public class SensingDevicePage extends WizardPage {
         btnRemove.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                int index = tblAttributes.getSelectionIndex();
-                tblAttributes.remove(index);
+                final int index = SensingDevicePage.this.tblAttributes.getSelectionIndex();
+                SensingDevicePage.this.tblAttributes.remove(index);
             }
         });
         btnRemove.setText(OdysseusNLS.Remove);
     }
 
     public String getSensingDeviceName() {
-        return txtName.getText();
+        return this.txtName.getText();
     }
 
     public List<SDFAttribute> getAttributes() {
-        List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(tblAttributes.getItemCount());
-        for (int i = 0; i < tblAttributes.getItemCount(); i++) {
-            attributes.add((SDFAttribute) tblAttributes.getItem(i).getData());
+        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(this.tblAttributes.getItemCount());
+        for (int i = 0; i < this.tblAttributes.getItemCount(); i++) {
+            attributes.add((SDFAttribute) this.tblAttributes.getItem(i).getData());
         }
         return attributes;
     }

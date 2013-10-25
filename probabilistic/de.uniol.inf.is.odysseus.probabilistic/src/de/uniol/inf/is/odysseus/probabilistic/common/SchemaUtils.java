@@ -316,7 +316,7 @@ public final class SchemaUtils {
 			return schema.indexOf(attribute);
 		}
 	}
-	
+
 	/**
 	 * Return true if the given expression is of the form:
 	 * 

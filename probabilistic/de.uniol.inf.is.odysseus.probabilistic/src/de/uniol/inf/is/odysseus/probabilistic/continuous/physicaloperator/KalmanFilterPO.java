@@ -47,7 +47,7 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	/** The measurement model. */
 	private final MeasurementModel measurementModel;
 	/** The Kalman filter. */
-	private KalmanFilter filter;
+	private final KalmanFilter filter;
 
 	/**
 	 * 
@@ -117,11 +117,11 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 		}
 		this.filter.correct(value);
 
-		double[] state = this.filter.getStateEstimation();
-		double[][] covariance = this.filter.getErrorCovariance();
+		final double[] state = this.filter.getStateEstimation();
+		final double[][] covariance = this.filter.getErrorCovariance();
 
 		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		MultivariateNormalDistribution component = new MultivariateNormalDistribution(state, covariance);
+		final MultivariateNormalDistribution component = new MultivariateNormalDistribution(state, covariance);
 		mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
 
 		final NormalDistributionMixture mixture = new NormalDistributionMixture(mvns);

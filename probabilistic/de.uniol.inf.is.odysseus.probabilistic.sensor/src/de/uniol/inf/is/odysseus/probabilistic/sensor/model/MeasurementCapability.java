@@ -37,7 +37,7 @@ public class MeasurementCapability {
      * @param name
      * @param attribute
      */
-    public MeasurementCapability(URI uri, SDFAttribute attribute) {
+    public MeasurementCapability(final URI uri, final SDFAttribute attribute) {
         super();
         this.uri = uri;
         this.attribute = attribute;
@@ -49,6 +49,7 @@ public class MeasurementCapability {
     public URI getUri() {
         return this.uri;
     }
+
     /**
      * @return the name
      */
@@ -70,11 +71,11 @@ public class MeasurementCapability {
         return this.conditions;
     }
 
-    public void addCondition(Condition condition) {
+    public void addCondition(final Condition condition) {
         this.conditions.add(condition);
     }
 
-    public void removeCondition(Condition condition) {
+    public void removeCondition(final Condition condition) {
         this.conditions.remove(condition);
     }
 
@@ -85,11 +86,11 @@ public class MeasurementCapability {
         return this.measurementProperties;
     }
 
-    public void addMeasurementProperty(MeasurementProperty measurementProperty) {
+    public void addMeasurementProperty(final MeasurementProperty measurementProperty) {
         this.measurementProperties.add(measurementProperty);
     }
 
-    public void removeMeasurementProperty(MeasurementProperty measurementProperty) {
+    public void removeMeasurementProperty(final MeasurementProperty measurementProperty) {
         this.measurementProperties.remove(measurementProperty);
     }
 }

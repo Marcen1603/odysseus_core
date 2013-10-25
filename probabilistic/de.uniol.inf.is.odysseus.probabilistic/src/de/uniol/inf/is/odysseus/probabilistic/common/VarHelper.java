@@ -23,9 +23,9 @@ package de.uniol.inf.is.odysseus.probabilistic.common;
  */
 public class VarHelper {
 	/** The position. */
-	private int pos;
+	private final int pos;
 	/** The object to use. */
-	private int objectPosToUse;
+	private final int objectPosToUse;
 
 	/**
 	 * Default constructor.

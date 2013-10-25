@@ -36,7 +36,7 @@ public class TContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object) 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
 	 * 
 	 * 
 	 * FIXME Implement Transformation rule to insert Regression and Sample operator (CK-20130720)

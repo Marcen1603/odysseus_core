@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.relational.transform.TAggregatePORule;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
-@SuppressWarnings({"all"})
+@SuppressWarnings({ "all" })
 public class TAggregateProbabilisticRule extends TAggregatePORule {
 
 	/*

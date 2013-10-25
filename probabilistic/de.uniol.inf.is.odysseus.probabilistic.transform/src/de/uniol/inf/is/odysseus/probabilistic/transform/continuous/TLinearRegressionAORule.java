@@ -62,7 +62,7 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
 	public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-			return true;
+				return true;
 			}
 		}
 		return false;

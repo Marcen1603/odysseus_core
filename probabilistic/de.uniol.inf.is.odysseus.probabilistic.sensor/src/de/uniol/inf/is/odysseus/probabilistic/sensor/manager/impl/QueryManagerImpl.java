@@ -28,7 +28,6 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -93,10 +92,10 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<SensingDevice> getAllSensingDevices() {
-        List<URI> uris = getAllSensingDeviceURIs();
+        final List<URI> uris = this.getAllSensingDeviceURIs();
         final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
-        for (URI uri : uris) {
-            SensingDevice sensingDevice = this.getSensingDevice(uri);
+        for (final URI uri : uris) {
+            final SensingDevice sensingDevice = this.getSensingDevice(uri);
             if (sensingDevice != null) {
                 sensingDevices.add(sensingDevice);
             }
@@ -114,10 +113,10 @@ public class QueryManagerImpl implements QueryManager {
         // this.getABox().getResource(uri.toString());
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
-        List<URI> propertyURIs = getAllPropertyURIsObservedBySensingDevice(uri);
-        for (URI propertyURI : propertyURIs) {
-            final Resource propertyResource = getABox().getResource(propertyURI.toString());
-            String sourceName = propertyResource.toString().substring(0, propertyResource.toString().lastIndexOf("#"));
+        final List<URI> propertyURIs = this.getAllPropertyURIsObservedBySensingDevice(uri);
+        for (final URI propertyURI : propertyURIs) {
+            final Resource propertyResource = this.getABox().getResource(propertyURI.toString());
+            final String sourceName = propertyResource.toString().substring(0, propertyResource.toString().lastIndexOf("#"));
             attributes.add(new SDFAttribute(sourceName, propertyResource.getURI(), SDFDatatype.OBJECT));
         }
         final SensingDevice sensingDevice = new SensingDevice(uri, new SDFSchema("", IStreamObject.class, attributes));
@@ -128,10 +127,10 @@ public class QueryManagerImpl implements QueryManager {
         // SSN.hasMeasurementCapability, (Resource) null); iter.hasNext();) {
         // final Statement stmt = iter.nextStatement();
         // final Resource measurementCapabilityResource = stmt.getResource();
-        List<URI> measurementCapabilityURIs = getAllMeasurementCapabilityURIsFromSensingDevice(uri);
-        for (URI measurementCapabilityURI : measurementCapabilityURIs) {
-            final Resource measurementCapabilityResource = getABox().getResource(measurementCapabilityURI.toString());
-            MeasurementCapability measurementCapability = this.getMeasurementCapability(measurementCapabilityResource);
+        final List<URI> measurementCapabilityURIs = this.getAllMeasurementCapabilityURIsFromSensingDevice(uri);
+        for (final URI measurementCapabilityURI : measurementCapabilityURIs) {
+            final Resource measurementCapabilityResource = this.getABox().getResource(measurementCapabilityURI.toString());
+            final MeasurementCapability measurementCapability = this.getMeasurementCapability(measurementCapabilityResource);
             if (measurementCapability != null) {
                 sensingDevice.addMeasurementCapability(measurementCapability);
             }
@@ -176,7 +175,7 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<SensingDevice> getSensingDevicesByObservedProperty(final SDFAttribute attribute) {
-        return getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS + attribute.getAttributeName()));
+        return this.getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS + attribute.getAttributeName()));
     }
 
     /**
@@ -222,6 +221,7 @@ public class QueryManagerImpl implements QueryManager {
         return uris;
     }
 
+    @Override
     public ResultSet executeQuery(final String queryString) {
         final StringBuilder prefix = new StringBuilder();
         prefix.append(QueryManagerImpl.SSN_PREFIX);
@@ -243,7 +243,7 @@ public class QueryManagerImpl implements QueryManager {
         final Statement attributeStmt = this.getABox().getProperty(measurementCapabilityResource, SSN.forProperty);
         if (attributeStmt != null) {
             final URI attributeURI = URI.create(attributeStmt.getResource().getURI());
-            String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
+            final String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
             final SDFAttribute attribute = new SDFAttribute(sourceName, attributeURI.getFragment(), SDFDatatype.OBJECT);
             final MeasurementCapability measurementCapability = new MeasurementCapability(attributeURI, attribute);
 
@@ -265,7 +265,7 @@ public class QueryManagerImpl implements QueryManager {
         final Statement attributeStmt = this.getABox().getProperty(condition, RDFS.subClassOf);
         if (attributeStmt != null) {
             final URI attributeURI = URI.create(attributeStmt.getResource().getURI());
-            String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
+            final String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
             final SDFAttribute attribute = new SDFAttribute(sourceName, attributeURI.getFragment(), SDFDatatype.OBJECT);
             final Interval interval = this.getConditionInterval(condition);
             return new Condition(URI.create(condition.getURI()), attribute, interval);

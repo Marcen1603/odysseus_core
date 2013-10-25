@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
 
 /**
  * Smaller operator for continuous probabilistic values.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */

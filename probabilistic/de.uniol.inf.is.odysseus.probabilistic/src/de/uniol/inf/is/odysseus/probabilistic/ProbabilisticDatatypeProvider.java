@@ -34,7 +34,7 @@ public class ProbabilisticDatatypeProvider implements IDatatypeProvider {
 	 */
 	@Override
 	public final List<SDFDatatype> getDatatypes() {
-		List<SDFDatatype> ret = new ArrayList<>();
+		final List<SDFDatatype> ret = new ArrayList<>();
 		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
 		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
 		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_LONG);

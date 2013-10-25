@@ -67,7 +67,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
 		final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
 		IMetadataMergeFunction<?> metadataMerge;
 		if (transformConfig.getMetaTypes().size() > 1) {
-			CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
+			final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
 			combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 			metadataMerge = combinedMetadataMerge;
 		} else {

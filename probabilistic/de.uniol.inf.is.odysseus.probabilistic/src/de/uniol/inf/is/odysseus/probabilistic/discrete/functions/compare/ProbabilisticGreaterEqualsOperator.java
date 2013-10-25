@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 
 /**
  * Greater-Equals operator for discrete probabilistic values.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
@@ -36,10 +37,11 @@ public class ProbabilisticGreaterEqualsOperator extends GreaterEqualsOperator {
 	 */
 	public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
 			SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG, SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT };
-/*
- * 
- * @see de.uniol.inf.is.odysseus.core.server.mep.functions.compare.GreaterEqualsOperator#getAcceptedTypes(int)
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.functions.compare.GreaterEqualsOperator#getAcceptedTypes(int)
+	 */
 	@Override
 	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {

@@ -146,5 +146,5 @@ public class ProbabilisticByteHandler extends AbstractDataHandler<ProbabilisticB
 	public Class<?> createsType() {
 		return ProbabilisticByte.class;
 	}
-	
+
 }

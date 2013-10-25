@@ -20,8 +20,8 @@ import org.apache.commons.math3.distribution.fitting.MultivariateNormalMixtureEx
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.probabilistic.common.UnivariateNormalMixtureExpectationMaximization;
 import de.uniol.inf.is.odysseus.probabilistic.common.ProbabilisticConstants;
+import de.uniol.inf.is.odysseus.probabilistic.common.UnivariateNormalMixtureExpectationMaximization;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -79,9 +79,9 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 	 * @return The approximated distribution of a*b
 	 */
 	protected final NormalDistributionMixture getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
-		double[][] aSamples = a.getMixtures().sample(ProbabilisticConstants.MEP_SAMPLES);
-		double[][] bSamples = b.getMixtures().sample(ProbabilisticConstants.MEP_SAMPLES);
-		double[][] samples = new double[ProbabilisticConstants.MEP_SAMPLES][a.getDimension()];
+		final double[][] aSamples = a.getMixtures().sample(ProbabilisticConstants.MEP_SAMPLES);
+		final double[][] bSamples = b.getMixtures().sample(ProbabilisticConstants.MEP_SAMPLES);
+		final double[][] samples = new double[ProbabilisticConstants.MEP_SAMPLES][a.getDimension()];
 
 		for (int i = 0; i < ProbabilisticConstants.MEP_SAMPLES; i++) {
 			for (int j = 0; j < samples[i].length; j++) {
@@ -90,17 +90,17 @@ public class ProbabilisticContinuousMultiplicationOperator extends AbstractProba
 		}
 		final NormalDistributionMixture result;
 		if (samples[0].length < 2) {
-			MixtureMultivariateNormalDistribution model = UnivariateNormalMixtureExpectationMaximization.estimate(samples, a.getMixtures().getComponents().size() + b.getMixtures().getComponents().size());
-			UnivariateNormalMixtureExpectationMaximization em = new UnivariateNormalMixtureExpectationMaximization(samples);
+			final MixtureMultivariateNormalDistribution model = UnivariateNormalMixtureExpectationMaximization.estimate(samples, a.getMixtures().getComponents().size() + b.getMixtures().getComponents().size());
+			final UnivariateNormalMixtureExpectationMaximization em = new UnivariateNormalMixtureExpectationMaximization(samples);
 			em.fit(model, ProbabilisticConstants.MEP_MAX_ITERATIONS, ProbabilisticConstants.MEP_THRESHOLD);
 			result = new NormalDistributionMixture(em.getFittedModel().getComponents());
 		} else {
-			MixtureMultivariateNormalDistribution model = MultivariateNormalMixtureExpectationMaximization.estimate(samples, a.getMixtures().getComponents().size() + b.getMixtures().getComponents().size());
-			MultivariateNormalMixtureExpectationMaximization em = new MultivariateNormalMixtureExpectationMaximization(samples);
+			final MixtureMultivariateNormalDistribution model = MultivariateNormalMixtureExpectationMaximization.estimate(samples, a.getMixtures().getComponents().size() + b.getMixtures().getComponents().size());
+			final MultivariateNormalMixtureExpectationMaximization em = new MultivariateNormalMixtureExpectationMaximization(samples);
 			em.fit(model, ProbabilisticConstants.MEP_MAX_ITERATIONS, ProbabilisticConstants.MEP_THRESHOLD);
 			result = new NormalDistributionMixture(em.getFittedModel().getComponents());
 		}
-		
+
 		final Interval[] support = new Interval[a.getSupport().length];
 		for (int i = 0; i < a.getSupport().length; i++) {
 			support[i] = a.getSupport(i).mul(b.getSupport(i));

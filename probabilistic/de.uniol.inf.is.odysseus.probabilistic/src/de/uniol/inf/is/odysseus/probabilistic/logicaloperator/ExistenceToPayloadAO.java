@@ -67,7 +67,7 @@ public class ExistenceToPayloadAO extends AbstractLogicalOperator {
 		}
 		outputAttributes.add(existence);
 
-		this.setOutputSchema(new SDFSchema(name, getInputSchema(0).getType(), outputAttributes));
+		this.setOutputSchema(new SDFSchema(name, this.getInputSchema(0).getType(), outputAttributes));
 
 		return this.getOutputSchema();
 	}

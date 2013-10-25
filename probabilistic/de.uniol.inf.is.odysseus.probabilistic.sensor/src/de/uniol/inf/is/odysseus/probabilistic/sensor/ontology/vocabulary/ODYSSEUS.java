@@ -47,7 +47,7 @@ public final class ODYSSEUS {
      * @see #NS
      */
     public static String getURI() {
-        return NS;
+        return ODYSSEUS.NS;
     }
 
     /**
@@ -55,18 +55,18 @@ public final class ODYSSEUS {
      * The namespace of the vocabulary as a resource
      * </p>
      */
-    public static final Resource NAMESPACE = m_model.createResource(NS);
+    public static final Resource NAMESPACE = ODYSSEUS.m_model.createResource(ODYSSEUS.NS);
 
     // Vocabulary properties
     // /////////////////////////
     /**
      * has Measurement Property Min Value:
      */
-    public static final Property hasMeasurementPropertyMinValue = m_model.createProperty(NS + "hasMeasurementPropertyMinValue");
+    public static final Property hasMeasurementPropertyMinValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyMinValue");
     /**
      * has Measurement Property Max Value:
      */
-    public static final Property hasMeasurementPropertyMaxValue = m_model.createProperty(NS + "hasMeasurementPropertyMaxValue");
+    public static final Property hasMeasurementPropertyMaxValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyMaxValue");
 
     private ODYSSEUS() {
     }

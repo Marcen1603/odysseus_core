@@ -126,7 +126,7 @@ public class AssignDistributionAO extends UnaryLogicalOp {
 	 * @return The position of the variance attribute
 	 */
 	public final int determineVariance() {
-		return SchemaUtils.getAttributePos(getInputSchema(), getVariance());
+		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getVariance());
 	}
 
 	/*

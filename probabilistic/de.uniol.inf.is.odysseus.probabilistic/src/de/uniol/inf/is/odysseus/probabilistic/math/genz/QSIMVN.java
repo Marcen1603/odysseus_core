@@ -81,7 +81,7 @@ public class QSIMVN {
 			p = p + d;
 
 			if (FastMath.abs(d) > 0.0) {
-				e = FastMath.abs(d) * FastMath.sqrt(1.0 + FastMath.pow(e / d, 2.0) * (i - 2.0) / i);
+				e = FastMath.abs(d) * FastMath.sqrt(1.0 + ((FastMath.pow(e / d, 2.0) * (i - 2.0)) / i));
 
 				// final double a1 = (e / d);
 				// final double b2 = 2.0 * (i - 2.0) / i;

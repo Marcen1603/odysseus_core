@@ -32,34 +32,38 @@ public class ProbabilisticPlusNumberRHSOperator extends ProbabilisticPlusOperato
 	 * 
 	 */
 	private static final long serialVersionUID = 7963474021672657756L;
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#getValue()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#getValue()
+	 */
 	@Override
 	public final ProbabilisticDouble getValue() {
 		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
 		final ProbabilisticDouble b = new ProbabilisticDouble(this.getNumericalInputValue(1), 1.0);
 		return this.getValueInternal(a, b);
 	}
+
 	/**
 	 * Accepted data types.
 	 */
 	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
 			{ SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG },
 			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#isCommutative()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#isCommutative()
+	 */
 	@Override
 	public final boolean isCommutative() {
 		return false;
 	}
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#getAcceptedTypes(int)
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticPlusOperator#getAcceptedTypes(int)
+	 */
 	@Override
 	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {

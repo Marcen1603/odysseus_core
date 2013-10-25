@@ -37,7 +37,7 @@ public class MeasurementProperty {
      * @param property
      * @param interval
      */
-    public MeasurementProperty(Property property, Interval interval) {
+    public MeasurementProperty(final Property property, final Interval interval) {
         super();
         this.property = property;
         this.interval = interval;
@@ -68,7 +68,7 @@ public class MeasurementProperty {
      * @param unit
      *            the unit to set
      */
-    public void setUnit(String unit) {
+    public void setUnit(final String unit) {
         this.unit = unit;
     }
 

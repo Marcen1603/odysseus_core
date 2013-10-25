@@ -117,8 +117,8 @@ public class ProbabilisticDiscreteSelectPO<T extends Tuple<?>> extends SelectPO<
 			((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
 			// KTHXBYE
 			this.transfer(outputVal);
-		} else if (LOG.isTraceEnabled()) {
-			LOG.trace("Drop tuple: " + outputVal.toString());
+		} else if (ProbabilisticDiscreteSelectPO.LOG.isTraceEnabled()) {
+			ProbabilisticDiscreteSelectPO.LOG.trace("Drop tuple: " + outputVal.toString());
 		}
 	}
 

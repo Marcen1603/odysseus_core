@@ -48,7 +48,7 @@ public final class DUL {
      * @see #NS
      */
     public static String getURI() {
-        return NS;
+        return DUL.NS;
     }
 
     /**
@@ -56,7 +56,7 @@ public final class DUL {
      * The namespace of the vocabulary as a resource
      * </p>
      */
-    public static final Resource NAMESPACE = m_model.createResource(NS);
+    public static final Resource NAMESPACE = DUL.m_model.createResource(DUL.NS);
 
     // Vocabulary properties
     // /////////////////////////
@@ -65,57 +65,57 @@ public final class DUL {
      * wheels of that truck is 12', 'the time of the experiment is August 9th,
      * 2004', 'the whale has been localized at 34 degrees E, 20 degrees S'.
      */
-    public static final Property hasRegion = m_model.createProperty(NS + "hasRegion");
+    public static final Property hasRegion = DUL.m_model.createProperty(DUL.NS + "hasRegion");
     /**
      * is participant in: A relation between an object and a process, e.g. 'John
      * took part in the discussion', 'a large mass of snow fell during the
      * avalanche', or 'a cook, some sugar, flour, etc. are all present in the
      * cooking of a cake'.
      */
-    public static final Property isParticipantIn = m_model.createProperty(NS + "isParticipantIn");
+    public static final Property isParticipantIn = DUL.m_model.createProperty(DUL.NS + "isParticipantIn");
     /**
      * satisfies: A relation between a Situation and a Description, e.g. the
      * execution of a Plan satisfies that plan.
      */
-    public static final Property satisfies = m_model.createProperty(NS + "satisfies");
+    public static final Property satisfies = DUL.m_model.createProperty(DUL.NS + "satisfies");
     /**
      * has location: A generic, relative localization, holding between any
      * entities. E.g. 'the cat is on the mat', 'Omar is in Samarcanda', 'the
      * wound is close to the femural artery'.For 'absolute' locations, see
      * SpaceRegion
      */
-    public static final Property hasLocation = m_model.createProperty(NS + "hasLocation");
+    public static final Property hasLocation = DUL.m_model.createProperty(DUL.NS + "hasLocation");
     /**
      * has participant: A relation between an object and a process, e.g. 'John
      * took part in the discussion', 'a large mass of snow fell during the
      * avalanche', or 'a cook, some sugar, flour, etc. are all present in the
      * cooking of a cake'.
      */
-    public static final Property hasParticipant = m_model.createProperty(NS + "hasParticipant");
+    public static final Property hasParticipant = DUL.m_model.createProperty(DUL.NS + "hasParticipant");
     /**
      * is setting for: A relation between situations and entities, e.g. 'this
      * morning I've prepared my coffee with a new fantastic Arabica', i.e.: the
      * preparation of my coffee this morning is the setting for (an amount of) a
      * new fantastic Arabica.
      */
-    public static final Property isSettingFor = m_model.createProperty(NS + "isSettingFor");
+    public static final Property isSettingFor = DUL.m_model.createProperty(DUL.NS + "isSettingFor");
     /**
      * has quality: A relation between entities and qualities, e.g. 'Dmitri's
      * skin is yellowish'.
      */
-    public static final Property hasQuality = m_model.createProperty(NS + "hasQuality");
+    public static final Property hasQuality = DUL.m_model.createProperty(DUL.NS + "hasQuality");
     /**
      * includes object: A relation between situations and objects, e.g. 'this
      * morning I've prepared my coffee and had my fingers burnt' (i.e.: the
      * preparation of my coffee this morning included me).
      */
-    public static final Property includesObject = m_model.createProperty(NS + "includesObject");
+    public static final Property includesObject = DUL.m_model.createProperty(DUL.NS + "includesObject");
     /**
      * is location of: A generic, relative localization, holding between any
      * entities. E.g. 'Rome is the seat of the Pope', 'the liver is the location
      * of the tumor'.For 'absolute' locations, see SpaceRegion
      */
-    public static final Property isLocationOf = m_model.createProperty(NS + "isLocationOf");
+    public static final Property isLocationOf = DUL.m_model.createProperty(DUL.NS + "isLocationOf");
     /**
      * describes: The relation between a Description and an Entity : a
      * Description gives a unity to a Collection of parts (the components), or
@@ -127,16 +127,16 @@ public final class DUL {
      * as
      * a flower pot.
      */
-    public static final Property describes = m_model.createProperty(NS + "describes");
+    public static final Property describes = DUL.m_model.createProperty(DUL.NS + "describes");
     /** is object included in. */
-    public static final Property isObjectIncludedIn = m_model.createProperty(NS + "isObjectIncludedIn");
+    public static final Property isObjectIncludedIn = DUL.m_model.createProperty(DUL.NS + "isObjectIncludedIn");
     /**
      * has part: A schematic relation between any entities, e.g. 'the human body
      * has a brain as part', '20th century contains year 1923', 'World War II
      * includes the Pearl Harbour event'.Subproperties and restrictions can be
      * used to specialize hasPart for objects, events, etc.
      */
-    public static final Property hasPart = m_model.createProperty(NS + "hasPart");
+    public static final Property hasPart = DUL.m_model.createProperty(DUL.NS + "hasPart");
     /**
      * is described by: The relation between an Entity and a Description: a
      * Description gives a unity to a Collection of parts (the components), or
@@ -148,53 +148,53 @@ public final class DUL {
      * as
      * a flower pot.
      */
-    public static final Property isDescribedBy = m_model.createProperty(NS + "isDescribedBy");
+    public static final Property isDescribedBy = DUL.m_model.createProperty(DUL.NS + "isDescribedBy");
     /**
      * is quality of: A relation between entities and qualities, e.g. 'Dmitri's
      * skin is yellowish'.
      */
-    public static final Property isQualityOf = m_model.createProperty(NS + "isQualityOf");
+    public static final Property isQualityOf = DUL.m_model.createProperty(DUL.NS + "isQualityOf");
     /**
      * è un concetto usato in: A more generic relation holding between a
      * Description and a Concept. In order to be used, a Concept must be
      * previously definedIn another Description
      */
-    public static final Property isConceptUsedIn = m_model.createProperty(NS + "isConceptUsedIn");
+    public static final Property isConceptUsedIn = DUL.m_model.createProperty(DUL.NS + "isConceptUsedIn");
     /**
      * classifica: A relation between a Concept and an Entity, e.g. the Role
      * 'student' classifies a Person 'John'.
      */
-    public static final Property classifies = m_model.createProperty(NS + "classifies");
+    public static final Property classifies = DUL.m_model.createProperty(DUL.NS + "classifies");
     /**
      * directly follows: The intransitive follows relation. For example,
      * Wednesday directly precedes Thursday. Directness of precedence depends on
      * the designer conceptualization.
      */
-    public static final Property directlyFollows = m_model.createProperty(NS + "directlyFollows");
+    public static final Property directlyFollows = DUL.m_model.createProperty(DUL.NS + "directlyFollows");
     /**
      * includes event: A relation between situations and events, e.g. 'this
      * morning I've prepared my coffee and had my fingers burnt' (i.e.: the
      * preparation of my coffee this morning included a burning of my fingers).
      */
-    public static final Property includesEvent = m_model.createProperty(NS + "includesEvent");
+    public static final Property includesEvent = DUL.m_model.createProperty(DUL.NS + "includesEvent");
     /**
      * è associato al concetto: Any relation between concepts, e.g.
      * superordinated, conceptual parthood, having a parameter, having a task,
      * superordination, etc.
      */
-    public static final Property isRelatedToConcept = m_model.createProperty(NS + "isRelatedToConcept");
+    public static final Property isRelatedToConcept = DUL.m_model.createProperty(DUL.NS + "isRelatedToConcept");
     /**
      * è classificato da: A relation between a Concept and an Entity, e.g. 'John
      * is considered a typical rude man'; your last concert constitutes the
      * achievement of a lifetime; '20-year-old means she's mature enough'.
      */
-    public static final Property isClassifiedBy = m_model.createProperty(NS + "isClassifiedBy");
+    public static final Property isClassifiedBy = DUL.m_model.createProperty(DUL.NS + "isClassifiedBy");
     /**
      * directly precedes: The intransitive precedes relation. For example,
      * Monday directly precedes Tuesday. Directness of precedence depends on the
      * designer conceptualization.
      */
-    public static final Property directlyPrecedes = m_model.createProperty(NS + "directlyPrecedes");
+    public static final Property directlyPrecedes = DUL.m_model.createProperty(DUL.NS + "directlyPrecedes");
     /**
      * has setting: A relation between entities and situations, e.g. 'this
      * morning I've prepared my coffee with a new fantastic Arabica', i.e.: (an
@@ -202,9 +202,9 @@ public final class DUL {
      * coffee
      * this morning.
      */
-    public static final Property hasSetting = m_model.createProperty(NS + "hasSetting");
+    public static final Property hasSetting = DUL.m_model.createProperty(DUL.NS + "hasSetting");
     /** is related to description: Any relation between descriptions. */
-    public static final Property isRelatedToDescription = m_model.createProperty(NS + "isRelatedToDescription");
+    public static final Property isRelatedToDescription = DUL.m_model.createProperty(DUL.NS + "isRelatedToDescription");
     /**
      * follows: A relation between entities, expressing a 'sequence' schema.
      * E.g. 'year 2000 follows 1999', 'preparing coffee' follows 'deciding what
@@ -212,16 +212,16 @@ public final class DUL {
      * between tasks, processes or time intervals, and subproperties would fit
      * best in order to distinguish the different uses.
      */
-    public static final Property follows = m_model.createProperty(NS + "follows");
+    public static final Property follows = DUL.m_model.createProperty(DUL.NS + "follows");
     /**
      * usa il concetto: A generic relation holding between a Description and a
      * Concept. In order to be used, a Concept must be previously definedIn
      * another Description. This last condition cannot be encoded for object
      * properties in OWL.
      */
-    public static final Property usesConcept = m_model.createProperty(NS + "usesConcept");
+    public static final Property usesConcept = DUL.m_model.createProperty(DUL.NS + "usesConcept");
     /** is event included in. */
-    public static final Property isEventIncludedIn = m_model.createProperty(NS + "isEventIncludedIn");
+    public static final Property isEventIncludedIn = DUL.m_model.createProperty(DUL.NS + "isEventIncludedIn");
     /**
      * esprime: This is a large comment field for those who want to investigate
      * the different uses of the 'expresses' relation for modeling different
@@ -330,7 +330,7 @@ public final class DUL {
      * the problem of integrating the different uses of 'expresses', so that
      * different theories, resources, methods can interoperate.
      */
-    public static final Property expresses = m_model.createProperty(NS + "expresses");
+    public static final Property expresses = DUL.m_model.createProperty(DUL.NS + "expresses");
     /**
      * has data value: A datatype property that encodes values from a datatype
      * for an Entity. There are several ways to encode values in DOLCE
@@ -357,13 +357,13 @@ public final class DUL {
      * constraint or a selection is modeled, independently from the actual
      * observation of values in the real world.
      */
-    public static final Property hasDataValue = m_model.createProperty(NS + "hasDataValue");
+    public static final Property hasDataValue = DUL.m_model.createProperty(DUL.NS + "hasDataValue");
     /**
      * definisce: A relation between a Description and a Concept, e.g. a
      * Workflow for a governmental Organization defines the Role 'officer', or
      * 'the Italian Traffic Law defines the role Vehicle'.
      */
-    public static final Property defines = m_model.createProperty(NS + "defines");
+    public static final Property defines = DUL.m_model.createProperty(DUL.NS + "defines");
     /**
      * is expressed by: A relation between a dul:SocialObject (the 'meaning')
      * and a dul:InformationObject (the 'expression'). For example: 'A Beehive
@@ -376,17 +376,17 @@ public final class DUL {
      * 'expresses', for those who want to investigate more on what kind of
      * meaning can be represented in what form.
      */
-    public static final Property isExpressedBy = m_model.createProperty(NS + "isExpressedBy");
+    public static final Property isExpressedBy = DUL.m_model.createProperty(DUL.NS + "isExpressedBy");
     /**
      * has region data value: A datatype property that encodes values for a
      * Region, e.g. a float for the Region Height.
      */
-    public static final Property hasRegionDataValue = m_model.createProperty(NS + "hasRegionDataValue");
+    public static final Property hasRegionDataValue = DUL.m_model.createProperty(DUL.NS + "hasRegionDataValue");
     /**
      * is part of: A relation between any entities, e.g.'brain is a part of the
      * human body'.
      */
-    public static final Property isPartOf = m_model.createProperty(NS + "isPartOf");
+    public static final Property isPartOf = DUL.m_model.createProperty(DUL.NS + "isPartOf");
     /**
      * precedes: A relation between entities, expressing a 'sequence' schema.
      * E.g. 'year 1999 precedes 2000', 'deciding what coffee to use' precedes
@@ -396,18 +396,18 @@ public final class DUL {
      * situations, etc. Subproperties can be defined in order to distinguish the
      * different uses.
      */
-    public static final Property precedes = m_model.createProperty(NS + "precedes");
+    public static final Property precedes = DUL.m_model.createProperty(DUL.NS + "precedes");
     /**
      * è definito in: A relation between a Description and a Concept, e.g. a
      * Workflow for a governmental Organization defines the Role 'officer', or
      * 'the Italian Traffic Law defines the role Vehicle'.
      */
-    public static final Property isDefinedIn = m_model.createProperty(NS + "isDefinedIn");
+    public static final Property isDefinedIn = DUL.m_model.createProperty(DUL.NS + "isDefinedIn");
     /**
      * is region for: A relation between entities and regions, e.g. 'the color
      * of my car is red'.
      */
-    public static final Property isRegionFor = m_model.createProperty(NS + "isRegionFor");
+    public static final Property isRegionFor = DUL.m_model.createProperty(DUL.NS + "isRegionFor");
     /**
      * is time of observation of: A relation to represent a (past, present or
      * future) TimeInterval at which an Entity is observable.In order to encode
@@ -415,7 +415,7 @@ public final class DUL {
      * alternative way of representing time is the datatype property:
      * hasIntervalDate
      */
-    public static final Property isTimeOfObservationOf = m_model.createProperty(NS + "isTimeOfObservationOf");
+    public static final Property isTimeOfObservationOf = DUL.m_model.createProperty(DUL.NS + "isTimeOfObservationOf");
     /**
      * expands: A partial order relation that holds between descriptions. It
      * represents the proper part relation between a description and another
@@ -427,47 +427,47 @@ public final class DUL {
      * considered, but even in this case a criterion of relevance is usually
      * active).
      */
-    public static final Property expands = m_model.createProperty(NS + "expands");
+    public static final Property expands = DUL.m_model.createProperty(DUL.NS + "expands");
     /**
      * è un ruolo definito in: A relation between a description and a role, e.g.
      * the role 'Ingredient' is defined in the recipe for a cake.
      */
-    public static final Property isRoleDefinedIn = m_model.createProperty(NS + "isRoleDefinedIn");
+    public static final Property isRoleDefinedIn = DUL.m_model.createProperty(DUL.NS + "isRoleDefinedIn");
     /**
      * ha parametro: A Concept can have a Parameter that constrains the
      * attributes that a classified Entity can have in a certain Situation, e.g.
      * a 4WheelDriver Role definedIn the ItalianTrafficLaw has a MinimumAge
      * parameter on the Amount 16.
      */
-    public static final Property hasParameter = m_model.createProperty(NS + "hasParameter");
+    public static final Property hasParameter = DUL.m_model.createProperty(DUL.NS + "hasParameter");
     /** is agent included in. */
-    public static final Property isAgentIncludedIn = m_model.createProperty(NS + "isAgentIncludedIn");
+    public static final Property isAgentIncludedIn = DUL.m_model.createProperty(DUL.NS + "isAgentIncludedIn");
     /**
      * is precondition of: Direct precedence applied to situations. E.g.,
      * 'claiming to find nuclear weapons in a foreign country is a precondition
      * to declare war against it'.
      */
-    public static final Property isPreconditionOf = m_model.createProperty(NS + "isPreconditionOf");
+    public static final Property isPreconditionOf = DUL.m_model.createProperty(DUL.NS + "isPreconditionOf");
     /**
      * è un obiettivo per: A relation between roles and tasks, e.g. 'students
      * have the duty of giving exams' (i.e. the Role 'student' hasTask the Task
      * 'giving exams').
      */
-    public static final Property isTaskOf = m_model.createProperty(NS + "isTaskOf");
+    public static final Property isTaskOf = DUL.m_model.createProperty(DUL.NS + "isTaskOf");
     /** is agent involved in: Agent participation. */
-    public static final Property isAgentInvolvedIn = m_model.createProperty(NS + "isAgentInvolvedIn");
+    public static final Property isAgentInvolvedIn = DUL.m_model.createProperty(DUL.NS + "isAgentInvolvedIn");
     /**
      * esprime il concetto: A relation between an InformationObject and a
      * Concept , e.g. the term "dog" expresses the Concept "dog". For expressing
      * a relational meaning, see the more general object property: expresses
      */
-    public static final Property expressesConcept = m_model.createProperty(NS + "expressesConcept");
+    public static final Property expressesConcept = DUL.m_model.createProperty(DUL.NS + "expressesConcept");
     /**
      * esegue il task: A relation between an action and a task, e.g. 'putting
      * some water in a pot and putting the pot on a fire until the water starts
      * bubbling' executes the task 'boiling'.
      */
-    public static final Property executesTask = m_model.createProperty(NS + "executesTask");
+    public static final Property executesTask = DUL.m_model.createProperty(DUL.NS + "executesTask");
     /**
      * ha valore: Parametrizes values from a datatype. For example, a Parameter
      * MinimumAgeForDriving hasParameterDataValue 18 on datatype xsd:int, in the
@@ -482,7 +482,7 @@ public final class DUL {
      * AgeRangeForDrugUsage.Ordering on subparameters can be created by using or
      * specializing the object property 'precedes'.
      */
-    public static final Property hasParameterDataValue = m_model.createProperty(NS + "hasParameterDataValue");
+    public static final Property hasParameterDataValue = DUL.m_model.createProperty(DUL.NS + "hasParameterDataValue");
     /**
      * is observable at: A relation to represent a (past, present or future)
      * TimeInterval at which an Entity is observable.In order to encode a
@@ -490,61 +490,61 @@ public final class DUL {
      * alternative way of representing time is the datatype property:
      * hasIntervalDate
      */
-    public static final Property isObservableAt = m_model.createProperty(NS + "isObservableAt");
+    public static final Property isObservableAt = DUL.m_model.createProperty(DUL.NS + "isObservableAt");
     /**
      * includes time: A relation between situations and time intervals, e.g.
      * 'this morning I've prepared my coffee and had my fingers burnt' (i.e.:
      * preparing my coffee was held this morning). A data value attached to the
      * time interval typically complements this modelling pattern.
      */
-    public static final Property includesTime = m_model.createProperty(NS + "includesTime");
+    public static final Property includesTime = DUL.m_model.createProperty(DUL.NS + "includesTime");
     /** is action included in. */
-    public static final Property isActionIncludedIn = m_model.createProperty(NS + "isActionIncludedIn");
+    public static final Property isActionIncludedIn = DUL.m_model.createProperty(DUL.NS + "isActionIncludedIn");
     /**
      * definisce il task: A relation between a description and a task, e.g. the
      * recipe for a cake defines the task 'boil'.
      */
-    public static final Property definesTask = m_model.createProperty(NS + "definesTask");
+    public static final Property definesTask = DUL.m_model.createProperty(DUL.NS + "definesTask");
     /**
      * ha come obiettivo: A relation between roles and tasks, e.g. 'students
      * have the duty of giving exams' (i.e. the Role 'student' hasTask the Task
      * 'giving exams').
      */
-    public static final Property hasTask = m_model.createProperty(NS + "hasTask");
+    public static final Property hasTask = DUL.m_model.createProperty(DUL.NS + "hasTask");
     /** involves agent: Agent participation. */
-    public static final Property involvesAgent = m_model.createProperty(NS + "involvesAgent");
+    public static final Property involvesAgent = DUL.m_model.createProperty(DUL.NS + "involvesAgent");
     /**
      * is postcondition of: Direct succession applied to situations. E.g.,
      * 'Taking some rest is a postcondition of my search for a hotel'.
      */
-    public static final Property isPostconditionOf = m_model.createProperty(NS + "isPostconditionOf");
+    public static final Property isPostconditionOf = DUL.m_model.createProperty(DUL.NS + "isPostconditionOf");
     /** is time included in. */
-    public static final Property isTimeIncludedIn = m_model.createProperty(NS + "isTimeIncludedIn");
+    public static final Property isTimeIncludedIn = DUL.m_model.createProperty(DUL.NS + "isTimeIncludedIn");
     /**
      * has interval date: A datatype property that encodes values from xsd:date
      * for a TimeInterval; a same TimeInterval can have more than one xsd:date
      * value: begin date, end date, date at which the interval holds, as well as
      * dates expressed in different formats: xsd:gYear, xsd:dateTime, etc.
      */
-    public static final Property hasIntervalDate = m_model.createProperty(NS + "hasIntervalDate");
+    public static final Property hasIntervalDate = DUL.m_model.createProperty(DUL.NS + "hasIntervalDate");
     /**
      * has event date: A datatype property that encodes values from xsd:date for
      * an Event; a same Event can have more than one xsd:date value: begin date,
      * end date, date at which the interval holds, as well as dates expressed in
      * different formats: xsd:gYear, xsd:dateTime, etc.
      */
-    public static final Property hasEventDate = m_model.createProperty(NS + "hasEventDate");
+    public static final Property hasEventDate = DUL.m_model.createProperty(DUL.NS + "hasEventDate");
     /**
      * has precondition: Direct precedence applied to situations. E.g., 'A
      * precondition to declare war against a foreign country is claiming to find
      * nuclear weapons in it'.
      */
-    public static final Property hasPrecondition = m_model.createProperty(NS + "hasPrecondition");
+    public static final Property hasPrecondition = DUL.m_model.createProperty(DUL.NS + "hasPrecondition");
     /**
      * definisce il ruolo: A relation between a description and a role, e.g. the
      * recipe for a cake defines the role 'ingredient'.
      */
-    public static final Property definesRole = m_model.createProperty(NS + "definesRole");
+    public static final Property definesRole = DUL.m_model.createProperty(DUL.NS + "definesRole");
     /**
      * is constraint for: A relation between parameters and entities. It allows
      * to assert generic constraints (encoded as parameters), e.g.
@@ -557,7 +557,7 @@ public final class DUL {
      * use in OWL is therefore a shortcut to annotate what Parameter constrains
      * what Entity
      */
-    public static final Property isConstraintFor = m_model.createProperty(NS + "isConstraintFor");
+    public static final Property isConstraintFor = DUL.m_model.createProperty(DUL.NS + "isConstraintFor");
     /**
      * ha vincolo: A relation between parameters and entities. It allows to
      * assert generic constraints (encoded as parameters), e.g.
@@ -567,68 +567,68 @@ public final class DUL {
      * moreover, it entails that a Parameter parametrizes a Region that
      * isRegionFor that Entity.
      */
-    public static final Property hasConstraint = m_model.createProperty(NS + "hasConstraint");
+    public static final Property hasConstraint = DUL.m_model.createProperty(DUL.NS + "hasConstraint");
     /**
      * includes agent: A relation between situations and persons, e.g. 'this
      * morning I've prepared my coffee and had my fingers burnt' (i.e.: the
      * preparation of my coffee this morning included me).
      */
-    public static final Property includesAgent = m_model.createProperty(NS + "includesAgent");
+    public static final Property includesAgent = DUL.m_model.createProperty(DUL.NS + "includesAgent");
     /**
      * è eseguito mediante: A relation between an action and a task, e.g.
      * 'putting some water in a pot and putting the pot on a fire until the
      * water starts bubbling' executes the task 'boiling'.
      */
-    public static final Property isExecutedIn = m_model.createProperty(NS + "isExecutedIn");
+    public static final Property isExecutedIn = DUL.m_model.createProperty(DUL.NS + "isExecutedIn");
     /**
      * è un concetto espresso da: A relation between an InformationObject and a
      * Concept , e.g. the term "dog" expresses the Concept "dog". For expressing
      * a relational meaning, see the more general object property: expresses
      */
-    public static final Property isConceptExpressedBy = m_model.createProperty(NS + "isConceptExpressedBy");
+    public static final Property isConceptExpressedBy = DUL.m_model.createProperty(DUL.NS + "isConceptExpressedBy");
     /**
      * è un parametro per: A Concept can have a Parameter that constrains the
      * attributes that a classified Entity can have in a certain Situation, e.g.
      * a 4WheelDriver Role definedIn the ItalianTrafficLaw has a MinimumAge
      * parameter on the Amount 16.
      */
-    public static final Property isParameterFor = m_model.createProperty(NS + "isParameterFor");
+    public static final Property isParameterFor = DUL.m_model.createProperty(DUL.NS + "isParameterFor");
     /**
      * è subordinato a: Direct succession applied to concepts. E.g. the role
      * 'Officer' is subordinated to 'Director'.
      */
-    public static final Property isSubordinatedTo = m_model.createProperty(NS + "isSubordinatedTo");
+    public static final Property isSubordinatedTo = DUL.m_model.createProperty(DUL.NS + "isSubordinatedTo");
     /**
      * has postcondition: Direct succession applied to situations. E.g., 'A
      * postcondition of our Plan is to have things settled'.
      */
-    public static final Property hasPostcondition = m_model.createProperty(NS + "hasPostcondition");
+    public static final Property hasPostcondition = DUL.m_model.createProperty(DUL.NS + "hasPostcondition");
     /**
      * ha ruolo: A relation between an object and a role, e.g. the person 'John'
      * has role 'student'.
      */
-    public static final Property hasRole = m_model.createProperty(NS + "hasRole");
+    public static final Property hasRole = DUL.m_model.createProperty(DUL.NS + "hasRole");
     /**
      * è superordinato a: Direct precedence applied to concepts. E.g. the role
      * 'Executive' is superordinated to 'DepartmentManager'.
      */
-    public static final Property isSuperordinatedTo = m_model.createProperty(NS + "isSuperordinatedTo");
+    public static final Property isSuperordinatedTo = DUL.m_model.createProperty(DUL.NS + "isSuperordinatedTo");
     /**
      * è un ruolo di: A relation between an object and a role, e.g. 'student' is
      * the role of 'John'.
      */
-    public static final Property isRoleOf = m_model.createProperty(NS + "isRoleOf");
+    public static final Property isRoleOf = DUL.m_model.createProperty(DUL.NS + "isRoleOf");
     /**
      * è parametrizzato da: The relation between a Parameter, e.g. 'MajorAge',
      * and a Region, e.g. '>17 year'.
      */
-    public static final Property isParametrizedBy = m_model.createProperty(NS + "isParametrizedBy");
+    public static final Property isParametrizedBy = DUL.m_model.createProperty(DUL.NS + "isParametrizedBy");
     /**
      * includes action: A relation between situations and actions, e.g. 'this
      * morning I've prepared my coffee and had my fingers burnt' (i.e.: the
      * preparation of my coffee this morning included a burning of my fingers).
      */
-    public static final Property includesAction = m_model.createProperty(NS + "includesAction");
+    public static final Property includesAction = DUL.m_model.createProperty(DUL.NS + "includesAction");
     /**
      * is expanded in: A partial order relation that holds between descriptions.
      * It represents the proper part relation between a description and another
@@ -640,38 +640,38 @@ public final class DUL {
      * considered, but even in this case a criterion of relevance is usually
      * active).
      */
-    public static final Property isExpandedIn = m_model.createProperty(NS + "isExpandedIn");
+    public static final Property isExpandedIn = DUL.m_model.createProperty(DUL.NS + "isExpandedIn");
     /**
      * parametrizza: The relation between a Parameter, e.g. 'MajorAgeLimit', and
      * a Region, e.g. '18_year'.For a more data-oriented relation, see
      * hasDataValue
      */
-    public static final Property parametrizes = m_model.createProperty(NS + "parametrizes");
+    public static final Property parametrizes = DUL.m_model.createProperty(DUL.NS + "parametrizes");
     /**
      * è un task definito in: A relation between a description and a task, e.g.
      * the task 'boil' is defined in a recipe for a cake.
      */
-    public static final Property isTaskDefinedIn = m_model.createProperty(NS + "isTaskDefinedIn");
+    public static final Property isTaskDefinedIn = DUL.m_model.createProperty(DUL.NS + "isTaskDefinedIn");
     /**
      * has component: The hasPart relation without transitivity, holding between
      * an Object (the system) and another (the component), and assuming a Design
      * that structures the Object.
      */
-    public static final Property hasComponent = m_model.createProperty(NS + "hasComponent");
+    public static final Property hasComponent = DUL.m_model.createProperty(DUL.NS + "hasComponent");
     /**
      * is component of: The hasPart relation without transitivity, holding
      * between an Object (the system) and another (the component), and assuming
      * a Design that structures the Object.
      */
-    public static final Property isComponentOf = m_model.createProperty(NS + "isComponentOf");
+    public static final Property isComponentOf = DUL.m_model.createProperty(DUL.NS + "isComponentOf");
     /** è caratterizzato da. */
-    public static final Property isCharacterizedBy = m_model.createProperty(NS + "isCharacterizedBy");
+    public static final Property isCharacterizedBy = DUL.m_model.createProperty(DUL.NS + "isCharacterizedBy");
     /**
      * realizes information about: The relation between entities and information
      * realizations, e.g. between Italy and a paper copy of the text of the
      * Italian Constitution.
      */
-    public static final Property realizesInformationAbout = m_model.createProperty(NS + "realizesInformationAbout");
+    public static final Property realizesInformationAbout = DUL.m_model.createProperty(DUL.NS + "realizesInformationAbout");
     /**
      * acts through: The relation holding between a PhysicalAgent and a
      * SocialAgent. In principle, a SocialAgent requires at least one
@@ -679,7 +679,7 @@ public final class DUL {
      * e.g. a university can be acted for by a department, which is acted for by
      * physical agents. AKA isActedBy
      */
-    public static final Property actsThrough = m_model.createProperty(NS + "actsThrough");
+    public static final Property actsThrough = DUL.m_model.createProperty(DUL.NS + "actsThrough");
     /**
      * ricopre: A relation between concepts and collections, where a Concept is
      * said to cover a Collection; it corresponds to a link between the
@@ -687,7 +687,7 @@ public final class DUL {
      * class.E.g. the collection of vintage saxophones is covered by the Concept
      * 'Saxophone' with the Parameter 'Vintage'.
      */
-    public static final Property covers = m_model.createProperty(NS + "covers");
+    public static final Property covers = DUL.m_model.createProperty(DUL.NS + "covers");
     /**
      * characterizes: A relation between concepts and collections, where a
      * Concept is said to characterize a Collection; it corresponds to a link
@@ -698,7 +698,7 @@ public final class DUL {
      * 'manufactured by hand', while it gets covered by the Concept 'Saxophone'
      * with the Parameter 'Vintage'.
      */
-    public static final Property characterizes = m_model.createProperty(NS + "characterizes");
+    public static final Property characterizes = DUL.m_model.createProperty(DUL.NS + "characterizes");
     /**
      * is conceptualized by: A relation stating that an Agent is internally
      * representing a Description . E.g., 'John believes in the conspiracy
@@ -707,12 +707,12 @@ public final class DUL {
      * the
      * attack plan'.
      */
-    public static final Property isConceptualizedBy = m_model.createProperty(NS + "isConceptualizedBy");
+    public static final Property isConceptualizedBy = DUL.m_model.createProperty(DUL.NS + "isConceptualizedBy");
     /**
      * is satisfied by: A relation between a Situation and a Description, e.g.
      * the execution of a Plan satisfies that plan.
      */
-    public static final Property isSatisfiedBy = m_model.createProperty(NS + "isSatisfiedBy");
+    public static final Property isSatisfiedBy = DUL.m_model.createProperty(DUL.NS + "isSatisfiedBy");
     /**
      * is reference of: A relation between information objects and any Entity
      * (including information objects). It can be used to talk about e.g.
@@ -725,7 +725,7 @@ public final class DUL {
      * Collection .The isReferenceOf relation is irreflexive, differently from
      * its inverse isAbout.
      */
-    public static final Property isReferenceOf = m_model.createProperty(NS + "isReferenceOf");
+    public static final Property isReferenceOf = DUL.m_model.createProperty(DUL.NS + "isReferenceOf");
     /**
      * is specialized by: A partial order relation that holds between social
      * objects. It represents the subsumption relation between e.g. a Concept
@@ -733,7 +733,7 @@ public final class DUL {
      * narrowe in intensional interpretation.E.g. PhDStudent Role specializes
      * Student Role
      */
-    public static final Property isSpecializedBy = m_model.createProperty(NS + "isSpecializedBy");
+    public static final Property isSpecializedBy = DUL.m_model.createProperty(DUL.NS + "isSpecializedBy");
     /**
      * conceptualizes: A relation stating that an Agent is internally
      * representing a SocialObject: situations, descriptions, concepts, etc.
@@ -746,7 +746,7 @@ public final class DUL {
      * or 'known', plans can be 'adopted', etc. (see ontology:
      * http://www.loa-cnr.it/ontologies/Conceptualization.owl.
      */
-    public static final Property conceptualizes = m_model.createProperty(NS + "conceptualizes");
+    public static final Property conceptualizes = DUL.m_model.createProperty(DUL.NS + "conceptualizes");
     /**
      * acts for: The relation holding between any Agent, and a SocialAgent. In
      * principle, a SocialAgent requires at least one PhysicalAgent in order to
@@ -754,7 +754,7 @@ public final class DUL {
      * acted for by a department, which on its turm is acted for by physical
      * agents.
      */
-    public static final Property actsFor = m_model.createProperty(NS + "actsFor");
+    public static final Property actsFor = DUL.m_model.createProperty(DUL.NS + "actsFor");
     /**
      * overlaps: A schematic relation between any entities, e.g. 'the chest
      * region overlaps with the abdomen region', 'my spoken words overlap with
@@ -763,12 +763,12 @@ public final class DUL {
      * restrictions can be used to specialize overlaps for objects, events, time
      * intervals, etc.
      */
-    public static final Property overlaps = m_model.createProperty(NS + "overlaps");
+    public static final Property overlaps = DUL.m_model.createProperty(DUL.NS + "overlaps");
     /**
      * co-participates with: A relation between two objects participating in a
      * same Event; e.g., 'Vitas and Jimmy are playing tennis'.
      */
-    public static final Property coparticipatesWith = m_model.createProperty(NS + "coparticipatesWith");
+    public static final Property coparticipatesWith = DUL.m_model.createProperty(DUL.NS + "coparticipatesWith");
     /**
      * specializes: A partial order relation that holds between social objects.
      * It mainly represents the subsumption relation between e.g. a Concept or
@@ -780,25 +780,25 @@ public final class DUL {
      * specializes A. For example, the 70,000 series Selmer Mark VI saxophone
      * Collection specializes the Selmer Mark VI saxophone Collection.
      */
-    public static final Property specializes = m_model.createProperty(NS + "specializes");
+    public static final Property specializes = DUL.m_model.createProperty(DUL.NS + "specializes");
     /**
      * is introduced by: A relation between a Description and a SocialAgent,
      * e.g. a Constitutional Charter introduces the SocialAgent
      * 'PresidentOfRepublic'.
      */
-    public static final Property isIntroducedBy = m_model.createProperty(NS + "isIntroducedBy");
+    public static final Property isIntroducedBy = DUL.m_model.createProperty(DUL.NS + "isIntroducedBy");
     /**
      * has member: A relation between collections and entities, e.g. 'my
      * collection of saxophones includes an old Adolphe Sax original alto' (i.e.
      * my collection has member an Adolphe Sax alto).
      */
-    public static final Property hasMember = m_model.createProperty(NS + "hasMember");
+    public static final Property hasMember = DUL.m_model.createProperty(DUL.NS + "hasMember");
     /**
      * realizes: A relation between an information realization and an
      * information object, e.g. the paper copy of the Italian Constitution
      * realizes the text of the Constitution.
      */
-    public static final Property realizes = m_model.createProperty(NS + "realizes");
+    public static final Property realizes = DUL.m_model.createProperty(DUL.NS + "realizes");
     /**
      * è ricoperto da: A relation between concepts and collections, where a
      * Concept is said to cover a Collection; it corresponds to a link between
@@ -806,7 +806,7 @@ public final class DUL {
      * class.E.g. the collection of vintage saxophones is covered by the Concept
      * 'Saxophone' with the Parameter 'Vintage'.
      */
-    public static final Property isCoveredBy = m_model.createProperty(NS + "isCoveredBy");
+    public static final Property isCoveredBy = DUL.m_model.createProperty(DUL.NS + "isCoveredBy");
     /**
      * is constituent of: 'Constituency' depends on some layering of the world
      * described by the ontology. For example, scientific granularities (e.g.
@@ -828,7 +828,7 @@ public final class DUL {
      * constitute them, and a river is conceptualized at a different layer from
      * the atoms that constitute it.
      */
-    public static final Property isConstituentOf = m_model.createProperty(NS + "isConstituentOf");
+    public static final Property isConstituentOf = DUL.m_model.createProperty(DUL.NS + "isConstituentOf");
     /**
      * has common boundary: A relation to encode either formal or informal
      * characterizations of 'boundaries' common to two different entities: an
@@ -836,12 +836,12 @@ public final class DUL {
      * common topological boundary, two objects that are said to be 'in contact'
      * from a commonsense perspective, etc.
      */
-    public static final Property hasCommonBoundary = m_model.createProperty(NS + "hasCommonBoundary");
+    public static final Property hasCommonBoundary = DUL.m_model.createProperty(DUL.NS + "hasCommonBoundary");
     /**
      * near to: Generic distance relation between any Entity(s). E.g. Rome is
      * near to Florence, astronomy is near to physics.
      */
-    public static final Property nearTo = m_model.createProperty(NS + "nearTo");
+    public static final Property nearTo = DUL.m_model.createProperty(DUL.NS + "nearTo");
     /**
      * unifies: A Collection has a unification criterion, provided by a
      * Description; for example, a community of practice can be unified by a
@@ -850,7 +850,7 @@ public final class DUL {
      * be represented as a Description MirrorNeuronTheory that unifies the
      * community. There can be several unifying descriptions.
      */
-    public static final Property unifies = m_model.createProperty(NS + "unifies");
+    public static final Property unifies = DUL.m_model.createProperty(DUL.NS + "unifies");
     /**
      * concretely expresses: A relation between an InformationRealization and a
      * Description, e.g. 'the printout of the Italian Constitution
@@ -858,20 +858,20 @@ public final class DUL {
      * with a rule stating that the InformationRealization realizes an
      * InformationObject that expresses the Description
      */
-    public static final Property concretelyExpresses = m_model.createProperty(NS + "concretelyExpresses");
+    public static final Property concretelyExpresses = DUL.m_model.createProperty(DUL.NS + "concretelyExpresses");
     /**
      * is member of: A relation between collections and entities, e.g. 'the
      * Night Watch by Rembrandt is in the Rijksmuseum collection'; 'Davide is
      * member of the Pen Club', 'Igor is one the subjects chosen for the
      * experiment'.
      */
-    public static final Property isMemberOf = m_model.createProperty(NS + "isMemberOf");
+    public static final Property isMemberOf = DUL.m_model.createProperty(DUL.NS + "isMemberOf");
     /**
      * is reference of information realized by: The relation between entities
      * and information realizations, e.g. between Italy and a paper copy of the
      * text of the Italian Constitution.
      */
-    public static final Property isReferenceOfInformationRealizedBy = m_model.createProperty(NS + "isReferenceOfInformationRealizedBy");
+    public static final Property isReferenceOfInformationRealizedBy = DUL.m_model.createProperty(DUL.NS + "isReferenceOfInformationRealizedBy");
     /**
      * is about: A relation between information objects and any Entity
      * (including information objects). It can be used to talk about e.g.
@@ -885,12 +885,12 @@ public final class DUL {
      * OWL1.0),
      * because information objects are also about themselves.
      */
-    public static final Property isAbout = m_model.createProperty(NS + "isAbout");
+    public static final Property isAbout = DUL.m_model.createProperty(DUL.NS + "isAbout");
     /**
      * introduces: A relation between a Description and a SocialAgent, e.g. a
      * Constitutional Charter introduces the SocialAgent 'PresidentOfRepublic'.
      */
-    public static final Property introduces = m_model.createProperty(NS + "introduces");
+    public static final Property introduces = DUL.m_model.createProperty(DUL.NS + "introduces");
     /**
      * is unified by: A Collection has a unification criterion, provided by a
      * Description; for example, a community of practice can be unified by a
@@ -899,7 +899,7 @@ public final class DUL {
      * be represented as a Description MirrorNeuronTheory that unifies the
      * community. There can be several unifying descriptions.
      */
-    public static final Property isUnifiedBy = m_model.createProperty(NS + "isUnifiedBy");
+    public static final Property isUnifiedBy = DUL.m_model.createProperty(DUL.NS + "isUnifiedBy");
     /**
      * has constituent: 'Constituency' depends on some layering of the world
      * described by the ontology. For example, scientific granularities (e.g.
@@ -921,7 +921,7 @@ public final class DUL {
      * constitute them, and a river is conceptualized at a different layer from
      * the atoms that constitute it.
      */
-    public static final Property hasConstituent = m_model.createProperty(NS + "hasConstituent");
+    public static final Property hasConstituent = DUL.m_model.createProperty(DUL.NS + "hasConstituent");
     /**
      * is concretely expressed by: A relation between an InformationRealization
      * and a Description, e.g. 'the printout of the Italian Constitution
@@ -929,22 +929,22 @@ public final class DUL {
      * with a rule stating that the InformationRealization realizes an
      * InformationObject that expresses the Description
      */
-    public static final Property isConcretelyExpressedBy = m_model.createProperty(NS + "isConcretelyExpressedBy");
+    public static final Property isConcretelyExpressedBy = DUL.m_model.createProperty(DUL.NS + "isConcretelyExpressedBy");
     /** has proxy. */
-    public static final Property hasProxy = m_model.createProperty(NS + "hasProxy");
+    public static final Property hasProxy = DUL.m_model.createProperty(DUL.NS + "hasProxy");
     /**
      * far from: Generic distance relation between any Entity(s). E.g. Rome is
      * far from Beijing, astronomy is far from necromancy.
      */
-    public static final Property farFrom = m_model.createProperty(NS + "farFrom");
+    public static final Property farFrom = DUL.m_model.createProperty(DUL.NS + "farFrom");
     /**
      * is realized by: A relation between an information realization and an
      * information object, e.g. the paper copy of the Italian Constitution
      * realizes the text of the Constitution.
      */
-    public static final Property isRealizedBy = m_model.createProperty(NS + "isRealizedBy");
+    public static final Property isRealizedBy = DUL.m_model.createProperty(DUL.NS + "isRealizedBy");
     /** mappable to. */
-    public static final Property mappableTo = m_model.createProperty(NS + "mappableTo");
+    public static final Property mappableTo = DUL.m_model.createProperty(DUL.NS + "mappableTo");
 
     // Vocabulary classes
     // /////////////////////////
@@ -957,7 +957,7 @@ public final class DUL {
      * for modelling data, see the properties: representsDataValue and
      * hasDataValue
      */
-    public static final Resource Region = m_model.createResource(NS + "Region");
+    public static final Resource Region = DUL.m_model.createResource(DUL.NS + "Region");
     /**
      * Situazione: A view, consistent with ('satisfying') a Description, on a
      * set of entities. It can also be seen as a 'relational context' created by
@@ -974,14 +974,14 @@ public final class DUL {
      * otherwise the 'identification constraint' (Calvanese et al., IJCAI 2001)
      * could be violated.
      */
-    public static final Resource Situation = m_model.createResource(NS + "Situation");
+    public static final Resource Situation = DUL.m_model.createResource(DUL.NS + "Situation");
     /**
      * Physical object: Any Object that has a proper space region. The
      * prototypical physical object has also an associated mass, but the nature
      * of its mass can greatly vary based on the epistemological status of the
      * object (scientifically measured, subjectively possible, imaginary).
      */
-    public static final Resource PhysicalObject = m_model.createResource(NS + "PhysicalObject");
+    public static final Resource PhysicalObject = DUL.m_model.createResource(DUL.NS + "PhysicalObject");
     /**
      * Quality: Any aspect of an Entity (but not a part of it), which cannot
      * exist without that Entity. For example, the way the surface of a specific
@@ -999,13 +999,13 @@ public final class DUL {
      * constitute the actual added value, because the design parameters for old
      * furniture are often not fixed, and may not be viewed as 'anomalies'.
      */
-    public static final Resource Quality = m_model.createResource(NS + "Quality");
+    public static final Resource Quality = DUL.m_model.createResource(DUL.NS + "Quality");
     /**
      * Oggetto informativo: A piece of information, such as a musical
      * composition, a text, a word, a picture, independently from how it is
      * concretely realized.
      */
-    public static final Resource InformationObject = m_model.createResource(NS + "InformationObject");
+    public static final Resource InformationObject = DUL.m_model.createResource(DUL.NS + "InformationObject");
     /**
      * Evento: Any physical, social, or mental process, event, or state.More
      * theoretically, events can be classified in different ways, possibly based
@@ -1092,7 +1092,7 @@ public final class DUL {
      * allowed, together with descriptions, in order to encode the modelling
      * needs independently from the position (if any) chosen by the designer.
      */
-    public static final Resource Event = m_model.createResource(NS + "Event");
+    public static final Resource Event = DUL.m_model.createResource(DUL.NS + "Event");
     /**
      * Method: A method is a Description that defines or uses concepts in order
      * to guide carrying out actions aimed at a solution with respect to a
@@ -1100,41 +1100,41 @@ public final class DUL {
      * in order to follow a method, but a method can be followed by executing
      * alternative plans.
      */
-    public static final Resource Method = m_model.createResource(NS + "Method");
+    public static final Resource Method = DUL.m_model.createResource(DUL.NS + "Method");
     /** Object: Any physical, social, or mental object, or a substance */
-    public static final Resource Object = m_model.createResource(NS + "Object");
+    public static final Resource Object = DUL.m_model.createResource(DUL.NS + "Object");
     /**
      * Designed artifact: A PhysicalArtifact that is also described by a Design.
      * This excludes simple recycling or refunctionalization of natural objects.
      * Most common sense 'artifacts' can be included in this class: cars, lamps,
      * houses, chips, etc.
      */
-    public static final Resource DesignedArtifact = m_model.createResource(NS + "DesignedArtifact");
+    public static final Resource DesignedArtifact = DUL.m_model.createResource(DUL.NS + "DesignedArtifact");
     /**
      * Process: This is a placeholder for events that are considered in their
      * evolution, or anyway not strictly dependent on agents, tasks, and plans.
      * See Event class for some thoughts on classifying events. See also
      * 'Transition'.
      */
-    public static final Resource Process = m_model.createResource(NS + "Process");
+    public static final Resource Process = DUL.m_model.createResource(DUL.NS + "Process");
     /** Functional substance. */
-    public static final Resource FunctionalSubstance = m_model.createResource(NS + "FunctionalSubstance");
+    public static final Resource FunctionalSubstance = DUL.m_model.createResource(DUL.NS + "FunctionalSubstance");
     /**
      * Physical attribute: Physical value of a physical object, e.g. density,
      * color, etc.
      */
-    public static final Resource PhysicalAttribute = m_model.createResource(NS + "PhysicalAttribute");
+    public static final Resource PhysicalAttribute = DUL.m_model.createResource(DUL.NS + "PhysicalAttribute");
     /**
      * Unit of measure: Units of measure are conceptualized here as parameters
      * on regions, which can be valued as datatype values.
      */
-    public static final Resource UnitOfMeasure = m_model.createResource(NS + "UnitOfMeasure");
+    public static final Resource UnitOfMeasure = DUL.m_model.createResource(DUL.NS + "UnitOfMeasure");
     /**
      * Organization: An internally structured, conventionally created
      * SocialAgent, needing a specific Role and Agent that plays it, in order to
      * act.
      */
-    public static final Resource Organization = m_model.createResource(NS + "Organization");
+    public static final Resource Organization = DUL.m_model.createResource(DUL.NS + "Organization");
     /**
      * Collezione: Any container for entities that share one or more common
      * properties. E.g. "stone objects", "the nurses",
@@ -1142,22 +1142,22 @@ public final class DUL {
      * President of the Republic. A collection is not a logical class: a
      * collection is a first-order entity, while a class is second-order.
      */
-    public static final Resource Collection = m_model.createResource(NS + "Collection");
+    public static final Resource Collection = DUL.m_model.createResource(DUL.NS + "Collection");
     /**
      * Informazione concreta: A concrete realization of an InformationObject,
      * e.g. the written document containing the text of a law.
      */
-    public static final Resource InformationRealization = m_model.createResource(NS + "InformationRealization");
+    public static final Resource InformationRealization = DUL.m_model.createResource(DUL.NS + "InformationRealization");
     /**
      * Person: Persons in commonsense intuition, which does not apparently
      * distinguish between either natural or social persons.
      */
-    public static final Resource Person = m_model.createResource(NS + "Person");
+    public static final Resource Person = DUL.m_model.createResource(DUL.NS + "Person");
     /**
      * Entity: Anything: real, possible, or imaginary, which some modeller wants
      * to talk about for some purpose.
      */
-    public static final Resource Entity = m_model.createResource(NS + "Entity");
+    public static final Resource Entity = DUL.m_model.createResource(DUL.NS + "Entity");
     /**
      * Place: A location, in a very generic sense: a political geographic entity
      * (Roma, Lesotho), a non-material location determined by the presence of
@@ -1167,16 +1167,16 @@ public final class DUL {
      * "approximate" location. For an "absolute" location, see the class
      * SpaceRegion
      */
-    public static final Resource Place = m_model.createResource(NS + "Place");
+    public static final Resource Place = DUL.m_model.createResource(DUL.NS + "Place");
     /**
      * Personification: A social entity with agentive features, but whose status
      * is the result of a cultural transformation from e.g. a PhysicalObject, an
      * Event, an Abstract, another SocialObject, etc. For example: the holy
      * grail, deus ex machina, gods, magic wands, etc.
      */
-    public static final Resource Personification = m_model.createResource(NS + "Personification");
+    public static final Resource Personification = DUL.m_model.createResource(DUL.NS + "Personification");
     /** Chemical object. */
-    public static final Resource ChemicalObject = m_model.createResource(NS + "ChemicalObject");
+    public static final Resource ChemicalObject = DUL.m_model.createResource(DUL.NS + "ChemicalObject");
     /**
      * Parameter: A Concept that classifies a Region; the difference between a
      * Region and a Parameter is that regions represent sets of observable
@@ -1190,21 +1190,21 @@ public final class DUL {
      * e.g. Meter on a subset of values from the Region Length applied to the
      * Region Length applied to roads.
      */
-    public static final Resource Parameter = m_model.createResource(NS + "Parameter");
+    public static final Resource Parameter = DUL.m_model.createResource(DUL.NS + "Parameter");
     /**
      * Agente fisico: A PhysicalObject that is capable of self-representing
      * (conceptualizing) a Description in order to plan an Action. A
      * PhysicalAgent is a substrate for (actsFor) a Social Agent
      */
-    public static final Resource PhysicalAgent = m_model.createResource(NS + "PhysicalAgent");
+    public static final Resource PhysicalAgent = DUL.m_model.createResource(DUL.NS + "PhysicalAgent");
     /**
      * Abstract: Any Entity that cannot be located in space-time. E.g.
      * mathematical entities: formal semantics elements, regions within
      * dimensional spaces, etc.
      */
-    public static final Resource Abstract = m_model.createResource(NS + "Abstract");
+    public static final Resource Abstract = DUL.m_model.createResource(DUL.NS + "Abstract");
     /** null. */
-    public static final Resource DesignedSubstance = m_model.createResource(NS + "DesignedSubstance");
+    public static final Resource DesignedSubstance = DUL.m_model.createResource(DUL.NS + "DesignedSubstance");
     /**
      * Configuration: A collection whose members are 'unified', i.e. organized
      * according to a certain schema that can be represented by a
@@ -1218,14 +1218,14 @@ public final class DUL {
      * a reified way by means of a (structural) description, which is said to
      * 'unify' the book configuration.
      */
-    public static final Resource Configuration = m_model.createResource(NS + "Configuration");
+    public static final Resource Configuration = DUL.m_model.createResource(DUL.NS + "Configuration");
     /**
      * Concept: A Concept is a SocialObject, and isDefinedIn some Description;
      * once defined, a Concept can be used in other Description(s). If a Concept
      * isDefinedIn exactly one Description, see the LocalConcept class.The
      * classifies relation relates Concept(s) to Entity(s) at some TimeInterval
      */
-    public static final Resource Concept = m_model.createResource(NS + "Concept");
+    public static final Resource Concept = DUL.m_model.createResource(DUL.NS + "Concept");
     /**
      * Agente: Additional comment: a computational agent can be considered as a
      * PhysicalAgent that realizes a certain class of algorithms (that can be
@@ -1234,13 +1234,13 @@ public final class DUL {
      * ontology of computational objects based on DOLCE see e.g.
      * http://www.loa-cnr.it/COS/COS.owl, and http://www.loa-cnr.it/KCO/KCO.owl.
      */
-    public static final Resource Agent = m_model.createResource(NS + "Agent");
+    public static final Resource Agent = DUL.m_model.createResource(DUL.NS + "Agent");
     /**
      * Social person: A SocialAgent that needs the existence of a specific
      * NaturalPerson in order to act (but the lifetime of the NaturalPerson has
      * only to overlap that of the SocialPerson).
      */
-    public static final Resource SocialPerson = m_model.createResource(NS + "SocialPerson");
+    public static final Resource SocialPerson = DUL.m_model.createResource(DUL.NS + "SocialPerson");
     /**
      * Collettivo: A Collection whose members are agents, e.g. "the nurses",
      * "the Italian rockabilly fans".Collectives, facon de parler, can act as
@@ -1249,7 +1249,7 @@ public final class DUL {
      * collectives in the range of the relations having Agent in their domain or
      * range.
      */
-    public static final Resource Collective = m_model.createResource(NS + "Collective");
+    public static final Resource Collective = DUL.m_model.createResource(DUL.NS + "Collective");
     /**
      * Sostanza: Any PhysicalBody that has not necessarily specified (designed)
      * boundaries, e.g. a pile of trash, some sand, etc. In this sense, an
@@ -1259,7 +1259,7 @@ public final class DUL {
      * of an artistic process might be still considered DesignedArtifact(s), and
      * Substance(s).
      */
-    public static final Resource Substance = m_model.createResource(NS + "Substance");
+    public static final Resource Substance = DUL.m_model.createResource(DUL.NS + "Substance");
     /**
      * Physical artifact: Any PhysicalObject that isDescribedBy a Plan .This
      * axiomatization is weak, but allows to talk of artifacts in a very general
@@ -1275,7 +1275,7 @@ public final class DUL {
      * SocialObject), which are all 'artifactual' in the weak sense assumed
      * here.
      */
-    public static final Resource PhysicalArtifact = m_model.createResource(NS + "PhysicalArtifact");
+    public static final Resource PhysicalArtifact = DUL.m_model.createResource(DUL.NS + "PhysicalArtifact");
     /**
      * Type collection: A Collection whose members are the maximal set of
      * individuals that share the same (named) type, e.g. "the gem stones",
@@ -1286,22 +1286,22 @@ public final class DUL {
      * should
      * be used instead.
      */
-    public static final Resource TypeCollection = m_model.createResource(NS + "TypeCollection");
+    public static final Resource TypeCollection = DUL.m_model.createResource(DUL.NS + "TypeCollection");
     /**
      * Time interval: Any Region in a dimensional space that aims at
      * representing time.
      */
-    public static final Resource TimeInterval = m_model.createResource(NS + "TimeInterval");
+    public static final Resource TimeInterval = DUL.m_model.createResource(DUL.NS + "TimeInterval");
     /** Set. */
-    public static final Resource Set = m_model.createResource(NS + "Set");
+    public static final Resource Set = DUL.m_model.createResource(DUL.NS + "Set");
     /**
      * Diagnosis: A Description of the Situation of a system, usually applied in
      * order to control a normal behaviour, or to explain a notable behavior
      * (e.g. a functional breakdown).
      */
-    public static final Resource Diagnosis = m_model.createResource(NS + "Diagnosis");
+    public static final Resource Diagnosis = DUL.m_model.createResource(DUL.NS + "Diagnosis");
     /** Narrative. */
-    public static final Resource Narrative = m_model.createResource(NS + "Narrative");
+    public static final Resource Narrative = DUL.m_model.createResource(DUL.NS + "Narrative");
     /**
      * Design: A Description of the Situation, in terms of structure and
      * function, held by an Entity for some reason.A design is usually
@@ -1314,14 +1314,14 @@ public final class DUL {
      * entities to be constructed, they can also be used to describe
      * 'refunctionalized' entities, or to hypothesize unknown functions.
      */
-    public static final Resource Design = m_model.createResource(NS + "Design");
+    public static final Resource Design = DUL.m_model.createResource(DUL.NS + "Design");
     /**
      * Workflow: A Plan that defines Role(s), Task(s), and a specific structure
      * for tasks to be executed, usually supporting the work of an Organization
      */
-    public static final Resource Workflow = m_model.createResource(NS + "Workflow");
+    public static final Resource Workflow = DUL.m_model.createResource(DUL.NS + "Workflow");
     /** Community. */
-    public static final Resource Community = m_model.createResource(NS + "Community");
+    public static final Resource Community = DUL.m_model.createResource(DUL.NS + "Community");
     /**
      * Theory: A Theory is a Description that represents a set of assumptions
      * for describing something, usually general. Scientific, philosophical, and
@@ -1331,14 +1331,14 @@ public final class DUL {
      * entities
      * are represented as first-order ones).
      */
-    public static final Resource Theory = m_model.createResource(NS + "Theory");
+    public static final Resource Theory = DUL.m_model.createResource(DUL.NS + "Theory");
     /**
      * Organism: A physical objects with biological characteristics, typically
      * that organisms can self-reproduce.
      */
-    public static final Resource Organism = m_model.createResource(NS + "Organism");
+    public static final Resource Organism = DUL.m_model.createResource(DUL.NS + "Organism");
     /** null: A piece of information, be it concretely realized or not. */
-    public static final Resource InformationEntity = m_model.createResource(NS + "InformationEntity");
+    public static final Resource InformationEntity = DUL.m_model.createResource(DUL.NS + "InformationEntity");
     /**
      * Social object: Any Object that exists only within some communication
      * Event, in which at least one PhysicalObject participates in. In other
@@ -1351,18 +1351,18 @@ public final class DUL {
      * expressed by some information object (information object are
      * self-expressing).
      */
-    public static final Resource SocialObject = m_model.createResource(NS + "SocialObject");
+    public static final Resource SocialObject = DUL.m_model.createResource(DUL.NS + "SocialObject");
     /**
      * Physical body: Physical bodies are PhysicalObject(s), for which we tend
      * to neutralize any possible artifactual character. They can have several
      * granularity levels: geological, chemical, physical, biological, etc.
      */
-    public static final Resource PhysicalBody = m_model.createResource(NS + "PhysicalBody");
+    public static final Resource PhysicalBody = DUL.m_model.createResource(DUL.NS + "PhysicalBody");
     /**
      * Luogo fisico: A physical object that is inherently located; for example,
      * a water area.
      */
-    public static final Resource PhysicalPlace = m_model.createResource(NS + "PhysicalPlace");
+    public static final Resource PhysicalPlace = DUL.m_model.createResource(DUL.NS + "PhysicalPlace");
     /**
      * Transition: A transition is a Situation that creates a context for three
      * TimeInterval(s), two additional different Situation(s), one Event, one
@@ -1380,7 +1380,7 @@ public final class DUL {
      * would need qualified cardinality restrictions, coreference, property
      * equivalence, and property composition.
      */
-    public static final Resource Transition = m_model.createResource(NS + "Transition");
+    public static final Resource Transition = DUL.m_model.createResource(DUL.NS + "Transition");
     /**
      * Local concept: A Concept that isDefinedIn exactly 1 Description. For
      * example, the Concept 'coffee' in a 'preparesCoffee' relation can be
@@ -1388,23 +1388,23 @@ public final class DUL {
      * the isConceptUsedIn property should be applied. Notice therefore that not
      * necessarily all Concept(s) isDefinedIn exactly 1 Description.
      */
-    public static final Resource LocalConcept = m_model.createResource(NS + "LocalConcept");
+    public static final Resource LocalConcept = DUL.m_model.createResource(DUL.NS + "LocalConcept");
     /**
      * Natural person: A person in the physical commonsense intuition: 'have you
      * seen that person walking down the street?'
      */
-    public static final Resource NaturalPerson = m_model.createResource(NS + "NaturalPerson");
+    public static final Resource NaturalPerson = DUL.m_model.createResource(DUL.NS + "NaturalPerson");
     /** Workflow execution. */
-    public static final Resource WorkflowExecution = m_model.createResource(NS + "WorkflowExecution");
+    public static final Resource WorkflowExecution = DUL.m_model.createResource(DUL.NS + "WorkflowExecution");
     /**
      * Caratteristica sociale: Any Region in a dimensional space that is used to
      * represent some characteristic of a SocialObject, e.g. judgment values,
      * social scalars, statistical attributes over a collection of entities,
      * etc.
      */
-    public static final Resource SocialObjectAttribute = m_model.createResource(NS + "SocialObjectAttribute");
+    public static final Resource SocialObjectAttribute = DUL.m_model.createResource(DUL.NS + "SocialObjectAttribute");
     /** Ruolo: A Concept that classifies an Object */
-    public static final Resource Role = m_model.createResource(NS + "Role");
+    public static final Resource Role = DUL.m_model.createResource(DUL.NS + "Role");
     /**
      * Formal entity: Entities that are formally defined and are considered
      * independent from the social context in which they are used. They cannot
@@ -1436,7 +1436,7 @@ public final class DUL {
      * isCoveredBy the Concept 'Quark', which is also expressed by the term
      * 'Quark'.
      */
-    public static final Resource FormalEntity = m_model.createResource(NS + "FormalEntity");
+    public static final Resource FormalEntity = DUL.m_model.createResource(DUL.NS + "FormalEntity");
     /**
      * Pattern: Any invariance detected from a dataset, or from observation;
      * also, any invariance proposed based on top-down considerations.E.g.
@@ -1445,20 +1445,20 @@ public final class DUL {
      * pattern
      * is an 'observable', or detected Situation
      */
-    public static final Resource Pattern = m_model.createResource(NS + "Pattern");
+    public static final Resource Pattern = DUL.m_model.createResource(DUL.NS + "Pattern");
     /** Norm: A social norm. */
-    public static final Resource Norm = m_model.createResource(NS + "Norm");
+    public static final Resource Norm = DUL.m_model.createResource(DUL.NS + "Norm");
     /**
      * Azione: An Event with at least one Agent that isParticipantIn it, and
      * that executes a Task that typically isDefinedIn a Plan, Workflow,
      * Project, etc.
      */
-    public static final Resource Action = m_model.createResource(NS + "Action");
+    public static final Resource Action = DUL.m_model.createResource(DUL.NS + "Action");
     /**
      * Group: A CollectiveAgent whose acting agents conceptualize a same
      * SocialRelation .
      */
-    public static final Resource Group = m_model.createResource(NS + "Group");
+    public static final Resource Group = DUL.m_model.createResource(DUL.NS + "Group");
     /**
      * Description: A Description is a SocialObject that represents a
      * conceptualization. It can be thought also as a 'descriptive context' that
@@ -1468,7 +1468,7 @@ public final class DUL {
      * in a certain way, with certain parameters; a Diagnosis is a Description
      * that provides an interpretation for a set of observed entities, etc.
      */
-    public static final Resource Description = m_model.createResource(NS + "Description");
+    public static final Resource Description = DUL.m_model.createResource(DUL.NS + "Description");
     /**
      * Collective agent: A SocialAgent that is actedBy agents that are (and act
      * as) members of a Collective. A collective agent can have roles that are
@@ -1485,7 +1485,7 @@ public final class DUL {
      * because they have a dedicated, publicly recognizable Description that is
      * conceived to introduce them.
      */
-    public static final Resource CollectiveAgent = m_model.createResource(NS + "CollectiveAgent");
+    public static final Resource CollectiveAgent = DUL.m_model.createResource(DUL.NS + "CollectiveAgent");
     /**
      * Relazione: Relations are descriptions that can be considered as the
      * counterpart of formal relations (that are included in the FormalEntity
@@ -1497,30 +1497,30 @@ public final class DUL {
      * Relation includes here any 'relation-like' entity in common sense,
      * including social relations.
      */
-    public static final Resource Relation = m_model.createResource(NS + "Relation");
+    public static final Resource Relation = DUL.m_model.createResource(DUL.NS + "Relation");
     /**
      * Plan: A Description having an explicit Goal, to be achieved by executing
      * the plan
      */
-    public static final Resource Plan = m_model.createResource(NS + "Plan");
+    public static final Resource Plan = DUL.m_model.createResource(DUL.NS + "Plan");
     /**
      * Event type: A Concept that classifies an Event . An event type describes
      * how an Event should be interpreted, executed, expected, seen, etc.,
      * according to the Description that the EventType isDefinedIn (or used in)
      */
-    public static final Resource EventType = m_model.createResource(NS + "EventType");
+    public static final Resource EventType = DUL.m_model.createResource(DUL.NS + "EventType");
     /** null. */
-    public static final Resource SpatioTemporalRegion = m_model.createResource(NS + "SpatioTemporalRegion");
+    public static final Resource SpatioTemporalRegion = DUL.m_model.createResource(DUL.NS + "SpatioTemporalRegion");
     /**
      * Plan execution: Plan executions are situations that proactively satisfy a
      * plan. Subplan executions are proper parts of the whole plan execution.
      */
-    public static final Resource PlanExecution = m_model.createResource(NS + "PlanExecution");
+    public static final Resource PlanExecution = DUL.m_model.createResource(DUL.NS + "PlanExecution");
     /**
      * Goal: The Description of a Situation that is desired by an Agent, and
      * usually associated to a Plan that describes how to actually achieve it
      */
-    public static final Resource Goal = m_model.createResource(NS + "Goal");
+    public static final Resource Goal = DUL.m_model.createResource(DUL.NS + "Goal");
     /**
      * Space region: Any Region in a dimensional space that is used to localize
      * an Entity ; i.e., it is not used to represent some characteristic (e.g.
@@ -1528,26 +1528,26 @@ public final class DUL {
      * Differently from a Place , a space region has a specific dimensional
      * space.
      */
-    public static final Resource SpaceRegion = m_model.createResource(NS + "SpaceRegion");
+    public static final Resource SpaceRegion = DUL.m_model.createResource(DUL.NS + "SpaceRegion");
     /**
      * Amount: A quantity, independently from how it is measured, computed, etc.
      */
-    public static final Resource Amount = m_model.createResource(NS + "Amount");
+    public static final Resource Amount = DUL.m_model.createResource(DUL.NS + "Amount");
     /** Task: An EventStructure that classifies an Action to be executed */
-    public static final Resource Task = m_model.createResource(NS + "Task");
+    public static final Resource Task = DUL.m_model.createResource(DUL.NS + "Task");
     /**
      * Progetto: A Plan that defines Role(s), Task(s), and a specific structure
      * for tasks to be executed in relation to goals to be achieved, in order to
      * achieve the main goal of the project. In other words, a project is a plan
      * with a subgoal structure and multiple roles and tasks.
      */
-    public static final Resource Project = m_model.createResource(NS + "Project");
+    public static final Resource Project = DUL.m_model.createResource(DUL.NS + "Project");
     /**
      * Right: A legal position by which an Agent is entitled to obtain something
      * from another Agent , under specified circumstances, through an
      * enforcement explicited either in a Law, Contract , etc.
      */
-    public static final Resource Right = m_model.createResource(NS + "Right");
+    public static final Resource Right = DUL.m_model.createResource(DUL.NS + "Right");
     /**
      * Classificazione: A special kind of Situation that allows to include time
      * indexing for the classifies relation in situations. For example, if a
@@ -1560,22 +1560,22 @@ public final class DUL {
      * sub-situation s' for the classification time: 'my old cradle is a flower
      * pot in 8June2007'. Such sub-situation s' isPartOf s.
      */
-    public static final Resource Classification = m_model.createResource(NS + "Classification");
+    public static final Resource Classification = DUL.m_model.createResource(DUL.NS + "Classification");
     /** Biological object. */
-    public static final Resource BiologicalObject = m_model.createResource(NS + "BiologicalObject");
+    public static final Resource BiologicalObject = DUL.m_model.createResource(DUL.NS + "BiologicalObject");
     /**
      * Contract: (The content of) an agreement between at least two agents that
      * play a Party Role, about some contract object (a Task to be executed).
      */
-    public static final Resource Contract = m_model.createResource(NS + "Contract");
+    public static final Resource Contract = DUL.m_model.createResource(DUL.NS + "Contract");
     /** Social relation: Any social relationship */
-    public static final Resource SocialRelation = m_model.createResource(NS + "SocialRelation");
+    public static final Resource SocialRelation = DUL.m_model.createResource(DUL.NS + "SocialRelation");
     /**
      * Social agent: Any individual whose existence is granted simply by its
      * social communicability and capability of action (through some
      * PhysicalAgent).
      */
-    public static final Resource SocialAgent = m_model.createResource(NS + "SocialAgent");
+    public static final Resource SocialAgent = DUL.m_model.createResource(DUL.NS + "SocialAgent");
 
     /**
      * Class constructor.

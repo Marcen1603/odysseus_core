@@ -43,7 +43,7 @@ public class TestLinearRegressionMergePO extends LinearRegressionMergePO<ITimeIn
 	 * Test constructor of the LinearRegressionMerge PO.
 	 */
 	public TestLinearRegressionMergePO() {
-		super(getSchema(), new int[] {}, new int[] {}, 1, 2);
+		super(TestLinearRegressionMergePO.getSchema(), new int[] {}, new int[] {}, 1, 2);
 	}
 
 	/*
@@ -79,7 +79,7 @@ public class TestLinearRegressionMergePO extends LinearRegressionMergePO<ITimeIn
 		final Collection<SDFAttribute> attr = new ArrayList<SDFAttribute>();
 		attr.add(new SDFAttribute("", "a", SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
 		attr.add(new SDFAttribute("", "b", SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
-		final SDFSchema schema = new SDFSchema("",ProbabilisticTuple.class, attr);
+		final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 		return schema;
 	}
 }

@@ -85,12 +85,12 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
 
 		final SDFSchema schema = new SDFSchema("", ProbabilisticTuple.class, attr);
 
-		double[][] samples = getTestSamples();
-		Object[][] tuples = new Object[samples.length][1];
+		final double[][] samples = this.getTestSamples();
+		final Object[][] tuples = new Object[samples.length][1];
 		for (int i = 0; i < samples.length; i++) {
-			double[] sample = samples[i];
+			final double[] sample = samples[i];
 			final Object[] attributes = new Object[] { sample[0], i, sample[1] };
-			ProbabilisticTuple<ITimeInterval> tuple = new ProbabilisticTuple<>(attributes, true);
+			final ProbabilisticTuple<ITimeInterval> tuple = new ProbabilisticTuple<>(attributes, true);
 			tuple.setMetadata(new TimeIntervalProbabilistic());
 			tuple.getMetadata().setStart(new PointInTime(1));
 			tuple.getMetadata().setEnd(new PointInTime(110));
@@ -102,7 +102,7 @@ public class TestEMPO extends EMPO<ITimeIntervalProbabilistic> {
 
 	/**
 	 * 
-	 * @return
+	 * @return The test samples
 	 */
 	private double[][] getTestSamples() {
 		// generated using R Mixtools rmvnorm with mean vectors [-1.5, 2] and

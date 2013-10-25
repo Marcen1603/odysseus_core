@@ -34,10 +34,11 @@ public class ProbabilisticContinuousMultiplicationNumberLHSOperator extends Abst
 	 * Accepted data types.
 	 */
 	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
-/*
- * 
- * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+	 */
 	@Override
 	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
 		if (argPos < 0) {
@@ -48,18 +49,20 @@ public class ProbabilisticContinuousMultiplicationNumberLHSOperator extends Abst
 		}
 		return ProbabilisticContinuousMultiplicationNumberLHSOperator.ACC_TYPES[argPos];
 	}
-/*
- * 
- * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.AbstractProbabilisticContinuousMultiplicationNumberOperator#isCommutative()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.AbstractProbabilisticContinuousMultiplicationNumberOperator#isCommutative()
+	 */
 	@Override
 	public final boolean isCommutative() {
 		return false;
 	}
-/*
- * 
- * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
- */
+
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+	 */
 	@Override
 	public final NormalDistributionMixture getValue() {
 		final Double a = this.getNumericalInputValue(0);
