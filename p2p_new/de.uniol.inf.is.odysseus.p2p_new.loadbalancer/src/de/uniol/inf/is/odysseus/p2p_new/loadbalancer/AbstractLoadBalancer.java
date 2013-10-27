@@ -453,6 +453,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 */
 	protected List<QueryPart> mergeQueryParts(List<QueryPart> parts) {
 		
+		// FIXME One part missing after merging
+		
 		Preconditions.checkNotNull(parts);
 		if(parts.size() < 2)
 			return parts;	
@@ -460,27 +462,42 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		// The return value
 		List<QueryPart> mergedParts = Lists.newArrayList();
 		
-		for(int partNo = 0; partNo < parts.size() - 1; partNo++) {
+		boolean localPartFound = false;
+		
+		do {
 			
-			if(parts.get(partNo).getDestinationName().isPresent() && 
-					parts.get(partNo).getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
+			localPartFound = false;
+			
+			for(int partNo = 0; partNo < parts.size(); partNo++) {
 				
-				if(parts.get(partNo + 1).getDestinationName().isPresent() && 
-						parts.get(partNo + 1).getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
+				if(parts.get(partNo).getDestinationName().isPresent() && 
+						parts.get(partNo).getDestinationName().get().equals(DistributionHelper.LOCAL_DESTINATION_NAME)) {
 					
-					// Merge
-					Collection<ILogicalOperator> mergedOperators = parts.get(partNo).getOperators();
-					mergedOperators.addAll(parts.get(partNo + 1).getOperators());
-					mergedParts.add(new QueryPart(mergedOperators, DistributionHelper.LOCAL_DESTINATION_NAME));
+					// part shall be executed locally
 					
-					// skip merged part
-					partNo++;
+					if(localPartFound) {
+						
+						// the part before this one shall be executed locally too -> merge
+						Collection<ILogicalOperator> mergedOperators = parts.get(partNo).getOperators();
+						mergedOperators.addAll(parts.get(partNo - 1).getOperators());
+						mergedParts.add(new QueryPart(mergedOperators, DistributionHelper.LOCAL_DESTINATION_NAME));
+						localPartFound = false; // Merge only two parts in one loop
+						
+					} else localPartFound = true;
+					
+				} else if(localPartFound) {
+					
+					// the part before this one shall be executed locally, but this one not -> no merging
+					mergedParts.add(parts.get(partNo));
+					mergedParts.add(parts.get(partNo - 1));
+					localPartFound = false;
 					
 				} else mergedParts.add(parts.get(partNo));
 				
-			} else mergedParts.add(parts.get(partNo));
+			}
 			
-		}
+			
+		} while(localPartFound);
 		
 		return mergedParts;
 		
