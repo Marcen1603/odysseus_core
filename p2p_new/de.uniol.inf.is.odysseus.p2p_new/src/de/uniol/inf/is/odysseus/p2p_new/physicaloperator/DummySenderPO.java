@@ -27,6 +27,7 @@ public class DummySenderPO<T extends IStreamObject<?>> extends AbstractSink<T> {
 	public void processPunctuation(IPunctuation punctuation, int port) {
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public AbstractSink<T> clone() {
 		return new DummySenderPO(this);
