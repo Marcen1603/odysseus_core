@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.IFragmentPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 
 /**
@@ -53,6 +54,13 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 		
 		// Insert operator for fragmentation
 		fragmentPlan = insertOperatorForFragmentation(fragmentPlan, numFragments, numReplicates, parameters, sourceName);
+		
+		for(ILogicalQuery query : fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().keySet()) {
+		
+			if(fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(query).isEmpty())
+				throw new QueryParseException("Can not distribute a query without any operators left after fragmentation");
+			
+		}
 		
 		// Insert operator for data reunion
 		fragmentPlan = insertOperatorForDataReunion(fragmentPlan, numReplicates);
@@ -410,8 +418,6 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 	 */
 	protected IPair<IFragmentPlan, Optional<AggregateAO>> replaceAggregation(IFragmentPlan fragmentPlan, ILogicalQuery query) {
 		
-		// FIXME Not working yet
-		
 		// Preconditions
 		Preconditions.checkNotNull(fragmentPlan);
 		Preconditions.checkNotNull(query);
@@ -438,30 +444,6 @@ public abstract class AbstractDataFragmentation implements IDataFragmentation {
 				
 				// The origin aggregation
 				AggregateAO origin = (AggregateAO) operator;
-				
-				// A new partial aggregation
-//				AggregateAO pa = new AggregateAO();
-//				pa.setOutputPA(true);
-//				
-//				// Change origin aggegration to be used as partial aggegration
-//				List<AggregateItem> items = Lists.newArrayList();
-//				Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = origin.getAggregations();
-//				for(SDFSchema attributes : aggregations.keySet()) {
-//					
-//					SDFAttribute inAttr = attributes.iterator().next();
-//					
-//					for(AggregateFunction function : aggregations.get(attributes).keySet()) {
-//						
-//						SDFAttribute outAttr = aggregations.get(attributes).get(function);
-//						
-//						items.add(new AggregateItem(function.getName(), inAttr, outAttr));
-//						
-//					}
-//					
-//				}
-//				pa.setAggregationItems(items);
-//				for(SDFAttribute groupBy : origin.getGroupingAttributes())
-//					pa.addGroupingAttribute(groupBy);
 				AggregateAO pa = origin.clone();
 				for(SDFSchema inSchema : pa.getAggregations().keySet()) {
 					

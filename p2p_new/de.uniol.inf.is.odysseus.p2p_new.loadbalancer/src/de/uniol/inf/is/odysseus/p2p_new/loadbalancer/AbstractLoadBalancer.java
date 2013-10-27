@@ -138,12 +138,11 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * TODO javaDoc update
-	 * Determines the degree of parallelism as the minimum of the degree given by the user and the 
+	 * Determines the number of replicates as the minimum of the degree given by the user and the 
 	 * number of available peers.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param remotePeerIDs A list of all available peers.
-	 * @return The degree of parallelism.
+	 * @return The number of replicates for each fragment.
 	 */
 	protected int determineNumberOfReplicates(QueryBuildConfiguration parameters, 
 			Collection<PeerID> remotePeerIDs) {
@@ -202,7 +201,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 	
 	/**
-	 * TODO javaDoc update
 	 * Distributes a logical query as follows: <br />
 	 * 1. Make copies of the query. <br />
 	 * 2. Use the fragmentation strategy to merge the copies. <br />
@@ -215,7 +213,8 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @param query The logical query to be distributed.
 	 * @param parameters The {@link QueryBuildConfiguration}.
 	 * @param fragmentationStrategy The pair of source name and fragmentation strategy if set.
-	 * @param numberOfReplicates The degree of parallelism.
+	 * @param numberOfReplicates The number of replicates for each fragment.
+	 * @param numberOfFragments The number of fragments.
 	 * @param remotePeerIDs A collection of all available peers.
 	 * @param peerAssignmentStrategy The peer assignment strategy.
 	 * @return The logical query to be executed locally.
@@ -289,13 +288,13 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	}
 
 	/**
-	 * TODO javaDoc update
-	 * Makes copies of the origin query and collects both copies and the logical plans of the copies.
+	 * Makes <code>numFragments</code> * <code>numReplicates</code> copies of the origin query and collects both copies and the logical operators of the copies.
 	 * @param originQuery The query to be copied.
 	 * @param queryCopies A mutable, empty list of query copies. Will be filled.
 	 * @param operatorsToCopyNoMap A mutable, empty mapping of all operators t o the copy they were 
 	 * belonging. Will be filled.
-	 * @param numberOfReplicates The degree of parallelism is also the number of copies to make.
+	 * @param numberOfReplicates The number of replicates for each fragment.
+	 * @param numberOfFragments The number of fragments.
 	 */
 	protected void copyQueryAndCollectCopiesAndLogicalPlans(ILogicalQuery originQuery, 
 			List<ILogicalQuery> queryCopies, Map<ILogicalQuery, List<ILogicalOperator>> operatorsToQueryCopyNoMap, 
@@ -353,7 +352,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 		else return Optional.absent();
 		
 		// Update  mapping of all operators to the copy they were belonging.
-		for(ILogicalQuery copy : operatorsToQueryCopyMap.keySet())
+		for(ILogicalQuery copy : operatorsToQueryCopyMap.keySet())			
 			operatorsToQueryCopyMap.put(copy, fragmentPlan.getOperatorsPerLogicalPlanAfterFragmentation().get(copy));
 		
 		return Optional.of(fragmentPlan);
@@ -452,8 +451,6 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 	 * @return A list of all parts inclusive the merged ones.
 	 */
 	protected List<QueryPart> mergeQueryParts(List<QueryPart> parts) {
-		
-		// FIXME One part missing after merging
 		
 		Preconditions.checkNotNull(parts);
 		if(parts.size() < 2)
