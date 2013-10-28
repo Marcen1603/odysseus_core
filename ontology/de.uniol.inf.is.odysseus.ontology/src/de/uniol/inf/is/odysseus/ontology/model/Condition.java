@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.ontology.model;
 
-import java.net.URI;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
@@ -25,7 +23,6 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class Condition {
-    private final URI uri;
     private final SDFAttribute attribute;
     private final Interval interval;
     private String unit;
@@ -37,25 +34,10 @@ public class Condition {
      * @param attribute
      * @param interval
      */
-    public Condition(final URI uri, final SDFAttribute attribute, final Interval interval) {
+    public Condition(final SDFAttribute attribute, final Interval interval) {
         super();
-        this.uri = uri;
         this.attribute = attribute;
         this.interval = interval;
-    }
-
-    /**
-     * @return the uri
-     */
-    public URI getUri() {
-        return this.uri;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return this.uri.getFragment();
     }
 
     /**

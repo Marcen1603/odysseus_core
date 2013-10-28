@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.dialogs;
 
-import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +22,7 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
 import de.uniol.inf.is.odysseus.ontology.model.Condition;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty;
-import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -45,7 +44,6 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class MeasurementCapabiltyDialog extends Dialog {
-    private Text txtName;
     private Combo cmbAttribute;
     private Text txtAttributeValueMin;
     private Text txtAttributeValueMax;
@@ -75,52 +73,86 @@ public class MeasurementCapabiltyDialog extends Dialog {
         final Monitor monitor = parent.getMonitor();
         final int maxWidth = (monitor.getBounds().width * 2) / 3;
 
-        final Label lblName = new Label(container, SWT.WRAP);
-        lblName.setText(OdysseusNLS.Name);
+        container.setLayout(new GridLayout(2, false));
         GridData gd = new GridData();
-        int lblNameWidth = lblName.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.widthHint = Math.min(lblNameWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        lblName.setLayoutData(gd);
-
-        this.txtName = new Text(container, SWT.BORDER);
-        gd = new GridData();
-        lblNameWidth = this.txtName.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        if (lblNameWidth > maxWidth) {
-            gd.widthHint = maxWidth;
-        }
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        this.txtName.setLayoutData(gd);
 
         final Label lblCondition = new Label(container, SWT.WRAP);
         lblCondition.setText(OdysseusNLS.Condition);
         gd = new GridData();
         final int lblConditionWidth = lblCondition.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 2;
         gd.widthHint = Math.min(lblConditionWidth, maxWidth);
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
         lblCondition.setLayoutData(gd);
 
         this.cmbAttribute = new Combo(container, SWT.BORDER);
+        gd = new GridData();
+        final int cmbAttributeWidth = cmbAttribute.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 2;
+        gd.widthHint = Math.min(cmbAttributeWidth, maxWidth);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        cmbAttribute.setLayoutData(gd);
+
         this.fillAttributeCombo(this.cmbAttribute);
+
         this.txtAttributeValueMin = new Text(container, SWT.BORDER);
+        gd = new GridData();
+        final int txtAttributeValueMinWidth = txtAttributeValueMin.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 1;
+        gd.widthHint = Math.min(txtAttributeValueMinWidth, maxWidth / 2);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        txtAttributeValueMin.setLayoutData(gd);
+
         this.txtAttributeValueMax = new Text(container, SWT.BORDER);
+        gd = new GridData();
+        final int txtAttributeValueMaxWidth = txtAttributeValueMax.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 1;
+        gd.widthHint = Math.min(txtAttributeValueMaxWidth, maxWidth / 2);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        txtAttributeValueMax.setLayoutData(gd);
 
         final Label lblProperty = new Label(container, SWT.WRAP);
         lblProperty.setText(OdysseusNLS.MeasurementProperty);
         gd = new GridData();
         final int lblPropertyWidth = lblProperty.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 2;
         gd.widthHint = Math.min(lblPropertyWidth, maxWidth);
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
         lblProperty.setLayoutData(gd);
 
         this.cmbProperty = new Combo(container, SWT.BORDER);
+        gd = new GridData();
+        final int cmbPropertyWidth = cmbProperty.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 2;
+        gd.widthHint = Math.min(cmbPropertyWidth, maxWidth);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        cmbProperty.setLayoutData(gd);
+
         this.fillPropertyCombo(this.cmbProperty);
+
         this.txtPropertyValueMin = new Text(container, SWT.BORDER);
+        gd = new GridData();
+        final int txtPropertyValueMinWidth = txtPropertyValueMin.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 1;
+        gd.widthHint = Math.min(txtPropertyValueMinWidth, maxWidth / 2);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        txtPropertyValueMin.setLayoutData(gd);
+
         this.txtPropertyValueMax = new Text(container, SWT.BORDER);
+        gd = new GridData();
+        final int txtPropertyValueMaxWidth = txtPropertyValueMax.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 1;
+        gd.widthHint = Math.min(txtPropertyValueMaxWidth, maxWidth / 2);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        txtPropertyValueMax.setLayoutData(gd);
 
         return container;
     }
@@ -132,13 +164,12 @@ public class MeasurementCapabiltyDialog extends Dialog {
     }
 
     private void saveInput() {
-        final String name = this.txtName.getText();
         final SDFAttribute attribute = (SDFAttribute) this.cmbAttribute.getData(this.cmbAttribute.getItem(this.cmbAttribute.getSelectionIndex()));
         final double attributeMinValue = Double.parseDouble(this.txtAttributeValueMin.getText());
         final double attributeMaxValue = Double.parseDouble(this.txtAttributeValueMax.getText());
         final Interval attributeInterval = new Interval(attributeMinValue, attributeMaxValue);
 
-        this.condition = new Condition(URI.create(ODYSSEUS.NS + name), attribute, attributeInterval);
+        this.condition = new Condition(attribute, attributeInterval);
 
         final MeasurementProperty.Property property = (MeasurementProperty.Property) this.cmbProperty.getData(this.cmbProperty.getItem(this.cmbProperty.getSelectionIndex()));
         final double propertyMinValue = Double.parseDouble(this.txtPropertyValueMin.getText());
@@ -178,8 +209,10 @@ public class MeasurementCapabiltyDialog extends Dialog {
 
     private void fillPropertyCombo(final Combo combo) {
         combo.removeAll();
-        combo.add(MeasurementProperty.Property.Accurancy.toString());
-        combo.setData(MeasurementProperty.Property.Accurancy.toString(), MeasurementProperty.Property.Accurancy);
+        for (MeasurementProperty.Property property : MeasurementProperty.Property.values()) {
+            combo.add(property.toString());
+            combo.setData(property.toString(), property);
+        }
         combo.select(0);
     }
 }

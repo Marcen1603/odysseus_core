@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -96,10 +97,12 @@ public class SensingDevicePage extends WizardPage {
                 if (SensingDevicePage.this.tblAttributes.isDisposed()) {
                     return;
                 }
-                final TableItem item = new TableItem(SensingDevicePage.this.tblAttributes, SWT.NONE);
-                item.setText(0, attributeDialog.getAttribute().getAttributeName());
-                item.setText(1, attributeDialog.getAttribute().getDatatype().getQualName());
-                item.setData(attributeDialog.getAttribute());
+                if (attributeDialog.getReturnCode() == Window.OK) {
+                    final TableItem item = new TableItem(SensingDevicePage.this.tblAttributes, SWT.NONE);
+                    item.setText(0, attributeDialog.getAttribute().getAttributeName());
+                    item.setText(1, attributeDialog.getAttribute().getDatatype().getQualName());
+                    item.setData(attributeDialog.getAttribute());
+                }
             }
         });
         btnAdd.setText(OdysseusNLS.Add);

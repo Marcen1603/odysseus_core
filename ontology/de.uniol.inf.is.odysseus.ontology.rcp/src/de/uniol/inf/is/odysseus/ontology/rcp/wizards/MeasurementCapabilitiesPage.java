@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -85,7 +86,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
 
                 for (final MeasurementCapability capability : MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute)) {
                     final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
-                    item.setText(0, capability.getConditions().get(0).getName());
+                    item.setText(0, capability.getConditions().get(0).getInterval().toString());
                     item.setText(1, capability.getMeasurementProperties().get(0).getProperty().toString());
                 }
             }
@@ -118,21 +119,23 @@ public class MeasurementCapabilitiesPage extends WizardPage {
                 if (MeasurementCapabilitiesPage.this.tblCapabilities.isDisposed()) {
                     return;
                 }
-                final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
-                item.setText(0, measurementCapabilityDialog.getCondition().getName());
-                item.setText(1, measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
-                final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
-                        .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
+                if (measurementCapabilityDialog.getReturnCode() == Window.OK) {
+                    final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
+                    item.setText(0, measurementCapabilityDialog.getCondition().getInterval().toString());
+                    item.setText(1, measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
+                    final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
+                            .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
 
-                final MeasurementCapability capability = new MeasurementCapability(URI.create(ODYSSEUS.NS + MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceName() + "_" + attribute
-                        + "_capability"), attribute);
-                capability.addCondition(measurementCapabilityDialog.getCondition());
-                capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
-                if (!MeasurementCapabilitiesPage.this.attributeCapabilities.containsKey(attribute)) {
-                    MeasurementCapabilitiesPage.this.attributeCapabilities.put(attribute, new ArrayList<MeasurementCapability>());
+                    final MeasurementCapability capability = new MeasurementCapability(URI.create(ODYSSEUS.NS + MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceName() + "/"
+                            + attribute), attribute);
+                    capability.addCondition(measurementCapabilityDialog.getCondition());
+                    capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
+                    if (!MeasurementCapabilitiesPage.this.attributeCapabilities.containsKey(attribute)) {
+                        MeasurementCapabilitiesPage.this.attributeCapabilities.put(attribute, new ArrayList<MeasurementCapability>());
+                    }
+                    MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute).add(capability);
+                    item.setData(capability);
                 }
-                MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute).add(capability);
-                item.setData(capability);
             }
         });
         btnAdd.setText(OdysseusNLS.Add);

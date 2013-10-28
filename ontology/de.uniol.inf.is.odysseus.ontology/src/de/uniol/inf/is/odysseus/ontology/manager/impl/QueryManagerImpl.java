@@ -60,7 +60,21 @@ public class QueryManagerImpl implements QueryManager {
     private static final String DUL_PREFIX = "PREFIX dul: <" + DUL.getURI() + "> ";
     private static final String QU_PREFIX = "PREFIX qu: <" + QU.getURI() + "> ";
     private static final String ODY_PREFIX = "PREFIX ody: <" + ODYSSEUS.getURI() + "> ";
+    private static final String QUERY_PREFIX;
     private final OntModel aBox;
+
+    static {
+        final StringBuilder prefix = new StringBuilder();
+        prefix.append(QueryManagerImpl.SSN_PREFIX);
+        prefix.append(QueryManagerImpl.XSD_PREFIX);
+        prefix.append(QueryManagerImpl.RDF_PREFIX);
+        prefix.append(QueryManagerImpl.RDFS_PREFIX);
+        prefix.append(QueryManagerImpl.OWL_PREFIX);
+        prefix.append(QueryManagerImpl.DUL_PREFIX);
+        prefix.append(QueryManagerImpl.QU_PREFIX);
+        prefix.append(QueryManagerImpl.ODY_PREFIX);
+        QUERY_PREFIX = prefix.toString();
+    }
 
     /**
      * Class constructor.
@@ -76,13 +90,16 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<URI> getAllSensingDeviceURIs() {
-        final String query = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " }";
-        final ResultSet result = this.executeQuery(query);
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
         final List<URI> uris = new ArrayList<URI>();
         while (result.hasNext()) {
             final QuerySolution solution = result.next();
             uris.add(URI.create(solution.get("uri").asResource().getURI()));
         }
+        qExec.close();
         return uris;
     }
 
@@ -109,8 +126,6 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public SensingDevice getSensingDevice(final URI uri) {
-        // final Resource sensingDeviceResource =
-        // this.getABox().getResource(uri.toString());
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
         final List<URI> propertyURIs = this.getAllPropertyURIsObservedBySensingDevice(uri);
@@ -120,13 +135,6 @@ public class QueryManagerImpl implements QueryManager {
             attributes.add(new SDFAttribute(sourceName, propertyResource.getURI(), SDFDatatype.OBJECT));
         }
         final SensingDevice sensingDevice = new SensingDevice(uri, new SDFSchema("", IStreamObject.class, attributes));
-        System.out.println(sensingDevice.getUri());
-        System.out.println(sensingDevice.getSchema());
-        // for (final StmtIterator iter =
-        // this.getABox().listStatements(sensingDeviceResource,
-        // SSN.hasMeasurementCapability, (Resource) null); iter.hasNext();) {
-        // final Statement stmt = iter.nextStatement();
-        // final Resource measurementCapabilityResource = stmt.getResource();
         final List<URI> measurementCapabilityURIs = this.getAllMeasurementCapabilityURIsFromSensingDevice(uri);
         for (final URI measurementCapabilityURI : measurementCapabilityURIs) {
             final Resource measurementCapabilityResource = this.getABox().getResource(measurementCapabilityURI.toString());
@@ -145,13 +153,16 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<URI> getAllPropertyURIs() {
-        final String query = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.Property.getLocalName() + " }";
-        final ResultSet result = this.executeQuery(query);
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.Property.getLocalName() + " }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
         final List<URI> uris = new ArrayList<URI>();
         while (result.hasNext()) {
             final QuerySolution solution = result.next();
             uris.add(URI.create(solution.get("uri").asResource().getURI()));
         }
+        qExec.close();
         return uris;
     }
 
@@ -184,13 +195,16 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<URI> getSensingDeviceURIsByObservedProperty(final URI uri) {
-        final String query = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.observes.getLocalName() + " <" + uri.toString() + "> }";
-        final ResultSet result = this.executeQuery(query);
+        final String queryString = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.observes.getLocalName() + " <" + uri.toString() + "> }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
         final List<URI> uris = new ArrayList<URI>();
         while (result.hasNext()) {
             final QuerySolution solution = result.next();
             uris.add(URI.create(solution.get("uri").asResource().getURI()));
         }
+        qExec.close();
         return uris;
     }
 
@@ -200,43 +214,31 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<URI> getAllPropertyURIsObservedBySensingDevice(final URI uri) {
-        final String query = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.observes.getLocalName() + " ?uri }";
-        final ResultSet result = this.executeQuery(query);
+        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.observes.getLocalName() + " ?uri }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
         final List<URI> uris = new ArrayList<URI>();
         while (result.hasNext()) {
             final QuerySolution solution = result.next();
             uris.add(URI.create(solution.get("uri").asResource().getURI()));
         }
+        qExec.close();
         return uris;
     }
 
     private List<URI> getAllMeasurementCapabilityURIsFromSensingDevice(final URI uri) {
-        final String query = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
-        final ResultSet result = this.executeQuery(query);
+        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
         final List<URI> uris = new ArrayList<URI>();
         while (result.hasNext()) {
             final QuerySolution solution = result.next();
             uris.add(URI.create(solution.get("uri").asResource().getURI()));
         }
+        qExec.close();
         return uris;
-    }
-
-    @Override
-    public ResultSet executeQuery(final String queryString) {
-        final StringBuilder prefix = new StringBuilder();
-        prefix.append(QueryManagerImpl.SSN_PREFIX);
-        prefix.append(QueryManagerImpl.XSD_PREFIX);
-        prefix.append(QueryManagerImpl.RDF_PREFIX);
-        prefix.append(QueryManagerImpl.RDFS_PREFIX);
-        prefix.append(QueryManagerImpl.OWL_PREFIX);
-        prefix.append(QueryManagerImpl.DUL_PREFIX);
-        prefix.append(QueryManagerImpl.QU_PREFIX);
-        prefix.append(QueryManagerImpl.ODY_PREFIX);
-        final Query query = QueryFactory.create(prefix.toString() + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-
-        return result;
     }
 
     private MeasurementCapability getMeasurementCapability(final Resource measurementCapabilityResource) {
@@ -247,8 +249,10 @@ public class QueryManagerImpl implements QueryManager {
             final SDFAttribute attribute = new SDFAttribute(sourceName, attributeURI.getFragment(), SDFDatatype.OBJECT);
             final MeasurementCapability measurementCapability = new MeasurementCapability(attributeURI, attribute);
 
-            final String query = "SELECT ?uri  WHERE { <" + measurementCapabilityResource.getURI().toString() + "> ssn:" + SSN.inCondition.getLocalName() + " ?uri }";
-            final ResultSet result = this.executeQuery(query);
+            final String queryString = "SELECT ?uri  WHERE { <" + measurementCapabilityResource.getURI().toString() + "> ssn:" + SSN.inCondition.getLocalName() + " ?uri }";
+            final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+            final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+            final ResultSet result = qExec.execSelect();
             while (result.hasNext()) {
                 final QuerySolution solution = result.next();
                 final Condition condition = this.getConditon(solution.get("uri").asResource());
@@ -256,6 +260,7 @@ public class QueryManagerImpl implements QueryManager {
                     measurementCapability.addCondition(condition);
                 }
             }
+            qExec.close();
             return measurementCapability;
         }
         return null;
@@ -268,7 +273,7 @@ public class QueryManagerImpl implements QueryManager {
             final String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
             final SDFAttribute attribute = new SDFAttribute(sourceName, attributeURI.getFragment(), SDFDatatype.OBJECT);
             final Interval interval = this.getConditionInterval(condition);
-            return new Condition(URI.create(condition.getURI()), attribute, interval);
+            return new Condition(attribute, interval);
         }
         return null;
     }

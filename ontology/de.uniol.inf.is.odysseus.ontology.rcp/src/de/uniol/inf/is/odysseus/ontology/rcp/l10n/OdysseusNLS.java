@@ -30,6 +30,7 @@ public class OdysseusNLS extends NLS {
 
     public static String Name;
     public static String URL;
+    public static String New;
 
     public static String Add;
     public static String Remove;
@@ -43,6 +44,13 @@ public class OdysseusNLS extends NLS {
     public static String Conditions;
     public static String MeasurementProperty;
     public static String MeasurementProperties;
+
+    public static String SensingDevice;
+    public static String SensingDevices;
+
+    public static String NewSensingDevice;
+    public static String DefineSensingDevices;
+    public static String DefineMeasurementCapabilities;
 
     static {
         NLS.initializeMessages(OdysseusNLS.BUNDLE_NAME, OdysseusNLS.class);

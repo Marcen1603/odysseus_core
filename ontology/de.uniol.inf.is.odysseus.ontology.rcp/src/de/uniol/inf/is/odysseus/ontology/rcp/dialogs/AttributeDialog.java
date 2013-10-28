@@ -92,6 +92,15 @@ public class AttributeDialog extends Dialog {
         this.cmbDatatype.add(SDFDatatype.FLOAT.getQualName());
         this.cmbDatatype.add(SDFDatatype.DOUBLE.getQualName());
 
+        this.cmbDatatype.add(SDFDatatype.DATE.getQualName());
+        this.cmbDatatype.add(SDFDatatype.TIMESTAMP.getQualName());
+        this.cmbDatatype.add(SDFDatatype.STRING.getQualName());
+        this.cmbDatatype.add(SDFDatatype.OBJECT.getQualName());
+        this.cmbDatatype.add(SDFDatatype.MATRIX_BOOLEAN.getQualName());
+        this.cmbDatatype.add(SDFDatatype.MATRIX_BYTE.getQualName());
+        this.cmbDatatype.add(SDFDatatype.MATRIX_FLOAT.getQualName());
+        this.cmbDatatype.add(SDFDatatype.MATRIX_DOUBLE.getQualName());
+
         this.cmbDatatype.setData(SDFDatatype.BOOLEAN.getQualName(), SDFDatatype.BOOLEAN);
         this.cmbDatatype.setData(SDFDatatype.BYTE.getQualName(), SDFDatatype.BYTE);
         this.cmbDatatype.setData(SDFDatatype.SHORT.getQualName(), SDFDatatype.SHORT);
@@ -99,6 +108,15 @@ public class AttributeDialog extends Dialog {
         this.cmbDatatype.setData(SDFDatatype.LONG.getQualName(), SDFDatatype.LONG);
         this.cmbDatatype.setData(SDFDatatype.FLOAT.getQualName(), SDFDatatype.FLOAT);
         this.cmbDatatype.setData(SDFDatatype.DOUBLE.getQualName(), SDFDatatype.DOUBLE);
+
+        this.cmbDatatype.setData(SDFDatatype.DATE.getQualName(), SDFDatatype.DATE);
+        this.cmbDatatype.setData(SDFDatatype.TIMESTAMP.getQualName(), SDFDatatype.TIMESTAMP);
+        this.cmbDatatype.setData(SDFDatatype.STRING.getQualName(), SDFDatatype.STRING);
+        this.cmbDatatype.setData(SDFDatatype.OBJECT.getQualName(), SDFDatatype.OBJECT);
+        this.cmbDatatype.setData(SDFDatatype.MATRIX_BOOLEAN.getQualName(), SDFDatatype.MATRIX_BOOLEAN);
+        this.cmbDatatype.setData(SDFDatatype.MATRIX_BYTE.getQualName(), SDFDatatype.MATRIX_BYTE);
+        this.cmbDatatype.setData(SDFDatatype.MATRIX_FLOAT.getQualName(), SDFDatatype.MATRIX_FLOAT);
+        this.cmbDatatype.setData(SDFDatatype.MATRIX_DOUBLE.getQualName(), SDFDatatype.MATRIX_DOUBLE);
 
         this.cmbDatatype.select(0);
 

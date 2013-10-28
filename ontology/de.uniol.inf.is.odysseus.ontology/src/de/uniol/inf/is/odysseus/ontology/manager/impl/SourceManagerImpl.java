@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.ontology.manager.impl;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.ontology.Individual;
@@ -27,6 +28,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.model.Condition;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
@@ -83,31 +85,58 @@ public class SourceManagerImpl {
                 this.addConditionToMeasurementCapability(measurementCapability, condition);
             }
         }
-        // if (!capability.getMeasurementProperties().isEmpty()) {
-        // for (MeasurementProperty measurementProperty :
-        // capability.getMeasurementProperties()) {
-        // this.addMeasurementPropertyToMeasurementCapability(measurementCapability,
-        // measurementProperty);
-        // }
-        // }
+        if (!capability.getMeasurementProperties().isEmpty()) {
+            for (MeasurementProperty measurementProperty : capability.getMeasurementProperties()) {
+                this.addMeasurementPropertyToMeasurementCapability(measurementCapability, measurementProperty);
+            }
+        }
         this.getABox().add(sensingDevice, SSN.hasMeasurementCapability, measurementCapability);
+    }
+
+    private void addMeasurementPropertyToMeasurementCapability(final Individual measurementCapability, final MeasurementProperty p) {
+        String measurementPropertyURI = measurementCapability.getURI() + "/" + UUID.randomUUID().toString() + "/" + p.getProperty().toString();
+        final Individual measurementProperty = this.getABox().createIndividual(measurementPropertyURI, SSN.MeasurementProperty);
+        this.getABox().add(measurementProperty, RDFS.subClassOf, SSN.Property);
+
+        this.getABox().createClass(DUL.Region.getURI());
+        final Individual measurementProperty_interval = this.getABox().createIndividual(measurementPropertyURI + "/region", DUL.Region);
+
+        this.getABox().createClass(DUL.Amount.getURI());
+        final Individual minValue = this.getABox().createIndividual(measurementPropertyURI + "/region/inf", DUL.Amount);
+        this.getABox().add(minValue, DUL.hasDataValue, new Double(p.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(p.getInterval().inf()));
+
+        final Individual maxValue = this.getABox().createIndividual(measurementPropertyURI + "/region/sup", DUL.Amount);
+        this.getABox().add(maxValue, DUL.hasDataValue, new Double(p.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(p.getInterval().sup()));
+        if (p.getUnit() != null) {
+            this.getABox().add(minValue, DUL.isClassifiedBy, p.getUnit());
+            this.getABox().add(maxValue, DUL.isClassifiedBy, p.getUnit());
+        }
+        this.getABox().add(measurementProperty_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
+
+        this.getABox().add(measurementProperty_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
+
+        this.getABox().createObjectProperty(SSN.hasValue.getURI());
+        this.getABox().add(measurementProperty, SSN.hasValue, measurementProperty_interval);
+
+        this.getABox().add(measurementCapability, SSN.hasMeasurementProperty, measurementProperty);
     }
 
     private void addConditionToMeasurementCapability(final Individual measurementCapability, final Condition c) {
         final SDFAttribute attribute = c.getAttribute();
         final Individual property = this.createPropertyNS(attribute.getAttributeName(), ODYSSEUS.NS);
+        String conditionURI = measurementCapability.getURI() + "/" + UUID.randomUUID().toString() + "/condition";
 
-        final Individual condition = this.getABox().createIndividual(ODYSSEUS.NS + c.getName(), SSN.Condition);
+        final Individual condition = this.getABox().createIndividual(conditionURI, SSN.Condition);
         this.getABox().add(condition, RDFS.subClassOf, property.asResource());
 
         this.getABox().createClass(DUL.Region.getURI());
-        final Individual condition_interval = this.getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval", DUL.Region);
+        final Individual condition_interval = this.getABox().createIndividual(conditionURI + "/region", DUL.Region);
 
         this.getABox().createClass(DUL.Amount.getURI());
-        final Individual minValue = this.getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval/inf", DUL.Amount);
+        final Individual minValue = this.getABox().createIndividual(conditionURI + "/region/inf", DUL.Amount);
         this.getABox().add(minValue, DUL.hasDataValue, new Double(c.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().inf()));
 
-        final Individual maxValue = this.getABox().createIndividual(ODYSSEUS.NS + c.getName() + "/interval/sup", DUL.Amount);
+        final Individual maxValue = this.getABox().createIndividual(conditionURI + "/region/sup", DUL.Amount);
         this.getABox().add(maxValue, DUL.hasDataValue, new Double(c.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().sup()));
         if (c.getUnit() != null) {
             this.getABox().add(minValue, DUL.isClassifiedBy, c.getUnit());

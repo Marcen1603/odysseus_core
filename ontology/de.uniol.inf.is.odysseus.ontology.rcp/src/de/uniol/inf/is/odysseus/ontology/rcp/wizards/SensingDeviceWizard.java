@@ -49,7 +49,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
 
     public SensingDeviceWizard() {
         super();
-        this.setWindowTitle("New Sensing Device");
+        this.setWindowTitle(OdysseusNLS.NewSensingDevice);
     }
 
     @Override
@@ -61,8 +61,8 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
     @Override
     public void init(final IWorkbench workbench, final IStructuredSelection selection) {
         this.workbench = workbench;
-        this.sensingDevicePage = new SensingDevicePage("Select file name", selection);
-        this.measurementCapabilitiesPage = new MeasurementCapabilitiesPage("Add measurement capabilities", selection, this.sensingDevicePage);
+        this.sensingDevicePage = new SensingDevicePage(OdysseusNLS.DefineSensingDevices, selection);
+        this.measurementCapabilitiesPage = new MeasurementCapabilitiesPage(OdysseusNLS.DefineMeasurementCapabilities, selection, this.sensingDevicePage);
     }
 
     @Override

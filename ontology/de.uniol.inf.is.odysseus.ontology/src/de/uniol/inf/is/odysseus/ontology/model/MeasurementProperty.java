@@ -15,6 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.ontology.model;
 
+import com.hp.hpl.jena.rdf.model.Resource;
+
+import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
@@ -23,8 +26,19 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  */
 public class MeasurementProperty {
     public static enum Property {
-        Accurancy;
+        Accurancy(SSN.Accuracy), DetectionLimit(SSN.DetectionLimit), Drift(SSN.Drift), Frequency(SSN.Frequency), Latency(SSN.Latency), MeasurementRange(SSN.MeasurementRange), Precision(SSN.Precision), ResponseTime(
+                SSN.ResponseTime), Resolution(SSN.Resolution), Sensitivity(SSN.Sensitivity), Selectivity(SSN.Selectivity);
 
+        private Resource resource;
+
+        // Constructor
+        Property(Resource resource) {
+            this.resource = resource;
+        }
+
+        Resource getResource() {
+            return resource;
+        }
     }
 
     private final Property property;

@@ -101,7 +101,6 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
             SensorOntologyServiceImpl.LOG.debug("Executor " + executor + " bound");
             this.prepareExecutor();
         }
-        this.registerDataDictionaryListener();
     }
 
     public void unbindExecutor(final IExecutor executor) {
@@ -116,7 +115,6 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
         SensorOntologyServiceImpl.session = SensorOntologyServiceImpl.getUserManagement().getSessionManagement().loginSuperUser(null);
         SensorOntologyServiceImpl.LOG.debug("UserManagement " + userManagement + " bound");
         this.prepareUserManagement();
-        this.registerDataDictionaryListener();
     }
 
     public void unbindUserManagement(final IUserManagement userManagement) {
@@ -172,11 +170,13 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
 
     private void prepareUserManagement() {
         SensorOntologyServiceImpl.getUserManagement().getSessionManagement().subscribe(this);
+        this.registerDataDictionaryListener();
     }
 
     private void registerDataDictionaryListener() {
         if ((SensorOntologyServiceImpl.getExecutor() != null) && (SensorOntologyServiceImpl.getActiveSession() != null)) {
             SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession().getTenant()).addListener(this);
+            createStreamsAndViewsInOntology();
         }
     }
 
@@ -229,8 +229,8 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     private void createSensingDevice(final String name, final SDFSchema schema) {
         final SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name), schema);
         for (final SDFAttribute attribute : schema.getAttributes()) {
-            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + attribute.getAttributeName()), attribute);
-            final Condition condition = new Condition(URI.create(ODYSSEUS.NS + attribute.getAttributeName() + "/" + name), attribute, Interval.MAX);
+            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + name + "/" + attribute.getAttributeName()), attribute);
+            final Condition condition = new Condition(attribute, Interval.MAX);
             measurementCapability.addCondition(condition);
             sensingDevice.addMeasurementCapability(measurementCapability);
         }

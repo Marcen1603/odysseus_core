@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.ontology.manager;
 import java.net.URI;
 import java.util.List;
 
-import com.hp.hpl.jena.query.ResultSet;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 
@@ -76,5 +74,4 @@ public interface QueryManager {
      */
     List<URI> getAllPropertyURIsObservedBySensingDevice(URI uri);
 
-    ResultSet executeQuery(final String queryString);
 }
