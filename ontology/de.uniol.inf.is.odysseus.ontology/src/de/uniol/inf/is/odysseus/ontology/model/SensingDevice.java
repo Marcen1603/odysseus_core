@@ -40,6 +40,9 @@ public class SensingDevice {
     public SensingDevice(final URI uri, final SDFSchema schema) {
         this.uri = uri;
         this.schema = schema.clone();
+        for (SDFAttribute attribute : this.schema.getAttributes()) {
+            this.capabilities.put(attribute, new ArrayList<MeasurementCapability>());
+        }
     }
 
     /**

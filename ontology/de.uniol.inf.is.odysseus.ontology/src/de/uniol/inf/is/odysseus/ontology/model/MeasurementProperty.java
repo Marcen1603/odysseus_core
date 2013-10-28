@@ -36,7 +36,7 @@ public class MeasurementProperty {
             this.resource = resource;
         }
 
-        Resource getResource() {
+        public Resource getResource() {
             return resource;
         }
     }

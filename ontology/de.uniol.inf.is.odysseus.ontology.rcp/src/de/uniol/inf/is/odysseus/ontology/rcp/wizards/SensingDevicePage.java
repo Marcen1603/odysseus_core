@@ -124,8 +124,8 @@ public class SensingDevicePage extends WizardPage {
     }
 
     public List<SDFAttribute> getAttributes() {
-        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(this.tblAttributes.getItemCount());
-        for (int i = 0; i < this.tblAttributes.getItemCount(); i++) {
+        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(this.tblAttributes.getItems().length);
+        for (int i = 0; i < this.tblAttributes.getItems().length; i++) {
             attributes.add((SDFAttribute) this.tblAttributes.getItem(i).getData());
         }
         return attributes;

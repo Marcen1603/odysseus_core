@@ -96,7 +96,7 @@ public class SourceManagerImpl {
     private void addMeasurementPropertyToMeasurementCapability(final Individual measurementCapability, final MeasurementProperty p) {
         String measurementPropertyURI = measurementCapability.getURI() + "/" + UUID.randomUUID().toString() + "/" + p.getProperty().toString();
         final Individual measurementProperty = this.getABox().createIndividual(measurementPropertyURI, SSN.MeasurementProperty);
-        this.getABox().add(measurementProperty, RDFS.subClassOf, SSN.Property);
+        this.getABox().add(measurementProperty, RDFS.subClassOf, p.getProperty().getResource());
 
         this.getABox().createClass(DUL.Region.getURI());
         final Individual measurementProperty_interval = this.getABox().createIndividual(measurementPropertyURI + "/region", DUL.Region);
