@@ -67,7 +67,7 @@ public class SensorRegistryView extends ViewPart implements IDataDictionaryListe
 
         this.setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
         this.getTreeViewer().setContentProvider(new SensingDeviceContentProvider());
-        this.getTreeViewer().setLabelProvider(new SensingDeviceContentLabelProvider("source"));
+        this.getTreeViewer().setLabelProvider(new SensingDeviceContentLabelProvider("sensingDevice"));
 
         final int operations = DND.DROP_MOVE;
         final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };

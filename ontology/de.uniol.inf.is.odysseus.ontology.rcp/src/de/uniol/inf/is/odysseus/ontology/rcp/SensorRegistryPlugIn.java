@@ -43,13 +43,13 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
         super.start(context);
         SensorRegistryPlugIn.plugin = this;
         SensorRegistryPlugIn.imageManager = new ImageManager(context.getBundle());
-        SensorRegistryPlugIn.imageManager.register("source", "icons/sources.png");
-        SensorRegistryPlugIn.imageManager.register("sink", "icons/sinks.png");
-        SensorRegistryPlugIn.imageManager.register("attribute", "icons/status.png");
-        SensorRegistryPlugIn.imageManager.register("loggedinuser", "icons/user--plus.png");
-        SensorRegistryPlugIn.imageManager.register("user", "icons/user.png");
-        SensorRegistryPlugIn.imageManager.register("role", "icons/tick-small-circle.png");
-        SensorRegistryPlugIn.imageManager.register("function", "icons/function.png");
+        SensorRegistryPlugIn.imageManager.register("sensingDevice", "icons/sensingDevice.png");
+        SensorRegistryPlugIn.imageManager.register("measurementCapability", "icons/measurementCapability.png");
+        SensorRegistryPlugIn.imageManager.register("measurementProperty", "icons/measurementProperty.png");
+        SensorRegistryPlugIn.imageManager.register("property", "icons/property.png");
+        SensorRegistryPlugIn.imageManager.register("condition", "icons/condition.png");
+        SensorRegistryPlugIn.imageManager.register("ontology", "icons/ontology.png");
+
     }
 
     /*

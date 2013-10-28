@@ -30,16 +30,24 @@ import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
  */
 public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider {
 
-    private final String operatorImage;
+    private final String sensingDeviceImage;
+    private final String measurementCapabilityImage = "measurementCapability";
+    private final String conditionImage = "condition";
 
-    public SensingDeviceContentLabelProvider(final String operatorImage) {
-        this.operatorImage = operatorImage;
+    public SensingDeviceContentLabelProvider(final String sensingDeviceImage) {
+        this.sensingDeviceImage = sensingDeviceImage;
     }
 
     @Override
     public Image getImage(final Object element) {
         if (element instanceof SensingDevice) {
-            return SensorRegistryPlugIn.getImageManager().get(this.operatorImage);
+            return SensorRegistryPlugIn.getImageManager().get(this.sensingDeviceImage);
+        }
+        if (element instanceof MeasurementCapability) {
+            return SensorRegistryPlugIn.getImageManager().get(this.measurementCapabilityImage);
+        }
+        if (element instanceof Condition) {
+            return SensorRegistryPlugIn.getImageManager().get(this.conditionImage);
         }
         return super.getImage(element);
     }
