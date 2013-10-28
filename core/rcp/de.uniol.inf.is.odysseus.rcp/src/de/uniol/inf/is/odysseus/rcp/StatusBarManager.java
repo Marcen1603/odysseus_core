@@ -27,6 +27,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 
+import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
+
 @SuppressWarnings("restriction")
 public class StatusBarManager implements IWindowListener {
 
@@ -72,8 +74,8 @@ public class StatusBarManager implements IWindowListener {
 	}
 
 	private void setStandardMessages() {
-		setMessage(StatusBarManager.EXECUTOR_ID, "No executor found");
-		setMessage(StatusBarManager.SCHEDULER_ID, "No scheduler found");
+		setMessage(StatusBarManager.EXECUTOR_ID, OdysseusNLS.NoExecutorFound);
+		setMessage(StatusBarManager.SCHEDULER_ID, OdysseusNLS.NoSchedulerFound);
 		setMessage(StatusBarManager.USER_ID, "anonymous");
 	}
 

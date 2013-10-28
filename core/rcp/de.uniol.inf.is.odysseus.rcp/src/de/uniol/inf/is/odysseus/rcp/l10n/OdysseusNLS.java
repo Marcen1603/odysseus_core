@@ -35,6 +35,7 @@ public class OdysseusNLS extends NLS {
 	public static String Continue;
 	public static String CausedBy;
 	public static String CreatedBy;
+    public static String Name;
 
 	public static String ID;
 	public static String User;

@@ -81,7 +81,7 @@ public class QueryTableViewer extends TableViewer {
 
 		/************* QueryName ****************/
 		TableViewerColumn queryNameColumn = new TableViewerColumn(this, SWT.NONE);
-		queryNameColumn.getColumn().setText("Name");
+		queryNameColumn.getColumn().setText(OdysseusNLS.Name);
 		queryNameColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
