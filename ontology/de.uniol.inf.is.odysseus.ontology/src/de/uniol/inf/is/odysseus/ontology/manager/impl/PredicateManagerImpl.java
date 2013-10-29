@@ -39,7 +39,7 @@ public class PredicateManagerImpl {
 
     }
 
-    @SuppressWarnings("unused")
+
     public void getConditionPredicates(final SensingDevice sensingDevice) {
 
     }
