@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util;
 
-import net.jxta.id.ID;
-import net.jxta.peer.PeerID;
-
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.builder.ToStringStyle;
 

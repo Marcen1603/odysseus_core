@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.calculator;
 
-import java.util.Collection;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;

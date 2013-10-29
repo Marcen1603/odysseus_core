@@ -145,6 +145,7 @@ public class Helper {
 		}		
 	}	
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static double calcCost(IServerExecutor executor, OperatorCostModel costModel, IPhysicalQuery q) {
 		ICost<IPhysicalOperator> cost = costModel.estimateCost(q.getPhysicalChilds(), false);
 		OperatorCost<IPhysicalOperator>  c = ((OperatorCost<IPhysicalOperator> )cost);
@@ -239,6 +240,7 @@ public class Helper {
 		return new Long(Runtime.getRuntime().maxMemory()).doubleValue();
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static double getCpuCostTotal(IServerExecutor executor, OperatorCostModel costModel) {
 		ICost<IPhysicalOperator> cost = null;
 		for(IPhysicalQuery q : executor.getExecutionPlan().getQueries()) {

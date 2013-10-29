@@ -14,16 +14,20 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.Helper;
 
 public class BidCalculator {
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(BidCalculator.class);
 	private IServerExecutor executor;
+	@SuppressWarnings("rawtypes")
 	private OperatorCostModel costModel;
 
 	
+	@SuppressWarnings("rawtypes")
 	public BidCalculator(IServerExecutor executor, OperatorCostModel costModel) {
 		this.executor = executor;
 		this.costModel = costModel;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public double calcBid(String pqlStatement, String transCfgName) {
 		ILogicalQuery query = Helper.getLogicalQuery(executor, pqlStatement).get(0);
 		

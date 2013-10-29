@@ -19,7 +19,6 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.SubPlan;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -83,6 +82,7 @@ public class SubPlanManipulator {
 	}
 	
 	// sfl4j / log4j funktioniert nicht korrekt im unit test (zu viele bindings)
+	@SuppressWarnings("unused")
 	private void log(String str, Object ...arg) {
 		System.out.println(String.format(str, arg));
 		// slf4j
@@ -180,6 +180,7 @@ public class SubPlanManipulator {
 		return partsOnPeer;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void insertJxtaOperators(List<SubPlan> queryParts, String sharedQueryId, PeerGroupID peerGroupId) {
 //		int connectionNo = 0;
 		for(SubPlan part : queryParts) {

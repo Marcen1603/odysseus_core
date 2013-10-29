@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model
 
 
 public class SubPlanManipulatorTest {
+	@SuppressWarnings("unused")
 	private static final Logger log = Logger.getLogger(SubPlanManipulatorTest.class);
 	private SubPlanManipulator manipulator;
 	

@@ -8,12 +8,15 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class RelativeCostsCalculator {
+	@SuppressWarnings("rawtypes")
 	private final OperatorCostModel costModel;
 	private final IServerExecutor executor;
+	@SuppressWarnings("unused")
 	private final IPQLGenerator generator;
 	
 	
 
+	@SuppressWarnings("rawtypes")
 	public RelativeCostsCalculator(OperatorCostModel costModel,
 			IServerExecutor executor, IPQLGenerator generator) {
 		super();

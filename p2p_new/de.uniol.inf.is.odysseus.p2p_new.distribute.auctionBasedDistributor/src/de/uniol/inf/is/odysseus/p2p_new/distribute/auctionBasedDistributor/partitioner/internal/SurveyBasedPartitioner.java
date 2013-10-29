@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.SubPlan;
 
 public class SurveyBasedPartitioner extends AbstractPartitioner {
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(SurveyBasedPartitioner.class);
 	
 	public void activate() {

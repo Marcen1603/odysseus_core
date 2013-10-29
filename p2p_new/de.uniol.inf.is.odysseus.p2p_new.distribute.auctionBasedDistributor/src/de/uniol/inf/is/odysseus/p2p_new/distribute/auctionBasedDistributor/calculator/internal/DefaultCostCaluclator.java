@@ -1,12 +1,9 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.calculator.internal;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -28,6 +25,7 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class DefaultCostCaluclator implements CostCalculator {
 	private static final Logger log = LoggerFactory.getLogger(DefaultCostCaluclator.class);
+	@SuppressWarnings("rawtypes")
 	private OperatorCostModel costModel;
 	private IServerExecutor executor;
 	private PlanProOperatorPartitioner operatorPartitioner;
@@ -55,12 +53,14 @@ public class DefaultCostCaluclator implements CostCalculator {
 		
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public void bindCostModel(OperatorCostModel costModel) {
 		this.costModel = costModel;
 		log.debug("CostModel binded {}", costModel);
 	}
 	
-	public void unbindCostModel(OperatorCostModel dataDictionaryProvider) {
+	@SuppressWarnings("rawtypes")
+	public void unbindCostModel(OperatorCostModel costModel) {
 		if( this.costModel == costModel ) {
 			costModel = null;
 		}
@@ -111,6 +111,7 @@ public class DefaultCostCaluclator implements CostCalculator {
 		return bidCalculator.calcBid(pqlStatement, transCfgName);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public CostSummary calcCostsForPlan(ILogicalQuery query, String transCfgName) {					
 		IPhysicalQuery p = Helper.getPhysicalQuery(executor, query, transCfgName);

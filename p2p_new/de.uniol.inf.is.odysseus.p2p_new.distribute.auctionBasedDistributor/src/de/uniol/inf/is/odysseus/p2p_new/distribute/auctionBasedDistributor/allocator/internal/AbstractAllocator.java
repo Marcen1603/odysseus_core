@@ -80,7 +80,6 @@ public abstract class AbstractAllocator implements Allocator {
 		}
 	}		
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public ILogicalQuery allocate(ILogicalQuery query,
 			ID sharedQueryID, List<SubPlan> subPlans,

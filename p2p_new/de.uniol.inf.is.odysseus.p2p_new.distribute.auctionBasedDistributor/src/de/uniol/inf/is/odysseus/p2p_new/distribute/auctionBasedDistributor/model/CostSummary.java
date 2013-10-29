@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model;
 
-import java.beans.Transient;
 import java.util.Collection;
 
 import com.google.common.base.Objects;

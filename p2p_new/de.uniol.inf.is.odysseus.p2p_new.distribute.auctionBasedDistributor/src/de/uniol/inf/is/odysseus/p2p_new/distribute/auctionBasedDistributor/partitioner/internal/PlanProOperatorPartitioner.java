@@ -16,9 +16,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.SubPlan;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.Helper;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.SubPlanManipulator;
 
 public class PlanProOperatorPartitioner extends AbstractPartitioner {
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory
 			.getLogger(PlanProOperatorPartitioner.class);
 

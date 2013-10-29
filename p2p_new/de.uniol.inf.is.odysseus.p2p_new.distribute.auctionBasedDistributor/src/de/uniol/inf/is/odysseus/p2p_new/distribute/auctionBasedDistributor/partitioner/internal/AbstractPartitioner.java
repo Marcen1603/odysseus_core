@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public abstract class AbstractPartitioner implements Partitioner {
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(AbstractPartitioner.class);
 	protected Communicator communicator;
 	protected IPQLGenerator generator;
