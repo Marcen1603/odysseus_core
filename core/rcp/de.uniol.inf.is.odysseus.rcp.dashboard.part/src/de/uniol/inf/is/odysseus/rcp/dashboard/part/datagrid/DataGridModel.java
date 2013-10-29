@@ -54,7 +54,8 @@ public final class DataGridModel {
 	private void copyRowsFromOtherModel(DataGridModel model) {
 		for( int i = 0; i < Math.min(model.rows.length, this.rows.length); i++ ) {
 			for( int j = 0; j < Math.min(model.rows[i].getColumnCount(), this.rows[i].getColumnCount()); j++) {
-				this.rows[i].setText(j, model.rows[i].getText(j));
+				setText(model.rows[i].getText(j), i, j);
+				setValue(i, j, model.rows[i].getValue(j));
 			}
 		}
 	}
