@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.datagrid;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -188,16 +189,20 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		Preconditions.checkArgument( rowCount > 0, "Row count must be positive");
 		Preconditions.checkArgument( columnCount > 0, "Column count must be positive");
 		
-		deleteColumns(tableViewer);
+		if( tableViewer != null ) {
+			deleteColumns(tableViewer);
+		}
 		
 		this.rowCount = rowCount;
 		this.columnCount = columnCount;
 		this.model = new DataGridModel( this, this.rowCount, this.columnCount, model );
 		
-		setInputAndCreateColumns(tableViewer);
-		
-		fullRelayout();
-		fireChangeEvent();
+		if( tableViewer != null ) {
+			setInputAndCreateColumns(tableViewer);
+			
+			fullRelayout();
+			fireChangeEvent();
+		}
 	}
 
 	private void fullRelayout() {
@@ -343,4 +348,17 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		return savedRows;
 	}
 	
+	@Override
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		super.onStart(physicalRoots);
+		
+		model.setSchemaFromOperators(physicalRoots);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		
+		model.clearSchemaFromOperators();
+	}
 }

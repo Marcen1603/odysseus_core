@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.datagrid;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -22,11 +24,14 @@ public final class DataGridModel {
 	private static final String ATTRIBUTE_TEXT_PREFIX = "=";
 	private static final String ATTRIBUTE_SOURCE_SEPARATOR = ".";
 	private static final String NO_VALUE_TEXT = "<no value>";
+	private static final String INVALID_ATTRIBITE_TEXT = "<undefined>";
+	private static final String UNKNOWN_TEXT = "<unknown>";
 	private static final String NULL_TEXT = "<null>";
 
 	private final DataRow[] rows;
 
 	private final GridPositionMap positionMap = new GridPositionMap();
+	private final List<SDFSchema> schemas = Lists.newArrayList();
 	private final DataGridDashboardPart dashboardPart;
 
 	public DataGridModel( DataGridDashboardPart dashboardPart, int rowCount, int columnCount ) {
@@ -102,12 +107,31 @@ public final class DataGridModel {
 		if (newText != null) {
 			if (!newText.startsWith(ATTRIBUTE_TEXT_PREFIX)) {
 				setValue(row, column, newText);
+			} else if( !isAttributeValid(newText.substring(1))) {
+				
+				if( !schemas.isEmpty() ) {
+					setValue(row, column, INVALID_ATTRIBITE_TEXT);
+				} else {
+					setValue( row, column, UNKNOWN_TEXT );
+				}
+				
 			} else {
 				setValue(row, column, NO_VALUE_TEXT);
 			}
 		}
 
 		rows[row].setText(column, newText);
+	}
+
+	private boolean isAttributeValid(String attributeName) {
+		for( SDFSchema schema : schemas ) {
+			for( SDFAttribute attribute : schema ) {
+				if( attribute.getAttributeName().equals(attributeName) || (attribute.getSourceName() + "." + attribute.getAttributeName()).equals(attributeName)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void updateValues(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
@@ -192,6 +216,33 @@ public final class DataGridModel {
 		Preconditions.checkArgument(row >= 0, "Row index must be positive, not %s", row);
 		Preconditions.checkArgument(column >= 0, "Column index must be positive, not %s", column);
 		Preconditions.checkArgument(row < rows.length, "Row must be lower than the maximum row index of %s", rows.length);
+	}
+
+	public void setSchemaFromOperators(Collection<IPhysicalOperator> operators) {
+		schemas.clear();
+		
+		for( IPhysicalOperator operator : operators ) {
+			schemas.add(operator.getOutputSchema());
+		}
+		
+		refreshTexts();
+	}
+
+	private void refreshTexts() {
+		for( int row = 0; row < rows.length; row++ ) {
+			for( int column = 0; column < rows[row].getColumnCount(); column++ ) {
+				// to trigger value checks...
+				setText(getText(row, column), row, column);
+			}
+		}
+		
+		dashboardPart.refresh();
+	}
+
+	public void clearSchemaFromOperators() {
+		schemas.clear();
+		
+		refreshTexts();
 	}
 
 }
