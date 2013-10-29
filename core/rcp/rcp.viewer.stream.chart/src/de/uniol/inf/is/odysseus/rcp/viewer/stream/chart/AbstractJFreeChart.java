@@ -452,6 +452,16 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public void onUnpause() {
 	}
+	
+	@Override
+	public void onLock() {
+		
+	}
+	
+	@Override
+	public void onUnlock() {
+		
+	}
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {

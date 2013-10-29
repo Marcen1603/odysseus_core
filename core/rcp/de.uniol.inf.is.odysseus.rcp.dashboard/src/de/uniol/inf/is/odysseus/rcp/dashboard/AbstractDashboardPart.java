@@ -91,6 +91,17 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	public boolean isStarted() {
 		return isStarted;
 	}
+	
+	@Override
+	public void onLock() {
+		
+	}
+	
+	
+	@Override
+	public void onUnlock() {
+		
+	}
 
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {

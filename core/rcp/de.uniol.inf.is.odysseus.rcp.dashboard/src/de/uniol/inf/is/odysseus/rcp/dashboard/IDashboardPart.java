@@ -42,6 +42,9 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	public void onPause();
 	public void onUnpause();
 	
+	public void onLock();
+	public void onUnlock();
+	
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider file);
 	public IDashboardPartQueryTextProvider getQueryTextProvider();
 	

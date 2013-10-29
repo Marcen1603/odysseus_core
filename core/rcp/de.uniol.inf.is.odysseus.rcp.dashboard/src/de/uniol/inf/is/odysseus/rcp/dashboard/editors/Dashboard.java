@@ -196,8 +196,38 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 	public void setSettings(DashboardSettings settings) {
 		Preconditions.checkNotNull(settings, "Settings to set must not be null!");
 
+		boolean oldLock = this.settings.isLocked();
+		
 		this.settings = settings;
 		selector.setLock(settings.isLocked());
+		
+		if( settings.isLocked() != oldLock ) {
+			if( settings.isLocked() ) {
+				fireOnLockEvent();
+			} else {
+				fireOnUnlockEvent();
+			}
+		}
+	}
+
+	private void fireOnUnlockEvent() {
+		for( DashboardPartPlacement placement : partContainer.getDashboardPartPlacements() ) {
+			try {
+				placement.getDashboardPart().onUnlock();
+			} catch( Throwable t ) {
+				LOG.error("Exception during unlock-event for dashboard part");
+			}
+		}
+	}
+
+	private void fireOnLockEvent() {
+		for( DashboardPartPlacement placement : partContainer.getDashboardPartPlacements() ) {
+			try {
+				placement.getDashboardPart().onLock();
+			} catch( Throwable t ) {
+				LOG.error("Exception during lock-event for dashboard part");
+			}
+		}
 	}
 
 	public DashboardSettings getSettings() {
