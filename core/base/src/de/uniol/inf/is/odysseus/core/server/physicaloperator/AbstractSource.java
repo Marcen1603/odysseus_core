@@ -645,6 +645,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 		//unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
+		removeActiveSubscription(sub);
 		connectedSinks.remove(sub);
 	}
 
