@@ -158,8 +158,13 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 			}
 			return outlinePage;
 		}		
+		Object dbAdapter = dashboard.getAdapter(adapter);
+		if(dbAdapter!=null){
+			return dbAdapter;
+		}		
 		return super.getAdapter(adapter);
 	}
+
 
 	public Dashboard getDashboard() {
 		return dashboard;

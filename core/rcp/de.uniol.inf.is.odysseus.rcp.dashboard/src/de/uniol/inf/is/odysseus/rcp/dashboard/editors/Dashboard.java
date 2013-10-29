@@ -114,6 +114,13 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 		parent.layout();
 	}
+	
+	public Object getAdapter(Class<?> adapter){		
+		if(getSelectedDashboardPartPlacement().isPresent()){
+			return getSelectedDashboardPartPlacement().get().getDashboardPart().getAdapter(adapter);
+		}
+		return null;		
+	}
 
 	public Control getControl() {
 		return dashboardControl.getComposite();
