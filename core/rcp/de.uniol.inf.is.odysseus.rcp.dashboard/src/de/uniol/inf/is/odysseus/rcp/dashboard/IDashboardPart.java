@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.rcp.dashboard;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchPart;
@@ -28,10 +30,11 @@ import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 
 public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>> {
 
+	public void init( IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart);
+	public void onLoad(Map<String, String> saved);
 	public void createPartControl(Composite parent, ToolBar toolbar);
 	public void dispose();
 
-	public void onLoad(Map<String, String> saved);
 	public Map<String, String> onSave();
 	
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception;
@@ -47,9 +50,6 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	
 	public void addListener(IDashboardPartListener listener);
 	public void removeListener(IDashboardPartListener listener);
-	
-	public void setWorkbenchPart(IWorkbenchPart workbenchpark);
-	public IWorkbenchPart getWorkbenchPart();
 	
 	public Object getAdapter(Class<?> adapter);
 	

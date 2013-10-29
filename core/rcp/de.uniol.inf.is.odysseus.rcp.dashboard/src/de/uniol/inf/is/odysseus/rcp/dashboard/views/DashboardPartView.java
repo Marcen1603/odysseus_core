@@ -55,12 +55,10 @@ public class DashboardPartView extends ViewPart {
 		final ToolBar toolBar = new ToolBar(parent, SWT.WRAP | SWT.RIGHT);
 		
 		try {
-			dashboardPart = DASHBOARD_PART_HANDLER.load(dashboardPartFile);
-			dashboardPart.setWorkbenchPart(this);
+			dashboardPart = DASHBOARD_PART_HANDLER.load(dashboardPartFile, this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
 
 			dashboardPart.createPartControl(comp, toolBar);
-			dashboardPart.setWorkbenchPart(this);
 			dashboardPartController.start();
 			
 			parent.layout();

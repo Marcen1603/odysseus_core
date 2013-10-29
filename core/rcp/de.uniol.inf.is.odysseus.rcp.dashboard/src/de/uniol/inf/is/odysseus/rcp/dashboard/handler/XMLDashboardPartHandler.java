@@ -38,6 +38,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -80,7 +81,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(XMLDashboardPartHandler.class);
 
 	@Override
-	public IDashboardPart load(IFile fileToLoad) throws DashboardHandlerException {
+	public IDashboardPart load(IFile fileToLoad, IWorkbenchPart partToShow) throws DashboardHandlerException {
 		Preconditions.checkNotNull(fileToLoad, "Array of lines from must not be null!");
 		
 		try {
@@ -93,7 +94,17 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
 			Map<String, String> customSettings = getCustoms(doc);
 
-			return buildDashboardPart(partName, queryTextProvider, customSettings);
+			try {
+				final IDashboardPart part = DashboardPartRegistry.createDashboardPart(partName);
+				part.init(fileToLoad, fileToLoad.getProject(), partToShow);
+				part.setQueryTextProvider(queryTextProvider);
+				part.onLoad(customSettings);
+				
+				return part;
+			} catch (final InstantiationException e) {
+				LOG.error("Could not load DashboardPart", e);
+				throw new DashboardHandlerException("Could not load DashboardPart", e);
+			}
 
 		} catch (ParserConfigurationException e) {
 			LOG.error("Could not load DashboardPart", e);
@@ -178,18 +189,6 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 		} else {
 			throw new DashboardHandlerException("Unknown IDashboardPartQueryTextProvider " + queryTextProvider.getClass());
-		}
-	}
-
-	private static IDashboardPart buildDashboardPart(String partName, IDashboardPartQueryTextProvider queryTextProvider, Map<String, String> customSettings) throws DashboardHandlerException {
-		try {
-			final IDashboardPart part = DashboardPartRegistry.createDashboardPart(partName);
-			part.setQueryTextProvider(queryTextProvider);
-			part.onLoad(customSettings);
-			return part;
-		} catch (final InstantiationException e) {
-			LOG.error("Could not load DashboardPart", e);
-			throw new DashboardHandlerException("Could not load DashboardPart", e);
 		}
 	}
 

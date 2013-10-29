@@ -61,11 +61,6 @@
                label="Show Dashboard Part as View"
                style="push">
          </command>
-         <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.ConfigureDashboard"
-               label="Configure Dashboard..."
-               style="push">
-         </command>
          <separator
                name="de.uniol.inf.is.odysseus.rcp.dashboard.separator2">
          </separator>

@@ -10,6 +10,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class AddDashboardPartCommand extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final Map<IFile, IDashboardPart> dashboardParts = loadDashboardParts(dashboardPartFiles);
+		final Map<IFile, IDashboardPart> dashboardParts = loadDashboardParts(dashboardPartFiles, dashboardEditor);
 		if (dashboardParts.isEmpty()) {
 			return null;
 		}
@@ -101,12 +102,12 @@ public class AddDashboardPartCommand extends AbstractHandler {
 		return obj instanceof IFile && ((IFile) obj).getFileExtension().equals(DashboardPlugIn.DASHBOARD_PART_EXTENSION);
 	}
 
-	private static Map<IFile, IDashboardPart> loadDashboardParts(List<IFile> dashboardPartFiles) {
+	private static Map<IFile, IDashboardPart> loadDashboardParts(List<IFile> dashboardPartFiles, IWorkbenchPart partToShow) {
 		final Map<IFile, IDashboardPart> parts = Maps.newHashMap();
 
 		for (final IFile dashboardPartFile : dashboardPartFiles) {
 			try {
-				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile);
+				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile, partToShow);
 				parts.put(dashboardPartFile, part);
 			} catch (FileNotFoundException | DashboardHandlerException ex) {
 				LOG.error("Could not load dashboardPart from file {}!", dashboardPartFile, ex);

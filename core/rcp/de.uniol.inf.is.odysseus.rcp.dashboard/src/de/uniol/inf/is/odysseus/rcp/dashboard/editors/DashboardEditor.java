@@ -183,7 +183,7 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboard = DASHBOARD_HANDLER.load(this.input.getFile(), DASHBOARD_PART_HANDLER);
+			dashboard = DASHBOARD_HANDLER.load(this.input.getFile(), DASHBOARD_PART_HANDLER, this);
 			dashboard.addListener(this);
 			controllers = createDashboardPartControllers(dashboard.getDashboardPartPlacements());
 		} catch (DashboardHandlerException ex) {
@@ -366,7 +366,6 @@ public class DashboardEditor extends EditorPart implements IDashboardListener, I
 
 		for (final DashboardPartPlacement place : dashboardPartPlacements) {
 			final IDashboardPart part = place.getDashboardPart();
-			part.setWorkbenchPart(this);
 			final DashboardPartController controller = new DashboardPartController(part);
 			controllers.put(part, controller);
 		}

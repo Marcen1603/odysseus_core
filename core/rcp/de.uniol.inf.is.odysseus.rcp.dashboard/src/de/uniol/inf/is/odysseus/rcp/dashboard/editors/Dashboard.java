@@ -17,16 +17,19 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.editors;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -45,8 +48,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.ControlPoint;
 import de.uniol.inf.is.odysseus.rcp.dashboard.editors.ctrlPoint.ControlPointManager;
+import de.uniol.inf.is.odysseus.rcp.dashboard.handler.XMLDashboardPartHandler;
 
 public final class Dashboard implements PaintListener, MouseListener, MouseMoveListener, ISelectionListener {
 
@@ -54,6 +59,9 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 	private static final int SELECT_MOUSE_BUTTON_ID = 1;
 	private static final int SELECTION_BORDER_MARGIN_PIXELS = 3;
+	private static final IDashboardPartHandler DASHBOARD_PART_HANDLER = new XMLDashboardPartHandler();
+	private static final int DEFAULT_PART_WIDTH = 500;
+	private static final int DEFAULT_PART_HEIGHT = 300;
 
 	private final PartDragger partDragger = new PartDragger();
 	private final DashboardPartSelector selector = new DashboardPartSelector();
@@ -83,9 +91,16 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			}
 
 			@Override
-			protected void dropDashboardPartPlacement(DashboardPartPlacement place) {
-				place.getDashboardPart().setWorkbenchPart(site.getPart());
-				add(place);
+			protected void dropDashboardPartPlacement(IFile dashboardPartFile, DropTargetEvent event) {
+				try {
+					final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile, site.getPart());
+					final Point position = dashboardControl.getComposite().toControl(event.x, event.y);
+					final DashboardPartPlacement place = new DashboardPartPlacement(part, dashboardPartFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH, DEFAULT_PART_HEIGHT);
+
+					add(place);
+				} catch( Throwable t ) {
+					LOG.error("Exception during dropping dashboard part placement", t);
+				}
 			}
 		};
 

@@ -38,6 +38,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -77,7 +78,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 	private static final String BG_IMAGE_STRETCHED_ATTRIBUTE_NAME = "stretched";
 
 	@Override
-	public Dashboard load(IFile fileToLoad, IDashboardPartHandler partHandler) throws DashboardHandlerException, FileNotFoundException {
+	public Dashboard load(IFile fileToLoad, IDashboardPartHandler partHandler, IWorkbenchPart partToShow) throws DashboardHandlerException, FileNotFoundException {
 		Preconditions.checkNotNull(fileToLoad, "Dashboard-File to load must not be null!");
 		Preconditions.checkNotNull(partHandler, "Dashboard part handler must not be null!");
 		
@@ -114,7 +115,7 @@ public class XMLDashboardHandler implements IDashboardHandler {
 					final IPath queryFilePath = new Path(fileName);
 					final IFile dashboardPartFile = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 
-					final IDashboardPart dashboardPart = partHandler.load(dashboardPartFile);
+					final IDashboardPart dashboardPart = partHandler.load(dashboardPartFile, partToShow);
 					final DashboardPartPlacement plc = new DashboardPartPlacement(dashboardPart, fileName, x, y, w, h);
 					applySettingsToDashboardPart(settingsMap, dashboardPart);			
 					

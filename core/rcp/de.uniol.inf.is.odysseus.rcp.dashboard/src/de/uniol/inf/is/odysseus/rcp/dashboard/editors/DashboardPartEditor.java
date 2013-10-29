@@ -135,8 +135,7 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		setPartName(this.input.getFile().getName());
 
 		try {
-			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile());
-			dashboardPart.setWorkbenchPart(this);
+			dashboardPart = DASHBOARD_PART_HANDLER.load(this.input.getFile(), this);
 			dashboardPart.addListener(this);
 			dashboardPartController = new DashboardPartController(dashboardPart);
 		} catch (DashboardHandlerException e) {
@@ -194,7 +193,6 @@ public class DashboardPartEditor extends EditorPart implements IDashboardPartLis
 		comp.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		try {
-			dashboardPart.setWorkbenchPart(this);
 			dashboardPart.createPartControl(comp, dashboardPartToolBar.getToolBar());			
 			dashboardPartController.start();
 		} catch (final Exception ex) {

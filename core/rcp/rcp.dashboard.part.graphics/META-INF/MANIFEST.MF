@@ -19,5 +19,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef;bundle-version="3.7.2",
  org.eclipse.ui.views,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.relational.base
+ de.uniol.inf.is.odysseus.relational.base,
+ org.eclipse.core.resources;bundle-version="3.7.101"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

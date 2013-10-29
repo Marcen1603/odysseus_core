@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	
 	private IDashboardActionBarContributor editorActionBarContributor;
 	private IWorkbenchPart workbenchpart;
+	private IFile dashboardPartFile;
+	private IProject containingProject;
 	private boolean isStarted;
 
 	@Override
@@ -61,6 +65,13 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public Map<String, String> onSave() {
 		return Maps.newHashMap();
+	}
+	
+	@Override
+	public void init(IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart) {
+		this.workbenchpart = containingPart;
+		this.dashboardPartFile = dashboardFile;
+		this.containingProject = containingProject;
 	}
 
 	@Override
@@ -122,14 +133,16 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 		this.sinkNames = sinkNames;
 	}
 	
-	@Override
-	public void setWorkbenchPart(IWorkbenchPart workbenchpart){
-		this.workbenchpart = workbenchpart;
+	public final IWorkbenchPart getWorkbenchPart(){		
+		return this.workbenchpart;		
 	}
 	
-	@Override
-	public IWorkbenchPart getWorkbenchPart(){		
-		return this.workbenchpart;		
+	public final IFile getDashboardPartFile() {
+		return dashboardPartFile;
+	}
+	
+	public final IProject getProject() {
+		return containingProject;
 	}
 	
 	@Override

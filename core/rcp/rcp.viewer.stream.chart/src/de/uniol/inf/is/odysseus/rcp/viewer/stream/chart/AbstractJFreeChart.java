@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -96,6 +98,13 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps.newHashMap();
 	
 	private List<IDashboardPartListener> listener = new ArrayList<>();
+	private IDashboardPartQueryTextProvider queryTextProvider;
+	private boolean opened = false;
+	private String sinkNames;
+	private ChartComposite chartComposite;
+	private IWorkbenchPart workbenchpart;
+	private IFile dashboardPartFile;
+	private IProject containingProject;
 	private boolean isStarted;
 
 	private static int currentUniqueSecondIdentifer = 0;
@@ -108,11 +117,18 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	}
 
 	@Override
+	public void init( IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart) {
+		this.dashboardPartFile = dashboardFile;
+		this.containingProject = containingProject;
+		this.workbenchpart = containingPart;
+	}
+
+	@Override
 	public void createPartControl(Composite parent) {
 		initComposite(parent);
 		contributeToActionBars();
 	}
-
+	
 	private void initComposite(Composite parent) {
 		this.chart = createChart();
 		this.chart.setTitle(chartTitle);		
@@ -269,16 +285,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	public void setFileName(String queryFile) {
 		this.queryFileName = queryFile;
 	}
-
-	/**
-	 * DASHBOARD IMPLEMENTATIONS
-	 */
-
-	private IDashboardPartQueryTextProvider queryTextProvider;
-	private boolean opened = false;
-	private String sinkNames;
-	private IWorkbenchPart workbenchpart;
-	private ChartComposite chartComposite;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
@@ -462,14 +468,16 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		this.listener.remove(listener);
 	}
 	
-	@Override
-	public IWorkbenchPart getWorkbenchPart() {
+	public final IWorkbenchPart getWorkbenchPart() {
 		return this.workbenchpart;
 	}
 	
-	@Override
-	public void setWorkbenchPart(IWorkbenchPart workbenchpark) {
-		this.workbenchpart = workbenchpark;		
+	public final IFile getDashboardPartFile() {
+		return dashboardPartFile;
+	}
+	
+	public final IProject getProject() {
+		return containingProject;
 	}
 
 	@Override
