@@ -44,6 +44,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	private IFile dashboardPartFile;
 	private IProject containingProject;
 	private boolean isStarted;
+	private boolean isLocked;
 
 	@Override
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
@@ -88,21 +89,24 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	public void onUnpause() {
 	}
 	
-	public boolean isStarted() {
+	public final boolean isStarted() {
 		return isStarted;
 	}
 	
 	@Override
 	public void onLock() {
-		
+		isLocked = true;
 	}
-	
 	
 	@Override
 	public void onUnlock() {
-		
+		isLocked = false;
 	}
 
+	public final boolean isLocked() {
+		return isLocked;
+	}
+	
 	@Override
 	public void setQueryTextProvider(IDashboardPartQueryTextProvider provider) {
 		this.queryTextProvider = Preconditions.checkNotNull(provider, "QueryTextProvider for DashboardPart must not be null!");
