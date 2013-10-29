@@ -106,7 +106,7 @@ public abstract class AbstractXYChart extends AbstractJFreeChart<Double, IMetaAt
 			minY = valueY;
 		}
 
-		if (autoadjust) {
+		if (autoadjust && getChart() != null ) {
 			getChart().getXYPlot().getRangeAxis().setLowerBound(minY * (1.0 - margin));
 			getChart().getXYPlot().getRangeAxis().setUpperBound(maxY * (1.0 + margin));
 
