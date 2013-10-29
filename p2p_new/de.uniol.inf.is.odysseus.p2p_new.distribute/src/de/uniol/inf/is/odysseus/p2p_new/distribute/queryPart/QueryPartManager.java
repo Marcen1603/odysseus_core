@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
@@ -159,13 +160,21 @@ public class QueryPartManager implements IAdvertisementListener,
 
 	}
 
+	/**
+	 * Not implemented.
+	 */
 	@Override
 	public void advertisementRemoved(IAdvertisementManager sender,
 			Advertisement adv) {
 		// do nothing
 	}
 
-	// called by OSGi-DS
+	/**
+	 * Binds the referenced {@link IExecutor}. <br />
+	 * Called by OSGI-DS.
+	 * @see #unbindExecutor(IExecutor)
+	 * @param exe An instance of an {@link IExecutor} implementation.
+	 */
 	public void bindExecutor(IExecutor exe) {
 		if (exe instanceof IServerExecutor) {
 			executor = (IServerExecutor) exe;
@@ -177,7 +186,12 @@ public class QueryPartManager implements IAdvertisementListener,
 		}
 	}
 
-	// called by OSGi-DS
+	/**
+	 * Unbinds an referenced {@link IExecutor}, if <code>exe</code> is the binded one. <br />
+	 * Called by OSGI-DS.
+	 * @see #bindExecutor(IExecutor)
+	 * @param exe An instance of an {@link IExecutor} implementation.
+	 */
 	public void unbindExecutor(IExecutor exe) {
 		if (executor == exe) {
 			LOG.debug("Unbound Executor {}", exe);
@@ -186,14 +200,25 @@ public class QueryPartManager implements IAdvertisementListener,
 		}
 	}
 
+	/**
+	 * Returns the used {@link IDataDictionary}.
+	 */
 	public IDataDictionary getDataDictionary(){
 		return DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
 	}
 
+	/**
+	 * Returns the single instance of this class.
+	 */
 	public static QueryPartManager getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Determine the needed settings to call {@link IServerExecutor#addQuery(String, String, ISession, String, List)}.
+	 * @param executor The {@link IServerExecutor}.
+	 * @param cfgName The name of the {@link QueryBuildConfiguration} to load. See {@link IServerExecutor#getQueryBuildConfiguration(String)}.
+	 */
 	private static List<IQueryBuildSetting<?>> determineQueryBuildSettings(
 			IServerExecutor executor, String cfgName) {
 		final IQueryBuildConfigurationTemplate qbc = executor
@@ -256,13 +281,24 @@ public class QueryPartManager implements IAdvertisementListener,
 
 	}
 
+	/**
+	 * Not implemented.
+	 */
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name,
-			ILogicalOperator op) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op) {
+		
+		// Nothing do do.
+		
 	}
 
+	/**
+	 * Not implemented.
+	 */
 	@Override
 	public void dataDictionaryChanged(IDataDictionary sender) {
+		
+		// Nothing do do.
+		
 	}
 
 }

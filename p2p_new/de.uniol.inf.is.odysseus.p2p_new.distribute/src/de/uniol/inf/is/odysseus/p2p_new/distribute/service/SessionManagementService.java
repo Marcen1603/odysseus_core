@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
+ * Singleton helper class to read out the active session.
  * @author Michael Brand
  */
 public class SessionManagementService {
