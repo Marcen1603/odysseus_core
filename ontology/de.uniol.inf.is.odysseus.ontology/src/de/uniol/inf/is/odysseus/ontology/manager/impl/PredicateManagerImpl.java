@@ -15,20 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.ontology.manager.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Resource;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
-import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
