@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 
 import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -33,38 +34,67 @@ public class ImagePictogramFigure extends AbstractPictogramFigure<ImagePictogram
 	private Image image;
 	private boolean visibile = true;
 	private boolean stretch = true;
+	private boolean center = true;
+	private boolean keepRatio = true;
 
 	public ImagePictogramFigure() {
 		super();
-	}	
+	}
 
-	public void paintFigure(Graphics g) {
-		Rectangle r = getBounds().getCopy();
+	public void paintGraphic(Graphics g) {
+		Rectangle r = getContentBounds().getCopy();
 		if (this.visibile) {
 			org.eclipse.swt.graphics.Rectangle imgBox = image.getBounds();
 			if (stretch) {
-				g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, r.width, r.height);
+				if (keepRatio) {
+					g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, r.width, r.height);
+				} else {
+					g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, r.width, r.height);
+				}
 			} else {
-				g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, imgBox.width, imgBox.height);
+				if (center) {
+					int left = (r.width - imgBox.width) / 2;
+					int top = (r.height - imgBox.height) / 2;
+					g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x + left, r.y + top, imgBox.width, imgBox.height);
+				} else {
+					g.drawImage(image, 0, 0, imgBox.width, imgBox.height, r.x, r.y, imgBox.width, imgBox.height);
+				}
 			}
-
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure#updateValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram)
 	 */
 	@Override
-	public void updateValues(ImagePictogram node) {		
+	public void updateValues(ImagePictogram node) {
 		this.visibile = node.isVisibile();
 		this.stretch = node.isStretch();
-		try {			
+		this.center = node.isCenter();
+		this.keepRatio = node.isKeepRatio();
+		try {
 			this.image = new Image(Display.getDefault(), new ImageData(node.getFile().getLocation().toOSString()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.image = new Image(Display.getDefault(), Activator.getImage("image.png").getImageData());
 		}
-		
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure#getContentSize()
+	 */
+	@Override
+	public Dimension getContentSize() {
+		if (image != null) {
+			return new Dimension(image);
+		}
+		return getPreferredSize();
+
 	}
 
 }

@@ -23,8 +23,10 @@ import java.util.Set;
 
 import org.eclipse.gef.ui.actions.ActionBarContributor;
 import org.eclipse.gef.ui.actions.ActionRegistry;
+import org.eclipse.gef.ui.actions.CopyRetargetAction;
 import org.eclipse.gef.ui.actions.DeleteRetargetAction;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
+import org.eclipse.gef.ui.actions.PasteRetargetAction;
 import org.eclipse.gef.ui.actions.RedoRetargetAction;
 import org.eclipse.gef.ui.actions.UndoRetargetAction;
 import org.eclipse.gef.ui.actions.ZoomComboContributionItem;
@@ -83,11 +85,14 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		addGlobalActionKey(action.getId());
 	}
 
+	
 	@Override
 	protected void buildActions() {
 		addRetargetAction(new UndoRetargetAction());
 		addRetargetAction(new RedoRetargetAction());
 		addRetargetAction(new DeleteRetargetAction());
+		addRetargetAction(new CopyRetargetAction());
+		addRetargetAction(new PasteRetargetAction());
 		addRetargetAction(new ZoomInRetargetAction());
 		addRetargetAction(new ZoomOutRetargetAction());
 
@@ -137,6 +142,8 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.DELETE.getId()));
+		toolBarManager.add(getAction(ActionFactory.COPY.getId()));
+		toolBarManager.add(getAction(ActionFactory.PASTE.getId()));
 		toolBarManager.add(new Separator());
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_IN));
 		toolBarManager.add(getAction(GEFActionConstants.ZOOM_OUT));

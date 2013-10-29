@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -45,11 +44,25 @@ public class ImagePictogram extends Pictogram {
 	private String filename = "";
 	private RelationalPredicate predicate;
 	private boolean stretch;
+	private boolean center = true;
+	private boolean keepRatio = true;
 
 	public ImagePictogram() {
 		this.filename = "";
 		this.stretch = true;
 		setPredicate("true");
+	}
+
+	/**
+	 * @param imagePictogram
+	 */
+	public ImagePictogram(ImagePictogram old) {
+		super(old);
+		this.filename = old.filename;
+		this.predicate = old.predicate.clone();
+		this.stretch = old.stretch;
+		this.center = old.center;
+		this.keepRatio = old.keepRatio;
 	}
 
 	public IResource getFile() {
@@ -62,7 +75,7 @@ public class ImagePictogram extends Pictogram {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
-		changed();
+		setDirty();
 	}
 
 	/*
@@ -75,6 +88,8 @@ public class ImagePictogram extends Pictogram {
 		setFilename(loadValue(values.get("filename"), ""));
 		setPredicate(loadValue(values.get("predicate"), "true"));
 		setStretch(loadValue(Boolean.parseBoolean(values.get("stretch")), true));
+		setCenter(loadValue(Boolean.parseBoolean(values.get("center")), true));
+		setKeepRatio(loadValue(Boolean.parseBoolean(values.get("keepRatio")), true));
 	}
 
 	/*
@@ -87,6 +102,8 @@ public class ImagePictogram extends Pictogram {
 		values.put("filename", filename);
 		values.put("predicate", this.predicate.toString());
 		values.put("stretch", Boolean.toString(stretch));
+		values.put("center", Boolean.toString(center));
+		values.put("keepRatio", Boolean.toString(keepRatio));
 	}
 
 	/*
@@ -106,7 +123,7 @@ public class ImagePictogram extends Pictogram {
 
 	public void setPredicate(String predicate) {
 		this.predicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
-		changed();
+		setDirty();
 	}
 
 	public IPredicate<Tuple<?>> getPredicate() {
@@ -117,9 +134,9 @@ public class ImagePictogram extends Pictogram {
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#open(java.util.Collection)
 	 */
 	@Override
-	protected void open(Collection<IPhysicalOperator> roots) {
+	protected void open(IPhysicalOperator root) {
 		try {
-			this.predicate.init(roots.iterator().next().getOutputSchema(), null);
+			this.predicate.init(root.getOutputSchema(), null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -131,7 +148,7 @@ public class ImagePictogram extends Pictogram {
 
 	public void setStretch(boolean stretch) {
 		this.stretch = stretch;
-		changed();
+		setDirty();
 	}
 
 	@Override
@@ -162,6 +179,32 @@ public class ImagePictogram extends Pictogram {
 			return new Dimension(img);
 		}
 		return super.getPreferedSize();
+	}
+
+	public boolean isKeepRatio() {
+		return keepRatio;
+	}
+
+	public void setKeepRatio(boolean keepRatio) {
+		this.keepRatio = keepRatio;
+		setDirty();
+	}
+
+	public boolean isCenter() {
+		return center;
+	}
+
+	public void setCenter(boolean center) {
+		this.center = center;
+		setDirty();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#clone()
+	 */
+	@Override
+	public ImagePictogram clone() {	
+		return new ImagePictogram(this);
 	}
 
 

@@ -15,10 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy;
 
+import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramCopyCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramDeleteCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
@@ -28,11 +31,30 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup
  * 
  */
 public class PictogramComponentEditPolicy extends ComponentEditPolicy {
+
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef.editpolicies.ComponentEditPolicy#getCommand(org.eclipse.gef.Request)
+	 */
+	@Override
+	public Command getCommand(Request request) {
+		if(request.getType().equals(CopyAction.GRAPHICS_COPY_ACTION)){
+			return createCopyCommand((GroupRequest) request);
+		}
+		return super.getCommand(request);
+	}	
+	
+	private Command createCopyCommand(GroupRequest request) {
+		PictogramCopyCommand copyCommand = new PictogramCopyCommand();		
+		copyCommand.setPictogram((Pictogram) getHost().getModel());
+		return copyCommand;
+	}
+
 	protected Command createDeleteCommand(GroupRequest request) {
 		PictogramDeleteCommand deleteCommand = new PictogramDeleteCommand();
 		deleteCommand.setPictogramGroup((PictogramGroup) getHost().getParent().getModel());
 		deleteCommand.setPictogram((Pictogram) getHost().getModel());
 		return deleteCommand;
 	}
+	
 }

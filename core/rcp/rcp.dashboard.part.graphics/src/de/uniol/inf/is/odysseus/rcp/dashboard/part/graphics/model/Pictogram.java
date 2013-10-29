@@ -25,35 +25,75 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public abstract class Pictogram extends Observable {
 
 	private Rectangle constraint;
-	private boolean visibile = true;	
+	private boolean visibile = true;
 	private PictogramGroup parentGroup;
 	private RelationalPredicate relevancePredicate = new RelationalPredicate(new SDFExpression("true", MEP.getInstance()));
+	private String selectedRootName;
 
+	private String textTop = "";
+	private String textBottom = "";	
+	private boolean dirty = true;
+	private Collection<IPhysicalOperator> roots;
+
+	
+	public Pictogram(){
+		
+	}
+	
+	public Pictogram(Pictogram old){
+		this.constraint = old.constraint.getCopy();
+		this.visibile = old.visibile;
+		this.parentGroup = old.parentGroup;
+		this.relevancePredicate = old.relevancePredicate.clone();
+		this.selectedRootName = old.selectedRootName;
+		this.textTop = old.textTop;
+		this.textBottom = old.textBottom;		
+		this.dirty = old.dirty;
+	}
+	
 	public Rectangle getConstraint() {
 		return constraint;
-	}
+	}		
 
 	public void setLocation(Point location) {
 		this.constraint = new Rectangle(location, getPreferedSize());
-		changed();
+		setDirty();
+	}
+	
+	protected void setDirty() {
+		refreshVisuals();
+		this.dirty = true;
+		if(this.getParentGroup()!=null){
+			this.getParentGroup().setDirty();
+		}
 	}
 
 	protected abstract void load(Map<String, String> values);
 
 	protected abstract void save(Map<String, String> values);
 
-	protected abstract void open(Collection<IPhysicalOperator> roots);
+	protected abstract void open(IPhysicalOperator root);
 
 	protected abstract void process(Tuple<?> tuple);
+	
+	public abstract Pictogram clone();
 
 	public abstract Class<? extends AbstractPictogramDialog<? extends Pictogram>> getConfigurationDialog();
 
 	protected void internalProcess(Tuple<?> tuple) {
+		if (dirty) {
+			internalOpen(roots);
+			dirty = false;
+		}
 		if (this.relevancePredicate.evaluate(tuple)) {
 			process(tuple);
-			setChanged();
-			notifyObservers();
+			refreshVisuals();
 		}
+	}
+	
+	private void refreshVisuals() {
+		setChanged();
+		notifyObservers();		
 	}
 
 	public <T> T loadValue(T value, T defaultValue) {
@@ -72,6 +112,10 @@ public abstract class Pictogram extends Observable {
 
 		save(values);
 		values.put("relevancePredicate", this.relevancePredicate.toString());
+		values.put("text_bottom", this.textBottom);
+		values.put("text_top", this.textTop);
+		values.put("selected_root", this.selectedRootName);
+
 		for (Entry<String, String> value : values.entrySet()) {
 			Element element = builder.createElement(value.getKey());
 			element.setTextContent(value.getValue());
@@ -106,6 +150,9 @@ public abstract class Pictogram extends Observable {
 			}
 		}
 		setRelevancePredicate(loadValue(values.get("relevancePredicate"), "true"));
+		setTextBottom(loadValue(values.get("text_bottom"), ""));
+		setTextTop(loadValue(values.get("text_top"), ""));
+		setSelectedRootName(loadValue(values.get("selected_root"), ""));
 		load(values);
 
 	}
@@ -116,7 +163,7 @@ public abstract class Pictogram extends Observable {
 
 	public void setVisibile(boolean visibile) {
 		this.visibile = visibile;
-	}	
+	}
 
 	public PictogramGroup getParentGroup() {
 		return parentGroup;
@@ -135,16 +182,29 @@ public abstract class Pictogram extends Observable {
 			relevancePredicate = "true";
 		}
 		this.relevancePredicate = new RelationalPredicate(new SDFExpression(relevancePredicate, MEP.getInstance()));
+		setDirty();
 	}
 
-	protected void internalOpen(Collection<IPhysicalOperator> roots) {
-		// TODO: this is only working with one root!!
+	protected void internalOpen(IPhysicalOperator root) {
 		try {
-			this.relevancePredicate.init(roots.iterator().next().getOutputSchema(), null);
+			this.relevancePredicate.init(root.getOutputSchema(), null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		open(roots);
+		open(root);
+	}
+
+	protected void internalOpen(Collection<IPhysicalOperator> roots) {
+		this.roots = roots;
+		IPhysicalOperator root = roots.iterator().next();
+		for (IPhysicalOperator candidate : roots) {
+			if (candidate.getName().equals(selectedRootName)) {
+				root = candidate;
+				break;
+			}
+		}
+		internalOpen(root);
+
 	}
 
 	public abstract IFigure createPictogramFigure();
@@ -155,12 +215,43 @@ public abstract class Pictogram extends Observable {
 
 	public void setConstraint(Rectangle newConstraint) {
 		this.constraint = newConstraint;
-		changed();
+		setDirty();
+	}	
+
+	public String getTextTop() {
+		return textTop;
 	}
 
-	protected void changed() {
-		setChanged();
-		notifyObservers();
+	public void setTextTop(String textTop) {
+		this.textTop = textTop;
+		setDirty();
 	}
 
+	public String getTextBottom() {
+		return textBottom;
+	}
+
+	public void setTextBottom(String textBottom) {
+		this.textBottom = textBottom;
+		setDirty();
+	}
+
+	public String getSelectedRootName() {
+		return selectedRootName;
+	}
+
+	public void setSelectedRootName(String selectedRoot) {
+		this.selectedRootName = selectedRoot;
+		setDirty();
+	}
+
+	public Collection<IPhysicalOperator> getRoots() {
+		if(roots == null){
+			if(getParentGroup()!=null){
+				this.roots = getParentGroup().getRoots();
+			}
+		}
+		return roots;
+	}		
+	
 }

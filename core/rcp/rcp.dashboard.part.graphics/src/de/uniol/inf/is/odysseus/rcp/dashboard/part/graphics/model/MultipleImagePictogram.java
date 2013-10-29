@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +38,23 @@ public class MultipleImagePictogram extends Pictogram {
 
 	private ArrayList<ImagePictogram> images = new ArrayList<>();
 	private boolean stretch = true;
+	private boolean center = true;
+	private boolean keepRatio = true;
+
+	public MultipleImagePictogram(){
+		
+	}
+	
+	public MultipleImagePictogram(MultipleImagePictogram old) {		
+		super(old);
+		this.images = new ArrayList<>();
+		for(ImagePictogram ip : old.images){
+			this.images.add(ip.clone());
+		}
+		this.stretch = old.stretch;
+		this.center = old.center;
+		this.keepRatio = old.keepRatio;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -54,6 +70,8 @@ public class MultipleImagePictogram extends Pictogram {
 			addImage(predicate, image);
 		}
 		setStretch(loadValue(Boolean.parseBoolean(values.get("stretch")), true));
+		setCenter(loadValue(Boolean.parseBoolean(values.get("center")), true));
+		setKeepRatio(loadValue(Boolean.parseBoolean(values.get("keepRatio")), true));
 	}
 
 	/*
@@ -74,6 +92,8 @@ public class MultipleImagePictogram extends Pictogram {
 		}
 		values.put("count", Integer.toString(i));
 		values.put("stretch", Boolean.toString(stretch));
+		values.put("center", Boolean.toString(center));
+		values.put("keepRatio", Boolean.toString(keepRatio));
 	}
 
 	/*
@@ -82,7 +102,7 @@ public class MultipleImagePictogram extends Pictogram {
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#init(java.util.Collection)
 	 */
 	@Override
-	protected void open(Collection<IPhysicalOperator> roots) {
+	protected void open(IPhysicalOperator roots) {
 		for (ImagePictogram image : images) {
 			image.internalOpen(roots);
 		}
@@ -141,7 +161,7 @@ public class MultipleImagePictogram extends Pictogram {
 		for (ImagePictogram img : this.images) {
 			img.setStretch(stretch);
 		}
-		changed();
+		setDirty();
 	}
 
 	public void clearImages() {
@@ -149,7 +169,7 @@ public class MultipleImagePictogram extends Pictogram {
 	}
 
 	public ImagePictogram addImage(String predicate, String image) {
-		ImagePictogram ip = new ImagePictogram();		
+		ImagePictogram ip = new ImagePictogram();
 		ip.setFilename(image);
 		ip.setConstraint(getConstraint());
 		ip.setRelevancePredicate("true");
@@ -158,7 +178,7 @@ public class MultipleImagePictogram extends Pictogram {
 		if (getParentGroup() != null) {
 			ip.setParentGroup(getParentGroup());
 		}
-		changed();
+		setDirty();
 		return ip;
 	}
 
@@ -174,5 +194,37 @@ public class MultipleImagePictogram extends Pictogram {
 		for (ImagePictogram ip : this.images) {
 			ip.setParentGroup(parentGroup);
 		}
+	}
+
+	public boolean isKeepRatio() {
+		return keepRatio;
+	}
+
+	public void setKeepRatio(boolean keepRatio) {
+		this.keepRatio = keepRatio;
+		for (ImagePictogram img : this.images) {
+			img.setKeepRatio(keepRatio);
+		}
+		setDirty();
+	}
+
+	public boolean isCenter() {
+		return center;
+	}
+
+	public void setCenter(boolean center) {
+		this.center = center;
+		for (ImagePictogram img : this.images) {
+			img.setCenter(center);
+		}
+		setDirty();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#clone()
+	 */
+	@Override
+	public MultipleImagePictogram clone() {	
+		return new MultipleImagePictogram(this);
 	}
 }

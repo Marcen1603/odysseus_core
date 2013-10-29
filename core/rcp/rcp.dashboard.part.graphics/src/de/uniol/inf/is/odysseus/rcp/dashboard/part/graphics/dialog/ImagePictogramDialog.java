@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
@@ -50,11 +48,15 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 
 	private String location;
 	private boolean stretch = true;
+	private boolean center = false;
+	private boolean keepRatio = true;
 	private String predicate;
 
 	private Text predicateText;
 	private Button stretchCheckButton;
 	private Text imgText;
+	private Button centerCheckButton;
+	private Button keepRatioCheckButton;
 
 	/*
 	 * (non-Javadoc)
@@ -84,10 +86,9 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 		button.setText("Browse...");
 
 		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			public void widgetSelected(SelectionEvent event) {				
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(parent.getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-				dialog.setInput(root);
+				dialog.setInput(getProject());
 				dialog.setAllowMultiple(false);
 				dialog.addFilter(new ViewerFilter() {
 					@Override
@@ -144,6 +145,14 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 		stretchCheckButton.setText("Resize the image to fit the container size");
 		stretchCheckButton.setSelection(stretch);
 		
+		keepRatioCheckButton = new Button(parent, SWT.CHECK);
+		keepRatioCheckButton.setText("Keep ratio if the image is resized to fit the container");
+		keepRatioCheckButton.setSelection(keepRatio);
+		
+		centerCheckButton = new Button(parent, SWT.CHECK);
+		centerCheckButton.setText("Centers the image if it does not fit into container");
+		centerCheckButton.setSelection(center);
+		
 		return parent;
 	}
 
@@ -167,6 +176,8 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 		pg.setFilename(imgText.getText());
 		pg.setPredicate(predicateText.getText());
 		pg.setStretch(stretchCheckButton.getSelection());
+		pg.setCenter(centerCheckButton.getSelection());
+		pg.setKeepRatio(keepRatioCheckButton.getSelection());		
 	}
 
 	/*
@@ -177,6 +188,9 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 	@Override
 	public void loadValues(ImagePictogram pg) {		
 		this.stretch = pg.isStretch();
+		this.keepRatio = pg.isKeepRatio();
+		this.center = pg.isCenter();
+		
 		if (pg.getFile() != null) {
 			this.location = pg.getFile().getProjectRelativePath().toOSString();
 		} else {

@@ -28,36 +28,39 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
 public class PictogramGroup extends Observable implements Serializable, Observer {
-	
+
 	private static final long serialVersionUID = 3019435887229998016L;
-	
+
 	private String backgroundImagePath;
 	private boolean backgroundFileStretch;
 
-	
 	List<Pictogram> nodes = new ArrayList<Pictogram>();
 
 	private IProject project;
 
+	private Collection<IPhysicalOperator> roots;
 
-	public PictogramGroup(String backgroundImagePath, boolean backgroundFileStretch, IProject parentProject){
+	public PictogramGroup(String backgroundImagePath, boolean backgroundFileStretch, IProject parentProject) {
 		this.backgroundImagePath = backgroundImagePath;
 		this.setProject(parentProject);
 		this.backgroundFileStretch = backgroundFileStretch;
 	}
 
-	public List<Pictogram> getPictograms() {		
+	public List<Pictogram> getPictograms() {
 		return nodes;
 	}
-	
-	public void processTuple(Tuple<?> tuple){
+
+	public void processTuple(IPhysicalOperator senderOperator, Tuple<?> tuple){
 		for(Pictogram p : nodes){
-			p.internalProcess(tuple);
+			if(p.getSelectedRootName().equals(senderOperator.getName())){
+				p.internalProcess(tuple);
+			}
 		}
 	}
-	
-	public void open(Collection<IPhysicalOperator> roots){
-		for(Pictogram p : nodes){			
+
+	public void open(Collection<IPhysicalOperator> roots) {
+		this.roots = roots;
+		for (Pictogram p : nodes) {
 			p.internalOpen(roots);
 		}
 	}
@@ -65,14 +68,12 @@ public class PictogramGroup extends Observable implements Serializable, Observer
 	public void addPictogram(Pictogram pg) {
 		getPictograms().add(pg);
 		pg.setParentGroup(this);
-		pg.addObserver(this);
 		changed();
 	}
 
 	public void removePictogram(Pictogram pg) {
 		getPictograms().remove(pg);
 		pg.setParentGroup(null);
-		pg.deleteObserver(this);
 		changed();
 	}
 
@@ -89,7 +90,7 @@ public class PictogramGroup extends Observable implements Serializable, Observer
 	 */
 	public void setBackgroundImageStretch(boolean backgroundFileStretch) {
 		this.backgroundFileStretch = backgroundFileStretch;
-		
+
 	}
 
 	public boolean isBackgroundFileStretch() {
@@ -107,18 +108,31 @@ public class PictogramGroup extends Observable implements Serializable, Observer
 	public void setProject(IProject project) {
 		this.project = project;
 	}
-	
-	
-	private void changed(){
+
+	private void changed() {
 		setChanged();
 		notifyObservers();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
 	public void update(Observable o, Object arg) {
-		changed();		
+		changed();
+	}
+
+	public void setDirty() {
+		changed();
+	}
+
+	public Collection<IPhysicalOperator> getRoots() {
+		return roots;
+	}
+
+	public void setRoots(Collection<IPhysicalOperator> roots) {
+		this.roots = roots;
 	}
 }

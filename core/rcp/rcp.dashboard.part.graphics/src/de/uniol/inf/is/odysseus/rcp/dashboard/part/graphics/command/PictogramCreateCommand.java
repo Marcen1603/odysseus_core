@@ -20,6 +20,7 @@ public class PictogramCreateCommand extends Command {
 		try {
 			@SuppressWarnings("rawtypes")
 			AbstractPictogramDialog dialog = pictogram.getConfigurationDialog().newInstance();
+			pictogram.setParentGroup(parent);
 			dialog.init(pictogram);
 			if (Window.OK == dialog.open()) {					
 				parent.addPictogram(pictogram);	

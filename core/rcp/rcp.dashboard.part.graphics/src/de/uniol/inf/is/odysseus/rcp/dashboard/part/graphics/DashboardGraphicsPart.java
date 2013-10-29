@@ -81,7 +81,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.GraphPalette;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PasteAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
@@ -170,19 +172,19 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	@Override
-	public void streamElementRecieved(IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
+	public void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				processElement(element, port);
+				processElement(senderOperator, element, port);
 			}
 		});
 	}
 
-	protected void processElement(IStreamObject<?> element, int port) {
+	protected void processElement(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		System.out.println(element);
 		Tuple<?> tuple = (Tuple<?>) element;
-		this.pictogramGroup.processTuple(tuple);
+		this.pictogramGroup.processTuple(senderOperator, tuple);
 	}
 
 	@Override
@@ -316,6 +318,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		actionRegistry.registerAction(new UndoAction(part));
 		actionRegistry.registerAction(new RedoAction(part));
 		actionRegistry.registerAction(new DeleteAction(part));
+		actionRegistry.registerAction(new CopyAction(part));
+		actionRegistry.registerAction(new PasteAction(part));
 	}
 
 	protected ActionRegistry getActionRegistry() {
@@ -329,6 +333,9 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(getWorkbenchPart()));
 		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.copy", new CopyAction(getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.paste", new PasteAction(getWorkbenchPart()));
+		
 		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
 		registerAndBindingService(new ZoomInAction(zoomManager));
 		registerAndBindingService(new ZoomOutAction(zoomManager));

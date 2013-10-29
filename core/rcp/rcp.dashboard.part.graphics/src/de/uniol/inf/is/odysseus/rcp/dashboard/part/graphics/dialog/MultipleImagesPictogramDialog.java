@@ -20,8 +20,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
@@ -61,6 +59,10 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 	private List<ImageEntry> entries = new ArrayList<>();
 	private ScrolledComposite scroller;
 	private Composite container;
+	private Button keepRatioCheckButton;
+	private Button centerCheckButton;
+	private boolean center = false;
+	private boolean keepRatio = true;
 
 	/*
 	 * (non-Javadoc)
@@ -110,10 +112,9 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 		}
 		
 		btnBrowseToAdd.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			public void widgetSelected(SelectionEvent event) {				
 				final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(parent.getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
-				dialog.setInput(root);
+				dialog.setInput(getProject());
 				dialog.setAllowMultiple(true);
 				dialog.addFilter(new ViewerFilter() {
 					@Override
@@ -171,6 +172,14 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 		stretchCheckButton = new Button(parent, SWT.CHECK);
 		stretchCheckButton.setText("Resize all images to fit the container size");
 		stretchCheckButton.setSelection(stretch);
+		
+		keepRatioCheckButton = new Button(parent, SWT.CHECK);
+		keepRatioCheckButton.setText("Keep ratio if the image is resized to fit the container");
+		keepRatioCheckButton.setSelection(keepRatio);
+		
+		centerCheckButton = new Button(parent, SWT.CHECK);
+		centerCheckButton.setText("Centers the image if it does not fit into container");
+		centerCheckButton.setSelection(center);
 
 		new Label(parent, SWT.NONE);
 
@@ -239,10 +248,12 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 	@Override
 	public void saveValues(MultipleImagePictogram pg) {
 		pg.setStretch(stretchCheckButton.getSelection());
+		pg.setCenter(centerCheckButton.getSelection());
+		pg.setKeepRatio(keepRatioCheckButton.getSelection());		
 		pg.clearImages();
 		for (ImageEntry ie : entries) {
 			pg.addImage(ie.predicate, ie.image);			
-		}
+		}		
 	}
 
 	/*
@@ -253,6 +264,8 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 	@Override
 	public void loadValues(MultipleImagePictogram pg) {
 		this.stretch = pg.isStretch();
+		this.keepRatio = pg.isKeepRatio();
+		this.center = pg.isCenter();
 		entries.clear();
 		for (ImagePictogram imgPictogram : pg.getImages()) {
 			ImageEntry ie = new ImageEntry();			

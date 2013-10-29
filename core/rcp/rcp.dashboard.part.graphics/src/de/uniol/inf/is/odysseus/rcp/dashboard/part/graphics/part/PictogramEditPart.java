@@ -11,6 +11,7 @@ import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.window.Window;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
@@ -34,7 +35,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 		@SuppressWarnings("unchecked")
 		AbstractPictogramFigure<Pictogram> figure = (AbstractPictogramFigure<Pictogram>) getFigure();
 		Pictogram node = (Pictogram) getModel();
-		figure.updateValues(node);
+		figure.updateValuesInternal(node);		
 		figure.refresh();
 		PictogramGroupEditPart parent = (PictogramGroupEditPart) getParent();
 		Rectangle constraint = node.getConstraint();
@@ -64,6 +65,9 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		if(req.getType().equals(CopyAction.GRAPHICS_COPY_ACTION)){
+			System.out.println("COPY!!");
 		}
 		super.performRequest(req);
 	}
