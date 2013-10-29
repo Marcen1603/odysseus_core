@@ -136,4 +136,13 @@ public class PhysicalQueryPartController extends QueryPartController {
 		}
 		return instance;
 	}
+	
+	public int getLocalQueryCorrespondingToSharedQueryID(ID pipeID) {
+		for(int i : this.sharedQueryIDMap.keySet()) {
+			if(this.sharedQueryIDMap.get(i).equals(pipeID)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

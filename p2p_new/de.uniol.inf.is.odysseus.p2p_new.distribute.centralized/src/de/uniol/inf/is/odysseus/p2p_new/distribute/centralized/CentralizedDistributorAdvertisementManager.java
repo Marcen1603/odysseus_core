@@ -13,8 +13,11 @@ import com.google.common.base.Strings;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -24,6 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.IdenticalQueryAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.MasterNotificationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPlanAdvertisement;
@@ -174,6 +178,11 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			// this node is a normal peer and received a physical query-part to place within the local plan
 			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
 				LOG.debug("Peer " + this.localID + " received a QueryPart for query " + adv.getSharedQueryID());
+				
+				//EVALUATION
+				LOG.debug(adv.toString());
+				//EVALUATION
+				
 				// Add the operators under the ID they were sent, because this is how the master knows them.
 				// Since master and peer hold their own objects, we have to keep things consistent
 				// and synchronize their references by the communicated IDs.
@@ -196,8 +205,29 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 				List<Integer> newOpIDs = new ArrayList<Integer>();
 				newOpIDs.addAll(newOperators.keySet());
 				CentralizedDistributor.getInstance().setOpsForQueryForPeer(this.localID, sharedQueryID, newOpIDs);
-				
-			}	
+			}
+		} else if (a instanceof IdenticalQueryAdvertisement) {
+			IdenticalQueryAdvertisement adv = (IdenticalQueryAdvertisement)a;
+			if(!isMaster() && adv.getPeerID().equals(this.localID)) {
+				String queryBuildConfigurationName = "Standard";
+				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
+				ILogicalQuery emptyLogicalQuery = new LogicalQuery();
+				emptyLogicalQuery.setParserId("");
+				emptyLogicalQuery.setQueryText("");
+				emptyLogicalQuery.setName("");
+				emptyLogicalQuery.setUser(user);
+				emptyLogicalQuery.setLogicalPlan(new TopAO(), true);
+				int idOfRunningQuery = PhysicalQueryPartController.getInstance().getLocalQueryCorrespondingToSharedQueryID(adv.getOldSharedQueryID());
+				ID newSharedQueryID = adv.getNewSharedQueryID();
+				int newQueryID = this.getExecutor().addIdenticalQuery(idOfRunningQuery, emptyLogicalQuery, user, queryBuildConfigurationName);
+				Collection<Integer> ids = new ArrayList<Integer>();
+				ids.add(newQueryID);
+				PhysicalQueryPartController.getInstance().registerAsSlave(ids, newSharedQueryID);
+				List<Integer> opIDsOfOldAndNewQuery = CentralizedDistributor.getInstance().getOpsForQueriesForPeer(localID).get(adv.getOldSharedQueryID());
+				// explain to the centralized distributor, that the operators in question are used by the new queries as well
+				CentralizedDistributor.getInstance().setOpsForQueryForPeer(localID, newSharedQueryID, opIDsOfOldAndNewQuery);
+				this.getExecutor().startQuery(newQueryID, user);
+			}
 		} else if (a instanceof ResourceUsageUpdateAdvertisement) {
 			ResourceUsageUpdateAdvertisement adv = (ResourceUsageUpdateAdvertisement) a;
 			if(isMaster() && adv.getMasterID().equals(this.localID)) {
@@ -265,6 +295,20 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		LOG.debug("Sent physicalQueryPart to Peer " + r.getPeer().toString());
 		//LOG.debug(adv.toString());
 		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), sharedQueryID, r.getOperatorIDsOfNewQuery(true));
+	}
+	
+	public void sendIdenticalQueryAdvertisementToPeer(SimulationResult r, ID oldSharedQueryID, ID newSharedQueryID) {
+		final IdenticalQueryAdvertisement adv = (IdenticalQueryAdvertisement) AdvertisementFactory.newAdvertisement(IdenticalQueryAdvertisement.getAdvertisementType());
+		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setNewSharedQueryID(newSharedQueryID);
+		adv.setMasterPeerID(localID);
+		adv.setPeerID(r.getPeer());
+		adv.setOldSharedQueryID(oldSharedQueryID);
+		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(r.getPeer().toString(), adv, 15000);
+		LOG.debug("Sent identical Query to Peer " + r.getPeer().toString());
+		List<Integer> opIDsOfOldAndNewQuery = CentralizedDistributor.getInstance().getOpsForQueriesForPeer(r.getPeer()).get(oldSharedQueryID);
+		// explain to the centralized distributor, that the operators in question are used by the new queries as well
+		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), newSharedQueryID, opIDsOfOldAndNewQuery);
 	}
 	
 	public void updateResourceUsage(double cpuUsage, double mem_free, double mem_total, double mem_used, double networkUsage) {

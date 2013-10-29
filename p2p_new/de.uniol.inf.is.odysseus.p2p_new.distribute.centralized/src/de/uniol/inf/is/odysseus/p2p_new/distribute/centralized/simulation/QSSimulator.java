@@ -100,10 +100,10 @@ public class QSSimulator implements IQuerySharingSimulator {
 							&& target.getOperatorID() != jxtaSenderNew.getOperatorID()) {
 						ID pipeID = ((JxtaSenderPO<?>)target.getOperator()).getPipeID();
 						// we have to check, if the pipe the sender is writing in is actually a sharedQueryID and not just a planjunction
-						if(CentralizedDistributor.getInstance().isSharedQueryID(pipeID)) {
-							// TODO: deactivated until the cross-peer-query-management for identical queries is properly implemented
-							//replaceNode(jxtaSenderNew, target);
-							//simRes.setFullyIdenticalToSharedQuery(pipeID);
+						if(!CentralizedDistributor.getInstance().getSharedQueryIDsForJxtaSenderPipeID(pipeID).isEmpty()) {
+							replaceNode(jxtaSenderNew, target);
+							graph.removeNode(jxtaSenderNew);
+							simRes.setFullyIdenticalToSharedQuery(CentralizedDistributor.getInstance().getSharedQueryIDsForJxtaSenderPipeID(pipeID).get(0));
 						}
 					}
 				}

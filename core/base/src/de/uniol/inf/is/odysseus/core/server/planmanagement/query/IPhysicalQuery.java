@@ -166,4 +166,12 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
 	
 	public void setLogicalQuery(ILogicalQuery q);
 
+	/**
+	 * For whenever there might be a discrepancy between the logical query's ID and the one to expect from creating a new physical one.
+	 * Mainly when creating the Physical Query based on a physical plan instead of a logical query
+	 * (the latter takes the logical query's id automatically)
+	 * @param q the logical query to be associated with this physical query
+	 */
+	public void setLogicalQueryAndAdoptItsID(ILogicalQuery q);
+
 }

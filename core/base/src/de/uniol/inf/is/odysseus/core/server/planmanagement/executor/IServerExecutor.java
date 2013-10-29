@@ -212,5 +212,18 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	public ISchedulerManager getSchedulerManager();
 
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query);
+	
+	/**
+	 * Allows the addition of a query using all the operators of an existing query. This can be used, when it was already determined,
+	 * that the logical query in question is in every way identical to the old one and thus has no need to go through all the
+	 * transformation- and re-optimization-processes again. This method wraps the old operators in a new query and adds it to the
+	 * data dictionary and the execution plan
+	 * @param idOfRunningQuery the old query, that provides the operators for the new query as well
+	 * @param q the new logical query, to be associated with the new physical one
+	 * @param user the session
+	 * @param confName name of the buildconfiguration, only really needed for the datadictionary-entry
+	 * @return the id of the newly created physical query
+	 */
+	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q, ISession user, String confName);
 
 }

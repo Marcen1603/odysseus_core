@@ -90,8 +90,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/**
 	 * Unique id of an ID. Used for identification of an query.
+	 * Not final anymore, because there might arise the need to change it in rare cases.
+	 * (i.e. creating a physical query based on a logical one and then later trying to construct one via a physical plan
+	 * First one would take the logical query's ID, while the next constructor would start at the idCounter's current value)
 	 */
-	private final int id;
+	private int id;
 
 	private AbstractMonitoringDataProvider mdP = new AbstractMonitoringDataProvider() {
 	};
@@ -789,5 +792,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void setLogicalQuery(ILogicalQuery q) {
 		this.query = q;
+	}
+	
+	@Override
+	public void setLogicalQueryAndAdoptItsID(ILogicalQuery q) {
+		this.query = q;
+		this.id = q.getID();
 	}
 }

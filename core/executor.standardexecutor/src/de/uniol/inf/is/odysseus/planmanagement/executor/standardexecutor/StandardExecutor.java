@@ -665,6 +665,29 @@ public class StandardExecutor extends AbstractExecutor implements
 	// ------------
 
 	@Override
+	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q, ISession user, String confName) {
+		IPhysicalQuery oldQuery = this.getExecutionPlan().getQueryById(idOfRunningQuery);
+		List<IPhysicalOperator> oldOps = new ArrayList<IPhysicalOperator>();
+		oldOps.addAll(oldQuery.getAllOperators());
+		IPhysicalQuery newQuery = new PhysicalQuery(oldOps);
+		newQuery.setLogicalQueryAndAdoptItsID(q);
+		newQuery.setSession(user);
+		newQuery.addReoptimizeListener(this);
+		this.executionPlanLock.lock();
+		List<IPhysicalQuery> queries = new ArrayList<IPhysicalQuery>();
+		queries.add(newQuery);
+		LOG.debug("Adding identical Query");
+		getDataDictionary(user.getTenant()).addQuery(
+				newQuery.getLogicalQuery(), newQuery.getSession(),
+				confName);
+		getExecutionPlan().addQuery(newQuery);
+		firePlanModificationEvent(new QueryPlanModificationEvent(this,
+				PlanModificationEventType.QUERY_ADDED, newQuery));
+		this.executionPlanLock.unlock();
+		return newQuery.getID();
+	}
+	
+	@Override
 	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String buildConfigurationName)
 			throws PlanManagementException {

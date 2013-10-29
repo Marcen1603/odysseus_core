@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataCreationPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.push.ReceiverPO;
@@ -36,8 +37,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.ResourceUsageUpdateAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.Tools;
@@ -94,6 +95,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 	
 	IP2PDictionary dictionary = P2PDictionaryService.get();
 	private int maximumConsideredAlternatives = 3;
+	private Map<ID, ID> sharedQueryIDtoMasterReceiverPipeID = new HashMap<ID,ID>();
 	private static final String DISTRIBUTION_TYPE = "centralized";
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -282,6 +284,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
 			List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true,false);
 			chosenMasterPeerConnectionPipeID = masterPeerConnectionPipeID.get(bestAlternative);
+			
 			for(GraphNode gn : topNodes) {
 				SDFSchema schema = gn.getOperator().getOutputSchema();
 				// The receivers for those would be unconnected and thus not transformable in the traditional manner
@@ -293,15 +296,19 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				receiverOp.setAssignedSchema(schema);
 				
 				// Put a selection on top of the receiver, because the query won't start otherwise
-				SelectAO selection = new SelectAO();
-				selection.setPredicate(new TruePredicate());
-				selection.setOutputSchema(schema);
+//				SelectAO selection = new SelectAO();
+//				selection.setPredicate(new TruePredicate());
+//				selection.setOutputSchema(schema);
 				
-				selection.subscribeToSource(receiverOp, 0, 0, schema);
+				RenameAO rename = new RenameAO();
+				rename.setNoOp(true);
+				rename.setOutputSchema(schema);
+				
+				rename.subscribeToSource(receiverOp, 0, 0, schema);
 				
 				// we can now also set the proper receivers on the master, couldn't do that before
 				// it wasn't yet clear which alternative would be chosen
-				q.setLogicalPlan(selection,true);
+				q.setLogicalPlan(rename,true);
 			}
 			
 			results.add(bestResult);
@@ -313,30 +320,21 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// TODO: Send a message to the peer running the sharedQuery telling it to create an additional query under a different ID
 			// and to associate it with the operators already present in the plan
 			if(placeableResults.size() == results.size() && bestResult.getFullyIdenticalToSharedQuery() != null) {
-				ID pipeID = bestResult.getFullyIdenticalToSharedQuery();
-				SDFSchema schema = null;
-				// iterate over the list of IDs for operators of the shared Query until we find the sender
-				for(int i : this.getOpsForQueriesForPeer(bestResult.getPeer()).get(pipeID)) {
-					IPhysicalOperator o = this.getOperatorPlans().get(bestResult.getPeer()).get(i);
-					if(o instanceof JxtaSenderPO) {
-						schema = ((JxtaSenderPO)o).getOutputSchema();
-					}
-				}
-				JxtaReceiverAO receiverOp = new JxtaReceiverAO();
-				receiverOp.setPipeID(pipeID.toURI().toString());
-				receiverOp.setOutputSchema(schema);
-				receiverOp.setAssignedSchema(schema);
+				ID oldSharedQueryID = bestResult.getFullyIdenticalToSharedQuery();
+				ID newSharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 				
-				// Put a selection on top of the receiver, because the query won't start otherwise
-				SelectAO selection = new SelectAO();
-				selection.setPredicate(new TruePredicate());
-				selection.setOutputSchema(schema);
-				
-				selection.subscribeToSource(receiverOp, 0, 0, schema);
-				
-				// no GraphNode for the receiver, because it goes to the master
-				// and thus has to find its way into the resulting query as a logical operator
-				q.setLogicalPlan(selection, true);
+				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
+				String queryBuildConfigurationName = "Standard";
+
+				int idOfRunningQuery = PhysicalQueryPartController.getInstance().getLocalQueryCorrespondingToSharedQueryID(oldSharedQueryID);
+				int newQueryID = this.getExecutor().addIdenticalQuery(idOfRunningQuery, q, user, queryBuildConfigurationName);
+				Collection<Integer> ids = new ArrayList<Integer>();
+				ids.add(newQueryID);
+				PhysicalQueryPartController.getInstance().registerAsMaster(q, newSharedQueryID);
+				this.manager.sendIdenticalQueryAdvertisementToPeer(bestResult, oldSharedQueryID, newSharedQueryID);
+				sharedQueryIDtoMasterReceiverPipeID.put(newSharedQueryID,this.sharedQueryIDtoMasterReceiverPipeID.get(oldSharedQueryID));
+				this.getExecutor().startQuery(newQueryID, user);
+				return new ArrayList<ILogicalQuery>();
 			}
 			
 			
@@ -420,6 +418,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				this.addOperators(sr.getPeer(), sr.getPlan(true));
 				this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
 			}
+			sharedQueryIDtoMasterReceiverPipeID.put(sharedQueryID,chosenMasterPeerConnectionPipeID);
 			PhysicalQueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
 			this.costsOfAllDistributedPlans = this.costsOfAllDistributedPlans.merge(endCost);
 			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(initialCost.substract(endCost));
@@ -890,6 +889,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		for(PeerID peerID : this.getPeersInvolvedInQuery(sharedQueryID)) {
 			removeQueryFromPeer(peerID, sharedQueryID);
 		}
+		this.sharedQueryIDtoMasterReceiverPipeID.remove(sharedQueryID);
 	}
 	
 	public List<PeerID> getPeersInvolvedInQuery(ID sharedQueryID) {
@@ -901,7 +901,6 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		}
 		return result;
 	}
-
 
 	/**
 	 * determines, whether or not an operator is used by a query other than the one specified
@@ -920,21 +919,18 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		this.operatorPlans.get(peerID).remove(operatorID);
 	}
 
-
-
 	public CentralizedDistributorAdvertisementManager getManager() {
 		return manager;
 	}
 	
-	public boolean isSharedQueryID(ID id) {
-		for(Map<ID,List<Integer>> sharedQueries : this.opsForQueriesForPeer.values()) {
-			for(ID sharedID : sharedQueries.keySet()) {
-				if(sharedID.equals(id)) {
-					return true;
-				}
+	public List<ID> getSharedQueryIDsForJxtaSenderPipeID(ID senderPipeID) {
+		List<ID> result = new ArrayList<ID>();
+		for(ID sharedQueryID : this.sharedQueryIDtoMasterReceiverPipeID.keySet()) {
+			if(this.sharedQueryIDtoMasterReceiverPipeID.get(sharedQueryID).equals(senderPipeID)) {
+				result.add(sharedQueryID);
 			}
 		}
-		return false;
+		return result;
 	}
 	
 	public int getNumberOfRunningQueriesForPeer(PeerID peerID) {

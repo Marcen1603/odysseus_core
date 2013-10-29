@@ -6,6 +6,8 @@ import net.jxta.document.AdvertisementFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.IdenticalQueryAdvertisement;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.IdenticalQueryAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.MasterNotificationAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.MasterNotificationAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.PhysicalQueryPartAdvertisement;
@@ -23,6 +25,7 @@ public class CentralizedDistributorPlugin implements BundleActivator {
 		AdvertisementFactory.registerAdvertisementInstance(MasterNotificationAdvertisement.getAdvertisementType(), new MasterNotificationAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(PhysicalQueryPlanAdvertisement.getAdvertisementType(), new PhysicalQueryPlanAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(ResourceUsageUpdateAdvertisement.getAdvertisementType(), new ResourceUsageUpdateAdvertisementInstantiator());
+		AdvertisementFactory.registerAdvertisementInstance(IdenticalQueryAdvertisement.getAdvertisementType(), new IdenticalQueryAdvertisementInstantiator());
 		// activate the advertisementmanager in order to find the other peers, send the the current plan to the master etc.
 		CentralizedDistributorAdvertisementManager.getInstance().activate();
 	}
