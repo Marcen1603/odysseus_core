@@ -11,9 +11,10 @@ public class PictogramChangeConstraintCommand extends Command {
 	private Pictogram node;
 
 	public void execute() {
-		if (oldConstraint == null)
+		if (oldConstraint == null){
 			oldConstraint = new Rectangle(node.getConstraint());
-		node.setConstraint(newConstraint);
+		}
+		node.setConstraint(newConstraint);		
 	}
 
 	public void undo() {

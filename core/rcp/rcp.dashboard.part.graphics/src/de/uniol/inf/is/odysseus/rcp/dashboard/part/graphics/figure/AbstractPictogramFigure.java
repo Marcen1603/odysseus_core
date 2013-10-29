@@ -13,46 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
+package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 
-import org.eclipse.gef.commands.Command;
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.LineBorder;
+import org.eclipse.draw2d.XYLayout;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
 
 /**
  * @author DGeesen
- *
+ * 
  */
-public class PictogramDeleteCommand extends Command{
-	
-	private Pictogram pictogram;
-	private PictogramGroup pictogramGroup;
-	
-	
-	@Override
-	public void execute() {
-		pictogramGroup.removePictogram(pictogram);
-	}
-	@Override
-	public void undo() {	
-		pictogramGroup.addPictogram(pictogram);
-	}	
+public abstract class AbstractPictogramFigure<T extends Pictogram> extends Figure {
 
-	public Pictogram getPictogram() {
-		return pictogram;
+	public AbstractPictogramFigure() {
+		setLayoutManager(new XYLayout());
+		setOpaque(false);
+		setBorder(new LineBorder(ColorConstants.white));
 	}
 
-	public void setPictogram(Pictogram pictogram) {
-		this.pictogram = pictogram;
+	public void refresh() {
+		this.repaint();
 	}
 
-	public PictogramGroup getPictogramGroup() {
-		return pictogramGroup;
-	}
-
-	public void setPictogramGroup(PictogramGroup pictogramGroup) {
-		this.pictogramGroup = pictogramGroup;
-	}
-
+	/**
+	 * @param node
+	 */
+	public abstract void updateValues(T node);
 }

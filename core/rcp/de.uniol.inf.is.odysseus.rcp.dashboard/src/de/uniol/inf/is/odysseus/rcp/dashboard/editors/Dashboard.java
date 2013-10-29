@@ -98,7 +98,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 					final DashboardPartPlacement place = new DashboardPartPlacement(part, dashboardPartFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH, DEFAULT_PART_HEIGHT);
 
 					add(place);
-				} catch( Throwable t ) {
+				} catch (Throwable t) {
 					LOG.error("Exception during dropping dashboard part placement", t);
 				}
 			}
@@ -114,12 +114,19 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 
 		parent.layout();
 	}
-	
-	public Object getAdapter(Class<?> adapter){		
-		if(getSelectedDashboardPartPlacement().isPresent()){
+
+	public Object getAdapter(Class<?> adapter) {
+		if (getSelectedDashboardPartPlacement().isPresent()) {
 			return getSelectedDashboardPartPlacement().get().getDashboardPart().getAdapter(adapter);
 		}
-		return null;		
+		// TODO: what to do if no one is selected?!
+		for (DashboardPartPlacement placement : getDashboardPartPlacements()) {
+			Object subAdapt = placement.getDashboardPart().getAdapter(adapter);
+			if (subAdapt != null) {
+				return subAdapt;
+			}
+		}
+		return null;
 	}
 
 	public Control getControl() {
@@ -174,7 +181,7 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		if (optDashboardPartControl.isPresent()) {
 			DashboardPartControl dashboardPartControl = optDashboardPartControl.get();
 			removeListenersRecursive(dashboardPartControl.getComposite());
-			
+
 			partContainer.remove(partPlace);
 			dashboardPartControl.dispose();
 			partPlace.getDashboardPart().dispose();

@@ -10,21 +10,20 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.NewPictogramDialog;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ImagePictogramFigure;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.PictogramComponentEditPolicy;
 
 public class PictogramEditPart extends AbstractGraphicalEditPart implements Observer {
+
 	public PictogramEditPart(Pictogram node) {
 		setModel(node);
 	}
 
 	protected IFigure createFigure() {
-		return new ImagePictogramFigure();
+		return ((Pictogram) getModel()).createPictogramFigure();
 	}
 
 	protected void createEditPolicies() {
@@ -32,16 +31,17 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 	}
 
 	public void refreshVisuals() {
-		ImagePictogramFigure figure = (ImagePictogramFigure) getFigure();
-		ImagePictogram node = (ImagePictogram) getModel();
-		figure.setVisibile(node.isVisibile());
-		figure.setStretch(node.isStretch());
-		figure.setImage(node.getFilename());
+		@SuppressWarnings("unchecked")
+		AbstractPictogramFigure<Pictogram> figure = (AbstractPictogramFigure<Pictogram>) getFigure();
+		Pictogram node = (Pictogram) getModel();
+		figure.updateValues(node);
 		figure.refresh();
 		PictogramGroupEditPart parent = (PictogramGroupEditPart) getParent();
-		Rectangle r = new Rectangle(node.getConstraint());
-
-		parent.setLayoutConstraint(this, figure, r);
+		Rectangle constraint = node.getConstraint();
+		if (constraint != null) {
+			Rectangle r = new Rectangle(constraint);
+			parent.setLayoutConstraint(this, figure, r);
+		}
 	}
 
 	/*
@@ -49,19 +49,20 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 	 * 
 	 * @see org.eclipse.gef.editparts.AbstractEditPart#performRequest(org.eclipse.gef.Request)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void performRequest(Request req) {
-		ImagePictogram pg = ((ImagePictogram) getModel());
+		Pictogram pg = ((Pictogram) getModel());
 		if (req.getType() == RequestConstants.REQ_OPEN) {
-			NewPictogramDialog dialog = new NewPictogramDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-			dialog.setLocation(pg.getFilename());
-			dialog.setPredicate(pg.getPredicate().toString());
-			dialog.setStretch(pg.isStretch());
-			if (Window.OK == dialog.open()) {
-				pg.setFilename(dialog.getLocation());
-				pg.setPredicate(dialog.getPredicate());	
-				pg.setStretch(dialog.isStretch());
-				refreshVisuals();
+			try {				
+				AbstractPictogramDialog dialog = pg.getConfigurationDialog().newInstance();
+				dialog.init(pg);
+				if (Window.OK == dialog.open()) {
+					// hint: save is invoked by ok button 
+					refreshVisuals();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		super.performRequest(req);

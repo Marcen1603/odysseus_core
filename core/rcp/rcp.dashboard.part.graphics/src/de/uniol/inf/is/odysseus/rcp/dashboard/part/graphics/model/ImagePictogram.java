@@ -18,11 +18,22 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.widgets.Display;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ImagePictogramDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ImagePictogramFigure;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
@@ -31,17 +42,27 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  */
 public class ImagePictogram extends Pictogram {
 
-	private String filename;
+	private String filename = "";
 	private RelationalPredicate predicate;
-	private Collection<IPhysicalOperator> roots;
 	private boolean stretch;
 
-	public String getFilename() {
-		return filename;
+	public ImagePictogram() {
+		this.filename = "";
+		this.stretch = true;
+		setPredicate("true");
+	}
+
+	public IResource getFile() {
+		if (getParentGroup() == null || getParentGroup().getProject() == null) {
+			return null;
+		}
+		IResource file = getParentGroup().getProject().findMember(filename);
+		return file;
 	}
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+		changed();
 	}
 
 	/*
@@ -51,10 +72,9 @@ public class ImagePictogram extends Pictogram {
 	 */
 	@Override
 	protected void load(Map<String, String> values) {
-		setFilename(values.get("filename"));
-		setPredicate(values.get("predicate"));
-		setStretch(Boolean.parseBoolean(values.get("stretch")));
-
+		setFilename(loadValue(values.get("filename"), ""));
+		setPredicate(loadValue(values.get("predicate"), "true"));
+		setStretch(loadValue(Boolean.parseBoolean(values.get("stretch")), true));
 	}
 
 	/*
@@ -65,7 +85,7 @@ public class ImagePictogram extends Pictogram {
 	@Override
 	protected void save(Map<String, String> values) {
 		values.put("filename", filename);
-		values.put("predicate", predicate.toString());
+		values.put("predicate", this.predicate.toString());
 		values.put("stretch", Boolean.toString(stretch));
 	}
 
@@ -84,42 +104,26 @@ public class ImagePictogram extends Pictogram {
 
 	}
 
-	/**
-	 * @param predicate
-	 */
 	public void setPredicate(String predicate) {
-		if (predicate == null || predicate.isEmpty()) {
-			predicate = "true";
-		}		
 		this.predicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
-		initPredicate();
+		changed();
 	}
 
 	public IPredicate<Tuple<?>> getPredicate() {
 		return this.predicate;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#init(java.util.Collection)
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#open(java.util.Collection)
 	 */
 	@Override
-	protected void init(Collection<IPhysicalOperator> roots) {
-		this.roots = roots;
-		initPredicate();
-	}
-
-	private void initPredicate() {
-		// TODO: this is only working with one root!!
-		if (roots != null) {
-			try {
-				this.predicate.init(roots.iterator().next().getOutputSchema(), null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	protected void open(Collection<IPhysicalOperator> roots) {
+		try {
+			this.predicate.init(roots.iterator().next().getOutputSchema(), null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}	
 
 	public boolean isStretch() {
 		return this.stretch;
@@ -127,6 +131,38 @@ public class ImagePictogram extends Pictogram {
 
 	public void setStretch(boolean stretch) {
 		this.stretch = stretch;
+		changed();
 	}
+
+	@Override
+	public Class<? extends AbstractPictogramDialog<ImagePictogram>> getConfigurationDialog() {
+		return ImagePictogramDialog.class;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#createPictogramFigure()
+	 */
+	@Override
+	public IFigure createPictogramFigure() {
+		return new ImagePictogramFigure();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#getPreferedSize()
+	 */
+	@Override
+	public Dimension getPreferedSize() {
+		IResource imgFile = getFile();
+		if (imgFile != null && imgFile instanceof IFile) {
+			Image img = new Image(Display.getDefault(), new ImageData(imgFile.getLocation().toOSString()));
+			return new Dimension(img);
+		}
+		return super.getPreferedSize();
+	}
+
 
 }

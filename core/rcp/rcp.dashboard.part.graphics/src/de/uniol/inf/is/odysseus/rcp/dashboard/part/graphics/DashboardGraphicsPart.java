@@ -18,10 +18,14 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,31 +37,39 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.EditDomain;
+import org.eclipse.gef.MouseWheelHandler;
+import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.commands.CommandStackListener;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.palette.PaletteRoot;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.actions.DeleteAction;
 import org.eclipse.gef.ui.actions.RedoAction;
 import org.eclipse.gef.ui.actions.UndoAction;
 import org.eclipse.gef.ui.actions.UpdateAction;
-import org.eclipse.gef.ui.palette.PaletteViewer;
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
+import org.eclipse.gef.ui.palette.PaletteViewerProvider;
+import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.gef.ui.parts.ScrollingGraphicalViewer;
+import org.eclipse.gef.ui.views.palette.PalettePage;
+import org.eclipse.gef.ui.views.palette.PaletteViewerPage;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -75,7 +87,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part.GraphicalEditPartFactory;
 
-public class DashboardGraphicsPart extends AbstractDashboardPart implements CommandStackListener, ISelectionListener {
+public class DashboardGraphicsPart extends AbstractDashboardPart implements CommandStackListener, ISelectionListener, Observer {
 
 	private static final String BACKGROUND_FILE = "BACKGROUND_FILE";
 	private static final String BACKGROUND_FILE_STRETCH = "BACKGROUND_FILE_STRETCH";
@@ -91,13 +103,12 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	private ScrollingGraphicalViewer viewer;
 	private PictogramGroup pictogramGroup;
 	private boolean backgroundFileStretch = true;
-	private boolean inEditMode = true;
-	private PaletteViewer paletteViewer;
-	private SashForm shashform;
 	private boolean isModelInitialized = false;
+	private PaletteViewerProvider provider;
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {
+
 		display = parent.getDisplay();
 		mainContainer = new Canvas(parent, SWT.NONE);
 
@@ -107,24 +118,19 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 		initModel();
 
-		shashform = new SashForm(mainContainer, SWT.HORIZONTAL);
-		createPaletteViewer(shashform);
-		createGraphViewer(shashform);
-		shashform.setWeights(new int[] { 15, 85 });
+		createGraphViewer(mainContainer);
+		createPaletteViewer();
+	}
 
-		final ToolItem toolItem = new ToolItem(toolbar, SWT.CHECK);
-		// toolItem.setImage(action.getImageDescriptor().createImage());
-		toolItem.setText("Edit Mode");
-		toolItem.setToolTipText("");
-		toolItem.setWidth(200);
-		toolItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				switchEditMode();
-			}
-		});
-		switchEditMode();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#onStart(java.util.Collection)
+	 */
+	@Override
+	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
+		this.pictogramGroup.open(physicalRoots);
+		super.onStart(physicalRoots);
 	}
 
 	private void createGraphViewer(Composite parent) {
@@ -137,6 +143,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		viewer.setContents(getRootPictogramGroup());
 		editDomain.addViewer(viewer);
 		getWorkbenchPart().getSite().setSelectionProvider(viewer);
+		configureGraphicalViewer();
 	}
 
 	/*
@@ -150,27 +157,16 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		super.dispose();
 	}
 
-	private void switchEditMode() {
-		if (inEditMode) {
-			shashform.setWeights(new int[] { 0, 100 });
-			paletteViewer.getControl().setVisible(false);
-		} else {
-			paletteViewer.getControl().setVisible(true);
-			shashform.setWeights(new int[] { 15, 85 });
-		}
-		inEditMode = !inEditMode;
-
-	}
-
 	private PictogramGroup getRootPictogramGroup() {
 		return pictogramGroup;
 	}
 
-	private void createPaletteViewer(Composite parent) {
-		paletteViewer = new PaletteViewer();
-		paletteViewer.createControl(parent);
-		editDomain.setPaletteViewer(paletteViewer);
-		editDomain.setPaletteRoot(new GraphPalette());
+	private void createPaletteViewer() {
+		editDomain.setPaletteRoot(getPaletteRoot());
+	}
+
+	private PaletteRoot getPaletteRoot() {
+		return new GraphPalette();
 	}
 
 	@Override
@@ -204,7 +200,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		super.onLoad(saved);
 		setBackgroundFile(saved.get(BACKGROUND_FILE));
 		setBackgroundFileStretch(Boolean.parseBoolean(saved.get(BACKGROUND_FILE_STRETCH)));
-		this.pictogramGroup = new PictogramGroup(getBackgroundFile(), isBackgroundFileStretch());
+		this.pictogramGroup = new PictogramGroup(getBackgroundFile(), isBackgroundFileStretch(), getProject());
+		this.pictogramGroup.addObserver(this);
 		String xmlContent = saved.get(GRAPHICS_CONTENT);
 		try {
 			if (!xmlContent.isEmpty()) {
@@ -216,7 +213,12 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 				for (int i = 0; i < pictogramList.getLength(); i++) {
 					Node pictogramNode = pictogramList.item(i);
 					if (pictogramNode.getNodeType() == Node.ELEMENT_NODE) {
-						Pictogram pictogram = new ImagePictogram();
+						String className = ((Element) pictogramNode).getAttribute("type");
+						if (className.isEmpty()) {
+							className = ImagePictogram.class.getName();
+						}
+
+						Pictogram pictogram = (Pictogram) Class.forName(className).newInstance();
 						pictogram.loadFromXML(pictogramNode);
 						this.pictogramGroup.addPictogram(pictogram);
 					}
@@ -242,6 +244,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 				PictogramGroup model = (PictogramGroup) viewer.getContents().getModel();
 				for (Pictogram p : model.getPictograms()) {
 					Element picNode = doc.createElement("pictogram");
+					picNode.setAttribute("type", p.getClass().getName());
 					p.getXML(picNode, doc);
 					root.appendChild(picNode);
 				}
@@ -260,7 +263,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 		save.put(BACKGROUND_FILE, this.backgroundfile);
 		save.put(BACKGROUND_FILE_STRETCH, Boolean.toString(this.backgroundFileStretch));
-		if(editDomain!=null){
+
+		if (editDomain != null) {
 			editDomain.getCommandStack().markSaveLocation();
 		}
 		return save;
@@ -297,17 +301,10 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		return this.backgroundFileStretch;
 	}
 
-	public void setRoots(Collection<IPhysicalOperator> roots) {
-		if (this.pictogramGroup != null) {
-			this.pictogramGroup.init(roots);
-		}
-	}
-
 	private void initModel() {
 		if (!isModelInitialized) {
 			editDomain = new DefaultEditDomain((IEditorPart) getWorkbenchPart());
 			initActionRegistry();
-			// setEditorActionBarContributor(new GprahicsActionBarContributor());
 			editDomain.getCommandStack().addCommandStackListener(this);
 			getWorkbenchPart().getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		}
@@ -321,8 +318,35 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		actionRegistry.registerAction(new DeleteAction(part));
 	}
 
-	public ActionRegistry getActionRegistry() {
+	protected ActionRegistry getActionRegistry() {
+		if (actionRegistry == null)
+			actionRegistry = new ActionRegistry();
 		return actionRegistry;
+	}
+
+	protected void configureGraphicalViewer() {
+		// actions
+		registerAndBindingService("org.eclipse.ui.edit.undo", new UndoAction(getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.redo", new RedoAction(getWorkbenchPart()));
+		registerAndBindingService("org.eclipse.ui.edit.delete", new DeleteAction(getWorkbenchPart()));
+		ZoomManager zoomManager = ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
+		registerAndBindingService(new ZoomInAction(zoomManager));
+		registerAndBindingService(new ZoomOutAction(zoomManager));
+
+		List<String> zoomContributions = Arrays.asList(new String[] { ZoomManager.FIT_ALL, ZoomManager.FIT_HEIGHT, ZoomManager.FIT_WIDTH });
+		zoomManager.setZoomLevelContributions(zoomContributions);
+		viewer.setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), MouseWheelZoomHandler.SINGLETON);
+		viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer));
+	}
+
+	private void registerAndBindingService(IAction action) {
+		registerAndBindingService(action.getActionDefinitionId(), action);
+	}
+
+	private void registerAndBindingService(String actionDefinitionId, IAction action) {
+		getActionRegistry().registerAction(action);
+		IHandlerService service = (IHandlerService) getWorkbenchPart().getSite().getService(IHandlerService.class);
+		service.activateHandler(actionDefinitionId, new ActionHandler(action));
 	}
 
 	/*
@@ -342,7 +366,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		Iterator<?> iterator = actionRegistry.getActions();
 		while (iterator.hasNext()) {
 			Object action = iterator.next();
-			if (action instanceof UpdateAction && inEditMode) {
+			if (action instanceof UpdateAction) {
 				((UpdateAction) action).update();
 			}
 		}
@@ -357,9 +381,32 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			return editDomain.getCommandStack();
 		}
 		if (adapter == ActionRegistry.class) {
-			return actionRegistry;
+			return getActionRegistry();
+		}
+		if (adapter == ZoomManager.class) {
+			return ((ScalableFreeformRootEditPart) viewer.getRootEditPart()).getZoomManager();
+		}
+		if (adapter == PalettePage.class) {
+			return createPalettePage();
+
 		}
 		return super.getAdapter(adapter);
+	}
+
+	/**
+	 * @return
+	 */
+	private Object createPalettePage() {
+		return new PaletteViewerPage(getPaletteViewerProvider());
+	}
+
+	/**
+	 * @return
+	 */
+	private PaletteViewerProvider getPaletteViewerProvider() {
+		if (provider == null)
+			provider = new PaletteViewerProvider(editDomain);
+		return provider;
 	}
 
 	/*
@@ -370,6 +417,19 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		updateActions();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg1) {
+		if (o instanceof PictogramGroup) {
+			fireChangeEvent();
+		}
+
 	}
 
 }

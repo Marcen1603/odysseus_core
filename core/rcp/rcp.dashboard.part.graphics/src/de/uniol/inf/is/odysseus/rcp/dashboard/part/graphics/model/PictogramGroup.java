@@ -20,11 +20,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
+
+import org.eclipse.core.resources.IProject;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
-public class PictogramGroup extends Observable implements Serializable {
+public class PictogramGroup extends Observable implements Serializable, Observer {
 	
 	private static final long serialVersionUID = 3019435887229998016L;
 	
@@ -34,9 +37,12 @@ public class PictogramGroup extends Observable implements Serializable {
 	
 	List<Pictogram> nodes = new ArrayList<Pictogram>();
 
+	private IProject project;
 
-	public PictogramGroup(String backgroundImagePath, boolean backgroundFileStretch){
+
+	public PictogramGroup(String backgroundImagePath, boolean backgroundFileStretch, IProject parentProject){
 		this.backgroundImagePath = backgroundImagePath;
+		this.setProject(parentProject);
 		this.backgroundFileStretch = backgroundFileStretch;
 	}
 
@@ -50,22 +56,24 @@ public class PictogramGroup extends Observable implements Serializable {
 		}
 	}
 	
-	public void init(Collection<IPhysicalOperator> roots){
-		for(Pictogram p : nodes){
-			p.init(roots);
+	public void open(Collection<IPhysicalOperator> roots){
+		for(Pictogram p : nodes){			
+			p.internalOpen(roots);
 		}
 	}
 
 	public void addPictogram(Pictogram pg) {
 		getPictograms().add(pg);
-		setChanged();
-		notifyObservers();
+		pg.setParentGroup(this);
+		pg.addObserver(this);
+		changed();
 	}
 
 	public void removePictogram(Pictogram pg) {
 		getPictograms().remove(pg);
-		setChanged();
-		notifyObservers();
+		pg.setParentGroup(null);
+		pg.deleteObserver(this);
+		changed();
 	}
 
 	public String getBackgroundImagePath() {
@@ -90,5 +98,27 @@ public class PictogramGroup extends Observable implements Serializable {
 
 	public void setBackgroundFileStretch(boolean backgroundFileStretch) {
 		this.backgroundFileStretch = backgroundFileStretch;
+	}
+
+	public IProject getProject() {
+		return project;
+	}
+
+	public void setProject(IProject project) {
+		this.project = project;
+	}
+	
+	
+	private void changed(){
+		setChanged();
+		notifyObservers();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		changed();		
 	}
 }

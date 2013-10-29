@@ -20,15 +20,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPartConfigurer;
 public class DashboardGraphicsPartConfigurer extends AbstractDashboardPartConfigurer<DashboardGraphicsPart> {
 
 	private Text backgroundImageText;
-	private DashboardGraphicsPart dashboardPart;
-	private Collection<IPhysicalOperator> roots;
+	private DashboardGraphicsPart dashboardPart;	
 	private Button checkButton;
 
 	@Override
 	public void init(DashboardGraphicsPart dashboardPartToConfigure, Collection<IPhysicalOperator> roots) {
-		this.dashboardPart = dashboardPartToConfigure;
-		this.roots = roots;
-		
+		this.dashboardPart = dashboardPartToConfigure;		
 	}
 
 	@Override
@@ -67,7 +64,7 @@ public class DashboardGraphicsPartConfigurer extends AbstractDashboardPartConfig
 				fireListener();
 			}
 		});
-		dashboardPart.setRoots(roots);
+		
 		Label label = new Label(parent, SWT.NONE);
 		label.setText("Stretch backgound to fit size");
 		

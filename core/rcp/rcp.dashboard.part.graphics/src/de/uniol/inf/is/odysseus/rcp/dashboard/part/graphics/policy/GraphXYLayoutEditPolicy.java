@@ -6,9 +6,8 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.XYLayoutEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.ImagePictogramCreateCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramChangeConstraintCommand;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramCreateCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
 
@@ -26,9 +25,9 @@ public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 	@Override
 	protected Command getCreateCommand(CreateRequest request) {
 		if (request.getNewObjectType().equals(Pictogram.class)) {
-			ImagePictogramCreateCommand result = new ImagePictogramCreateCommand();
+			PictogramCreateCommand result = new PictogramCreateCommand();
 			result.setLocation(request.getLocation());
-			result.setPictogram((ImagePictogram) request.getNewObject());
+			result.setPictogram((Pictogram) request.getNewObject());
 			result.setParent((PictogramGroup) getHost().getModel());
 			return result;
 		}
