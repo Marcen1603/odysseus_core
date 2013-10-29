@@ -24,6 +24,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +78,10 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 
 			final IDashboardPartHandler handler = new XMLDashboardPartHandler();
 			handler.save(part, dashboardPartFile);
-			
+	
+			// open editor
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(dashboardPartFile), DashboardPlugIn.DASHBOARD_PART_EDITOR_ID, true);
+
 			return true;
 		} catch (final CancelException ex) {
 			return false;

@@ -31,6 +31,9 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 	private static final Logger LOG = LoggerFactory.getLogger(DashboardPlugIn.class);
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.dashboard";
+	public static final String DASHBOARD_PART_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartEditor";
+	public static final String DASHBOARD_EDITOR_ID = "de.uniol.inf.is.odysseus.rcp.dashboard.DashboardEditor";
+	
 	public static final String EXTENSION_POINT_ID = "de.uniol.inf.is.odysseus.rcp.DashboardPart";
 	public static final String DASHBOARD_PART_EXTENSION = "prt";
 	public static final String DASHBOARD_EXTENSION = "dsh";
