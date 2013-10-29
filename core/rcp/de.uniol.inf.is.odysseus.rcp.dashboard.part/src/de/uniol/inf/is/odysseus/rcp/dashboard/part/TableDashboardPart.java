@@ -122,7 +122,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE);
 		final Table table = tableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
@@ -222,9 +222,9 @@ public class TableDashboardPart extends AbstractDashboardPart {
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		if( element != null ) {
 			synchronized( data ) {
-				data.add((Tuple<?>) element);
+				data.add(0, (Tuple<?>) element);
 				if (data.size() > maxData) {
-					data.remove(0);
+					data.remove(data.size() - 1);
 				}
 			}
 			
