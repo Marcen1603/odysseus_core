@@ -8,6 +8,11 @@
             configClass="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.SoccerOverviewConfigurer"
             name="Soccer Overview">
       </dashboardPart>
+      <dashboardPart
+            class="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.HeatmapDashboardPart"
+            configClass="de.uniol.inf.is.odysseus.rcp.dashboard.soccer.HeatmapConfigurer"
+            name="Soccer Heatmap">
+      </dashboardPart>
    </extension>
 
 </plugin>
