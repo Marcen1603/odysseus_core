@@ -184,6 +184,7 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		positions = determinePositions(operator.getOutputSchema(), attributes);
 		refreshAttributesList( operator.getOutputSchema() ); // if attributes was = "*"
 		
+		deleteColumns();
 		final int colCount = positions.length;
 		for (int i = 0; i < colCount; i++) {
 
@@ -208,6 +209,16 @@ public class TableDashboardPart extends AbstractDashboardPart {
 		tableViewer.getTable().redraw();
 		
 		tableComposite.layout();
+	}
+
+	private void deleteColumns() {
+		disposeAllColumns(tableViewer.getTable());
+	}
+	
+	private static void disposeAllColumns(Table table) {
+		while( table.getColumnCount() > 0 ) {
+			table.getColumns()[0].dispose();
+		}
 	}
 
 	@Override
