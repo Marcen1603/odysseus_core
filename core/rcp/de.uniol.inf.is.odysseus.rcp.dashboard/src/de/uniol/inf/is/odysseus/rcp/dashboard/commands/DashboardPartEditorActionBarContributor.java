@@ -65,14 +65,17 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 
 	private Set<String> globalActionKeys = new HashSet<String>();
 
+	@Override
 	protected void addAction(IAction action) {
 		getActionRegistry().registerAction(action);
 	}
 
+	@Override
 	public void addGlobalActionKey(String key) {
 		globalActionKeys.add(key);
 	}
 
+	@Override
 	public void addRetargetAction(RetargetAction action) {
 		addAction(action);
 		retargetActions.add(action);
@@ -80,6 +83,7 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		addGlobalActionKey(action.getId());
 	}
 
+	@Override
 	protected void buildActions() {
 		addRetargetAction(new UndoRetargetAction());
 		addRetargetAction(new RedoRetargetAction());
@@ -89,6 +93,7 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 
 	}
 
+	@Override
 	protected void declareGlobalActionKeys() {
 		addGlobalActionKey(ActionFactory.PRINT.getId());
 		addGlobalActionKey(ActionFactory.SELECT_ALL.getId());
@@ -97,6 +102,7 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		addGlobalActionKey(ActionFactory.DELETE.getId());
 	}
 
+	@SuppressWarnings("cast")
 	@Override
 	public void dispose() {
 		for (int i = 0; i < retargetActions.size(); i++) {
@@ -109,20 +115,24 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		registry = null;
 	}
 
+	@Override
 	protected IAction getAction(String id) {
 		return registry.getAction(id);
 	}
 
+	@Override
 	protected ActionRegistry getActionRegistry() {
 		return registry;
 	}
 
+	@Override
 	public void init(IActionBars bars) {
 		buildActions();
 		declareGlobalActionKeys();
 		super.init(bars);
 	}
 
+	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
@@ -134,6 +144,7 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 
 	}
 
+	@Override
 	public void contributeToMenu(IMenuManager menubar) {
 		super.contributeToMenu(menubar);
 		MenuManager viewMenu = new MenuManager("View");
