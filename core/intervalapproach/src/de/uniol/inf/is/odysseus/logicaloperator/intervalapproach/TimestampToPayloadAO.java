@@ -25,24 +25,45 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(name = "TimestampToPayload", minInputPorts = 1, maxInputPorts = 1, doc="This operator is needed before data is send to another system (e.g. via a socket sink) to keep the time meta information (i.e. start and end time stamp). The input object gets two new fields with start and end timestamp. If this output is read again by (another) Odysseus instance, the following needs to be attached to the schema: ['start', 'StartTimestamp'], ['end', 'EndTimestamp']",category = {LogicalOperatorCategory.TRANSFORM})
 public class TimestampToPayloadAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 7506659021418301530L;
+	private List<String> attributes;
 
 	public TimestampToPayloadAO() {
 	}
 
 	public TimestampToPayloadAO(TimestampToPayloadAO timestampToPayloadAO) {
 		super(timestampToPayloadAO);
+		this.attributes = new ArrayList<String>(timestampToPayloadAO.attributes);
 	}
 
+	@Parameter(name="attributes", type=StringParameter.class, isList=true, optional=true,  doc="Names of the attributes for the start and endtimestamp (default meta_valid_start and meta_valid_end.")
+	public void setAttributes(List<String> attributes){
+		this.attributes = attributes;
+	}
+	
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
+
+		final String start;
+		final String end;
+		if (attributes == null){
+			start = "meta_valid_start";
+			end = "meta_valid_end";
+		}else{
+			start = attributes.get(0);
+			end = attributes.get(1);
+		}
+		
 		SDFAttribute starttimeStamp = new SDFAttribute(null,
-				"meta_valid_start", SDFDatatype.TIMESTAMP);
-		SDFAttribute endtimeStamp = new SDFAttribute(null, "meta_valid_end",
+				start, SDFDatatype.TIMESTAMP);
+		SDFAttribute endtimeStamp = new SDFAttribute(null, end,
 				SDFDatatype.TIMESTAMP);
 		
 		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
@@ -63,6 +84,18 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 		return getOutputSchema();
 	}
 
+	@Override
+	public boolean isValid() {
+		boolean isValid = true;
+		if (attributes != null && attributes.size() != 2){
+			addError(new IllegalParameterException(
+					"Must defined two attribute names!"));
+			isValid = false;
+		}
+		
+		return isValid && super.isValid();
+	}
+	
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new TimestampToPayloadAO(this);
