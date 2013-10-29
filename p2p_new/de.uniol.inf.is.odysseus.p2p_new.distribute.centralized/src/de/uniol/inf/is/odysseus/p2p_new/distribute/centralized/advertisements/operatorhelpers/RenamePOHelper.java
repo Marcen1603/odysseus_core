@@ -7,14 +7,14 @@ import net.jxta.document.MimeMediaType;
 import net.jxta.document.StructuredDocument;
 import net.jxta.document.TextElement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.RenamePO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.TopPO;
 
 @SuppressWarnings("rawtypes")
-public class RenamePOHelper extends AbstractPhysicalOperatorHelper<RenamePO> {
+public class RenamePOHelper extends AbstractPhysicalOperatorHelper<TopPO> {
 
 	@Override
-	public Class<RenamePO> getOperatorClass() {
-		return RenamePO.class;
+	public Class<TopPO> getOperatorClass() {
+		return TopPO.class;
 	}
 
 	@Override
@@ -25,10 +25,10 @@ public class RenamePOHelper extends AbstractPhysicalOperatorHelper<RenamePO> {
 	}
 
 	@Override
-	SimpleImmutableEntry<Integer, RenamePO> createSpecificOperatorFromStatement(TextElement<?> contentElement, int operatorId) {
+	SimpleImmutableEntry<Integer, TopPO> createSpecificOperatorFromStatement(TextElement<?> contentElement, int operatorId) {
 		// just create a RenamePO-Instance and return it along with the operatorId
-		RenamePO result = new RenamePO();
-		return new SimpleImmutableEntry<Integer, RenamePO>(operatorId,result);
+		TopPO result = new TopPO();
+		return new SimpleImmutableEntry<Integer, TopPO>(operatorId,result);
 	}
 
 }

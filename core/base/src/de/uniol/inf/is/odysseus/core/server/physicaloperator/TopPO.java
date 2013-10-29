@@ -26,15 +26,14 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
  *	
  * Which type to read and to write
  * @param <R>
- * @deprecated use TopPO instead
  */
-@Deprecated
-public class RenamePO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
-	public RenamePO() {
+public class TopPO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
+
+	public TopPO() {
 	}
 
-	public RenamePO(RenamePO<R> pipe) {
+	public TopPO(TopPO<R> pipe) {
 		super(pipe);
 	}
 
@@ -51,7 +50,7 @@ public class RenamePO<R extends IStreamObject<?>> extends AbstractPipe<R, R> {
 
 	@Override
 	public AbstractPipe<R, R> clone() {
-		return new RenamePO<R>(this);
+		return new TopPO<R>(this);
 	}
 
 }

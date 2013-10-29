@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.RenamePO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.TopPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -32,7 +32,10 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO operator, TransformationConfiguration config) {
-		defaultExecute(operator, new RenamePO<IStreamObject<?>>(), config ,true, true);
+		if (operator.getName().equalsIgnoreCase("Rename")){
+			operator.setName("TOP");
+		}
+		defaultExecute(operator, new TopPO<IStreamObject<?>>(), config ,true, true);
 	}
 
 	@Override
@@ -43,7 +46,7 @@ public class TRenameAORule extends AbstractTransformationRule<RenameAO> {
 
 	@Override
 	public String getName() {
-		return "RenameAO --> RenamePO";
+		return "RenameAO --> TopPO";
 	}
 
 	@Override
