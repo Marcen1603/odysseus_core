@@ -34,8 +34,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.EvalFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IfFunction;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNaNFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.IsNullFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.RandomFunction2;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.SMaxFunction;
@@ -104,6 +104,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.time.MonthFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.NanoTimeFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.NowFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.SecondFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.time.ToDateFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.WeekFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.YearFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.DoubleToByteFunction;
@@ -252,7 +253,8 @@ public class MEP implements IExpressionParser {
         
         /** Date Functions */
         registerFunction(new DebsDateFormatParse());
-                
+        registerFunction(new ToDateFunction());      
+        
         registerFunction(new SecondFunction());
         registerFunction(new MinuteFunction());
         registerFunction(new HourFunction());
