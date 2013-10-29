@@ -291,10 +291,10 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					
 					if(!streamAO.isPresent()) {
 						
-						operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, 
+						operatorForFragmentation.subscribeSink(subToSink.getTarget(), subToSink.getSinkInPort(), 0, 
 								subToSink.getSchema());
 						
-					} else streamAO.get().subscribeSink(subToSink.getTarget(), 0, 0, 
+					} else streamAO.get().subscribeSink(subToSink.getTarget(), subToSink.getSinkInPort(), 0, 
 							subToSink.getSchema());
 					
 				}
@@ -354,10 +354,10 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					
 					if(!windowAO.isPresent()) {
 						
-						operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, 0, 
+						operatorForFragmentation.subscribeSink(subToSink.getTarget(), subToSink.getSinkInPort(), 0, 
 								subToSink.getSchema());
 						
-					} else windowAO.get().subscribeSink(subToSink.getTarget(), 0, 0, 
+					} else windowAO.get().subscribeSink(subToSink.getTarget(), subToSink.getSinkInPort(), 0, 
 							subToSink.getSchema());
 					
 				}
@@ -491,7 +491,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 					ILogicalOperator operatorForFragmentation = operatorsForFragmentationIter.next();
 										
 					operator.unsubscribeSink(subToSink);
-					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, fragmentNo, 
+					operatorForFragmentation.subscribeSink(subToSink.getTarget(), subToSink.getSinkInPort(), fragmentNo, 
 							subToSink.getSchema());
 					
 				}
@@ -526,7 +526,7 @@ public abstract class AbstractPrimaryHorizontalDataFragmentation extends Abstrac
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 					
 					operator.unsubscribeSink(subToSink);
-					operatorForFragmentation.subscribeSink(subToSink.getTarget(), 0, fragmentNo, 
+					operatorForFragmentation.subscribeSink(subToSink.getTarget(), subToSink.getSinkInPort(), fragmentNo, 
 							subToSink.getSchema());
 					
 				}
