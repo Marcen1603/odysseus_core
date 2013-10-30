@@ -189,10 +189,17 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	}
 
 	private void updateSources() {
+		boolean changed = false;
 		synchronized (sources) {
-			if (toAdd.size() > 0 || toRemove.size() > 0) {
+			if (toAdd.size() > 0) {
 				delayedAddSources();
+				changed = true;
+			}
+			if (toRemove.size() > 0) {
 				delayedRemoveSources();
+				changed = true;
+			}
+			if (changed) {
 				Collections.sort(sources, sourcesComparator);
 			}
 		}
