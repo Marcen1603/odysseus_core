@@ -66,7 +66,8 @@ public class ImagePictogram extends Pictogram {
 	}
 
 	public IResource getFile() {
-		if (getGraphicsLayer() == null || getGraphicsLayer().getProject() == null) {
+		if (getGraphicsLayer() == null
+				|| getGraphicsLayer().getProject() == null) {
 			return null;
 		}
 		IResource file = getGraphicsLayer().getProject().findMember(filename);
@@ -81,7 +82,9 @@ public class ImagePictogram extends Pictogram {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#init(java.util.Map)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * init(java.util.Map)
 	 */
 	@Override
 	protected void load(Map<String, String> values) {
@@ -89,13 +92,16 @@ public class ImagePictogram extends Pictogram {
 		setPredicate(loadValue(values.get("predicate"), "true"));
 		setStretch(loadValue(Boolean.parseBoolean(values.get("stretch")), true));
 		setCenter(loadValue(Boolean.parseBoolean(values.get("center")), true));
-		setKeepRatio(loadValue(Boolean.parseBoolean(values.get("keepRatio")), true));
+		setKeepRatio(loadValue(Boolean.parseBoolean(values.get("keepRatio")),
+				true));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#save(java.util.Map)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * save(java.util.Map)
 	 */
 	@Override
 	protected void save(Map<String, String> values) {
@@ -109,7 +115,9 @@ public class ImagePictogram extends Pictogram {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#process(de.uniol.inf.is.odysseus.core.collection.Tuple)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * process(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
 	@Override
 	protected void process(Tuple<?> tuple) {
@@ -122,16 +130,26 @@ public class ImagePictogram extends Pictogram {
 	}
 
 	public void setPredicate(String predicate) {
-		this.predicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
-		setDirty();
+		try {
+			this.predicate = new RelationalPredicate(new SDFExpression(
+					predicate, MEP.getInstance()));
+			setDirty();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public IPredicate<Tuple<?>> getPredicate() {
 		return this.predicate;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#open(java.util.Collection)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * open(java.util.Collection)
 	 */
 	@Override
 	protected void open(IPhysicalOperator root) {
@@ -139,8 +157,8 @@ public class ImagePictogram extends Pictogram {
 			this.predicate.init(root.getOutputSchema(), null);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
-	}	
+		}
+	}
 
 	public boolean isStretch() {
 		return this.stretch;
@@ -159,7 +177,9 @@ public class ImagePictogram extends Pictogram {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#createPictogramFigure()
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * createPictogramFigure()
 	 */
 	@Override
 	public IFigure createPictogramFigure() {
@@ -169,13 +189,16 @@ public class ImagePictogram extends Pictogram {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#getPreferedSize()
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * getPreferedSize()
 	 */
 	@Override
 	public Dimension getPreferedSize() {
 		IResource imgFile = getFile();
 		if (imgFile != null && imgFile instanceof IFile) {
-			Image img = new Image(Display.getDefault(), new ImageData(imgFile.getLocation().toOSString()));
+			Image img = new Image(Display.getDefault(), new ImageData(imgFile
+					.getLocation().toOSString()));
 			return new Dimension(img);
 		}
 		return super.getPreferedSize();
@@ -198,16 +221,17 @@ public class ImagePictogram extends Pictogram {
 		this.center = center;
 		setDirty();
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#clone()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#
+	 * clone()
 	 */
 	@Override
-	public ImagePictogram clone() {	
+	public ImagePictogram clone() {
 		return new ImagePictogram(this);
 	}
-
-	
-
 
 }
