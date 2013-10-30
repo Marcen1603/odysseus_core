@@ -191,7 +191,6 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	private void updateSources() {
 		synchronized (sources) {
 			if (toAdd.size() > 0 || toRemove.size() > 0) {
-				logger.debug("Update sources");
 				delayedAddSources();
 				delayedRemoveSources();
 				Collections.sort(sources, sourcesComparator);
@@ -287,8 +286,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 					sources.add(source);
 					source.subscribe(this, POEventType.OpenDone);
 				}
-				logger.debug("Added Source " + source + " " + sources);
 			}
+			logger.debug("Added Sources " + toAdd);
 			toAdd.clear();
 		}
 		// this.sourcesChangeRequested = false;
@@ -302,8 +301,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 					sources.remove(source);
 					// source.unsubscribe(this, POEventType.OpenDone);
 				}
-				logger.debug("Removed Source " + source + " " + sources);
 			}
+			logger.debug("Removed Sources " + toRemove);
 			toRemove.clear();
 		}
 		// this.sourcesChangeRequested = false;
