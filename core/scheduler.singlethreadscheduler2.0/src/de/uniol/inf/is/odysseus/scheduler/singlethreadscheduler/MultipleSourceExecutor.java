@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -316,9 +315,10 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	@Override
 	public String toString() {
-		synchronized (sources) {
-			return this.getClass().getSimpleName() + " " + sources;
-		}
+		return this.getName();
+//		synchronized (sources) {
+//			return this.getClass().getSimpleName() + " " + sources;
+//		}
 	}
 
 }
