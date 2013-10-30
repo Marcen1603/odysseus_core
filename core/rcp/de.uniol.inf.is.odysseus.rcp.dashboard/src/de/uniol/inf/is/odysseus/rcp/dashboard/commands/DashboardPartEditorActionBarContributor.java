@@ -47,6 +47,7 @@ import org.eclipse.ui.actions.RetargetAction;
  * @author DGeesen
  * 
  */
+@SuppressWarnings("deprecation")
 public class DashboardPartEditorActionBarContributor extends ActionBarContributor {
 
 	@Override
