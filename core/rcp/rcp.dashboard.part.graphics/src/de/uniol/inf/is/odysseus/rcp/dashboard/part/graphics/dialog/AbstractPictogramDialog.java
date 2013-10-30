@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -47,6 +48,7 @@ public abstract class AbstractPictogramDialog<T extends Pictogram> extends Title
 		for (IPhysicalOperator op : roots) {
 			this.roots.add(op.getName());
 		}
+		Collections.sort(this.roots);
 		selectedRoot = pg.getSelectedRootName();
 		if (selectedRoot == null) {
 			selectedRoot = roots.iterator().next().getName();
@@ -132,7 +134,7 @@ public abstract class AbstractPictogramDialog<T extends Pictogram> extends Title
 	}
 
 	protected IProject getProject() {
-		return this.pictogram.getParentGroup().getProject();
+		return this.pictogram.getGraphicsLayer().getProject();
 	}
 
 }
