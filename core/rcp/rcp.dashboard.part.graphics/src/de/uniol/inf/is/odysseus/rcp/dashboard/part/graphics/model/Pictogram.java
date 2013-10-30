@@ -31,39 +31,44 @@ public abstract class Pictogram extends Observable {
 	private String selectedRootName;
 
 	private String textTop = "";
-	private String textBottom = "";	
+	private String textBottom = "";
+
+	private SDFExpression bottomExpression;
+	private SDFExpression topExpression;
+
 	private boolean dirty = true;
 	private Collection<IPhysicalOperator> roots;
+	private String currentTextBottom;
+	private String currentTextTop;
 
-	
-	public Pictogram(){
-		
+	public Pictogram() {
+
 	}
-	
-	public Pictogram(Pictogram old){
+
+	public Pictogram(Pictogram old) {
 		this.constraint = old.constraint.getCopy();
 		this.visibile = old.visibile;
 		this.parentGroup = old.parentGroup;
 		this.relevancePredicate = old.relevancePredicate.clone();
 		this.selectedRootName = old.selectedRootName;
 		this.textTop = old.textTop;
-		this.textBottom = old.textBottom;		
+		this.textBottom = old.textBottom;
 		this.dirty = old.dirty;
 	}
-	
+
 	public Rectangle getConstraint() {
 		return constraint;
-	}		
+	}
 
 	public void setLocation(Point location) {
 		this.constraint = new Rectangle(location, getPreferedSize());
 		setDirty();
 	}
-	
+
 	protected void setDirty() {
 		refreshVisuals();
 		this.dirty = true;
-		if(this.getParentGroup()!=null){
+		if (this.getParentGroup() != null) {
 			this.getParentGroup().setDirty();
 		}
 	}
@@ -75,7 +80,7 @@ public abstract class Pictogram extends Observable {
 	protected abstract void open(IPhysicalOperator root);
 
 	protected abstract void process(Tuple<?> tuple);
-	
+
 	public abstract Pictogram clone();
 
 	public abstract Class<? extends AbstractPictogramDialog<? extends Pictogram>> getConfigurationDialog();
@@ -86,14 +91,26 @@ public abstract class Pictogram extends Observable {
 			dirty = false;
 		}
 		if (this.relevancePredicate.evaluate(tuple)) {
+			if (this.topExpression != null) {
+				this.currentTextTop = getExpressionValue(topExpression, tuple);
+			}
+			if (this.bottomExpression != null) {
+				this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
+			}
 			process(tuple);
 			refreshVisuals();
 		}
 	}
-	
+
+	private String getExpressionValue(SDFExpression expression, Tuple<?> tuple) {
+		int[] positions = expression.getAttributePositions();
+		expression.bindVariables(tuple.restrict(positions, true).getAttributes());
+		return expression.getValue().toString();
+	}
+
 	private void refreshVisuals() {
 		setChanged();
-		notifyObservers();		
+		notifyObservers();
 	}
 
 	public <T> T loadValue(T value, T defaultValue) {
@@ -188,6 +205,12 @@ public abstract class Pictogram extends Observable {
 	protected void internalOpen(IPhysicalOperator root) {
 		try {
 			this.relevancePredicate.init(root.getOutputSchema(), null);
+			if (this.bottomExpression != null) {
+				this.bottomExpression.initAttributePositions(root.getOutputSchema());
+			}
+			if (this.topExpression != null) {
+				this.topExpression.initAttributePositions(root.getOutputSchema());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -216,7 +239,7 @@ public abstract class Pictogram extends Observable {
 	public void setConstraint(Rectangle newConstraint) {
 		this.constraint = newConstraint;
 		setDirty();
-	}	
+	}
 
 	public String getTextTop() {
 		return textTop;
@@ -224,6 +247,12 @@ public abstract class Pictogram extends Observable {
 
 	public void setTextTop(String textTop) {
 		this.textTop = textTop;
+		if (textTop.startsWith("=")) {
+			topExpression = new SDFExpression(textTop.substring(1), MEP.getInstance());
+		} else {
+			topExpression = null;
+			this.currentTextTop = this.textTop;
+		}
 		setDirty();
 	}
 
@@ -231,8 +260,22 @@ public abstract class Pictogram extends Observable {
 		return textBottom;
 	}
 
+	public String getTextBottomToShow() {
+		return currentTextBottom;
+	}
+
+	public String getTextTopToShow() {
+		return currentTextTop;
+	}
+
 	public void setTextBottom(String textBottom) {
 		this.textBottom = textBottom;
+		if (textBottom.startsWith("=")) {
+			bottomExpression = new SDFExpression(textBottom.substring(1), MEP.getInstance());
+		} else {
+			bottomExpression = null;
+			this.currentTextBottom = this.textBottom;
+		}
 		setDirty();
 	}
 
@@ -246,12 +289,12 @@ public abstract class Pictogram extends Observable {
 	}
 
 	public Collection<IPhysicalOperator> getRoots() {
-		if(roots == null){
-			if(getParentGroup()!=null){
+		if (roots == null) {
+			if (getParentGroup() != null) {
 				this.roots = getParentGroup().getRoots();
 			}
 		}
 		return roots;
-	}		
-	
+	}
+
 }

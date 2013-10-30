@@ -184,7 +184,6 @@ public class SDFExpression implements Serializable, IClone {
 				// this.schema = new SDFSchema("", attribs);
 
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -275,11 +274,12 @@ public class SDFExpression implements Serializable, IClone {
 	}
 
 	public void initAttributePositions(SDFSchema schema) {
-		this.attributePositions = new int[this.attributes.size()];
-
+		this.attributePositions = new int[this.attributes.size()];		
 		int j = 0;
-		for (SDFAttribute curAttribute : this.attributes) {
-			this.attributePositions[j++] = schema.indexOf(curAttribute);
+		DirectAttributeResolver dar = new DirectAttributeResolver(schema);
+		for (SDFAttribute curAttribute : this.attributes) {		
+			SDFAttribute resolvedAttribute = dar.getAttribute(curAttribute.getAttributeName());
+			this.attributePositions[j++] = schema.indexOf(resolvedAttribute);			
 		}
 	}
 

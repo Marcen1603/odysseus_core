@@ -63,8 +63,8 @@ public abstract class AbstractPictogramFigure<T extends Pictogram> extends Figur
 	}
 
 	public void updateValuesInternal(T node) {
-		this.topTextlabel.setText(node.getTextTop());
-		this.bottomTextlabel.setText(node.getTextBottom());
+		this.topTextlabel.setText(node.getTextTopToShow());
+		this.bottomTextlabel.setText(node.getTextBottomToShow());
 		recalcPreferedSize();
 		updateValues(node);
 	}
