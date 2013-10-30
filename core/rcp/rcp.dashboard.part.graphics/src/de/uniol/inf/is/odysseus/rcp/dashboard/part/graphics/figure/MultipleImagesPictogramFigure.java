@@ -85,6 +85,9 @@ public class MultipleImagesPictogramFigure extends AbstractPictogramFigure<Multi
 		this.stretch = node.isStretch();
 		this.center = node.isCenter();
 		this.keepRatio = node.isKeepRatio();
+		for (Image i:images){
+			i.dispose();
+		}
 		images.clear();
 		imagePictograms.clear();
 		for (ImagePictogram ip : node.getImages()) {

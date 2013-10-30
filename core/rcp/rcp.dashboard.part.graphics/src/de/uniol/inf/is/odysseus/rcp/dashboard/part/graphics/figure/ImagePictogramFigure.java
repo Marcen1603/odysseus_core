@@ -74,6 +74,9 @@ public class ImagePictogramFigure extends AbstractPictogramFigure<ImagePictogram
 		this.stretch = node.isStretch();
 		this.center = node.isCenter();
 		this.keepRatio = node.isKeepRatio();
+		if (image != null){
+			image.dispose();
+		}
 		try {
 			this.image = new Image(Display.getDefault(), new ImageData(node.getFile().getLocation().toOSString()));
 		} catch (Exception e) {
