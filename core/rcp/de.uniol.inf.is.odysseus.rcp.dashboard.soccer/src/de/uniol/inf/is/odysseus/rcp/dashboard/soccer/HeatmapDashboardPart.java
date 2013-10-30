@@ -13,11 +13,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,17 +60,12 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	}
 
 	@Override
-	public void createPartControl(Composite parent, ToolBar toolbar) {
-
-	}
-	
-	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
 		
 		tsIndex = getAttributeIndex("ts");
 		playerIDIndex = getAttributeIndex("player_id");
-		firstXValueIndex = getAttributeIndex("firstXValue");
+		firstXValueIndex = 2; // getAttributeIndex("firstXValue"); why?
 		
 		validAttributes = tsIndex != -1 && playerIDIndex != -1 && firstXValueIndex != -1;
 		if( !validAttributes ) {
@@ -87,10 +79,12 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 			LOG.error("Warning: Soccer is only for relational tuple!");
 			return;
 		}
-
-		if (validAttributes) {
-			Tuple<?> currentTuple = (Tuple<?>) element;
-			for (int i = firstXValueIndex; i < (currentTuple.getAttributes().length - 2); i = i + 5) {
+		
+		Tuple<?> currentTuple = (Tuple<?>) element;
+		Integer playerID = (Integer)currentTuple.getAttribute(playerIDIndex);
+		if (validAttributes && playerID == 16) {
+			
+			for (int i = firstXValueIndex; i < (currentTuple.getAttributes().length - 2); i += 5) {
 				
 				int[] tempArray = { (int) currentTuple.getAttribute(i), (int) currentTuple.getAttribute(i + 1), (int) currentTuple.getAttribute(i + 2), (int) currentTuple.getAttribute(i + 3) };
 				int hash = getCellHashCode(tempArray);
@@ -114,10 +108,11 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	@Override
 	public void paintControl(PaintEvent e) {
 		GC gc = new GC(getCanvas());
-		Font fontTime = getFont();
 
-		initializeCellValues(cellValues.values());
-
+		recalculateColorMap(cellValues.values());
+		
+		renderBackground(gc);
+		
 		for (Entry<Integer, int[]> entry : cellCoordinates.entrySet()) {
 			int hash = entry.getKey();
 			int[] cell = entry.getValue();
@@ -133,8 +128,11 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 		}
 
 		if (lastReceivedTuple != null) {
-			gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-			gc.setFont(fontTime);
+			
+			gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			gc.setFont(getFont());
+			
 			long millis = (Long.parseLong(lastReceivedTuple.getAttribute(tsIndex).toString()) - 10748401988186756L) / 1000000000;
 			String time = String.format("%d min %d sec %d ms", TimeUnit.MILLISECONDS.toMinutes(millis),
 					TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
@@ -146,7 +144,7 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 		gc.dispose();
 	}
 	
-	private void initializeCellValues(Collection<Double> values) {
+	private void recalculateColorMap(Collection<Double> values) {
 		ArrayList<Double> list = new ArrayList<>();
 		for (Double value : values) {
 			if(value>0.0){
