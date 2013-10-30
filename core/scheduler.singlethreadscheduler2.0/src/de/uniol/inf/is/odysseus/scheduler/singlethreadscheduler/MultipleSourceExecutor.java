@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
 	private boolean interrupt = false;
 	final private List<IIterableSource<?>> sources = new ArrayList<>();
-	final private List<IIterableSource<?>> toAdd = new CopyOnWriteArrayList<>();
-	final private List<IIterableSource<?>> toRemove = new CopyOnWriteArrayList<>();
+	final private List<IIterableSource<?>> toAdd = new LinkedList<>();
+	final private List<IIterableSource<?>> toRemove = new LinkedList<>();
 
 	final private Comparator<IIterableSource<?>> sourcesComparator = new Comparator<IIterableSource<?>>() {
 		@Override
@@ -37,7 +37,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	};
 	final private AbstractSimpleThreadScheduler caller;
 	final private Map<IIterableSource<?>, Long> lastRuns = new HashMap<>();
-	private boolean sourcesChangeRequested = false;
+	// private boolean sourcesChangeRequested = false;
 
 	private static long counter = 0;
 
@@ -60,6 +60,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 						// Need to delay some time to catch an open
 						delay(10);
 						boolean processableSources = processSources();
+						updateSources();
 						if (!processableSources) {
 							waitForProcessableSources();
 						}
@@ -112,7 +113,9 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	private boolean processSources() {
 
 		boolean waitedForFirstSource = false;
-
+		if (logger.isTraceEnabled()) {
+			logger.trace("Process Sources " + sources);
+		}
 		boolean processableSources = false;
 		for (IIterableSource<?> s : sources) {
 			if (s.isOpen() && !s.isDone()) {
@@ -125,12 +128,17 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 					// ... its some kind of busy wait ... :-/
 					if (!waitedForFirstSource) {
 						waitedForFirstSource = true;
-						long ct2 = System.currentTimeMillis();
 						// The first round nobody has to wait
 						if (lastRun != null) {
-							long diff = ct2 - lastRun;
 							try {
-								logger.trace("Sleeping ..." + s);
+								if (logger.isTraceEnabled()) {
+									logger.trace("Sleeping ..." + s + " "
+											+ toRemove.size() + " " + toRemove
+											+ " " + sources.size() + " "
+											+ sources);
+								}
+								long ct2 = System.currentTimeMillis();
+								long diff = ct2 - lastRun;
 								if (s.getDelay() - diff > 0) {
 									Thread.sleep(s.getDelay() - diff);
 								}
@@ -183,7 +191,8 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 
 	private void updateSources() {
 		synchronized (sources) {
-			if (this.sourcesChangeRequested) {
+			if (toAdd.size() > 0 || toRemove.size() > 0) {
+				logger.debug("Update sources");
 				delayedAddSources();
 				delayedRemoveSources();
 				Collections.sort(sources, sourcesComparator);
@@ -229,49 +238,76 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	}
 
 	public void removeSource(IIterableSource<?> source) {
-		synchronized (sources) {
-			this.sourcesChangeRequested = true;
+		synchronized (toRemove) {
 			toRemove.add(source);
-			source.unsubscribe(this, POEventType.OpenDone);
+		}
+		// this.sourcesChangeRequested = true;
+		synchronized (sources) {
+			sources.notifyAll();
+		}
+	}
+
+	public void removeSources(List<IIterableSource<?>> remove) {
+		// logger.debug("Trying to remove " + remove + " to remove list");
+		synchronized (toRemove) {
+			toRemove.addAll(remove);
+		}
+		// this.sourcesChangeRequested = true;
+		// logger.debug("Added " + remove + " to remove list");
+		synchronized (sources) {
 			sources.notifyAll();
 		}
 	}
 
 	public synchronized void addSource(IIterableSource<?> source) {
-		synchronized (sources) {
-			this.sourcesChangeRequested = true;
+		// this.sourcesChangeRequested = true;
+		synchronized (toAdd) {
 			toAdd.add(source);
-			source.subscribe(this, POEventType.OpenDone);
+		}
+		synchronized (sources) {
+			sources.notifyAll();
+		}
+	}
+
+	public void addSources(List<IIterableSource<?>> add) {
+		synchronized (sources) {
+			for (IIterableSource<?> s : add) {
+				toAdd.add(s);
+				s.subscribe(this, POEventType.OpenDone);
+			}
+			// this.sourcesChangeRequested = true;
 			sources.notifyAll();
 		}
 	}
 
 	private void delayedAddSources() {
-		synchronized (sources) {
-			Iterator<IIterableSource<?>> sourceIter = toAdd.iterator();
-			while (sourceIter.hasNext()) {
-				IIterableSource<?> source = sourceIter.next();
-				sources.add(source);
-				toAdd.remove(source);
+		synchronized (toAdd) {
+			// logger.debug("Trying to add " + toAdd.size() + " sources");
+			for (IIterableSource<?> source : toAdd) {
+				synchronized (sources) {
+					sources.add(source);
+					source.subscribe(this, POEventType.OpenDone);
+				}
 				logger.debug("Added Source " + source + " " + sources);
 			}
-			sources.notifyAll();
-			this.sourcesChangeRequested = false;
+			toAdd.clear();
 		}
+		// this.sourcesChangeRequested = false;
 	}
 
 	private void delayedRemoveSources() {
-		synchronized (sources) {
-			Iterator<IIterableSource<?>> sourceIter = toRemove.iterator();
-			while (sourceIter.hasNext()) {
-				IIterableSource<?> source = sourceIter.next();
-				sources.remove(source);
-				toRemove.remove(source);
+		synchronized (toRemove) {
+			// logger.debug("Trying to remove " + toRemove.size() + " sources");
+			for (IIterableSource<?> source : toRemove) {
+				synchronized (sources) {
+					sources.remove(source);
+					// source.unsubscribe(this, POEventType.OpenDone);
+				}
 				logger.debug("Removed Source " + source + " " + sources);
 			}
-			sources.notifyAll();
-			this.sourcesChangeRequested = false;
+			toRemove.clear();
 		}
+		// this.sourcesChangeRequested = false;
 	}
 
 	public int getRunningSources() {
@@ -284,4 +320,5 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			return this.getClass().getSimpleName() + " " + sources;
 		}
 	}
+
 }
