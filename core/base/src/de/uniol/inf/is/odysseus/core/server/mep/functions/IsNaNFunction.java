@@ -34,11 +34,5 @@ public class IsNaNFunction extends AbstractFunction<Boolean> {
 		return SDFDatatype.BOOLEAN;
 	}
 	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(getSymbol());
-		builder.append("()");
-		return builder.toString();
-	}
 
 }
