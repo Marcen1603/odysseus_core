@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 import java.util.Map;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.swt.graphics.Color;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ConnectionDialog;
 
 /**
@@ -34,6 +34,7 @@ public class Connection extends AbstractPart{
 	private AbstractPictogram target;
 	private String sourceText = "";
 	private String targetText = "";
+	private int width;
 	
 
 	public Connection(){
@@ -181,5 +182,37 @@ public class Connection extends AbstractPart{
 	@Override
 	public Class<ConnectionDialog> getConfigurationDialog() {
 		return ConnectionDialog.class;
+	}
+
+	/**
+	 * @param color
+	 * @param predicate
+	 */
+	public void addColor(Color color, String predicate) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @param parseInt
+	 */
+	public void setWidth(int width) {
+		this.width = width;
+		
+	}
+
+	/**
+	 * 
+	 */
+	public void clearColors() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @return
+	 */
+	public int getWidth() {
+		return width;
 	}
 }

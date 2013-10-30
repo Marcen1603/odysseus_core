@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.Rectangle;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -41,14 +43,14 @@ public class MultipleImagePictogram extends AbstractPictogram {
 	private boolean center = true;
 	private boolean keepRatio = true;
 
-	public MultipleImagePictogram(){
-		
+	public MultipleImagePictogram() {
+
 	}
-	
-	public MultipleImagePictogram(MultipleImagePictogram old) {		
+
+	public MultipleImagePictogram(MultipleImagePictogram old) {
 		super(old);
 		this.images = new ArrayList<>();
-		for(ImagePictogram ip : old.images){
+		for (ImagePictogram ip : old.images) {
 			this.images.add(ip.clone());
 		}
 		this.stretch = old.stretch;
@@ -219,12 +221,38 @@ public class MultipleImagePictogram extends AbstractPictogram {
 		}
 		setDirty();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram#clone()
 	 */
 	@Override
-	public MultipleImagePictogram clone() {	
+	public MultipleImagePictogram clone() {
 		return new MultipleImagePictogram(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram#setConstraint(org.eclipse.draw2d.geometry.Rectangle)
+	 */
+	@Override
+	public void setConstraint(Rectangle newConstraint) {
+		super.setConstraint(newConstraint);
+		for (ImagePictogram img : this.images) {
+			img.setConstraint(newConstraint);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram#setLocation(org.eclipse.draw2d.geometry.Point)
+	 */
+	@Override
+	public void setLocation(Point location) {	
+		super.setLocation(location);
+		for (ImagePictogram img : this.images) {
+			img.setLocation(location);
+		}
 	}
 }

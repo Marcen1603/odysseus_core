@@ -28,6 +28,8 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	private Composite container;
 
 	private List<ColorEntry> entries = new ArrayList<>();
+	private Text widthText;
+	private String width;
 
 	/*
 	 * (non-Javadoc)
@@ -36,8 +38,14 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	 */
 	@Override
 	public Control createWidgetAdrea(final Composite parent) {
-		Label lblChooseAnImage = new Label(parent, SWT.NONE);
-		lblChooseAnImage.setText("Order-dependent list of images");
+		Label lblWidth= new Label(parent, SWT.NONE);
+		lblWidth.setText("Width of the connection");
+
+		widthText = new Text(parent, SWT.BORDER);
+		widthText.setText(width);
+		
+		Label lblChooseAnColor = new Label(parent, SWT.NONE);
+		lblChooseAnColor.setText("Order-dependent list of colors");
 
 		Button btnBrowseToAdd = new Button(parent, SWT.PUSH);
 		btnBrowseToAdd.setText("Add a color...");
@@ -141,8 +149,12 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog#saveValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart)
 	 */
 	@Override
-	public void saveValues(Connection pg) {
-		// TODO Auto-generated method stub
+	public void saveValues(Connection connection) {
+		connection.setWidth(Integer.parseInt(widthText.getText()));
+		connection.clearColors();
+		for (ColorEntry ce : entries) {
+			connection.addColor(ce.color, ce.predicate);
+		}
 
 	}
 
@@ -152,8 +164,8 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog#loadValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart)
 	 */
 	@Override
-	public void loadValues(Connection pg) {
-		// TODO Auto-generated method stub
+	public void loadValues(Connection connection) {
+		width = Integer.toString(connection.getWidth());
 
 	}
 
