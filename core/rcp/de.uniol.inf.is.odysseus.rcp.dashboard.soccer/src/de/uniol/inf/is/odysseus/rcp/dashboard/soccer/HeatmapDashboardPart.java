@@ -8,16 +8,17 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -35,11 +36,15 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	
 	private boolean validAttributes;
 
-	private final ConcurrentHashMap<Integer, int[]> cellCoordinates = new ConcurrentHashMap<>();
-	private final ConcurrentHashMap<Integer, Double> cellValues = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, int[]>> cellCoordinates = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, Double>> cellValues = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<Integer, Color> colorMap = new ConcurrentHashMap<>();
+	
 	private ConcurrentHashMap<Integer, Double> colorValueMap = new ConcurrentHashMap<>();
 	private Tuple<?> lastReceivedTuple;
+	
+	private String selectedPlayerIDString = "16";
+	private int selectedPlayerID = 16;
 
 	public HeatmapDashboardPart() {
 		colorMap.put(1, new Color(Display.getDefault(), 255,255,178));
@@ -49,14 +54,10 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	}
 	
 	@Override
-	public void init(IFile dashboardFile, IProject containingProject, IWorkbenchPart containingPart) {
-		super.init(dashboardFile, containingProject, containingPart);
-		
-	}
-	
-	@Override
 	public void onLoad(Map<String, String> saved) {
-		super.onLoad(saved);
+		String selPlayerID = saved.get("selectedPlayerID");
+		
+		selectedPlayerIDString = Strings.isNullOrEmpty(selPlayerID) ? "16" : selPlayerID;
 	}
 
 	@Override
@@ -80,23 +81,46 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 			return;
 		}
 		
-		Tuple<?> currentTuple = (Tuple<?>) element;
-		Integer playerID = (Integer)currentTuple.getAttribute(playerIDIndex);
-		if (validAttributes && playerID == 16) {
+		if (validAttributes) {
+			
+			Tuple<?> currentTuple = (Tuple<?>) element;
+			Integer playerID = (Integer)currentTuple.getAttribute(playerIDIndex);
+			ConcurrentHashMap<Integer, Double> values = getCellValuesOfPlayer(playerID);
+			ConcurrentHashMap<Integer, int[]> coordinates = getCellCoordinatesOfPlayer(playerID);
 			
 			for (int i = firstXValueIndex; i < (currentTuple.getAttributes().length - 2); i += 5) {
 				
 				int[] tempArray = { (int) currentTuple.getAttribute(i), (int) currentTuple.getAttribute(i + 1), (int) currentTuple.getAttribute(i + 2), (int) currentTuple.getAttribute(i + 3) };
 				int hash = getCellHashCode(tempArray);
 				
-				cellCoordinates.put(hash, tempArray);
-				cellValues.put(hash, (Double) currentTuple.getAttribute(i + 4));
+				coordinates.put(hash, tempArray);
+				values.put(hash, (Double) currentTuple.getAttribute(i + 4));
 			}
 			
 			lastReceivedTuple = currentTuple;
 		}
 	}
 	
+	private ConcurrentHashMap<Integer, Double> getCellValuesOfPlayer(Integer playerID) {
+		if( cellValues.containsKey(playerID)) {
+			return cellValues.get(playerID);
+		}
+		
+		ConcurrentHashMap<Integer, Double> values = new ConcurrentHashMap<>();
+		cellValues.put(playerID, values);
+		return values;
+	}
+	
+	private ConcurrentHashMap<Integer, int[]> getCellCoordinatesOfPlayer(Integer playerID) {
+		if( cellCoordinates.containsKey(playerID)) {
+			return cellCoordinates.get(playerID);
+		}
+		
+		ConcurrentHashMap<Integer, int[]> values = new ConcurrentHashMap<>();
+		cellCoordinates.put(playerID, values);
+		return values;
+	}
+
 	private static int getCellHashCode(int[] array) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
@@ -109,17 +133,20 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	public void paintControl(PaintEvent e) {
 		GC gc = new GC(getCanvas());
 
-		recalculateColorMap(cellValues.values());
+		ConcurrentHashMap<Integer, Double> values = getCellValuesOfPlayer(selectedPlayerID);
+		ConcurrentHashMap<Integer, int[]> coordinates = getCellCoordinatesOfPlayer(selectedPlayerID);
+		
+		recalculateColorMap(values.values());
 		
 		renderBackground(gc);
 		
-		for (Entry<Integer, int[]> entry : cellCoordinates.entrySet()) {
+		for (Entry<Integer, int[]> entry : coordinates.entrySet()) {
 			int hash = entry.getKey();
 			int[] cell = entry.getValue();
-			Double percent = cellValues.get(hash);
+			Double percent = values.get(hash);
 			if (percent > 0.0) {
 				gc.setAlpha(220);
-				gc.setBackground(getColorForPercent(cellValues.get(hash)));
+				gc.setBackground(getColorForPercent(values.get(hash)));
 				gc.fillRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1]) - getCoordX(cell[3]), getCoordY(cell[2]) - getCoordY(cell[0]));
 				gc.setAlpha(255);
 				gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
@@ -137,8 +164,7 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 			String time = String.format("%d min %d sec %d ms", TimeUnit.MILLISECONDS.toMinutes(millis),
 					TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
 					millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis)));
-			gc.drawText("TS: " + lastReceivedTuple.getAttribute(tsIndex).toString() + "    MS: " + millis + " ms" + "    " + time + "\nPlayerId: " + lastReceivedTuple.getAttribute(playerIDIndex), 5,
-					5);
+			gc.drawText("Time: " + time + "\nHeatmap of playerID " + selectedPlayerIDString, 5, 5);
 		}
 
 		gc.dispose();
@@ -179,9 +205,34 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	
 	@Override
 	public Map<String, String> onSave() {
-		return super.onSave();
+		Map<String, String> map = Maps.newHashMap();
+		map.put("selectedPlayerID", selectedPlayerIDString);
+		return map;
 	}
 	
+	public void setSelectedPlayerID( String playerIDString ) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(playerIDString));
+		
+		if( !playerIDString.equals(selectedPlayerIDString) ) {
+			selectedPlayerIDString = playerIDString;
+			selectedPlayerID = tryParseToInteger(playerIDString);
+			
+			fireChangeEvent();
+		}
+	}
+	
+	public String getSelectedPlayerID() {
+		return selectedPlayerIDString;
+	}
+	
+	private static int tryParseToInteger(String text) {
+		try {
+			return Integer.parseInt(text);
+		} catch( Throwable t ) {
+			return 1;
+		}
+	}
+
 	@Override
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 		// do nothing
