@@ -13,25 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part;
+package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartFactory;
+import org.eclipse.gef.commands.Command;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 
-public class GraphicalEditPartFactory implements EditPartFactory {
 
-	public EditPart createEditPart(EditPart context, Object model) {
-		if (model instanceof GraphicsLayer) {
-			return new GraphicalLayerEditPart((GraphicsLayer) model);
-		} else if (model instanceof Pictogram) {
-			return new PictogramEditPart((Pictogram) model);
-		} else if (model instanceof Connection){
-			return new ConnectionEditPart((Connection)model);			
+/**
+ * @author DGeesen
+ * 
+ */
+public class ConnectionDeleteCommand extends Command {
+	private Pictogram source;
+	private Pictogram target;
+	private Connection connection;
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
+	public void execute() {
+		if (source == null) {
+			source = connection.getSource();
 		}
-		return null;
+		if (target == null) {
+			target = connection.getTarget();
+		}
+		connection.setSource(null);
+		connection.setTarget(null);
+	}
+
+	public void undo() {
+		connection.setSource(source);
+		connection.setTarget(target);
 	}
 }

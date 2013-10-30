@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
@@ -22,13 +25,16 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-public abstract class Pictogram extends Observable {
+public abstract class Pictogram extends Observable implements Observer {
 
 	private Rectangle constraint;
 	private boolean visibile = true;
-	private PictogramGroup parentGroup;
+	private GraphicsLayer graphicsLayer;
 	private RelationalPredicate relevancePredicate = new RelationalPredicate(new SDFExpression("true", MEP.getInstance()));
 	private String selectedRootName;
+
+	private List<Connection> sourceConnections = new ArrayList<>();
+	private List<Connection> targetConnections = new ArrayList<>();
 
 	private String textTop = "";
 	private String textBottom = "";
@@ -48,7 +54,7 @@ public abstract class Pictogram extends Observable {
 	public Pictogram(Pictogram old) {
 		this.constraint = old.constraint.getCopy();
 		this.visibile = old.visibile;
-		this.parentGroup = old.parentGroup;
+		this.graphicsLayer = old.graphicsLayer;
 		this.relevancePredicate = old.relevancePredicate.clone();
 		this.selectedRootName = old.selectedRootName;
 		this.textTop = old.textTop;
@@ -68,8 +74,8 @@ public abstract class Pictogram extends Observable {
 	protected void setDirty() {
 		refreshVisuals();
 		this.dirty = true;
-		if (this.getParentGroup() != null) {
-			this.getParentGroup().setDirty();
+		if (this.getGraphicsLayer() != null) {
+			this.getGraphicsLayer().setDirty();
 		}
 	}
 
@@ -182,12 +188,12 @@ public abstract class Pictogram extends Observable {
 		this.visibile = visibile;
 	}
 
-	public PictogramGroup getParentGroup() {
-		return parentGroup;
+	public GraphicsLayer getGraphicsLayer() {
+		return graphicsLayer;
 	}
 
-	public void setParentGroup(PictogramGroup parentGroup) {
-		this.parentGroup = parentGroup;
+	public void setGraphicsLayer(GraphicsLayer graphicsLayer) {
+		this.graphicsLayer = graphicsLayer;
 	}
 
 	public RelationalPredicate getRelevancePredicate() {
@@ -290,11 +296,61 @@ public abstract class Pictogram extends Observable {
 
 	public Collection<IPhysicalOperator> getRoots() {
 		if (roots == null) {
-			if (getParentGroup() != null) {
-				this.roots = getParentGroup().getRoots();
+			if (getGraphicsLayer() != null) {
+				this.roots = getGraphicsLayer().getRoots();
 			}
 		}
 		return roots;
+	}
+
+	public List<Connection> getSourceConnections() {
+		return sourceConnections;
+	}
+
+	public List<Connection> getTargetConnections() {
+		return targetConnections;
+	}
+
+	public void addSourceConnection(Connection connection) {
+		getSourceConnections().add(connection);
+		connection.addObserver(this);
+		connection.setGraphicsLayer(this.graphicsLayer);
+		update();
+	}
+
+	public void addTargetConnection(Connection connection) {
+		getTargetConnections().add(connection);
+		connection.addObserver(this);
+		connection.setGraphicsLayer(graphicsLayer);
+		update();
+	}
+
+	public void removeSourceConnection(Connection connection) {
+		getSourceConnections().remove(connection);
+		connection.deleteObserver(this);
+		update();
+
+	}
+
+	public void removeTargetConnection(Connection connection) {
+		getTargetConnections().remove(connection);
+		connection.deleteObserver(this);
+		update();
+	}
+
+	private void update() {		
+		setChanged();
+		notifyObservers();
+		// inform view
+		//OperatorGraphSelectionProvider.getInstance().update();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		update();
 	}
 
 }

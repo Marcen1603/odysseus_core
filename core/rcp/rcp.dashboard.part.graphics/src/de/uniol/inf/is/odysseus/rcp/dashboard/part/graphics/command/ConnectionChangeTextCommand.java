@@ -17,42 +17,49 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 
 import org.eclipse.gef.commands.Command;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 
 /**
  * @author DGeesen
- *
+ * 
  */
-public class PictogramDeleteCommand extends Command{
-	
-	private Pictogram pictogram;
-	private GraphicsLayer pictogramGroup;
-	
-	
+public class ConnectionChangeTextCommand extends Command {
+
+	private String oldText;
+	private String newText;
+	private Connection conn;
+	private boolean target;
+
+	public ConnectionChangeTextCommand(boolean target) {
+		this.target = target;
+	}
+
 	@Override
 	public void execute() {
-		pictogramGroup.removePictogram(pictogram);
+		if (target) {
+			oldText = conn.getTargetText();
+			conn.setTargetText(newText);
+		} else {
+			oldText = conn.getSourceText();
+			conn.setSourceText(newText);
+		}
 	}
+
 	@Override
-	public void undo() {	
-		pictogramGroup.addPictogram(pictogram);
-	}	
-
-	public Pictogram getPictogram() {
-		return pictogram;
+	public void undo() {
+		if (target) {
+			conn.setTargetText(oldText);
+		} else {
+			conn.setSourceText(oldText);
+		}
 	}
 
-	public void setPictogram(Pictogram pictogram) {
-		this.pictogram = pictogram;
+	public void setNewText(String text) {
+		this.newText = text;
 	}
 
-	public GraphicsLayer getPictogramGroup() {
-		return pictogramGroup;
-	}
-
-	public void setPictogramGroup(GraphicsLayer pictogramGroup) {
-		this.pictogramGroup = pictogramGroup;
+	public void setModel(Connection conn) {
+		this.conn = conn;
 	}
 
 }

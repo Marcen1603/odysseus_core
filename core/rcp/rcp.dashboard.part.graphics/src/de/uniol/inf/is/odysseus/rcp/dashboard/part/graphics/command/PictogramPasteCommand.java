@@ -20,7 +20,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.Clipboard;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 /**
  * @author DGeesen
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup
 public class PictogramPasteCommand extends Command{
 	
 	private Pictogram newPictogram;		
-	private PictogramGroup pictogramGroup;
+	private GraphicsLayer graphicsLayer;
 	
 	@Override
 	public void execute() {
@@ -41,8 +41,8 @@ public class PictogramPasteCommand extends Command{
 			cons.x = cons.x + 5;
 			cons.y = cons.y + 5;
 			newOne.setConstraint(cons);
-			pictogramGroup = oldOne.getParentGroup();
-			pictogramGroup.addPictogram(newOne);
+			graphicsLayer = oldOne.getGraphicsLayer();
+			graphicsLayer.addPictogram(newOne);
 			newPictogram = newOne;
 		}
 			
@@ -50,6 +50,6 @@ public class PictogramPasteCommand extends Command{
 	
 	@Override
 	public void undo() {			
-		pictogramGroup.removePictogram(newPictogram);
+		graphicsLayer.removePictogram(newPictogram);
 	}		
 }

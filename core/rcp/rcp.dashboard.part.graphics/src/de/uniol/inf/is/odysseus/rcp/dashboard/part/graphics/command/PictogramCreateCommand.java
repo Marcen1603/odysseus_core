@@ -6,13 +6,13 @@ import org.eclipse.jface.window.Window;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 public class PictogramCreateCommand extends Command {
 
 	private Pictogram pictogram;
 	private Point location;
-	private PictogramGroup parent;	
+	private GraphicsLayer parent;	
 
 	@SuppressWarnings("unchecked")
 	public void execute() {
@@ -20,7 +20,7 @@ public class PictogramCreateCommand extends Command {
 		try {
 			@SuppressWarnings("rawtypes")
 			AbstractPictogramDialog dialog = pictogram.getConfigurationDialog().newInstance();
-			pictogram.setParentGroup(parent);
+			pictogram.setGraphicsLayer(parent);
 			dialog.init(pictogram);
 			if (Window.OK == dialog.open()) {					
 				parent.addPictogram(pictogram);	
@@ -45,7 +45,7 @@ public class PictogramCreateCommand extends Command {
 		this.location = location;
 	}
 
-	public void setParent(PictogramGroup parent) {
+	public void setParent(GraphicsLayer parent) {
 		this.parent = parent;
 	}
 }

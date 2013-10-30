@@ -13,7 +13,6 @@ public class PictogramFactory implements CreationFactory {
 	}
 	
 	public Object getNewObject() {
-		//return new ImagePictogram();
 		try {
 			return type.newInstance();
 		} catch (InstantiationException e) {

@@ -66,10 +66,10 @@ public class ImagePictogram extends Pictogram {
 	}
 
 	public IResource getFile() {
-		if (getParentGroup() == null || getParentGroup().getProject() == null) {
+		if (getGraphicsLayer() == null || getGraphicsLayer().getProject() == null) {
 			return null;
 		}
-		IResource file = getParentGroup().getProject().findMember(filename);
+		IResource file = getGraphicsLayer().getProject().findMember(filename);
 		return file;
 	}
 
@@ -206,6 +206,8 @@ public class ImagePictogram extends Pictogram {
 	public ImagePictogram clone() {	
 		return new ImagePictogram(this);
 	}
+
+	
 
 
 }

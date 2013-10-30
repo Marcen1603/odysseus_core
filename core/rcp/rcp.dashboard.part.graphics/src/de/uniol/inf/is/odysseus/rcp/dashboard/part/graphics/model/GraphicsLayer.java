@@ -27,7 +27,7 @@ import org.eclipse.core.resources.IProject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 
-public class PictogramGroup extends Observable implements Serializable, Observer {
+public class GraphicsLayer extends Observable implements Serializable, Observer {
 
 	private static final long serialVersionUID = 3019435887229998016L;
 
@@ -40,7 +40,7 @@ public class PictogramGroup extends Observable implements Serializable, Observer
 
 	private Collection<IPhysicalOperator> roots;
 
-	public PictogramGroup(String backgroundImagePath, boolean backgroundFileStretch, IProject parentProject) {
+	public GraphicsLayer(String backgroundImagePath, boolean backgroundFileStretch, IProject parentProject) {
 		this.backgroundImagePath = backgroundImagePath;
 		this.setProject(parentProject);
 		this.backgroundFileStretch = backgroundFileStretch;
@@ -67,13 +67,13 @@ public class PictogramGroup extends Observable implements Serializable, Observer
 
 	public void addPictogram(Pictogram pg) {
 		getPictograms().add(pg);
-		pg.setParentGroup(this);
+		pg.setGraphicsLayer(this);
 		changed();
 	}
 
 	public void removePictogram(Pictogram pg) {
 		getPictograms().remove(pg);
-		pg.setParentGroup(null);
+		pg.setGraphicsLayer(null);
 		changed();
 	}
 
@@ -134,5 +134,5 @@ public class PictogramGroup extends Observable implements Serializable, Observer
 
 	public void setRoots(Collection<IPhysicalOperator> roots) {
 		this.roots = roots;
-	}
+	}	
 }

@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PasteAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramChangeConstraintCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramCreateCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 	
@@ -41,8 +41,7 @@ public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 	private Command createPasteAction(LocationRequest request) {
 		PictogramCreateCommand result = new PictogramCreateCommand();
 		result.setLocation(request.getLocation());
-//		result.setPictogram((Pictogram) request.getNewObject());
-		result.setParent((PictogramGroup) getHost().getModel());
+		result.setParent((GraphicsLayer) getHost().getModel());
 		return result;
 	}
 
@@ -52,7 +51,7 @@ public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 			PictogramCreateCommand result = new PictogramCreateCommand();
 			result.setLocation(request.getLocation());
 			result.setPictogram((Pictogram) request.getNewObject());
-			result.setParent((PictogramGroup) getHost().getModel());
+			result.setParent((GraphicsLayer) getHost().getModel());
 			return result;
 		}
 		return null;

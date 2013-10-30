@@ -86,7 +86,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.GraphPalette
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PasteAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part.GraphicalEditPartFactory;
 
 public class DashboardGraphicsPart extends AbstractDashboardPart implements CommandStackListener, ISelectionListener, Observer {
@@ -103,7 +103,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 	private EditDomain editDomain;
 	private ScrollingGraphicalViewer viewer;
-	private PictogramGroup pictogramGroup;
+	private GraphicsLayer pictogramGroup;
 	private boolean backgroundFileStretch = true;
 	private boolean isModelInitialized = false;
 	private PaletteViewerProvider provider;
@@ -159,7 +159,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		super.dispose();
 	}
 
-	private PictogramGroup getRootPictogramGroup() {
+	private GraphicsLayer getRootPictogramGroup() {
 		return pictogramGroup;
 	}
 
@@ -168,7 +168,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	private PaletteRoot getPaletteRoot() {
-		return new GraphPalette();
+		return GraphPalette.createGraphPalette();
 	}
 
 	@Override
@@ -202,7 +202,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 		super.onLoad(saved);
 		setBackgroundFile(saved.get(BACKGROUND_FILE));
 		setBackgroundFileStretch(Boolean.parseBoolean(saved.get(BACKGROUND_FILE_STRETCH)));
-		this.pictogramGroup = new PictogramGroup(getBackgroundFile(), isBackgroundFileStretch(), getProject());
+		this.pictogramGroup = new GraphicsLayer(getBackgroundFile(), isBackgroundFileStretch(), getProject());
 		this.pictogramGroup.addObserver(this);
 		String xmlContent = saved.get(GRAPHICS_CONTENT);
 		try {
@@ -243,7 +243,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			Element root = doc.createElement("pictogramgroup");
 			doc.appendChild(root);
 			if (viewer != null) {
-				PictogramGroup model = (PictogramGroup) viewer.getContents().getModel();
+				GraphicsLayer model = (GraphicsLayer) viewer.getContents().getModel();
 				for (Pictogram p : model.getPictograms()) {
 					Element picNode = doc.createElement("pictogram");
 					picNode.setAttribute("type", p.getClass().getName());
@@ -433,7 +433,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	 */
 	@Override
 	public void update(Observable o, Object arg1) {
-		if (o instanceof PictogramGroup) {
+		if (o instanceof GraphicsLayer) {
 			fireChangeEvent();
 		}
 

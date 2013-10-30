@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPicto
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.PictogramComponentEditPolicy;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.PictogramGraphicalNodeEditPolicy;
 
 public class PictogramEditPart extends AbstractGraphicalEditPart implements Observer {
 
@@ -28,6 +29,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 	}
 
 	protected void createEditPolicies() {
+		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new PictogramGraphicalNodeEditPolicy());
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new PictogramComponentEditPolicy());
 	}
 
@@ -37,7 +39,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 		Pictogram node = (Pictogram) getModel();
 		figure.updateValuesInternal(node);		
 		figure.refresh();
-		PictogramGroupEditPart parent = (PictogramGroupEditPart) getParent();
+		GraphicalLayerEditPart parent = (GraphicalLayerEditPart) getParent();
 		Rectangle constraint = node.getConstraint();
 		if (constraint != null) {
 			Rectangle r = new Rectangle(constraint);
@@ -89,5 +91,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		refreshVisuals();
+		refreshSourceConnections();
+		refreshTargetConnections();
 	}
 }

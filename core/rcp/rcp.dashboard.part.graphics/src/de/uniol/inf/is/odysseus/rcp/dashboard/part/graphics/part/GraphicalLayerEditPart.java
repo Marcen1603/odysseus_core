@@ -17,17 +17,17 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.DashboardGraphicsPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.BackgroundImageLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.GraphXYLayoutEditPolicy;
 
-public class PictogramGroupEditPart extends AbstractGraphicalEditPart implements Observer {
+public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements Observer {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(DashboardGraphicsPart.class);
 	
 	private String imagepath;
 	private boolean stretch;
 
-	public PictogramGroupEditPart(PictogramGroup group) {
+	public GraphicalLayerEditPart(GraphicsLayer group) {
 		setModel(group);
 		this.imagepath = group.getBackgroundImagePath();
 		this.stretch = group.isBackgroundFileStretch();
@@ -49,7 +49,7 @@ public class PictogramGroupEditPart extends AbstractGraphicalEditPart implements
 
 	protected List<Pictogram> getModelChildren() {
 		ArrayList<Pictogram> result = new ArrayList<Pictogram>();
-		result.addAll(((PictogramGroup)getModel()).getPictograms());
+		result.addAll(((GraphicsLayer)getModel()).getPictograms());
 		return result;
 	}
 
@@ -59,14 +59,14 @@ public class PictogramGroupEditPart extends AbstractGraphicalEditPart implements
 	
 	public void activate() {
 		if (!isActive()) {
-			((PictogramGroup)getModel()).addObserver(this);
+			((GraphicsLayer)getModel()).addObserver(this);
 			super.activate();
 		}
 	}
 	
 	public void deactivate() {
 		if (isActive()) {
-			((PictogramGroup)getModel()).deleteObserver(this);
+			((GraphicsLayer)getModel()).deleteObserver(this);
 			super.deactivate();
 		}
 	}

@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramCopyCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramDeleteCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.PictogramGroup;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 /**
  * @author DGeesen
@@ -52,7 +52,7 @@ public class PictogramComponentEditPolicy extends ComponentEditPolicy {
 
 	protected Command createDeleteCommand(GroupRequest request) {
 		PictogramDeleteCommand deleteCommand = new PictogramDeleteCommand();
-		deleteCommand.setPictogramGroup((PictogramGroup) getHost().getParent().getModel());
+		deleteCommand.setPictogramGroup((GraphicsLayer) getHost().getParent().getModel());
 		deleteCommand.setPictogram((Pictogram) getHost().getModel());
 		return deleteCommand;
 	}

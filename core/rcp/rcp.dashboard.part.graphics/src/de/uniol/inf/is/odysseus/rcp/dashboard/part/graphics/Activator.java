@@ -52,5 +52,6 @@ public class Activator extends AbstractUIPlugin {
 	public static ImageDescriptor getImage(String name){
 		return ImageDescriptor.createFromURL(plugin.getBundle().getResource("icons/"+name));
 	}
+	
 
 }

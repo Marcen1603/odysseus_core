@@ -175,8 +175,8 @@ public class MultipleImagePictogram extends Pictogram {
 		ip.setRelevancePredicate("true");
 		ip.setPredicate(predicate);
 		this.images.add(ip);
-		if (getParentGroup() != null) {
-			ip.setParentGroup(getParentGroup());
+		if (getGraphicsLayer() != null) {
+			ip.setGraphicsLayer(getGraphicsLayer());
 		}
 		setDirty();
 		return ip;
@@ -189,10 +189,10 @@ public class MultipleImagePictogram extends Pictogram {
 		return Collections.unmodifiableList(images);
 	}
 
-	public void setParentGroup(PictogramGroup parentGroup) {
-		super.setParentGroup(parentGroup);
+	public void setGraphicsLayer(GraphicsLayer parentGroup) {
+		super.setGraphicsLayer(parentGroup);
 		for (ImagePictogram ip : this.images) {
-			ip.setParentGroup(parentGroup);
+			ip.setGraphicsLayer(parentGroup);
 		}
 	}
 
