@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.debs2013.heatmap;
+package de.uniol.inf.is.odysseus.debs2013.rule;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.debs2013.heatmap.FastHeatMapPO;
