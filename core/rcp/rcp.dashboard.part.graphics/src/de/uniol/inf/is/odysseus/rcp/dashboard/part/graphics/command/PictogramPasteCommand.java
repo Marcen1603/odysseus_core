@@ -19,7 +19,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.Clipboard;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 /**
@@ -28,15 +28,15 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
  */
 public class PictogramPasteCommand extends Command{
 	
-	private Pictogram newPictogram;		
+	private AbstractPictogram newPictogram;		
 	private GraphicsLayer graphicsLayer;
 	
 	@Override
 	public void execute() {
 		Object contents = Clipboard.getDefault().getContents();
-		if(contents instanceof Pictogram){
-			Pictogram oldOne = (Pictogram) contents;			
-			Pictogram newOne = oldOne.clone();			
+		if(contents instanceof AbstractPictogram){
+			AbstractPictogram oldOne = (AbstractPictogram) contents;			
+			AbstractPictogram newOne = oldOne.clone();			
 			Rectangle cons = newOne.getConstraint().getCopy();
 			cons.x = cons.x + 5;
 			cons.y = cons.y + 5;

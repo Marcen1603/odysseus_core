@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 /**
  * @author DGeesen
@@ -62,7 +62,7 @@ public class PasteAction extends WorkbenchPartAction {
 	 * @return
 	 */	
 	private Command createPasteCopyCommand() {
-		if(!(Clipboard.getDefault().getContents() instanceof Pictogram)){
+		if(!(Clipboard.getDefault().getContents() instanceof AbstractPictogram)){
 			return null;
 		}		
 		return new PictogramPasteCommand();		

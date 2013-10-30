@@ -15,27 +15,43 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
-import java.util.Observable;
+import java.util.Map;
+
+import org.eclipse.draw2d.IFigure;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ConnectionDialog;
 
 /**
  * @author DGeesen
  * 
  */
-public class Connection extends Observable{
+public class Connection extends AbstractPart{
 
-	private Pictogram source;
-	private Pictogram target;
+	private AbstractPictogram source;
+	private AbstractPictogram target;
 	private String sourceText = "";
-	private String targetText = "";	
-	private GraphicsLayer graphicsLayer;
-	
+	private String targetText = "";
 	
 
-	public Pictogram getSource() {
+	public Connection(){
+		
+	}
+
+	public Connection(Connection old) {
+		this.source = old.source;
+		this.target = old.target;
+		this.sourceText = old.sourceText;
+		this.targetText = old.targetText;
+	}
+
+	public AbstractPictogram getSource() {
 		return source;
 	}
 
-	public void setSource(Pictogram source) {
+	public void setSource(AbstractPictogram source) {
 		if (source == this.source)
 			return;
 		if (this.source != null) {
@@ -48,11 +64,11 @@ public class Connection extends Observable{
 		update();
 	}
 
-	public Pictogram getTarget() {
+	public AbstractPictogram getTarget() {
 		return target;
 	}
 
-	public void setTarget(Pictogram target) {
+	public void setTarget(AbstractPictogram target) {
 		if (target == this.target)
 			return;
 		if (this.target != null) {
@@ -65,7 +81,7 @@ public class Connection extends Observable{
 		update();
 	}
 
-	public void reconnect(Pictogram sourceNode, Pictogram targetNode) {
+	public void reconnect(AbstractPictogram sourceNode, AbstractPictogram targetNode) {
 		setTarget(targetNode);
 		setSource(sourceNode);		
 	}
@@ -106,17 +122,64 @@ public class Connection extends Observable{
 		update();
 	}
 
-	
-	private void update(){				
-		setChanged();
-		notifyObservers();
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#createPictogramFigure()
+	 */
+	@Override
+	public IFigure createPictogramFigure() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public GraphicsLayer getGraphicsLayer() {
-		return graphicsLayer;
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#load(java.util.Map)
+	 */
+	@Override
+	protected void load(Map<String, String> values) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	public void setGraphicsLayer(GraphicsLayer graphicsLayer) {
-		this.graphicsLayer = graphicsLayer;
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#save(java.util.Map)
+	 */
+	@Override
+	protected void save(Map<String, String> values) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#open(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 */
+	@Override
+	protected void open(IPhysicalOperator root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#process(de.uniol.inf.is.odysseus.core.collection.Tuple)
+	 */
+	@Override
+	protected void process(Tuple<?> tuple) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#clone()
+	 */
+	@Override
+	public Connection clone() {
+		return new Connection(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#getConfigurationDialog()
+	 */
+	@Override
+	public Class<ConnectionDialog> getConfigurationDialog() {
+		return ConnectionDialog.class;
 	}
 }

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 
 import org.eclipse.gef.commands.Command;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 /**
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
  */
 public class PictogramDeleteCommand extends Command{
 	
-	private Pictogram pictogram;
+	private AbstractPictogram pictogram;
 	private GraphicsLayer pictogramGroup;
 	
 	
@@ -39,11 +39,11 @@ public class PictogramDeleteCommand extends Command{
 		pictogramGroup.addPictogram(pictogram);
 	}	
 
-	public Pictogram getPictogram() {
+	public AbstractPictogram getPictogram() {
 		return pictogram;
 	}
 
-	public void setPictogram(Pictogram pictogram) {
+	public void setPictogram(AbstractPictogram pictogram) {
 		this.pictogram = pictogram;
 	}
 

@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 public class PictogramChangeConstraintCommand extends Command {
 	private Rectangle newConstraint;
 	private Rectangle oldConstraint;
-	private Pictogram node;
+	private AbstractPictogram node;
 
 	public void execute() {
 		if (oldConstraint == null){
@@ -25,7 +25,7 @@ public class PictogramChangeConstraintCommand extends Command {
 		this.newConstraint = newConstraint;
 	}
 
-	public void setNode(Pictogram node) {
+	public void setNode(AbstractPictogram node) {
 		this.node = node;
 	}
 }

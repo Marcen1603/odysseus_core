@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 import org.eclipse.gef.commands.Command;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 /**
  * @author DGeesen
@@ -27,10 +27,10 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
 public class ConnectionReconnectCommand extends Command {
 
 	private Connection conn;
-	private Pictogram oldSourceNode;
-	private Pictogram oldTargetNode;
-	private Pictogram newSourceNode;
-	private Pictogram newTargetNode;
+	private AbstractPictogram oldSourceNode;
+	private AbstractPictogram oldTargetNode;
+	private AbstractPictogram newSourceNode;
+	private AbstractPictogram newTargetNode;
 
 	public ConnectionReconnectCommand(Connection conn) {
 		if (conn == null) {
@@ -66,7 +66,7 @@ public class ConnectionReconnectCommand extends Command {
 		return true;
 	}
 
-	public void setNewSourceNode(Pictogram sourceNode) {
+	public void setNewSourceNode(AbstractPictogram sourceNode) {
 		if (sourceNode == null) {
 			throw new IllegalArgumentException();
 		}
@@ -74,7 +74,7 @@ public class ConnectionReconnectCommand extends Command {
 		this.newTargetNode = null;
 	}
 
-	public void setNewTargetNode(Pictogram targetNode) {
+	public void setNewTargetNode(AbstractPictogram targetNode) {
 		if (targetNode == null) {
 			throw new IllegalArgumentException();
 		}

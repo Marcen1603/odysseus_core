@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure;
 import org.eclipse.draw2d.ConnectionEndpointLocator;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 
 /**
@@ -31,11 +30,7 @@ public class ConnectionFigure extends PolylineConnection {
 	private Label sourcePortLabel;
 
 	public ConnectionFigure() {
-		setLineWidth(2);
-		PolygonDecoration deco = new PolygonDecoration();
-		deco.setTemplate(PolygonDecoration.TRIANGLE_TIP);
-		setTargetDecoration(deco);
-
+		setLineWidth(2);		
 		targetPortLabel = new Label(Integer.toString(0));
 		targetPortLabel.setOpaque(false);		
 		add(targetPortLabel, new ConnectionEndpointLocator(this, true));
@@ -65,6 +60,6 @@ public class ConnectionFigure extends PolylineConnection {
 
 	public void setSourcePortLabel(Label sourcePortLabel) {
 		this.sourcePortLabel = sourcePortLabel;
-	}
-
+	}	
+	
 }

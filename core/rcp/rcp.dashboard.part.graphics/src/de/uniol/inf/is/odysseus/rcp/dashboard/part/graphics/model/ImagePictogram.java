@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * @author DGeesen
  * 
  */
-public class ImagePictogram extends Pictogram {
+public class ImagePictogram extends AbstractPictogram {
 
 	private String filename = "";
 	private RelationalPredicate predicate;

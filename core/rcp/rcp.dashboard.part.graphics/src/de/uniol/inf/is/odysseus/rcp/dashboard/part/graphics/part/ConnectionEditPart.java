@@ -28,7 +28,9 @@ import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.window.Window;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ConnectionDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.editing.ConnectionCellEditorLocator;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.editing.ConnectionDirectEditManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ConnectionFigure;
@@ -88,6 +90,20 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 			if (req instanceof DirectEditRequest) {
 				DirectEditRequest der = (DirectEditRequest) req;
 				performDirectEditing(der.getLocation());
+			}else{
+				if (req.getType() == RequestConstants.REQ_OPEN) {
+					try {			
+						Connection connection = ((Connection) getModel());
+						ConnectionDialog dialog = connection.getConfigurationDialog().newInstance();
+						dialog.init(connection);
+						if (Window.OK == dialog.open()) {
+							// hint: save is invoked by ok button 
+							refreshVisuals();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

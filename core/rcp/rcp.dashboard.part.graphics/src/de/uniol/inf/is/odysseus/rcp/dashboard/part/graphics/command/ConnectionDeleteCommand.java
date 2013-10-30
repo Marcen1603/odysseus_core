@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 import org.eclipse.gef.commands.Command;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 
 /**
@@ -26,8 +26,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
  * 
  */
 public class ConnectionDeleteCommand extends Command {
-	private Pictogram source;
-	private Pictogram target;
+	private AbstractPictogram source;
+	private AbstractPictogram target;
 	private Connection connection;
 
 	public void setConnection(Connection connection) {

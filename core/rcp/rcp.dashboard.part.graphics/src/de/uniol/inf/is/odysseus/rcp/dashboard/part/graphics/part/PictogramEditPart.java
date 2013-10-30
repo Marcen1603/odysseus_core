@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,18 +15,19 @@ import org.eclipse.jface.window.Window;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.AbstractPictogramFigure;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.PictogramComponentEditPolicy;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.PictogramGraphicalNodeEditPolicy;
 
 public class PictogramEditPart extends AbstractGraphicalEditPart implements Observer {
 
-	public PictogramEditPart(Pictogram node) {
+	public PictogramEditPart(AbstractPictogram node) {
 		setModel(node);
 	}
 
 	protected IFigure createFigure() {
-		return ((Pictogram) getModel()).createPictogramFigure();
+		return ((AbstractPictogram) getModel()).createPictogramFigure();
 	}
 
 	protected void createEditPolicies() {
@@ -35,8 +37,8 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 
 	public void refreshVisuals() {
 		@SuppressWarnings("unchecked")
-		AbstractPictogramFigure<Pictogram> figure = (AbstractPictogramFigure<Pictogram>) getFigure();
-		Pictogram node = (Pictogram) getModel();
+		AbstractPictogramFigure<AbstractPictogram> figure = (AbstractPictogramFigure<AbstractPictogram>) getFigure();
+		AbstractPictogram node = (AbstractPictogram) getModel();
 		figure.updateValuesInternal(node);		
 		figure.refresh();
 		GraphicalLayerEditPart parent = (GraphicalLayerEditPart) getParent();
@@ -55,7 +57,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void performRequest(Request req) {
-		Pictogram pg = ((Pictogram) getModel());
+		AbstractPictogram pg = ((AbstractPictogram) getModel());
 		if (req.getType() == RequestConstants.REQ_OPEN) {
 			try {				
 				AbstractPictogramDialog dialog = pg.getConfigurationDialog().newInstance();
@@ -76,14 +78,14 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 
 	public void activate() {
 		if (!isActive()) {
-			((Pictogram) getModel()).addObserver(this);
+			((AbstractPictogram) getModel()).addObserver(this);
 		}
 		super.activate();
 	}
 
 	public void deactivate() {
 		if (isActive()) {
-			((Pictogram) getModel()).deleteObserver(this);
+			((AbstractPictogram) getModel()).deleteObserver(this);
 		}
 		super.deactivate();
 	}
@@ -93,5 +95,14 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 		refreshVisuals();
 		refreshSourceConnections();
 		refreshTargetConnections();
+	}
+	
+	
+	protected List<Connection> getModelSourceConnections() {
+		return ((AbstractPictogram) getModel()).getSourceConnections();
+	}
+
+	protected List<Connection> getModelTargetConnections() {
+		return ((AbstractPictogram) getModel()).getTargetConnections();
 	}
 }

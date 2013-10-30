@@ -2,13 +2,13 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.factory;
 
 import org.eclipse.gef.requests.CreationFactory;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 public class PictogramFactory implements CreationFactory {
 	
-	private Class<? extends Pictogram> type;
+	private Class<? extends AbstractPictogram> type;
 
-	public PictogramFactory(Class<? extends Pictogram> type){
+	public PictogramFactory(Class<? extends AbstractPictogram> type){
 		this.type = type;
 	}
 	
@@ -24,6 +24,6 @@ public class PictogramFactory implements CreationFactory {
 	}
 
 	public Object getObjectType() {
-		return Pictogram.class;
+		return AbstractPictogram.class;
 	}
 }

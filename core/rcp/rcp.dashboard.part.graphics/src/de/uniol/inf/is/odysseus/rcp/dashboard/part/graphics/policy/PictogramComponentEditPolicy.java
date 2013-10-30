@@ -23,7 +23,7 @@ import org.eclipse.gef.requests.GroupRequest;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramCopyCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramDeleteCommand;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 /**
@@ -46,14 +46,14 @@ public class PictogramComponentEditPolicy extends ComponentEditPolicy {
 	
 	private Command createCopyCommand(GroupRequest request) {
 		PictogramCopyCommand copyCommand = new PictogramCopyCommand();		
-		copyCommand.setPictogram((Pictogram) getHost().getModel());
+		copyCommand.setPictogram((AbstractPictogram) getHost().getModel());
 		return copyCommand;
 	}
 
 	protected Command createDeleteCommand(GroupRequest request) {
 		PictogramDeleteCommand deleteCommand = new PictogramDeleteCommand();
 		deleteCommand.setPictogramGroup((GraphicsLayer) getHost().getParent().getModel());
-		deleteCommand.setPictogram((Pictogram) getHost().getModel());
+		deleteCommand.setPictogram((AbstractPictogram) getHost().getModel());
 		return deleteCommand;
 	}
 	

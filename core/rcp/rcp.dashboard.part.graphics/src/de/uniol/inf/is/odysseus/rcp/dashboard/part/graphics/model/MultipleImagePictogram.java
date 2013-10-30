@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.MultipleImage
  * @author DGeesen
  * 
  */
-public class MultipleImagePictogram extends Pictogram {
+public class MultipleImagePictogram extends AbstractPictogram {
 
 	private ArrayList<ImagePictogram> images = new ArrayList<>();
 	private boolean stretch = true;

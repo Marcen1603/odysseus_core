@@ -5,12 +5,12 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.window.Window;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 public class PictogramCreateCommand extends Command {
 
-	private Pictogram pictogram;
+	private AbstractPictogram pictogram;
 	private Point location;
 	private GraphicsLayer parent;	
 
@@ -37,7 +37,7 @@ public class PictogramCreateCommand extends Command {
 	}
 		
 
-	public void setPictogram(Pictogram pg) {
+	public void setPictogram(AbstractPictogram pg) {
 		this.pictogram = pg;
 	}
 

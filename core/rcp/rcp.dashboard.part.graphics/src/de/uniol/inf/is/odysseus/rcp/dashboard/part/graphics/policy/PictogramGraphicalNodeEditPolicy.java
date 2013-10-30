@@ -23,7 +23,7 @@ import org.eclipse.gef.requests.ReconnectRequest;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.ConnectionCreateCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.ConnectionReconnectCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 
 /**
@@ -35,7 +35,7 @@ public class PictogramGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 	
 	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = new ConnectionCreateCommand();
-		result.setSource((Pictogram) getHost().getModel());
+		result.setSource((AbstractPictogram) getHost().getModel());
 		result.setConnection((Connection) request.getNewObject());
 		request.setStartCommand(result);
 		return result;
@@ -49,7 +49,7 @@ public class PictogramGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 	@Override
 	protected Command getConnectionCompleteCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = (ConnectionCreateCommand) request.getStartCommand();
-		result.setTarget((Pictogram) getHost().getModel());
+		result.setTarget((AbstractPictogram) getHost().getModel());
 		return result;
 	}
 
@@ -61,7 +61,7 @@ public class PictogramGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 	@Override
 	protected Command getReconnectTargetCommand(ReconnectRequest request) {
 		Connection conn = (Connection)request.getConnectionEditPart().getModel();
-		Pictogram targetNode = (Pictogram)getHost().getModel();
+		AbstractPictogram targetNode = (AbstractPictogram)getHost().getModel();
         ConnectionReconnectCommand cmd = new ConnectionReconnectCommand(conn);
         cmd.setNewTargetNode(targetNode);       
         return cmd;
@@ -75,7 +75,7 @@ public class PictogramGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 	@Override
 	protected Command getReconnectSourceCommand(ReconnectRequest request) {
 		Connection conn = (Connection)request.getConnectionEditPart().getModel();
-		Pictogram sourceNode = (Pictogram)getHost().getModel();
+		AbstractPictogram sourceNode = (AbstractPictogram)getHost().getModel();
         ConnectionReconnectCommand cmd = new ConnectionReconnectCommand(conn);
         cmd.setNewSourceNode(sourceNode);       
         return cmd;

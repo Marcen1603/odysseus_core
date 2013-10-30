@@ -1,0 +1,167 @@
+package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
+
+public class ConnectionDialog extends AbstractPartDialog<Connection> {
+
+	private ScrolledComposite scroller;
+	private Composite container;
+
+	private List<ColorEntry> entries = new ArrayList<>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog#createWidgetAdrea(org.eclipse.swt.widgets.Composite)
+	 */
+	@Override
+	public Control createWidgetAdrea(final Composite parent) {
+		Label lblChooseAnImage = new Label(parent, SWT.NONE);
+		lblChooseAnImage.setText("Order-dependent list of images");
+
+		Button btnBrowseToAdd = new Button(parent, SWT.PUSH);
+		btnBrowseToAdd.setText("Add a color...");
+		scroller = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
+		GridData gd_scroller = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd_scroller.heightHint = 250;
+		scroller.setLayoutData(gd_scroller);
+		container = new Composite(scroller, SWT.NONE);
+		scroller.setContent(container);
+		scroller.setExpandVertical(true);
+		scroller.setExpandHorizontal(true);
+		scroller.setMinHeight(250);
+
+		GridLayout containerLayout = new GridLayout(2, false);
+		containerLayout.marginWidth = 0;
+		containerLayout.marginHeight = 0;
+		container.setLayout(containerLayout);
+
+		GridData gd_container = new GridData(GridData.FILL_HORIZONTAL);
+		gd_container.heightHint = 250;
+		gd_container.minimumHeight = 250;
+		container.setLayoutData(gd_container);
+
+		for (ColorEntry ce : entries) {
+			addColorEntryToContainer(ce);
+		}
+
+		btnBrowseToAdd.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+
+				ColorSelector colorSelector = new ColorSelector(parent);
+				colorSelector.open();
+				if (colorSelector.getColorValue() != null) {
+
+					ColorEntry ce = new ColorEntry();
+					ce.color = new Color(Display.getCurrent(), colorSelector.getColorValue());
+					ce.predicate = "true";
+					addColorEntryToContainer(ce);
+					entries.add(ce);
+				}
+			}
+
+		});
+		relayout(container, scroller);
+		return parent;
+	}
+
+	private void relayout(Composite container, ScrolledComposite scroller) {
+		scroller.setMinHeight(container.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		container.layout();
+		scroller.layout(true);
+	}
+
+	private void addColorEntryToContainer(final ColorEntry ce) {
+		Composite composite = new Composite(container, SWT.NONE);
+		composite.setLayout(new GridLayout(2, true));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+		Label imgLabel = new Label(composite, SWT.NONE);			
+		imgLabel.setBackground(ce.color);
+		GridData gd_imgLabel = new GridData(GridData.FILL_HORIZONTAL);
+		gd_imgLabel.widthHint = 50;
+		gd_imgLabel.grabExcessHorizontalSpace = true;
+		imgLabel.setLayoutData(gd_imgLabel);
+		
+		
+		final Text predicateText = new Text(composite, SWT.BORDER);
+		GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);
+		gd_dataFolderText.widthHint = 287;
+		predicateText.setLayoutData(gd_dataFolderText);
+		predicateText.setText(ce.predicate);
+		predicateText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				ce.predicate = predicateText.getText();
+
+			}
+		});
+
+		ce.composite = composite;
+
+		final Button removeButton = new Button(container, SWT.PUSH);
+		removeButton.setText("X");
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ce.composite.dispose();
+				entries.remove(ce);
+				removeButton.dispose();
+				ce.color.dispose();
+				relayout(container, scroller);
+			}
+		});
+		relayout(container, scroller);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog#saveValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart)
+	 */
+	@Override
+	public void saveValues(Connection pg) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog#loadValues(de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart)
+	 */
+	@Override
+	public void loadValues(Connection pg) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private class ColorEntry {
+		protected Color color;
+		protected String predicate;
+		protected Composite composite;
+
+	}
+
+}

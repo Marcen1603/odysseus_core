@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.DashboardGraphicsPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.BackgroundImageLayer;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.GraphXYLayoutEditPolicy;
 
@@ -47,8 +47,8 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 		return layer;
 	}
 
-	protected List<Pictogram> getModelChildren() {
-		ArrayList<Pictogram> result = new ArrayList<Pictogram>();
+	protected List<AbstractPictogram> getModelChildren() {
+		ArrayList<AbstractPictogram> result = new ArrayList<AbstractPictogram>();
 		result.addAll(((GraphicsLayer)getModel()).getPictograms());
 		return result;
 	}

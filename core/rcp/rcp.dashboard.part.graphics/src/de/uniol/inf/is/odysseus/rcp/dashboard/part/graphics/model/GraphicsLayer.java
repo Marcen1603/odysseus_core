@@ -34,7 +34,7 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 	private String backgroundImagePath;
 	private boolean backgroundFileStretch;
 
-	List<Pictogram> nodes = new ArrayList<Pictogram>();
+	List<AbstractPictogram> nodes = new ArrayList<AbstractPictogram>();
 
 	private IProject project;
 
@@ -46,12 +46,12 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 		this.backgroundFileStretch = backgroundFileStretch;
 	}
 
-	public List<Pictogram> getPictograms() {
+	public List<AbstractPictogram> getPictograms() {
 		return nodes;
 	}
 
 	public void processTuple(IPhysicalOperator senderOperator, Tuple<?> tuple){
-		for(Pictogram p : nodes){
+		for(AbstractPictogram p : nodes){
 			if(p.getSelectedRootName().equals(senderOperator.getName())){
 				p.internalProcess(tuple);
 			}
@@ -60,18 +60,18 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 
 	public void open(Collection<IPhysicalOperator> roots) {
 		this.roots = roots;
-		for (Pictogram p : nodes) {
+		for (AbstractPictogram p : nodes) {
 			p.internalOpen(roots);
 		}
 	}
 
-	public void addPictogram(Pictogram pg) {
+	public void addPictogram(AbstractPictogram pg) {
 		getPictograms().add(pg);
 		pg.setGraphicsLayer(this);
 		changed();
 	}
 
-	public void removePictogram(Pictogram pg) {
+	public void removePictogram(AbstractPictogram pg) {
 		getPictograms().remove(pg);
 		pg.setGraphicsLayer(null);
 		changed();

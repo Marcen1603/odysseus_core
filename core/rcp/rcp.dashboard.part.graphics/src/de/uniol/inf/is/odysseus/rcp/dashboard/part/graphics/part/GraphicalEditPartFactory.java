@@ -20,15 +20,15 @@ import org.eclipse.gef.EditPartFactory;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 public class GraphicalEditPartFactory implements EditPartFactory {
 
 	public EditPart createEditPart(EditPart context, Object model) {
 		if (model instanceof GraphicsLayer) {
 			return new GraphicalLayerEditPart((GraphicsLayer) model);
-		} else if (model instanceof Pictogram) {
-			return new PictogramEditPart((Pictogram) model);
+		} else if (model instanceof AbstractPictogram) {
+			return new PictogramEditPart((AbstractPictogram) model);
 		} else if (model instanceof Connection){
 			return new ConnectionEditPart((Connection)model);			
 		}

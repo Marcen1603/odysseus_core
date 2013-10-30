@@ -85,7 +85,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.GraphPalette;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PasteAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part.GraphicalEditPartFactory;
 
@@ -220,7 +220,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 							className = ImagePictogram.class.getName();
 						}
 
-						Pictogram pictogram = (Pictogram) Class.forName(className).newInstance();
+						AbstractPictogram pictogram = (AbstractPictogram) Class.forName(className).newInstance();
 						pictogram.loadFromXML(pictogramNode);
 						this.pictogramGroup.addPictogram(pictogram);
 					}
@@ -244,7 +244,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			doc.appendChild(root);
 			if (viewer != null) {
 				GraphicsLayer model = (GraphicsLayer) viewer.getContents().getModel();
-				for (Pictogram p : model.getPictograms()) {
+				for (AbstractPictogram p : model.getPictograms()) {
 					Element picNode = doc.createElement("pictogram");
 					picNode.setAttribute("type", p.getClass().getName());
 					p.getXML(picNode, doc);

@@ -11,14 +11,14 @@ import org.eclipse.gef.requests.LocationRequest;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PasteAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramChangeConstraintCommand;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PictogramCreateCommand;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 	
 	protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
 		PictogramChangeConstraintCommand changeConstraintCommand = new PictogramChangeConstraintCommand();
-		changeConstraintCommand.setNode((Pictogram) child.getModel());
+		changeConstraintCommand.setNode((AbstractPictogram) child.getModel());
 		changeConstraintCommand.setNewConstraint((Rectangle) constraint);
 		return changeConstraintCommand;
 	}
@@ -47,10 +47,10 @@ public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 
 	@Override
 	protected Command getCreateCommand(CreateRequest request) {
-		if (request.getNewObjectType().equals(Pictogram.class)) {
+		if (request.getNewObjectType().equals(AbstractPictogram.class)) {
 			PictogramCreateCommand result = new PictogramCreateCommand();
 			result.setLocation(request.getLocation());
-			result.setPictogram((Pictogram) request.getNewObject());
+			result.setPictogram((AbstractPictogram) request.getNewObject());
 			result.setParent((GraphicsLayer) getHost().getModel());
 			return result;
 		}
