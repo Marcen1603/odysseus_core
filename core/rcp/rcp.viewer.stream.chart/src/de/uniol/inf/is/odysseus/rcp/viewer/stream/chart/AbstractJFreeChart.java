@@ -33,6 +33,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -507,5 +508,10 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@ChartSetting(name = "Chart title", type = Type.GET)
 	public String getChartTitle() {
 		return chartTitle;
+	}
+	
+	@Override
+	public Point getPreferredSize() {
+		return new Point(500, 300);
 	}
 }

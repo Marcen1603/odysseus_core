@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchPart;
@@ -50,6 +51,7 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	
 	public void setSinkNames( String sinkNames );
 	public String getSinkNames();
+	public Point getPreferredSize();
 	
 	public void addListener(IDashboardPartListener listener);
 	public void removeListener(IDashboardPartListener listener);

@@ -93,15 +93,19 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 			@Override
 			protected void dropDashboardPartPlacement(IFile dashboardPartFile, DropTargetEvent event) {
 				try {
-					final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile, site.getPart());
-					final Point position = dashboardControl.getComposite().toControl(event.x, event.y);
-					final DashboardPartPlacement place = new DashboardPartPlacement(part, dashboardPartFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH, DEFAULT_PART_HEIGHT);
+					IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile, site.getPart());
+					
+					Point position = dashboardControl.getComposite().toControl(event.x, event.y);
+					Point size = determinePreferredSize(part);
+					
+					DashboardPartPlacement place = new DashboardPartPlacement(part, dashboardPartFile.getFullPath().toString(), position.x, position.y, size.x, size.y);
 
 					add(place);
 				} catch (Throwable t) {
 					LOG.error("Exception during dropping dashboard part placement", t);
 				}
 			}
+
 		};
 
 		addListeners();
@@ -113,6 +117,15 @@ public final class Dashboard implements PaintListener, MouseListener, MouseMoveL
 		site.setSelectionProvider(selector);
 
 		parent.layout();
+	}
+
+	private Point determinePreferredSize(final IDashboardPart part) {
+		Point size = part.getPreferredSize();
+		if( size == null || size.x <= 0 || size.y <= 0 ) {
+			LOG.error("Invalid preferred size delivered from part {}", part);
+			size = new Point(DEFAULT_PART_WIDTH, DEFAULT_PART_HEIGHT);
+		}
+		return size;
 	}
 
 	public Object getAdapter(Class<?> adapter) {

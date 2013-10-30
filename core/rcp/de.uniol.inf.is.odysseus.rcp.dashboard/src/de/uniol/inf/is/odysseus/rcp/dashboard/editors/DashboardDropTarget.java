@@ -44,15 +44,6 @@ public abstract class DashboardDropTarget {
 		Optional<IFile> optDashboardPartFile = getDashboardPartFile(event);
 		if (optDashboardPartFile.isPresent()) {
 			dropDashboardPartPlacement(optDashboardPartFile.get(), event);
-//			try {
-//				final IDashboardPart part = DASHBOARD_PART_HANDLER.load(dashboardPartFile);
-//				final Point position = composite.toControl(event.x, event.y);
-//				final DashboardPartPlacement place = new DashboardPartPlacement(part, dashboardPartFile.getFullPath().toString(), position.x, position.y, DEFAULT_PART_WIDTH, DEFAULT_PART_HEIGHT);
-//	
-//				dropDashboardPartPlacement(place);
-//			} catch( Throwable t ) {
-//				LOG.error("Exception during dropping dashboard part placement", t);
-//			}
 		}
 	}
 	

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,5 +173,10 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	
 	public void setEditorActionBarContributor(IDashboardActionBarContributor editorActionBarContributor){
 		this.editorActionBarContributor = editorActionBarContributor;
+	}
+	
+	@Override
+	public Point getPreferredSize() {
+		return new Point(500, 300);
 	}
 }
