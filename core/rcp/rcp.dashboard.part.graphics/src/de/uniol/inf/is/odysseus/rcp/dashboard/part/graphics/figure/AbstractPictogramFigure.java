@@ -23,13 +23,13 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Pictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
 
 /**
  * @author DGeesen
  * 
  */
-public abstract class AbstractPictogramFigure<T extends Pictogram> extends Figure {
+public abstract class AbstractPictogramFigure<T extends AbstractPictogram> extends Figure {
 
 	private Label topTextlabel;
 	private Label bottomTextlabel;
@@ -82,6 +82,7 @@ public abstract class AbstractPictogramFigure<T extends Pictogram> extends Figur
 		Rectangle r = getBounds().getCopy();
 		r.y = r.y + topTextlabel.getPreferredSize().height;
 		r.height = r.height - topTextlabel.getPreferredSize().height - bottomTextlabel.getPreferredSize().height;
+		r.height = Math.max(r.height, 0);
 		return r;
 	}
 
