@@ -38,8 +38,8 @@ public class PictogramPasteCommand extends Command{
 			AbstractPictogram oldOne = (AbstractPictogram) contents;			
 			AbstractPictogram newOne = oldOne.clone();			
 			Rectangle cons = newOne.getConstraint().getCopy();
-			cons.x = cons.x + 5;
-			cons.y = cons.y + 5;
+			cons.x = cons.x + 50;
+			cons.y = cons.y + 50;
 			newOne.setConstraint(cons);
 			graphicsLayer = oldOne.getGraphicsLayer();
 			graphicsLayer.addPictogram(newOne);

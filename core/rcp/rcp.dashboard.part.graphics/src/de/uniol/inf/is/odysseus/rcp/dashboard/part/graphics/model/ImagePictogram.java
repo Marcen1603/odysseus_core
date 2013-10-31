@@ -59,7 +59,7 @@ public class ImagePictogram extends AbstractPictogram {
 	public ImagePictogram(ImagePictogram old) {
 		super(old);
 		this.filename = old.filename;
-		this.predicate = old.predicate.clone();
+		this.setPredicate(old.predicate.getExpression().getExpressionString());
 		this.stretch = old.stretch;
 		this.center = old.center;
 		this.keepRatio = old.keepRatio;

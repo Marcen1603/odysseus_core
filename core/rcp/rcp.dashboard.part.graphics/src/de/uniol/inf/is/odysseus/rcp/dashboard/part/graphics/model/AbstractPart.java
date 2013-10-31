@@ -42,7 +42,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 	public AbstractPart(AbstractPart old) {
 		this.visibile = old.visibile;
 		this.graphicsLayer = old.graphicsLayer;
-		this.relevancePredicate = old.relevancePredicate.clone();
+		this.setRelevancePredicate(old.relevancePredicate.getExpression().getExpressionString());		
 		this.selectedRootName = old.selectedRootName;
 		this.dirty = old.dirty;
 	}
