@@ -45,22 +45,23 @@ public class Connection extends AbstractPart {
 
 	private AbstractPictogram source;
 	private AbstractPictogram target;
-	
-	
-	
-	
+
+	public enum TextPosition {
+		Top, Bottom, Target, Source
+	};
+
 	private int width = 2;
 	private Color currentColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private List<Pair<Color, RelationalPredicate>> entries = new ArrayList<>();
-	
+
 	private String bottomText = "";
 	private SDFExpression bottomExpression;
 	private String currentTextBottom;
-	
+
 	private String topText = "";
 	private SDFExpression topExpression;
 	private String currentTextTop;
-	
+
 	private String sourceText = "";
 	private SDFExpression sourceExpression;
 	private String currentTextSource;
@@ -69,7 +70,6 @@ public class Connection extends AbstractPart {
 	private SDFExpression targetExpression;
 	private String currentTextTarget;
 
-	
 	public Connection() {
 
 	}
@@ -83,7 +83,7 @@ public class Connection extends AbstractPart {
 		this.topText = old.topText;
 		this.width = old.width;
 		this.currentColor = old.currentColor;
-		for(Pair<Color, RelationalPredicate> e : entries){
+		for (Pair<Color, RelationalPredicate> e : entries) {
 			this.addColor(e.getE1(), e.getE2().getExpression().getExpressionString());
 		}
 	}
@@ -262,7 +262,7 @@ public class Connection extends AbstractPart {
 			if (this.targetExpression != null) {
 				this.targetExpression.initAttributePositions(root.getOutputSchema());
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -390,7 +390,7 @@ public class Connection extends AbstractPart {
 		}
 		setDirty();
 	}
-	
+
 	public String getTextBottomToShow() {
 		return currentTextBottom;
 	}
@@ -398,13 +398,45 @@ public class Connection extends AbstractPart {
 	public String getTextTopToShow() {
 		return currentTextTop;
 	}
-	
+
 	public String getTextTargetToShow() {
 		return currentTextTarget;
 	}
-	
+
 	public String getTextSourceToShow() {
 		return currentTextSource;
 	}
-	
+
+	public String getTextByPosition(TextPosition position) {
+		switch (position) {
+		case Top:
+			return getTopText();
+		case Bottom:
+			return getBottomText();
+		case Source:
+			return getSourceText();
+		case Target:
+			return getTargetText();
+		}
+		return "";
+	}
+
+	public void setTextByPosition(TextPosition position, String text) {
+		switch (position) {
+		case Top:
+			setTopText(text);
+			break;
+		case Bottom:
+			setBottomText(text);
+			break;
+		case Source:
+			setSourceText(text);
+			break;
+		case Target:
+			setTargetText(text);
+			break;
+		}
+
+	}
+
 }

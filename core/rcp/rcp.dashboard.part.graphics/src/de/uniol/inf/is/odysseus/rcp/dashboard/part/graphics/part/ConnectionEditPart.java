@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.editing.ConnectionCe
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.editing.ConnectionDirectEditManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ConnectionFigure;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection.TextPosition;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.ConnectionDirectEditPolicy;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.ConnectionEditPolicy;
 
@@ -116,9 +117,11 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 	 */
 	private void performDirectEditing(Point location) {
 		ConnectionFigure figure = (ConnectionFigure) getFigure();
-		Label label = figure.getNearestLabel(location);
-		if (label != null) {
-			ConnectionDirectEditManager manager = new ConnectionDirectEditManager(this, TextCellEditor.class, new ConnectionCellEditorLocator(label), label);
+		TextPosition position = figure.getNearestPosition(location);
+		if (position != null) {
+			Label label = figure.getLabelByPosition(position);			
+			String initialValue = ((Connection)getModel()).getTextByPosition(position);
+			ConnectionDirectEditManager manager = new ConnectionDirectEditManager(this, TextCellEditor.class, new ConnectionCellEditorLocator(label), initialValue, position);			
 			manager.show();
 		}
 	}

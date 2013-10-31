@@ -16,13 +16,15 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy;
 
 
+import org.eclipse.draw2d.Label;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.DirectEditPolicy;
 import org.eclipse.gef.requests.DirectEditRequest;
-import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.ConnectionChangeTextCommand;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ConnectionFigure;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection.TextPosition;
 
 /**
  * @author DGeesen
@@ -37,8 +39,10 @@ public class ConnectionDirectEditPolicy extends DirectEditPolicy {
 	 */
 	@Override
 	protected Command getDirectEditCommand(DirectEditRequest request) {
-		Point location = request.getCellEditor().getControl().getLocation();
-		ConnectionChangeTextCommand command = new ConnectionChangeTextCommand(isTargetRequest(location));
+//		Point location = request.getCellEditor().getControl().getLocation();		
+		ConnectionFigure figure = ((ConnectionFigure) getHostFigure());
+		TextPosition pos = figure.getNearestPosition(request.getLocation());		
+		ConnectionChangeTextCommand command = new ConnectionChangeTextCommand(pos);
 		command.setModel((Connection) getHost().getModel());
 		command.setNewText(request.getCellEditor().getValue().toString());
 		return command;
@@ -51,25 +55,10 @@ public class ConnectionDirectEditPolicy extends DirectEditPolicy {
 	 */
 	@Override
 	protected void showCurrentEditValue(DirectEditRequest request) {
-//		String value = (String) request.getCellEditor().getValue();
-//		if (isTargetRequest(request)) {
-//			((ConnectionFigure) getHostFigure()).getTargetPortLabel().setText(value);
-//		} else {
-//			((ConnectionFigure) getHostFigure()).getSourcePortLabel().setText(value);
-//		}
+		String value = (String) request.getCellEditor().getValue();
+		ConnectionFigure figure = ((ConnectionFigure) getHostFigure());
+		TextPosition pos = (TextPosition) request.getDirectEditFeature();
+		Label label = figure.getLabelByPosition(pos);
+		label.setText(value);
 	}
-
-	private boolean isTargetRequest(Point location) {
-//		ConnectionFigure figure = (ConnectionFigure) getHostFigure();
-//		org.eclipse.draw2d.geometry.Point p = new org.eclipse.draw2d.geometry.Point(location.x, location.y);
-//		double distanceToEnd = figure.getTargetTextLabel().getLocation().getDistance(p);
-//		double distanceToStart = figure.getSourceTextLabel().getLocation().getDistance(p);
-//		if (distanceToEnd < distanceToStart) {
-//			return true;
-//		} else {
-//			return false;
-//		}
-		return true;
-	}
-
 }

@@ -21,6 +21,8 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.geometry.Point;
 
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection.TextPosition;
+
 /**
  * @author DGeesen
  * 
@@ -29,44 +31,48 @@ public class ConnectionFigure extends PolylineConnection {
 
 	private Label targetTextLabel;
 	private Label sourceTextLabel;
-	
+
 	private Label topTextlabel;
 	private Label bottomTextlabel;
 
+	private static final int TEXT_PADDING = 10;
+	
 	public ConnectionFigure() {
-		setLineWidth(2);		
+		setLineWidth(2);
 		targetTextLabel = new Label("");
-		targetTextLabel.setOpaque(false);		
+		targetTextLabel.setOpaque(false);
 		add(targetTextLabel, new ConnectionEndpointLocator(this, true));
 
 		sourceTextLabel = new Label("");
 		sourceTextLabel.setOpaque(false);
 		add(sourceTextLabel, new ConnectionEndpointLocator(this, false));
-		
+
 		topTextlabel = new Label("");
 		bottomTextlabel = new Label("");
-		add(topTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, -10));
-		add(bottomTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, 10));
+		add(topTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, ((getLineWidth()/2)+TEXT_PADDING)*-1));
+		add(bottomTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, (getLineWidth()/2)+TEXT_PADDING));
 	}
 
-//	public void paintFigure(Graphics g) {
-//		super.paintFigure(g);
-//		Rectangle r = getBounds().getCopy();
-//		Point center = new Point(r.width / 2, r.height / 2);
-//		Dimension topDim = topTextlabel.getPreferredSize();
-//		setConstraint(topTextlabel, new Rectangle(center.x - topDim.width / 2, 0, topDim.width, topDim.height));
-//
-//		Dimension bottomDim = bottomTextlabel.getPreferredSize();
-//		setConstraint(bottomTextlabel, new Rectangle(center.x - bottomDim.width / 2, r.height - bottomDim.height, bottomDim.width, bottomDim.height));
-//
-//		topTextlabel.invalidate();
-//		bottomTextlabel.invalidate();
-//		targetTextLabel.invalidate();
-//		sourceTextLabel.invalidate();
-//	}
-	
+	// public void paintFigure(Graphics g) {
+	// super.paintFigure(g);
+	// Rectangle r = getBounds().getCopy();
+	// Point center = new Point(r.width / 2, r.height / 2);
+	// Dimension topDim = topTextlabel.getPreferredSize();
+	// setConstraint(topTextlabel, new Rectangle(center.x - topDim.width / 2, 0, topDim.width, topDim.height));
+	//
+	// Dimension bottomDim = bottomTextlabel.getPreferredSize();
+	// setConstraint(bottomTextlabel, new Rectangle(center.x - bottomDim.width / 2, r.height - bottomDim.height, bottomDim.width, bottomDim.height));
+	//
+	// topTextlabel.invalidate();
+	// bottomTextlabel.invalidate();
+	// targetTextLabel.invalidate();
+	// sourceTextLabel.invalidate();
+	// }
+
 	public void paintFigure(Graphics g) {
 		super.paintFigure(g);
+		setConstraint(topTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, ((getLineWidth()/2)+TEXT_PADDING)*-1));
+		setConstraint(bottomTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, ((getLineWidth()/2)+TEXT_PADDING)));
 		targetTextLabel.invalidate();
 		sourceTextLabel.invalidate();
 		topTextlabel.invalidate();
@@ -79,40 +85,48 @@ public class ConnectionFigure extends PolylineConnection {
 
 	public void setSourceText(String sourceText) {
 		this.sourceTextLabel.setText(sourceText);
-	}	
-	
-	
-	public void setTopText(String topText){
+	}
+
+	public void setTopText(String topText) {
 		this.topTextlabel.setText(topText);
 	}
-	
-	public void setBottomText(String bottomText){
+
+	public void setBottomText(String bottomText) {
 		this.bottomTextlabel.setText(bottomText);
 	}
-	
-	public Label getNearestLabel(Point location) {
-		if(targetTextLabel.getBounds().contains(location)){
-			return targetTextLabel;
+
+	public TextPosition getNearestPosition(Point location) {
+		if (targetTextLabel.getBounds().contains(location)) {
+			return TextPosition.Target;
 		}
-		if(sourceTextLabel.getBounds().contains(location)){
-			return sourceTextLabel;
+		if (sourceTextLabel.getBounds().contains(location)) {
+			return TextPosition.Source;
 		}
-		if(bottomTextlabel.getBounds().contains(location)){
-			return bottomTextlabel;
+		if (bottomTextlabel.getBounds().contains(location)) {
+			return TextPosition.Bottom;
 		}
-		if(topTextlabel.getBounds().contains(location)){
-			return topTextlabel;
+		if (topTextlabel.getBounds().contains(location)) {
+			return TextPosition.Top;
 		}
 		return null;
-		
-//		double distanceToEnd = targetTextLabel.getLocation().getDistance(location);
-//		double distanceToStart = sourceTextLabel.getLocation().getDistance(location);
-//		double 
-//		if (distanceToEnd < distanceToStart) {
-//			return figure.getTargetTextLabel();
-//		} else {
-//			return figure.getSourceTextLabel();
-//		}
 	}
-	
+
+	/**
+	 * @param position
+	 * @return
+	 */
+	public Label getLabelByPosition(TextPosition position) {
+		switch (position) {
+		case Bottom:
+			return bottomTextlabel;
+		case Top:
+			return topTextlabel;
+		case Source:
+			return sourceTextLabel;
+		case Target:
+			return targetTextLabel;
+		}
+		return null;
+	}
+
 }

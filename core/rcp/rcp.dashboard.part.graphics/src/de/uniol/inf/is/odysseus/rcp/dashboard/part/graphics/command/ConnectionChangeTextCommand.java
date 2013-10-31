@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command;
 import org.eclipse.gef.commands.Command;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection.TextPosition;
 
 /**
  * @author DGeesen
@@ -28,30 +29,21 @@ public class ConnectionChangeTextCommand extends Command {
 	private String oldText;
 	private String newText;
 	private Connection conn;
-	private boolean target;
+	private TextPosition position;
 
-	public ConnectionChangeTextCommand(boolean target) {
-		this.target = target;
+	public ConnectionChangeTextCommand(TextPosition position) {
+		this.position = position;
 	}
 
 	@Override
 	public void execute() {
-		if (target) {
-			oldText = conn.getTargetText();
-			conn.setTargetText(newText);
-		} else {
-			oldText = conn.getSourceText();
-			conn.setSourceText(newText);
-		}
+		oldText = conn.getTextByPosition(position);
+		conn.setTextByPosition(position, newText);
 	}
 
 	@Override
 	public void undo() {
-		if (target) {
-			conn.setTargetText(oldText);
-		} else {
-			conn.setSourceText(oldText);
-		}
+		conn.setTextByPosition(position, oldText);
 	}
 
 	public void setNewText(String text) {

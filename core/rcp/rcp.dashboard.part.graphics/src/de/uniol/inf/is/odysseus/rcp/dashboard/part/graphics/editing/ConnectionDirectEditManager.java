@@ -15,28 +15,28 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.editing;
 
-import org.eclipse.draw2d.Label;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.gef.tools.DirectEditManager;
+
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection.TextPosition;
 
 /**
  * @author DGeesen
  * 
  */
 public class ConnectionDirectEditManager extends DirectEditManager {
+	
+	private String initialValue;
 
-	private Label label;
-
-	public ConnectionDirectEditManager(GraphicalEditPart source, @SuppressWarnings("rawtypes") Class editorType, CellEditorLocator locator, Label label) {
-		super(source, editorType, locator);
-		this.label = label;
+	public ConnectionDirectEditManager(GraphicalEditPart source, @SuppressWarnings("rawtypes") Class editorType, CellEditorLocator locator, String value, TextPosition feature) {
+		super(source, editorType, locator, feature);				
+		this.initialValue = value;
 	}
 
 	@Override
-	protected void initCellEditor() {
-		String initialLabelText = label.getText();
-		getCellEditor().setValue(initialLabelText);
+	protected void initCellEditor() {		
+		getCellEditor().setValue(initialValue);
 
 	}
 
