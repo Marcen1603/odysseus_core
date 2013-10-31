@@ -82,16 +82,35 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 		choosePartNameCombo = new Combo(choosePartNameComposite, SWT.BORDER | SWT.READ_ONLY);
 		choosePartNameCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		choosePartNameCombo.setItems(dashboardPartNames.toArray(new String[0]));
+		choosePartNameCombo.setText("");
 		choosePartNameCombo.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				startQueryIfNeeded();
 				selectDashboardPart(choosePartNameCombo.getSelectionIndex());
 			}
-
 		});
 
 		finishCreation(rootComposite);
+	}
+	
+	private void startQueryIfNeeded() {
+		if( handler == null ) {
+			handler = new QueryExecutionHandler(queryFilePage.getQueryTextProvider().getQueryText());
+		}
+		
+		try {
+			if( !handler.isStarted() ) {
+				handler.start();
+			}
+			
+			setPageComplete(true);
+		} catch (OdysseusScriptException ex) {
+			LOG.error("Could not execute query", ex);
+			setErrorMessage("Selected Odysseus Script has some errors. See log for details.");
+		}
+		
 	}
 	
 	@Override
@@ -113,17 +132,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		
-		if( visible == true ) {
-			handler = new QueryExecutionHandler(queryFilePage.getQueryTextProvider().getQueryText());
-			try {
-				handler.start();
-				setPageComplete(true);
-			} catch( OdysseusScriptException ex ) {
-				LOG.error("Could not execute query", ex);
-				setErrorMessage("Selected Odysseus Script has some errors. See log for details.");
-			}
-			selectDashboardPart(0);
-		} else {
+		if( visible != true ) {
 			stopQueryExecution();
 		}
 	}

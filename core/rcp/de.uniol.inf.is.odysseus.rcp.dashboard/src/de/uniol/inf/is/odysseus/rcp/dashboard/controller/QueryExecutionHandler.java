@@ -92,4 +92,8 @@ public class QueryExecutionHandler {
 		queryIDs = null;
 		queryRoots = null;
 	}
+	
+	public boolean isStarted() {
+		return queryRoots != null;
+	}
 }
