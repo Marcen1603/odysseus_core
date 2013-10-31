@@ -45,10 +45,10 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 	private int columnCount = DEFAULT_COLUMN_COUNT;
 	private DataGridModel model;
 	
-	private Composite parent;
 	private TableViewer tableViewer;
 	private Boolean refreshing = false;
 	private Boolean editing = false;
+	private Composite rootComposite;
 	
 	public DataGridDashboardPart() {
 		model = new DataGridModel(this, rowCount, columnCount);
@@ -56,9 +56,7 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 	
 	@Override
 	public final void createPartControl(Composite parent, ToolBar toolbar) {
-		this.parent = parent;
-		
-		Composite rootComposite = createRootComposite(parent);
+		rootComposite = createRootComposite(parent);
 		
 		tableViewer = createTableViewer(rootComposite);
 		configureTableViewer(tableViewer);
@@ -85,11 +83,13 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 	
 	protected TableViewer createTableViewer(Composite composite) {
 		Composite tableComposite = new Composite(composite, SWT.NONE);
+		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		TableViewer tableViewer = new TableViewer(tableComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		return tableViewer;
 	}
 
@@ -200,16 +200,10 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		if( tableViewer != null ) {
 			setInputAndCreateColumns(tableViewer);
 			
-			fullRelayout();
+			tableViewer.getTable().getParent().layout();
+			tableViewer.refresh();
+			
 			fireChangeEvent();
-		}
-	}
-
-	private void fullRelayout() {
-		tableViewer.getTable().getParent().layout();
-		parent.layout();
-		if( parent.getParent() != null ) {
-			parent.getParent().layout();
 		}
 	}
 	
