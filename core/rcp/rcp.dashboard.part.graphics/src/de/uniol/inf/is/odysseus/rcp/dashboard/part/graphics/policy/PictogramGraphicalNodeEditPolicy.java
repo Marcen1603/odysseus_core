@@ -36,7 +36,7 @@ public class PictogramGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = new ConnectionCreateCommand();
 		result.setSource((AbstractPictogram) getHost().getModel());
-		result.setConnection((Connection) request.getNewObject());
+		result.setConnection((Connection) request.getNewObject());		
 		request.setStartCommand(result);
 		return result;
 	}

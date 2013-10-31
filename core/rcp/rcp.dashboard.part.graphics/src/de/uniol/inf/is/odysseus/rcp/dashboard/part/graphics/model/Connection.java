@@ -196,6 +196,7 @@ public class Connection extends AbstractPart {
 
 			}
 		}
+		layer.addPart(this);
 	}
 
 	/*

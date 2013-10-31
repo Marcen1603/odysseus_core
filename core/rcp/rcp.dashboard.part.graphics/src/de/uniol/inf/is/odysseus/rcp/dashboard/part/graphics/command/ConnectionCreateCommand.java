@@ -54,11 +54,13 @@ public class ConnectionCreateCommand extends Command {
 	public void execute() {
 		connection.setSource(source);
 		connection.setTarget(target);
+		source.getGraphicsLayer().addPart(connection);	
 	}
 
 	public void undo() {
 		connection.setSource(null);
 		connection.setTarget(null);
+		source.getGraphicsLayer().removePart(connection);	
 	}
 
 }

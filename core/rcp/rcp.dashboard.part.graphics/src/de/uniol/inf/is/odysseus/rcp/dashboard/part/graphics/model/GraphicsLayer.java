@@ -34,7 +34,8 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 	private String backgroundImagePath;
 	private boolean backgroundFileStretch;
 
-	List<AbstractPictogram> nodes = new ArrayList<AbstractPictogram>();
+	List<AbstractPictogram> pictograms = new ArrayList<AbstractPictogram>();
+	List<AbstractPart> allParts = new ArrayList<AbstractPart>();
 
 	private IProject project;
 
@@ -47,11 +48,11 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 	}
 
 	public List<AbstractPictogram> getPictograms() {
-		return nodes;
+		return pictograms;
 	}
 
 	public void processTuple(IPhysicalOperator senderOperator, Tuple<?> tuple) {
-		for (AbstractPictogram p : nodes) {
+		for (AbstractPart p : allParts) {
 			if (p.getSelectedRootName().equals(senderOperator.getName())) {
 				p.internalProcess(tuple);
 			}
@@ -60,27 +61,37 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 
 	public void open(Collection<IPhysicalOperator> roots) {
 		this.roots = roots;
-		for (AbstractPictogram p : nodes) {
+		for (AbstractPart p : allParts) {
 			p.internalOpen(roots);
 		}
 	}
+	
+	public void addPart(AbstractPart part){
+		allParts.add(part);
+		part.setGraphicsLayer(this);
+		changed();
+	}
+	
+	public void removePart(AbstractPart part){
+		allParts.remove(part);
+		part.setGraphicsLayer(null);
+		changed();
+	}
 
 	public void addPictogram(AbstractPictogram pg) {
-		getPictograms().add(pg);
-		pg.setGraphicsLayer(this);
+		getPictograms().add(pg);		
 		resetUniqueIds();
-		changed();
+		addPart(pg);
 	}
 
 	public void removePictogram(AbstractPictogram pg) {
-		getPictograms().remove(pg);
-		pg.setGraphicsLayer(null);
+		getPictograms().remove(pg);		
 		resetUniqueIds();
-		changed();
+		removePart(pg);
 	}
 
 	public AbstractPictogram getAbstractPictogramById(int id) {
-		for (AbstractPictogram p : this.nodes) {
+		for (AbstractPictogram p : this.pictograms) {
 			if (p.getId() == id) {
 				return p;
 			}
@@ -127,7 +138,7 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 
 	public synchronized void resetUniqueIds() {
 		int id = 1;
-		for (AbstractPictogram node : this.nodes) {
+		for (AbstractPictogram node : this.pictograms) {
 			node.setId(id);
 			id++;
 		}

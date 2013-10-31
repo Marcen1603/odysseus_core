@@ -43,10 +43,12 @@ public class ConnectionDeleteCommand extends Command {
 		}
 		connection.setSource(null);
 		connection.setTarget(null);
+		source.getGraphicsLayer().removePart(connection);
 	}
 
 	public void undo() {
 		connection.setSource(source);
 		connection.setTarget(target);
+		source.getGraphicsLayer().addPart(connection);
 	}
 }

@@ -23,7 +23,7 @@ public class PictogramCreateCommand extends Command {
 			pictogram.setGraphicsLayer(parent);
 			dialog.init(pictogram);
 			if (Window.OK == dialog.open()) {					
-				parent.addPictogram(pictogram);	
+				parent.addPictogram(pictogram);					
 				pictogram.setLocation(location);				
 			}
 		} catch (Exception e) {

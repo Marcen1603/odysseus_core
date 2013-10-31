@@ -125,8 +125,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 			}
 		}
 
-		internalLoad(values);
-
+		internalLoad(values);		
 	}
 
 	protected void internalLoad(Map<String, String> values) {
