@@ -33,11 +33,5 @@ public class AssureNumber extends AbstractFunction<Double> {
 		return SDFDatatype.DOUBLE;
 	}
 	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(getSymbol());
-		builder.append("()");
-		return builder.toString();
-	}
 
 }

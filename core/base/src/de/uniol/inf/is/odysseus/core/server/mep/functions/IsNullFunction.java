@@ -47,10 +47,4 @@ public class IsNullFunction extends AbstractFunction<Boolean> {
         return SDFDatatype.getTypes().toArray(new SDFDatatype[0]);
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder(getSymbol());
-		builder.append("()");
-		return builder.toString();
-	}
 }
