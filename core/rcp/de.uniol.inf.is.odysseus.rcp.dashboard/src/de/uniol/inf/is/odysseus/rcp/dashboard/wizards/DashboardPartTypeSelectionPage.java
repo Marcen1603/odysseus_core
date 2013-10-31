@@ -97,7 +97,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 	
 	private void startQueryIfNeeded() {
 		if( handler == null ) {
-			handler = new QueryExecutionHandler(queryFilePage.getQueryTextProvider().getQueryText());
+			handler = new QueryExecutionHandler(queryFilePage.getQueryTextProvider());
 		}
 		
 		try {

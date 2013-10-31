@@ -20,6 +20,9 @@ import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
+import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -34,18 +37,23 @@ public class QueryExecutionHandler {
 	private Collection<Integer> queryIDs;
 	private Collection<IPhysicalOperator> queryRoots;
 	
-	public QueryExecutionHandler( IFile scriptFile ) {
-		Preconditions.checkNotNull(scriptFile, "List of text lines must not be null!");
+	public QueryExecutionHandler( IDashboardPartQueryTextProvider provider ) {
+		Preconditions.checkNotNull(provider, "Text provider for execution must not be null!");
 		
-		this.scriptFile = scriptFile;
-	}
-	
-	public QueryExecutionHandler( List<String> queryTextLines ) {
-		Preconditions.checkNotNull(queryTextLines, "List of text lines must not be null!");
-		Preconditions.checkArgument(!queryTextLines.isEmpty(), "List of text lines must not be empty!");
+		if( provider instanceof ResourceFileQueryTextProvider ) {
+			ResourceFileQueryTextProvider resProvider = (ResourceFileQueryTextProvider)provider;
+			
+			this.scriptFile = resProvider.getFile();
+			this.lines = null;
+		} else if( provider instanceof SimpleQueryTextProvider ) {
+			SimpleQueryTextProvider simpleProvider = (SimpleQueryTextProvider)provider;
+			
+			this.scriptFile = null;
+			
+			ImmutableList<String> queryText = simpleProvider.getQueryText();
+			this.lines = queryText.toArray(new String[queryText.size()]);
+		}
 		
-		lines = queryTextLines.toArray(new String[queryTextLines.size()]);
-		scriptFile = null;
 	}
 	
 	public void start() throws OdysseusScriptException {

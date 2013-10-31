@@ -40,7 +40,8 @@ public final class DashboardPartController implements IDashboardPartListener {
 
 	public DashboardPartController(IDashboardPart dashboardPart) {
 		this.dashboardPart = Preconditions.checkNotNull(dashboardPart, "DashboardPart for container must not be null!");
-		queryHandler = new QueryExecutionHandler(dashboardPart.getQueryTextProvider().getQueryText());
+		
+		queryHandler = new QueryExecutionHandler(dashboardPart.getQueryTextProvider());
 	}
 
 	public void pause() {
