@@ -116,7 +116,13 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 	}
 
 	@Override
-	public String toString() {
+	final public String toString() {
+		
+		String ret = _internalToString();
+		if (ret != null){
+			return ret;
+		}
+		
 		StringBuilder builder = new StringBuilder(getSymbol());
 		builder.append('(');
 		if (getArity() > 0) {
@@ -130,6 +136,15 @@ public abstract class AbstractFunction<T> implements IFunction<T> {
 		}
 		builder.append(')');
 		return builder.toString();
+	}
+	
+	/**
+	 * Use this method to overwrite the string representation of the operator/function
+	 * WARNING: Do only overwrite if needed and if you know what you are doing ;-)
+	 * @return internal Representation
+	 */
+	protected String _internalToString() {
+		return null;
 	}
 
 	@Override

@@ -70,10 +70,10 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction#toString()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction#_internalToString(()
 	 */
 	@Override
-	public final String toString() {
+	protected String _internalToString() {
 		final StringBuffer buffer = new StringBuffer("" + this.getArgument(0));
 		buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
 		return buffer.toString();

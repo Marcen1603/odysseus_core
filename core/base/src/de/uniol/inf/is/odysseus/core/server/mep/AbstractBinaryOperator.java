@@ -44,7 +44,7 @@ public abstract class AbstractBinaryOperator<T> extends AbstractFunction<T>
 	}
 	
 	@Override
-	public String toString() {
+	protected String _internalToString() {
 		StringBuffer buffer = new StringBuffer(""+getArgument(0));
 		buffer.append(" ").append(getSymbol()).append(" "+getArgument(1));
 		return buffer.toString();
