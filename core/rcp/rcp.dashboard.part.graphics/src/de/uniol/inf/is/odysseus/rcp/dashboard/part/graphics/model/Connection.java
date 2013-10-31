@@ -45,12 +45,31 @@ public class Connection extends AbstractPart {
 
 	private AbstractPictogram source;
 	private AbstractPictogram target;
-	private String sourceText = "";
-	private String targetText = "";
-	private int width;
+	
+	
+	
+	
+	private int width = 2;
 	private Color currentColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private List<Pair<Color, RelationalPredicate>> entries = new ArrayList<>();
+	
+	private String bottomText = "";
+	private SDFExpression bottomExpression;
+	private String currentTextBottom;
+	
+	private String topText = "";
+	private SDFExpression topExpression;
+	private String currentTextTop;
+	
+	private String sourceText = "";
+	private SDFExpression sourceExpression;
+	private String currentTextSource;
 
+	private String targetText = "";
+	private SDFExpression targetExpression;
+	private String currentTextTarget;
+
+	
 	public Connection() {
 
 	}
@@ -60,8 +79,13 @@ public class Connection extends AbstractPart {
 		this.target = old.target;
 		this.sourceText = old.sourceText;
 		this.targetText = old.targetText;
+		this.bottomText = old.bottomText;
+		this.topText = old.topText;
 		this.width = old.width;
 		this.currentColor = old.currentColor;
+		for(Pair<Color, RelationalPredicate> e : entries){
+			this.addColor(e.getE1(), e.getE2().getExpression().getExpressionString());
+		}
 	}
 
 	public AbstractPictogram getSource() {
@@ -109,7 +133,13 @@ public class Connection extends AbstractPart {
 
 	public void setTargetText(String targetText) {
 		this.targetText = targetText;
-		update();
+		if (targetText.startsWith("=")) {
+			targetExpression = new SDFExpression(targetText.substring(1), MEP.getInstance());
+		} else {
+			targetExpression = null;
+			this.currentTextTarget = this.targetText;
+		}
+		setDirty();
 	}
 
 	public String getSourceText() {
@@ -118,7 +148,13 @@ public class Connection extends AbstractPart {
 
 	public void setSourceText(String sourceText) {
 		this.sourceText = sourceText;
-		update();
+		if (sourceText.startsWith("=")) {
+			sourceExpression = new SDFExpression(sourceText.substring(1), MEP.getInstance());
+		} else {
+			sourceExpression = null;
+			this.currentTextSource = this.sourceText;
+		}
+		setDirty();
 	}
 
 	/*
@@ -131,6 +167,8 @@ public class Connection extends AbstractPart {
 		setWidth(loadValue(Integer.parseInt(values.get("width")), 2));
 		setTargetText(loadValue(values.get("targetText"), ""));
 		setSourceText(loadValue(values.get("sourceText"), ""));
+		setBottomText(loadValue(values.get("bottomText"), ""));
+		setTopText(loadValue(values.get("topText"), ""));
 		String targetId = values.get("targetNode");
 		if (targetId != null) {
 			setTarget(getGraphicsLayer().getAbstractPictogramById(Integer.parseInt(targetId)));
@@ -153,6 +191,8 @@ public class Connection extends AbstractPart {
 		values.put("sourceNode", source.getXMLIdentifier());
 		values.put("targetText", targetText);
 		values.put("sourceText", sourceText);
+		values.put("bottomText", bottomText);
+		values.put("topText", topText);
 		values.put("width", Integer.toString(width));
 	}
 
@@ -210,6 +250,19 @@ public class Connection extends AbstractPart {
 			for (Pair<Color, RelationalPredicate> ce : this.entries) {
 				ce.getE2().init(root.getOutputSchema(), null);
 			}
+			if (this.bottomExpression != null) {
+				this.bottomExpression.initAttributePositions(root.getOutputSchema());
+			}
+			if (this.topExpression != null) {
+				this.topExpression.initAttributePositions(root.getOutputSchema());
+			}
+			if (this.sourceExpression != null) {
+				this.sourceExpression.initAttributePositions(root.getOutputSchema());
+			}
+			if (this.targetExpression != null) {
+				this.targetExpression.initAttributePositions(root.getOutputSchema());
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -223,6 +276,18 @@ public class Connection extends AbstractPart {
 	 */
 	@Override
 	protected void process(Tuple<?> tuple) {
+		if (this.topExpression != null) {
+			this.currentTextTop = getExpressionValue(this.topExpression, tuple);
+		}
+		if (this.bottomExpression != null) {
+			this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
+		}
+		if (this.targetExpression != null) {
+			this.currentTextTarget = getExpressionValue(this.targetExpression, tuple);
+		}
+		if (this.sourceExpression != null) {
+			this.currentTextSource = getExpressionValue(this.sourceExpression, tuple);
+		}
 		for (Pair<Color, RelationalPredicate> ce : entries) {
 			if (ce.getE2().evaluate(tuple)) {
 				setCurrentColor(ce.getE1());
@@ -294,6 +359,52 @@ public class Connection extends AbstractPart {
 
 	public List<Pair<Color, RelationalPredicate>> getColorPredicates() {
 		return Collections.unmodifiableList(this.entries);
+	}
+
+	public String getTopText() {
+		return topText;
+	}
+
+	public void setTopText(String topText) {
+		this.topText = topText;
+		if (topText.startsWith("=")) {
+			topExpression = new SDFExpression(topText.substring(1), MEP.getInstance());
+		} else {
+			topExpression = null;
+			this.currentTextTop = this.topText;
+		}
+		setDirty();
+	}
+
+	public String getBottomText() {
+		return bottomText;
+	}
+
+	public void setBottomText(String textBottom) {
+		this.bottomText = textBottom;
+		if (textBottom.startsWith("=")) {
+			bottomExpression = new SDFExpression(textBottom.substring(1), MEP.getInstance());
+		} else {
+			bottomExpression = null;
+			this.currentTextBottom = this.bottomText;
+		}
+		setDirty();
+	}
+	
+	public String getTextBottomToShow() {
+		return currentTextBottom;
+	}
+
+	public String getTextTopToShow() {
+		return currentTextTop;
+	}
+	
+	public String getTextTargetToShow() {
+		return currentTextTarget;
+	}
+	
+	public String getTextSourceToShow() {
+		return currentTextSource;
 	}
 	
 }

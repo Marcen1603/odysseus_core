@@ -32,6 +32,18 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	private List<ColorContainer> entries = new ArrayList<>();
 	private Text widthText;
 	private String width;
+	
+	private Text sourceTextText;
+	private String sourceText = "";
+
+	private Text targetTextText;
+	private String targetText = "";
+	
+	private Text topTextText;
+	private String topText = "";
+
+	private Text bottomTextText;
+	private String bottomText = "";
 
 	/*
 	 * (non-Javadoc)
@@ -47,6 +59,37 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 		widthText.setText(width);
 		widthText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
+		
+		Label lblTextTop = new Label(parent, SWT.NONE);
+		lblTextTop.setText("Text at the top of the connection");
+
+		topTextText = new Text(parent, SWT.BORDER);
+		topTextText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		topTextText.setText(topText);
+
+		Label lblTextBottom = new Label(parent, SWT.NONE);
+		lblTextBottom.setText("Text at the bottom of the connection");
+
+		bottomTextText = new Text(parent, SWT.BORDER);
+		bottomTextText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		bottomTextText.setText(bottomText);
+		
+		
+		Label lblTextSource = new Label(parent, SWT.NONE);
+		lblTextSource.setText("Text at the source of the connection");
+
+		sourceTextText = new Text(parent, SWT.BORDER);
+		sourceTextText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		sourceTextText.setText(sourceText);
+
+		Label lblTextTarget= new Label(parent, SWT.NONE);
+		lblTextTarget.setText("Text at the target of the connection");
+
+		targetTextText = new Text(parent, SWT.BORDER);
+		targetTextText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		targetTextText.setText(targetText);
+		
+		
 		Label lblChooseAnColor = new Label(parent, SWT.NONE);
 		lblChooseAnColor.setText("Order-dependent list of colors");
 
@@ -156,6 +199,10 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 		for (ColorContainer ce : entries) {
 			connection.addColor(ce.color, ce.predicate);
 		}
+		connection.setBottomText(bottomTextText.getText());
+		connection.setTargetText(targetTextText.getText());
+		connection.setTopText(topTextText.getText());
+		connection.setSourceText(sourceTextText.getText());
 
 	}
 
@@ -173,6 +220,10 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 			cc.predicate = co.getE2().getExpression().getExpressionString();
 			this.entries.add(cc);
 		}
+		bottomText = connection.getBottomText();
+		topText = connection.getTopText();
+		sourceText = connection.getSourceText();
+		targetText = connection.getTargetText();
 
 	}
 

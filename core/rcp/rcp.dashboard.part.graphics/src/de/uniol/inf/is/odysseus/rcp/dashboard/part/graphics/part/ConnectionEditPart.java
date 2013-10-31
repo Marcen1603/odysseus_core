@@ -38,7 +38,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.ConnectionDirectEditPolicy;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.policy.ConnectionEditPolicy;
 
-
 /**
  * @author DGeesen
  * 
@@ -57,8 +56,10 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 	public void refreshVisuals() {
 		ConnectionFigure figure = (ConnectionFigure) getFigure();
 		Connection connection = (Connection) getModel();
-		figure.getTargetPortLabel().setText(connection.getTargetText());
-		figure.getSourcePortLabel().setText(connection.getSourceText());
+		figure.setTargetText(connection.getTextTargetToShow());
+		figure.setSourceText(connection.getTextSourceToShow());
+		figure.setTopText(connection.getTextTopToShow());
+		figure.setBottomText(connection.getTextBottomToShow());
 		figure.setLineWidth(connection.getWidth());
 		figure.setForegroundColor(connection.getCurrentColor());
 		figure.repaint();
@@ -92,14 +93,14 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 			if (req instanceof DirectEditRequest) {
 				DirectEditRequest der = (DirectEditRequest) req;
 				performDirectEditing(der.getLocation());
-			}else{
+			} else {
 				if (req.getType() == RequestConstants.REQ_OPEN) {
-					try {			
+					try {
 						Connection connection = ((Connection) getModel());
 						ConnectionDialog dialog = connection.getConfigurationDialog().newInstance();
 						dialog.init(connection);
 						if (Window.OK == dialog.open()) {
-							// hint: save is invoked by ok button 
+							// hint: save is invoked by ok button
 							refreshVisuals();
 						}
 					} catch (Exception e) {
@@ -114,19 +115,11 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 	 * 
 	 */
 	private void performDirectEditing(Point location) {
-		Label label = getNearestLabel(location);
-		ConnectionDirectEditManager manager = new ConnectionDirectEditManager(this, TextCellEditor.class, new ConnectionCellEditorLocator(label), label);
-		manager.show();
-	}
-
-	private Label getNearestLabel(Point location) {
 		ConnectionFigure figure = (ConnectionFigure) getFigure();
-		double distanceToEnd = figure.getTargetPortLabel().getLocation().getDistance(location);
-		double distanceToStart = figure.getSourcePortLabel().getLocation().getDistance(location);
-		if (distanceToEnd < distanceToStart) {
-			return figure.getTargetPortLabel();
-		} else {
-			return figure.getSourcePortLabel();
+		Label label = figure.getNearestLabel(location);
+		if (label != null) {
+			ConnectionDirectEditManager manager = new ConnectionDirectEditManager(this, TextCellEditor.class, new ConnectionCellEditorLocator(label), label);
+			manager.show();
 		}
 	}
 

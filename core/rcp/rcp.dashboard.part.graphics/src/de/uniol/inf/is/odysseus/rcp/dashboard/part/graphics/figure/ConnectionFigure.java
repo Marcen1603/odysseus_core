@@ -19,6 +19,7 @@ import org.eclipse.draw2d.ConnectionEndpointLocator;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;
+import org.eclipse.draw2d.geometry.Point;
 
 /**
  * @author DGeesen
@@ -26,40 +27,92 @@ import org.eclipse.draw2d.PolylineConnection;
  */
 public class ConnectionFigure extends PolylineConnection {
 
-	private Label targetPortLabel;
-	private Label sourcePortLabel;
+	private Label targetTextLabel;
+	private Label sourceTextLabel;
+	
+	private Label topTextlabel;
+	private Label bottomTextlabel;
 
 	public ConnectionFigure() {
 		setLineWidth(2);		
-		targetPortLabel = new Label(Integer.toString(0));
-		targetPortLabel.setOpaque(false);		
-		add(targetPortLabel, new ConnectionEndpointLocator(this, true));
+		targetTextLabel = new Label("");
+		targetTextLabel.setOpaque(false);		
+		add(targetTextLabel, new ConnectionEndpointLocator(this, true));
 
-		sourcePortLabel = new Label(Integer.toString(0));
-		sourcePortLabel.setOpaque(false);
-		add(sourcePortLabel, new ConnectionEndpointLocator(this, false));
+		sourceTextLabel = new Label("");
+		sourceTextLabel.setOpaque(false);
+		add(sourceTextLabel, new ConnectionEndpointLocator(this, false));
+		
+		topTextlabel = new Label("");
+		bottomTextlabel = new Label("");
+		add(topTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, -10));
+		add(bottomTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, 10));
 	}
 
+//	public void paintFigure(Graphics g) {
+//		super.paintFigure(g);
+//		Rectangle r = getBounds().getCopy();
+//		Point center = new Point(r.width / 2, r.height / 2);
+//		Dimension topDim = topTextlabel.getPreferredSize();
+//		setConstraint(topTextlabel, new Rectangle(center.x - topDim.width / 2, 0, topDim.width, topDim.height));
+//
+//		Dimension bottomDim = bottomTextlabel.getPreferredSize();
+//		setConstraint(bottomTextlabel, new Rectangle(center.x - bottomDim.width / 2, r.height - bottomDim.height, bottomDim.width, bottomDim.height));
+//
+//		topTextlabel.invalidate();
+//		bottomTextlabel.invalidate();
+//		targetTextLabel.invalidate();
+//		sourceTextLabel.invalidate();
+//	}
+	
 	public void paintFigure(Graphics g) {
 		super.paintFigure(g);
-		targetPortLabel.invalidate();
-		sourcePortLabel.invalidate();
+		targetTextLabel.invalidate();
+		sourceTextLabel.invalidate();
+		topTextlabel.invalidate();
+		bottomTextlabel.invalidate();
+	}
+
+	public void setTargetText(String targetText) {
+		this.targetTextLabel.setText(targetText);
+	}
+
+	public void setSourceText(String sourceText) {
+		this.sourceTextLabel.setText(sourceText);
+	}	
+	
+	
+	public void setTopText(String topText){
+		this.topTextlabel.setText(topText);
 	}
 	
-	public Label getTargetPortLabel() {
-		return targetPortLabel;
+	public void setBottomText(String bottomText){
+		this.bottomTextlabel.setText(bottomText);
 	}
-
-	public void setTargetPortLabel(Label targetPortLabel) {
-		this.targetPortLabel = targetPortLabel;
+	
+	public Label getNearestLabel(Point location) {
+		if(targetTextLabel.getBounds().contains(location)){
+			return targetTextLabel;
+		}
+		if(sourceTextLabel.getBounds().contains(location)){
+			return sourceTextLabel;
+		}
+		if(bottomTextlabel.getBounds().contains(location)){
+			return bottomTextlabel;
+		}
+		if(topTextlabel.getBounds().contains(location)){
+			return topTextlabel;
+		}
+		return null;
+		
+//		double distanceToEnd = targetTextLabel.getLocation().getDistance(location);
+//		double distanceToStart = sourceTextLabel.getLocation().getDistance(location);
+//		double 
+//		if (distanceToEnd < distanceToStart) {
+//			return figure.getTargetTextLabel();
+//		} else {
+//			return figure.getSourceTextLabel();
+//		}
 	}
-
-	public Label getSourcePortLabel() {
-		return sourcePortLabel;
-	}
-
-	public void setSourcePortLabel(Label sourcePortLabel) {
-		this.sourcePortLabel = sourcePortLabel;
-	}	
 	
 }

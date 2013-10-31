@@ -22,7 +22,6 @@ import org.eclipse.gef.requests.DirectEditRequest;
 import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.ConnectionChangeTextCommand;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ConnectionFigure;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 
 /**
@@ -61,15 +60,16 @@ public class ConnectionDirectEditPolicy extends DirectEditPolicy {
 	}
 
 	private boolean isTargetRequest(Point location) {
-		ConnectionFigure figure = (ConnectionFigure) getHostFigure();
-		org.eclipse.draw2d.geometry.Point p = new org.eclipse.draw2d.geometry.Point(location.x, location.y);
-		double distanceToEnd = figure.getTargetPortLabel().getLocation().getDistance(p);
-		double distanceToStart = figure.getSourcePortLabel().getLocation().getDistance(p);
-		if (distanceToEnd < distanceToStart) {
-			return true;
-		} else {
-			return false;
-		}
+//		ConnectionFigure figure = (ConnectionFigure) getHostFigure();
+//		org.eclipse.draw2d.geometry.Point p = new org.eclipse.draw2d.geometry.Point(location.x, location.y);
+//		double distanceToEnd = figure.getTargetTextLabel().getLocation().getDistance(p);
+//		double distanceToStart = figure.getSourceTextLabel().getLocation().getDistance(p);
+//		if (distanceToEnd < distanceToStart) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+		return true;
 	}
 
 }
