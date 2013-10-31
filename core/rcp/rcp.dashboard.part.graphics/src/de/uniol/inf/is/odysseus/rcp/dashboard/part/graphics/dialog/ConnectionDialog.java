@@ -16,18 +16,20 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class ConnectionDialog extends AbstractPartDialog<Connection> {
 
 	private ScrolledComposite scroller;
 	private Composite container;
 
-	private List<ColorEntry> entries = new ArrayList<>();
+	private List<ColorContainer> entries = new ArrayList<>();
 	private Text widthText;
 	private String width;
 
@@ -38,12 +40,13 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	 */
 	@Override
 	public Control createWidgetAdrea(final Composite parent) {
-		Label lblWidth= new Label(parent, SWT.NONE);
+		Label lblWidth = new Label(parent, SWT.NONE);
 		lblWidth.setText("Width of the connection");
 
 		widthText = new Text(parent, SWT.BORDER);
 		widthText.setText(width);
-		
+		widthText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
 		Label lblChooseAnColor = new Label(parent, SWT.NONE);
 		lblChooseAnColor.setText("Order-dependent list of colors");
 
@@ -69,7 +72,7 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 		gd_container.minimumHeight = 250;
 		container.setLayoutData(gd_container);
 
-		for (ColorEntry ce : entries) {
+		for (ColorContainer ce : entries) {
 			addColorEntryToContainer(ce);
 		}
 
@@ -80,8 +83,8 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 				colorSelector.open();
 				if (colorSelector.getColorValue() != null) {
 
-					ColorEntry ce = new ColorEntry();
-					ce.color = new Color(Display.getCurrent(), colorSelector.getColorValue());
+					ColorContainer ce = new ColorContainer();
+					ce.color = ColorManager.createColor(colorSelector.getColorValue());
 					ce.predicate = "true";
 					addColorEntryToContainer(ce);
 					entries.add(ce);
@@ -99,19 +102,18 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 		scroller.layout(true);
 	}
 
-	private void addColorEntryToContainer(final ColorEntry ce) {
+	private void addColorEntryToContainer(final ColorContainer ce) {
 		Composite composite = new Composite(container, SWT.NONE);
 		composite.setLayout(new GridLayout(2, true));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		Label imgLabel = new Label(composite, SWT.NONE);			
+		Label imgLabel = new Label(composite, SWT.NONE);
 		imgLabel.setBackground(ce.color);
 		GridData gd_imgLabel = new GridData(GridData.FILL_HORIZONTAL);
 		gd_imgLabel.widthHint = 50;
 		gd_imgLabel.grabExcessHorizontalSpace = true;
 		imgLabel.setLayoutData(gd_imgLabel);
-		
-		
+
 		final Text predicateText = new Text(composite, SWT.BORDER);
 		GridData gd_dataFolderText = new GridData(GridData.FILL_HORIZONTAL);
 		gd_dataFolderText.widthHint = 287;
@@ -135,8 +137,7 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 			public void widgetSelected(SelectionEvent e) {
 				ce.composite.dispose();
 				entries.remove(ce);
-				removeButton.dispose();
-				ce.color.dispose();
+				removeButton.dispose();				
 				relayout(container, scroller);
 			}
 		});
@@ -152,7 +153,7 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	public void saveValues(Connection connection) {
 		connection.setWidth(Integer.parseInt(widthText.getText()));
 		connection.clearColors();
-		for (ColorEntry ce : entries) {
+		for (ColorContainer ce : entries) {
 			connection.addColor(ce.color, ce.predicate);
 		}
 
@@ -166,10 +167,16 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	@Override
 	public void loadValues(Connection connection) {
 		width = Integer.toString(connection.getWidth());
+		for (Pair<Color, RelationalPredicate> co : connection.getColorPredicates()) {
+			ColorContainer cc = new ColorContainer();
+			cc.color = co.getE1();
+			cc.predicate = co.getE2().getExpression().getExpressionString();
+			this.entries.add(cc);
+		}
 
 	}
 
-	private class ColorEntry {
+	private class ColorContainer {
 		protected Color color;
 		protected String predicate;
 		protected Composite composite;

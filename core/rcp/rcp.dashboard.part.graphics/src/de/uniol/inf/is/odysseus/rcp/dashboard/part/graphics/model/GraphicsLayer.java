@@ -50,9 +50,9 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 		return nodes;
 	}
 
-	public void processTuple(IPhysicalOperator senderOperator, Tuple<?> tuple){
-		for(AbstractPictogram p : nodes){
-			if(p.getSelectedRootName().equals(senderOperator.getName())){
+	public void processTuple(IPhysicalOperator senderOperator, Tuple<?> tuple) {
+		for (AbstractPictogram p : nodes) {
+			if (p.getSelectedRootName().equals(senderOperator.getName())) {
 				p.internalProcess(tuple);
 			}
 		}
@@ -68,13 +68,24 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 	public void addPictogram(AbstractPictogram pg) {
 		getPictograms().add(pg);
 		pg.setGraphicsLayer(this);
+		resetUniqueIds();
 		changed();
 	}
 
 	public void removePictogram(AbstractPictogram pg) {
 		getPictograms().remove(pg);
 		pg.setGraphicsLayer(null);
+		resetUniqueIds();
 		changed();
+	}
+
+	public AbstractPictogram getAbstractPictogramById(int id) {
+		for (AbstractPictogram p : this.nodes) {
+			if (p.getId() == id) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	public String getBackgroundImagePath() {
@@ -114,6 +125,14 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 		notifyObservers();
 	}
 
+	public synchronized void resetUniqueIds() {
+		int id = 1;
+		for (AbstractPictogram node : this.nodes) {
+			node.setId(id);
+			id++;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -134,5 +153,5 @@ public class GraphicsLayer extends Observable implements Serializable, Observer 
 
 	public void setRoots(Collection<IPhysicalOperator> roots) {
 		this.roots = roots;
-	}	
+	}
 }

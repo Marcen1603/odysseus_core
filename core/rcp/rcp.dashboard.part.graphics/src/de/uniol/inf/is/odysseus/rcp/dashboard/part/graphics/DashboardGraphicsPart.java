@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EventObject;
@@ -84,9 +85,11 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.GraphPalette;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.PasteAction;
-import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictogram;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part.GraphicalEditPartFactory;
 
 public class DashboardGraphicsPart extends AbstractDashboardPart implements CommandStackListener, ISelectionListener, Observer {
@@ -220,9 +223,8 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 							className = ImagePictogram.class.getName();
 						}
 
-						AbstractPictogram pictogram = (AbstractPictogram) Class.forName(className).newInstance();
-						pictogram.loadFromXML(pictogramNode);
-						this.pictogramGroup.addPictogram(pictogram);
+						AbstractPart part = (AbstractPart) Class.forName(className).newInstance();						
+						part.loadFromXML(pictogramNode, this.pictogramGroup);						
 					}
 				}
 			}
@@ -244,11 +246,19 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 			doc.appendChild(root);
 			if (viewer != null) {
 				GraphicsLayer model = (GraphicsLayer) viewer.getContents().getModel();
+				List<Connection> connections = new ArrayList<>();
 				for (AbstractPictogram p : model.getPictograms()) {
 					Element picNode = doc.createElement("pictogram");
 					picNode.setAttribute("type", p.getClass().getName());
 					p.getXML(picNode, doc);
 					root.appendChild(picNode);
+					connections.addAll(p.getSourceConnections());
+				}
+				for (Connection c : connections) {
+					Element conNode = doc.createElement("connection");
+					conNode.setAttribute("type", c.getClass().getName());
+					c.getXML(conNode, doc);
+					root.appendChild(conNode);
 				}
 			}
 

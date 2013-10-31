@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -25,6 +26,8 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPicto
  * 
  */
 public abstract class AbstractPictogram extends AbstractPart {
+
+	private int id = -1;
 
 	private Rectangle constraint;
 
@@ -51,6 +54,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 		this.textBottom = old.textBottom;
 
 	}
+	
+	
+	public abstract IFigure createPictogramFigure();
 
 	public Rectangle getConstraint() {
 		return constraint;
@@ -77,7 +83,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 		super.internalOpen(root);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#internalProcessRelavant(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
 	@Override
@@ -89,7 +97,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 			this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -100,6 +108,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 		super.internalSave(values);
 		values.put("text_bottom", this.textBottom);
 		values.put("text_top", this.textTop);
+		values.put("identifier", getXMLIdentifier());
 	}
 
 	/*
@@ -111,6 +120,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	protected void internalLoad(Map<String, String> values) {
 		setTextBottom(loadValue(values.get("text_bottom"), ""));
 		setTextTop(loadValue(values.get("text_top"), ""));
+		setId(Integer.parseInt(loadValue(values.get("identifier"), "-1")));
 		super.internalLoad(values);
 	}
 
@@ -119,8 +129,8 @@ public abstract class AbstractPictogram extends AbstractPart {
 	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#loadFromXML(org.w3c.dom.Node)
 	 */
-	public void loadFromXML(Node parent) {
-		super.loadFromXML(parent);
+	public void loadFromXML(Node parent, GraphicsLayer layer) {
+		super.loadFromXML(parent, layer);
 		NodeList list = parent.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			list.item(i);
@@ -134,7 +144,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 				setConstraint(rect);
 			}
 		}
-
+		layer.addPictogram(this);
 	}
 
 	/*
@@ -151,6 +161,18 @@ public abstract class AbstractPictogram extends AbstractPart {
 		constElement.setAttribute("width", Integer.toString(constraint.width));
 		constElement.setAttribute("height", Integer.toString(constraint.height));
 		parent.appendChild(constElement);
+	}
+
+	public String getXMLIdentifier() {
+		return Integer.toString(id);
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Dimension getPreferedSize() {
@@ -235,12 +257,13 @@ public abstract class AbstractPictogram extends AbstractPart {
 		update();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#clone()
 	 */
 	@Override
 	public abstract AbstractPictogram clone();
-	
-	
+
 	public abstract Class<? extends AbstractPictogramDialog<? extends AbstractPictogram>> getConfigurationDialog();
 }

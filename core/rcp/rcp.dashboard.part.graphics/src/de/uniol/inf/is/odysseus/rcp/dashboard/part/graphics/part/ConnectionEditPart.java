@@ -60,6 +60,7 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 		figure.getTargetPortLabel().setText(connection.getTargetText());
 		figure.getSourcePortLabel().setText(connection.getSourceText());
 		figure.setLineWidth(connection.getWidth());
+		figure.setForegroundColor(connection.getCurrentColor());
 		figure.repaint();
 	}
 

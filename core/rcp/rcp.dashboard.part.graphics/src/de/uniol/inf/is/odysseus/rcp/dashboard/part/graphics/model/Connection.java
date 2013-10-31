@@ -15,30 +15,44 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.draw2d.IFigure;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ConnectionDialog;
+import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * @author DGeesen
  * 
  */
-public class Connection extends AbstractPart{
+public class Connection extends AbstractPart {
 
 	private AbstractPictogram source;
 	private AbstractPictogram target;
 	private String sourceText = "";
 	private String targetText = "";
 	private int width;
-	
+	private Color currentColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+	private List<Pair<Color, RelationalPredicate>> entries = new ArrayList<>();
 
-	public Connection(){
-		
+	public Connection() {
+
 	}
 
 	public Connection(Connection old) {
@@ -46,6 +60,8 @@ public class Connection extends AbstractPart{
 		this.target = old.target;
 		this.sourceText = old.sourceText;
 		this.targetText = old.targetText;
+		this.width = old.width;
+		this.currentColor = old.currentColor;
 	}
 
 	public AbstractPictogram getSource() {
@@ -60,7 +76,7 @@ public class Connection extends AbstractPart{
 		}
 		this.source = source;
 		if (source != null) {
-			source.addSourceConnection(this);			
+			source.addSourceConnection(this);
 		}
 		update();
 	}
@@ -76,34 +92,16 @@ public class Connection extends AbstractPart{
 			this.target.removeTargetConnection(this);
 		}
 		this.target = target;
-		if (target != null) {			
-			target.addTargetConnection(this);								
+		if (target != null) {
+			target.addTargetConnection(this);
 		}
 		update();
 	}
 
 	public void reconnect(AbstractPictogram sourceNode, AbstractPictogram targetNode) {
 		setTarget(targetNode);
-		setSource(sourceNode);		
+		setSource(sourceNode);
 	}
-
-//	public void getXML(Node parent, Document builder) {
-//		Element targetElement = builder.createElement("target");
-//		targetElement.setTextContent(target.getXMLIdentifier());
-//		parent.appendChild(targetElement);
-//		
-//		Element sourceElement = builder.createElement("source");
-//		sourceElement.setTextContent(source.getXMLIdentifier());
-//		parent.appendChild(sourceElement);
-//		
-//		Element targetPortElement = builder.createElement("targetPort");
-//		targetPortElement.setTextContent(Integer.toString(targetPort));
-//		parent.appendChild(targetPortElement);
-//		
-//		Element sourcePortElement = builder.createElement("sourcePort");
-//		sourcePortElement.setTextContent(Integer.toString(sourcePort));
-//		parent.appendChild(sourcePortElement);
-//	}
 
 	public String getTargetText() {
 		return targetText;
@@ -123,52 +121,119 @@ public class Connection extends AbstractPart{
 		update();
 	}
 
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#createPictogramFigure()
-	 */
-	@Override
-	public IFigure createPictogramFigure() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#load(java.util.Map)
 	 */
 	@Override
 	protected void load(Map<String, String> values) {
-		// TODO Auto-generated method stub
-		
+		setWidth(loadValue(Integer.parseInt(values.get("width")), 2));
+		setTargetText(loadValue(values.get("targetText"), ""));
+		setSourceText(loadValue(values.get("sourceText"), ""));
+		String targetId = values.get("targetNode");
+		if (targetId != null) {
+			setTarget(getGraphicsLayer().getAbstractPictogramById(Integer.parseInt(targetId)));
+		}
+		String sourceId = values.get("sourceNode");
+		if (sourceId != null) {
+			setSource(getGraphicsLayer().getAbstractPictogramById(Integer.parseInt(sourceId)));
+		}
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#save(java.util.Map)
 	 */
 	@Override
 	protected void save(Map<String, String> values) {
-		// TODO Auto-generated method stub
-		
+		values.put("targetNode", target.getXMLIdentifier());
+		values.put("sourceNode", source.getXMLIdentifier());
+		values.put("targetText", targetText);
+		values.put("sourceText", sourceText);
+		values.put("width", Integer.toString(width));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#getXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 */
+	@Override
+	public void getXML(Node parent, Document builder) {
+		super.getXML(parent, builder);
+		Element colorsElement = builder.createElement("colors");
+		for (Pair<Color, RelationalPredicate> ce : this.entries) {
+			Element colorElement = builder.createElement("color");
+			colorElement.setAttribute("predicate", ce.getE2().getExpression().getExpressionString());
+			colorElement.setAttribute("r", Integer.toString(ce.getE1().getRGB().red));
+			colorElement.setAttribute("g", Integer.toString(ce.getE1().getRGB().green));
+			colorElement.setAttribute("b", Integer.toString(ce.getE1().getRGB().blue));
+			colorsElement.appendChild(colorElement);
+		}
+		parent.appendChild(colorsElement);
+	}
+
+	public void loadFromXML(Node parent, GraphicsLayer layer) {
+		super.loadFromXML(parent, layer);
+		NodeList list = parent.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			list.item(i);
+			Element elem = (Element) list.item(i);
+			if (elem.getNodeName().equals("colors")) {
+				NodeList colorsList = elem.getChildNodes();
+				for (int k = 0; k < colorsList.getLength(); k++) {
+					Element colorElem = (Element) colorsList.item(k);
+					String predicate = colorElem.getAttribute("predicate");
+					int r = Integer.parseInt(colorElem.getAttribute("r"));
+					int g = Integer.parseInt(colorElem.getAttribute("g"));
+					int b = Integer.parseInt(colorElem.getAttribute("b"));
+					Color color = ColorManager.createColor(r, g, b);
+					addColor(color, predicate);
+				}
+
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#open(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
 	protected void open(IPhysicalOperator root) {
-		// TODO Auto-generated method stub
-		
+		try {
+			for (Pair<Color, RelationalPredicate> ce : this.entries) {
+				ce.getE2().init(root.getOutputSchema(), null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#process(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
 	@Override
 	protected void process(Tuple<?> tuple) {
-		// TODO Auto-generated method stub
-		
+		for (Pair<Color, RelationalPredicate> ce : entries) {
+			if (ce.getE2().evaluate(tuple)) {
+				setCurrentColor(ce.getE1());
+				break;
+			}
+		}
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#clone()
 	 */
 	@Override
@@ -176,7 +241,9 @@ public class Connection extends AbstractPart{
 		return new Connection(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#getConfigurationDialog()
 	 */
 	@Override
@@ -189,8 +256,9 @@ public class Connection extends AbstractPart{
 	 * @param predicate
 	 */
 	public void addColor(Color color, String predicate) {
-		// TODO Auto-generated method stub
-		
+		RelationalPredicate relPredicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
+		Pair<Color, RelationalPredicate> ce = new Pair<Color, RelationalPredicate>(color, relPredicate);
+		this.entries.add(ce);
 	}
 
 	/**
@@ -198,15 +266,17 @@ public class Connection extends AbstractPart{
 	 */
 	public void setWidth(int width) {
 		this.width = width;
-		
+
 	}
 
 	/**
 	 * 
 	 */
 	public void clearColors() {
-		// TODO Auto-generated method stub
-		
+		for (Pair<Color, RelationalPredicate> ce : entries) {
+			ce.getE1().dispose();
+		}
+		entries.clear();
 	}
 
 	/**
@@ -215,4 +285,17 @@ public class Connection extends AbstractPart{
 	public int getWidth() {
 		return width;
 	}
+
+	public Color getCurrentColor() {
+		return currentColor;
+	}
+
+	public void setCurrentColor(Color currentColor) {
+		this.currentColor = currentColor;
+	}
+
+	public List<Pair<Color, RelationalPredicate>> getColorPredicates() {
+		return Collections.unmodifiableList(this.entries);
+	}
+	
 }

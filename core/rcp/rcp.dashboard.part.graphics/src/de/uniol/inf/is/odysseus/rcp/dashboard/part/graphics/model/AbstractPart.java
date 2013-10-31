@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.draw2d.IFigure;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -112,7 +111,8 @@ public abstract class AbstractPart extends Observable implements Observer {
 		values.put("selected_root", this.selectedRootName);
 	}
 
-	public void loadFromXML(Node parent) {
+	public void loadFromXML(Node parent, GraphicsLayer layer) {
+		this.graphicsLayer = layer; 
 		Map<String, String> values = new HashMap<String, String>();
 		NodeList list = parent.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -217,8 +217,6 @@ public abstract class AbstractPart extends Observable implements Observer {
 		}
 		return roots;
 	}
-
-	public abstract IFigure createPictogramFigure();
 
 	protected abstract void load(Map<String, String> values);
 
