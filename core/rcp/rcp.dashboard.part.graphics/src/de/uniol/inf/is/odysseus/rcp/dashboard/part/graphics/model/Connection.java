@@ -273,9 +273,6 @@ public class Connection extends AbstractPart {
 	 * 
 	 */
 	public void clearColors() {
-		for (Pair<Color, RelationalPredicate> ce : entries) {
-			ce.getE1().dispose();
-		}
 		entries.clear();
 	}
 

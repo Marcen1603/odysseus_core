@@ -49,6 +49,7 @@ public class ColorManager {
 		for (Color c : loadedColors) {
 			c.dispose();
 		}
+		loadedColors.clear();
 	}
 
 }
