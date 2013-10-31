@@ -131,7 +131,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 				int width = Integer.parseInt(elem.getAttribute("width"));
 				int height = Integer.parseInt(elem.getAttribute("height"));
 				Rectangle rect = new Rectangle(x, y, width, height);
-				this.constraint = rect;
+				setConstraint(rect);
 			}
 		}
 
