@@ -20,7 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
 
 /**
- * This is anything that can be viewed in a container and connected by connections
+ * This is anything that can be viewed in a container and connected by
+ * connections
  * 
  * @author DGeesen
  * 
@@ -54,8 +55,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 		this.textBottom = old.textBottom;
 
 	}
-	
-	
+
 	public abstract IFigure createPictogramFigure();
 
 	public Rectangle getConstraint() {
@@ -70,15 +70,24 @@ public abstract class AbstractPictogram extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#internalOpen(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #internalOpen
+	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
 	protected void internalOpen(IPhysicalOperator root) {
-		if (this.bottomExpression != null) {
-			this.bottomExpression.initAttributePositions(root.getOutputSchema());
-		}
-		if (this.topExpression != null) {
-			this.topExpression.initAttributePositions(root.getOutputSchema());
+		try {
+			if (this.bottomExpression != null) {
+				this.bottomExpression.initAttributePositions(root
+						.getOutputSchema());
+			}
+			if (this.topExpression != null) {
+				this.topExpression.initAttributePositions(root
+						.getOutputSchema());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		super.internalOpen(root);
 	}
@@ -86,7 +95,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#internalProcessRelavant(de.uniol.inf.is.odysseus.core.collection.Tuple)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #internalProcessRelavant(de.uniol.inf.is.odysseus.core.collection.Tuple)
 	 */
 	@Override
 	protected void internalProcessRelavant(Tuple<?> tuple) {
@@ -94,14 +105,17 @@ public abstract class AbstractPictogram extends AbstractPart {
 			this.currentTextTop = getExpressionValue(topExpression, tuple);
 		}
 		if (this.bottomExpression != null) {
-			this.currentTextBottom = getExpressionValue(this.bottomExpression, tuple);
+			this.currentTextBottom = getExpressionValue(this.bottomExpression,
+					tuple);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#internalSave(java.util.Map)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #internalSave(java.util.Map)
 	 */
 	@Override
 	protected void internalSave(Map<String, String> values) {
@@ -114,7 +128,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#internalLoad(java.util.Map)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #internalLoad(java.util.Map)
 	 */
 	@Override
 	protected void internalLoad(Map<String, String> values) {
@@ -127,7 +143,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#loadFromXML(org.w3c.dom.Node)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #loadFromXML(org.w3c.dom.Node)
 	 */
 	public void loadFromXML(Node parent, GraphicsLayer layer) {
 		super.loadFromXML(parent, layer);
@@ -150,7 +168,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#getXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #getXML(org.w3c.dom.Node, org.w3c.dom.Document)
 	 */
 	@Override
 	public void getXML(Node parent, Document builder) {
@@ -159,7 +179,8 @@ public abstract class AbstractPictogram extends AbstractPart {
 		constElement.setAttribute("x", Integer.toString(constraint.x));
 		constElement.setAttribute("y", Integer.toString(constraint.y));
 		constElement.setAttribute("width", Integer.toString(constraint.width));
-		constElement.setAttribute("height", Integer.toString(constraint.height));
+		constElement
+				.setAttribute("height", Integer.toString(constraint.height));
 		parent.appendChild(constElement);
 	}
 
@@ -191,7 +212,8 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextTop(String textTop) {
 		this.textTop = textTop;
 		if (textTop.startsWith("=")) {
-			topExpression = new SDFExpression(textTop.substring(1), MEP.getInstance());
+			topExpression = new SDFExpression(textTop.substring(1),
+					MEP.getInstance());
 		} else {
 			topExpression = null;
 			this.currentTextTop = this.textTop;
@@ -214,7 +236,8 @@ public abstract class AbstractPictogram extends AbstractPart {
 	public void setTextBottom(String textBottom) {
 		this.textBottom = textBottom;
 		if (textBottom.startsWith("=")) {
-			bottomExpression = new SDFExpression(textBottom.substring(1), MEP.getInstance());
+			bottomExpression = new SDFExpression(textBottom.substring(1),
+					MEP.getInstance());
 		} else {
 			bottomExpression = null;
 			this.currentTextBottom = this.textBottom;
@@ -260,7 +283,9 @@ public abstract class AbstractPictogram extends AbstractPart {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart#clone()
+	 * @see
+	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
+	 * #clone()
 	 */
 	@Override
 	public abstract AbstractPictogram clone();
