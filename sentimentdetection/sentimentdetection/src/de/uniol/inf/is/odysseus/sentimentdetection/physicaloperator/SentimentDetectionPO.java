@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
@@ -94,11 +95,13 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 	public SentimentDetectionPO(boolean splitDecision, String classifier,
 			int trainSetMinSize, String domain, boolean debugClassifier,
-			int attributeTrainSetTextPos, int attributeTrainSetTrueDecisionPos,
-			int attributeTestSetTextPos, int attributeTestSetTrueDecisionPos,
-			int ngram, boolean removeStopWords, boolean stemmWords,
-			boolean ngramUpto, String language, int maxBufferSize,
-			int attributeTextToBeClassifiedPos, int totalInputports) {
+			SDFAttribute attributeTrainSetText,
+			SDFAttribute attributeTrainSetTrueDecision,
+			SDFAttribute attributeTestSetText,
+			SDFAttribute attributeTestSetTrueDecision, int ngram,
+			boolean removeStopWords, boolean stemmWords, boolean ngramUpto,
+			String language, int maxBufferSize,
+			SDFAttribute attributeTextToBeClassified, int totalInputports) {
 		super();
 
 		this.splitDecision = splitDecision;
@@ -107,6 +110,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.domain = domain;
 		this.debugClassifier = debugClassifier;
 
+		// Determine Attribute positions!
 		this.attributeTrainSetTextPos = attributeTrainSetTextPos;
 		this.attributeTrainSetTrueDecisionPos = attributeTrainSetTrueDecisionPos;
 
@@ -123,6 +127,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 		this.stemmWords = stemmWords;
 		this.maxBufferSize = maxBufferSize;
 		this.language = language;
+		throw new RuntimeException("Currently not implemented");
 	}
 
 	public SentimentDetectionPO(SentimentDetectionPO<T> senti) {
@@ -171,9 +176,8 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends
 
 		if (debugClassifier) {
 			/*
-			 * Debug-Mouds two modi 
-			 * 1. traindata and testdata 
-			 * 2. traindata, testdata and text to be classified
+			 * Debug-Mouds two modi 1. traindata and testdata 2. traindata,
+			 * testdata and text to be classified
 			 */
 			// in debug-modus port 0 only trainingdata
 			if (port == 0) {

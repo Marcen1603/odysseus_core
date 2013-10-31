@@ -19,6 +19,8 @@ public class TSentimentDetectionAORule extends
 	@Override
 	public void execute(SentimentDetectionAO sentimentDetectionAO,
 			TransformationConfiguration config) {
+		
+		
 		defaultExecute(
 				sentimentDetectionAO,
 				new SentimentDetectionPO(sentimentDetectionAO.getOutputPorts(),
@@ -26,17 +28,17 @@ public class TSentimentDetectionAORule extends
 						sentimentDetectionAO.getMinimumSize(),
 						sentimentDetectionAO.getDomain(), 
 						sentimentDetectionAO.getEvaluateClassifier(),
-						sentimentDetectionAO.getAttributeTrainSetTextPos(),
-						sentimentDetectionAO.getAttributeTrainSetTrueDecisionPos(),
-						sentimentDetectionAO.getAttributeTestSetTextPos(),
-						sentimentDetectionAO.getAttributeTestSetTrueDecisionPos(),
+						sentimentDetectionAO.getAttributeTrainSetText(),
+						sentimentDetectionAO.getAttributeTrainSetTrueDecision(),
+						sentimentDetectionAO.getAttributeTestSetText(),
+						sentimentDetectionAO.getAttributeTestSetTrueDecision(),
 						sentimentDetectionAO.getNgram(),
 						sentimentDetectionAO.getRemoveStopWords(),
 						sentimentDetectionAO.getStemmWords(),
 						sentimentDetectionAO.getNgramUpTo(),
 						sentimentDetectionAO.getLanguage(),
 						sentimentDetectionAO.getMaxBufferSize(),
-						sentimentDetectionAO.getAttributeTextToBeClassifiedPos(),
+						sentimentDetectionAO.getAttributeTextToBeClassified(),
 						sentimentDetectionAO.getTotalInputports()),
 						config, true, true);
 	}

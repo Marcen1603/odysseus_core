@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.sentimentdetection.classifier.ClassifierRegistry;
@@ -44,26 +45,13 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	private boolean stemmWords = false;
 	private boolean ngramUpTo = false;
 	
-	private String attributeTrainSetText;
-	private String attributeTrainSetTrueDecision;
+	private SDFAttribute attributeTrainSet;
+	private SDFAttribute attributeTrainSetTrueDecision;
 	
-	private String attributeTestSetText;
-	private String attributeTestSetTrueDecision;
+	private SDFAttribute attributeTestSet;
+	private SDFAttribute attributeTestSetTrueDecision;
 	
-	private String attributeTextToBeClassifiedText;
-	
-	
-	//Attribute positions
-	private int attributeTrainSetTextPos = -1;
-	private int attributeTrainSetTrueDecisionPos = -1;
-	
-	private int attributeTestSetTextPos = -1 ;
-	private int attributeTestSetTrueDecisionPos = -1;
-	
-	private int attributeTextToBeClassifiedPos = -1;
-	
-
-	
+	private SDFAttribute attributeTextToBeClassified;
 	
 	private String enrichAttribut = "decision";
 	private String language = "english";
@@ -89,20 +77,12 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
      
         this.maxBufferSize = sentimentDetectionAO.maxBufferSize;
  
-        this.attributeTrainSetText = sentimentDetectionAO.attributeTrainSetText;
+        this.attributeTrainSet = sentimentDetectionAO.attributeTrainSet;
         this.attributeTrainSetTrueDecision = sentimentDetectionAO.attributeTrainSetTrueDecision;
         
-        this.attributeTestSetText = sentimentDetectionAO.attributeTestSetText;
+        this.attributeTestSet = sentimentDetectionAO.attributeTestSet;
         this.attributeTestSetTrueDecision = sentimentDetectionAO.attributeTestSetTrueDecision;
-        
-        this.attributeTestSetTextPos = sentimentDetectionAO.attributeTestSetTextPos;
-        this.attributeTestSetTrueDecisionPos = sentimentDetectionAO.attributeTestSetTrueDecisionPos;
-        
-        this.attributeTrainSetTextPos = sentimentDetectionAO.attributeTrainSetTextPos;
-        this.attributeTrainSetTrueDecisionPos = sentimentDetectionAO.attributeTrainSetTrueDecisionPos;
-        
-        this.attributeTextToBeClassifiedPos = sentimentDetectionAO.attributeTextToBeClassifiedPos;
-        
+                
         this.totalInputports = sentimentDetectionAO.totalInputports;
    
     }
@@ -163,29 +143,29 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.debugClassifier = debugClassifier;
 	}
 
-	@Parameter(name="trainSetText", type=StringParameter.class, doc="")
-	public void setAttributeTrainSetText(String attributeTrainSetText){
-		this.attributeTrainSetText = attributeTrainSetText;
+	@Parameter(name="trainSetText", type=ResolvedSDFAttributeParameter.class, doc="")
+	public void setAttributeTrainSetText(SDFAttribute attributeTrainSetText){
+		this.attributeTrainSet = attributeTrainSetText;
 	}
 	
-	@Parameter(name="trainSetTrueDecision", type=StringParameter.class, doc="")
-	public void setAttributeTrainSetTrueDecision(String attributeTrainSetTrueDecision){
+	@Parameter(name="trainSetTrueDecision", type=ResolvedSDFAttributeParameter.class, doc="")
+	public void setAttributeTrainSetTrueDecision(SDFAttribute attributeTrainSetTrueDecision){
 		this.attributeTrainSetTrueDecision = attributeTrainSetTrueDecision;
 	}
 	
-	@Parameter(name="testSetTrueDecision", type=StringParameter.class, optional= true ,doc="")
-	public void setAttributeTestSetTrueDecision(String attributeTestSetTrueDecision){
+	@Parameter(name="testSetTrueDecision", type=ResolvedSDFAttributeParameter.class, optional= true ,doc="")
+	public void setAttributeTestSetTrueDecision(SDFAttribute attributeTestSetTrueDecision){
 		this.attributeTestSetTrueDecision = attributeTestSetTrueDecision;
 	}
 	
-	@Parameter(name="testSetText", type=StringParameter.class, optional= true, doc="")
-	public void setAttributeTestSetText(String attributeTestSetText){
-		this.attributeTestSetText = attributeTestSetText;
+	@Parameter(name="testSetText", type=ResolvedSDFAttributeParameter.class, optional= true, doc="")
+	public void setAttributeTestSetText(SDFAttribute attributeTestSetText){
+		this.attributeTestSet = attributeTestSetText;
 	}
 	
-	@Parameter(name = "textToBeClassified", type=StringParameter.class, optional= true, doc="")
-	public void setToClassifierText(String textToBeClassified) {
-		this.attributeTextToBeClassifiedText   = textToBeClassified;
+	@Parameter(name = "textToBeClassified", type=ResolvedSDFAttributeParameter.class, optional= true, doc="")
+	public void setToClassifierText(SDFAttribute textToBeClassified) {
+		this.attributeTextToBeClassified   = textToBeClassified;
 	}
 	
 	@Parameter(name="language", type=StringParameter.class, optional= true, doc="")
@@ -229,11 +209,6 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		this.enrichAttribut   = enrichAttribut;
 	}
 	
-	
-	
-	
-	
-	
 	public String getLanguage(){
 		return language;
 	}
@@ -257,21 +232,26 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return removeStopWords;
 	}
 	
-	public String getAttributeTestSetTrueDecision(){
+	public SDFAttribute getAttributeTestSetTrueDecision(){
 		return attributeTestSetTrueDecision;
 	}
 	
-	public String getAttributeTestSetText(){
-		return attributeTestSetText;
+	public SDFAttribute getAttributeTestSetText(){
+		return attributeTestSet;
 	}
 
-	public String getAttributeTrainSetTrueDecision(){
+	public SDFAttribute getAttributeTrainSetTrueDecision(){
 		return attributeTrainSetTrueDecision;
 	}
 	
-	public String getAttributeTrainSetText(){
-		return attributeTrainSetText;
+	public SDFAttribute getAttributeTrainSetText(){
+		return attributeTrainSet;
 	}
+	
+	public SDFAttribute getAttributeTextToBeClassified() {
+		return attributeTextToBeClassified;
+	}
+	
 	public boolean getOutputPorts(){
 		return splitDecision;
 	}
@@ -292,34 +272,18 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return debugClassifier;
 	}
 	
-	
-	public int getAttributeTrainSetTextPos(){
-		return attributeTrainSetTextPos;
-	}
-	
-	public int getAttributeTrainSetTrueDecisionPos(){
-		return attributeTrainSetTrueDecisionPos;
-	}
-	
-	
-	public int getAttributeTestSetTextPos(){
-		return attributeTestSetTextPos;
-	}
-	
-	public int getAttributeTestSetTrueDecisionPos(){
-		return attributeTestSetTrueDecisionPos;
-	}
-	
+		
 	public String getEnrichAttribut(){
 		return enrichAttribut;
 	}
 	
-	public int getAttributeTextToBeClassifiedPos(){
-		return attributeTextToBeClassifiedPos;
-	}
-	
 	public int getTotalInputports(){
 		return totalInputports;
+	}
+	
+	@Override
+	public void initialize() {
+		
 	}
 	
 	@Override
@@ -339,43 +303,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		if(debugClassifier){
 			
 			// 2. inputs 
-			
-			if(getAttributePos(this.getInputSchema(0),attributeTrainSetText) != -1){
-				this.attributeTrainSetTextPos = getAttributePos(this.getInputSchema(0),attributeTrainSetText);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTrainSetText +" could not found in the TrainingSet!"));
-				return false;
-			}
-			
-			if(getAttributePos(this.getInputSchema(0),attributeTrainSetTrueDecision) != -1){
-				this.attributeTrainSetTrueDecisionPos = getAttributePos(this.getInputSchema(0),attributeTrainSetTrueDecision);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTrainSetTrueDecision +" could not found in the TrainingSet!"));
-				return false;
-			}
-			
-			
-			if(getAttributePos(this.getInputSchema(1),attributeTestSetText) != -1){
-				this.outputSchemaPort = 2;
-				this.totalInputports = 3;
-				this.attributeTestSetTextPos = getAttributePos(this.getInputSchema(1),attributeTestSetText);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTestSetText +" could not found in the TestSet!"));
-				return false;
-			}
-			
-			
-			if(getAttributePos(this.getInputSchema(1),attributeTestSetTrueDecision) != -1){
-				this.attributeTestSetTrueDecisionPos = getAttributePos(this.getInputSchema(1),attributeTestSetTrueDecision);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTestSetTrueDecision +" could not found in the TestSet!"));
-				return false;
-			}
-			
+		
 			
 			this.totalInputports = 2;
 			this.outputSchemaPort = 1;
@@ -386,7 +314,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		
 			SDFSchema toClassifierSchema = this.getInputSchema(2);
 			
-			if(toClassifierSchema == null && attributeTextToBeClassifiedText != null ){
+			if(toClassifierSchema == null && attributeTextToBeClassified != null ){
 				addError(new IllegalParameterException(
 						"Please define all inputports"));
 				return false;
@@ -394,14 +322,6 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			
 			if(toClassifierSchema != null){
 				
-				if(getAttributePos(toClassifierSchema, attributeTextToBeClassifiedText) != -1){
-					
-					this.attributeTextToBeClassifiedPos = getAttributePos(toClassifierSchema,attributeTextToBeClassifiedText);
-				}else{
-					addError(new IllegalParameterException(
-							"Attribute: "+ attributeTextToBeClassifiedText +" could not found in the data that are to classifiered!"));
-					return false;
-				}
 				
 			this.totalInputports = 3;
 			this.outputSchemaPort = 2;
@@ -413,33 +333,7 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 			
 		}else{
 			
-			if(getAttributePos(this.getInputSchema(0),attributeTrainSetText) != -1){
-				this.attributeTrainSetTextPos = getAttributePos(this.getInputSchema(0),attributeTrainSetText);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTrainSetText +" could not found in the TrainingSet!"));
-				return false;
-			}
 			
-			if(getAttributePos(this.getInputSchema(0),attributeTrainSetTrueDecision) != -1){
-				this.attributeTrainSetTrueDecisionPos = getAttributePos(this.getInputSchema(0),attributeTrainSetTrueDecision);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTrainSetTrueDecision +" could not found in the TrainingSet!"));
-				return false;
-			}
-			
-			
-			SDFSchema toClassifierSchema = this.getInputSchema(1);
-			
-			
-			if(getAttributePos(toClassifierSchema, attributeTextToBeClassifiedText) != -1){	
-				this.attributeTextToBeClassifiedPos = getAttributePos(toClassifierSchema,attributeTextToBeClassifiedText);
-			}else{
-				addError(new IllegalParameterException(
-						"Attribute: "+ attributeTextToBeClassifiedText +" could not found in the data that are to classifiered!"));
-				return false;
-			}
 			
 			this.totalInputports = 2;
 			this.outputSchemaPort = 1;
@@ -459,19 +353,6 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 		return true;
 	}
 	
-	public int getAttributePos(SDFSchema schema, String attribute){
-		int pos = -1;
-		int i = 0;
-		for (SDFAttribute a : schema) {
-			//System.out.println(a.getAttributeName());
-			if(a.getAttributeName().equals(attribute)){
-				pos = i;
-			}
-			i++;
-		}
-		
-		return pos;
-	}
 	
 
 	
