@@ -82,7 +82,9 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
         
         this.attributeTestSet = sentimentDetectionAO.attributeTestSet;
         this.attributeTestSetTrueDecision = sentimentDetectionAO.attributeTestSetTrueDecision;
-                
+        
+        this.attributeTextToBeClassified = sentimentDetectionAO.attributeTextToBeClassified;
+        
         this.totalInputports = sentimentDetectionAO.totalInputports;
    
     }
@@ -95,17 +97,14 @@ public class SentimentDetectionAO extends BinaryLogicalOp{
 	
 	@Override 
 	public SDFSchema getOutputSchemaIntern(int pos){
-		
+		// add detected sentiment to schema 		
+		SDFSchema inSchema = getInputSchema(outputSchemaPort);
 		SDFAttribute sentDetection = new SDFAttribute(null, enrichAttribut ,SDFDatatype.STRING);
-		
-		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
-		
-		outputAttributes.addAll(getInputSchema(outputSchemaPort).getAttributes());
-		String name = getInputSchema(outputSchemaPort).getURI();
-		
+		List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();		
+		outputAttributes.addAll(inSchema.getAttributes());				
 		outputAttributes.add(sentDetection);
-		
-		setOutputSchema(new SDFSchema(name, getInputSchema(outputSchemaPort).getType(), outputAttributes));
+		SDFSchema outSchema = new SDFSchema(inSchema.getURI(), inSchema.getType(), outputAttributes);
+		setOutputSchema(outSchema);
 		
 		if(totalInputports == 3){
 			List<SDFAttribute> outputAttributesneu = new ArrayList<SDFAttribute>();
