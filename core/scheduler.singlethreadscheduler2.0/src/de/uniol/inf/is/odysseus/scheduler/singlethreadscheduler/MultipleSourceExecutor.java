@@ -12,19 +12,21 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.event.IEvent;
-import de.uniol.inf.is.odysseus.core.event.IEventListener;
-import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 
-public class MultipleSourceExecutor extends Thread implements IEventListener,
-		ISourceExecutor {
+public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
 	Logger logger = LoggerFactory.getLogger(MultipleSourceExecutor.class);
 	private boolean interrupt = false;
 	final private List<IIterableSource<?>> sources = new ArrayList<>();
 	final private List<IIterableSource<?>> toAdd = new LinkedList<>();
 	final private List<IIterableSource<?>> toRemove = new LinkedList<>();
+
+	enum State {
+		WAIT_FOR_OPEN, PROCESSING, UPDATE_SOURCES
+	};
+
+	private State currentState = State.WAIT_FOR_OPEN;
 
 	final private Comparator<IIterableSource<?>> sourcesComparator = new Comparator<IIterableSource<?>>() {
 		@Override
@@ -52,15 +54,17 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		try {
 			interrupt = false;
 			while (!interrupt && !isInterrupted() && caller.isRunning()) {
-				waitForOpen();
+				// waitForOpen();
+				updateSources();
 				while (sources.size() > 0) {
-					synchronized (sources) {
+					   synchronized (sources) {
 						updateSources();
 						// Need to delay some time to catch an open
 						delay(10);
 						boolean processableSources = processSources();
 						updateSources();
 						if (!processableSources) {
+							logger.trace("No processable sources");
 							waitForProcessableSources();
 						}
 					} // Synchronized
@@ -89,8 +93,10 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		synchronized (sources) {
 			boolean processableSources = false;
 			while (!processableSources && sources.size() > 0) {
+				updateSources();
 				for (IIterableSource<?> others : sources) {
 					if (others.isOpen()) {
+						logger.trace("Found open source " + others);
 						processableSources = true;
 						break;
 					}
@@ -102,7 +108,6 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 									+ sources);
 						}
 						sources.wait(1000);
-						updateSources();
 					}
 				} catch (InterruptedException e) {
 				}
@@ -111,7 +116,7 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 	}
 
 	private boolean processSources() {
-
+		currentState = State.PROCESSING;
 		boolean waitedForFirstSource = false;
 		if (logger.isTraceEnabled()) {
 			logger.trace("Process Sources " + sources);
@@ -167,38 +172,39 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		return processableSources;
 	}
 
-	private void waitForOpen() {
-		boolean open = false;
-		// Wait for at least one open source
-		synchronized (sources) {
-
-			while (!open) {
-
-				updateSources();
-
-				for (IIterableSource<?> s : sources) {
-					if (s.isOpen()) {
-						logger.trace("Opened " + this.hashCode()
-								+ "... Start Processing of Source " + s);
-						open = true;
-						break;
-					}
-				}
-
-				try {
-					if (!open) {
-						sources.wait(1000);
-					}
-				} catch (InterruptedException ignored) {
-				}
-
-			}
-		}
-		logger.trace("At least one source is open");
-	}
+	// private void waitForOpen() {
+	// boolean open = false;
+	// currentState = State.WAIT_FOR_OPEN;
+	// // Wait for at least one open source
+	// synchronized (sources) {
+	//
+	// while (!open) {
+	// updateSources();
+	//
+	// for (IIterableSource<?> s : sources) {
+	// if (s.isOpen()) {
+	// logger.trace("Opened " + this.hashCode()
+	// + "... Start Processing of Source " + s);
+	// open = true;
+	// break;
+	// }
+	// }
+	//
+	// try {
+	// if (!open) {
+	// sources.wait(1000);
+	// }
+	// } catch (InterruptedException ignored) {
+	// }
+	//
+	// }
+	// }
+	// logger.trace("At least one source is open");
+	// }
 
 	private void updateSources() {
 		boolean changed = false;
+		currentState = State.UPDATE_SOURCES;
 		synchronized (sources) {
 			if (toAdd.size() > 0) {
 				delayedAddSources();
@@ -244,21 +250,14 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		return Collections.synchronizedCollection(sources);
 	}
 
-	@Override
-	public synchronized void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
-		synchronized (sources) {
-			sources.notifyAll();
-		}
-	}
-
 	public void removeSource(IIterableSource<?> source) {
 		synchronized (toRemove) {
 			toRemove.add(source);
 		}
 		// this.sourcesChangeRequested = true;
-		// synchronized (sources) {
-		// sources.notifyAll();
-		// }
+		synchronized (sources) {
+			sources.notifyAll();
+		}
 	}
 
 	public void removeSources(List<IIterableSource<?>> remove) {
@@ -268,9 +267,9 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		}
 		// this.sourcesChangeRequested = true;
 		// logger.debug("Added " + remove + " to remove list");
-		// synchronized (sources) {
-		// sources.notifyAll();
-		// }
+		synchronized (sources) {
+			sources.notifyAll();
+		}
 	}
 
 	public synchronized void addSource(IIterableSource<?> source) {
@@ -278,19 +277,19 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 		synchronized (toAdd) {
 			toAdd.add(source);
 		}
-		// synchronized (sources) {
-		// sources.notifyAll();
-		// }
+		synchronized (sources) {
+			sources.notifyAll();
+		}
 	}
 
 	public void addSources(List<IIterableSource<?>> add) {
 		synchronized (toAdd) {
 			toAdd.addAll(add);
 		}
-		// // this.sourcesChangeRequested = true;
-		// synchronized (sources) {
-		// sources.notifyAll();
-		// }
+		// this.sourcesChangeRequested = true;
+		synchronized (sources) {
+			sources.notifyAll();
+		}
 	}
 
 	private void delayedAddSources() {
@@ -299,10 +298,10 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			for (IIterableSource<?> source : toAdd) {
 				synchronized (sources) {
 					sources.add(source);
-					source.subscribe(this, POEventType.OpenDone);
 				}
 			}
 			logger.debug("Added Sources " + toAdd);
+			logger.trace("" + this.currentState);
 			toAdd.clear();
 		}
 		// this.sourcesChangeRequested = false;
@@ -314,7 +313,6 @@ public class MultipleSourceExecutor extends Thread implements IEventListener,
 			for (IIterableSource<?> source : toRemove) {
 				synchronized (sources) {
 					sources.remove(source);
-					// source.unsubscribe(this, POEventType.OpenDone);
 				}
 			}
 			logger.debug("Removed Sources " + toRemove);
