@@ -66,7 +66,6 @@ public class QueryFileSelectionPage extends WizardPage {
 	private final ContainerSelectionPage page1;
 
 	private TableViewer filesTable;
-	private Button copyQueryTextCheck;
 	private Button chooseSourceRadio;
 	private Button chooseQueryRadio;
 	private Combo sourceCombo;
@@ -96,9 +95,6 @@ public class QueryFileSelectionPage extends WizardPage {
 	private void createChooseQueryControls(Composite rootComposite) {
 		createChooseQueryRadioButton(rootComposite);
 		createQueryFilesTable(rootComposite);
-
-		copyQueryTextCheck = new Button(rootComposite, SWT.CHECK);
-		copyQueryTextCheck.setText("Copy query into file (query-file and dashboard part are independent)");
 	}
 
 	private void createQueryFilesTable(Composite rootComposite) {
@@ -146,7 +142,6 @@ public class QueryFileSelectionPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				filesTable.getTable().setEnabled(chooseQueryRadio.getSelection());
-				copyQueryTextCheck.setEnabled(chooseQueryRadio.getSelection());
 			}
 		});
 	}
@@ -206,10 +201,6 @@ public class QueryFileSelectionPage extends WizardPage {
 		
 		throw new RuntimeException("There was no source selected here");
 	}
-
-	private boolean isQueryFileCopy() {
-		return chooseQueryRadio.getSelection() && copyQueryTextCheck.getSelection();
-	}
 	
 	private boolean isQueryFileSelected() {
 		return chooseQueryRadio.getSelection();
@@ -217,10 +208,6 @@ public class QueryFileSelectionPage extends WizardPage {
 	
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
 		if( isQueryFileSelected() ) {
-			if( isQueryFileCopy() ) {
-				return new SimpleQueryTextProvider(getSelectedQueryFile());
-			}
-			
 			return new ResourceFileQueryTextProvider(getSelectedQueryFile());
 		}
 		
