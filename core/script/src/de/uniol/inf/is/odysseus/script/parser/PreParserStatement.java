@@ -42,7 +42,9 @@ public final class PreParserStatement {
 		this.line = line;
 	}
 	
-	void validate( Map<String, Object> variables, ISession caller ) throws OdysseusScriptException {
+	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+		keyword.setParser(parser);
+		
 		keyword.validate(variables, parameter, caller);
 	}
 	

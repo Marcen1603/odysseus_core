@@ -33,6 +33,8 @@ public interface IOdysseusScriptParser {
 
 	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
 
+	public void validate(String[] textlines, ISession caller) throws OdysseusScriptException;
+	
 	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException;
@@ -56,4 +58,5 @@ public interface IOdysseusScriptParser {
 	public PreParserKeywordRegistry getPreParserKeywordRegistry();
 
 	public void setReplacement(String key, String value);
+
 }

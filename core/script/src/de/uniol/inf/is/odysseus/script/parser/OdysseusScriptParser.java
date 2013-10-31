@@ -124,15 +124,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return keywordNames;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#parseAndExecute
-	 * (java.lang.String,
-	 * de.uniol.inf.is.odysseus.core.server.usermanagement.User)
-	 */
-
 	@Override
 	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 		return execute(parseScript(completeText, caller), caller, defaultSink);
@@ -147,12 +138,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	@Override
 	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
 
-		Map<String, Object> variables = prepareVariables(defaultSink);
-		for (PreParserStatement stmt : statements) {
-			stmt.validate(variables, caller);
-		}
+		validate(statements, caller, defaultSink);
 
-		variables = prepareVariables(defaultSink);
+		Map<String, Object> variables = prepareVariables(defaultSink);
 		List results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
 			try {
@@ -172,6 +160,18 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		}
 
 		return results;
+	}
+
+	private void validate(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException {
+		Map<String, Object> variables = prepareVariables(defaultSink);
+		for (PreParserStatement stmt : statements) {
+			stmt.validate(variables, caller, this);
+		}
+	}
+
+	@Override
+	public void validate(String[] lines, ISession caller) throws OdysseusScriptException {
+		validate(parseScript(lines, caller), caller, null);
 	}
 
 	private static Boolean isResumeOnError(Map<String, Object> variables) {
