@@ -176,7 +176,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	private static Boolean isResumeOnError(Map<String, Object> variables) {
 		try {
-			return Boolean.parseBoolean((String) variables.get(ResumeOnErrorPreParserKeyword.RESUME_ON_ERROR_FLAG));
+			Boolean val = (Boolean) variables.get(ResumeOnErrorPreParserKeyword.RESUME_ON_ERROR_FLAG);
+			return val != null ? val : false;
 		} catch (Throwable t) {
 			LOG.error("Exception during determining if resume on error was set", t);
 			return false;
