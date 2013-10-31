@@ -182,7 +182,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 	}
 
 	protected void processElement(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
-		System.out.println(element);
+		//System.out.println(element);
 		Tuple<?> tuple = (Tuple<?>) element;
 		this.pictogramGroup.processTuple(senderOperator, tuple);
 	}

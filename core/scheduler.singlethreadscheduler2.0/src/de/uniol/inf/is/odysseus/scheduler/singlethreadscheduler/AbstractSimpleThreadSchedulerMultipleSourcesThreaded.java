@@ -95,6 +95,7 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 	protected MultipleSourceExecutor createNewExecutor() {
 		MultipleSourceExecutor ret;
 		ret = new MultipleSourceExecutor(this);
+		logger.debug("Created new Multi-Source-Excutor "+ret);
 		sourceThreads.add(ret);
 		return ret;
 	}
