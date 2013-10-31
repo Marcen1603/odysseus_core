@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.commands;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -178,6 +179,13 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 	private static void prepareParserReplacements(IOdysseusScriptParser scriptParser, IFile scriptFile) {
 		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		scriptParser.setReplacement("WORKSPACE", localRootLocation);
+		scriptParser.setReplacement("WORKSPACE/", localRootLocation + File.separator);
+		scriptParser.setReplacement("WORKSPACE\\", localRootLocation + File.separator);
 		scriptParser.setReplacement("PROJECT", scriptFile.getProject().getName());
+		scriptParser.setReplacement("WORKSPACEPROJECT", localRootLocation + File.separator + scriptFile.getProject().getName());
+		scriptParser.setReplacement("WORKSPACEPROJECT\\", localRootLocation + File.separator + scriptFile.getProject().getName() + File.separator);
+		scriptParser.setReplacement("WORKSPACEPROJECT/", localRootLocation + File.separator + scriptFile.getProject().getName() + File.separator);
+		scriptParser.setReplacement("\\", File.separator);
+		scriptParser.setReplacement("/", File.separator);
 	}
 }
