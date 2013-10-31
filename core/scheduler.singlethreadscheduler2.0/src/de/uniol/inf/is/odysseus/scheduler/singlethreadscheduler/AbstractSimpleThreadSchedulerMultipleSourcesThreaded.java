@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,15 +79,25 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 		synchronized (sourceThreads) {
 			removeUnscheduledSources();
 			if (newSources != null) {
+				Map<MultipleSourceExecutor, List<IIterableSource<?>>> toAdd = new HashMap<>();
 				for (IIterableSource<?> source : newSources) {
 					if (!isScheduled(source)) {
 						MultipleSourceExecutor mse = getNextSourceExecutor();
-						mse.addSource(source);
-						if (this.isRunning() && !mse.isAlive()) {
-							mse.start();
-						}
+						List<IIterableSource<?>> list = toAdd.get(mse);
+						if (list == null){
+							list = new LinkedList<>();
+							toAdd.put(mse,list);
+						}	
+						list.add(source);
+					}
+				}
+				for (Entry<MultipleSourceExecutor, List<IIterableSource<?>>> e:toAdd.entrySet()){
+					e.getKey().addSources(e.getValue());
+					if (this.isRunning() && !e.getKey().isAlive()) {
+						e.getKey().start();
 					}
 
+					
 				}
 			}
 		}
