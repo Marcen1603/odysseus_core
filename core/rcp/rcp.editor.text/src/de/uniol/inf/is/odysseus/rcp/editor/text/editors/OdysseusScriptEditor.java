@@ -132,7 +132,7 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		IResource resource = delta.getResource();
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
-			if (file.equals(((IFileEditorInput) getEditorInput()).getFile())) {
+			if (file.equals(getFile())) {
 				switch (delta.getKind()) {
 				case IResourceDelta.REMOVED:
 				case IResourceDelta.REPLACED:
@@ -146,22 +146,16 @@ public class OdysseusScriptEditor extends AbstractDecoratedTextEditor implements
 		}
 		return true;
 	}
+	
+	public final IFile getFile() {
+		return ((IFileEditorInput) getEditorInput()).getFile();
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		if(isDirty()){

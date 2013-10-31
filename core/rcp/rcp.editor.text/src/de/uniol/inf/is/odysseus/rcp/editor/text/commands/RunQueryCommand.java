@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -47,7 +46,6 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptDocumentProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.OdysseusScriptEditor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.services.OdysseusScriptParserService;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
@@ -69,8 +67,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			Optional<OdysseusScriptEditor> optEditor = getScriptEditor();
 			if (optEditor.isPresent()) {
 				OdysseusScriptEditor editor = optEditor.get();
-				String[] lines = readLinesFromEditor(editor);
-				execute(lines);
+				runFile(editor.getFile());
 				return null;
 			}
 		}
@@ -112,22 +109,16 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		}
 		return Optional.absent();
 	}
-
-	private static String[] readLinesFromEditor(OdysseusScriptEditor editor) {
-		OdysseusScriptDocumentProvider docPro = (OdysseusScriptDocumentProvider) editor.getDocumentProvider();
-		Document doc = (Document) docPro.getDocument(editor.getEditorInput());
-		String text = doc.get();
-		String lines[] = text.split(doc.getDefaultLineDelimiter());
-		return lines;
+	
+	private void runFile( IFile fileToRun ) {
+		runFiles(Lists.newArrayList(fileToRun));
 	}
 
-	private void runFiles(List<IFile> optFileToRun) {
+	private void runFiles(List<IFile> filesToRun) {
 		try {
-			List<String> result = Lists.newArrayList();
-			for (IFile file : optFileToRun) {
-				result.addAll(readLinesFromFile(file));
+			for (IFile file : filesToRun) {
+				execute(file);
 			}
-			execute(result.toArray(new String[result.size()]));
 		} catch (Exception ex) {
 			LOG.error("Exception during running query file", ex);
 			new ExceptionWindow(ex);
@@ -135,13 +126,11 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 
 	}
 
-	private static List<String> readLinesFromFile(IFile queryFile) throws CoreException, IOException {
-		// Datei �ffnen
+	private static String[] readLinesFromFile(IFile queryFile) throws CoreException, IOException {
 		if (!queryFile.isSynchronized(IResource.DEPTH_ZERO)) {
 			queryFile.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
 
-		// Datei einlesen
 		ArrayList<String> lines = new ArrayList<String>();
 		BufferedReader br = new BufferedReader(new InputStreamReader(queryFile.getContents()));
 		String line = br.readLine();
@@ -150,17 +139,19 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			line = br.readLine();
 		}
 		br.close();
-		return lines;
+		return lines.toArray(new String[lines.size()]);
 	}
 
-	private static void execute(final String[] text) {
+	private static void execute(final IFile scriptFile) throws CoreException, IOException {
+		final String[] text = readLinesFromFile(scriptFile);
+		
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				IOdysseusScriptParser scriptParser = OdysseusScriptParserService.get();
 				
 				try {
-					prepareParserReplacements(scriptParser);
+					prepareParserReplacements(scriptParser, scriptFile);
 					scriptParser.parseAndExecute(text, OdysseusRCPPlugIn.getActiveSession(), null);
 				} catch (OdysseusScriptException ex) {
 									
@@ -184,8 +175,9 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		job.schedule();
 	}
 
-	private static void prepareParserReplacements(IOdysseusScriptParser scriptParser) {
+	private static void prepareParserReplacements(IOdysseusScriptParser scriptParser, IFile scriptFile) {
 		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
 		scriptParser.setReplacement("WORKSPACE", localRootLocation);
+		scriptParser.setReplacement("PROJECT", scriptFile.getProject().getName());
 	}
 }
