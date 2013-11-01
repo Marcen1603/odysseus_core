@@ -466,10 +466,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 			if (from != -1 && to != -1) {
 				String loopDef = textToParse[from].replaceFirst(PARAMETER_KEY + LOOP_START_KEY, "").trim();
-				try {
+				try {					
 					String[] parts = loopDef.split(" ");
-					if (parts.length != 4) {
-						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable FROM 1 TO 10\"");
+					if (parts.length < 4) {
+						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 TO 10\"");
 					}
 					Map<String, String> repl = getReplacements(Arrays.copyOf(textToParse, from - 1));
 					String variable = parts[0].trim();
@@ -480,6 +480,17 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					String toStr = parts[3].trim();
 					if (toStr.startsWith(REPLACEMENT_START_KEY) && toStr.endsWith(REPLACEMENT_END_KEY)) {
 						toStr = repl.get(toStr.substring(2, toStr.length() - 1).toUpperCase());
+					}
+					
+					String offsetVariable = "";
+					int offsetValue = 0;
+					if(parts.length>4){
+						if(parts.length!=7){
+							throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 UPTO 10 WITH offset 5\"");
+						}
+						offsetVariable = parts[5];
+						offsetValue = Integer.parseInt(parts[6]);
+						
 					}
 
 					int startCount = Integer.parseInt(fromStr);
@@ -494,6 +505,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "-1" + REPLACEMENT_END_KEY), Integer.toString(counter - 1));
 							// replace ${i+1}
 							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "+1" + REPLACEMENT_END_KEY), Integer.toString(counter + 1));
+							if(!offsetVariable.isEmpty()){
+							// replace ${i+1}
+								toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + offsetVariable + REPLACEMENT_END_KEY), Integer.toString(counter+offsetValue));
+							}
 							text.add(toChange);
 						}
 					}
