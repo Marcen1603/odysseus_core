@@ -15,6 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.rcp.dashboard.wizards;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -174,6 +175,7 @@ public class QueryFileSelectionPage extends WizardPage {
 			// FIXME: Use Resource
 			names.add(getPlainSourceName(streamOrView.getKey().toString()));
 		}
+		Collections.sort(names);
 		return names.toArray(new String[names.size()]);
 	}
 
