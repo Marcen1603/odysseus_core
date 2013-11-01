@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -37,20 +38,21 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 	}
 
 	@Override
-	public void execute(StreamAO operator,
-			TransformationConfiguration transformConfig) {
+	public void execute(StreamAO operator, TransformationConfiguration transformConfig) {
+
+		Resource name = operator.getStreamname();
+		if (!getDataDictionary().containsViewOrStream(name, getCaller())) {
+			throw new TransformationException("Stream or view " + name + " does not exist");
+		}
+
 		ISource<?> source = null;
 		// check, if this stream is not transformed yet into a physical or not
 		if (getDataDictionary().getAccessPlan(operator.getStreamname()) == null) {
 			// ok, we have to transform the stream operator!
-			ILogicalOperator logicalPlan = getDataDictionary()
-					.getStreamForTransformation(operator.getStreamname(),
-							getCaller());
+			ILogicalOperator logicalPlan = getDataDictionary().getStreamForTransformation(operator.getStreamname(), getCaller());
 			// start a new sub-transformation
 			ITransformation transformation = new TransformationExecutor();
-			ArrayList<IPhysicalOperator> roots = transformation.transform(
-					logicalPlan, transformConfig, getCaller(),
-					getDataDictionary());
+			ArrayList<IPhysicalOperator> roots = transformation.transform(logicalPlan, transformConfig, getCaller(), getDataDictionary());
 			// we don't need the subscriptions anymore
 			logicalPlan.clearPhysicalSubscriptions();
 			// get the first root, since this is the physical operator for the
@@ -62,13 +64,10 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 				insert(source);
 				// and add this to the accessplan
 				if (!transformConfig.isVirtualTransformation()) {
-					getDataDictionary().putAccessPlan(operator.getStreamname(),
-							source);
+					getDataDictionary().putAccessPlan(operator.getStreamname(), source);
 				}
 			} else {
-				throw new RuntimeException(
-						"Cannot transform view: Root of view plan is no source. 0="
-								+ roots.get(0) + " list=" + roots);
+				throw new RuntimeException("Cannot transform view: Root of view plan is no source. 0=" + roots.get(0) + " list=" + roots);
 			}
 		}
 		// finally, there must be a physical transformed stream in the data
@@ -86,10 +85,8 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 	}
 
 	@Override
-	public boolean isExecutable(StreamAO operator,
-			TransformationConfiguration transformConfig) {
-		Resource name = operator.getStreamname();
-		return getDataDictionary().containsViewOrStream(name, getCaller());
+	public boolean isExecutable(StreamAO operator, TransformationConfiguration transformConfig) {
+		return true;
 	}
 
 	@Override

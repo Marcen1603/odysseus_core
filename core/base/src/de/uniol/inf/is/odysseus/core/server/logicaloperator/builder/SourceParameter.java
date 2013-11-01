@@ -12,7 +12,11 @@ public class SourceParameter extends AbstractParameter<AccessAO> {
 	protected void internalAssignment() {
 		ILogicalOperator source = getDataDictionary().getViewOrStream((String) this.inputValue, getCaller());
 		AccessAO accessAO = new AccessAO();
-		accessAO.setAccessAOName(new Resource(getCaller().getUser(),((String) this.inputValue)));
+		if (Resource.containsUser(getCaller().getUser(), (String) this.inputValue)) {
+			accessAO.setAccessAOName(new Resource((String) this.inputValue));
+		} else {
+			accessAO.setAccessAOName(new Resource(getCaller().getUser(), ((String) this.inputValue)));
+		}
 		accessAO.setOutputSchema(source.getOutputSchema());
 		setValue(accessAO);
 	}

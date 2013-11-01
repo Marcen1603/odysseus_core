@@ -14,25 +14,25 @@ public class Resource implements Serializable, Comparable<Resource> {
 		this.user = user.getName();
 		this.resourceName = resourceName;
 	}
-	
-	public Resource(String resourcename){
+
+	public Resource(String resourcename) {
 		int pos = resourcename.indexOf('.');
-		if (pos > 0){
-			user = resourcename.substring(0,pos);
-			this.resourceName = resourcename.substring(pos+1);
-		}else{
-			throw new IllegalArgumentException("Parameter "+resourcename+" does not contain a '.'");
+		if (pos > 0) {
+			user = resourcename.substring(0, pos);
+			this.resourceName = resourcename.substring(pos + 1);
+		} else {
+			throw new IllegalArgumentException("Parameter " + resourcename + " does not contain a '.'");
 		}
 	}
-	
+
 	public String getUser() {
 		return user;
 	}
-	
+
 	public String getResourceName() {
 		return resourceName;
 	}
-	
+
 	@Override
 	public String toString() {
 		return new StringBuffer(user).append(".").append(resourceName).toString();
@@ -43,14 +43,20 @@ public class Resource implements Serializable, Comparable<Resource> {
 		return toString().compareTo(other.toString());
 	}
 
-	
-	
+	public static boolean containsUser(IUser caller, String resourceName) {
+		int pos = resourceName.indexOf(".");
+		if (pos > 0) {
+			return resourceName.substring(0, pos).equalsIgnoreCase(caller.getName());
+		} else {
+			return false;
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((resourceName == null) ? 0 : resourceName.hashCode());
+		result = prime * result + ((resourceName == null) ? 0 : resourceName.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
@@ -81,8 +87,8 @@ public class Resource implements Serializable, Comparable<Resource> {
 		Resource test = new Resource("test1.test2.test3");
 		System.out.println(test.getUser());
 		System.out.println(test.getResourceName());
-		
+
 		test = new Resource("test");
 	}
-	
+
 }
