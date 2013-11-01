@@ -589,8 +589,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 			final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
 			if (posLoop != -1) {
-				String[] parts = replacedLine.split(" |\t", 3);
+				String[] parts = replacedLine.split(" |\t");
 				repl.put(parts[1].trim().toUpperCase(), parts[1].trim());
+				if(parts.length>6){
+					repl.put(parts[6].trim().toUpperCase(), parts[6].trim());
+				}
 			}
 		}
 		return repl;
