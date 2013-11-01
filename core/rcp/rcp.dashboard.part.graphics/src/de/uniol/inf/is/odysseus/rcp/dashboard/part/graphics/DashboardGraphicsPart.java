@@ -176,7 +176,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 	@Override
 	public void streamElementRecieved(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
-		Display.getDefault().syncExec(new Runnable() {
+		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				processElement(senderOperator, element, port);
