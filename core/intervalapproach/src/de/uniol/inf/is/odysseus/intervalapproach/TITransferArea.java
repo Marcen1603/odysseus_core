@@ -23,6 +23,7 @@ import java.util.PriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -51,15 +52,15 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	// the operator that uses this sink
 	protected AbstractSource<W> po;
 	// Store to reorder elements
-	protected PriorityQueue<IStreamable> outputQueue = new PriorityQueue<IStreamable>(
-			11, new Comparator<IStreamable>() {
+	protected PriorityQueue<Pair<IStreamable, Integer>> outputQueue = new PriorityQueue<>(
+			11, new Comparator<Pair<IStreamable, Integer>>() {
 				@SuppressWarnings("unchecked")
 				@Override
-				public int compare(IStreamable left, IStreamable right) {
-					PointInTime l = left.isPunctuation() ? ((IPunctuation) left)
-							.getTime() : ((W) left).getMetadata().getStart();
-					PointInTime r = right.isPunctuation() ? ((IPunctuation) right)
-							.getTime() : ((W) right).getMetadata().getStart();
+				public int compare(Pair<IStreamable, Integer> left, Pair<IStreamable, Integer> right) {
+					PointInTime l = left.getE1().isPunctuation() ? ((IPunctuation) left.getE1())
+							.getTime() : ((W) left.getE1()).getMetadata().getStart();
+					PointInTime r = right.getE1().isPunctuation() ? ((IPunctuation) right.getE1())
+							.getTime() : ((W) right.getE1()).getMetadata().getStart();
 
 					return l.compareTo(r);
 				}
@@ -131,7 +132,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
-	public void transfer(W object) {
+	public void transfer(W object, int toPort) {
 		synchronized (this.outputQueue) {
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
@@ -143,7 +144,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 						&& object.getMetadata().getStart().equals(watermark)) {
 					// ignore puncutations that do not change the watermark!
 				} else {
-					outputQueue.add(object);
+					outputQueue.add(new Pair<IStreamable, Integer>(object, toPort));
 					sendData();
 				}
 			}
@@ -151,7 +152,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
-	public void sendPunctuation(IPunctuation punctuation) {
+	public void transfer(W object) {
+		transfer(object, outputPort);
+	}
+	
+	@Override
+	public void sendPunctuation(IPunctuation punctuation, int toPort) {
 		synchronized (this.outputQueue) {
 			// watermark is needed if new sources are connected at runtime
 			// if watermark == null no object has ever been transferred --> init
@@ -159,21 +165,26 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			// else treat only objects that are at least from time watermark
 			if (watermark == null
 					|| punctuation.getTime().afterOrEquals(watermark)) {
-				outputQueue.add(punctuation);
+				outputQueue.add(new Pair<IStreamable, Integer>(punctuation,toPort));
 				sendData();
 			}
 		}
+	}
+	
+	@Override
+	public void sendPunctuation(IPunctuation punctuation) {
+		sendPunctuation(punctuation, outputPort);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void purge() {
 		synchronized (outputQueue) {
 			while (!this.outputQueue.isEmpty()) {
-				IStreamable elem = this.outputQueue.poll();
-				if (elem.isPunctuation()) {
-					po.sendPunctuation((IPunctuation) elem);
+				Pair<IStreamable, Integer> elem = this.outputQueue.poll();
+				if (elem.getE1().isPunctuation()) {
+					po.sendPunctuation((IPunctuation) elem.getE1(),elem.getE2());
 				} else {
-					po.transfer((W) elem, outputPort);
+					po.transfer((W) elem.getE1(), elem.getE2());
 				}
 			}
 		}
@@ -239,11 +250,11 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 			synchronized (this.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
-				IStreamable elem = this.outputQueue.peek();
+				Pair<IStreamable,Integer> elem = this.outputQueue.peek();
 				boolean elementsSend = false;
 				while (elem != null) {
-					if (elem.isPunctuation()) {
-						if (((IPunctuation) elem).getTime().beforeOrEquals(
+					if (elem.getE1().isPunctuation()) {
+						if (((IPunctuation) elem.getE1()).getTime().beforeOrEquals(
 								minimum)) {
 							this.outputQueue.poll();
 							// FIXME: This will not work!
@@ -260,18 +271,18 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 							// break;
 							// }
 							// }
-							po.sendPunctuation((IPunctuation) elem);
+							po.sendPunctuation((IPunctuation) elem.getE1(), elem.getE2());
 							elem = this.outputQueue.peek();
 						} else {
 							elem = null;
 						}
 					} else {
-						if (((W) elem).getMetadata() != null
-								&& ((W) elem).getMetadata().getStart()
+						if (((W) elem.getE1()).getMetadata() != null
+								&& ((W) elem.getE1()).getMetadata().getStart()
 										.beforeOrEquals(minimum)) {
 							this.outputQueue.poll();
 							elementsSend = true;
-							po.transfer((W) elem);
+							po.transfer((W) elem.getE1(), elem.getE2());
 							elem = this.outputQueue.peek();
 						} else {
 							elem = null;

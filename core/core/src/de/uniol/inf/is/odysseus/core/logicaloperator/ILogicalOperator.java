@@ -132,6 +132,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @return The schema
 	 */
 	public SDFSchema getOutputSchema(int pos);
+	
+	public Map<Integer, SDFSchema> getOutputSchemaMap();
 
 	void setOutputSchema(int pos, SDFSchema outputSchema);
 

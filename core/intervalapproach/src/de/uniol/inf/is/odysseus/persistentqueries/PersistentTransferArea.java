@@ -103,11 +103,21 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 
 	@Override
+	public void sendPunctuation(IPunctuation punctuation, int toPort) {
+		po.sendPunctuation(punctuation, toPort);
+	}
+	
+	@Override
 	public void transfer(W object) {
 		this.po.transfer(object);
 		// synchronized (this.outputQueue) {
 		// outputQueue.add(object);
 		// }
+	}
+
+	@Override
+	public void transfer(W object, int toPort) {
+		this.po.transfer(object, toPort);
 	}
 	
 	@Override

@@ -217,6 +217,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 			return getOutputSchemaIntern(pos);
 		}
 	}
+	
+	@Override
+	public Map<Integer, SDFSchema> getOutputSchemaMap() {
+		return Collections.unmodifiableMap(outputSchema);
+	}
 
 	// Default-Implementation: Get the input from the
 	// input operator on port 0

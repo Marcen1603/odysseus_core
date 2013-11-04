@@ -47,7 +47,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * @param object Objekt, das in den Heap eingefuegt werden soll.
 	 */
 	public void transfer(W object);
-
+	void transfer(W object, int toPort);
 	/**
 	 * To avoid packing time stamps into a punctuation, this
 	 * method can be used. It will not create a new punctuation!
@@ -63,7 +63,8 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * @param punctuation
 	 */
 	public void sendPunctuation(IPunctuation punctuation);		
-	
+	void sendPunctuation(IPunctuation punctuation, int toPort);
+
 	public void done(int port);
 
 	public void init(AbstractPipe<R,W> source);

@@ -31,6 +31,8 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	
 	Logger logger = LoggerFactory.getLogger(UnionPO.class);
 
+	private boolean useInputPortAsOutputPort = false;
+	
 	protected ITransferArea<R, R> transferArea;
 
 	public UnionPO(ITransferArea<R, R> transferFunction) {
@@ -50,6 +52,10 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
+	}
+	
+	public void setUseInputPortAsOutputPort(boolean useInputPortAsOutputPort) {
+		this.useInputPortAsOutputPort = useInputPortAsOutputPort;
 	}
 
 	@Override
@@ -71,7 +77,11 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
-		transferArea.transfer(object);
+		if (useInputPortAsOutputPort){
+			transferArea.transfer(object, port);
+		}else{
+			transferArea.transfer(object);
+		}
 		transferArea.newElement(object, port);
 	}
 
@@ -83,7 +93,11 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		transferArea.sendPunctuation(punctuation);
+		if (useInputPortAsOutputPort){
+			transferArea.sendPunctuation(punctuation, port);
+		}else{
+			transferArea.sendPunctuation(punctuation);
+		}
 		transferArea.newElement(punctuation, port);
 	}
 

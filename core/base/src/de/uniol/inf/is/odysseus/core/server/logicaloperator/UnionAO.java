@@ -32,17 +32,29 @@ public class UnionAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 2828756253165671692L;
 
+	protected boolean useInputPortAsOutputPort = false; 
+	
 	/**
 	 * @param unionPO
 	 */
 	public UnionAO(UnionAO unionPO) {
 		super(unionPO);
+		this.useInputPortAsOutputPort = unionPO.useInputPortAsOutputPort;
 	}
 
 	public UnionAO() {
 		super();
+		
 	}
 
+	public void setUseInputPortAsOutputPort(boolean useInputPortAsOutputPort) {
+		this.useInputPortAsOutputPort = useInputPortAsOutputPort;
+	}
+	
+	public boolean isUseInputPortAsOutputPort() {
+		return useInputPortAsOutputPort;
+	}
+	
 	public @Override
 	UnionAO clone() {
 		return new UnionAO(this);
@@ -50,7 +62,11 @@ public class UnionAO extends BinaryLogicalOp {
 
 	@Override
 	public SDFSchema getOutputSchemaIntern(int pos) {
-		return getInputSchema(LEFT);
+		if (useInputPortAsOutputPort){
+			return getInputSchema(pos);
+		}else{
+			return getInputSchema(LEFT);
+		}
 	}
 
 //	@Override

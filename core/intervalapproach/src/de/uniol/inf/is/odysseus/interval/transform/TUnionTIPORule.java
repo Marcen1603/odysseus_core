@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.interval.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
@@ -35,7 +35,16 @@ public class TUnionTIPORule extends AbstractTransformationRule<UnionAO> {
 	@Override
 	public void execute(UnionAO unionAO, TransformationConfiguration transformConfig) {
 		UnionPO<IStreamObject<ITimeInterval>> unionPO = new UnionPO<IStreamObject<ITimeInterval>>(new TITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>>());
+		
 		defaultExecute(unionAO, unionPO, transformConfig, true, true);
+	
+		// Update schema
+		if (unionAO.isUseInputPortAsOutputPort()){
+			unionPO.setUseInputPortAsOutputPort(unionAO.isUseInputPortAsOutputPort());
+			for (int i=0;i<unionAO.getNumberOfInputs();i++){
+				unionPO.setOutputSchema(unionAO.getOutputSchema(i),i);
+			}
+		}
 	}
 
 	@Override
