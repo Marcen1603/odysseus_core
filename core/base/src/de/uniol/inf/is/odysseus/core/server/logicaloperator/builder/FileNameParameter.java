@@ -15,7 +15,6 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
-import java.io.File;
 
 public class FileNameParameter extends AbstractParameter<String> {
 
@@ -28,11 +27,6 @@ public class FileNameParameter extends AbstractParameter<String> {
 		setValue(path);		
 	}
 	
-	@Override
-	public boolean internalValidation() {	
-		File f = new File(inputValue.toString());
-		return f.exists();
-	}
 	
 	@Override
 	protected String getPQLStringInternal() {
