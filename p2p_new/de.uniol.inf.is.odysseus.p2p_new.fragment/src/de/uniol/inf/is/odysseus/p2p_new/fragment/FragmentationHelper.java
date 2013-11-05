@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.FileSinkAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
@@ -50,7 +51,8 @@ public class FragmentationHelper {
 	 */
 	public static final Class<?>[] OPERATOR_CLASSES_DATAREUNION_PART = {
 		FileSinkAO.class, 
-		CalcLatencyAO.class
+		CSVFileSink.class,
+		CalcLatencyAO.class,
 	};
 	
 	/**
