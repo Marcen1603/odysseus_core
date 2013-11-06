@@ -76,7 +76,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	}
 
 	@Override
-	protected synchronized void process_next(R object, int port) {
+	protected void process_next(R object, int port) {
 		if (useInputPortAsOutputPort){
 			transferArea.transfer(object, port);
 		}else{
@@ -84,7 +84,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 		}
 		transferArea.newElement(object, port);
 	}
-
+	
 	@Override
 	protected void process_done(int port) {
 		transferArea.done(port);

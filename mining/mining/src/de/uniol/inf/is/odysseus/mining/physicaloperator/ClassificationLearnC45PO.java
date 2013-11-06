@@ -96,7 +96,7 @@ public class ClassificationLearnC45PO<M extends ITimeInterval> extends AbstractP
 	}
 
 	@Override
-	protected synchronized void process_next(Tuple<M> object, int port) {
+	protected void process_next(Tuple<M> object, int port) {
 		process_data(object);
 		sweepArea.insert(object);
 	}

@@ -63,7 +63,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	}
 
 	@Override
-	protected synchronized void process_next(R object, int port) {
+	protected void process_next(R object, int port) {
 		// logger.debug("Process next: "+object);
 		R newLastElement = null;
 		R lastElem = null;

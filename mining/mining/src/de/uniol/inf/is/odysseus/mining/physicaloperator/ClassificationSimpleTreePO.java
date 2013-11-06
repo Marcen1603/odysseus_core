@@ -63,7 +63,7 @@ public class ClassificationSimpleTreePO<M extends ITimeInterval> extends Abstrac
 	}
 
 	@Override
-	protected synchronized void process_next(Tuple<M> tuple, int port) {
+	protected void process_next(Tuple<M> tuple, int port) {
 		inputStreamSyncArea.newElement(tuple, port);
 	}
 

@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -39,6 +42,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStreamObject<?>>
 		extends AbstractSource<W> implements IPipe<R, W> {
 
+	Logger logger = LoggerFactory.getLogger(AbstractPipe.class);
+	
 	// ------------------------------------------------------------------------
 	// Delegation to simulate multiple inheritance
 	// ------------------------------------------------------------------------
@@ -83,6 +88,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		@Override
 		public void close(List<PhysicalSubscription<ISink<?>>> callPath,
 				List<IOperatorOwner> forOwners) {
+			logger.trace("Closing "+getName()+" for "+forOwners);
 			internal_close(callPath, forOwners, false);
 		}
 
@@ -246,6 +252,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	final synchronized public void close(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
+		// logger.trace("CLOSE "+getName());
 		this.delegateSink.close(callPath, forOwners);
 		super.close(caller, sourcePort, sinkPort, callPath, forOwners);
 	}

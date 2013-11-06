@@ -120,7 +120,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	}
 
 	@Override
-	protected synchronized void process_next(Tuple<M> o, int port) {
+	protected void process_next(Tuple<M> o, int port) {
 		
 		Integer groupID = 0;
 		if (groupProcessor != null) {

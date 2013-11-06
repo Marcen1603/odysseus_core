@@ -475,12 +475,14 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
+		getLogger().trace("CLOSE "+getName());
 		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
 		if (sub == null) {
 			throw new RuntimeException(
 					"Close called from an unsubscribed sink ");
 		}
+		getLogger().trace("Closing from "+sub);
 		// Hint: Multiple Open calls can occur per subscription because of query
 		// sharing
 		// Op1 --> Op2 --> Op3
@@ -527,6 +529,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected void propagateDone() {
+		getLogger().trace("Propagate done "+getName());
 		// Could be that the query is already closed. In this cases the done
 		// event
 		// does not of any interest any more

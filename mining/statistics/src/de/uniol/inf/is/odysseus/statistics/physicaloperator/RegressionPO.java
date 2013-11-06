@@ -80,6 +80,7 @@ public class RegressionPO<M extends ITimeInterval, R extends Tuple<M>> extends A
 
 	@Override
 	protected synchronized void process_next(R object, int port) {
+		// TODO: DO NOT SYNCHRONIZE ON THIS!
 		double x = 0;
 		if (object.getAttribute(xAttribute) instanceof Number) {
 			x = ((Number) object.getAttribute(xAttribute)).doubleValue();

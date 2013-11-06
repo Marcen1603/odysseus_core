@@ -637,6 +637,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 			List<PhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners) {
 		PhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
 				caller, sourcePort, sinkPort);
+		getLogger().trace("CLOSE "+getName());
 		if (sub == null) {
 			throw new RuntimeException(
 					"Close called from an unsubscribed sink ");

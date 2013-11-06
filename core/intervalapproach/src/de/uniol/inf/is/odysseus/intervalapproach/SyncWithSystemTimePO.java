@@ -46,7 +46,7 @@ public class SyncWithSystemTimePO<R extends IStreamObject<? extends ITimeInterva
 	}
 
 	@Override
-	protected synchronized void process_next(R object, int port) {
+	protected void process_next(R object, int port) {
 		if (lastSystemtime > 0) {
 			long currentApplicationTime = object.getMetadata().getStart()
 					.getMainPoint();

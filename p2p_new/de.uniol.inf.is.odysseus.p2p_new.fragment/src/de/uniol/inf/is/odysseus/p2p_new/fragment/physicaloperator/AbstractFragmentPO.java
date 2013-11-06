@@ -56,7 +56,7 @@ public abstract class AbstractFragmentPO<T extends IStreamObject<IMetaAttribute>
 	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(T object, int port) {
-		
+		// TODO: DO NOT SYNCHRONIZE ON THIS!
 		int outPort = this.route(object);
 		this.transfer(object, outPort);
 		

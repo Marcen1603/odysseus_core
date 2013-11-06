@@ -82,7 +82,7 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 
 	@Override
 	@SuppressWarnings("unchecked") // Suppress metadata-cast warnings
-	protected synchronized void process_next(Tuple<T> inputTuple, int port) {
+	protected  void process_next(Tuple<T> inputTuple, int port) {
 		// System.out.println(String.format("(%28s-------", getName()).replace(' ', '-'));
 		// System.out.println("Tuple(before):  "+inputTuple);
 

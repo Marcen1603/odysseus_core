@@ -78,7 +78,7 @@ public class DuplicateEliminationTIPO<T extends IStreamObject<? extends ITimeInt
 	}
 	
 	@Override
-	public synchronized void process_next(T next, int port) {
+	public void process_next(T next, int port) {
 		
 		// Using extractElements the odering parameters for the
 		// remove predicate must be inversed,

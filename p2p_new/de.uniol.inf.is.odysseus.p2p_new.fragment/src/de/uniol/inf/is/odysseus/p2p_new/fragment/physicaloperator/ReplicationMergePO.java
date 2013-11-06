@@ -171,7 +171,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	
 	@Override
 	protected synchronized void process_next(T object, int port) {
-		
+		// TODO: DO NOT SYNCHRONIZE ON THIS!
 		this.transferFunction.newElement(object, port);
 		this.purgeElements(this.getTS(object, true));
 		this.mergeElement(object, port);

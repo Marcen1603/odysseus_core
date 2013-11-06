@@ -80,7 +80,7 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 	}
 	
 	@Override
-	protected synchronized void process_next(Tuple<M> object, int port) {
+	protected void process_next(Tuple<M> object, int port) {
 //		System.out.println(object);
 		PointInTime currentTime = object.getMetadata().getStart();
 		Iterator<Tuple<M>> qualifies = sweepArea.queryElementsStartingBefore(currentTime);

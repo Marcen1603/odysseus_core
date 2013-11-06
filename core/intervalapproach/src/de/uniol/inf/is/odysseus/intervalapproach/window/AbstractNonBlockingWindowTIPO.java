@@ -38,7 +38,7 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 	}
 
 	@Override
-	protected synchronized void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		ITimeInterval time = object.getMetadata();
 		PointInTime end = this.calcWindowEnd(time);
 		if (end.after(time.getStart())) {

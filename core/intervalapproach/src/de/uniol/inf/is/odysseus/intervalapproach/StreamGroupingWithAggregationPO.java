@@ -102,7 +102,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	protected void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
 		transferArea.init((AbstractPipe<W, W>) this);
 	}
@@ -128,8 +128,9 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected void process_close() {
-		super.process_close();
+		logger.debug("closing "+this.getName());
 		drainGroups();
+	
 	}
 
 	@Override
@@ -138,7 +139,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	}
 
 	@Override
-	protected synchronized void process_next(R object, int port) {
+	protected void process_next(R object, int port) {
 
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
@@ -162,7 +163,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		createOutput(object.getMetadata().getStart());
 	}
 
-	private synchronized void createOutput(PointInTime timestamp) {
+	private void createOutput(PointInTime timestamp) {
 		// optional: Build partial aggregates with validity end until timestamp
 		createOutputCounter++;
 		if (dumpAtValueCount > 0 && createOutputCounter >= dumpAtValueCount) {
@@ -207,7 +208,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	}
 
-	private synchronized void produceResults(
+	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
 			Integer groupID) {
 		while (results.hasNext()) {
