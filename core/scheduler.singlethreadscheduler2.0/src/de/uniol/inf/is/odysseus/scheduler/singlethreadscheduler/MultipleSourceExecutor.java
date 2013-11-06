@@ -57,17 +57,15 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 				// waitForOpen();
 				updateSources();
 				while (sources.size() > 0) {
-					   synchronized (sources) {
-						updateSources();
-						// Need to delay some time to catch an open
-						delay(10);
-						boolean processableSources = processSources();
-						updateSources();
-						if (!processableSources) {
-							logger.trace("No processable sources");
-							waitForProcessableSources();
-						}
-					} // Synchronized
+					updateSources();
+					// Need to delay some time to catch an open
+					//delay(10);
+					boolean processableSources = processSources();
+					updateSources();
+					if (!processableSources) {
+						logger.trace("No processable sources");
+						waitForProcessableSources();
+					}
 				}// while sources.size() > 0
 			} // !interrupt && !isInterrupted() && caller.isRunning()
 		} catch (Exception e) {
@@ -80,14 +78,16 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
 	}
 
-	private void delay(int t) {
-		try {
-			sources.wait(t);
-		} catch (InterruptedException e) {
-		} catch (IllegalMonitorStateException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void delay(int t) {
+//		try {
+//			synchronized (sources) {
+//				sources.wait(t);
+//			}
+//		} catch (InterruptedException e) {
+//		} catch (IllegalMonitorStateException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private void waitForProcessableSources() {
 		synchronized (sources) {
@@ -149,7 +149,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 												+ sources.size() + " "
 												+ sources);
 									}
-									Thread.sleep(time);
+									sources.wait(time);
 									if (logger.isTraceEnabled()) {
 										logger.trace(this.hashCode()
 												+ " Sleeping done");
@@ -205,15 +205,29 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 	private void updateSources() {
 		boolean changed = false;
 		currentState = State.UPDATE_SOURCES;
-		synchronized (sources) {
+		List<IIterableSource<?>> list = null;
+		synchronized (toAdd) {
 			if (toAdd.size() > 0) {
-				delayedAddSources();
+				list = new ArrayList<>(toAdd);
+				toAdd.clear();
 				changed = true;
 			}
+		}
+		if (list != null) {
+			delayedAddSources(list);
+			list = null;
+		}
+		synchronized (toRemove) {
 			if (toRemove.size() > 0) {
-				delayedRemoveSources();
+				list = new ArrayList<>(toRemove);
+				toRemove.clear();
 				changed = true;
 			}
+		}
+		if (list != null) {
+			delayedRemoveSources(list);
+		}
+		synchronized (sources) {
 			if (changed) {
 				Collections.sort(sources, sourcesComparator);
 			}
@@ -247,7 +261,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
 	@Override
 	public Collection<IIterableSource<?>> getSources() {
-		return Collections.synchronizedCollection(sources);
+		return Collections.unmodifiableCollection(sources);
 	}
 
 	public void removeSource(IIterableSource<?> source) {
@@ -292,32 +306,24 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 		}
 	}
 
-	private void delayedAddSources() {
-		synchronized (toAdd) {
-			// logger.debug("Trying to add " + toAdd.size() + " sources");
-			for (IIterableSource<?> source : toAdd) {
-				synchronized (sources) {
-					sources.add(source);
-				}
-			}
-			logger.debug("Added Sources " + toAdd);
-			logger.trace("" + this.currentState);
-			toAdd.clear();
+	private void delayedAddSources(List<IIterableSource<?>> addList) {
+		// logger.debug("Trying to add " + toAdd.size() + " sources");
+		synchronized (sources) {
+			sources.addAll(addList);
 		}
+		logger.debug("Added Sources " + addList);
+		logger.trace("" + this.currentState);
+		addList.clear();
 		// this.sourcesChangeRequested = false;
 	}
 
-	private void delayedRemoveSources() {
-		synchronized (toRemove) {
-			// logger.debug("Trying to remove " + toRemove.size() + " sources");
-			for (IIterableSource<?> source : toRemove) {
-				synchronized (sources) {
-					sources.remove(source);
-				}
-			}
-			logger.debug("Removed Sources " + toRemove);
-			toRemove.clear();
+	private void delayedRemoveSources(List<IIterableSource<?>> removeList) {
+		// logger.debug("Trying to remove " + toRemove.size() + " sources");
+		synchronized (sources) {
+			sources.addAll(removeList);
 		}
+		logger.debug("Removed Sources " + removeList);
+		removeList.clear();
 		// this.sourcesChangeRequested = false;
 	}
 

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
@@ -24,8 +25,9 @@ public class SimpleThreadSchedulerEachSourceThreaded extends
 					+ sourceExecutor);
 			// there should be only one running source per executor in
 			// single mode
-			for (IIterableSource<?> runningSource : sourceExecutor
-					.getSources()) {
+			List<IIterableSource<?>> copyList = new ArrayList<IIterableSource<?>>(
+					sourceExecutor.getSources());
+			for (IIterableSource<?> runningSource :copyList) {
 				if (!sources.contains(runningSource)) {
 					sourceExecutor.interrupt();
 					logger.debug("Remove source thread "
