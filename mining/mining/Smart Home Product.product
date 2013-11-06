@@ -25,6 +25,7 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <windowImages i16="icons/16_16.gif" i32="icons/32_32.gif" i48="icons/48_48.gif" i64="icons/64_64.gif" i128="icons/128_128.gif"/>
 
+
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -106,9 +107,8 @@ http://odysseus.informatik.uni-oldenburg.de/
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.datadictionary.mem.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.usermanagement.mem.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.relational.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
@@ -123,7 +123,12 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.benchmark.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.evaluation.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.sentimentdetection.feature" version="1.0.0.qualifier"/>
    </features>
 
+   <configurations>
+      <plugin id="de.uniol.inf.is.odysseus.rcp.starter" autoStart="true" startLevel="0" />
+   </configurations>
 
 </product>
