@@ -22,6 +22,7 @@ public class NumberDatatypeProvider extends AbstractViewableDatatype<Double> {
 	
 	public NumberDatatypeProvider() {
 		super.addProvidedSDFDatatype(SDFDatatype.LONG);
+		super.addProvidedSDFDatatype(SDFDatatype.FLOAT);
 		super.addProvidedSDFDatatype(SDFDatatype.START_TIMESTAMP);
 		super.addProvidedSDFDatatype(SDFDatatype.END_TIMESTAMP);
 		super.addProvidedSDFDatatype(SDFDatatype.TIMESTAMP);
@@ -29,6 +30,8 @@ public class NumberDatatypeProvider extends AbstractViewableDatatype<Double> {
 		super.addProvidedSDFDatatype(SDFDatatype.INTEGER);
 		super.addProvidedClass(Integer.class);
 		super.addProvidedClass(int.class);
+		super.addProvidedClass(float.class);
+		super.addProvidedClass(Float.class);
 		super.addProvidedClass(Double.class);
 		super.addProvidedClass(double.class);		
 		super.addProvidedClass(Long.class);
