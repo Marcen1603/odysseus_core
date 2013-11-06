@@ -83,7 +83,7 @@ public class JSONProtocolHandler extends
 					return null;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				return null;
 			}
 		}
