@@ -75,7 +75,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
-		transferArea.init(this);
+		transferArea.init(this, getSubscribedToSource().size());
 		initWeights();
 
 		list = new HashMap<>();

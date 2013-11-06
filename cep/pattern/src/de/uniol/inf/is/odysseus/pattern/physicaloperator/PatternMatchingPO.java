@@ -210,7 +210,7 @@ public abstract class PatternMatchingPO<T extends ITimeInterval> extends
 	public void process_open() throws OpenFailedException {
 		super.process_open();
 		inputStreamSyncArea.init(this);
-		outputTransferArea.init(this);
+		outputTransferArea.init(this, getSubscribedToSource().size());
 	}
 
 	@Override

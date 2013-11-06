@@ -37,7 +37,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	public UnionPO(ITransferArea<R, R> transferFunction) {
 		this.transferArea = transferFunction;
-		transferFunction.init(this);
+		transferFunction.init(this, getSubscribedToSource().size());
 	}
 
 	public UnionPO(UnionPO<R> unionPO) {
@@ -72,7 +72,7 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		transferArea.init(this);
+		transferArea.init(this, getSubscribedToSource().size());
 	}
 
 	@Override

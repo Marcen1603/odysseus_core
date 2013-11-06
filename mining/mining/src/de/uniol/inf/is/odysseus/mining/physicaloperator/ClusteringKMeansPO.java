@@ -75,8 +75,8 @@ public class ClusteringKMeansPO<M extends ITimeInterval> extends AbstractPipe<Tu
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		transferFunctionTuples.init(this);
-		transferFunctionMeans.init(this);
+		transferFunctionTuples.init(this, getSubscribedToSource().size());
+		transferFunctionMeans.init(this, getSubscribedToSource().size());
 	}
 	
 	@Override

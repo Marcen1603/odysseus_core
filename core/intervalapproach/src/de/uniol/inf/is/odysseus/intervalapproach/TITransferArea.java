@@ -30,9 +30,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
 /**
@@ -50,7 +49,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	// states the time stamp of the last send object
 	private PointInTime watermark = null;
 	// the operator that uses this sink
-	protected AbstractSource<W> po;
+	protected ITransfer<W> po;
 	// Store to reorder elements
 	protected PriorityQueue<Pair<IStreamable, Integer>> outputQueue = new PriorityQueue<>(
 			11, new Comparator<Pair<IStreamable, Integer>>() {
@@ -86,16 +85,20 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
-	public void init(AbstractPipe<R, W> po) {
+	public void init(ITransfer<W> po, int intputPortCount) {
 		this.minTs.clear();
 		this.isDone.clear();
 		synchronized (outputQueue) {
 			this.watermark = null;
 			this.po = po;
-			for (PhysicalSubscription<ISource<? extends R>> sub : po
-					.getSubscribedToSource()) {
-				this.minTs.put(sub.getSinkInPort(), null);
-				this.isDone.put(sub.getSinkInPort(), false);
+//			for (PhysicalSubscription<ISource<? extends R>> sub : po
+//					.getSubscribedToSource()) {
+//				this.minTs.put(sub.getSinkInPort(), null);
+//				this.isDone.put(sub.getSinkInPort(), false);
+//			}
+			for (int port=0;port < intputPortCount; port++) {
+				this.minTs.put(port, null);
+				this.isDone.put(port, false);
 			}
 			this.outputQueue.clear();
 		}
@@ -338,17 +341,6 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void setInOrder(boolean isInOrder) {
 		this.inOrder = isInOrder;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "@" + hashCode() + " "
-				+ po.getName();
 	}
 
 }

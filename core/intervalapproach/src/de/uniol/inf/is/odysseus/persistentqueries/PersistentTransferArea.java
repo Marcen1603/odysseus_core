@@ -24,10 +24,9 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
 /**
@@ -40,7 +39,7 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		implements ITransferArea<R, W> {
 
 	protected PointInTime[] minTs;
-	protected AbstractSource<W> po;
+	protected ITransfer<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
 			new MetadataComparator<ITimeInterval>());
 
@@ -78,9 +77,9 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 
 	@Override
-	public void init(AbstractPipe<R, W> po) {
+	public void init(ITransfer<W> po, int length) {
 		this.po = po;
-		minTs = new PointInTime[po.getSubscribedToSource().size()];
+		minTs = new PointInTime[length];
 		for (int i = 0; i < minTs.length; i++) {
 			this.minTs[i] = null;
 		}

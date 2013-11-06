@@ -55,7 +55,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	public AssureOrderPO(AssureOrderPO<K, T> assureOrderPO) {
 		super(assureOrderPO);
 		this.transferFunction = assureOrderPO.transferFunction.clone();
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
 
 	/*
@@ -110,7 +110,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
 	
 	@Override

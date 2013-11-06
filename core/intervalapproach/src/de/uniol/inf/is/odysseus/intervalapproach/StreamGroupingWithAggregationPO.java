@@ -104,7 +104,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
-		transferArea.init((AbstractPipe<W, W>) this);
+		transferArea.init((AbstractPipe<W, W>) this, getSubscribedToSource().size());
 	}
 
 	@Override

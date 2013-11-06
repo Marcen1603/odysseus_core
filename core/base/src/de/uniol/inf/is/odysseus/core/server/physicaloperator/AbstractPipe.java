@@ -402,6 +402,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		this.delegateSink.unSubscribeFromAll(listener);
 	}
 
+	
 	// ------------------------------------------------------------------------
 	// Other methods
 	// ------------------------------------------------------------------------
@@ -499,4 +500,5 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	public boolean hasInput() {
 		return delegateSink.hasInput();
 	}
+
 }

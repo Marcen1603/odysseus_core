@@ -132,7 +132,7 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	protected synchronized void process_open() throws OpenFailedException {
 		
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 		this.inputQueue.clear();
 		
 	}

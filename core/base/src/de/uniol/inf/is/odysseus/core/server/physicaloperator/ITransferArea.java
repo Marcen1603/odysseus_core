@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 
 /**
@@ -67,7 +68,7 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 
 	public void done(int port);
 
-	public void init(AbstractPipe<R,W> source);
+	public void init(ITransfer<W> sendTo,  int inputPortCount);
 	
 	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub);
 	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub);

@@ -258,7 +258,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 		for (int i = 0; i < 2; ++i) {
 			this.areas[i].clear();
 		}
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
 
 	@SuppressWarnings("unchecked")

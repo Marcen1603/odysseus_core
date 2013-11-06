@@ -167,7 +167,7 @@ public class PatternDetectPO<R extends IStreamObject<? extends ITimeInterval>, W
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		inputStreamSyncArea.init(this);
-		outputTransferArea.init(this);
+		outputTransferArea.init(this, getSubscribedToSource().size());
 	}
 
 	/**

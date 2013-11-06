@@ -105,7 +105,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.metadataMerge = join.metadataMerge.clone();
 		metadataMerge.init();
 		this.transferFunction = join.transferFunction.clone();
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 		this.creationFunction = join.creationFunction.clone();
 
 	}
@@ -229,7 +229,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		this.dataMerge.init();
 		this.metadataMerge.init();
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
 
 	@Override

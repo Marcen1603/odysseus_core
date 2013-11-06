@@ -80,7 +80,7 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		areas[(TREE_PORT + 1) % 2] = elementSA;
 
 		this.metadataMerge.init();
-		this.transferFunction.init(this);
+		this.transferFunction.init(this, getSubscribedToSource().size());
 
 	}
 
