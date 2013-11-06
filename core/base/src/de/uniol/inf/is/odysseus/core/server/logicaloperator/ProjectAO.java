@@ -28,9 +28,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.UnresolvedSDFAttributeParameter;
 
 /**
  * @author Marco Grawunder
@@ -48,7 +48,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	public ProjectAO(ProjectAO ao) {
 		super(ao);
 		this.attributes = new ArrayList<>(ao.attributes);
-		this.paths = ao.getPaths();
+		this.paths = new ArrayList<>(ao.getPaths());
 	}
 
 	public @Override
@@ -75,7 +75,7 @@ public class ProjectAO extends UnaryLogicalOp {
 		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
 	}
 	
-	@Parameter(type = UnresolvedSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true)
+	@Parameter(type = CreateSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true, doc = "for use with keyvalue objects")
 	public void setPaths(List<SDFAttribute> paths) {
 		this.paths = paths;
 	}
@@ -120,11 +120,11 @@ public class ProjectAO extends UnaryLogicalOp {
 	
 	@Override
 	public boolean isValid() {
-		if(!this.attributes.isEmpty() || !this.paths.isEmpty()) {
+		if(this.attributes.isEmpty() != this.paths.isEmpty()) {
 			return true;
 		} else {
 			addError(new IllegalParameterException(
-					"either attributes or paths parameter have to be set"));
+					"either attributes xor paths parameter have to be set"));
 			return false;
 		}
 	}
