@@ -119,14 +119,14 @@ public class ReplicationMergePO<T extends IStreamObject<? extends ITimeInterval>
 	@Override
 	protected void newSourceSubscribed(PhysicalSubscription<ISource<? extends T>> sub) {
 		
-		this.transferFunction.addNewInput(sub);
+		this.transferFunction.addNewInput(sub.getSinkInPort());
 		
 	}
 	
 	@Override
 	protected void sourceUnsubscribed(PhysicalSubscription<ISource<? extends T>> sub) {
 		
-		this.transferFunction.removeInput(sub);
+		this.transferFunction.removeInput(sub.getSinkInPort());
 	}
 	
 	@Override

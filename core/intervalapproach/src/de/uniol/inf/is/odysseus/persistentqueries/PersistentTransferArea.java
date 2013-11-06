@@ -23,9 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.Heartbeat;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
 
@@ -64,14 +62,14 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 	}
 	
 	@Override
-	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
+	public void addNewInput(int port) {
 		// TODO Auto-generated method stub
 		throw new IllegalArgumentException(
 				"Adding of inputs currently not implemented");
 	}
 	
 	@Override
-	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub) {
+	public void removeInput(int port) {
 		throw new IllegalArgumentException(
 				"Removing of inputs currently not implemented");
 	}

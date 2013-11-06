@@ -105,15 +105,15 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
-	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub) {
-		this.minTs.put(sub.getSinkInPort(), null);
-		this.isDone.put(sub.getSinkInPort(), false);
+	public void addNewInput(int port) {
+		this.minTs.put(port, null);
+		this.isDone.put(port, false);
 	}
 
 	@Override
-	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub) {
-		this.minTs.remove(sub.getSinkInPort());
-		this.isDone.remove(sub.getSinkInPort());
+	public void removeInput(int port) {
+		this.minTs.remove(port);
+		this.isDone.remove(port);
 	}
 
 	@SuppressWarnings("unchecked")

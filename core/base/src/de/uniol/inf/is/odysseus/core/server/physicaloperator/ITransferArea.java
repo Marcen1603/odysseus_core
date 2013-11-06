@@ -20,9 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
-import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 
 /**
  * Diese Klasse verarbeitet den in einem Operator u.U. notwendigen Heap, der die richtige Sortierung
@@ -70,8 +68,8 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 
 	public void init(ITransfer<W> sendTo,  int inputPortCount);
 	
-	public void addNewInput(PhysicalSubscription<ISource<? extends R>> sub);
-	public void removeInput(PhysicalSubscription<ISource<? extends R>> sub);
+	public void addNewInput(int port);
+	public void removeInput(int port);
 
 	
 	public int size();

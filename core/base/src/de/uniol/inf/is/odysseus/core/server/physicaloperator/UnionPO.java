@@ -61,13 +61,13 @@ public class UnionPO<R extends IStreamObject<?>> extends AbstractPipe<R, R>
 	@Override
 	protected void newSourceSubscribed(
 			PhysicalSubscription<ISource<? extends R>> sub) {
-		transferArea.addNewInput(sub);
+		transferArea.addNewInput(sub.getSinkInPort());
 	}
 
 	@Override
 	protected void sourceUnsubscribed(
 			PhysicalSubscription<ISource<? extends R>> sub) {
-		transferArea.removeInput(sub);
+		transferArea.removeInput(sub.getSinkInPort());
 	}
 
 	@Override
