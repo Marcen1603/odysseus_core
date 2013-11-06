@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder

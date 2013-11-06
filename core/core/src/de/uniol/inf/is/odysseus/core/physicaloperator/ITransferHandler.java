@@ -15,9 +15,12 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
-public interface ITransferHandler<W> {
-
-	void transfer(W toTransfer);
-	void sendPunctuation(IPunctuation punctuation);
+/**
+ * Old interface use ITransfer instead
+ * @author Marco Grawunder
+ *
+ * @param <W>
+ */
+public interface ITransferHandler<W> extends ITransfer<W>{
 
 }
