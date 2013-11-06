@@ -59,7 +59,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 				while (sources.size() > 0) {
 					updateSources();
 					// Need to delay some time to catch an open
-					//delay(10);
+					// delay(10);
 					boolean processableSources = processSources();
 					updateSources();
 					if (!processableSources) {
@@ -78,16 +78,16 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
 	}
 
-//	private void delay(int t) {
-//		try {
-//			synchronized (sources) {
-//				sources.wait(t);
-//			}
-//		} catch (InterruptedException e) {
-//		} catch (IllegalMonitorStateException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// private void delay(int t) {
+	// try {
+	// synchronized (sources) {
+	// sources.wait(t);
+	// }
+	// } catch (InterruptedException e) {
+	// } catch (IllegalMonitorStateException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	private void waitForProcessableSources() {
 		synchronized (sources) {
@@ -122,53 +122,57 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			logger.trace("Process Sources " + sources);
 		}
 		boolean processableSources = false;
-		for (IIterableSource<?> s : sources) {
-			if (s.isOpen() && !s.isDone()) {
-				processableSources = true;
-				if (s.hasNext()) {
-					Long lastRun = -1l;
-					lastRun = lastRuns.get(s);
-					// Only delay source with shortest waiting time
-					// all other sources should be testet each time
-					// ... its some kind of busy wait ... :-/
-					if (!waitedForFirstSource) {
-						waitedForFirstSource = true;
-						// The first round nobody has to wait
-						if (lastRun != null) {
-							try {
+		synchronized (sources) {
+			for (IIterableSource<?> s : sources) {
+				if (s.isOpen() && !s.isDone()) {
+					processableSources = true;
+					if (s.hasNext()) {
+						Long lastRun = -1l;
+						lastRun = lastRuns.get(s);
+						// Only delay source with shortest waiting time
+						// all other sources should be testet each time
+						// ... its some kind of busy wait ... :-/
+						if (!waitedForFirstSource) {
+							waitedForFirstSource = true;
+							// The first round nobody has to wait
+							if (lastRun != null) {
+								try {
 
-								while (s.getDelay()
-										- (System.currentTimeMillis() - lastRun) > 0) {
-									long time = s.getDelay()
-											- (System.currentTimeMillis() - lastRun);
-									if (logger.isTraceEnabled()) {
-										logger.trace(this.hashCode()
-												+ " Sleeping ..." + time + " "
-												+ s + " " + toRemove.size()
-												+ " " + toRemove + " "
-												+ sources.size() + " "
-												+ sources);
+									while (s.getDelay()
+											- (System.currentTimeMillis() - lastRun) > 0) {
+										long time = s.getDelay()
+												- (System.currentTimeMillis() - lastRun);
+										if (logger.isTraceEnabled()) {
+											logger.trace(this.hashCode()
+													+ " Sleeping ..." + time
+													+ " " + s + " "
+													+ toRemove.size() + " "
+													+ toRemove + " "
+													+ sources.size() + " "
+													+ sources);
+										}
+										sources.wait(time);
+										if (logger.isTraceEnabled()) {
+											logger.trace(this.hashCode()
+													+ " Sleeping done");
+										}
 									}
-									sources.wait(time);
-									if (logger.isTraceEnabled()) {
-										logger.trace(this.hashCode()
-												+ " Sleeping done");
-									}
+								} catch (InterruptedException e) {
+									e.printStackTrace();
 								}
-							} catch (InterruptedException e) {
-								e.printStackTrace();
+							}
+							transfer(s);
+						} else { // Handle all but the first source
+							long ct2 = System.currentTimeMillis();
+							if (lastRun == null
+									|| ct2 - lastRun >= s.getDelay()) {
+								transfer(s);
 							}
 						}
-						transfer(s);
-					} else { // Handle all but the first source
-						long ct2 = System.currentTimeMillis();
-						if (lastRun == null || ct2 - lastRun >= s.getDelay()) {
-							transfer(s);
-						}
-					}
-				} // if (s.hasNext())
-			} // if (s.isOpen() && !s.isDone())
-		} // for
+					} // if (s.hasNext())
+				} // if (s.isOpen() && !s.isDone())
+			} // for
+		}
 		return processableSources;
 	}
 
