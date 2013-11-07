@@ -21,6 +21,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
+
 public class IfController {
 
 	private static final String PARAMETER_KEY = "#";
@@ -31,35 +35,42 @@ public class IfController {
 	public static final String ELSE_KEY = "ELSE";
 	public static final String ENDIF_KEY = "ENDIF";
 	public static final String UNDEF_KEY = "UNDEF";
-
+	
+	public static final String SRCDEF_KEY = "IFSRCDEF";
+	public static final String SRCNDEF_KEY = "IFSRCNDEF";
+	
 	private final String[] text;
+	private final ISession caller;
 	private final List<String> defined = Lists.newArrayList();
 
 	private int currentLine = 0;
 	
 	private Boolean inIfClause = null;
 
-	public IfController( String[] text ) {
+	public IfController( String[] text, ISession caller ) {
 		Preconditions.checkNotNull(text, "Text-array for IfController must not be null!");
 		
 		this.text = text;
+		this.caller = caller;
 	}
 
 	public boolean canExecuteNextLine() throws OdysseusScriptException {
 		try {
 			
-			if( determineEndIf(text[currentLine].trim()) ) {
+			String currentLine = text[this.currentLine].trim();
+			
+			if( determineEndIf(currentLine) ) {
 				if( inIfClause == null ) {
-					throw new OdysseusScriptException("ENDIF without IFDEF/IFNDEF!");
+					throw new OdysseusScriptException("ENDIF without IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
 				}
 				
 				inIfClause = null;
 				return false;
 			}
 			
-			if( determineElse(text[currentLine].trim()) ) {
+			if( determineElse(currentLine) ) {
 				if( inIfClause == null ) {
-					throw new OdysseusScriptException("ELSE without IFDEF/IFNDEF!");
+					throw new OdysseusScriptException("ELSE without IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF!");
 				}
 				
 				inIfClause = !inIfClause;
@@ -71,39 +82,61 @@ public class IfController {
 				return false;
 			}
 			
-			Optional<String> optionalDefined = determineDefined( text[currentLine].trim() );
+			Optional<String> optionalDefined = determineDefined( currentLine );
 			if( optionalDefined.isPresent() && !defined.contains(optionalDefined.get())) {
 				defined.add(optionalDefined.get());
 				return true;
 			}
 			
-			Optional<String> optionalUndefined = determineUndefined( text[currentLine].trim());
+			Optional<String> optionalUndefined = determineUndefined( currentLine);
 			if( optionalUndefined.isPresent() ) {
 				defined.remove(optionalUndefined.get());
 				return false;
 			}
 			
-			Optional<String> optionalIfDef = determineIfDef( text[currentLine].trim() );
+			Optional<String> optionalIfDef = determineIfDef( currentLine );
 			if(optionalIfDef.isPresent()) {
 				
 				if( inIfClause != null ) {
-					throw new OdysseusScriptException("Nested IFDEF/IFNDEF-clauses not allowed (now)!");
+					throw new OdysseusScriptException("Nested IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF-clauses not allowed (now)!");
 				}
 				
 				inIfClause = defined.contains(optionalIfDef.get());
 				return false;
 			}
 			
-			Optional<String> optionalIfNDef = determineIfNDef( text[currentLine].trim() );
+			Optional<String> optionalIfNDef = determineIfNDef( currentLine );
 			if(optionalIfNDef.isPresent()) {
 				
 				if( inIfClause != null ) {
-					throw new OdysseusScriptException("Nested IFDEF/IFNDEF-clauses not allowed (now)!");
+					throw new OdysseusScriptException("Nested IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF-clauses not allowed (now)!");
 				}
 				
 				inIfClause = !defined.contains(optionalIfNDef.get());
 				return false;
 			}
+			
+			Optional<String> optionalSrcDef = determineIfSrcDef(currentLine);
+			if( optionalSrcDef.isPresent() ) {
+				if( inIfClause != null ) {
+					throw new OdysseusScriptException("Nested IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF-clauses not allowed (now)!");
+				}
+				
+				inIfClause = existsSource(optionalSrcDef.get(), caller);
+				
+				return false;
+			}
+			
+			Optional<String> optionalSrcNotDef = determineIfSrcNDef(currentLine);
+			if( optionalSrcNotDef.isPresent() ) {
+				if( inIfClause != null ) {
+					throw new OdysseusScriptException("Nested IFDEF/IFNDEF/IFSRCDEF/IFSRCNDEF-clauses not allowed (now)!");
+				}
+				
+				inIfClause = !existsSource(optionalSrcNotDef.get(), caller);
+				
+				return false;
+			}			
 			
 			return true;
 		} finally {
@@ -111,7 +144,11 @@ public class IfController {
 		}
 	}
 	
-	private boolean determineElse(String trim) {
+	private static boolean existsSource(String sourceName, ISession caller) {
+		return Activator.getExecutor().containsViewOrStream(new Resource(caller.getUser(), sourceName), caller);
+	}
+
+	private static boolean determineElse(String trim) {
 		return hasPreParserKeyword(PARAMETER_KEY + ELSE_KEY, trim);
 	}
 
@@ -134,6 +171,14 @@ public class IfController {
 	private static Optional<String> determineUndefined(String textLine) throws OdysseusScriptException {
 		return determineReplacement(PARAMETER_KEY + UNDEF_KEY, textLine);
 	}
+	
+	private static Optional<String> determineIfSrcDef(String textLine) throws OdysseusScriptException {
+		return determineReplacement(PARAMETER_KEY + SRCDEF_KEY, textLine);
+	}	
+	
+	private static Optional<String> determineIfSrcNDef(String textLine) throws OdysseusScriptException {
+		return determineReplacement(PARAMETER_KEY + SRCNDEF_KEY, textLine);
+	}	
 	
 	private static boolean hasPreParserKeyword( String keyword, String textLine ) {
 		return textLine.indexOf(keyword) != -1;

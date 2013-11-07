@@ -113,6 +113,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		strings.add(IfController.ENDIF_KEY);
 		strings.add(IfController.IFNDEF_KEY);
 		strings.add(IfController.UNDEF_KEY);
+		strings.add(IfController.SRCDEF_KEY);
+		strings.add(IfController.SRCNDEF_KEY);
 		return strings;
 	}
 
@@ -219,7 +221,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// initialize the replacement using the defaults
 			Map<String, String> replacements = new HashMap<String, String>(this.defaultReplacements);
 
-			IfController ifController = new IfController(text);
+			IfController ifController = new IfController(text, caller);
 			StringBuffer sb = null;
 
 			String currentKey = null;
