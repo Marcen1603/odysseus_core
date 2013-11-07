@@ -945,7 +945,17 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
 		return getDataDictionary(caller.getTenant()).getSinks(caller);
 	}
+	
+	@Override
+	public boolean containsViewOrStream(Resource name, ISession caller) {
+		return getDataDictionary(caller.getTenant()).containsViewOrStream(name, caller);
+	}
 
+	@Override
+	public boolean containsViewOrStream(String name, ISession caller) {
+		return getDataDictionary(caller.getTenant()).containsViewOrStream(name, caller);
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#getRegisteredDatatypes(de.uniol.inf.is.odysseus.core.usermanagement.ISession)

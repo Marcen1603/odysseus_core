@@ -229,6 +229,8 @@ public interface IExecutor extends IClientPlanManager{
 	public void removeViewOrStream(Resource name, ISession caller);
 	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
+	public boolean containsViewOrStream(Resource name, ISession caller);
+	public boolean containsViewOrStream(String name, ISession caller);
 
 	void reloadStoredQueries(ISession caller);
 	

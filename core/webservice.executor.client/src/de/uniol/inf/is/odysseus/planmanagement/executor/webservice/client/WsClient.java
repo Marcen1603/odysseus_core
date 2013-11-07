@@ -512,6 +512,18 @@ public class WsClient implements IExecutor, IClientExecutor {
 		// TODO not implemented by server yet
 
 	}
+	
+	@Override
+	public boolean containsViewOrStream(Resource name, ISession caller) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean containsViewOrStream(String name, ISession caller) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public void addStoredProcedure(String name, StoredProcedure sp, ISession caller) {		
