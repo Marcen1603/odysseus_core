@@ -30,6 +30,7 @@
  */
 package de.uniol.inf.is.odysseus.generator;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,7 +38,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StreamServer extends Thread {
+public class StreamServer extends Thread implements UncaughtExceptionHandler{
 
 	final private StreamClientHandler defaultHandler;
 	final private ServerSocket socket;
@@ -106,7 +107,7 @@ public class StreamServer extends Thread {
 			defaultHandler.start();
 			defaultHandler.setInstanceNumber(instanceCounter);
 			defaultHandler.setStreamName(name);
-			this.clients.add(defaultHandler);
+			addClient(defaultHandler);
 			instanceCounter++;
 		}else{
 			defaultHandler = null;
@@ -134,7 +135,7 @@ public class StreamServer extends Thread {
 					streamClient.start();
 					streamClient.setInstanceNumber(instanceCounter);
 					streamClient.setStreamName(name);
-					this.clients.add(streamClient);
+					addClient(streamClient);
 					instanceCounter++;
 					System.out.println("Started new simulation");
 				} else {
@@ -147,6 +148,11 @@ public class StreamServer extends Thread {
 				continue;
 			}
 		}
+	}
+
+	private void addClient(StreamClientHandler streamClient) {
+		this.clients.add(streamClient);
+		streamClient.setUncaughtExceptionHandler(this);
 	}
 
 	public void stopClients() {
@@ -180,5 +186,11 @@ public class StreamServer extends Thread {
 			}
 		}
 
+	}
+
+	@Override
+	public void uncaughtException(Thread t, Throwable e) {
+		System.err.println("Exception from thread "+t);
+		e.printStackTrace();
 	}
 }
