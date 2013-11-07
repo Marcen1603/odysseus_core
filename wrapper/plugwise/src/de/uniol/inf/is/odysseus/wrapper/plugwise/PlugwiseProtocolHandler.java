@@ -11,11 +11,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public static final String NAME = "Plugwise";
+	public static final String CIRCLE_MAC = "CIRCLE_MAC";
+	
+	private String circleMac = null;
 	
 	public PlugwiseProtocolHandler() {
 	}
@@ -29,15 +33,30 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		setTransfer(transfer);
 	}
 	
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		// TODO: Is this always correct?
+		return ITransportExchangePattern.InOptionalOut;
+	}
 	
 	
 	private void init(Map<String, String> options) {
-		// TODO:		
+		if (options.containsKey(CIRCLE_MAC)){
+			circleMac = options.get(CIRCLE_MAC);
+		}
 	}
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
-		// Init
+		getTransportHandler().open();
+		String init = "000AB43C";
+		getTransportHandler().send(init.getBytes());
+		String startMessage = "";
+		String header = "";
+		String powerchangeCode = "0017";
+		String on = "01";
+		
+		//getTransportHandler().send(startMessage.getBytes());
 	}
 
 	@Override

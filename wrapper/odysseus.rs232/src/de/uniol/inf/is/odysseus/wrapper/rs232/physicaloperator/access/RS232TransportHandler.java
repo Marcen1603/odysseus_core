@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
@@ -111,6 +112,8 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 		if (this.output != null) {
 			this.output.write(message);
 			LOG.debug("RS232 Handler: > {}", message);
+		}else{
+			LOG.error("Trying to write to a not opened connection!");
 		}
 	}
 
@@ -158,6 +161,12 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
 		return null;
 	}
 
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		// TODO: Is this correct?
+		return ITransportExchangePattern.InOptionalOut;
+	}
+	
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
 		try {
