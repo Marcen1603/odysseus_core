@@ -47,10 +47,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.equinox.app.IApplicationContext;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class DataProvider extends StreamClientHandler {
+public class DataProvider extends AbstractDataGenerator {
 
 	private BufferedReader in;
 	private long counter = 0;
@@ -221,7 +221,7 @@ public class DataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {
+	public void process_init() {
 		counter = 0;
 		LastTime = System.currentTimeMillis();
 		InputStream inputStream;
@@ -250,13 +250,13 @@ public class DataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public DataProvider newCleanInstance() {
 		return new DataProvider(this);
 	}
 
 	public void go() {
 		System.out.println("GO!");
-		init();
+		process_init();
 		while (next() != null) {
 			// ...
 		}

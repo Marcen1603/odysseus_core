@@ -18,10 +18,10 @@ package de.uniol.inf.is.odysseus.generator.hmm;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class HMMGenerator extends StreamClientHandler {
+public class HMMGenerator extends AbstractDataGenerator {
 
 	private int number = 0;
 	private int nextIndex = 0;
@@ -54,7 +54,7 @@ public class HMMGenerator extends StreamClientHandler {
 	
 
 	@Override
-	public void init() {
+	public void process_init() {
 
 	}
 
@@ -64,7 +64,7 @@ public class HMMGenerator extends StreamClientHandler {
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public HMMGenerator newCleanInstance() {
 		return new HMMGenerator();
 	}
 

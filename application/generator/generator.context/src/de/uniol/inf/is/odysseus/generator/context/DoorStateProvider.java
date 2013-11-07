@@ -32,8 +32,8 @@ package de.uniol.inf.is.odysseus.generator.context;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.DataType;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
@@ -44,13 +44,13 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerat
  * 
  * @author Dennis Geesen Created at: 07.05.2012
  */
-public class DoorStateProvider extends StreamClientHandler {
+public class DoorStateProvider extends AbstractDataGenerator {
 
 	IValueGenerator time;
 	IValueGenerator door;
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		// Time
 		addGenerator(new IncreaseGenerator(new NoError(), 0, 20), DataType.LONG);
 		//change
@@ -69,7 +69,7 @@ public class DoorStateProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public DoorStateProvider newCleanInstance() {
 		return new DoorStateProvider();
 	}
 

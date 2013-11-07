@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
@@ -57,7 +58,7 @@ public class BenchmarkController {
 	private WebserviceServer server;
 	private boolean started = false;
 
-	private Map<Integer, StreamClientHandler> handlers = new HashMap<>();
+	private Map<Integer, IDataGenerator> handlers = new HashMap<>();
 	private int pointer = 0;
 
 	private int breakAfterTransactions = 20000000;
@@ -66,11 +67,11 @@ public class BenchmarkController {
 
 	private List<Double> throughputs = new ArrayList<>();
 
-	public void addHandler(int order, StreamClientHandler sch) {
+	public void addHandler(int order, IDataGenerator sch) {
 		this.handlers.put(order, sch);
 	}
 
-	public void removeHandler(int order, StreamClientHandler sch) {
+	public void removeHandler(int order, IDataGenerator sch) {
 		this.handlers.remove(order);
 	}
 
@@ -160,7 +161,7 @@ public class BenchmarkController {
 		return content;
 	}
 
-	public void instanceFinished(StreamClientHandler handler, double throughput) {
+	public void instanceFinished(IDataGenerator handler, double throughput) {
 		if (!this.started) {
 			return;
 		}

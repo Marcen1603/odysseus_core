@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.generator.planadaption;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.ContinuousErrorModel;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.noise.DuplicateNoise;
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
  * @author Merlin Wasmann
  *
  */
-public class WindGenerator extends StreamClientHandler {
+public class WindGenerator extends AbstractDataGenerator {
 
 	String[] directions = {"N", "E", "W", "S", "NE", "NW", "SE", "SW"};
 	
@@ -52,7 +52,7 @@ public class WindGenerator extends StreamClientHandler {
 	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#init()
 	 */
 	@Override
-	public void init() {
+	public void process_init() {
 		// CREATE STREAM wind (timestamp LONG, speed INTEGER, direction STRING, name STRING, location INTEGER) CHANNEL localhost : 57003;
 				/**
 				 * wind ::= ACCESS({
@@ -87,7 +87,7 @@ public class WindGenerator extends StreamClientHandler {
 		location = new PredifinedValueGenerator(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		location.init();
 		
-		setDelay(SLEEP);
+		getRunner().setDelay(SLEEP);
 	}
 
 	/* (non-Javadoc)
@@ -146,7 +146,7 @@ public class WindGenerator extends StreamClientHandler {
 	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#clone()
 	 */
 	@Override
-	public StreamClientHandler clone() {
+	public WindGenerator newCleanInstance() {
 		WindGenerator clone = new WindGenerator();
 		clone.tupleCounter = this.tupleCounter;
 		clone.changed = this.changed;

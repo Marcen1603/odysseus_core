@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.fastflowerdelivery.io;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.StreamServer;
 
 /**
@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
  * @author Weert Stamm
  * @version 1.0
  */
-public class EventSender extends StreamClientHandler {
+public class EventSender extends AbstractDataGenerator {
 
 	/**
 	 * A Queue to hold events to be send to odysseus
@@ -89,7 +89,7 @@ public class EventSender extends StreamClientHandler {
 	}
 	
 	@Override
-	public void init() {}
+	public void process_init() {}
 
 	@Override
 	public void close() {}
@@ -117,7 +117,7 @@ public class EventSender extends StreamClientHandler {
 	 * Required by the event generator
 	 */
 	@Override
-	public StreamClientHandler clone() {
+	public EventSender newCleanInstance() {
 		return new EventSender(port, sourceEventHandler, eventQueue);
 	}
 

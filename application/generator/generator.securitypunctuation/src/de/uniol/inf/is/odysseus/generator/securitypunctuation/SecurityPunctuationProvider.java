@@ -18,11 +18,11 @@ package de.uniol.inf.is.odysseus.generator.securitypunctuation;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.SADataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class SecurityPunctuationProvider extends StreamClientHandler {
+public class SecurityPunctuationProvider extends AbstractDataGenerator {
 	
 	private Long counterTS = Long.valueOf(0);
 	private boolean spActivated;
@@ -54,10 +54,15 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	}
 	
 	@Override
-	public void init() {
-		super.setIsSA(true);
+	protected void process_init() {
+		
 	}
-
+	
+	@Override
+	public boolean isSA() {
+		return true;
+	}
+	
 	@Override
 	public void close() {
 	}
@@ -92,7 +97,7 @@ public class SecurityPunctuationProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public SecurityPunctuationProvider newCleanInstance() {
 		return new SecurityPunctuationProvider(spActivated, spType, delay, name, benchmark, spProbability);
 	}
 	

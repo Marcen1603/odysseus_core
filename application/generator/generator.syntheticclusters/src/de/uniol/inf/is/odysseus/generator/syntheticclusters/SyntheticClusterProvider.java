@@ -34,10 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class SyntheticClusterProvider extends StreamClientHandler {
+public class SyntheticClusterProvider extends AbstractDataGenerator {
 
 	// CREATE STREAM clusters (timestamp STARTTIMESTAMP, valX DOUBLE, valY DOUBLE) CHANNEL localhost : 54321;
 	
@@ -53,7 +53,7 @@ public class SyntheticClusterProvider extends StreamClientHandler {
 	private double[] peekY;
 
 	@Override
-	public void init() {
+	public void process_init() {
 		System.out.println("Creating clusters: " + numberOfPotentialClusters);
 		System.out.println("... with distance between means: " + distanceBetweenPeeks);
 		System.out.println("... with standard derivation: " + standardabweichung);
@@ -119,7 +119,7 @@ public class SyntheticClusterProvider extends StreamClientHandler {
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public SyntheticClusterProvider newCleanInstance() {
 		return new SyntheticClusterProvider();
 	}
 

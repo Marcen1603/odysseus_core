@@ -35,8 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.BurstErrorModel;
 import de.uniol.inf.is.odysseus.generator.error.ContinuousErrorModel;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
  * @author Dennis Geesen
  * Created at: 24.06.2011
  */
-public class WeatherStationGenerator extends StreamClientHandler {
+public class WeatherStationGenerator extends AbstractDataGenerator {
 
 	//CREATE STREAM weatherstation (timestamp STARTTIMESTAMP, temperature DOUBLE, humidity INTEGER, rain DOUBLE, pressure DOUBLE, location INTEGER) CHANNEL localhost : 54322;
 	enum Attribute{
@@ -101,7 +101,7 @@ public class WeatherStationGenerator extends StreamClientHandler {
 
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		//Time
 		IValueGenerator timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
 		timeGenerator.init();
@@ -135,7 +135,7 @@ public class WeatherStationGenerator extends StreamClientHandler {
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public WeatherStationGenerator newCleanInstance() {
 		return new WeatherStationGenerator();
 	}
 

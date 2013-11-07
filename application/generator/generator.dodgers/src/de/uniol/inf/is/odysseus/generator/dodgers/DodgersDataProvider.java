@@ -40,10 +40,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class DodgersDataProvider extends StreamClientHandler {
+public class DodgersDataProvider extends AbstractDataGenerator {
 
 	private BufferedReader in;
 	private SimpleDateFormat format = new SimpleDateFormat("M/d/yyyy HH:mm");
@@ -80,7 +80,7 @@ public class DodgersDataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {	
+	public void process_init() {	
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/dodgers.data");
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
@@ -100,7 +100,7 @@ public class DodgersDataProvider extends StreamClientHandler {
 	}	
 	
 	@Override
-	public StreamClientHandler clone() {
+	public DodgersDataProvider newCleanInstance() {
 		return new DodgersDataProvider();
 	}
 	

@@ -38,10 +38,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class AdultTestDataProvider extends StreamClientHandler {
+public class AdultTestDataProvider extends AbstractDataGenerator {
 
 	
 	private BufferedReader in;	
@@ -109,7 +109,7 @@ public class AdultTestDataProvider extends StreamClientHandler {
 	}
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/adult.test");
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
@@ -130,7 +130,7 @@ public class AdultTestDataProvider extends StreamClientHandler {
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public AdultTestDataProvider newCleanInstance() {
 		return new AdultTestDataProvider();
 	}
 

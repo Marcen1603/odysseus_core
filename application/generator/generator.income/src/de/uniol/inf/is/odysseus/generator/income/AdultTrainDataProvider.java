@@ -38,11 +38,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 
-public class AdultTrainDataProvider extends StreamClientHandler{
+public class AdultTrainDataProvider extends AbstractDataGenerator{
 	
 	private BufferedReader in;	
 	private long number  = 0;
@@ -115,7 +115,7 @@ public class AdultTrainDataProvider extends StreamClientHandler{
 
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/adult.data");
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
@@ -137,7 +137,7 @@ public class AdultTrainDataProvider extends StreamClientHandler{
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public AdultTrainDataProvider newCleanInstance() {
 		return new AdultTrainDataProvider();
 	}
 }

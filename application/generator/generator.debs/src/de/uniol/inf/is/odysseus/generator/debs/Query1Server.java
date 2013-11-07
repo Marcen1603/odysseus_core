@@ -33,8 +33,8 @@ package de.uniol.inf.is.odysseus.generator.debs;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.switching.SwitchGenerat
  * 
  * @author Dennis Geesen Created at: 18.04.2012
  */
-public class Query1Server extends StreamClientHandler {
+public class Query1Server extends AbstractDataGenerator {
 
 	// CREATE STREAM gchSource (timestamp STARTTIMESTAMP, bm05 DOUBLE, bm06 DOUBLE, bm07 DOUBLE, bm08 DOUBLE, bm09 DOUBLE, bm10 DOUBLE)
 	// CHANNEL localhost : 54321;
@@ -58,7 +58,7 @@ public class Query1Server extends StreamClientHandler {
 	private IValueGenerator bm10;
 
 	@Override
-	public void init() {
+	public void process_init() {
 		// Time
 		timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
 		timeGenerator.init();
@@ -118,7 +118,7 @@ public class Query1Server extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public Query1Server newCleanInstance() {
 		return new Query1Server();
 	}
 	

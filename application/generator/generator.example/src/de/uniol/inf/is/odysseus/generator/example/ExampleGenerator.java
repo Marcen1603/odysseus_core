@@ -33,15 +33,15 @@ package de.uniol.inf.is.odysseus.generator.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 /**
  * 
  * @author Dennis Geesen
  * Created at: 05.09.2011
  */
-public class ExampleGenerator  extends StreamClientHandler{
+public class ExampleGenerator  extends AbstractDataGenerator{
 
 	private long time = 0;
 	private int intVal = 0;
@@ -50,7 +50,7 @@ public class ExampleGenerator  extends StreamClientHandler{
 	
 	
 	@Override
-	public void init() {		
+	public void process_init() {		
 		
 	}
 
@@ -87,7 +87,7 @@ public class ExampleGenerator  extends StreamClientHandler{
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public ExampleGenerator newCleanInstance() {
 		return new ExampleGenerator();
 	}
 

@@ -24,13 +24,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
-public class ProbabilisticDataProvider extends StreamClientHandler {
+public class ProbabilisticDataProvider extends AbstractDataGenerator {
 	private BufferedReader reader;
 	private long timestamp = 0l;
 
@@ -51,7 +51,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 			tuples.add(tuple);
 		} else {
 			this.close();
-			this.init();
+			this.process_init();
 		}
 		try {
 			Thread.sleep(10000);
@@ -62,7 +62,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {
+	public void process_init() {
 		final URL fileURL = Activator.getContext().getBundle()
 				.getEntry("/data/data");
 		try {
@@ -88,7 +88,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public ProbabilisticDataProvider clone() {
+	public ProbabilisticDataProvider newCleanInstance() {
 		return new ProbabilisticDataProvider();
 	}
 
@@ -228,7 +228,7 @@ public class ProbabilisticDataProvider extends StreamClientHandler {
 
 	public static void main(final String[] args) {
 		final ProbabilisticDataProvider provider = new ProbabilisticDataProvider();
-		provider.init();
+		provider.process_init();
 		provider.next();
 		provider.next();
 

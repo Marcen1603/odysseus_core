@@ -21,10 +21,11 @@ import java.util.Random;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class RandomStreamClientHandler extends StreamClientHandler {
+public class RandomStreamClientHandler extends AbstractDataGenerator {
 
 	private static final int WAITING_TIME_MILLIS = 500;
 	private static final Random RANDOM = new Random(System.currentTimeMillis());
@@ -51,7 +52,7 @@ public class RandomStreamClientHandler extends StreamClientHandler {
 	}
 	
 	@Override
-	public void init() {
+	public void process_init() {
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class RandomStreamClientHandler extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public RandomStreamClientHandler newCleanInstance() {
 		return new RandomStreamClientHandler(minValue, maxValue);
 	}
 

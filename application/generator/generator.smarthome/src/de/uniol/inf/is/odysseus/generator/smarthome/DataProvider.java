@@ -33,10 +33,10 @@ package de.uniol.inf.is.odysseus.generator.smarthome;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class DataProvider extends StreamClientHandler {
+public class DataProvider extends AbstractDataGenerator {
 	
 	private boolean hasNew = false;
 	private String streamName;
@@ -48,7 +48,6 @@ public class DataProvider extends StreamClientHandler {
 		this.reader = reader;
 	}	
 
-	@Override
 	public String getStreamName(){
 		return this.streamName;
 	}
@@ -65,7 +64,7 @@ public class DataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {	
+	public void process_init() {	
 		this.reader.addListener(this);
 	}
 
@@ -75,7 +74,7 @@ public class DataProvider extends StreamClientHandler {
 	}	
 	
 	@Override
-	public DataProvider clone() {
+	public DataProvider newCleanInstance() {
 		return new DataProvider(streamName, reader);
 	}
 

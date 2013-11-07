@@ -33,8 +33,8 @@ package de.uniol.inf.is.odysseus.generator.outliersanddirty;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.AlternatingGenerator;
@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
  * @author Dennis Geesen
  * Created at: 30.03.2012
  */
-public class RegressionGenerator extends StreamClientHandler{
+public class RegressionGenerator extends AbstractDataGenerator{
 
 	// CREATE STREAM clusters (timestamp STARTTIMESTAMP, valX DOUBLE, valY DOUBLE) CHANNEL localhost : 54321;
 	
@@ -54,7 +54,7 @@ public class RegressionGenerator extends StreamClientHandler{
 	private IValueGenerator yGenerator;
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		//Time
 				timeGenerator = new IncreaseGenerator(new NoError(), 0, 1);
 				timeGenerator.init();
@@ -102,7 +102,7 @@ public class RegressionGenerator extends StreamClientHandler{
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public RegressionGenerator newCleanInstance() {
 		return new RegressionGenerator();
 	}
 

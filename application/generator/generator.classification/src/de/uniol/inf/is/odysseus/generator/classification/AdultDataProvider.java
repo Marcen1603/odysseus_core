@@ -23,14 +23,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class AdultDataProvider extends StreamClientHandler{
+public class AdultDataProvider extends AbstractDataGenerator{
 
 	private BufferedReader in;
 	private long counter = 0L;
@@ -60,14 +60,14 @@ public class AdultDataProvider extends StreamClientHandler{
 			if(line==null || line.trim().isEmpty()){
 				// System.out.println("number of items: "+counter);
 				System.out.println("end of file reached");
-				double throughput = super.getLastThroughput();
+				double throughput = getRunner().getLastThroughput();
 				BenchmarkController.getInstance().instanceFinished(this, throughput);
 				return null;
 			}
 			if (counter >= BenchmarkController.getInstance().breakAfter()) {
 				System.out.println("reached "+counter+" lines!");
-				super.printStats();
-				double throughput = super.getLastThroughput();
+				getRunner().printStats();
+				double throughput = getRunner().getLastThroughput();
 				BenchmarkController.getInstance().instanceFinished(this, throughput);				
 				return null;
 			}
@@ -124,7 +124,7 @@ public class AdultDataProvider extends StreamClientHandler{
 	}
 
 	@Override
-	public void init() {	
+	public void process_init() {	
 		BenchmarkController.getInstance().addHandler(this.order, this);
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/"+this.filename);
 		try {
@@ -145,7 +145,7 @@ public class AdultDataProvider extends StreamClientHandler{
 	}	
 
 	@Override
-	public StreamClientHandler clone() {
+	public AdultDataProvider newCleanInstance() {
 		return new AdultDataProvider(this);
 	}
 

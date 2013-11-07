@@ -34,10 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class ChangeDataProvider  extends StreamClientHandler{
+public class ChangeDataProvider  extends AbstractDataGenerator{
 
 	// CREATE STREAM change(timestamp STARTTIMESTAMP, value DOUBLE) CHANNEL localhost : 54321;
 	
@@ -82,7 +82,7 @@ public class ChangeDataProvider  extends StreamClientHandler{
 	}
 
 	@Override
-	public void init() {		
+	public void process_init() {		
 		this.time = 0;
 	}
 
@@ -91,7 +91,7 @@ public class ChangeDataProvider  extends StreamClientHandler{
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public ChangeDataProvider newCleanInstance() {
 		return new ChangeDataProvider();
 	}
 	

@@ -39,22 +39,17 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import de.uniol.inf.is.odysseus.generator.valuegenerator.DataType;
-import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
-
-public abstract class StreamClientHandler extends Thread {
+public class StreamClientHandler extends Thread implements IProviderRunner {
 
 	private ByteBuffer gbuffer = ByteBuffer.allocate(1024);
 	private ByteBuffer bytebuffer = ByteBuffer.allocate(1024);
-	private Socket connection;
-	private List<IValueGenerator> generators = new ArrayList<IValueGenerator>();
-	private Map<IValueGenerator, DataType> datatypes = new HashMap<IValueGenerator, DataType>();
+	final private List<Socket> connections = new LinkedList<>();
+	final private List<Socket> toAdd = new LinkedList<>();
 	private boolean paused = false;
 	private NumberFormat nf = NumberFormat.getIntegerInstance(Locale.GERMAN);
 	private int instanceNumber = 0;
@@ -79,12 +74,7 @@ public abstract class StreamClientHandler extends Thread {
 	private long delay = 0;
 	private long lastTransfer = -1;
 	private boolean delayEachTuple = false;
-
-	public abstract void init();
-
-	public abstract void close();
-
-	public abstract List<DataTuple> next() throws InterruptedException;
+	private IDataGenerator generator = null;
 
 	public void pause() {
 		synchronized (this) {
@@ -104,13 +94,14 @@ public abstract class StreamClientHandler extends Thread {
 	}
 
 	private void internalInit() {
-		for (IValueGenerator gen : this.generators) {
-			gen.init();
-		}
 		this.startTime = System.currentTimeMillis();
 		this.lastTime = startTime;
 		this.counter = 0;
-		init();
+		generator.init(this);
+	}
+
+	public void setGenerator(IDataGenerator generator) {
+		this.generator = generator;
 	}
 
 	@Override
@@ -118,59 +109,81 @@ public abstract class StreamClientHandler extends Thread {
 		internalInit();
 		List<DataTuple> next;
 		try {
-			next = next();
+			next = generator.next();
 		} catch (InterruptedException ie) {
 			System.out.println("Thread interrupted. Stopping client for"
 					+ getInternalName());
 			next = null;
 		}
-		while (next != null) {
-			try {
-				if (this.connection.isClosed()) {
-					System.out.println("Connection closed for "
-							+ getInternalName());
-					break;
+		while (!isInterrupted()) {
+			
+			updateConnections();
+			synchronized (connections) {
+				while (connections.size() == 0) {
+					try {
+						System.out.println("Waiting for connections ...");
+						connections.wait();
+						updateConnections();
+					} catch (InterruptedException e) {
+					}
 				}
-				for (DataTuple nextTuple : next) {
-					if (delayEachTuple){
+			}
+
+			;
+			Iterator<Socket> connectionIter = connections.iterator();
+			while (connectionIter.hasNext()) {
+				Socket connection = connectionIter.next();
+				try {
+					if (connection.isClosed()) {
+						System.out.println("Connection closed for "
+								+ getInternalName());
+						connectionIter.remove();
+						continue;
+					}
+					for (DataTuple nextTuple : next) {
+						if (delayEachTuple) {
+							delay();
+						}
+						transferTuple(connection.getChannel(), nextTuple);
+						printThroughput(nextTuple);
+					}
+					if (!delayEachTuple) {
 						delay();
 					}
-					transferTuple(nextTuple);
-					printThroughput(nextTuple);
-				}
-				if (!delayEachTuple){
-					delay();
-				}
-				next = next();
+					next = generator.next();
 
-			} catch (InterruptedException ie) {
-				System.out.println("Thread interrupted. Stopping client for "
-						+ getInternalName());
-				if (printthroughput) {
-					System.out.println("Total stats:");
-					printStats();
+				} catch (InterruptedException ie) {
+					System.out
+							.println("Thread interrupted. Stopping client for "
+									+ getInternalName());
+					if (printthroughput) {
+						System.out.println("Total stats:");
+						printStats();
+					}
+					connectionIter.remove();
+					continue;
+				} catch (IOException e) {
+					System.out.println("Connection closed for "
+							+ getInternalName());
+					if (printthroughput) {
+						System.out.println("Total stats for :");
+						printStats();
+					}
+					connectionIter.remove();
+					continue;
 				}
-				next = null;
-			} catch (IOException e) {
-				System.out
-						.println("Connection closed for " + getInternalName());
-				if (printthroughput) {
-					System.out.println("Total stats for :");
-					printStats();
-				}
-				break;
-			}
-			synchronized (this) {
-				while (paused) {
-					try {
-						wait();
-					} catch (Exception e) {
-						e.printStackTrace();
+				synchronized (this) {
+					while (paused) {
+						try {
+							wait();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
-		close();
+		generator.close();
 	}
 
 	private void printThroughput(DataTuple nextTuple) {
@@ -191,7 +204,7 @@ public abstract class StreamClientHandler extends Thread {
 		if (delay > 0) {
 			long now = System.currentTimeMillis();
 			if (lastTransfer > 0) {
-				long sleepingTime = delay-(now - lastTransfer);
+				long sleepingTime = delay - (now - lastTransfer);
 				if (sleepingTime > 0) {
 					try {
 						Thread.sleep(sleepingTime);
@@ -207,10 +220,8 @@ public abstract class StreamClientHandler extends Thread {
 		return this.streamName + " #" + this.instanceNumber;
 	}
 
-	/**
-	 * @param nextTuple
-	 */
-	protected void printStats() {
+	@Override
+	public void printStats() {
 		System.out.println("--- " + getInternalName() + "---");
 		double needed = System.currentTimeMillis() - lastTime;
 		double total = System.currentTimeMillis() - startTime;
@@ -226,24 +237,25 @@ public abstract class StreamClientHandler extends Thread {
 						+ " \tbytes/ms");
 	}
 
+	@Override
 	public double getLastThroughput() {
 		double total = System.currentTimeMillis() - startTime;
 		return Math.round((totalSize / total) * 100.) / 100.;
 	}
 
-	public void transferTuple(DataTuple tuple) throws IOException {
+	public void transferTuple(SocketChannel ch, DataTuple tuple)
+			throws IOException {
 		if (tuple != null) {
 			ByteBuffer buffer = getByteBuffer(tuple);
 			synchronized (gbuffer) {
 				gbuffer.clear();
 				gbuffer.putInt(buffer.limit());
 				gbuffer.flip();
-				SocketChannel ch = connection.getChannel();
 				ch.write(gbuffer);
 				ch.write(buffer);
 			}
 		} else {
-			connection.getChannel().close();
+			ch.close();
 
 		}
 	}
@@ -308,66 +320,20 @@ public abstract class StreamClientHandler extends Thread {
 	}
 
 	public void setConnection(Socket connection) {
-		this.connection = connection;
+		this.connections.clear();
+		connections.add(connection);
 	}
-	
+
+	@Override
 	public void setDelay(long delay) {
 		this.delay = delay;
 	}
-	
+
 	public void setDelayEachTuple(boolean delayEachTuple) {
 		this.delayEachTuple = delayEachTuple;
 	}
 
 	public void remove() {
-	}
-
-	@Override
-	public abstract StreamClientHandler clone();
-
-	public List<DataTuple> buildDataTuple() {
-		DataTuple tuple = new DataTuple();
-		for (IValueGenerator v : this.generators) {
-			DataType datatype = datatypes.get(v);
-			switch (datatype) {
-			case BYTE:
-				tuple.addByte(v.nextValue());
-				break;
-			case BOOLEAN:
-				tuple.addBoolean(v.nextValue());
-				break;
-			case DOUBLE:
-				tuple.addDouble(v.nextValue());
-				break;
-			case INTEGER:
-				tuple.addInteger(v.nextValue());
-				break;
-			case LONG:
-				tuple.addLong(v.nextValue());
-				break;
-			case OBJECT:
-				tuple.addAttribute(v.nextValue());
-				break;
-			case STRING:
-				tuple.addString(v.nextValue());
-				break;
-			}
-		}
-		return tuple.asList();
-	}
-
-	protected void addGenerator(IValueGenerator generator, DataType datatype) {
-		this.generators.add(generator);
-		this.datatypes.put(generator, datatype);
-	}
-
-	protected void addGenerator(IValueGenerator generator) {
-		addGenerator(generator, DataType.DOUBLE);
-	}
-
-	protected void removeGenerator(IValueGenerator generator) {
-		this.generators.remove(generator);
-		this.datatypes.remove(generator);
 	}
 
 	public void pause(long millis) {
@@ -417,5 +383,23 @@ public abstract class StreamClientHandler extends Thread {
 		System.out.println("------ Current Status ------");
 		printStats();
 		System.out.println("----------------------------");
+	}
+
+	public void addConnection(Socket connection) {
+		synchronized (toAdd) {
+			toAdd.add(connection);
+		}
+	}
+
+	private void updateConnections() {
+		if (toAdd.size() > 0) {
+			synchronized (toAdd) {
+				connections.addAll(toAdd);
+				toAdd.clear();
+			}
+		}
+		synchronized (connections) {
+			connections.notifyAll();
+		}
 	}
 }

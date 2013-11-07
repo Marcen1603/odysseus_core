@@ -3,16 +3,16 @@ package de.uniol.inf.is.odysseus.generator.heatmap;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class HeatmapDataProvider extends StreamClientHandler {
+public class HeatmapDataProvider extends AbstractDataGenerator {
 
 	int counter;
 	static int WAITING_TIME_MILLIS = 1000;
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		counter = 0;
 		System.out.println("Heatmap Daten-Generator gestartet.");
 	}
@@ -33,7 +33,7 @@ public class HeatmapDataProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public HeatmapDataProvider newCleanInstance() {
 		return new HeatmapDataProvider();
 	}
 	

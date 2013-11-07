@@ -20,7 +20,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		StreamServer server = new StreamServer(65321, new TelephoneDataProvider(5000000, 7000000, 10));
+		StreamServer server = new StreamServer(65321, new TelephoneDataProvider(5000000, 7000000, 10), false);
 		server.start();
 	}
 

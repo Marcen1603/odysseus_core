@@ -40,14 +40,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 /**
  * 
  * @author Dennis Geesen Created at: 31.05.2012
  */
-public class ArffReader extends StreamClientHandler {
+public class ArffReader extends AbstractDataGenerator {
 
 	private BufferedReader in;
 	private String file;
@@ -68,7 +68,7 @@ public class ArffReader extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {
+	public void process_init() {
 		URL fileURL = Activator.getContext().getBundle().getEntry(file);
 		try {
 			counter = 0;
@@ -134,7 +134,7 @@ public class ArffReader extends StreamClientHandler {
 				System.out.println("Process done: " + nf.format(counter) + " tuples processed!");	
 				System.out.println("Restarting....");
 				close();
-				init();
+				process_init();
 				line = in.readLine();
 			}
 			while(line.trim().startsWith("%") || line.isEmpty()){
@@ -179,7 +179,7 @@ public class ArffReader extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public ArffReader newCleanInstance() {
 		return new ArffReader(this);
 	}
 

@@ -23,14 +23,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 /**
  * @author Dennis Geesen
  *
  */
-public class ClassificationProvider extends StreamClientHandler{
+public class ClassificationProvider extends AbstractDataGenerator{
 
 	private BufferedReader in;
 	private long counter = 0L;
@@ -70,7 +70,7 @@ public class ClassificationProvider extends StreamClientHandler{
 	}
 
 	@Override
-	public void init() {	
+	public void process_init() {	
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/buyscomputer.data");
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
@@ -90,7 +90,7 @@ public class ClassificationProvider extends StreamClientHandler{
 	}	
 
 	@Override
-	public StreamClientHandler clone() {
+	public ClassificationProvider newCleanInstance() {
 		return new ClassificationProvider();
 	}
 

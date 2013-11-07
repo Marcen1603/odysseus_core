@@ -38,10 +38,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class FrequentItemProvider extends StreamClientHandler {
+public class FrequentItemProvider extends AbstractDataGenerator {
 
 	// CREATE STREAM frequent (timestamp STARTTIMESTAMP, transaction INTEGER,
 	// item INTEGER) CHANNEL localhost : 54321;
@@ -81,15 +81,15 @@ public class FrequentItemProvider extends StreamClientHandler {
 			if (line == null) {
 				// System.out.println("number of items: "+counter);
 				System.out.println("end of file reached");
-				double throughput = super.getLastThroughput();
+				double throughput = getRunner().getLastThroughput();
 				BenchmarkController.getInstance().instanceFinished(throughput);
 				return null;
 			}
 			counter++;
 			if (counter >= BenchmarkController.getInstance().breakAfter()) {
 				System.out.println("reached "+counter+" lines!");
-				super.printStats();
-				double throughput = super.getLastThroughput();
+				getRunner().printStats();
+				double throughput = getRunner().getLastThroughput();
 				BenchmarkController.getInstance().instanceFinished(throughput);				
 				return null;
 			}
@@ -121,7 +121,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public void init() {
+	public void process_init() {
 		URL fileURL = Activator.getContext().getBundle().getEntry("/data/" + this.file);
 		try {
 			InputStream inputStream = fileURL.openConnection().getInputStream();
@@ -141,7 +141,7 @@ public class FrequentItemProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public FrequentItemProvider newCleanInstance() {
 		return new FrequentItemProvider(this);
 	}
 

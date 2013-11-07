@@ -39,57 +39,109 @@ import java.util.List;
 
 public class StreamServer extends Thread {
 
-	private ServerSocket socket;
-	private StreamClientHandler streamClientHandler;	
-	private List<StreamClientHandler> clients = new ArrayList<StreamClientHandler>();
+	final private StreamClientHandler defaultHandler;
+	final private ServerSocket socket;
+	final private IDataGenerator dataGenerator;
+	final private boolean newGeneratorEachConnection;
+	final private List<StreamClientHandler> clients = new ArrayList<StreamClientHandler>();
 	private int throughputEach = 0;
 	private int instanceCounter = 1;
 	private String name = "";
 
-	public StreamServer(int port, StreamClientHandler streamClientHandler) throws Exception {
-		this(port, streamClientHandler, streamClientHandler.getClass().getSimpleName());
+	public StreamServer(int port, IDataGenerator dataGenerator,
+			boolean newGeneratorEachConnection) throws Exception {
+		this(port, dataGenerator, newGeneratorEachConnection, dataGenerator
+				.getClass().getSimpleName());
 	}
-	
-	public StreamServer(int port, StreamClientHandler streamClientHandler, String name) throws Exception {
-		this.streamClientHandler = streamClientHandler;
+
+	public StreamServer(int port, IDataGenerator dataGenerator,
+			boolean newGeneratorEachConnection, String name) throws Exception {
+		this(port, dataGenerator, newGeneratorEachConnection, 0, name);
+	}
+
+	public StreamServer(int port, IDataGenerator dataGenerator,
+			boolean newGeneratorEachConnection, int printThroughputEach)
+			throws Exception {
+		this(port, dataGenerator, newGeneratorEachConnection,
+				printThroughputEach, dataGenerator.getClass().getSimpleName());
+	}
+
+	public StreamServer(int port, IDataGenerator dataGenerator)
+			throws Exception {
+		this(port, dataGenerator, true, dataGenerator.getClass()
+				.getSimpleName());
+	}
+
+	public StreamServer(int port, IDataGenerator dataGenerator, String name)
+			throws Exception {
+		this(port, dataGenerator, true, 0, name);
+	}
+
+	public StreamServer(int port, IDataGenerator dataGenerator,
+			int printThroughputEach) throws Exception {
+		this(port, dataGenerator, true, printThroughputEach, dataGenerator
+				.getClass().getSimpleName());
+	}
+
+	public StreamServer(int port, IDataGenerator dataGenerator,
+			int printThroughputEach, String name) throws Exception {
+		this(port, dataGenerator, true, printThroughputEach, name);
+	}
+
+	public StreamServer(int port, IDataGenerator dataGenerator,
+			boolean newGeneratorEachConnection, int printThroughputEach,
+			String name) throws Exception {
+		this.dataGenerator = dataGenerator;
+		this.newGeneratorEachConnection = newGeneratorEachConnection;
 		ServerSocketChannel serverChannel = ServerSocketChannel.open();
 		socket = serverChannel.socket();
 		socket.bind(new InetSocketAddress(port));
 		serverChannel.configureBlocking(true);
+		this.throughputEach = printThroughputEach;
 		this.name = name;
-	}
-	
-	public StreamServer(int port, StreamClientHandler streamClientHandler, int printThroughputEach) throws Exception {
-		this(port, streamClientHandler, printThroughputEach, streamClientHandler.getClass().getSimpleName());
-	}
-	
-	public StreamServer(int port, StreamClientHandler streamClientHandler, int printThroughputEach, String name) throws Exception {
-		this.streamClientHandler = streamClientHandler;
-		ServerSocketChannel serverChannel = ServerSocketChannel.open();
-		socket = serverChannel.socket();
-		socket.bind(new InetSocketAddress(port));
-		serverChannel.configureBlocking(true);
-		this.throughputEach  = printThroughputEach;
-		this.name = name;
+		if (!newGeneratorEachConnection) {
+			this.defaultHandler = new StreamClientHandler();
+			defaultHandler.setGenerator(dataGenerator.newCleanInstance());
+			defaultHandler.setThroughputEach(this.throughputEach);
+			defaultHandler.start();
+			defaultHandler.setInstanceNumber(instanceCounter);
+			defaultHandler.setStreamName(name);
+			this.clients.add(defaultHandler);
+			instanceCounter++;
+		}else{
+			defaultHandler = null;
+		}
 	}
 
 	@Override
 	public void run() {
-		System.out.println("Starting new server on port " + this.socket.getLocalPort()+" for "+this.name);
+		System.out.println("Starting new server on port "
+				+ this.socket.getLocalPort() + " for " + this.name);
 		while (true) {
 			Socket connection = null;
 			try {
 				System.out.println("Waiting for connection...");
 				connection = socket.accept();
-				System.out.println("New connection from " + connection.getInetAddress()+" on port on port " + this.socket.getLocalPort()+" for "+this.name);				
-				StreamClientHandler streamClient = this.streamClientHandler.clone();
-				streamClient.setConnection(connection);
-				streamClient.setThroughputEach(this.throughputEach);
-				streamClient.start();
-				streamClient.setInstanceNumber(instanceCounter);
-				streamClient.setStreamName(name);
-				this.clients.add(streamClient);
-				instanceCounter++;
+				System.out.println("New connection from "
+						+ connection.getInetAddress() + " on port on port "
+						+ this.socket.getLocalPort() + " for " + this.name);
+
+				if (newGeneratorEachConnection) {
+					StreamClientHandler streamClient = new StreamClientHandler();
+					streamClient.setGenerator(dataGenerator.newCleanInstance());
+					streamClient.setConnection(connection);
+					streamClient.setThroughputEach(this.throughputEach);
+					streamClient.start();
+					streamClient.setInstanceNumber(instanceCounter);
+					streamClient.setStreamName(name);
+					this.clients.add(streamClient);
+					instanceCounter++;
+					System.out.println("Started new simulation");
+				} else {
+					defaultHandler.addConnection(connection);
+					System.out.println("Added Client to running simulation.");
+				}
+
 			} catch (Exception ex) {
 				System.err.println("Error: " + ex.getStackTrace());
 				continue;
@@ -120,13 +172,13 @@ public class StreamServer extends Thread {
 			}
 		}
 	}
-	
+
 	public void printStats() {
 		synchronized (this) {
 			for (StreamClientHandler sch : this.clients) {
 				sch.printStatus();
 			}
 		}
-		
+
 	}
 }

@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.generator.planadaption;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.ContinuousErrorModel;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.noise.DuplicateNoise;
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
  * @author Merlin Wasmann
  *
  */
-public class HumidityGenerator extends StreamClientHandler {
+public class HumidityGenerator extends AbstractDataGenerator {
 
 	private final static int CHANGE_MARKER = 250;
 	private final static int SLEEP = 100;
@@ -49,7 +49,7 @@ public class HumidityGenerator extends StreamClientHandler {
 	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#init()
 	 */
 	@Override
-	public void init() {
+	public void process_init() {
 		// CREATE STREAM humidity (timestamp LONG, humidity DOUBLE, name STRING, location INTEGER) CHANNEL localhost : 57002;
 				/**
 				 * humidity ::= ACCESS({
@@ -85,7 +85,7 @@ public class HumidityGenerator extends StreamClientHandler {
 				6, 7, 8, 9, 10);
 		location.init();
 		
-		setDelay(SLEEP);
+		getRunner().setDelay(SLEEP);
 	}
 
 	/* (non-Javadoc)
@@ -142,7 +142,7 @@ public class HumidityGenerator extends StreamClientHandler {
 	 * @see de.uniol.inf.is.odysseus.generator.StreamClientHandler#clone()
 	 */
 	@Override
-	public StreamClientHandler clone() {
+	public HumidityGenerator newCleanInstance() {
 		HumidityGenerator clone = new HumidityGenerator();
 		clone.tupleCounter = this.tupleCounter;
 		clone.changed = this.changed;

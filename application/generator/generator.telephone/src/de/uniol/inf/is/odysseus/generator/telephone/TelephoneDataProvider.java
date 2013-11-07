@@ -3,10 +3,10 @@ package de.uniol.inf.is.odysseus.generator.telephone;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class TelephoneDataProvider extends StreamClientHandler implements
+public class TelephoneDataProvider extends AbstractDataGenerator implements
 		ICallDecriptionRecordReceiver {
 
 	Simulation sim = null;
@@ -30,7 +30,7 @@ public class TelephoneDataProvider extends StreamClientHandler implements
 	}
 
 	@Override
-	public void init() {
+	public void process_init() {
 		elems.clear();
 		sim = new Simulation(parallelCallCount, noOfTelephones);
 		sim.start();
@@ -72,7 +72,7 @@ public class TelephoneDataProvider extends StreamClientHandler implements
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public TelephoneDataProvider newCleanInstance() {
 		return new TelephoneDataProvider(this);
 	}
 

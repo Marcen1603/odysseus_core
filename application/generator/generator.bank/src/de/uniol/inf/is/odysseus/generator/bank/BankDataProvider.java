@@ -38,21 +38,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
-import de.uniol.inf.is.odysseus.generator.StreamServer;
 
-public class BankDataProvider extends StreamClientHandler {
-
-	public static void main(String[] args) throws Exception {
-		StreamServer server = new StreamServer(54321, new BankDataProvider());
-		server.start();
-	}
+public class BankDataProvider extends AbstractDataGenerator {
  
 	private BufferedReader in;
 
 	@Override
-	public void init() {
+	public void process_init() {
 		System.out.println("startng stream...");
 		initFileStream();
 	}
@@ -121,7 +115,7 @@ public class BankDataProvider extends StreamClientHandler {
 	}
 	
 	@Override
-	public StreamClientHandler clone() {
+	public BankDataProvider newCleanInstance() {
 		return new BankDataProvider();
 	}
 

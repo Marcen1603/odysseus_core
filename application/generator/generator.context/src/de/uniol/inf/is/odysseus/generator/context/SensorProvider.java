@@ -32,8 +32,8 @@ package de.uniol.inf.is.odysseus.generator.context;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.DataType;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.PredifinedValueGenerator;
@@ -43,10 +43,10 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
  * 
  * @author Dennis Geesen Created at: 07.05.2012
  */
-public class SensorProvider extends StreamClientHandler {
+public class SensorProvider extends AbstractDataGenerator {
 
 	@Override
-	public void init() {
+	public void process_init() {
 		// Time
 		addGenerator(new IncreaseGenerator(new NoError(), 0, 2), DataType.LONG);
 		// temp
@@ -66,7 +66,7 @@ public class SensorProvider extends StreamClientHandler {
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public SensorProvider newCleanInstance() {
 		return new SensorProvider();
 	}
 

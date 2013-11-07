@@ -23,11 +23,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.SADataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class CSVSPProvider extends StreamClientHandler {
+public class CSVSPProvider extends AbstractDataGenerator {
 		
 		Integer i = 0;
 		private BufferedReader in;
@@ -45,11 +45,15 @@ public class CSVSPProvider extends StreamClientHandler {
 			this.name = name;
 		}
 		@Override
-		public void init() {
+		public void process_init() {
 			initFileStream();
-			super.setIsSA(true);
 		}
 
+		@Override
+		public boolean isSA() {
+			return true;
+		}
+		
 		@Override
 		public void close() {
 		}
@@ -107,7 +111,7 @@ public class CSVSPProvider extends StreamClientHandler {
 		}
 
 		@Override
-		public StreamClientHandler clone() {
+		public CSVSPProvider newCleanInstance() {
 			return new CSVSPProvider(fileName, delay, name, benchmark);
 		}
 

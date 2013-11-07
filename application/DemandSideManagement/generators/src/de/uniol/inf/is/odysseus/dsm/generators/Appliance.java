@@ -35,14 +35,14 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 /**
  * 
  * @author Daniel Weinberg Created at: 07.09.2011
  */
-public class Appliance extends StreamClientHandler {
+public class Appliance extends AbstractDataGenerator {
 
     private Calendar calendar = Calendar.getInstance();
     private long timestamp; // Zeitstempel
@@ -111,7 +111,7 @@ public class Appliance extends StreamClientHandler {
      * Bestimmung der initialen Werte
      */
     @Override
-    public void init() {
+    public void process_init() {
         randomTimes = new long[2][rMax];
         calendar.setTimeInMillis(SimulationClock.getInstance().getTime());
         currentDay = calendar.get(Calendar.DAY_OF_MONTH);
@@ -295,7 +295,7 @@ public class Appliance extends StreamClientHandler {
     }
 
     @Override
-    public StreamClientHandler clone() {
+    public Appliance newCleanInstance() {
         return new Appliance(this);
     }
 

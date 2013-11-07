@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
-public class PriceProvider extends StreamClientHandler{
+public class PriceProvider extends AbstractDataGenerator{
 	
 	private Calendar calendar = Calendar.getInstance();
 	private int end;
@@ -40,7 +40,7 @@ public class PriceProvider extends StreamClientHandler{
 	}
 	
 	@Override
-	public void init() {
+	public void process_init() {
 		
 	}
 	
@@ -131,7 +131,7 @@ public class PriceProvider extends StreamClientHandler{
 	}
 
 	@Override
-	public StreamClientHandler clone() {
+	public PriceProvider newCleanInstance() {
 		return new PriceProvider(this);
 	}
 	
