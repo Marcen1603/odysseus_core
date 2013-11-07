@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public abstract class AbstractSoccerDashboardPart extends AbstractDashboardPart implements PaintListener {
 
-	private static final int UPDATE_INTERVAL_MILLIS = 100;
+	private static final int UPDATE_INTERVAL_MILLIS = 50;
 	private static final int FONT_SIZE = 8;
 	private static final int POINT_SIZE_PIXELS = 8;
 
