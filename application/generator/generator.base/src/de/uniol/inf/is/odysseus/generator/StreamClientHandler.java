@@ -389,6 +389,9 @@ public class StreamClientHandler extends Thread implements IProviderRunner {
 		synchronized (toAdd) {
 			toAdd.add(connection);
 		}
+		synchronized(connections){
+			connections.notifyAll();
+		}
 	}
 
 	private void updateConnections() {
