@@ -15,30 +15,32 @@
  */
 package de.uniol.inf.is.odysseus.rcp.startup;
 
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.splash.AbstractSplashHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.rcp.Login;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
-/**
- * @author Dennis Geesen
- *
- */
 public class SplashHandler extends AbstractSplashHandler {
-
+	
+	private static final Logger LOG = LoggerFactory.getLogger(SplashHandler.class);
 	
 	@Override
 	public void init(Shell splash) {	
 		super.init(splash);
-		// waiting for executor...		
+		
+		waitForExecutor();	
+		
+		Login.loginWindow(splash.getDisplay(), false, false);
+	}
+
+	private static void waitForExecutor() {
 		try {
 			OdysseusRCPPlugIn.waitForExecutor();
 		} catch (InterruptedException e) {			
-			e.printStackTrace();
-		}		
-		Display display = splash.getDisplay();
-		Login.loginWindow(display, false, false);
+			LOG.error("Could not wait for executor", e);
+		}
 	}
 }
