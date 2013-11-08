@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.Login;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
@@ -85,9 +87,15 @@ public class LoginWindow {
 		wnd = createWindow();
 		wnd.setVisible(true);
 
-		while (!wnd.isDisposed())
-			if (!display.readAndDispatch())
+		eventLoop();
+	}
+
+	private void eventLoop() {
+		while (!wnd.isDisposed()) {
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
+		}
 	}
 
 	private Shell createWindow() {
@@ -211,15 +219,15 @@ public class LoginWindow {
 	// versucht, sich mit den eingegebenen Daten anzumelden
 	private void tryToLogin() {
 		// password ist klartext, daher false
-		ISession user = Login.realLogin(usernameInput.getText(),
+		Optional<ISession> optSession = Login.realLogin(usernameInput.getText(),
 				passwordInput.getText(), tenantInput.getText());
-		if (user != null) {
+		if (optSession.isPresent()) {
 			// anmeldung ok
 			loginOK = true;
 
 			// Nutzerdaten nur speichern, wenn AutoLogin gew�hlt
 			if (autoLoginCheck.getSelection()) {
-				LoginPreferencesManager.getInstance().setUsername(user.getUser().getName());
+				LoginPreferencesManager.getInstance().setUsername(optSession.get().getUser().getName());
 				LoginPreferencesManager.getInstance().setPassword(passwordInput.getText());
 				LoginPreferencesManager.getInstance().setTenant(tenantInput.getText());
 			}

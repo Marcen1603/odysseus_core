@@ -22,6 +22,8 @@ import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
@@ -30,51 +32,37 @@ import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
 
 public class Login {
 
-	protected static Logger _logger = null;
-
-	protected synchronized static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(Login.class);
-		}
-		return _logger;
-	}
-
+	private static final Logger LOG = LoggerFactory.getLogger(Login.class);
+	
 	private Login() {
 	}
 
 	public static void loginWindow(Display parent, boolean forceShow, boolean cancelOK) {
-		// Daten aus Prefs holen
 		String username = LoginPreferencesManager.getInstance().getUsername();
 		String password = LoginPreferencesManager.getInstance().getPassword();
 		String tenant =  LoginPreferencesManager.getInstance().getTenant();
 
 		// Daten ok und automatisches anmelden erlaubt?
 		if (username.length() > 0 && password.length() > 0 && !forceShow && LoginPreferencesManager.getInstance().getAutoLogin()) {
-			// Automatisch anmelden (password ist md5)
-			ISession user = realLogin(username, password, tenant);
-			if (user == null) {
-				// fehlerhafte anmeldung..
-				// Fenster anzeigen, damit der Nutzer das
-				// korrigieren kann.
+			Optional<ISession> optSession = realLogin(username, password, tenant);
+			
+			if (!optSession.isPresent()) {
 				LoginWindow wnd = new LoginWindow(parent, username, tenant, cancelOK);
 				wnd.show();
 			}else{
-				StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID, "User " + user.getUser().getName());
+				StatusBarManager.getInstance().setMessage(StatusBarManager.USER_ID, "User " + optSession.get().getUser().getName());
 			}
 		} else {
-			// Leeres Loginfenster
 			LoginWindow wnd = new LoginWindow(parent, username, tenant, cancelOK);
 			wnd.show();
 		}
 
 	}
 
-	public static ISession realLogin(String username, String password, String tenant) {
+	public static Optional<ISession> realLogin(String username, String password, String tenant) {
 		try {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-
-			ISession user = null;
-			user = executor.login(username, password.getBytes(), tenant);
+			ISession user = executor.login(username, password.getBytes(), tenant);
 
 			if (user != null) {
 				// anmelden ok
@@ -85,18 +73,23 @@ public class Login {
 				}
 				StatusBarManager.getInstance().setMessage(message.toString());
 				executor.reloadStoredQueries(user);
-				return user;
+				return Optional.of(user);
 			}
 			return null;
 		} catch (RuntimeException ex) {
-			// getLogger().error(ex.getMessage(), ex);
-			ex.printStackTrace();
-			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-			box.setMessage("An error occured during validating the user.\n" + "Please contact your administrator. The application\n" + "will be closed.");
-			box.setText("Error");
-			box.open();
-			System.exit(0); // programm beenden
+			LOG.error("Could not login user '" + username + "'", ex);
+			
+			showErrorMessage();
+			
+			System.exit(0); 
 		}
-		return null;
+		return Optional.absent();
+	}
+
+	private static void showErrorMessage() {
+		MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
+		box.setMessage("An error occured during validating the user.\n" + "Please contact your administrator. The application\n" + "will be closed.");
+		box.setText("Error");
+		box.open();
 	}
 }
