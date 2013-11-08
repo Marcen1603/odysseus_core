@@ -34,15 +34,15 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 
 	public DashboardPartExtensionPointResolver() {
 		// Extensions, welche vor dem Listener bereits registriert wurden
-		for (final IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(DashboardPlugIn.EXTENSION_POINT_ID)) {
+		for (IConfigurationElement element : Platform.getExtensionRegistry().getConfigurationElementsFor(DashboardPlugIn.EXTENSION_POINT_ID)) {
 			resolveConfigurationElement(element);
 		}
 	}
 
 	@Override
 	public void added(IExtension[] extensions) {
-		for (final IExtension extension : extensions) {
-			for (final IConfigurationElement element : extension.getConfigurationElements()) {
+		for (IExtension extension : extensions) {
+			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				resolveConfigurationElement(element);
 			}
 		}
@@ -55,9 +55,9 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 
 	@Override
 	public void removed(IExtension[] extensions) {
-		for (final IExtension extension : extensions) {
-			for (final IConfigurationElement element : extension.getConfigurationElements()) {
-				final String name = element.getAttribute("name");
+		for (IExtension extension : extensions) {
+			for (IConfigurationElement element : extension.getConfigurationElements()) {
+				String name = element.getAttribute("name");
 				DashboardPartRegistry.unregister(name);
 			}
 		}
@@ -73,7 +73,7 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 		if (!(obj instanceof IDashboardPart)) {
 			throw new Exception("Class " + obj.getClass() + " does not implement the interface " + IDashboardPart.class);
 		}
-		final IDashboardPart part = (IDashboardPart) obj;
+		IDashboardPart part = (IDashboardPart) obj;
 		return (Class<IDashboardPart>) part.getClass();
 	}
 
@@ -82,18 +82,18 @@ public class DashboardPartExtensionPointResolver implements IRegistryEventListen
 		if (!(obj instanceof IDashboardPartConfigurer)) {
 			throw new Exception("Class " + obj.getClass() + " does not implement the interface " + IDashboardPartConfigurer.class);
 		}
-		final IDashboardPartConfigurer<?> part = (IDashboardPartConfigurer<?>) obj;
+		IDashboardPartConfigurer<?> part = (IDashboardPartConfigurer<?>) obj;
 		return (Class<IDashboardPartConfigurer<? extends IDashboardPart>>) part.getClass();
 	}
 
 
 	private static void resolveConfigurationElement(IConfigurationElement element) {
 		try {
-			final Class<? extends IDashboardPart> dashboardPartClass = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));
-			final Class<? extends IDashboardPartConfigurer<? extends IDashboardPart>> dashboardPartConfigurerClass = checkAndGetDashboardPartConfigurerClass(element.createExecutableExtension("configClass"));
-			final String name = element.getAttribute("name");
+			Class<? extends IDashboardPart> dashboardPartClass = checkAndGetDashboardPartClass(element.createExecutableExtension("class"));
+			Class<? extends IDashboardPartConfigurer<? extends IDashboardPart>> dashboardPartConfigurerClass = checkAndGetDashboardPartConfigurerClass(element.createExecutableExtension("configClass"));
+			String name = element.getAttribute("name");
 			DashboardPartRegistry.register(dashboardPartClass, dashboardPartConfigurerClass, name);
-		} catch (final Throwable t) {
+		} catch (Throwable t) {
 			LOG.error("Could not evaluate extension", t);
 		}
 	}
