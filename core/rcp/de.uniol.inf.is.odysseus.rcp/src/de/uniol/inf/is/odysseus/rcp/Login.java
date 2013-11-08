@@ -43,7 +43,7 @@ public class Login {
 		String tenant =  LoginPreferencesManager.getInstance().getTenant();
 
 		// Daten ok und automatisches anmelden erlaubt?
-		if (username.length() > 0 && password.length() > 0 && !forceShow && LoginPreferencesManager.getInstance().getAutoLogin()) {
+		if (username.length() > 0 && password.length() > 0 && !forceShow && LoginPreferencesManager.getInstance().isAutoLogin()) {
 			Optional<ISession> optSession = realLogin(username, password, tenant);
 			
 			if (!optSession.isPresent()) {
@@ -56,7 +56,6 @@ public class Login {
 			LoginWindow wnd = new LoginWindow(parent, username, tenant, cancelOK);
 			wnd.show();
 		}
-
 	}
 
 	public static Optional<ISession> realLogin(String username, String password, String tenant) {

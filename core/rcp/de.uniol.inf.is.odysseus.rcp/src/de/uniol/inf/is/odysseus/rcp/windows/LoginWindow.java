@@ -125,7 +125,7 @@ public class LoginWindow {
 		autoLoginCheck = new Button(wnd, SWT.CHECK);
 		autoLoginCheck.setText(OdysseusNLS.LoginAutomatically);
 		autoLoginCheck.setSelection(LoginPreferencesManager.getInstance()
-				.getAutoLogin());
+				.isAutoLogin());
 
 		createButtons(wnd);
 

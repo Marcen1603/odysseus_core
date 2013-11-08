@@ -54,7 +54,7 @@ public class LoginPreferencesManager {
 		OdysseusRCPConfiguration.set("tenant", tenant);
 	}
 
-	public boolean getAutoLogin() {
+	public boolean isAutoLogin() {
 		try {
 			return Boolean.valueOf(OdysseusRCPConfiguration.get("autologin", "false"));
 		} catch( Exception ex ) {
