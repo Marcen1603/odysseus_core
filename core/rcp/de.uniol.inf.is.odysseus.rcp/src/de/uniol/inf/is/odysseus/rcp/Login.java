@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.util.LoginPreferencesManager;
 import de.uniol.inf.is.odysseus.rcp.windows.LoginWindow;
 
-public class Login {
+public final class Login {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Login.class);
 	
