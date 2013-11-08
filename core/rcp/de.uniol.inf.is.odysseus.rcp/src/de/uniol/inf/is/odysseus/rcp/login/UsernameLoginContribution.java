@@ -97,6 +97,8 @@ public class UsernameLoginContribution implements ILoginContribution {
 				updateMessages(container);
 			}
 		});
+		
+		updateMessages(container);
 	}
 
 	private void updateMessages(ILoginContributionContainer container) {
