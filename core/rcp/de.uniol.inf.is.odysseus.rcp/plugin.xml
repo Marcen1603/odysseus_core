@@ -505,5 +505,11 @@
          </enabledWhen>
       </handler>
    </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.LoginContribution">
+      <loginContribution
+            class="de.uniol.inf.is.odysseus.rcp.login.UsernameLoginContribution">
+      </loginContribution>
+   </extension>
 
 </plugin>

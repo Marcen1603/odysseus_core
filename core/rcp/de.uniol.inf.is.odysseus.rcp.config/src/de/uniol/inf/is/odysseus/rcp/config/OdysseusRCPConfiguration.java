@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 
 public final class OdysseusRCPConfiguration {
@@ -111,7 +114,6 @@ public final class OdysseusRCPConfiguration {
 	}
 
 	public static void set(String key, String value) {
-		Preconditions.checkNotNull(key, "Settingkey for rcp configuration must not be null!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "SettingKey must not be null or empty!");
 
 		firstLoadIfNeeded();
@@ -152,5 +154,13 @@ public final class OdysseusRCPConfiguration {
 		firstLoadIfNeeded();
 
 		return properties.containsKey(key);
+	}
+	
+	public static Collection<String> getKeys() {
+		List<String> keys = Lists.newArrayList();
+		for( Object key : properties.keySet() ) {
+			keys.add(key.toString());
+		}
+		return keys;
 	}
 }

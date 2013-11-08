@@ -20,8 +20,8 @@ import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.rcp.Login;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.login.Login;
 
 public class SplashHandler extends AbstractSplashHandler {
 	
@@ -33,7 +33,7 @@ public class SplashHandler extends AbstractSplashHandler {
 		
 		waitForExecutor();	
 		
-		Login.loginWindow(splash.getDisplay(), false, false);
+		Login.login(splash, false, false);
 	}
 
 	private static void waitForExecutor() {
