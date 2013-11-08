@@ -59,8 +59,7 @@ public class UsernameLoginContribution implements ILoginContribution {
 		rootComposite.setLayout(new GridLayout(2, false));
 		
 		createLabel( rootComposite, "Tenant" );
-		final Text tenantText = createText( rootComposite, "");
-		tenantText.setText(tenant);
+		final Text tenantText = createText( rootComposite, tenant);
 		tenantText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -72,8 +71,7 @@ public class UsernameLoginContribution implements ILoginContribution {
 		});
 		
 		createLabel( rootComposite, "Username");
-		final Text usernameText = createText( rootComposite, "");
-		usernameText.setText(username);
+		final Text usernameText = createText( rootComposite, username);
 		usernameText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
@@ -85,9 +83,8 @@ public class UsernameLoginContribution implements ILoginContribution {
 		});
 		
 		createLabel( rootComposite, "Password");
-		final Text passwordText = createText(rootComposite, "");
+		final Text passwordText = createText(rootComposite, password);
 		passwordText.setEchoChar('*');
-		passwordText.setText(password);
 		passwordText.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
