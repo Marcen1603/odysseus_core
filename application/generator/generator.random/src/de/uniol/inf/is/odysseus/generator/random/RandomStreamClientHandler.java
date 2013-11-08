@@ -23,7 +23,6 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 
 public class RandomStreamClientHandler extends AbstractDataGenerator {
 
