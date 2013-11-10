@@ -75,6 +75,23 @@ http://odysseus.informatik.uni-oldenburg.de/
       <feature id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.p2p_new.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.p2p_new.loadbalancer.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"/>
+      <feature id="org.eclipse.equinox.p2.core.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.core.feature"/>
+      <feature id="org.eclipse.platform"/>
+      <feature id="org.eclipse.zest"/>
+      <feature id="org.eclipse.draw2d"/>
+      <feature id="org.eclipse.rcp"/>
+      <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"/>
+      <feature id="org.eclipse.help"/>
+      <feature id="de.uniol.inf.is.odysseus.relational.feature"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature"/>
+      <feature id="org.eclipse.equinox.p2.user.ui"/>
+      <feature id="de.uniol.inf.is.odysseus.studio.feature"/>
+      <feature id="org.eclipse.equinox.p2.extras.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.scheduling.feature"/>
+      <feature id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"/>
+      <feature id="org.eclipse.gef"/>
    </features>
 
    <configurations>
