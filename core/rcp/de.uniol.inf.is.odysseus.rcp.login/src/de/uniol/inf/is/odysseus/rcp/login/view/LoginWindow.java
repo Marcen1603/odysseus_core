@@ -47,6 +47,8 @@ public class LoginWindow extends TitleAreaDialog implements ILoginWindow {
 	public void show(Collection<ILoginContribution> contributions, boolean showWindowSetting) {
 		Preconditions.checkNotNull(contributions, "Contributions collection must not be null!");
 		Preconditions.checkArgument(!contributions.isEmpty(), "Collection of contributions to show must not be empty!");
+		
+		LOG.debug("Showing login window with {} login contributions. ShowWindowSetting = {}", contributions.size(), showWindowSetting);
 
 		this.contributions = Lists.newArrayList(contributions);
 		this.isNotShowAgain = !showWindowSetting;
@@ -76,7 +78,8 @@ public class LoginWindow extends TitleAreaDialog implements ILoginWindow {
 
 		int currentTabIndex = 0;
 		for (ILoginContribution contribution : contributions) {
-
+			LOG.debug("Creating tab area for login contribution {} with tabIndex = {}", contribution, currentTabIndex);
+			
 			Composite contributionComposite = new Composite(tabFolder, SWT.NONE);
 			contributionComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 			contributionComposite.setLayout(new GridLayout(1, true));

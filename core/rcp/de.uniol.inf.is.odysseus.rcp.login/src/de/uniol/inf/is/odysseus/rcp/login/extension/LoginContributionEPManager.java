@@ -28,13 +28,19 @@ public class LoginContributionEPManager implements IRegistryEventListener {
 	}
 	
 	public void checkForExtensionPoints() {
-		for (IConfigurationElement configElement : Platform.getExtensionRegistry().getConfigurationElementsFor(RCPLoginPlugIn.EXTENSION_POINT_ID)) {
+		LOG.debug("Check for login contribution extension points");
+		IConfigurationElement[] configurationElementsFor = Platform.getExtensionRegistry().getConfigurationElementsFor(RCPLoginPlugIn.EXTENSION_POINT_ID);
+		LOG.debug("Found {} login contribution extension points", configurationElementsFor.length);
+		
+		for (IConfigurationElement configElement : configurationElementsFor) {
 			resolveConfigurationElement(configElement);
 		}
 	}
 
 	@Override
 	public void added(IExtension[] extensions) {
+		LOG.debug("Got {} new login contribution extension points", extensions.length);
+		
 		for( IExtension extension : extensions ) {
 			for( IConfigurationElement configElement : extension.getConfigurationElements()) {
 				resolveConfigurationElement(configElement);
@@ -44,6 +50,8 @@ public class LoginContributionEPManager implements IRegistryEventListener {
 
 	@Override
 	public void removed(IExtension[] extensions) {
+		LOG.debug("Removed {} new login contribution extension points", extensions.length);
+		
 		for( IExtension extension : extensions ) {
 			for( IConfigurationElement configElement : extension.getConfigurationElements()) {
 				unresolveConfigurationElement(configElement);

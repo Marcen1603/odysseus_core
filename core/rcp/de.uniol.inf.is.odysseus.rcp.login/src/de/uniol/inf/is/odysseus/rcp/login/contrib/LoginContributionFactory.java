@@ -19,6 +19,7 @@ public final class LoginContributionFactory {
 		Preconditions.checkNotNull(classToCreate, "Login contribution class to create instance must not be null!");
 		
 		try {
+			LOG.debug("Creating instance of {}", classToCreate);
 			return Optional.<ILoginContribution>of(classToCreate.newInstance());
 		} catch (InstantiationException | IllegalAccessException ex) {
 			LOG.error("Could not create instance of login contribution class", ex);
@@ -29,6 +30,7 @@ public final class LoginContributionFactory {
 	public Collection<ILoginContribution> create( Collection<Class<? extends ILoginContribution>> classesToCreate ) {
 		Collection<ILoginContribution> contributions = Lists.newArrayList();
 		
+		LOG.debug("Creating {} login contributions", classesToCreate.size());
 		for( Class<? extends ILoginContribution> classToCreate : classesToCreate ) {
 			Optional<ILoginContribution> optContribution = create(classToCreate);
 			if( optContribution.isPresent() ) {

@@ -21,10 +21,12 @@ public class LoginContributionLifecycle {
 		Preconditions.checkNotNull(contributions, "Collection of login contributions for lifecycle must not be null!");
 		Preconditions.checkArgument(!contributions.isEmpty(), "Collection of login contributions for lifecycle must not be empty!");
 		
+		LOG.debug("Creating lifecyle for {} login contributions", contributions.size());
 		this.contributions = contributions;
 	}
 	
 	public void onInitAll() {
+		LOG.debug("Init all login contributions");
 		for( ILoginContribution contribution : contributions ) {
 			tryOnInit(contribution);
 		}
@@ -40,6 +42,7 @@ public class LoginContributionLifecycle {
 
 	public void onLoadAll( Map<String, String> savedConfig ) {
 		Preconditions.checkNotNull(savedConfig, "Saved config must not be null");
+		LOG.debug("Load config in all login contributions");
 		
 		for( ILoginContribution contribution : contributions ) {
 			Map<String, String> configClone = deepCloneMap(savedConfig);
@@ -88,6 +91,7 @@ public class LoginContributionLifecycle {
 	
 	public Map<String, String> onSaveAll() {
 		Map<String, String> config = Maps.newHashMap();
+		LOG.debug("Save config for all login contributions");
 		
 		for( ILoginContribution contribution: contributions ) {
 			config.putAll(tryOnSave(contribution));
@@ -107,10 +111,14 @@ public class LoginContributionLifecycle {
 	}
 	
 	public boolean onFinishAll() {
+		LOG.debug("Finishing all login contributions");
+		
 		boolean allFinished = true;
 		for( ILoginContribution contribution : contributions ) {
 			allFinished &= tryOnFinish(contribution);
 		}
+		
+		LOG.debug("Finish = {}", allFinished);
 		return allFinished;
 	}
 
