@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public static final String NAME = "Plugwise";
-	public static final String CIRCLE_MAC = "CIRCLE_MAC";
+	public static final String CIRCLE_MAC = "circle_mac";
 	
 	private String circleMac = null;
 	
@@ -43,22 +43,49 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private void init(Map<String, String> options) {
 		if (options.containsKey(CIRCLE_MAC)){
 			circleMac = options.get(CIRCLE_MAC);
+		}else{
+			throw new IllegalArgumentException("No Circle Mac defined!");
 		}
 	}
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
-		String init = "000AB43C";
-		getTransportHandler().send(init.getBytes());
-		String startMessage = "";
-		String header = "";
-		String powerchangeCode = "0017";
-		String on = "01";
+		byte[] init_0 = {0x00, 0x0a};
 		
-		//getTransportHandler().send(startMessage.getBytes());
-	}
+		byte[] chksum = Checksum.getCRC16_bytes(init_0);
 
+		getTransportHandler().send(init_0);
+		getTransportHandler().send(chksum);
+		
+
+//		
+//		byte[] init = {0x00, 0x0a, (byte) 0xb4, 0x3c};
+//		byte[] endline = {0x0d, 0x0a};
+//		
+//		
+//		
+//		String startMessage = "";
+//		byte[] header = {0x05,0x05,0x03,0x03};
+//		int powerchangecode = 0017;
+//		
+//		int on = 01;
+//		ByteBuffer command = ByteBuffer.allocate(800);
+//		command.putInt(powerchangecode);
+//		command.put(this.circleMac.getBytes());
+//		command.putInt(on);
+//		command.flip();
+//		
+//		ByteBuffer buffer = ByteBuffer.allocate(1024);
+//		buffer.put(header);
+//		buffer.put(command);
+//		buffer.put(Checksum.getCRC16_bytes(command.array()));
+//		buffer.put(endline);
+//		
+//		getTransportHandler().send(buffer.array());
+	}
+	
+ 
 	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
@@ -93,7 +120,12 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void process(ByteBuffer message) {
 		// TODO Auto-generated method stub
-
+		message.limit();
+		byte[] out = message.array();
+		for (byte b:out){
+			System.out.print(b);
+		}
+		System.out.println();
 	}
 
 	@Override
