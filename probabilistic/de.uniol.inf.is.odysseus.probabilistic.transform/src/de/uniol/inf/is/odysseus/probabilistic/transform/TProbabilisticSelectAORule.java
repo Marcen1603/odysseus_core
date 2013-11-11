@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
@@ -25,33 +27,35 @@ import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
  * 
  */
 public class TProbabilisticSelectAORule extends TSelectAORule {
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
-		super.execute(selectAO, transformConfig);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
+        super.execute(selectAO, transformConfig);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				return true;
-			}
-		}
-		return super.isExecutable(operator, transformConfig);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                if (!SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
+                    return true;
+                }
+            }
+        }
+        return super.isExecutable(operator, transformConfig);
+    }
 }

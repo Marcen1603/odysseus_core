@@ -41,7 +41,7 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
 	 */
 	@Override
 	public final int getPriority() {
-		return 1;
+        return TransformationConstants.PRIORITY;
 	}
 
 	/*

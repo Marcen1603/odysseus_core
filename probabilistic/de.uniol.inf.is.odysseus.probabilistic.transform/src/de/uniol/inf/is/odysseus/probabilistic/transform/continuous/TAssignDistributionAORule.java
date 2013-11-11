@@ -37,7 +37,7 @@ public class TAssignDistributionAORule extends AbstractTransformationRule<Assign
 	 */
 	@Override
 	public final int getPriority() {
-		return 1;
+        return 0;
 	}
 
 	/*

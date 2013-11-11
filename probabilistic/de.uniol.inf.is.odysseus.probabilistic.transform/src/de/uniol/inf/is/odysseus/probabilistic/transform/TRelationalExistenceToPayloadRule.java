@@ -35,7 +35,7 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
 	 */
 	@Override
 	public final int getPriority() {
-		return 0;
+        return TransformationConstants.PRIORITY;
 	}
 
 	/*
@@ -52,8 +52,8 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
 	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final boolean isExecutable(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
-		if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
+    public final boolean isExecutable(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
+        if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
 			if (operator.isAllPhysicalInputSet()) {
 				return true;
 			}

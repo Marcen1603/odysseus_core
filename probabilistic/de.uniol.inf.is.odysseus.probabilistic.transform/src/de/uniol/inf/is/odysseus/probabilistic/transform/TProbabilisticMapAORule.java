@@ -27,47 +27,39 @@ import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
  * 
  */
 public class TProbabilisticMapAORule extends TMapAORule {
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 
-				boolean isProbabilisticDiscreteOrContinuous = false;
-				for (final SDFExpression expr : operator.getExpressions()) {
-					if (SchemaUtils.containsProbabilisticAttributes(expr.getAllAttributes())) {
-						isProbabilisticDiscreteOrContinuous = true;
-					}
-				}
-				if (!isProbabilisticDiscreteOrContinuous) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "MapAO -> ProbabilisticMapPO";
-	}
+                boolean isProbabilisticDiscreteOrContinuous = false;
+                for (final SDFExpression expr : operator.getExpressions()) {
+                    if (SchemaUtils.containsProbabilisticAttributes(expr.getAllAttributes())) {
+                        isProbabilisticDiscreteOrContinuous = true;
+                    }
+                }
+                if (!isProbabilisticDiscreteOrContinuous) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }

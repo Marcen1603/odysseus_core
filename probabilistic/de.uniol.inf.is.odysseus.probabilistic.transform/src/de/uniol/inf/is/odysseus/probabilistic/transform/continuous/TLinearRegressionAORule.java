@@ -32,15 +32,14 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRegressionAO> {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
-		return 1;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
+        return 0;
+    }
 
 	/*
 	 * (non-Javadoc)

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**
@@ -32,7 +33,14 @@ import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class TProbabilisiticContinuousSelectAORule extends TSelectAORule {
-
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 	/*
 	 * (non-Javadoc)
 	 * 

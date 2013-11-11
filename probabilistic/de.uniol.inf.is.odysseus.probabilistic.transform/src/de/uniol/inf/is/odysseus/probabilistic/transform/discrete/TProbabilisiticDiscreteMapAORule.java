@@ -23,7 +23,9 @@ import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpr
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteMapPO;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
 
 /**
@@ -33,56 +35,72 @@ import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
  */
 public class TProbabilisiticDiscreteMapAORule extends TMapAORule {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
-		IPhysicalOperator mapPO;
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-		final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
-		for (int i = 0; i < expressions.length; i++) {
-			expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
-		}
-		mapPO = new ProbabilisticDiscreteMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
+        IPhysicalOperator mapPO;
 
-		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
-	}
+        final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
+        for (int i = 0; i < expressions.length; i++) {
+            expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
+        }
+        mapPO = new ProbabilisticDiscreteMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+        this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
+    }
 
-				boolean isProbabilisticDiscrete = false;
-				for (final SDFExpression expr : operator.getExpressions()) {
-					if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {
-						isProbabilisticDiscrete = true;
-					}
-				}
-				if (isProbabilisticDiscrete) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "MapAO -> ProbabilisticDiscreteMapPO";
-	}
+                boolean isProbabilisticDiscrete = false;
+                for (final SDFExpression expr : operator.getExpressions()) {
+                    if (SchemaUtils.containsDiscreteProbabilisticAttributes(expr.getAllAttributes())) {
+                        isProbabilisticDiscrete = true;
+                    }
+                    if ((expr.getType() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) expr.getType()).isDiscrete())) {
+                        isProbabilisticDiscrete = true;
+                    }
+                }
+                if (isProbabilisticDiscrete) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "MapAO -> ProbabilisticDiscreteMapPO";
+    }
 
 }

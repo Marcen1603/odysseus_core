@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteUnNestPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TUnnestAORule;
 
 /**
@@ -28,39 +29,46 @@ import de.uniol.inf.is.odysseus.relational.transform.TUnnestAORule;
  * 
  */
 public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void execute(final UnNestAO operator, final TransformationConfiguration config) {
-		final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<ITimeIntervalProbabilistic>(operator.getAttributePosition());
-		this.defaultExecute(operator, po, config, true, true);
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute(final UnNestAO operator, final TransformationConfiguration config) {
+        final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<ITimeIntervalProbabilistic>(operator.getAttributePosition());
+        this.defaultExecute(operator, po, config, true, true);
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getName() {
-		return "UnNestAO -> ProbabilisticDiscreteUnNestPO";
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getName() {
+        return "UnNestAO -> ProbabilisticDiscreteUnNestPO";
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
-
-			}
-		}
-		return false;
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
+            }
+        }
+        return false;
+    }
 
 }

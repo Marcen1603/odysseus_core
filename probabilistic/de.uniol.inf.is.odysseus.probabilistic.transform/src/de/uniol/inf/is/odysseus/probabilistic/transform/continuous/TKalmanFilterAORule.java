@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.KalmanFilterAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.KalmanFilterPO;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -37,7 +36,7 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
 	 */
 	@Override
 	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
+        return 0;
 	}
 
 	/*

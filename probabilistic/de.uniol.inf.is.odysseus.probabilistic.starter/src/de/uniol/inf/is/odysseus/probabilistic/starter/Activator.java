@@ -22,7 +22,7 @@ import org.osgi.framework.BundleContext;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class Activator implements BundleActivator {
-	/** The bundle context. */
+    /** The bundle context. */
 	private static BundleContext context;
 
 	/**

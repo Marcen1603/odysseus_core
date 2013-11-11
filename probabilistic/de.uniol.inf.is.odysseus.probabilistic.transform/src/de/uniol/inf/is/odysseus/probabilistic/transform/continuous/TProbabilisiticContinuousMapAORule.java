@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousMapPO;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
 
 /**
@@ -33,59 +34,71 @@ import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class TProbabilisiticContinuousMapAORule extends TMapAORule {
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
-		IPhysicalOperator mapPO;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
+        IPhysicalOperator mapPO;
 
-		final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
-		for (int i = 0; i < expressions.length; i++) {
-			expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
-		}
-		mapPO = new ProbabilisticContinuousMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
+        final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
+        for (int i = 0; i < expressions.length; i++) {
+            expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
+        }
+        mapPO = new ProbabilisticContinuousMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
 
-		this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
-	}
+        this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				boolean isProbabilisticContinuous = false;
-				for (final SDFExpression expr : operator.getExpressions()) {
-					if (SchemaUtils.containsContinuousProbabilisticAttributes(expr.getAllAttributes())) {
-						isProbabilisticContinuous = true;
-					}
-					if (expr.getType() == SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE) {
-						isProbabilisticContinuous = true;
-					}
-				}
-				if (isProbabilisticContinuous) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                boolean isProbabilisticContinuous = false;
+                for (final SDFExpression expr : operator.getExpressions()) {
+                    if (SchemaUtils.containsContinuousProbabilisticAttributes(expr.getAllAttributes())) {
+                        isProbabilisticContinuous = true;
+                    }
+                    if ((expr.getType() instanceof SDFProbabilisticDatatype) && (((SDFProbabilisticDatatype) expr.getType()).isContinuous())) {
+                        isProbabilisticContinuous = true;
+                    }
+                }
+                if (isProbabilisticContinuous) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "MapAO -> ProbabilisticContinuousMapPO";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "MapAO -> ProbabilisticContinuousMapPO";
+    }
 
 }
