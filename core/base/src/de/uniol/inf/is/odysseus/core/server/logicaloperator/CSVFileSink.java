@@ -56,16 +56,16 @@ public class CSVFileSink extends AbstractSenderAO {
 		addOption(AbstractCSVHandler.CSV_FLOATING_FORMATTER, value);
 	}
 	
-	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.CSV_NUMBER_FORMATTER, optional = true, doc = "Formatter for floating numbers.")
+	@Parameter(type = StringParameter.class, name = AbstractCSVHandler.CSV_NUMBER_FORMATTER, optional = true, doc = "Formatter for integer numbers.")
 	public void setNumberFormatter(String value) {
 		addOption(AbstractCSVHandler.CSV_NUMBER_FORMATTER, value);
 	}
 	
-	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Formatter for floating numbers.")
-	public void setFloatingFormatter(Boolean value) {
+	@Parameter(type = BooleanParameter.class, name = AbstractCSVHandler.CSV_WRITE_METADATA, optional = true, doc = "Write metadata.")
+	public void writeMetadata(Boolean value) {
 		addOption(AbstractCSVHandler.CSV_WRITE_METADATA, Boolean.toString(value));
 	}
-	
+		
 	@Override
 	public String getProtocolHandler() {
 		if (textDelimiterSet){
