@@ -25,6 +25,7 @@ import org.apache.commons.math3.filter.KalmanFilter;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -89,7 +90,15 @@ public class KalmanFilterPO<T extends ITimeInterval> extends AbstractPipe<Probab
 	public KalmanFilterPO(final KalmanFilterPO<T> kalmanPO) {
 		super(kalmanPO);
 		this.attributes = kalmanPO.attributes.clone();
-		this.measurementModel = new DefaultMeasurementModel(kalmanPO.measurementModel.getMeasurementMatrix().copy(), kalmanPO.measurementModel.getMeasurementNoise().copy());
+		RealMatrix measurementMatrix = null;
+		RealMatrix measurementNoise = null;
+		if (kalmanPO.measurementModel.getMeasurementMatrix() != null) {
+			measurementMatrix = kalmanPO.measurementModel.getMeasurementMatrix().copy();
+		}
+		if (kalmanPO.measurementModel.getMeasurementNoise() != null) {
+			measurementNoise = kalmanPO.measurementModel.getMeasurementNoise().copy();
+		}
+		this.measurementModel = new DefaultMeasurementModel(measurementMatrix, measurementNoise);
 		this.processModel = new DefaultProcessModel(kalmanPO.processModel.getStateTransitionMatrix().copy(), kalmanPO.processModel.getControlMatrix().copy(), kalmanPO.processModel.getProcessNoise().copy(), kalmanPO.processModel.getInitialStateEstimate().copy(), kalmanPO.processModel
 				.getInitialErrorCovariance().copy());
 		this.filter = new KalmanFilter(this.processModel, this.measurementModel);

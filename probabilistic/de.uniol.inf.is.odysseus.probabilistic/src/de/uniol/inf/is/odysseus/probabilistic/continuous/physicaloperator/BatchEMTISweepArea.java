@@ -76,6 +76,8 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 		if (predicate != null) {
 			this.predicate = predicate.clone();
 			this.predicate.init();
+		} else {
+			this.predicate = null;
 		}
 	}
 

@@ -126,9 +126,10 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
 	 * @return <code>true</code> if the data type is continuous probabilistic
 	 */
 	public final boolean isContinuous() {
-		return (this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI())
-				|| this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI()) || this
-				.getURI().equals(SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()));
+		return (this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()) || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI())
+				|| this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI()) || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI())
+				|| this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI()) || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI()) || this.getURI().equalsIgnoreCase(
+				SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()));
 	}
 
 	/**
