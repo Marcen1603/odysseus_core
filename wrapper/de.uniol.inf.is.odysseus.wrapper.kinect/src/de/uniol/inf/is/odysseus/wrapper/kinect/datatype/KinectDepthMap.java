@@ -5,6 +5,7 @@ import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.BLUE_PATTE
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
@@ -46,7 +47,13 @@ public class KinectDepthMap {
         tempBuffer.asShortBuffer().get(imgbytes);
     }
     
-    /**
+    public KinectDepthMap(short[] image, int width, int height) {
+        this.width = width;
+        this.height = height;
+        imgbytes = image;
+	}
+
+	/**
      * Creates a {@link BufferedImage} from the depth map to use in AWT.
      * @return A {@link BufferedImage}.
      */

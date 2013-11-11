@@ -46,6 +46,13 @@ public class KinectColorMap {
         imgbytes = new byte[width * height * DEPTH];
         buffer.get(imgbytes);
     }
+    
+    public KinectColorMap(byte[] image, int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        imgbytes = image;
+    }    
 
     /**
      * Copy Constructor.

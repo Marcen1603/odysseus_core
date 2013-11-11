@@ -2,15 +2,9 @@ package de.uniol.inf.is.odysseus.wrapper.kinect.datatype;
 
 import java.nio.ByteBuffer;
 
-import javax.media.opengl.GL2;
-
-import org.OpenNI.Point3D;
+import org.openni.Point3D;
 
 public class KinectSkeleton {
-    public static final float[][] COLOR_CODES = new float[][] { {1, 0, 0},
-            {0, 1, 0}, {1, 1, 0}, {1, 0, 1}, {0, 1, 1}, {0.4f, 0.4f, 1},
-            {1, 1, 1}};
-
     public static final String CSV_HEADER = "userId;head;neck;leftShoulder;leftEllbow;"
             + "leftHand;rightShoulder;rightEllbow;rightHand;torso;leftHip;leftKnee;leftFoot;"
             + "rightHip;rightKnee;rightFoot";
@@ -69,46 +63,6 @@ public class KinectSkeleton {
         return res;
     }
 
-    public void render(GL2 gl) {
-        setColor(gl, userId - 1);
-        renderLine(gl, head, neck);
-
-        renderLine(gl, leftShoulder, torso);
-        renderLine(gl, rightShoulder, torso);
-        renderLine(gl, leftShoulder, neck);
-        renderLine(gl, rightShoulder, neck);
-
-        renderLine(gl, leftShoulder, leftElbow);
-        renderLine(gl, leftElbow, leftHand);
-
-        renderLine(gl, rightShoulder, rightElbow);
-        renderLine(gl, rightElbow, rightHand);
-
-        renderLine(gl, leftHip, torso);
-        renderLine(gl, rightHip, torso);
-        renderLine(gl, leftHip, rightHip);
-
-        renderLine(gl, leftHip, leftKnee);
-        renderLine(gl, leftKnee, leftFoot);
-
-        renderLine(gl, rightHip, rightKnee);
-        renderLine(gl, rightKnee, rightFoot);
-    }
-
-    private void setColor(GL2 gl, int codeId) {
-        if (codeId < 0) {
-            codeId = 0;
-        }
-        codeId %= COLOR_CODES.length;
-        gl.glColor3f(COLOR_CODES[codeId][0], COLOR_CODES[codeId][1],
-                COLOR_CODES[codeId][2]);
-    }
-
-    private void renderLine(GL2 gl, Point3D p1, Point3D p2) {
-        gl.glVertex3f(p1.getX(), p1.getY(), p1.getZ());
-        gl.glVertex3f(p2.getX(), p2.getY(), p2.getZ());
-    }
-
     public String toCsvString() {
         StringBuffer sb = new StringBuffer();
         sb.append(userId + ";");
@@ -138,4 +92,136 @@ public class KinectSkeleton {
     private void appendPoint3D(StringBuffer sb, Point3D p) {
         sb.append(String.format("(%f/%f/%f);", p.getX(), p.getY(), p.getZ()));
     }
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public Point3D getHead() {
+		return head;
+	}
+
+	public void setHead(Point3D head) {
+		this.head = head;
+	}
+
+	public Point3D getNeck() {
+		return neck;
+	}
+
+	public void setNeck(Point3D neck) {
+		this.neck = neck;
+	}
+
+	public Point3D getLeftShoulder() {
+		return leftShoulder;
+	}
+
+	public void setLeftShoulder(Point3D leftShoulder) {
+		this.leftShoulder = leftShoulder;
+	}
+
+	public Point3D getLeftElbow() {
+		return leftElbow;
+	}
+
+	public void setLeftElbow(Point3D leftElbow) {
+		this.leftElbow = leftElbow;
+	}
+
+	public Point3D getLeftHand() {
+		return leftHand;
+	}
+
+	public void setLeftHand(Point3D leftHand) {
+		this.leftHand = leftHand;
+	}
+
+	public Point3D getRightShoulder() {
+		return rightShoulder;
+	}
+
+	public void setRightShoulder(Point3D rightShoulder) {
+		this.rightShoulder = rightShoulder;
+	}
+
+	public Point3D getRightElbow() {
+		return rightElbow;
+	}
+
+	public void setRightElbow(Point3D rightElbow) {
+		this.rightElbow = rightElbow;
+	}
+
+	public Point3D getRightHand() {
+		return rightHand;
+	}
+
+	public void setRightHand(Point3D rightHand) {
+		this.rightHand = rightHand;
+	}
+
+	public Point3D getTorso() {
+		return torso;
+	}
+
+	public void setTorso(Point3D torso) {
+		this.torso = torso;
+	}
+
+	public Point3D getLeftHip() {
+		return leftHip;
+	}
+
+	public void setLeftHip(Point3D leftHip) {
+		this.leftHip = leftHip;
+	}
+
+	public Point3D getLeftKnee() {
+		return leftKnee;
+	}
+
+	public void setLeftKnee(Point3D leftKnee) {
+		this.leftKnee = leftKnee;
+	}
+
+	public Point3D getLeftFoot() {
+		return leftFoot;
+	}
+
+	public void setLeftFoot(Point3D leftFoot) {
+		this.leftFoot = leftFoot;
+	}
+
+	public Point3D getRightHip() {
+		return rightHip;
+	}
+
+	public void setRightHip(Point3D rightHip) {
+		this.rightHip = rightHip;
+	}
+
+	public Point3D getRightKnee() {
+		return rightKnee;
+	}
+
+	public void setRightKnee(Point3D rightKnee) {
+		this.rightKnee = rightKnee;
+	}
+
+	public Point3D getRightFoot() {
+		return rightFoot;
+	}
+
+	public void setRightFoot(Point3D rightFoot) {
+		this.rightFoot = rightFoot;
+	}
+
+	public static String getCsvHeader() {
+		return CSV_HEADER;
+	}
 }

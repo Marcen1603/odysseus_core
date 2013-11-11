@@ -13,11 +13,11 @@ import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.OpenNI.DepthMap;
-import org.OpenNI.GeneralException;
-import org.OpenNI.ImageMap;
-import org.OpenNI.SkeletonJoint;
-import org.OpenNI.SkeletonJointPosition;
+import org.openni.DepthMap;
+import org.openni.GeneralException;
+import org.openni.ImageMap;
+import org.openni.SkeletonJoint;
+import org.openni.SkeletonJointPosition;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;

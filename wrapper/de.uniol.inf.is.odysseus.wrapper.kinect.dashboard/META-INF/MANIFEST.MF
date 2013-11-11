@@ -1,16 +1,17 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Kinect
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.kinect;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.kinect.dashboard;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.kinect.Activator
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.kinect.dashboard.part.Activator
 Bundle-Vendor: OFFIS
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.ruleengine,
- org.OpenNI;bundle-version="1.5.4"
+ com.jogamp.jogl;bundle-version="2.0.0",
+ de.uniol.inf.is.odysseus.wrapper.kinect;bundle-version="1.0.0",
+ org.eclipse.core.resources;bundle-version="3.7.101"
 Import-Package: com.google.common.collect,
- com.google.gson,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
  de.uniol.inf.is.odysseus.core.physicaloperator,
@@ -36,18 +37,9 @@ Import-Package: com.google.common.collect,
  org.eclipse.swt.opengl,
  org.eclipse.swt.widgets,
  org.eclipse.ui,
+ org.openni,
  org.osgi.framework;version="1.6.0",
  org.slf4j
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/KinectTransportHandler.xml, OSGI-INF/KinectProtocolHandler.xml, OSGI-INF/KinectColorMapHandler.xml, OSGI-INF/KinectSkeletonMapHandler.xml, OSGI-INF/KinectDepthMapHandler.xml, OSGI-INF/KinectDatatypeProvider.xml, OSGI-INF/KinectFunctionProvider.xml
+Service-Component: OSGI-INF/KinectTransportHandler.xml, OSGI-INF/KinectProtocolHandler.xml, OSGI-INF/KinectColorMapHandler.xml, OSGI-INF/KinectSkeletonMapHandler.xml, OSGI-INF/KinectDepthMapHandler.xml, OSGI-INF/KinectDatatypeProvider.xml, OSGI-INF/TransformationRuleService.xml, OSGI-INF/KinectFunctionProvider.xml
 Bundle-ClassPath: .
-Export-Package: de.uniol.inf.is.odysseus.wrapper.kinect,
- de.uniol.inf.is.odysseus.wrapper.kinect.datahandler,
- de.uniol.inf.is.odysseus.wrapper.kinect.datatype,
- de.uniol.inf.is.odysseus.wrapper.kinect.functions,
- de.uniol.inf.is.odysseus.wrapper.kinect.logicaloperator,
- de.uniol.inf.is.odysseus.wrapper.kinect.openNI,
- de.uniol.inf.is.odysseus.wrapper.kinect.physicaloperator,
- de.uniol.inf.is.odysseus.wrapper.kinect.sdf.schema,
- de.uniol.inf.is.odysseus.wrapper.kinect.transform,
- de.uniol.inf.is.odysseus.wrapper.kinect.utils

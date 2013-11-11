@@ -79,7 +79,8 @@ public class KinectProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
 
     @Override
     public void process(ByteBuffer message) {
-        super.getTransfer().transfer(getDataHandler().readData(message));
+    	Tuple<?> data = getDataHandler().readData(message);
+        super.getTransfer().transfer(data);
     }
 
     @Override
