@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 public class Condition {
     private final SDFAttribute attribute;
     private final Interval interval;
+    private final String expression;
     private String unit;
 
     /**
@@ -38,6 +39,22 @@ public class Condition {
         super();
         this.attribute = attribute;
         this.interval = interval;
+        this.expression = null;
+    }
+
+    /**
+     * Class constructor.
+     * 
+     * @param name
+     * @param attribute
+     * @param expression
+     * 
+     */
+    public Condition(final SDFAttribute attribute, final String expression) {
+        super();
+        this.attribute = attribute;
+        this.interval = Interval.MAX;
+        this.expression = expression;
     }
 
     /**
@@ -52,6 +69,18 @@ public class Condition {
      */
     public Interval getInterval() {
         return this.interval;
+    }
+
+    /**
+     * 
+     * @return the expression
+     */
+    public String getExpression() {
+        return this.expression;
+    }
+
+    public boolean isExpression() {
+        return this.expression != null;
     }
 
     /**

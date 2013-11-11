@@ -23,7 +23,10 @@ Import-Package: com.google.common.primitives,
  org.apache.commons.math3.linear,
  org.apache.commons.math3.special,
  org.apache.commons.math3.util,
+ org.eclipse.osgi.util;version="1.1.0",
  org.osgi.framework,
+ org.osgi.service.prefs,
+ org.osgi.util.tracker,
  org.slf4j
 Service-Component: OSGI-INF/IntervalProbabilistic.xml,OSGI-INF/ProbabilisticTupleDataHandler.xml,OSGI-INF/ProbabilisticDoubleDataHandler.xml,OSGI-INF/ProbabilisticFloatDataHandler.xml,OSGI-INF/ProbabilisticLongDataHandler.xml,OSGI-INF/ProbabilisticIntegerDataHandler.xml,OSGI-INF/ProbabilisticShortDataHandler.xml,OSGI-INF/ProbabilisticByteDataHandler.xml,OSGI-INF/ProbabilisticStringDataHandler.xml,
  OSGI-INF/IntervalProbabilisticLatencyQueryBuildConfiguration.xml,OSGI-INF/ProbabilisticAggregationFunctionBuilder.xml,OSGI-INF/IntervalProbabilisticLatency.xml,OSGI-INF/IntervalProbabilisticQueryBuildConfiguration.xml,OSGI-INF/ProbabilisticDatatypeProvider.xml,OSGI-INF/ProbabilisticContinuousDataHandler.xml,OSGI-INF/Probabilistic.xml,OSGI-INF/ProbabilisticFunctionProvider.xml

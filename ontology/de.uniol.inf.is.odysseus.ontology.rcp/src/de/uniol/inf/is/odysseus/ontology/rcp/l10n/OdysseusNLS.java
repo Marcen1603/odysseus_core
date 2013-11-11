@@ -52,6 +52,8 @@ public class OdysseusNLS extends NLS {
     public static String DefineSensingDevices;
     public static String DefineMeasurementCapabilities;
 
+    public static String Interval;
+    public static String Function;
     static {
         NLS.initializeMessages(OdysseusNLS.BUNDLE_NAME, OdysseusNLS.class);
     }

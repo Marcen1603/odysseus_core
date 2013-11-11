@@ -129,25 +129,43 @@ public class SourceManagerImpl {
         final Individual condition = this.getABox().createIndividual(conditionURI, SSN.Condition);
         this.getABox().add(condition, RDFS.subClassOf, property.asResource());
 
-        this.getABox().createClass(DUL.Region.getURI());
-        final Individual condition_interval = this.getABox().createIndividual(conditionURI + "/region", DUL.Region);
+        if (c.isExpression()) {
+            this.getABox().createClass(DUL.Region.getURI());
+            final Individual condition_expression = this.getABox().createIndividual(conditionURI + "/region", DUL.Region);
 
-        this.getABox().createClass(DUL.Amount.getURI());
-        final Individual minValue = this.getABox().createIndividual(conditionURI + "/region/inf", DUL.Amount);
-        this.getABox().add(minValue, DUL.hasDataValue, new Double(c.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().inf()));
+            this.getABox().createClass(DUL.Amount.getURI());
+            final Individual expression = this.getABox().createIndividual(conditionURI + "/region/expression", DUL.Amount);
+            this.getABox().add(expression, DUL.hasDataValue, c.getExpression(), TypeMapper.getInstance().getTypeByValue(c.getExpression()));
 
-        final Individual maxValue = this.getABox().createIndividual(conditionURI + "/region/sup", DUL.Amount);
-        this.getABox().add(maxValue, DUL.hasDataValue, new Double(c.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().sup()));
-        if (c.getUnit() != null) {
-            this.getABox().add(minValue, DUL.isClassifiedBy, c.getUnit());
-            this.getABox().add(maxValue, DUL.isClassifiedBy, c.getUnit());
+            if (c.getUnit() != null) {
+                this.getABox().add(expression, DUL.isClassifiedBy, c.getUnit());
+            }
+
+            this.getABox().add(condition_expression, ODYSSEUS.hasMeasurementPropertyExpression, expression);
+            this.getABox().createObjectProperty(SSN.hasValue.getURI());
+            this.getABox().add(condition, SSN.hasValue, condition_expression);
         }
-        this.getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
+        else {
+            this.getABox().createClass(DUL.Region.getURI());
+            final Individual condition_interval = this.getABox().createIndividual(conditionURI + "/region", DUL.Region);
 
-        this.getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
+            this.getABox().createClass(DUL.Amount.getURI());
+            final Individual minValue = this.getABox().createIndividual(conditionURI + "/region/inf", DUL.Amount);
+            this.getABox().add(minValue, DUL.hasDataValue, new Double(c.getInterval().inf()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().inf()));
 
-        this.getABox().createObjectProperty(SSN.hasValue.getURI());
-        this.getABox().add(condition, SSN.hasValue, condition_interval);
+            final Individual maxValue = this.getABox().createIndividual(conditionURI + "/region/sup", DUL.Amount);
+            this.getABox().add(maxValue, DUL.hasDataValue, new Double(c.getInterval().sup()).toString(), TypeMapper.getInstance().getTypeByValue(c.getInterval().sup()));
+            if (c.getUnit() != null) {
+                this.getABox().add(minValue, DUL.isClassifiedBy, c.getUnit());
+                this.getABox().add(maxValue, DUL.isClassifiedBy, c.getUnit());
+            }
+            this.getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMinValue, minValue);
+
+            this.getABox().add(condition_interval, ODYSSEUS.hasMeasurementPropertyMaxValue, maxValue);
+
+            this.getABox().createObjectProperty(SSN.hasValue.getURI());
+            this.getABox().add(condition, SSN.hasValue, condition_interval);
+        }
 
         this.getABox().add(measurementCapability, SSN.inCondition, condition);
     }

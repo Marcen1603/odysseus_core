@@ -67,6 +67,10 @@ public final class ODYSSEUS {
      * has Measurement Property Max Value:
      */
     public static final Property hasMeasurementPropertyMaxValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyMaxValue");
+    /**
+     * has Measurement Property Expression:
+     */
+    public static final Property hasMeasurementPropertyExpression = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyExpression");
 
     private ODYSSEUS() {
     }

@@ -23,10 +23,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -47,6 +50,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
     private Combo cmbAttribute;
     private Text txtAttributeValueMin;
     private Text txtAttributeValueMax;
+    private Text txtAttributeFunction;
 
     private Combo cmbProperty;
     private Text txtPropertyValueMin;
@@ -97,6 +101,51 @@ public class MeasurementCapabiltyDialog extends Dialog {
 
         this.fillAttributeCombo(this.cmbAttribute);
 
+        Button[] radios = new Button[2];
+
+        radios[0] = new Button(container, SWT.RADIO);
+        radios[0].setText(OdysseusNLS.Interval);
+        radios[0].addListener(SWT.Selection, new Listener() {
+
+            @Override
+            public void handleEvent(Event event) {
+                txtAttributeFunction.setText("");
+                txtAttributeFunction.setEditable(false);
+                txtAttributeFunction.setEnabled(false);
+                txtAttributeValueMin.setEnabled(true);
+                txtAttributeValueMax.setEnabled(true);
+                txtAttributeValueMin.setEditable(true);
+                txtAttributeValueMax.setEditable(true);
+
+            }
+        });
+        radios[1] = new Button(container, SWT.RADIO);
+        radios[1].setText(OdysseusNLS.Function);
+        radios[1].addListener(SWT.Selection, new Listener() {
+
+            @Override
+            public void handleEvent(Event event) {
+                txtAttributeValueMin.setText("");
+                txtAttributeValueMax.setText("");
+                txtAttributeValueMin.setEditable(false);
+                txtAttributeValueMax.setEditable(false);
+                txtAttributeValueMin.setEnabled(false);
+                txtAttributeValueMax.setEnabled(false);
+                txtAttributeFunction.setEditable(true);
+                txtAttributeFunction.setEnabled(true);
+
+            }
+        });
+
+        this.txtAttributeFunction = new Text(container, SWT.BORDER);
+        gd = new GridData();
+        final int txtAttributeFunctionWidth = txtAttributeFunction.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        gd.horizontalSpan = 2;
+        gd.widthHint = Math.min(txtAttributeFunctionWidth, maxWidth);
+        gd.horizontalAlignment = GridData.FILL;
+        gd.grabExcessHorizontalSpace = true;
+        txtAttributeFunction.setLayoutData(gd);
+
         this.txtAttributeValueMin = new Text(container, SWT.BORDER);
         gd = new GridData();
         final int txtAttributeValueMinWidth = txtAttributeValueMin.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -114,6 +163,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
         txtAttributeValueMax.setLayoutData(gd);
+        new Label(container, SWT.NONE);
 
         final Label lblProperty = new Label(container, SWT.WRAP);
         lblProperty.setText(OdysseusNLS.MeasurementProperty);
@@ -154,6 +204,10 @@ public class MeasurementCapabiltyDialog extends Dialog {
         gd.grabExcessHorizontalSpace = true;
         txtPropertyValueMax.setLayoutData(gd);
 
+        radios[0].setSelection(true);
+        txtAttributeFunction.setEditable(false);
+        txtAttributeFunction.setEnabled(false);
+
         return container;
     }
 
@@ -165,12 +219,16 @@ public class MeasurementCapabiltyDialog extends Dialog {
 
     private void saveInput() {
         final SDFAttribute attribute = (SDFAttribute) this.cmbAttribute.getData(this.cmbAttribute.getItem(this.cmbAttribute.getSelectionIndex()));
+        final String attributeFunction = this.txtAttributeFunction.getText();
         final double attributeMinValue = Double.parseDouble(this.txtAttributeValueMin.getText());
         final double attributeMaxValue = Double.parseDouble(this.txtAttributeValueMax.getText());
         final Interval attributeInterval = new Interval(attributeMinValue, attributeMaxValue);
-
-        this.condition = new Condition(attribute, attributeInterval);
-
+        if (this.txtAttributeFunction.isEnabled()) {
+            this.condition = new Condition(attribute, attributeFunction);
+        }
+        else {
+            this.condition = new Condition(attribute, attributeInterval);
+        }
         final MeasurementProperty.Property property = (MeasurementProperty.Property) this.cmbProperty.getData(this.cmbProperty.getItem(this.cmbProperty.getSelectionIndex()));
         final double propertyMinValue = Double.parseDouble(this.txtPropertyValueMin.getText());
         final double propertyMaxValue = Double.parseDouble(this.txtPropertyValueMax.getText());
@@ -178,7 +236,6 @@ public class MeasurementCapabiltyDialog extends Dialog {
         final Interval propertyInterval = new Interval(propertyMinValue, propertyMaxValue);
 
         this.measurementPropery = new MeasurementProperty(property, propertyInterval);
-
     }
 
     public Condition getCondition() {
