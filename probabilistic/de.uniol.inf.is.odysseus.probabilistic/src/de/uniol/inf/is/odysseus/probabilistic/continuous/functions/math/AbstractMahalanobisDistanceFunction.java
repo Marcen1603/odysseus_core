@@ -64,6 +64,7 @@ public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbab
 	 *            The normal distribution mixture
 	 * @param b
 	 *            The point
+	 * @throws DimensionMismatchException
 	 * @return The distance measure
 	 */
 	protected final double getValueInternal(final NormalDistributionMixture a, final RealMatrix b) {

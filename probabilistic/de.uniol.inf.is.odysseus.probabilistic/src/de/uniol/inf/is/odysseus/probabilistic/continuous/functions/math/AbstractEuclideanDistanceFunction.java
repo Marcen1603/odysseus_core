@@ -54,6 +54,7 @@ public abstract class AbstractEuclideanDistanceFunction extends AbstractFunction
 	 *            The point
 	 * @param b
 	 *            The other point
+	 * @throws DimensionMismatchException
 	 * @return The distance measure
 	 */
 	protected final double getValueInternal(final RealMatrix a, final RealMatrix b) {
