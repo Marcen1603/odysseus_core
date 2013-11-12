@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.kinect.datatype;
 
-import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.BLUE_PATTERN;
 import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.ONE_HALF;
 
 import org.openni.Point3D;

@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.plugwise.protocol;
 import java.util.List;
 
 // https://bitbucket.org/hadara/python-plugwise/src/635b13b0b20f763b831c11e814149413cda69214/plugwise/protocol.py?at=default
+@SuppressWarnings("all")
 
 public class PlugwiseMessage {
 	static final byte[] PACKET_HEADER = {0x05,0x05,0x03,0x03};

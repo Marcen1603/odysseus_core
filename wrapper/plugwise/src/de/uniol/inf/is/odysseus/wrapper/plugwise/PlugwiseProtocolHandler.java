@@ -19,6 +19,7 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public static final String NAME = "Plugwise";
 	public static final String CIRCLE_MAC = "circle_mac";
 	
+	@SuppressWarnings("unused")
 	private String circleMac = null;
 	
 	public PlugwiseProtocolHandler() {

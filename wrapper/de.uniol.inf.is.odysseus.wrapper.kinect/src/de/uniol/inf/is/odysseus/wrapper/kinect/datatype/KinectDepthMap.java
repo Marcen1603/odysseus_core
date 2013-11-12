@@ -5,8 +5,6 @@ import static de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants.BLUE_PATTE
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 

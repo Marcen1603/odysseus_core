@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.plugwise;
 
+@SuppressWarnings("all")
 public class Checksum {
 
 	// scrambler lookup table for fast computation.
