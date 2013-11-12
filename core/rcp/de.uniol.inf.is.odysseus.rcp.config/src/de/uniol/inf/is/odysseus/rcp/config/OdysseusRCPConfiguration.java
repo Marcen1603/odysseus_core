@@ -74,7 +74,7 @@ public final class OdysseusRCPConfiguration {
 			}
 			
 		} catch (IOException ex) {
-			LOG.warn("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
+			LOG.error("Could not load configuration file '" + ODYSSEUS_RCP_CONFIGURATION_FILE + "'", ex);
 		}
 	}
 
@@ -157,6 +157,7 @@ public final class OdysseusRCPConfiguration {
 	}
 	
 	public static Collection<String> getKeys() {
+		firstLoadIfNeeded();
 		List<String> keys = Lists.newArrayList();
 		for( Object key : properties.keySet() ) {
 			keys.add(key.toString());
