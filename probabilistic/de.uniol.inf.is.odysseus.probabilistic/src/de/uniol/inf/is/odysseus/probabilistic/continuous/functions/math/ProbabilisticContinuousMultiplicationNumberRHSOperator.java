@@ -26,47 +26,49 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ProbabilisticContinuousMultiplicationNumberRHSOperator extends AbstractProbabilisticContinuousMultiplicationNumberOperator {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 4055030542539063085L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+    private static final long serialVersionUID = 4055030542539063085L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS };
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > (this.getArity() - 1)) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-		return ProbabilisticContinuousMultiplicationNumberRHSOperator.ACC_TYPES[argPos];
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > (this.getArity() - 1)) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
+        }
+        return ProbabilisticContinuousMultiplicationNumberRHSOperator.ACC_TYPES[argPos];
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.AbstractProbabilisticContinuousMultiplicationNumberOperator#isCommutative()
-	 */
-	@Override
-	public final boolean isCommutative() {
-		return false;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.
+     * AbstractProbabilisticContinuousMultiplicationNumberOperator
+     * #isCommutative()
+     */
+    @Override
+    public final boolean isCommutative() {
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
-	 */
-	@Override
-	public final NormalDistributionMixture getValue() {
-		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
-		final Double b = this.getNumericalInputValue(1);
-		return this.getValueInternal(a, b);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+     */
+    @Override
+    public final NormalDistributionMixture getValue() {
+        final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
+        final Double b = this.getNumericalInputValue(1);
+        return this.getValueInternal(a, b);
+    }
 }

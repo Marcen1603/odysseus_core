@@ -29,41 +29,42 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ProbabilisticIntegrateFunction extends AbstractIntegrateMultivariateFunction {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = 144107943090837242L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE },
-			{ SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+    private static final long serialVersionUID = 144107943090837242L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateMultivariateFunction#getValue()
-	 */
-	@Override
-	public final Double getValue() {
-		final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
-		final RealVector lowerBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(1) });
-		final RealVector upperBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(2) });
-		return this.getValueInternal(continuousDouble, lowerBound, upperBound);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.
+     * ProbabilisticIntegrateMultivariateFunction#getValue()
+     */
+    @Override
+    public final Double getValue() {
+        final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
+        final RealVector lowerBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(1) });
+        final RealVector upperBound = MatrixUtils.createRealVector(new double[] { this.getNumericalInputValue(2) });
+        return this.getValueInternal(continuousDouble, lowerBound, upperBound);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.ProbabilisticIntegrateMultivariateFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution, a covariance matrix and the lower and upper support.");
-		}
-		return ProbabilisticIntegrateFunction.ACC_TYPES[argPos];
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.
+     * ProbabilisticIntegrateMultivariateFunction#getAcceptedTypes(int)
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity()) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution, a covariance matrix and the lower and upper support.");
+        }
+        return ProbabilisticIntegrateFunction.ACC_TYPES[argPos];
+    }
 
 }

@@ -36,131 +36,139 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ProbabilisticContinuousGreaterEqualsOperator extends AbstractProbabilisticBinaryOperator<NormalDistributionMixture> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -9122605635777338549L;
+    private static final long serialVersionUID = -9122605635777338549L;
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
-	 */
-	@Override
-	public final int getPrecedence() {
-		return 8;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
+     */
+    @Override
+    public final int getPrecedence() {
+        return 8;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public String getSymbol() {
-		return ">=";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+     */
+    @Override
+    public String getSymbol() {
+        return ">=";
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
-	 */
-	@Override
-	public final NormalDistributionMixture getValue() {
-		final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+     */
+    @Override
+    public final NormalDistributionMixture getValue() {
+        final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
 
-		final Double b = this.getNumericalInputValue(1);
-		final double[] lowerBoundData = new double[a.getDimension()];
-		Arrays.fill(lowerBoundData, b);
-		final double[] upperBoundData = new double[a.getDimension()];
-		Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
+        final Double b = this.getNumericalInputValue(1);
+        final double[] lowerBoundData = new double[a.getDimension()];
+        Arrays.fill(lowerBoundData, b);
+        final double[] upperBoundData = new double[a.getDimension()];
+        Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
 
-		final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
-		final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
+        final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
+        final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
-		final double value = ProbabilisticContinuousUtils.cumulativeProbability(a, lowerBound, upperBound);
-		a.setScale(a.getScale() / value);
-		final Interval[] support = new Interval[a.getDimension()];
-		for (int i = 0; i < a.getDimension(); i++) {
-			final Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
-			support[i] = a.getSupport(i).intersection(interval);
-		}
-		a.setSupport(support);
-		return a;
-	}
+        final double value = ProbabilisticContinuousUtils.cumulativeProbability(a, lowerBound, upperBound);
+        a.setScale(a.getScale() / value);
+        final Interval[] support = new Interval[a.getDimension()];
+        for (int i = 0; i < a.getDimension(); i++) {
+            final Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
+            support[i] = a.getSupport(i).intersection(interval);
+        }
+        a.setSupport(support);
+        return a;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public final SDFDatatype getReturnType() {
-		return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isCommutative()
-	 */
-	@Override
-	public final boolean isCommutative() {
-		return false;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isCommutative()
+     */
+    @Override
+    public final boolean isCommutative() {
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isAssociative()
-	 */
-	@Override
-	public final boolean isAssociative() {
-		return false;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isAssociative()
+     */
+    @Override
+    public final boolean isAssociative() {
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isLeftDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
-	 */
-	@Override
-	public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
-		return false;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#
+     * isLeftDistributiveWith
+     * (de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+     */
+    @Override
+    public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isRightDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
-	 */
-	@Override
-	public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
-		return false;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#
+     * isRightDistributiveWith
+     * (de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+     */
+    @Override
+    public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getAssociativity()
-	 */
-	@Override
-	public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.mep.IOperator#getAssociativity()
+     */
+    @Override
+    public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+        return ASSOCIATIVITY.LEFT_TO_RIGHT;
+    }
 
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
-			{ SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT,
-					SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.FLOAT, SDFDatatype.DOUBLE, SDFDatatype.LONG } };
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
+            { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER,
+                    SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG },
+            SDFDatatype.NUMBERS };
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > (this.getArity() - 1)) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-		return ProbabilisticContinuousGreaterEqualsOperator.ACC_TYPES[argPos];
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > (this.getArity() - 1)) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
+        }
+        return ProbabilisticContinuousGreaterEqualsOperator.ACC_TYPES[argPos];
+    }
 
 }

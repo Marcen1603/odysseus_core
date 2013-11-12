@@ -25,37 +25,37 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * 
  */
 public class EuclideanDistanceFunction extends AbstractEuclideanDistanceFunction {
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -4967226185023253568L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.DOUBLE }, { SDFDatatype.DOUBLE } };
+    private static final long serialVersionUID = -4967226185023253568L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFDatatype.NUMBERS };
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-		}
-		return EuclideanDistanceFunction.ACC_TYPES[argPos];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity()) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
+        }
+        return EuclideanDistanceFunction.ACC_TYPES[argPos];
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final Double getValue() {
-		final RealMatrix a = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(0) });
-		final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(1) });
-		return this.getValueInternal(a, b);
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final Double getValue() {
+        final RealMatrix a = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(0) });
+        final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { this.getNumericalInputValue(1) });
+        return this.getValueInternal(a, b);
+    }
 }

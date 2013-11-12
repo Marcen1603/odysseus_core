@@ -28,38 +28,38 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class MahalanobisDistanceFunction extends AbstractMahalanobisDistanceFunction {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 7141595399115956448L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFDatatype.BYTE, SDFDatatype.SHORT, SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.FLOAT, SDFDatatype.DOUBLE } };
+    private static final long serialVersionUID = 7141595399115956448L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, SDFDatatype.NUMBERS };
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-		}
-		return MahalanobisDistanceFunction.ACC_TYPES[argPos];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity()) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
+        }
+        return MahalanobisDistanceFunction.ACC_TYPES[argPos];
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final Double getValue() {
-		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
-		final double scalar = this.getNumericalInputValue(1);
-		final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { scalar });
-		return this.getValueInternal(a, b);
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final Double getValue() {
+        final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
+        final double scalar = this.getNumericalInputValue(1);
+        final RealMatrix b = MatrixUtils.createColumnRealMatrix(new double[] { scalar });
+        return this.getValueInternal(a, b);
+    }
 }
