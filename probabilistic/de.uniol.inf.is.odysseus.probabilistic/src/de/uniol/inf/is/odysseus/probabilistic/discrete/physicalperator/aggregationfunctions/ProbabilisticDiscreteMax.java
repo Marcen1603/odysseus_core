@@ -15,9 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ElementPartialAggregate;
@@ -26,13 +23,13 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
- *         FIXME Implement probabilistic Min aggregation function
+ *         FIXME Implement probabilistic Max aggregation function
  */
-public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticDiscreteMax extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4241950598685654559L;
+	private static final long serialVersionUID = 8103927421161762878L;
 	/** The attribute position. */
 	@SuppressWarnings("unused")
 	private final int pos;
@@ -40,7 +37,7 @@ public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTup
 	private final String datatype;
 
 	/**
-	 * Gets an instance of {@link ProbabilisticMin}.
+	 * Gets an instance of {@link ProbabilisticDiscreteMax}.
 	 * 
 	 * @param pos
 	 *            The attribute position
@@ -48,15 +45,14 @@ public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTup
 	 *            The partial aggregate input
 	 * @param datatype
 	 *            The result datatype
-	 * @return An instance of {@link ProbabilisticMin}
+	 * @return An instance of {@link ProbabilisticDiscreteMax}
 	 */
-	public static ProbabilisticMin getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-
-		return new ProbabilisticMin(pos, partialAggregateInput, datatype);
+	public static ProbabilisticDiscreteMax getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticDiscreteMax(pos, partialAggregateInput, datatype);
 	}
 
 	/**
-	 * Creates a new instance of {@link ProbabilisticMin}.
+	 * Creates a new instance of {@link ProbabilisticDiscreteMax}.
 	 * 
 	 * @param pos
 	 *            The attribute position
@@ -65,8 +61,8 @@ public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTup
 	 * @param datatype
 	 *            The result datatype
 	 */
-	protected ProbabilisticMin(final int pos, final boolean partialAggregateInput, final String datatype) {
-		super("MIN", partialAggregateInput);
+	protected ProbabilisticDiscreteMax(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("MAX", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
 	}
@@ -101,68 +97,4 @@ public class ProbabilisticMin extends AbstractAggregateFunction<ProbabilisticTup
 		return pa.getElem();
 	}
 
-	/**
-	 * TEST CODE.
-	 * 
-	 * @return Computed bins
-	 */
-	private Object[] computeBins() {
-		final Object[] bins = new Object[] {};
-		// final int[] p = new int[] {};
-		// final int[] b = new int[] {};
-		// int i = 1;
-		// final int l = 0;
-		// final int e = 1;
-		// while (i < l) {
-		// final double k = Math.log(b[i]) / Math.log(1 + e);
-		// int q = 0;
-		// bins = bins;
-		// FIXME Test for floating point equality
-		// while (k == (Math.log(b[i]) / Math.log(1 + e))) {
-		// q = q + p[i];
-		// i++;
-		// }
-		// }
-		return bins;
-	}
-
-	/**
-	 * TEST CODE.
-	 * 
-	 * @return estimated mi9nimum
-	 */
-	@SuppressWarnings({ "unused", "rawtypes" })
-	private double estimateMin() {
-		final List p = new ArrayList();
-
-		while (!p.isEmpty()) {
-
-			final Object[] bins = this.computeBins();
-			double w = 1;
-			double u = 0;
-			double v = 0;
-			final double q = 0;
-			for (final Object k : bins) {
-				u = ((q / w) * v) + u;
-				v = (1 - (q / w)) * v;
-				w = w - q;
-			}
-
-		}
-		final double v = 0;
-		final double u = 0;
-		final double e = 1;
-		double min = 0;
-		final double n = 0;
-		final double t = (2 * Math.log(n)) / Math.log(1 + e);
-		for (int i = 0; i <= t; i++) {
-			double tmp = 0;
-			for (int j = 0; j <= (i - 1); j++) {
-				tmp *= v;
-			}
-			min += Math.pow((1 + e), i) * u * tmp;
-		}
-		return min;
-
-	}
 }

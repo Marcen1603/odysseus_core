@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
- *         FIXME Implement probabilistic Max aggregation function
+ *         FIXME Implement probabilistic StdDev aggregation function
  */
-public class ProbabilisticMax extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticDiscreteStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8103927421161762878L;
+	private static final long serialVersionUID = -45894921488698597L;
 	/** The attribute position. */
 	@SuppressWarnings("unused")
 	private final int pos;
@@ -37,7 +37,7 @@ public class ProbabilisticMax extends AbstractAggregateFunction<ProbabilisticTup
 	private final String datatype;
 
 	/**
-	 * Gets an instance of {@link ProbabilisticMax}.
+	 * Gets an instance of {@link ProbabilisticDiscreteStdDev}.
 	 * 
 	 * @param pos
 	 *            The attribute position
@@ -45,14 +45,14 @@ public class ProbabilisticMax extends AbstractAggregateFunction<ProbabilisticTup
 	 *            The partial aggregate input
 	 * @param datatype
 	 *            The result datatype
-	 * @return An instance of {@link ProbabilisticMax}
+	 * @return An instance of {@link ProbabilisticDiscreteStdDev}
 	 */
-	public static ProbabilisticMax getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-		return new ProbabilisticMax(pos, partialAggregateInput, datatype);
+	public static ProbabilisticDiscreteStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticDiscreteStdDev(pos, partialAggregateInput, datatype);
 	}
 
 	/**
-	 * Creates a new instance of {@link ProbabilisticMax}.
+	 * Creates a new instance of {@link ProbabilisticDiscreteStdDev}.
 	 * 
 	 * @param pos
 	 *            The attribute position
@@ -61,8 +61,8 @@ public class ProbabilisticMax extends AbstractAggregateFunction<ProbabilisticTup
 	 * @param datatype
 	 *            The result datatype
 	 */
-	protected ProbabilisticMax(final int pos, final boolean partialAggregateInput, final String datatype) {
-		super("MAX", partialAggregateInput);
+	protected ProbabilisticDiscreteStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("STDDEV", partialAggregateInput);
 		this.pos = pos;
 		this.datatype = datatype;
 	}
@@ -96,5 +96,4 @@ public class ProbabilisticMax extends AbstractAggregateFunction<ProbabilisticTup
 		final ElementPartialAggregate<ProbabilisticTuple<?>> pa = (ElementPartialAggregate<ProbabilisticTuple<?>>) p;
 		return pa.getElem();
 	}
-
 }
