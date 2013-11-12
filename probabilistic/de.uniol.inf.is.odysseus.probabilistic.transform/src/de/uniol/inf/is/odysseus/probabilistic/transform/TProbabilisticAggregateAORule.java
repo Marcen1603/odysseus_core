@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
+package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,16 +29,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.relational.transform.TAggregatePORule;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
 @SuppressWarnings({ "all" })
-public class TProbabilisticDiscreteAggregateAORule extends TAggregatePORule {
+public class TProbabilisticAggregateAORule extends TAggregatePORule {
     /*
      * 
      * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
@@ -87,11 +85,14 @@ public class TProbabilisticDiscreteAggregateAORule extends TAggregatePORule {
 
                     if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
                         final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
-                        if (datatype.isContinuous()) {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
+                        if (datatype.isDiscrete()) {
+                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "DISCRETE_" + p.getE2().getName());
+                        }
+                        else if (datatype.isContinuous()) {
+                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "CONTINUOUS_" + p.getE2().getName());
                         }
                         else {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
+                            builder = null;
                         }
                     }
                     else {
@@ -123,6 +124,7 @@ public class TProbabilisticDiscreteAggregateAORule extends TAggregatePORule {
         if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
             if (operator.getGroupProcessor() == null) {
                 return true;
+
             }
         }
         return false;
