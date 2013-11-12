@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	public static final String QUEUE_NAME = "QUEUE_NAME";
+	public static final String CONSUMER_TAG = "CONSUMER_TAG";
 	public static final String HOST = "HOST";
 	public static final String USERNAME = "USERNAME";
 	public static final String PASSWORD = "PASSWORD";
@@ -26,6 +27,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	public static final String NAME = "RabbitMQ";
 
 	private String queueName;
+	private String consumerTag;
 	private String host;
 	private String username;
 	private String password;
@@ -57,6 +59,9 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		}
 		if (options.containsKey(VIRTUALHOST)) {
 			virtualhost = options.get(VIRTUALHOST);
+		}
+		if (options.containsKey(CONSUMER_TAG)){
+			consumerTag = options.get(CONSUMER_TAG);
 		}
 		if (options.containsKey(PORT)) {
 			port = Integer.parseInt(options.get(PORT));
@@ -96,7 +101,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		internalOpen();
 		// Create Consumer
 		boolean autoAck = false;
-		channel.basicConsume(queueName, autoAck, "myConsumerTag",
+		channel.basicConsume(queueName, autoAck, consumerTag,
 				new DefaultConsumer(channel) {
 					public void handleDelivery(
 							String consumerTag,
