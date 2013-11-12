@@ -115,7 +115,9 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 //						String contentType = properties.getContentType();
 						long deliveryTag = envelope.getDeliveryTag();
 						try{
-							fireProcess(ByteBuffer.wrap(body));
+							ByteBuffer wrapped = ByteBuffer.wrap(body);
+							wrapped.position(wrapped.limit());
+							fireProcess(wrapped);
 						}catch(Exception e){
 							e.printStackTrace();
 						}
