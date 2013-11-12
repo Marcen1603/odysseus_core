@@ -15,17 +15,23 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,6 +40,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 /**
  * @author Christian Kuka <christian@kuka.cc>
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformationRule<JoinAO> {
     /*
      * 
@@ -55,41 +62,26 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
      * operator (CK-20130720)
      */
     @Override
-    public final void execute(final JoinAO joinAO, final TransformationConfiguration transformConfig) {
-        // FIXME Insert linear regression
+    public final void execute(final JoinAO operator, final TransformationConfiguration config) {
+        JoinTIPO joinPO = new JoinTIPO();
 
-        // final IPredicate<?> pred = joinAO.getPredicate();
-        //
-        // final ContinuousProbabilisticEquiJoinPO joinPO = new
-        // ContinuousProbabilisticEquiJoinPO();
-        // if (pred == null) {
-        // joinPO.setJoinPredicate(new TruePredicate());
-        // } else {
-        // joinPO.setJoinPredicate(pred.clone());
-        // }
-        // boolean windowFound = false;
-        // for (int port = 0; port < 2; port++) {
-        // if
-        // (!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget()))
-        // {
-        // windowFound = true;
-        // break;
-        // }
-        // }
-        //
-        // if (!windowFound) {
-        // joinPO.setTransferFunction(new PersistentTransferArea());
-        // } else {
-        // joinPO.setTransferFunction(new TITransferArea());
-        // }
-        //
-        // joinPO.setMetadataMerge(new CombinedMergeFunction());
-        // ((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new
-        // ProbabilisticMetadataMergeFunction());
-        // joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
-        //
-        // this.defaultExecute(joinAO, joinPO, transformConfig, true, true);
+        boolean isCross = false;
+        IPredicate pred = operator.getPredicate();
+        if (pred == null) {
+            joinPO.setJoinPredicate(new TruePredicate<>());
+            isCross = true;
+        }
+        else {
+            joinPO.setJoinPredicate(pred.clone());
+        }
+        joinPO.setTransferFunction(new TITransferArea());
+        joinPO.setMetadataMerge(new CombinedMergeFunction());
+        joinPO.setCreationFunction(new DefaultProbabilisticTIDummyDataCreation());
 
+        defaultExecute(operator, joinPO, config, true, true);
+        if (isCross) {
+            joinPO.setName("Crossproduct");
+        }
     }
 
     /*
@@ -108,14 +100,7 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
                     if (!SchemaUtils.containsContinuousProbabilisticAttributes(operator.getPredicate().getAttributes())) {
                         return false;
                     }
-
-                    final String mepString = operator.getPredicate().toString();
-                    final SDFSchema leftInputSchema = operator.getInputSchema(0);
-                    final SDFSchema rightInputSchema = operator.getInputSchema(1);
-
-                    final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
-                    final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
-                    final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance());
+                    final SDFExpression expr = getExpression(operator);
 
                     if (SchemaUtils.isEquiExpression(expr.getMEPExpression())) {
                         return true;
@@ -132,7 +117,7 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
      */
     @Override
     public final String getName() {
-        return "JoinAO -> continuous probabilistic Equi Join";
+        return "JoinAO -> Continuous probabilistic Equi-Join";
     }
 
     /*
@@ -153,4 +138,16 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
     public final Class<? super JoinAO> getConditionClass() {
         return JoinAO.class;
     }
+
+    private SDFExpression getExpression(ILogicalOperator operator) {
+        final String mepString = operator.getPredicate().toString();
+        final SDFSchema leftInputSchema = operator.getInputSchema(0);
+        final SDFSchema rightInputSchema = operator.getInputSchema(1);
+
+        final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
+        final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
+        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance());
+        return expr;
+    }
+
 }

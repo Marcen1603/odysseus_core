@@ -45,9 +45,9 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 */
 	private static final long serialVersionUID = 6621664432018792263L;
 	/** The dependent attributes. */
-	private List<SDFAttribute> dependentAttributes;
+    private List<SDFAttribute> dependentAttributes;
 	/** The explanatory attributes. */
-	private List<SDFAttribute> explanatoryAttributes;
+    private List<SDFAttribute> explanatoryAttributes;
 
 	/**
 	 * Default constructor.
@@ -76,7 +76,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 *            The dependent attributes
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
-	public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
+    public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
 		this.dependentAttributes = dependentAttributes;
 	}
 
@@ -86,7 +86,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 * @return the dependent attributes
 	 */
 	@GetParameter(name = "DEPENDENT")
-	public final List<SDFAttribute> getDependentAttributes() {
+    public final List<SDFAttribute> getDependentAttributes() {
 		if (this.dependentAttributes == null) {
 			this.dependentAttributes = new ArrayList<SDFAttribute>();
 		}
@@ -100,7 +100,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 *            The explanatory attributes
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
-	public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
+    public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
 		this.explanatoryAttributes = explanatoryAttributes;
 	}
 
@@ -110,7 +110,7 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 * @return the explanatory attributes
 	 */
 	@GetParameter(name = "EXPLANATORY")
-	public final List<SDFAttribute> getExplanatoryAttributes() {
+    public final List<SDFAttribute> getExplanatoryAttributes() {
 		if (this.explanatoryAttributes == null) {
 			this.explanatoryAttributes = new ArrayList<SDFAttribute>();
 		}

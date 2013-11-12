@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunctio
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeFunction<ITimeIntervalProbabilistic>, Cloneable {
+public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeFunction<IProbabilistic>, Cloneable {
 	/*
 	 * 
 	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IInlineMetadataMergeFunction#mergeInto(java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void mergeInto(final ITimeIntervalProbabilistic result, final ITimeIntervalProbabilistic inLeft, final ITimeIntervalProbabilistic inRight) {
+    public final void mergeInto(final IProbabilistic result, final IProbabilistic inLeft, final IProbabilistic inRight) {
 		result.setExistence(inLeft.getExistence() * inRight.getExistence());
 	}
 
@@ -48,7 +48,7 @@ public class ProbabilisticMetadataMergeFunction implements IInlineMetadataMergeF
 	 */
 	@Override
 	public final Class<? extends IMetaAttribute> getMetadataType() {
-		return ITimeIntervalProbabilistic.class;
+        return IProbabilistic.class;
 	}
 
 }
