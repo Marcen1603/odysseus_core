@@ -17,13 +17,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
-	public static final String QUEUE_NAME = "QUEUE_NAME";
-	public static final String CONSUMER_TAG = "CONSUMER_TAG";
-	public static final String HOST = "HOST";
-	public static final String USERNAME = "USERNAME";
-	public static final String PASSWORD = "PASSWORD";
-	public static final String VIRTUALHOST = "VIRTUALHOST";
-	public static final String PORT = "PORT";
+	public static final String QUEUE_NAME = "queue_name";
+	public static final String CONSUMER_TAG = "consumer_tag";
+	public static final String HOST = "host";
+	public static final String USERNAME = "username";
+	public static final String PASSWORD = "password";
+	public static final String VIRTUALHOST = "virtualhost";
+	public static final String PORT = "port";
 	public static final String NAME = "RabbitMQ";
 
 	private String queueName;
@@ -37,6 +37,9 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	Channel channel;
 	Connection connection;
 
+	public RabbitMQTransportHandler(){
+	}
+	
 	public RabbitMQTransportHandler(IProtocolHandler<?> protocolHandler,
 			Map<String, String> options) {
 		super(protocolHandler);
@@ -111,7 +114,11 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 //						String routingKey = envelope.getRoutingKey();
 //						String contentType = properties.getContentType();
 						long deliveryTag = envelope.getDeliveryTag();
-						fireProcess(ByteBuffer.wrap(body));
+						try{
+							fireProcess(ByteBuffer.wrap(body));
+						}catch(Exception e){
+							e.printStackTrace();
+						}
 						channel.basicAck(deliveryTag, false);
 					};
 				});

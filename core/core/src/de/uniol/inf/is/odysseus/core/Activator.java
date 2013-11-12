@@ -82,7 +82,7 @@ public class Activator implements BundleActivator {
 		ProtocolHandlerRegistry.register(new SizeByteBufferHandler());
 		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
 		ProtocolHandlerRegistry.register(new StringArrayProtocolHandler());
-		ProtocolHandlerRegistry.register(new SimpleByteBufferHandler<>());
+		//ProtocolHandlerRegistry.register(new SimpleByteBufferHandler<>());
 		
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());

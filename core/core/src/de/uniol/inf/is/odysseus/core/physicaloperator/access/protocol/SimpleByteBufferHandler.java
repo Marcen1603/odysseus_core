@@ -44,8 +44,10 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 		int messageSizeBytes = buffer.remaining();
 		byte[] rawBytes = new byte[messageSizeBytes];
+		// buffer.array() returns the complete array (1024 bytes) and
+		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 0, messageSizeBytes);
-		getTransportHandler().send(rawBytes);
+		getTransportHandler().send(rawBytes);		
 	}
 
 	@Override
