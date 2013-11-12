@@ -116,9 +116,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype LIST_PARTIAL_AGGREGATE = new SDFDatatype(
 			"ListPartialAggregate");
 
+    public static final SDFDatatype[] NUMBERS = new SDFDatatype[] { BYTE, BOOLEAN, SHORT, INTEGER, LONG, FLOAT, DOUBLE, START_TIMESTAMP, END_TIMESTAMP };
+
 	private static final long serialVersionUID = 8585322290347489841L;
 
-	private KindOfDatatype type;
+	private final KindOfDatatype type;
 
 	/**
 	 * A user defined datatype must have a schema or a subtype that describes
