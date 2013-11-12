@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -44,8 +43,8 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
         super();
     }
 
-    public TextProtocolHandler(ITransportDirection direction, IAccessPattern access) {
-        super(direction, access);
+    public TextProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
+        super(direction, access, dataHandler);
     }
 
     @Override
@@ -99,11 +98,9 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
     }
 
     @Override
-    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+    public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
 
-        TextProtocolHandler<T> instance = new TextProtocolHandler<T>(direction, access);
-        instance.setDataHandler(dataHandler);
-        instance.setTransfer(transfer);
+        TextProtocolHandler<T> instance = new TextProtocolHandler<T>(direction, access, dataHandler);
         instance.setOptionsMap(options);
 
 		if (options.containsKey("charset")) {

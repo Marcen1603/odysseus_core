@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -44,6 +43,15 @@ public class FacebookProtocolHandler extends
 
 	@SuppressWarnings("rawtypes")
 	List<KeyValueObject> facebookMessages = new ArrayList<KeyValueObject>();
+
+	public FacebookProtocolHandler() {
+	}
+	
+	public FacebookProtocolHandler(
+			ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+		super(direction, access,dataHandler);
+		
+	}
 
 	@Override
 	public boolean hasNext() throws IOException {
@@ -132,13 +140,10 @@ public class FacebookProtocolHandler extends
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			Map<String, String> options,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
-			ITransferHandler<KeyValueObject<? extends IMetaAttribute>> transfer) {
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
 
-		FacebookProtocolHandler instance = new FacebookProtocolHandler();
+		FacebookProtocolHandler instance = new FacebookProtocolHandler(direction, access, dataHandler);
 		instance.setOptionsMap(options);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
 		return instance;
 	}
 

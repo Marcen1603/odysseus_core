@@ -92,7 +92,8 @@ public class EventReceiver extends Thread implements ITransferHandler {
 		ReceiverPO receiver = new ReceiverPO();
 		IProtocolHandler ph = ProtocolHandlerRegistry.getInstance(
 				"sizebytebuffer", ITransportDirection.IN, IAccessPattern.PUSH, options,
-				dataHandler, (ITransferHandler) this);
+				dataHandler);
+		ph.setTransfer(this);
 		
 		ITransportHandler transportHandler = TransportHandlerRegistry.getInstance(
 				"nonblockingtcp", ph, options);

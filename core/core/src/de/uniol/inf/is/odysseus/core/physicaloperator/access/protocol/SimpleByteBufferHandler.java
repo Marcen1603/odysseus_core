@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
@@ -27,10 +26,8 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
 	public SimpleByteBufferHandler(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		super(direction, access);
-		setDataHandler(dataHandler);
-		setTransfer(transfer);
+			IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 		setOptionsMap(options);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
         setByteOrder(options.get("byteorder"));
@@ -53,9 +50,9 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+			IDataHandler<T> dataHandler) {
 		return new SimpleByteBufferHandler<>(direction, access, options,
-				dataHandler, transfer);
+				dataHandler);
 	}
 
 	@Override

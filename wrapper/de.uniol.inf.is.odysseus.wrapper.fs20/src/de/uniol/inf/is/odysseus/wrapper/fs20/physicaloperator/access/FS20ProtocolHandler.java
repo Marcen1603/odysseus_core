@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -51,8 +50,8 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public FS20ProtocolHandler(ITransportDirection direction,
-			IAccessPattern access) {
-		super(direction, access);
+			IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 	}
 
 	@Override
@@ -85,12 +84,10 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+			IDataHandler<T> dataHandler) {
 		FS20ProtocolHandler<T> instance = new FS20ProtocolHandler<T>(direction,
-				access);
-		instance.setDataHandler(dataHandler);
+				access, dataHandler);
 		instance.setOptionsMap(options);
-		instance.setTransfer(transfer);
 		throw new RuntimeException("Not implemented yet");
 		// return instance;
 	}

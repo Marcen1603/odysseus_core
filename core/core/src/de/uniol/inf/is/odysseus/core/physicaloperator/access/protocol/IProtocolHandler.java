@@ -43,7 +43,7 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener {
     public void writePunctuation(IPunctuation punctuation) throws IOException;
     
     public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer);
+            Map<String, String> options, IDataHandler<T> dataHandler);
 
     public ITransportExchangePattern getExchangePattern();
 

@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -27,11 +26,9 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	
 	public PlugwiseProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		super(direction, access);
+			IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 		init(options);
-		setDataHandler(dataHandler);
-		setTransfer(transfer);
 	}
 	
 	@Override
@@ -96,8 +93,8 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		return new PlugwiseProtocolHandler<>(direction, access, options, dataHandler,transfer);
+			IDataHandler<T> dataHandler) {
+		return new PlugwiseProtocolHandler<>(direction, access, options, dataHandler);
 
 	}
 

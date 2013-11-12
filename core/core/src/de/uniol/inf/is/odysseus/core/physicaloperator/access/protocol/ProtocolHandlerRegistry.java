@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
@@ -51,19 +50,13 @@ public class ProtocolHandlerRegistry implements IProtocolHandlerRegistry {
 	
     @SuppressWarnings({ "rawtypes", "unchecked" })
     static public IProtocolHandler<?> getInstance(String name, ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler dataHandler, ITransferHandler transfer) {
+            Map<String, String> options, IDataHandler dataHandler) {
         IProtocolHandler<?> ret = handlers.get(name.toLowerCase());
         if (ret != null) {
-            return ret.createInstance(direction, access, options, dataHandler, transfer);
+            return ret.createInstance(direction, access, options, dataHandler);
         }
         logger.error("No handler with name " + name + " found!");
         return null;
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    static public IProtocolHandler<?> getInstance(String name, ITransportDirection direction, IAccessPattern access,
-            Map<String, String> options, IDataHandler dataHandler) {
-        return getInstance(name, direction, access, options, dataHandler, null);
     }
 	
 	public static ImmutableList<String> getHandlerNames() {

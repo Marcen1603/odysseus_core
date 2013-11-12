@@ -47,7 +47,6 @@ import org.xml.sax.SAXNotSupportedException;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -82,12 +81,14 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 
 	/**
 	 * Create a new HTML Data Handler
+	 * @param transfer 
+	 * @param dataHandler 
 	 * 
 	 * @param schema
 	 */
 	private HTMLProtocolHandler(final ITransportDirection direction,
-			final IAccessPattern access) {
-		super(direction, access);
+			final IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 		this.parser = new DOMFragmentParser();
 
 		try {
@@ -217,12 +218,9 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 	public IProtocolHandler<T> createInstance(
 			final ITransportDirection direction, final IAccessPattern access,
 			final Map<String, String> options,
-			final IDataHandler<T> dataHandler,
-			final ITransferHandler<T> transfer) {
+			final IDataHandler<T> dataHandler) {
 		final HTMLProtocolHandler<T> instance = new HTMLProtocolHandler<T>(
-				direction, access);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
+				direction, access, dataHandler);
 		instance.init(options);
 		instance.setOptionsMap(options);
 

@@ -1,21 +1,15 @@
 package de.uniol.inf.is.odysseus.wrapper.urg.protocol;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class UrgProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
+public class UrgProtocolHandler<T> extends SimpleByteBufferHandler<T> {
 	/**
 	 * Default constructor.
 	 */
@@ -29,32 +23,20 @@ public class UrgProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
      * Direction of the stream.
      * @param access
      * Access pattern.
+	 * @param transfer 
+	 * @param dataHandler 
      */
 	public UrgProtocolHandler(ITransportDirection direction,
-            IAccessPattern access) {
-		super (direction, access);
+            IAccessPattern access, IDataHandler<T> dataHandler, Map<String, String> options) {
+		super (direction, access, options, dataHandler);
 	}
 	
-	@Override
-	public void open() throws UnknownHostException, IOException {
-		getTransportHandler().open();
-	}
 
 	@Override
-	public void close() throws IOException {
-		getTransportHandler().close();
-	}
-
-	@Override
-	public IProtocolHandler<Tuple<?>> createInstance(
+	public IProtocolHandler<T> createInstance(
 			ITransportDirection direction, IAccessPattern access,
-			Map<String, String> options, IDataHandler<Tuple<?>> dataHandler,
-			ITransferHandler<Tuple<?>> transfer) {
-		UrgProtocolHandler instance = new UrgProtocolHandler(direction, access);
-		instance.setOptionsMap(options);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
-		return instance;
+			Map<String, String> options, IDataHandler<T> dataHandler) {
+		return new UrgProtocolHandler<>(direction, access, dataHandler, options);
 	}
 
 	@Override
@@ -62,29 +44,11 @@ public class UrgProtocolHandler extends AbstractByteBufferHandler<Tuple<?>> {
 		return "URG";
 	}
 
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		// Transport handler will do the job
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-		// Transport handler will do the job
-	}
 
     @Override
     public ITransportExchangePattern getExchangePattern() {
         return ITransportExchangePattern.InOnly;
     }
-
-	@Override
-	public void process(ByteBuffer message) {
-		super.getTransfer().transfer(getDataHandler().readData(message));
-	}
-
-	@Override
-	public void process(String[] message) {
-	}
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {

@@ -27,10 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
@@ -44,8 +42,8 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		super();
 	}
 
-	public SizeByteBufferHandler(ITransportDirection direction, IAccessPattern access) {
-		super(direction, access);
+	public SizeByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 	}
 
 	@Override
@@ -174,10 +172,8 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 	
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		SizeByteBufferHandler<T> instance = new SizeByteBufferHandler<T>(direction, access);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
+		SizeByteBufferHandler<T> instance = new SizeByteBufferHandler<T>(direction, access, dataHandler);
 		instance.setOptionsMap(options);
 		instance.objectHandler = new ByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
@@ -187,15 +183,6 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	@Override
 	public String getName() {
 		return "SizeByteBuffer";
-	}
-
-	@Override
-	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection().equals(ITransportDirection.IN)) {
-			return ITransportExchangePattern.InOnly;
-		} else {
-			return ITransportExchangePattern.OutOnly;
-		}
 	}
 
 	private static void insertInt(byte[] destArray, int offset, int value) {

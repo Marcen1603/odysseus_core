@@ -46,7 +46,6 @@ import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -102,10 +101,8 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	 */
 	public XMLProtocolHandler(final ITransportDirection direction,
 			final IAccessPattern access, IDataHandler<T> dataHandler,
-			ITransferHandler<T> transfer, Map<String, String> options) {
-		super(direction, access);
-		setDataHandler(dataHandler);
-		setTransfer(transfer);
+			Map<String, String> options) {
+		super(direction, access, dataHandler);
 		setOptionsMap(options);
 	}
 
@@ -236,10 +233,9 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	public IProtocolHandler<T> createInstance(
 			final ITransportDirection direction, final IAccessPattern access,
 			final Map<String, String> options,
-			final IDataHandler<T> dataHandler,
-			final ITransferHandler<T> transfer) {
+			final IDataHandler<T> dataHandler) {
 		final XMLProtocolHandler<T> instance = new XMLProtocolHandler<T>(
-				direction, access, dataHandler, transfer, options);
+				direction, access, dataHandler, options);
 		return instance;
 	}
 

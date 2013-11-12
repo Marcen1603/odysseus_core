@@ -28,10 +28,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> {
-    private final ITransportDirection direction;
+	private final ITransportDirection direction;
     private final IAccessPattern      access;
     private ITransportHandler         transportHandler;
-    private IDataHandler<T>           dataHandler;
+    private final IDataHandler<T>           dataHandler;
     private ITransferHandler<T>       transfer;
     
     private Map<String, String> optionsMap;
@@ -39,11 +39,13 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     public AbstractProtocolHandler() {
         direction = null;
         access = null;
+        dataHandler = null;
     }
 
-    public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access) {
+    public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler) {
         this.direction = direction;
         this.access = access;
+        this.dataHandler = datahandler;
     }
 
     final public ITransportHandler getTransportHandler() {
@@ -54,22 +56,22 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
         return dataHandler;
     }
 
-    final protected void setDataHandler(IDataHandler<T> dataHandler) {
-        this.dataHandler = dataHandler;
-    }
-
     final protected ITransferHandler<T> getTransfer() {
         return transfer;
     }
 
     @Override
-	public final void setTransfer(ITransferHandler<T> transfer) {
-        this.transfer = transfer;
-    }
-
-    @Override
 	public final void setTransportHandler(ITransportHandler transportHandler) {
         this.transportHandler = transportHandler;
+    }
+    
+    @Override
+    public void setTransfer(ITransferHandler<T> transfer) {
+    	if (this.transfer == null){
+    		this.transfer = transfer;
+    	}else{
+    		throw new IllegalArgumentException("Transfer can only be set once");
+    	}
     }
 
     @Override
@@ -137,7 +139,7 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     
     /**
      * This method is supposed to retrieve the options for an instance,
-     * which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, Map, IDataHandler, ITransferHandler)}
+     * which were used during the call of {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, Map, IDataHandler)}
      * based on the current configuration. This is useful serialising different ProtocolHandler-instances.
      * CANNOT be used for comparisons to check if two AbstractProtocolHandler-instances are semantically equivalent.
      */

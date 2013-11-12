@@ -36,10 +36,6 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		this.exchangePattern = null;
 	}
 
-	public AbstractTransportHandler(ITransportExchangePattern exchangePattern) {
-		this.exchangePattern = exchangePattern;
-	}
-
 	public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
 		this.exchangePattern = protocolHandler.getExchangePattern();
 		protocolHandler.setTransportHandler(this);

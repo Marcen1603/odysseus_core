@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -44,8 +43,8 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public SunspotProtocolHandler(ITransportDirection direction,
-			IAccessPattern access) {
-		super(direction, access);
+			IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 	}
 
 	/*
@@ -107,17 +106,11 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+			IDataHandler<T> dataHandler) {
 		SunspotProtocolHandler<T> instance = new SunspotProtocolHandler<T>(
-				direction, access);
+				direction, access, dataHandler);
 
-		// 2 mal?!
-		// instance.setDataHandler(dataHandler);
-		// instance.setTransportHandler(transportHandler);
-		// instance.setTransfer(transfer);
 		instance.setOptionsMap(options);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
 
 		return instance;
 	}

@@ -11,13 +11,11 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
@@ -42,8 +40,8 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 		super();
 	}
 
-	public JxtaProtocolHandler(ITransportDirection direction, IAccessPattern access) {
-		super(direction, access);
+	public JxtaProtocolHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 	}
 
 	@Override
@@ -195,11 +193,9 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access);
-		instance.setDataHandler(dataHandler);
+	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
+		JxtaProtocolHandler<T> instance = new JxtaProtocolHandler<T>(direction, access,dataHandler);
 		instance.setOptionsMap(options);
-		instance.setTransfer(transfer);
 		instance.jxtaBufferHandler = new JxtaByteBufferHandler<T>(dataHandler);
 		instance.setByteOrder(options.get("byteorder"));
 		return instance;
@@ -208,15 +204,6 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	@Override
 	public String getName() {
 		return HANDLER_NAME;
-	}
-
-	@Override
-	public ITransportExchangePattern getExchangePattern() {
-		if (this.getDirection().equals(ITransportDirection.IN)) {
-			return ITransportExchangePattern.InOnly;
-		}
-		
-		return ITransportExchangePattern.OutOnly;
 	}
 
 	private static void insertInt(byte[] destArray, int offset, int value) {

@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -52,8 +51,8 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	public DocumentProtocolHandler(ITransportDirection direction,
-			IAccessPattern access) {
-		super(direction, access);
+			IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 	}
 
 	@Override
@@ -187,11 +186,9 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+			IDataHandler<T> dataHandler) {
 		DocumentProtocolHandler<T> instance = new DocumentProtocolHandler<T>(
-				direction, access);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
+				direction, access, dataHandler);
 		instance.setOptionsMap(options);
 		instance.init(options);
 

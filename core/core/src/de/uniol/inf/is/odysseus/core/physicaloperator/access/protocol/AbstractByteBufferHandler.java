@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.nio.ByteOrder;
 
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
 abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandler<T> {
 
@@ -28,8 +30,8 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
         super();
     }
 
-    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access) {
-        super(direction, access);
+    public AbstractByteBufferHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> datahandler) {
+        super(direction, access, datahandler);
     }
 
     public void setByteOrder(ByteOrder byteOrder) {
@@ -47,5 +49,15 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
 
 	public ByteOrder getByteOrder() {
 		return byteOrder;
+	}
+	
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		if (this.getDirection().equals(ITransportDirection.IN)) {
+			return ITransportExchangePattern.InOnly;
+		} 
+		
+		return ITransportExchangePattern.OutOnly;
+		
 	}
 }

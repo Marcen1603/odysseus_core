@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
@@ -29,6 +28,15 @@ public class JSONProtocolHandler extends
 	
 	protected ObjectMapper mapper;
 	protected ArrayList<KeyValueObject<IMetaAttribute>> jsonArray;
+	
+	public JSONProtocolHandler() {
+	}
+	
+
+	public JSONProtocolHandler(
+			ITransportDirection direction, IAccessPattern access, IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+		super(direction,access,dataHandler);
+	}
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
@@ -125,12 +133,9 @@ public class JSONProtocolHandler extends
 	public IProtocolHandler<KeyValueObject<? extends IMetaAttribute>> createInstance(
 			ITransportDirection direction, IAccessPattern access,
 			Map<String, String> options,
-			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler,
-			ITransferHandler<KeyValueObject<? extends IMetaAttribute>> transfer) {
-		JSONProtocolHandler instance = new JSONProtocolHandler();
+			IDataHandler<KeyValueObject<? extends IMetaAttribute>> dataHandler) {
+		JSONProtocolHandler instance = new JSONProtocolHandler(direction, access, dataHandler);
 		instance.setOptionsMap(options);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
 		return instance;
 	}
 

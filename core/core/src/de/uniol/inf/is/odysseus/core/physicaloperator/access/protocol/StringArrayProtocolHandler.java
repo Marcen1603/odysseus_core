@@ -20,17 +20,20 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public StringArrayProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
-		setDataHandler(dataHandler);
+			IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
+		setOptionsMap(options);
+	}
+
+	@Override
+	public void setTransfer(ITransferHandler<T> transfer) {
 		if (transfer != null) {
-			if (transfer instanceof IProvidesStringArray) {
-				setTransfer(transfer);
-			} else {
+			if (!(transfer instanceof IProvidesStringArray)) {
 				throw new IllegalArgumentException("Illegal transport handler "
 						+ transfer);
 			}
 		}
-		setOptionsMap(options);
+		super.setTransfer(transfer);
 	}
 
 	@Override
@@ -52,9 +55,9 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+			IDataHandler<T> dataHandler) {
 		return new StringArrayProtocolHandler<T>(direction, access, options,
-				dataHandler, transfer);
+				dataHandler);
 	}
 
 	@Override

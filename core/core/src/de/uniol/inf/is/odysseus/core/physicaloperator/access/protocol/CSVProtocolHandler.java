@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
@@ -33,8 +32,8 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	}
 
 	public CSVProtocolHandler(ITransportDirection direction,
-			IAccessPattern access) {
-		super(direction, access);
+			IAccessPattern access, IDataHandler<T> dataHandler) {
+		super(direction, access, dataHandler);
 	}
 	
 	@Override
@@ -93,11 +92,9 @@ public class CSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
-			IDataHandler<T> dataHandler, ITransferHandler<T> transfer) {
+			IDataHandler<T> dataHandler) {
 		CSVProtocolHandler<T> instance = new CSVProtocolHandler<T>(direction,
-				access);
-		instance.setDataHandler(dataHandler);
-		instance.setTransfer(transfer);
+				access, dataHandler);
 		instance.init(options);
 		return instance;
 	}

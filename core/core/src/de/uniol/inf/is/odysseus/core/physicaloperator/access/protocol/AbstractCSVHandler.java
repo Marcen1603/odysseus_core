@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -36,8 +37,8 @@ abstract public class AbstractCSVHandler<T> extends LineProtocolHandler<T> {
     public static final String ADDLINENUMBERS = "addlinenumber";
 
     
-    public AbstractCSVHandler(ITransportDirection direction, IAccessPattern access) {
-        super(direction, access);
+    public AbstractCSVHandler(ITransportDirection direction, IAccessPattern access, IDataHandler<T> dataHandler) {
+        super(direction, access, dataHandler);
     }
 
     public AbstractCSVHandler() {
