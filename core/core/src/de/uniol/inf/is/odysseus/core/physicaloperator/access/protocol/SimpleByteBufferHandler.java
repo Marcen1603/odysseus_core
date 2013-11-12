@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -14,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 
@@ -36,16 +34,6 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		setOptionsMap(options);
 		objectHandler = new ByteBufferHandler<T>(dataHandler);
         setByteOrder(options.get("byteorder"));
-	}
-
-	@Override
-	public void open() throws UnknownHostException, IOException {
-		getTransportHandler().open();
-	}
-
-	@Override
-	public void close() throws IOException {
-		getTransportHandler().close();
 	}
 
 	@Override
@@ -74,14 +62,6 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 	}
 
 	@Override
-	public void onConnect(ITransportHandler caller) {
-	}
-
-	@Override
-	public void onDisonnect(ITransportHandler caller) {
-	}
-
-	@Override
 	public void process(ByteBuffer message) {
 		objectHandler.clear();
 		try {
@@ -101,11 +81,6 @@ public class SimpleByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 		}else{
 			LOG.error ("Empty object");
 		}
-	}
-
-	@Override
-	public void process(String[] message) {
-		throw new RuntimeException("Not implemented!");
 	}
 
 	@Override

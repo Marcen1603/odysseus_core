@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -80,7 +81,30 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
     public IAccessPattern getAccess() {
         return this.access;
     }
+    
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+	}
 
+	@Override
+	public void close() throws IOException {
+		getTransportHandler().close();
+	}
+
+	@Override
+	public void onConnect(ITransportHandler caller) {
+	}
+
+	@Override
+	public void onDisonnect(ITransportHandler caller) {
+	}
+	
+	@Override
+	public void process(String[] message) {
+		throw new RuntimeException("Sorry. Currently not implemented!");
+	}
+	
     @Override
     public boolean hasNext() throws IOException {
         throw new RuntimeException("Sorry. Currently not implemented");
