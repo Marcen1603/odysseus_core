@@ -90,7 +90,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
         gd.grabExcessHorizontalSpace = true;
         lblCondition.setLayoutData(gd);
 
-        this.cmbAttribute = new Combo(container, SWT.BORDER);
+        this.cmbAttribute = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         gd = new GridData();
         final int cmbAttributeWidth = cmbAttribute.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         gd.horizontalSpan = 2;
@@ -175,7 +175,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
         gd.grabExcessHorizontalSpace = true;
         lblProperty.setLayoutData(gd);
 
-        this.cmbProperty = new Combo(container, SWT.BORDER);
+        this.cmbProperty = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         gd = new GridData();
         final int cmbPropertyWidth = cmbProperty.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         gd.horizontalSpan = 2;

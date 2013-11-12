@@ -75,7 +75,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         lblAttribute.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
         lblAttribute.setText(OdysseusNLS.Attribute + ":");
 
-        this.cmbAttribute = new Combo(container, SWT.BORDER);
+        this.cmbAttribute = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         this.fillAttributes(this.cmbAttribute);
         this.cmbAttribute.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -83,11 +83,12 @@ public class MeasurementCapabilitiesPage extends WizardPage {
                 final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
                         .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
                 MeasurementCapabilitiesPage.this.tblCapabilities.removeAll();
-
-                for (final MeasurementCapability capability : MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute)) {
-                    final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
-                    item.setText(0, capability.getConditions().get(0).getInterval().toString());
-                    item.setText(1, capability.getMeasurementProperties().get(0).getProperty().toString());
+                if ((MeasurementCapabilitiesPage.this.attributeCapabilities != null) && (attribute != null)) {
+                    for (final MeasurementCapability capability : MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute)) {
+                        final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
+                        item.setText(0, capability.getConditions().get(0).getInterval().toString());
+                        item.setText(1, capability.getMeasurementProperties().get(0).getProperty().toString());
+                    }
                 }
             }
         });

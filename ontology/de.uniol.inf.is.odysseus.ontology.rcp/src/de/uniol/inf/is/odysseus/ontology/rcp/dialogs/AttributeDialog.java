@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.dialogs;
 
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -29,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
+import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -83,40 +86,12 @@ public class AttributeDialog extends Dialog {
         gd.grabExcessHorizontalSpace = true;
         lblDatatype.setLayoutData(gd);
 
-        this.cmbDatatype = new Combo(container, SWT.BORDER);
-        this.cmbDatatype.add(SDFDatatype.BOOLEAN.getQualName());
-        this.cmbDatatype.add(SDFDatatype.BYTE.getQualName());
-        this.cmbDatatype.add(SDFDatatype.SHORT.getQualName());
-        this.cmbDatatype.add(SDFDatatype.INTEGER.getQualName());
-        this.cmbDatatype.add(SDFDatatype.LONG.getQualName());
-        this.cmbDatatype.add(SDFDatatype.FLOAT.getQualName());
-        this.cmbDatatype.add(SDFDatatype.DOUBLE.getQualName());
-
-        this.cmbDatatype.add(SDFDatatype.DATE.getQualName());
-        this.cmbDatatype.add(SDFDatatype.TIMESTAMP.getQualName());
-        this.cmbDatatype.add(SDFDatatype.STRING.getQualName());
-        this.cmbDatatype.add(SDFDatatype.OBJECT.getQualName());
-        this.cmbDatatype.add(SDFDatatype.MATRIX_BOOLEAN.getQualName());
-        this.cmbDatatype.add(SDFDatatype.MATRIX_BYTE.getQualName());
-        this.cmbDatatype.add(SDFDatatype.MATRIX_FLOAT.getQualName());
-        this.cmbDatatype.add(SDFDatatype.MATRIX_DOUBLE.getQualName());
-
-        this.cmbDatatype.setData(SDFDatatype.BOOLEAN.getQualName(), SDFDatatype.BOOLEAN);
-        this.cmbDatatype.setData(SDFDatatype.BYTE.getQualName(), SDFDatatype.BYTE);
-        this.cmbDatatype.setData(SDFDatatype.SHORT.getQualName(), SDFDatatype.SHORT);
-        this.cmbDatatype.setData(SDFDatatype.INTEGER.getQualName(), SDFDatatype.INTEGER);
-        this.cmbDatatype.setData(SDFDatatype.LONG.getQualName(), SDFDatatype.LONG);
-        this.cmbDatatype.setData(SDFDatatype.FLOAT.getQualName(), SDFDatatype.FLOAT);
-        this.cmbDatatype.setData(SDFDatatype.DOUBLE.getQualName(), SDFDatatype.DOUBLE);
-
-        this.cmbDatatype.setData(SDFDatatype.DATE.getQualName(), SDFDatatype.DATE);
-        this.cmbDatatype.setData(SDFDatatype.TIMESTAMP.getQualName(), SDFDatatype.TIMESTAMP);
-        this.cmbDatatype.setData(SDFDatatype.STRING.getQualName(), SDFDatatype.STRING);
-        this.cmbDatatype.setData(SDFDatatype.OBJECT.getQualName(), SDFDatatype.OBJECT);
-        this.cmbDatatype.setData(SDFDatatype.MATRIX_BOOLEAN.getQualName(), SDFDatatype.MATRIX_BOOLEAN);
-        this.cmbDatatype.setData(SDFDatatype.MATRIX_BYTE.getQualName(), SDFDatatype.MATRIX_BYTE);
-        this.cmbDatatype.setData(SDFDatatype.MATRIX_FLOAT.getQualName(), SDFDatatype.MATRIX_FLOAT);
-        this.cmbDatatype.setData(SDFDatatype.MATRIX_DOUBLE.getQualName(), SDFDatatype.MATRIX_DOUBLE);
+        this.cmbDatatype = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+        List<SDFDatatype> types = SDFProbabilisticDatatype.getTypes();
+        for (SDFDatatype type : types) {
+            this.cmbDatatype.add(type.getQualName());
+            this.cmbDatatype.setData(type.getQualName(), type);
+        }
 
         this.cmbDatatype.select(0);
 
