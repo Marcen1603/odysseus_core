@@ -149,7 +149,7 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 				gc.setBackground(getColorForPercent(values.get(hash)));
 				gc.fillRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1]) - getCoordX(cell[3]), getCoordY(cell[2]) - getCoordY(cell[0]));
 				gc.setAlpha(255);
-				gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+				gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
 				gc.drawRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1]) - getCoordX(cell[3]), getCoordY(cell[2]) - getCoordY(cell[0]));
 			}
 		}
