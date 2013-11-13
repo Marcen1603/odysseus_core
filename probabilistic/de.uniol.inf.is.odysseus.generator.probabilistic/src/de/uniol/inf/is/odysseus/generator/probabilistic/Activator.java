@@ -19,6 +19,7 @@ package de.uniol.inf.is.odysseus.generator.probabilistic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -28,43 +29,79 @@ import de.uniol.inf.is.odysseus.generator.StreamServer;
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class Activator implements BundleActivator {
-	private static final int SERVERS = 3;
-	private static final int PORT = 65450;
-	private static BundleContext context;
-	private final List<StreamServer> servers = new ArrayList<StreamServer>();
+    private static BundleContext context;
 
-	static BundleContext getContext() {
-		return Activator.context;
-	}
+    private static List<StreamServer> server = new ArrayList<StreamServer>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
-	 */
-	@Override
-	public void start(final BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-		for (int i = 0; i < Activator.SERVERS; i++) {
-			final StreamServer server = new StreamServer(Activator.PORT + i, new ProbabilisticDataProvider());
-			server.start();
-			this.servers.add(server);
-		}
+    static BundleContext getContext() {
+        return context;
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+     * )
+     */
+    @Override
+    public void start(BundleContext bundleContext) throws Exception {
+        Activator.context = bundleContext;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void stop(final BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-		for (int i = 0; i < Activator.SERVERS; i++) {
-			this.servers.get(i).printStats();
-			this.servers.get(i).stopClients();
-		}
-	}
+        bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
 
+        StreamServer probabilistic = new StreamServer(54325, new ProbabilisticProvider());
+        probabilistic.start();
+        server.add(probabilistic);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop(BundleContext bundleContext) throws Exception {
+        Activator.context = null;
+    }
+
+    /**
+     * 
+     */
+    public static void pause() {
+        synchronized (server) {
+            for (StreamServer s : server) {
+                s.pauseClients();
+            }
+        }
+    }
+
+    public static void proceed() {
+        synchronized (server) {
+            for (StreamServer s : server) {
+                s.proceedClients();
+            }
+        }
+    }
+
+    public static void stop() {
+        synchronized (server) {
+            for (StreamServer s : server) {
+                s.stopClients();
+            }
+        }
+    }
+
+    /**
+     * 
+     */
+    public static void printStatus() {
+        synchronized (server) {
+            for (StreamServer s : server) {
+                s.printStats();
+            }
+        }
+
+    }
 }
