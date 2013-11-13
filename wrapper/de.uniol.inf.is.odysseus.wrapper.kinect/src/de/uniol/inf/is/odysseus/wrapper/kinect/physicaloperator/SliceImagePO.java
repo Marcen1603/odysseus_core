@@ -63,7 +63,7 @@ public class SliceImagePO extends AbstractPipe<Tuple<? extends ITimeInterval>, T
 	
 	@Override
 	public AbstractPipe.OutputMode getOutputMode() {
-		return OutputMode.INPUT;
+		return OutputMode.MODIFIED_INPUT;
 	}
 
     @Override
@@ -88,8 +88,8 @@ public class SliceImagePO extends AbstractPipe<Tuple<? extends ITimeInterval>, T
             g.drawImage(img,
             		(int)this.rectangle.getX(),
             		(int)this.rectangle.getY(),
-            		(int)this.rectangle.getWidth(),
-            		(int)this.rectangle.getHeight(),
+            		(int)this.rectangle.getX()+(int)this.rectangle.getWidth(),
+            		(int)this.rectangle.getY()+(int)this.rectangle.getHeight(),
             		null);
             g.dispose();            
             
@@ -110,8 +110,8 @@ public class SliceImagePO extends AbstractPipe<Tuple<? extends ITimeInterval>, T
             g.drawImage(img,
             		(int)this.rectangle.getX(),
             		(int)this.rectangle.getY(),
-            		(int)this.rectangle.getWidth(),
-            		(int)this.rectangle.getHeight(),
+            		(int)this.rectangle.getX()+(int)this.rectangle.getWidth(),
+            		(int)this.rectangle.getY()+(int)this.rectangle.getHeight(),
             		null);
             g.dispose();            
             

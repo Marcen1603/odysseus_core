@@ -13,6 +13,8 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +49,10 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	private int selectedPlayerID = 16;
 
 	public HeatmapDashboardPart() {
-		colorMap.put(1, new Color(Display.getDefault(), 255,255,178));
-		colorMap.put(2, new Color(Display.getDefault(), 254,204,92));
-		colorMap.put(3, new Color(Display.getDefault(), 253,141,60));
-		colorMap.put(4, new Color(Display.getDefault(), 240,59,32));
+		colorMap.put(1, new Color(PlatformUI.getWorkbench().getDisplay(), 255,255,178));
+		colorMap.put(2, new Color(PlatformUI.getWorkbench().getDisplay(), 254,204,92));
+		colorMap.put(3, new Color(PlatformUI.getWorkbench().getDisplay(), 253,141,60));
+		colorMap.put(4, new Color(PlatformUI.getWorkbench().getDisplay(), 240,59,32));
 	}
 	
 	@Override
@@ -149,15 +151,15 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 				gc.setBackground(getColorForPercent(values.get(hash)));
 				gc.fillRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1]) - getCoordX(cell[3]), getCoordY(cell[2]) - getCoordY(cell[0]));
 				gc.setAlpha(255);
-				gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+				gc.setBackground(PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				gc.drawRectangle(getCoordX(cell[3]), getCoordY(cell[0]), getCoordX(cell[1]) - getCoordX(cell[3]), getCoordY(cell[2]) - getCoordY(cell[0]));
 			}
 		}
 
 		if (lastReceivedTuple != null) {
 			
-			gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
-			gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+			gc.setBackground(PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			gc.setForeground(PlatformUI.getWorkbench().getDisplay().getSystemColor(SWT.COLOR_BLACK));
 			gc.setFont(getFont());
 			
 			long millis = (Long.parseLong(lastReceivedTuple.getAttribute(tsIndex).toString()) - 10748401988186756L) / 1000000000;
