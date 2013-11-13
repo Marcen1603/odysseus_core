@@ -155,9 +155,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		for (IPhysicalOperator op : operators) {
 			disconnect(op);
 		}
-		if (transferHandler != null){
-			// TODO: Something to do?
-		}
 		connected = false;
 	}
 
@@ -215,10 +212,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		// Will never be called		
 	}
 	
+	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		notifyListenersPunctuation(punctuation, outPort);
-	};
-	
+	}
 
 	@Override
 	public void disable() {
@@ -300,8 +297,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		}
 	}
 
-
-	
 	@Override
 	public boolean isOpen() {
 		return isOpen;
