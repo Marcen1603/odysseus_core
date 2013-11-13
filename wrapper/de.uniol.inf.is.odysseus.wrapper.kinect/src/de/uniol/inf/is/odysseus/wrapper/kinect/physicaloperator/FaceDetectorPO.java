@@ -6,7 +6,6 @@ import java.awt.image.DataBufferByte;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
-import org.opencv.highgui.Highgui;
 import org.opencv.objdetect.CascadeClassifier;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
