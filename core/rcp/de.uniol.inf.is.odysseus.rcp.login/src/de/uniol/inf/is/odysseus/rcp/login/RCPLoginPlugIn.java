@@ -21,7 +21,7 @@ public class RCPLoginPlugIn extends AbstractUIPlugin {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		System.out.println("WAKAAAAAAAAAAAAAAA");
+		//System.out.println("WAKAAAAAAAAAAAAAAA");
 		
 		LOG.debug("Started login plugin");
 		super.start(context);
