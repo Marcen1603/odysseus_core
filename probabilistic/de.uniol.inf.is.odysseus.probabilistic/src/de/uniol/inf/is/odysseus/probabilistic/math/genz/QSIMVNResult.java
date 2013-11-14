@@ -17,11 +17,25 @@
 package de.uniol.inf.is.odysseus.probabilistic.math.genz;
 
 public class QSIMVNResult {
-	public double p;
-	public double e;
+    private final double probability;
+    private final double error;
 
-	public QSIMVNResult(final double p, final double e) {
-		this.p = p;
-		this.e = e;
-	}
+    public QSIMVNResult(final double probability, final double error) {
+        this.probability = probability;
+        this.error = error;
+    }
+
+    /**
+     * @return the error
+     */
+    public double getError() {
+        return this.error;
+    }
+
+    /**
+     * @return the probability
+     */
+    public double getProbability() {
+        return this.probability;
+    }
 }

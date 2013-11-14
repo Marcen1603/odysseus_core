@@ -144,7 +144,7 @@ public abstract class AbstractIntegrateMultivariateFunction extends AbstractProb
 			final Matrix covarianceMatrix = new Matrix(normalDistribution.getCovariances().getData());
 			final Matrix lower = new Matrix(new double[][] { lowerBound.toArray() });
 			final Matrix upper = new Matrix(new double[][] { upperBound.toArray() });
-			probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).p * weight;
+            probability += QSIMVN.cumulativeProbability(5000, covarianceMatrix, lower, upper).getProbability() * weight;
 		}
 		return probability;
 	}

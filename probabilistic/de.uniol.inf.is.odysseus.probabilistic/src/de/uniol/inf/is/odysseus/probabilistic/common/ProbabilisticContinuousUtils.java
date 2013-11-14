@@ -105,7 +105,7 @@ public final class ProbabilisticContinuousUtils {
 			final Matrix lower = new Matrix(new double[][] { lowerBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
 			final Matrix upper = new Matrix(new double[][] { upperBound.subtract(MatrixUtils.createRealVector(normalDistribution.getMeans())).toArray() });
 			final QSIMVNResult result = QSIMVN.cumulativeProbability(ProbabilisticConstants.SAMPLES, covarianceMatrix, lower, upper);
-			probability += result.p * weight;
+            probability += result.getProbability() * weight;
 		}
 		return probability;
 	}

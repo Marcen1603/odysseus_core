@@ -45,12 +45,12 @@ public class QSIMVN {
 		if (FastMath.abs(ai) < (cn * ct)) {
 			c = Util.phi(ai / ct);
 		} else {
-			c = (1.0 + Util.sign(ai)) / 2.0;
+            c = (1.0 + FastMath.signum(ai)) / 2.0;
 		}
 		if (FastMath.abs(bi) < (cn * ct)) {
 			d = Util.phi(bi / ct);
 		} else {
-			d = (1.0 + Util.sign(bi)) / 2.0;
+            d = (1.0 + FastMath.signum(bi)) / 2.0;
 		}
 		final double ci = c;
 		final double dci = d - ci;
@@ -61,7 +61,7 @@ public class QSIMVN {
 		final double nv = Util.max(new double[] { m / ns, 1.0 }); // double nv = max( [
 		// m/ns 1 ] );
 		// %q = 2.^( [1:n-1]'/n) ; % Niederreiter point set generators
-		final Matrix ps = Matrix.primes((int) ((5.0 * n * Util.log(n + 1.0)) / 4.0)).sqrt();
+        final Matrix ps = Matrix.primes((int) ((5.0 * n * FastMath.log(n + 1.0)) / 4.0)).sqrt();
 		final Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //% Richtmyer
 															// generators
 
@@ -147,12 +147,12 @@ public class QSIMVN {
 			if (FastMath.abs(ai) < (cn * ct)) {
 				c = Util.phi(ai / ct);
 			} else {
-				c = (1.0 + Util.sign(ai)) / 2.0;
+                c = (1.0 + FastMath.signum(ai)) / 2.0;
 			}
 			if (FastMath.abs(bi) < (cn * ct)) {
 				d = Util.phi(bi / ct);
 			} else {
-				d = (1.0 + Util.sign(bi)) / 2.0;
+                d = (1.0 + FastMath.signum(bi)) / 2.0;
 			}
 			dc = d - c;
 			p = p * dc;
@@ -295,7 +295,7 @@ public class QSIMVN {
 		final Matrix b = new Matrix(new double[][] { { 1.0 }, { 2.0 }, { 3.0 }, { 4.0 } });
 
 		final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, r, a, b);
-		System.out.println("p = " + ret.p + "   e = " + new DecimalFormat("#.###############").format(ret.e));
+        System.out.println("p = " + ret.getProbability() + "   e = " + new DecimalFormat("#.###############").format(ret.getError()));
 	}
 }
 
