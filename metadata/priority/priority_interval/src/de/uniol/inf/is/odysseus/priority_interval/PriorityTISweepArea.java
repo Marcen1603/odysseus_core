@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,11 +129,16 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObjec
 	}
 
 	@Override
-	public Iterator<T> queryCopy(T element, Order order) {
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
 		LinkedList<T> result = new LinkedList<T>();
+		Iterator<T> iter;
 		switch (order) {
 		case LeftRight:
-			for (T next : this.getElements()) {
+
+			iter = this.getElements().iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
+
 				if (TimeInterval.totallyBefore(next.getMetadata(),
 						element.getMetadata())) {
 					continue;
@@ -143,15 +148,20 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObjec
 					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
 					}
-                    continue;
+					continue;
 				}
 				if (getQueryPredicate().evaluate(element, next)) {
 					result.add(next);
+					if (extract) {
+						iter.remove();
+					}
 				}
 			}
 			break;
 		case RightLeft:
-			for (T next : this.getElements()) {
+			iter = this.getElements().iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
 				if (TimeInterval.totallyBefore(next.getMetadata(),
 						element.getMetadata())) {
 					continue;
@@ -161,10 +171,13 @@ public class PriorityTISweepArea<K extends ITimeInterval, T extends IStreamObjec
 					if (((IPriority) next.getMetadata()).getPriority() == 0) {
 						break;
 					}
-                    continue;
+					continue;
 				}
 				if (getQueryPredicate().evaluate(next, element)) {
 					result.add(next);
+					if (extract) {
+						iter.remove();
+					}
 				}
 			}
 			break;
