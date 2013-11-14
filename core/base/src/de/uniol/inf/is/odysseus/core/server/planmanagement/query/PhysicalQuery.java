@@ -501,7 +501,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		IPhysicalOperator po = (IPhysicalOperator) op;
 		if (roots.contains(po) && !doneRoots.contains(po)) {
 			doneRoots.add(po);
-			if (doneRoots.size() == roots.size()) {
+			if (doneRoots.size() == roots.size() && queryListener != null) {
 				queryListener.done(this);
 			}
 		}
