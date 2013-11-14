@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.core.resources.IProject;
+
 /**
  * @author DGeesen
  * 
@@ -27,6 +29,7 @@ import java.util.Observer;
 public class Graph extends Observable implements Observer{
 
 	private List<OperatorNode> nodes;
+	private IProject project;
 
 	public List<OperatorNode> getNodes() {
 		if (nodes == null) {
@@ -84,6 +87,14 @@ public class Graph extends Observable implements Observer{
 			node.updateInformations();
 			node.recalcSatisfied();
 		}		
+	}
+
+	public IProject getProject() {
+		return project;
+	}
+
+	public void setProject(IProject project) {
+		this.project = project;
 	}
 	
 }

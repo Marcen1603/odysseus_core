@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -173,6 +174,10 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	
 	public OperatorNode getOperator(){
 		return this.operator;
+	}
+	
+	protected IProject getProject(){
+		return this.operator.getGraph().getProject();
 	}
 	
 }

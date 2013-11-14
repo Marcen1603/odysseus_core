@@ -190,6 +190,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	private void loadFromXML(FileEditorInput input) {
 
 		try {
+			this.graph.setProject(input.getFile().getProject());
 			InputStream is = input.getFile().getContents();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
