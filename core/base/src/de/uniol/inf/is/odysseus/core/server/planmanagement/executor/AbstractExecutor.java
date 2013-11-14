@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
@@ -1035,6 +1036,16 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	private List<String> resolvePossibleOperatorParameterValue(IOperatorBuilder builder, IParameter<?> param, ISession caller) {
+		if (param instanceof EnumParameter){
+			EnumParameter eParam = (EnumParameter) param;
+			@SuppressWarnings("rawtypes")
+			Class<? extends Enum> enumClass = eParam.getEnum();
+			List<String> ret = new LinkedList<>();
+			for (@SuppressWarnings("rawtypes") Enum u:enumClass.getEnumConstants()){
+				ret.add(u.toString());
+			}
+			return ret;
+		}
 		if (param.getPossibleValueMethod().isEmpty()) {
 			return new ArrayList<>();
 		}
