@@ -45,6 +45,7 @@ public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unused")
     @Override
     public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
         final SDFSchema schema = operator.getInputSchema();

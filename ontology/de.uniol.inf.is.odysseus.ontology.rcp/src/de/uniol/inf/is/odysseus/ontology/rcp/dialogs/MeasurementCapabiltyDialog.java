@@ -218,6 +218,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
         newShell.setText("Selection dialog");
     }
 
+    @SuppressWarnings("unused")
     private void saveInput() {
         final SDFAttribute attribute = (SDFAttribute) this.cmbAttribute.getData(this.cmbAttribute.getItem(this.cmbAttribute.getSelectionIndex()));
         final String attributeFunction = this.txtAttributeFunction.getText();

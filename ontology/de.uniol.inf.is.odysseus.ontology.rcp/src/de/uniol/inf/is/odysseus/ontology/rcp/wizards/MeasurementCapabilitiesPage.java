@@ -76,6 +76,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         this.cmbAttribute = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
         this.fillAttributes(this.cmbAttribute);
         this.cmbAttribute.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings("unused")
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
@@ -112,6 +113,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         final GridData gd_btnAdd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
         btnAdd.setLayoutData(gd_btnAdd);
         btnAdd.addSelectionListener(new SelectionAdapter() {
+            @SuppressWarnings("unused")
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 final MeasurementCapabiltyDialog measurementCapabilityDialog = new MeasurementCapabiltyDialog(btnAdd.getShell(), MeasurementCapabilitiesPage.this.sensingDevicePage.getAttributes());

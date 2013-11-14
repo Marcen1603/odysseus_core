@@ -51,6 +51,7 @@ public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider
         return super.getImage(element);
     }
 
+    @SuppressWarnings("unused")
     @Override
     public String getText(final Object element) {
         if (element instanceof SensingDevice) {

@@ -59,6 +59,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
         this.measurementCapabilitiesPage = new MeasurementCapabilitiesPage(OdysseusNLS.DefineMeasurementCapabilities, selection, this.sensingDevicePage);
     }
 
+    @SuppressWarnings("unused")
     @Override
     public boolean performFinish() {
         final IWorkbenchWindow workbenchWindow = this.workbench.getActiveWorkbenchWindow();
