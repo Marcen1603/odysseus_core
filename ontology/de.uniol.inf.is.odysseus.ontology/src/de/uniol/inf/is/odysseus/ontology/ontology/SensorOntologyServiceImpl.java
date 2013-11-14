@@ -44,11 +44,8 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -82,6 +79,15 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
+    public List<SensingDevice> getAllSensingDevices(String featureOfInterest) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void createSensingDevice(final SensingDevice sensingDevice) {
         SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
     }
@@ -93,6 +99,15 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     public List<SDFAttribute> getAllProperties() {
         final List<SDFAttribute> properties = new ArrayList<SDFAttribute>();
         return properties;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<SDFAttribute> getAllProperties(String featureOfInterest) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public void bindExecutor(final IExecutor executor) {
@@ -227,13 +242,16 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     }
 
     private void createSensingDevice(final String name, final SDFSchema schema) {
-        final SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name), schema);
-        for (final SDFAttribute attribute : schema.getAttributes()) {
-            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + name + "/" + attribute.getAttributeName()), attribute);
-            final Condition condition = new Condition(attribute, Interval.MAX);
-            measurementCapability.addCondition(condition);
-            sensingDevice.addMeasurementCapability(measurementCapability);
-        }
+        final SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name));
+        // for (final SDFAttribute attribute : schema.getAttributes()) {
+        // final MeasurementCapability measurementCapability = new
+        // MeasurementCapability(URI.create(ODYSSEUS.NS + name + "/" +
+        // attribute.getAttributeName()), attribute);
+        // final AbstractCondition condition = new AbstractCondition(attribute,
+        // Interval.MAX);
+        // measurementCapability.addCondition(condition);
+        // sensingDevice.addMeasurementCapability(measurementCapability);
+        // }
         SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
     }
 }

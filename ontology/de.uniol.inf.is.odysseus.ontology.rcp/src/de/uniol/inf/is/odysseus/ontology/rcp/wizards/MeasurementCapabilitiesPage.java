@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.wizards;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.ontology.rcp.dialogs.MeasurementCapabiltyDialog;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
 
@@ -86,8 +84,10 @@ public class MeasurementCapabilitiesPage extends WizardPage {
                 if ((MeasurementCapabilitiesPage.this.attributeCapabilities != null) && (attribute != null)) {
                     for (final MeasurementCapability capability : MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute)) {
                         final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
-                        item.setText(0, capability.getConditions().get(0).getInterval().toString());
-                        item.setText(1, capability.getMeasurementProperties().get(0).getProperty().toString());
+                        // item.setText(0,
+                        // capability.getInConditions().get(0).getInterval().toString());
+                        // item.setText(1,
+                        // capability.getHasMeasurementProperties().get(0).getProperty().toString());
                     }
                 }
             }
@@ -122,20 +122,28 @@ public class MeasurementCapabilitiesPage extends WizardPage {
                 }
                 if (measurementCapabilityDialog.getReturnCode() == Window.OK) {
                     final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
-                    item.setText(0, measurementCapabilityDialog.getCondition().getInterval().toString());
-                    item.setText(1, measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
+                    // item.setText(0,
+                    // measurementCapabilityDialog.getCondition().getInterval().toString());
+                    // item.setText(1,
+                    // measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
                     final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
                             .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
 
-                    final MeasurementCapability capability = new MeasurementCapability(URI.create(ODYSSEUS.NS + MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceName() + "/"
-                            + attribute), attribute);
-                    capability.addCondition(measurementCapabilityDialog.getCondition());
-                    capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
-                    if (!MeasurementCapabilitiesPage.this.attributeCapabilities.containsKey(attribute)) {
-                        MeasurementCapabilitiesPage.this.attributeCapabilities.put(attribute, new ArrayList<MeasurementCapability>());
-                    }
-                    MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute).add(capability);
-                    item.setData(capability);
+                    // final MeasurementCapability capability = new
+                    // MeasurementCapability(URI.create(ODYSSEUS.NS +
+                    // MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceName()
+                    // + "/"
+                    // + attribute), attribute);
+                    // capability.addCondition(measurementCapabilityDialog.getCondition());
+                    // capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
+                    // if
+                    // (!MeasurementCapabilitiesPage.this.attributeCapabilities.containsKey(attribute))
+                    // {
+                    // MeasurementCapabilitiesPage.this.attributeCapabilities.put(attribute,
+                    // new ArrayList<MeasurementCapability>());
+                    // }
+                    // MeasurementCapabilitiesPage.this.attributeCapabilities.get(attribute).add(capability);
+                    // item.setData(capability);
                 }
             }
         });

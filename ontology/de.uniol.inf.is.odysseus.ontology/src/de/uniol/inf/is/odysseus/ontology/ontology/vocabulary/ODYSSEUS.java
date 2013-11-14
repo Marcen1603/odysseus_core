@@ -60,17 +60,17 @@ public final class ODYSSEUS {
     // Vocabulary properties
     // /////////////////////////
     /**
-     * has Measurement Property Min Value:
+     * has Min Value:
      */
-    public static final Property hasMeasurementPropertyMinValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyMinValue");
+    public static final Property hasMinValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMinValue");
     /**
-     * has Measurement Property Max Value:
+     * has Max Value:
      */
-    public static final Property hasMeasurementPropertyMaxValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyMaxValue");
+    public static final Property hasMaxValue = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMaxValue");
     /**
-     * has Measurement Property Expression:
+     * has Expression:
      */
-    public static final Property hasMeasurementPropertyExpression = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasMeasurementPropertyExpression");
+    public static final Property hasExpression = ODYSSEUS.m_model.createProperty(ODYSSEUS.NS + "hasExpression");
 
     private ODYSSEUS() {
     }

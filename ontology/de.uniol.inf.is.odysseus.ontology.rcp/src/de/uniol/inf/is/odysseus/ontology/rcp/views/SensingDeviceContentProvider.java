@@ -49,11 +49,11 @@ public class SensingDeviceContentProvider implements ITreeContentProvider {
         }
         if (parentElement instanceof SensingDevice) {
             final SensingDevice sensingDevice = (SensingDevice) parentElement;
-            return sensingDevice.getAllCapabilities().toArray();
+            return sensingDevice.getHasMeasurementCapabilities().toArray();
         }
         if (parentElement instanceof MeasurementCapability) {
             final MeasurementCapability measurementCapability = (MeasurementCapability) parentElement;
-            return measurementCapability.getConditions().toArray();
+            return measurementCapability.getInConditions().toArray();
         }
         return null;
     }
@@ -66,10 +66,10 @@ public class SensingDeviceContentProvider implements ITreeContentProvider {
     @Override
     public boolean hasChildren(final Object element) {
         if (element instanceof SensingDevice) {
-            return !((SensingDevice) element).getAllCapabilities().isEmpty();
+            return !((SensingDevice) element).getHasMeasurementCapabilities().isEmpty();
         }
         if (element instanceof MeasurementCapability) {
-            return !((MeasurementCapability) element).getConditions().isEmpty();
+            return !((MeasurementCapability) element).getInConditions().isEmpty();
         }
         return false;
     }

@@ -22,6 +22,8 @@ Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
 Service-Component: OSGI-INF/SensorOntologyService.xml
 Export-Package: de.uniol.inf.is.odysseus.ontology,
  de.uniol.inf.is.odysseus.ontology.model,
+ de.uniol.inf.is.odysseus.ontology.model.condition,
+ de.uniol.inf.is.odysseus.ontology.model.property,
  de.uniol.inf.is.odysseus.ontology.ontology,
  de.uniol.inf.is.odysseus.ontology.ontology.vocabulary
 Ignore-Package: com.sun.jdmk.comm,javax.jmdns,javax.jms,sun.io,com.ibm.u

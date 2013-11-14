@@ -36,8 +36,9 @@ import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty;
+import de.uniol.inf.is.odysseus.ontology.model.SSNMeasurementProperty;
+import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -224,18 +225,21 @@ public class MeasurementCapabiltyDialog extends Dialog {
         final double attributeMaxValue = Double.parseDouble(this.txtAttributeValueMax.getText());
         final Interval attributeInterval = new Interval(attributeMinValue, attributeMaxValue);
         if (this.txtAttributeFunction.isEnabled()) {
-            this.condition = new Condition(attribute, attributeFunction);
+            // this.condition = new ExpressionCondition(attribute,
+            // attributeFunction);
         }
         else {
-            this.condition = new Condition(attribute, attributeInterval);
+            // this.condition = new IntervalCondition(attribute,
+            // attributeInterval);
         }
-        final MeasurementProperty.Property property = (MeasurementProperty.Property) this.cmbProperty.getData(this.cmbProperty.getItem(this.cmbProperty.getSelectionIndex()));
+        final SSNMeasurementProperty property = (SSNMeasurementProperty) this.cmbProperty.getData(this.cmbProperty.getItem(this.cmbProperty.getSelectionIndex()));
         final double propertyMinValue = Double.parseDouble(this.txtPropertyValueMin.getText());
         final double propertyMaxValue = Double.parseDouble(this.txtPropertyValueMax.getText());
 
         final Interval propertyInterval = new Interval(propertyMinValue, propertyMaxValue);
 
-        this.measurementPropery = new MeasurementProperty(property, propertyInterval);
+        // this.measurementPropery = new MeasurementProperty(property,
+        // propertyInterval);
     }
 
     public Condition getCondition() {
@@ -266,7 +270,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
 
     private void fillPropertyCombo(final Combo combo) {
         combo.removeAll();
-        for (MeasurementProperty.Property property : MeasurementProperty.Property.values()) {
+        for (SSNMeasurementProperty property : SSNMeasurementProperty.values()) {
             combo.add(property.toString());
             combo.setData(property.toString(), property);
         }

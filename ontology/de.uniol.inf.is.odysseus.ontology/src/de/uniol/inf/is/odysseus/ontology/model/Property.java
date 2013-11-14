@@ -13,28 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.ontology;
+package de.uniol.inf.is.odysseus.ontology.model;
 
-import java.util.List;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import java.net.URI;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface SensorOntologyService {
-    List<SensingDevice> getAllSensingDevices();
-
-    List<SensingDevice> getAllSensingDevices(String featureOfInterest);
+public class Property {
+    private final URI uri;
+    private String unit;
 
     /**
-     * @param sensingDevice
+     * Class constructor.
+     * 
      */
-    void createSensingDevice(SensingDevice sensingDevice);
+    public Property(URI uri) {
+        this.uri = uri;
+    }
 
-    List<SDFAttribute> getAllProperties();
+    /**
+     * @return the uri
+     */
+    public URI getUri() {
+        return this.uri;
+    }
 
-    List<SDFAttribute> getAllProperties(String featureOfInterest);
+    /**
+     * @return the unit
+     */
+    public String getUnit() {
+        return this.unit;
+    }
+
+    /**
+     * @param unit
+     *            the unit to set
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
 }

@@ -17,80 +17,81 @@ package de.uniol.inf.is.odysseus.ontology.model;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class MeasurementCapability {
-    private final URI uri;
-    private final SDFAttribute attribute;
-    private final List<Condition> conditions = new ArrayList<Condition>();
-    private final List<MeasurementProperty> measurementProperties = new ArrayList<MeasurementProperty>();
+public class MeasurementCapability extends Property {
+    private final Property forProperty;
+    private final List<Condition> inConditions = new ArrayList<Condition>();
+    private final List<MeasurementProperty> hasMeasurementProperties = new ArrayList<MeasurementProperty>();
 
     /**
      * Class constructor.
      * 
-     * @param name
-     * @param attribute
+     * @param uri
      */
-    public MeasurementCapability(final URI uri, final SDFAttribute attribute) {
-        super();
-        this.uri = uri;
-        this.attribute = attribute;
+    public MeasurementCapability(URI uri, Property forProperty) {
+        super(uri);
+        this.forProperty = forProperty;
     }
 
     /**
-     * @return the uri
+     * @return the forProperty
      */
-    public URI getUri() {
-        return this.uri;
+    public Property getForProperty() {
+        return this.forProperty;
     }
 
     /**
-     * @return the name
+     * @return the inConditions
      */
-    public String getName() {
-        return this.uri.getFragment();
+    public List<Condition> getInConditions() {
+        return Collections.unmodifiableList(this.inConditions);
     }
 
     /**
-     * @return the attribute
+     * 
+     * @param inCondition
      */
-    public SDFAttribute getAttribute() {
-        return this.attribute;
+    public void addCondition(final Condition inCondition) {
+        this.inConditions.add(inCondition);
     }
 
     /**
-     * @return the conditions
+     * 
+     * @param inCondition
      */
-    public List<Condition> getConditions() {
-        return this.conditions;
-    }
-
-    public void addCondition(final Condition condition) {
-        this.conditions.add(condition);
-    }
-
-    public void removeCondition(final Condition condition) {
-        this.conditions.remove(condition);
+    public void removeCondition(final Condition inCondition) {
+        this.inConditions.remove(inCondition);
     }
 
     /**
-     * @return the measurementProperties
+     * @return the hasMeasurementProperties
      */
-    public List<MeasurementProperty> getMeasurementProperties() {
-        return this.measurementProperties;
+    public List<MeasurementProperty> getHasMeasurementProperties() {
+        return Collections.unmodifiableList(this.hasMeasurementProperties);
     }
 
-    public void addMeasurementProperty(final MeasurementProperty measurementProperty) {
-        this.measurementProperties.add(measurementProperty);
+    /**
+     * 
+     * @param hasMeasurementProperty
+     */
+    public void addMeasurementProperty(final MeasurementProperty hasMeasurementProperty) {
+        this.hasMeasurementProperties.add(hasMeasurementProperty);
     }
 
-    public void removeMeasurementProperty(final MeasurementProperty measurementProperty) {
-        this.measurementProperties.remove(measurementProperty);
+    /**
+     * 
+     * @param hasMeasurementProperty
+     */
+    public void removeMeasurementProperty(final MeasurementProperty hasMeasurementProperty) {
+        this.hasMeasurementProperties.remove(hasMeasurementProperty);
     }
 }

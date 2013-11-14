@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -45,16 +42,11 @@ import de.uniol.inf.is.odysseus.ontology.Activator;
 import de.uniol.inf.is.odysseus.ontology.manager.impl.PredicateManagerImpl;
 import de.uniol.inf.is.odysseus.ontology.manager.impl.QueryManagerImpl;
 import de.uniol.inf.is.odysseus.ontology.manager.impl.SourceManagerImpl;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.QU;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -107,7 +99,7 @@ public class SensorOntology {
     public List<SensingDevice> getAllSensingDevices() {
         List<SensingDevice> sensingDevices = this.queryManager.getAllSensingDevices();
         for (SensingDevice sensingDevice : sensingDevices) {
-           System.out.println( getConditionPredicates(sensingDevice));
+            // System.out.println( getConditionPredicates(sensingDevice));
         }
         return sensingDevices;
     }
@@ -116,61 +108,69 @@ public class SensorOntology {
         return this.queryManager.getSensingDevice(URI.create(ODYSSEUS.NS + name));
     }
 
-    public Map<SDFAttribute, Map<Property, String>> getConditionPredicates(final SensingDevice sensingDevice) {
-        Map<SDFAttribute, Map<Property, String>> attributePropertyMapping = new HashMap<SDFAttribute, Map<Property, String>>();
-        List<SensingDevice> requiredSources = new ArrayList<SensingDevice>();
-        for (SDFAttribute attribute : sensingDevice.getSchema()) {
-            List<MeasurementCapability> measurementCapabilities = sensingDevice.getCapabilities(attribute);
-            attributePropertyMapping.put(attribute, new HashMap<Property, String>());
-            for (MeasurementCapability measurementCapability : measurementCapabilities) {
-
-                List<Condition> conditions = measurementCapability.getConditions();
-                for (Condition condition : conditions) {
-                    SDFAttribute conditionAttribute = condition.getAttribute();
-                    if (!sensingDevice.getSchema().contains(conditionAttribute)) {
-                        List<SensingDevice> otherSensingDevice = queryManager.getSensingDevicesByObservedProperty(conditionAttribute);
-                        if (otherSensingDevice.size() > 0) {
-                            requiredSources.add(otherSensingDevice.get(0));
-                        }
-                    }
-
-                    Interval conditionInterval = condition.getInterval();
-
-                    List<MeasurementProperty> measurementProperties = measurementCapability.getMeasurementProperties();
-                    for (MeasurementProperty measurementProperty : measurementProperties) {
-                        Property property = measurementProperty.getProperty();
-                        Interval measurementPropertyInterval = measurementProperty.getInterval();
-
-                        // Create an expression like:
-                        // eif(attr > inf AND attr < sup, toInterval(min,max),
-                        // toInterval(1.0,1.0))
-                        StringBuilder valueString = new StringBuilder();
-                        valueString.append("eif(");
-                        valueString.append(conditionAttribute.getQualName());
-                        valueString.append(" > ");
-                        valueString.append(conditionInterval.inf());
-                        valueString.append(" AND ");
-                        valueString.append(conditionAttribute.getQualName());
-                        valueString.append(" < ");
-                        valueString.append(conditionInterval.sup());
-                        valueString.append(",");
-                        valueString.append("toInterval(");
-                        valueString.append(measurementPropertyInterval.inf());
-                        valueString.append(",");
-                        valueString.append(measurementPropertyInterval.sup());
-                        valueString.append("),toInterval(1.0,1.0)");
-                        valueString.append(")");
-
-                        System.out.println(valueString.toString());
-                        attributePropertyMapping.get(attribute).put(property, valueString.toString());
-                    }
-
-                }
-
-            }
-        }
-        return attributePropertyMapping;
-    }
+    // public Map<SDFAttribute, Map<Property, String>>
+    // getConditionPredicates(final SensingDevice sensingDevice) {
+    // Map<SDFAttribute, Map<Property, String>> attributePropertyMapping = new
+    // HashMap<SDFAttribute, Map<Property, String>>();
+    // List<SensingDevice> requiredSources = new ArrayList<SensingDevice>();
+    // for (SDFAttribute attribute : sensingDevice.getSchema()) {
+    // List<MeasurementCapability> measurementCapabilities =
+    // sensingDevice.getHasMeasurementCapabilities(attribute);
+    // attributePropertyMapping.put(attribute, new HashMap<Property, String>());
+    // for (MeasurementCapability measurementCapability :
+    // measurementCapabilities) {
+    //
+    // List<AbstractCondition> conditions =
+    // measurementCapability.getConditions();
+    // for (AbstractCondition condition : conditions) {
+    // SDFAttribute conditionAttribute = condition.getAttribute();
+    // if (!sensingDevice.getSchema().contains(conditionAttribute)) {
+    // List<SensingDevice> otherSensingDevice =
+    // queryManager.getSensingDevicesByObservedProperty(conditionAttribute);
+    // if (otherSensingDevice.size() > 0) {
+    // requiredSources.add(otherSensingDevice.get(0));
+    // }
+    // }
+    //
+    // Interval conditionInterval = condition.getInterval();
+    //
+    // List<MeasurementProperty> measurementProperties =
+    // measurementCapability.getMeasurementProperties();
+    // for (MeasurementProperty measurementProperty : measurementProperties) {
+    // Property property = measurementProperty.getProperty();
+    // Interval measurementPropertyInterval = measurementProperty.getInterval();
+    //
+    // // Create an expression like:
+    // // eif(attr > inf AND attr < sup, toInterval(min,max),
+    // // toInterval(1.0,1.0))
+    // StringBuilder valueString = new StringBuilder();
+    // valueString.append("eif(");
+    // valueString.append(conditionAttribute.getQualName());
+    // valueString.append(" > ");
+    // valueString.append(conditionInterval.inf());
+    // valueString.append(" AND ");
+    // valueString.append(conditionAttribute.getQualName());
+    // valueString.append(" < ");
+    // valueString.append(conditionInterval.sup());
+    // valueString.append(",");
+    // valueString.append("toInterval(");
+    // valueString.append(measurementPropertyInterval.inf());
+    // valueString.append(",");
+    // valueString.append(measurementPropertyInterval.sup());
+    // valueString.append("),toInterval(1.0,1.0)");
+    // valueString.append(")");
+    //
+    // System.out.println(valueString.toString());
+    // attributePropertyMapping.get(attribute).put(property,
+    // valueString.toString());
+    // }
+    //
+    // }
+    //
+    // }
+    // }
+    // return attributePropertyMapping;
+    // }
 
     private Model getTBox() throws IOException {
         if (this.tBox == null) {

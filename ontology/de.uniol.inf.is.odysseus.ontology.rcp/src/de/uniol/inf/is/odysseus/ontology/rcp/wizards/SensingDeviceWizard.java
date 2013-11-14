@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.wizards;
 
-import java.net.URI;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -26,13 +24,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
-import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
+import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -75,8 +69,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
             // @Override
             // protected void execute(final IProgressMonitor progressMonitor) {
             // try {
-            // // final AddressbookService addressbook =
-            // // Activator.getAddressbook();
+            final SensorOntologyService ontologyService = SensorRegistryPlugIn.getSensorOntologyService();
             // // //
             // //
             // NewAddressWizard.this.addressDataPage.getAddress().save(addressbook);
@@ -93,13 +86,17 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
             // };
 
             // this.getContainer().run(false, false, operation);
-            final SensingDevice device = new SensingDevice(URI.create(ODYSSEUS.NS + this.sensingDevicePage.getSensingDeviceName()), new SDFSchema("", ProbabilisticTuple.class,
-                    this.sensingDevicePage.getAttributes()));
-            for (final MeasurementCapability capability : this.measurementCapabilitiesPage.getMeasurementCapabilities()) {
-                device.addMeasurementCapability(capability);
-            }
-
-            SensorRegistryPlugIn.getSensorOntologyService().createSensingDevice(device);
+            // final SensingDevice device = new
+            // SensingDevice(URI.create(ODYSSEUS.NS +
+            // this.sensingDevicePage.getSensingDeviceName()), new SDFSchema("",
+            // ProbabilisticTuple.class,
+            // this.sensingDevicePage.getAttributes()));
+            // for (final MeasurementCapability capability :
+            // this.measurementCapabilitiesPage.getMeasurementCapabilities()) {
+            // device.addMeasurementCapability(capability);
+            // }
+            //
+            // SensorRegistryPlugIn.getSensorOntologyService().createSensingDevice(device);
             return true;
         }
         catch (final Exception e) {

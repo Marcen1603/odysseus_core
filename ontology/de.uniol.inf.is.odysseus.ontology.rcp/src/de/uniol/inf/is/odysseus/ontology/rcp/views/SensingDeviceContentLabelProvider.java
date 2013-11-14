@@ -17,10 +17,9 @@ package de.uniol.inf.is.odysseus.ontology.rcp.views;
 
 import org.eclipse.swt.graphics.Image;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
 
@@ -57,21 +56,22 @@ public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider
         if (element instanceof SensingDevice) {
             final SensingDevice sensingDevice = (SensingDevice) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(sensingDevice.getName()).append(" [").append(sensingDevice.getUri().toString()).append("]");
+            // sb.append(sensingDevice.getName()).append(" [").append(sensingDevice.getUri().toString()).append("]");
             return sb.toString();
         }
         else if (element instanceof MeasurementCapability) {
             final MeasurementCapability measurementCapability = (MeasurementCapability) element;
-            final SDFAttribute attribute = measurementCapability.getAttribute();
+            // final SDFAttribute attribute =
+            // measurementCapability.getAttribute();
             final StringBuilder sb = new StringBuilder();
-            sb.append(attribute.getAttributeName()).append(" [").append(attribute.getURI().toString()).append("]");
+            // sb.append(attribute.getAttributeName()).append(" [").append(attribute.getURI().toString()).append("]");
             return sb.toString();
         }
         else if (element instanceof Condition) {
             final Condition condition = (Condition) element;
             final StringBuilder sb = new StringBuilder();
-            sb.append(condition.getAttribute().getAttributeName()).append(" [").append(condition.getAttribute().getURI().toString()).append("]").append(" [").append(condition.getInterval())
-                    .append("]");
+            // sb.append(condition.getAttribute().getAttributeName()).append(" [").append(condition.getAttribute().getURI().toString()).append("]").append(" [").append(condition.getInterval())
+            // .append("]");
             return sb.toString();
         }
         return super.getText(element);

@@ -13,28 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.ontology;
+package de.uniol.inf.is.odysseus.ontology.model.condition;
 
-import java.util.List;
+import java.net.URI;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface SensorOntologyService {
-    List<SensingDevice> getAllSensingDevices();
-
-    List<SensingDevice> getAllSensingDevices(String featureOfInterest);
+public class IntervalCondition extends Condition implements ICondition {
+    private final Interval interval;
 
     /**
-     * @param sensingDevice
+     * Class constructor.
+     * 
+     * @param uri
      */
-    void createSensingDevice(SensingDevice sensingDevice);
+    public IntervalCondition(URI uri, Property onProperty, Interval interval) {
+        super(uri, onProperty);
+        this.interval = interval;
+    }
 
-    List<SDFAttribute> getAllProperties();
+    /**
+     * @return the interval
+     */
+    public Interval getInterval() {
+        return this.interval;
+    }
 
-    List<SDFAttribute> getAllProperties(String featureOfInterest);
 }

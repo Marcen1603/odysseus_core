@@ -33,15 +33,27 @@ import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.ontology.manager.QueryManager;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementProperty;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.condition.ExpressionCondition;
+import de.uniol.inf.is.odysseus.ontology.model.condition.IntervalCondition;
+import de.uniol.inf.is.odysseus.ontology.model.property.Accuracy;
+import de.uniol.inf.is.odysseus.ontology.model.property.DetectionLimit;
+import de.uniol.inf.is.odysseus.ontology.model.property.Drift;
+import de.uniol.inf.is.odysseus.ontology.model.property.Frequency;
+import de.uniol.inf.is.odysseus.ontology.model.property.Latency;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementRange;
+import de.uniol.inf.is.odysseus.ontology.model.property.Precision;
+import de.uniol.inf.is.odysseus.ontology.model.property.Resolution;
+import de.uniol.inf.is.odysseus.ontology.model.property.ResponseTime;
+import de.uniol.inf.is.odysseus.ontology.model.property.Selectivity;
+import de.uniol.inf.is.odysseus.ontology.model.property.Sensitivity;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.QU;
@@ -108,6 +120,24 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
+    public List<URI> getAllFeatureOfInterestURIs() {
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<URI> uris = new ArrayList<URI>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        }
+        qExec.close();
+        return uris;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public List<SensingDevice> getAllSensingDevices() {
         final List<URI> uris = this.getAllSensingDeviceURIs();
@@ -125,17 +155,25 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
+    public List<FeatureOfInterest> getAllFeaturesOfInterest() {
+        final List<URI> uris = this.getAllSensingDeviceURIs();
+        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
+        for (final URI uri : uris) {
+            final FeatureOfInterest featureOfInterest = this.getFeatureOfInterest(uri);
+            if (featureOfInterest != null) {
+                featuresOfInterest.add(featureOfInterest);
+            }
+        }
+        return featuresOfInterest;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public SensingDevice getSensingDevice(final URI uri) {
-        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-
-        final List<URI> propertyURIs = this.getAllPropertyURIsObservedBySensingDevice(uri);
-        for (final URI propertyURI : propertyURIs) {
-            final Resource propertyResource = this.getABox().getResource(propertyURI.toString());
-            final String sourceName = propertyResource.toString().substring(0, propertyResource.toString().lastIndexOf("#"));
-            attributes.add(new SDFAttribute(sourceName, propertyURI.getFragment(), SDFDatatype.OBJECT));
-        }
-        final SensingDevice sensingDevice = new SensingDevice(uri, new SDFSchema("", IStreamObject.class, attributes));
+        final SensingDevice sensingDevice = new SensingDevice(uri);
         final List<URI> measurementCapabilityURIs = this.getAllMeasurementCapabilityURIsFromSensingDevice(uri);
         for (final URI measurementCapabilityURI : measurementCapabilityURIs) {
             final Resource measurementCapabilityResource = this.getABox().getResource(measurementCapabilityURI.toString());
@@ -146,6 +184,22 @@ public class QueryManagerImpl implements QueryManager {
         }
 
         return sensingDevice;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public FeatureOfInterest getFeatureOfInterest(final URI uri) {
+        final FeatureOfInterest featureOfInterest = new FeatureOfInterest(uri);
+        final List<URI> propertyURIs = this.getAllPropertyURIsByFeatureOfInterest(uri);
+        for (final URI propertyURI : propertyURIs) {
+            final Resource propertyResource = this.getABox().getResource(propertyURI.toString());
+            final Property property = new Property(URI.create(propertyResource.getURI()));
+            featureOfInterest.addProperty(property);
+        }
+
+        return featureOfInterest;
     }
 
     /**
@@ -185,9 +239,38 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
+    public List<FeatureOfInterest> getFeaturesOfInterestByProperty(final URI uri) {
+        final List<URI> featureOfInterestURIs = this.getFeatureOfInterestURIsByProperty(uri);
+        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
+        for (final URI featureOfInterestURI : featureOfInterestURIs) {
+            featuresOfInterest.add(this.getFeatureOfInterest(featureOfInterestURI));
+        }
+        return featuresOfInterest;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public List<SensingDevice> getSensingDevicesByObservedProperty(final SDFAttribute attribute) {
-        return this.getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS + attribute.getAttributeName()));
+        // TODO Implement SDFAttribute mapping
+        // return
+        // this.getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS +
+        // attribute.getAttributeName()));
+        throw new IllegalArgumentException("Not implemented yet");
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<FeatureOfInterest> getFeaturesOfInterestByProperty(final SDFAttribute attribute) {
+        // TODO Implement SDFAttribute mapping
+        // return
+        // this.getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS +
+        // attribute.getAttributeName()));
+        throw new IllegalArgumentException("Not implemented yet");
     }
 
     /**
@@ -197,6 +280,24 @@ public class QueryManagerImpl implements QueryManager {
     @Override
     public List<URI> getSensingDeviceURIsByObservedProperty(final URI uri) {
         final String queryString = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.observes.getLocalName() + " <" + uri.toString() + "> }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<URI> uris = new ArrayList<URI>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        }
+        qExec.close();
+        return uris;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<URI> getFeatureOfInterestURIsByProperty(final URI uri) {
+        final String queryString = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.hasProperty.getLocalName() + " <" + uri.toString() + "> }";
         final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
         final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
         final ResultSet result = qExec.execSelect();
@@ -228,6 +329,24 @@ public class QueryManagerImpl implements QueryManager {
         return uris;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<URI> getAllPropertyURIsByFeatureOfInterest(final URI uri) {
+        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasProperty.getLocalName() + " ?uri }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<URI> uris = new ArrayList<URI>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        }
+        qExec.close();
+        return uris;
+    }
+
     private List<URI> getAllMeasurementCapabilityURIsFromSensingDevice(final URI uri) {
         final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
         final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
@@ -243,12 +362,10 @@ public class QueryManagerImpl implements QueryManager {
     }
 
     private MeasurementCapability getMeasurementCapability(final Resource measurementCapabilityResource) {
-        final Statement attributeStmt = this.getABox().getProperty(measurementCapabilityResource, SSN.forProperty);
-        if (attributeStmt != null) {
-            final URI attributeURI = URI.create(attributeStmt.getResource().getURI());
-            final String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
-            final SDFAttribute attribute = new SDFAttribute(sourceName, attributeURI.getFragment(), SDFDatatype.OBJECT);
-            final MeasurementCapability measurementCapability = new MeasurementCapability(attributeURI, attribute);
+        final Statement propertyStmt = this.getABox().getProperty(measurementCapabilityResource, SSN.forProperty);
+        if (propertyStmt != null) {
+            final Property property = new Property(URI.create(propertyStmt.getResource().getURI()));
+            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(measurementCapabilityResource.getURI()), property);
 
             QueryExecution qExec;
             ResultSet result;
@@ -286,56 +403,65 @@ public class QueryManagerImpl implements QueryManager {
     }
 
     private Condition getConditon(final Resource condition) {
-        final Statement attributeStmt = this.getABox().getProperty(condition, RDFS.subClassOf);
-        if (attributeStmt != null) {
-            final URI attributeURI = URI.create(attributeStmt.getResource().getURI());
-            final String sourceName = attributeURI.toString().substring(0, attributeURI.toString().lastIndexOf("#"));
-            final SDFAttribute attribute = new SDFAttribute(sourceName, attributeURI.getFragment(), SDFDatatype.OBJECT);
-            final Interval interval = this.getConditionInterval(condition);
-            return new Condition(attribute, interval);
+        final Statement propertyStmt = this.getABox().getProperty(condition, RDFS.subClassOf);
+        final Property property;
+        if (propertyStmt != null) {
+            property = new Property(URI.create(propertyStmt.getResource().getURI()));
         }
-        return null;
+        else {
+            property = new Property(URI.create(condition.getURI()));
+        }
+
+        String expression = getConditionExpression(condition);
+        if (expression == null) {
+            final Interval interval = this.getConditionInterval(condition);
+            return new IntervalCondition(URI.create(condition.getURI()), property, interval);
+        }
+        else {
+            return new ExpressionCondition(URI.create(condition.getURI()), property, expression);
+        }
     }
 
     private MeasurementProperty getMeasurementProperty(final Resource measurementProperty) {
 
+        @SuppressWarnings("unused")
         final Interval interval = this.getMeasurementPropertyInterval(measurementProperty);
         // FIXME Use correct property class
 
-        if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Accurancy.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Accurancy, interval);
+        if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Accuracy)) {
+            return new Accuracy(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.DetectionLimit.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.DetectionLimit, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.DetectionLimit)) {
+            return new DetectionLimit(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Drift.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Drift, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Drift)) {
+            return new Drift(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Frequency.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Frequency, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Frequency)) {
+            return new Frequency(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Latency.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Latency, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Latency)) {
+            return new Latency(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.MeasurementRange.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.MeasurementRange, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.MeasurementRange)) {
+            return new MeasurementRange(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Precision.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Precision, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Precision)) {
+            return new Precision(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.ResponseTime.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.ResponseTime, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.ResponseTime)) {
+            return new ResponseTime(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Resolution.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Resolution, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Resolution)) {
+            return new Resolution(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Sensitivity.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Sensitivity, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Sensitivity)) {
+            return new Sensitivity(URI.create(measurementProperty.getURI()));
         }
-        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(MeasurementProperty.Property.Selectivity.getResource())) {
-            return new MeasurementProperty(MeasurementProperty.Property.Selectivity, interval);
+        else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Selectivity)) {
+            return new Selectivity(URI.create(measurementProperty.getURI()));
         }
-        return new MeasurementProperty(MeasurementProperty.Property.Accurancy, interval);
+        return new MeasurementProperty(URI.create(measurementProperty.getURI()), measurementProperty);
 
     }
 
@@ -346,8 +472,8 @@ public class QueryManagerImpl implements QueryManager {
         final Statement conditionStmt = this.getABox().getProperty(condition, SSN.hasValue);
         if (conditionStmt != null) {
             final Resource region = conditionStmt.getResource();
-            final Statement minValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMeasurementPropertyMinValue);
-            final Statement maxValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMeasurementPropertyMaxValue);
+            final Statement minValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMinValue);
+            final Statement maxValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMaxValue);
             if (minValueStmt != null) {
                 min = this.getABox().getProperty(minValueStmt.getObject().asResource(), DUL.hasDataValue).getObject().asLiteral().getDouble();
             }
@@ -358,6 +484,21 @@ public class QueryManagerImpl implements QueryManager {
         return new Interval(min, max);
     }
 
+    private String getConditionExpression(final Resource condition) {
+        String expression = null;
+
+        final Statement conditionStmt = this.getABox().getProperty(condition, SSN.hasValue);
+        if (conditionStmt != null) {
+            final Resource region = conditionStmt.getResource();
+            final Statement expressionValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasExpression);
+            if (expressionValueStmt != null) {
+                expression = this.getABox().getProperty(expressionValueStmt.getObject().asResource(), DUL.hasDataValue).getObject().asLiteral().getString();
+            }
+
+        }
+        return expression;
+    }
+
     private Interval getMeasurementPropertyInterval(final Resource measurementProperty) {
         double min = Double.MIN_VALUE;
         double max = Double.MAX_VALUE;
@@ -365,8 +506,8 @@ public class QueryManagerImpl implements QueryManager {
         final Statement measurementPropertyStmt = this.getABox().getProperty(measurementProperty, SSN.hasValue);
         if (measurementPropertyStmt != null) {
             final Resource region = measurementPropertyStmt.getResource();
-            final Statement minValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMeasurementPropertyMinValue);
-            final Statement maxValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMeasurementPropertyMaxValue);
+            final Statement minValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMinValue);
+            final Statement maxValueStmt = this.getABox().getProperty(region, ODYSSEUS.hasMaxValue);
             if (minValueStmt != null) {
                 min = this.getABox().getProperty(minValueStmt.getObject().asResource(), DUL.hasDataValue).getObject().asLiteral().getDouble();
             }

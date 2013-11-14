@@ -15,20 +15,16 @@
  */
 package de.uniol.inf.is.odysseus.ontology.transform;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ontology.logicaloperator.QualityAO;
-import de.uniol.inf.is.odysseus.ontology.model.Condition;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.ontology.SensorOntologyServiceImpl;
+import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -53,26 +49,36 @@ public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
     public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
         final SDFSchema schema = operator.getInputSchema();
 
+        // Required parameter:
+        // - Attribute
+        // - Measurement Property
         final Object[] expressions = new Object[schema.getAttributes().size()];
         for (int i = 0; i < schema.getAttributes().size(); i++) {
             final SDFAttribute attribute = schema.getAttribute(i);
             final SensingDevice thisSensingDevice = SensorOntologyServiceImpl.getOntology().getSensingDevice(attribute.getQualName());
             if (thisSensingDevice != null) {
-                final List<MeasurementCapability> measurementCapabilities = thisSensingDevice.getCapabilities(attribute);
-
-                if (measurementCapabilities != null) {
-                    for (final MeasurementCapability measurementCapability : measurementCapabilities) {
-                        final List<Condition> conditions = measurementCapability.getConditions();
-                        for (final Condition condition : conditions) {
-                            final List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.getOntology().getSensingdeviceByProperty(condition.getAttribute());
-                            if (!sensingDevices.isEmpty()) {
-                                // TODO join sensingDevice to the current stream
-                                final String attributeName = condition.getAttribute().getAttributeName();
-                                expressions[i] = attributeName + ">" + condition.getInterval().inf() + " AND " + attributeName + "<" + condition.getInterval().sup();
-                            }
-                        }
-                    }
-                }
+                // final List<MeasurementCapability> measurementCapabilities =
+                // thisSensingDevice.getHasMeasurementCapabilities(attribute);
+                //
+                // if (measurementCapabilities != null) {
+                // for (final MeasurementCapability measurementCapability :
+                // measurementCapabilities) {
+                // final List<AbstractCondition> conditions =
+                // measurementCapability.getConditions();
+                // for (final AbstractCondition condition : conditions) {
+                // final List<SensingDevice> sensingDevices =
+                // SensorOntologyServiceImpl.getOntology().getSensingdeviceByProperty(condition.getAttribute());
+                // if (!sensingDevices.isEmpty()) {
+                // // TODO join sensingDevice to the current stream
+                // final String attributeName =
+                // condition.getAttribute().getAttributeName();
+                // expressions[i] = attributeName + ">" +
+                // condition.getInterval().inf() + " AND " + attributeName + "<"
+                // + condition.getInterval().sup();
+                // }
+                // }
+                // }
+                // }
             }
             else {
                 LOG.debug("No sensing device found");
@@ -86,7 +92,7 @@ public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
     @Override
     public final boolean isExecutable(final QualityAO operator, final TransformationConfiguration transformConfig) {
         if (operator.isAllPhysicalInputSet()) {
-            if (operator.getInputSchema().getType() == Tuple.class) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }
         }

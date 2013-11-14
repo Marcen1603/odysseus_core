@@ -13,28 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.ontology;
+package de.uniol.inf.is.odysseus.ontology.model.condition;
 
-import java.util.List;
+import java.net.URI;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface SensorOntologyService {
-    List<SensingDevice> getAllSensingDevices();
+public class Condition extends Property implements ICondition {
 
-    List<SensingDevice> getAllSensingDevices(String featureOfInterest);
+    private final Property onProperty;
 
     /**
-     * @param sensingDevice
+     * Class constructor.
+     * 
+     * @param uri
      */
-    void createSensingDevice(SensingDevice sensingDevice);
+    public Condition(URI uri, Property onProperty) {
+        super(uri);
+        this.onProperty = onProperty;
+    }
 
-    List<SDFAttribute> getAllProperties();
+    /**
+     * @return the onProperty
+     */
+    public Property getOnProperty() {
+        return this.onProperty;
+    }
 
-    List<SDFAttribute> getAllProperties(String featureOfInterest);
 }

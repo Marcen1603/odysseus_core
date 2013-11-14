@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.ontology;
+package de.uniol.inf.is.odysseus.ontology.model.property;
 
-import java.util.List;
+import java.net.URI;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface SensorOntologyService {
-    List<SensingDevice> getAllSensingDevices();
-
-    List<SensingDevice> getAllSensingDevices(String featureOfInterest);
+public class Frequency extends MeasurementProperty implements IMeasurementProperty {
 
     /**
-     * @param sensingDevice
+     * Class constructor.
+     * 
+     * @param uri
      */
-    void createSensingDevice(SensingDevice sensingDevice);
+    public Frequency(URI uri) {
+        super(uri, SSN.Frequency);
+    }
 
-    List<SDFAttribute> getAllProperties();
-
-    List<SDFAttribute> getAllProperties(String featureOfInterest);
 }

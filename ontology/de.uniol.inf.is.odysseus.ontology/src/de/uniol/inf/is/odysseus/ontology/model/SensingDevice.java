@@ -17,12 +17,8 @@ package de.uniol.inf.is.odysseus.ontology.model;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -30,26 +26,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class SensingDevice {
     private final URI uri;
-    private final SDFSchema schema;
-    private final Map<SDFAttribute, List<MeasurementCapability>> capabilities = new HashMap<SDFAttribute, List<MeasurementCapability>>();
+    private final List<MeasurementCapability> hasMeasurementCapabilities = new ArrayList<MeasurementCapability>();
 
     /**
      * Class constructor.
      * 
      */
-    public SensingDevice(final URI uri, final SDFSchema schema) {
+    public SensingDevice(final URI uri) {
         this.uri = uri;
-        this.schema = schema.clone();
-        for (SDFAttribute attribute : this.schema.getAttributes()) {
-            this.capabilities.put(attribute, new ArrayList<MeasurementCapability>());
-        }
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return this.uri.getFragment();
     }
 
     /**
@@ -60,17 +44,10 @@ public class SensingDevice {
     }
 
     /**
-     * @return the schema
-     */
-    public SDFSchema getSchema() {
-        return this.schema;
-    }
-
-    /**
      * @return the capabilities
      */
-    public Map<SDFAttribute, List<MeasurementCapability>> getCapabilities() {
-        return this.capabilities;
+    public List<MeasurementCapability> getHasMeasurementCapabilities() {
+        return Collections.unmodifiableList(this.hasMeasurementCapabilities);
     }
 
     /**
@@ -78,30 +55,22 @@ public class SensingDevice {
      *            the attribute
      * @return the capabilities
      */
-    public List<MeasurementCapability> getCapabilities(final SDFAttribute attribute) {
-        return this.capabilities.get(attribute);
-    }
-
-    /**
-     * @return
-     */
-    public List<MeasurementCapability> getAllCapabilities() {
-        final List<MeasurementCapability> capabilities = new ArrayList<MeasurementCapability>();
-        for (final List<MeasurementCapability> attributeCapability : this.capabilities.values()) {
-            capabilities.addAll(attributeCapability);
+    public List<MeasurementCapability> getHasMeasurementCapabilities(final Property forProperty) {
+        List<MeasurementCapability> propertyCapabilities = new ArrayList<MeasurementCapability>();
+        for (MeasurementCapability capability : this.hasMeasurementCapabilities) {
+            if (forProperty.equals(capability.getForProperty())) {
+                propertyCapabilities.add(capability);
+            }
         }
-        return capabilities;
+        return propertyCapabilities;
     }
 
-    public void addMeasurementCapability(final MeasurementCapability capability) {
-        if (!this.capabilities.containsKey(capability.getAttribute())) {
-            this.capabilities.put(capability.getAttribute(), new ArrayList<MeasurementCapability>());
-        }
-        this.capabilities.get(capability.getAttribute()).add(capability);
+    public void addMeasurementCapability(final MeasurementCapability hasMeasurementCapability) {
+        this.hasMeasurementCapabilities.add(hasMeasurementCapability);
     }
 
-    public void removeCapability(final MeasurementCapability capability) {
-        this.capabilities.get(capability.getAttribute()).remove(capability);
+    public void removeCapability(final MeasurementCapability hasMeasurementCapability) {
+        this.hasMeasurementCapabilities.remove(hasMeasurementCapability);
     }
 
 }
