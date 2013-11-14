@@ -42,6 +42,7 @@ import org.eclipse.ui.part.MultiPageEditorPart;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator.ScriptGenerator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.views.OperatorGraphPropertyView;
+import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 /**
  * An example showing how to create a multi-page editor. This example has 3 pages:
@@ -396,7 +397,9 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	}
 
 	public void executeScript() {
+		IFile file = ((FileEditorInput) getEditorInput()).getFile();
 		String pql = getPQLString();
+		pql = ParserClientUtil.replaceClientReplacements(pql, file);
 		Activator.getDefault().getExecutor().addQuery(pql, "PQL", Activator.getDefault().getCaller(), "Standard");
 	}
 

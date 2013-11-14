@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.services;
 
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
-
+//TODO: script parser is normally on server side!!!
+@Deprecated
 public class OdysseusScriptParserService {
 
 	private static IOdysseusScriptParser boundParser;

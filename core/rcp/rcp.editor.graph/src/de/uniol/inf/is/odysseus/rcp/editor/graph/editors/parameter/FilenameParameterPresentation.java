@@ -77,7 +77,7 @@ public class FilenameParameterPresentation extends StringParameterPresentation {
 					IResource resource = (IResource) dialog.getFirstResult();					
 					if (resource != null) {
 						String dir = resource.getProjectRelativePath().toString();
-						text.setText("${WORKSPACEPROJECT/}"+dir);
+						text.setText("${PROJECTPATH/}"+dir);
 					}
 				}	
 			}

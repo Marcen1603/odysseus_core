@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.dashboard.controller;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +22,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
+import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -60,16 +59,18 @@ public class QueryExecutionHandler {
 		final IOdysseusScriptParser parser = DashboardPlugIn.getScriptParser();
 		final ISession caller = OdysseusRCPPlugIn.getActiveSession();
 
-		if( scriptFile != null ) {
-			prepareParserReplacements(parser, scriptFile);
-		} 
+	
 		
 		try {
 			if( lines == null ) {
 				List<String> lineList = FileUtil.read(scriptFile);
 				lines = lineList.toArray(new String[lineList.size()]);
 			}
-			
+
+			if( scriptFile != null ) {
+				lines = ParserClientUtil.replaceClientReplacements(lines, scriptFile);
+			}
+			//TODO: you cannot access the parser directly!!
 			List<?> results = parser.execute(parser.parseScript(lines, caller), caller, null);
 			
 			queryIDs = getExecutedQueryIDs(results);
@@ -79,18 +80,6 @@ public class QueryExecutionHandler {
 		}
 	}
 	
-	private static void prepareParserReplacements(IOdysseusScriptParser scriptParser, IFile scriptFile) {
-		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toString();
-		scriptParser.setReplacement("WORKSPACE", localRootLocation);
-		scriptParser.setReplacement("WORKSPACE/", localRootLocation + File.separator);
-		scriptParser.setReplacement("WORKSPACE\\", localRootLocation + File.separator);
-		scriptParser.setReplacement("PROJECT", scriptFile.getProject().getName());
-		scriptParser.setReplacement("WORKSPACEPROJECT", localRootLocation + File.separator + scriptFile.getProject().getName());
-		scriptParser.setReplacement("WORKSPACEPROJECT\\", localRootLocation + File.separator + scriptFile.getProject().getName() + File.separator);
-		scriptParser.setReplacement("WORKSPACEPROJECT/", localRootLocation + File.separator + scriptFile.getProject().getName() + File.separator);
-		scriptParser.setReplacement("\\", File.separator);
-		scriptParser.setReplacement("/", File.separator);
-	}	
 	
 	private static Collection<Integer> getExecutedQueryIDs(List<?> results) {
 		final Collection<Integer> ids = Lists.newArrayList();
