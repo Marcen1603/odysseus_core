@@ -47,9 +47,10 @@ public interface ISweepArea<T> extends Iterable<T> {
 	/**
 	 * same as above, but you are guaranteed to iterate over your own copy of
 	 * the query results
+	 * @param extract if set to true, elements will be remove from sweep area
 	 */
-	public Iterator<T> queryCopy(T element, Order order);
-
+	public Iterator<T> queryCopy(T element, Order order, boolean extract);
+	
 	public Iterator<T> extractElements(T element, Order order);
 
 	public T peek();

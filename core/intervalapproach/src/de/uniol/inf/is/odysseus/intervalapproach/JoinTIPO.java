@@ -28,14 +28,16 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
 
 /**
@@ -72,6 +74,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected IDummyDataCreationFunction<K, T> creationFunction;
 
 	protected boolean inOrder = true;
+	private Cardinalities card = null;
 
 	// ------------------------------------------------------------------------------------
 
@@ -107,7 +110,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.transferFunction = join.transferFunction.clone();
 		this.transferFunction.init(this, getSubscribedToSource().size());
 		this.creationFunction = join.creationFunction.clone();
-
+		this.card = join.card;
 	}
 
 	public IDataMergeFunction<T, K> getDataMerge() {
@@ -153,6 +156,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 	}
 
+	public void setCardinalities(Cardinalities card) {
+		this.card = card;
+	}
+
 	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
 		this.transferFunction = transferFunction;
 	}
@@ -170,7 +177,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected void process_next(T object, int port) {
 
 		transferFunction.newElement(object, port);
-		
+
 		if (isDone()) {
 			// TODO bei den sources abmelden ?? MG: Warum??
 			// propagateDone gemeint?
@@ -207,18 +214,48 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 				return;
 			}
 
-			qualifies = areas[otherport].queryCopy(object, order);
+			// depending on card, delete hits from areas
+			// Currently only for ONE_ONE
+			boolean extract = false;
+			if (card != null && card == Cardinalities.ONE_ONE) {
+				extract = true;
+			} 
+			
+			qualifies = areas[otherport].queryCopy(object, order, extract);
+			
+			boolean hit = qualifies.hasNext();
+			while (qualifies.hasNext()) {
+				T next = qualifies.next();
+				T newElement = dataMerge.merge(object, next, metadataMerge,
+						order);
+				transferFunction.transfer(newElement);
 
-			// Warum erst hier?
-			// transferFunction.newElement(object, port);
-			areas[port].insert(object);
+			}
+			// Depending on card insert elements into sweep area
+			if (card == null || card == Cardinalities.MANY_MANY) {
+				areas[port].insert(object);
+			} else {
+				switch (card) {
+				case ONE_ONE:
+					// If one to one case, a hit cannot be produce another hit
+					if (!hit) {
+						areas[port].insert(object);
+					}
+					break;
+				case ONE_MANY:
+					// TODO: Currently not respected
+					areas[port].insert(object);
+					break;
+				case MANY_ONE:
+					// TODO: Currently not respected
+					areas[port].insert(object);
+					break;
+				default:
+					areas[port].insert(object);
+					break;
+				}
+			}
 		}
-		while (qualifies.hasNext()) {
-			T next = qualifies.next();
-			T newElement = dataMerge.merge(object, next, metadataMerge, order);
-			transferFunction.transfer(newElement);
-		}
-
 	}
 
 	@Override
@@ -250,7 +287,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected void process_done(int port) {
 		transferFunction.done(port);
 	}
-	
+
 	@Override
 	protected boolean isDone() {
 		try {
@@ -306,8 +343,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ipo;
 
+		if (this.card != jtipo.card){
+			return false;
+		}
+		
 		if (!dataMerge.getClass().toString()
-						.equals(jtipo.dataMerge.getClass().toString())
+				.equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString()
 						.equals(jtipo.metadataMerge.getClass().toString())
 				|| !creationFunction.getClass().toString()
@@ -331,8 +372,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ip;
 
+		if (this.card != jtipo.card){
+			return false;
+		}
+		
 		if (!dataMerge.getClass().toString()
-						.equals(jtipo.dataMerge.getClass().toString())
+				.equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString()
 						.equals(jtipo.metadataMerge.getClass().toString())
 				|| !creationFunction.getClass().toString()

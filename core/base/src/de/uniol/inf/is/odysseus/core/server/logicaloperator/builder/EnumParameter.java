@@ -25,6 +25,10 @@ public class EnumParameter extends AbstractParameter<Enum> {
 		this.enumeration = e;
 	}
 
+	public Class<? extends Enum> getEnum() {
+		return enumeration;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void internalAssignment() {

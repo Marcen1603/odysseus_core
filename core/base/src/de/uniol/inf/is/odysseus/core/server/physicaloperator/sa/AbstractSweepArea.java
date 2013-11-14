@@ -164,7 +164,7 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 	}
 
 	@Override
-	public Iterator<T> queryCopy(T element, Order order) {
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {
 		case LeftRight:

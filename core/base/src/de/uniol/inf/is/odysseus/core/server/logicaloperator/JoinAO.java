@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 
 /**
@@ -35,6 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicatePar
 public class JoinAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 3710951139395164614L;
+	
+	Cardinalities card = null;
 
 	public JoinAO() {
 		super();
@@ -47,8 +50,17 @@ public class JoinAO extends BinaryLogicalOp {
 
 	public JoinAO(JoinAO joinPO) {
 		super(joinPO);
+		this.card = joinPO.card;
 	}
-
+	
+	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
+	public void setCard(Cardinalities card) {
+		this.card = card;
+	}
+	
+	public Cardinalities getCard() {
+		return card;
+	}
 
 	@Override
 	@Parameter(type = PredicateParameter.class, optional = true, doc = "Predicate to filter combinations")

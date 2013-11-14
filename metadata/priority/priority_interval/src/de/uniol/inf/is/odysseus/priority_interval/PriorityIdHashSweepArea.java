@@ -165,7 +165,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	@Override
 	public Iterator<T> queryCopy(
 			T element,
-			de.uniol.inf.is.odysseus.core.Order order) {
+			de.uniol.inf.is.odysseus.core.Order order, boolean extract) {
 		return query(element, order);
 	}
 

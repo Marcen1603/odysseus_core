@@ -91,7 +91,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		Iterator<T> qualifies;
 		synchronized (this.areas) {
 			synchronized (this.areas[otherport]) {
-				qualifies = areas[otherport].queryCopy(object, order);
+				qualifies = areas[otherport].queryCopy(object, order, false);
 			}
 			transferFunction.newElement(object, port);
 			synchronized (areas[port]) {

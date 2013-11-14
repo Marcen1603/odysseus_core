@@ -56,12 +56,15 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 	}
 	
 	@Override
-	public Iterator<T> queryCopy(T element, Order order) {
+	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
 		LinkedList<T> result = new LinkedList<T>();
+		Iterator<T> iter;
 		synchronized(this.getElements()){
 			switch (order) {
 			case LeftRight:
-				for (T next : this.getElements()) {
+				iter = this.getElements().iterator();
+				while (iter.hasNext()) {
+					T next = iter.next();
 					if (TimeInterval.totallyBefore(next.getMetadata(), element
 							.getMetadata())) {
 						continue;
@@ -72,12 +75,17 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 					}
 					if (getQueryPredicate().evaluate(element, next)) {
 						result.add(next);
+						if (extract){
+							iter.remove();
+						}
 					}
 
 				}
 				break;
 			case RightLeft:
-				for (T next : this.getElements()) {
+				iter = this.getElements().iterator();
+				while (iter.hasNext()) {
+					T next = iter.next();
 					if (TimeInterval.totallyBefore(next.getMetadata(), element
 							.getMetadata())) {
 						continue;
@@ -88,6 +96,9 @@ public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 					}
 					if (getQueryPredicate().evaluate(next, element)) {
 						result.add(next);
+						if (extract){
+							iter.remove();
+						}
 					}
 				}
 				break;

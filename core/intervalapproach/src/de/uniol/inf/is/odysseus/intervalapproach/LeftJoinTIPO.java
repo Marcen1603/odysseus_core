@@ -129,7 +129,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 		Iterator<T> qualifies;
 		synchronized (this.areas) {
 			synchronized (this.areas[otherport]) {
-				qualifies = areas[otherport].queryCopy(object, leftRight);
+				qualifies = areas[otherport].queryCopy(object, leftRight, false);
 
 				while (qualifies.hasNext()) {
 					T next = qualifies.next();
@@ -198,7 +198,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 
 		// second, process all valid elements with join partner
 		Iterator<T> qualifies = this.areas[leftport].queryCopy(object,
-				rightLeft);
+				rightLeft, false);
 		while (qualifies.hasNext()) {
 			T e_hat = qualifies.next(); // es werden nur kompatible Partner
 										// zurueckgeliefert, die auch nach einem

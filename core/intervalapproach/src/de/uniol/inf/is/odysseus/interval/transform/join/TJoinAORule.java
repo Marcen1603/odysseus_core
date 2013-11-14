@@ -48,6 +48,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO> {
 		}else{
 			joinPO.setJoinPredicate(pred.clone());
 		}
+		joinPO.setCardinalities(joinAO.getCard());
 		
 
 		// This is "bullsh*" The is no need for a window. The elements could already have start and end timestamps! 

@@ -70,7 +70,7 @@ public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic,
 				return;
 			}
 
-			qualifies = this.areas[otherport].queryCopy(object, order);
+			qualifies = this.areas[otherport].queryCopy(object, order, false);
 
 			this.areas[port].insert(object);
 		}

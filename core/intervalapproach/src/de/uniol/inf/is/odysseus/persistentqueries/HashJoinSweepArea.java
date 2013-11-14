@@ -99,7 +99,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	}
 	
 	@Override
-	public Iterator<Tuple<? extends ITimeInterval>> queryCopy(Tuple<? extends ITimeInterval> element, Order order) {
+	public Iterator<Tuple<? extends ITimeInterval>> queryCopy(Tuple<? extends ITimeInterval> element, Order order, boolean extract) {
 		LinkedList<Tuple<? extends ITimeInterval>> result = new LinkedList<Tuple<? extends ITimeInterval>>();
 		synchronized(this.elements){
 			Tuple<? extends ITimeInterval> keyTuple = element.restrict(this.queryRestrictList, true);

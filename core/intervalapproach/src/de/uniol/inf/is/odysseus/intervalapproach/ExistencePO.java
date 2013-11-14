@@ -169,7 +169,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 		// differentiate between left and right
 		if (port == LEFT) {
-			Iterator<T> qualifies = areas[otherport].queryCopy(object, order);
+			Iterator<T> qualifies = areas[otherport].queryCopy(object, order, false);
 			K curMetadata = object.getMetadata();
 			boolean elementFull = false;
 			while (qualifies.hasNext()) {
@@ -214,7 +214,7 @@ public class ExistencePO<K extends ITimeInterval, T extends IStreamObject<K>>
 				areas[port].insert(object);
 			}
 		} else if (port == RIGHT) {
-			Iterator<T> qualifies = areas[otherport].queryCopy(object, order);
+			Iterator<T> qualifies = areas[otherport].queryCopy(object, order, false);
 			// LinkedList<T> modifiedElemsOnLeft = new LinkedList<T>();
 			while (qualifies.hasNext()) {
 				T next = qualifies.next();
