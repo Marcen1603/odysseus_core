@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -215,14 +214,31 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 			}
 
 			// depending on card, delete hits from areas
-			// Currently only for ONE_ONE
+			// deleting if port is ONE-side
+			// cases for ONE_MANY, MANY_ONE: 
+			// ONE side element is earlier than MANY side elements, nothing will be found 
+			// and nothing will be removed
+			// ONE side element is later than some MANY side elements, find all
+			// corresponding elements and remove them
 			boolean extract = false;
-			if (card != null && card == Cardinalities.ONE_ONE) {
-				extract = true;
-			} 
-			
+			if (card != null) {
+				switch(card){
+				case ONE_ONE:
+					extract = true;
+					break;
+				case MANY_ONE:
+					extract = port == 1;
+					break;
+				case ONE_MANY:
+					extract = port == 0;
+					break;
+				default:
+					break;
+				}
+			}
+
 			qualifies = areas[otherport].queryCopy(object, order, extract);
-			
+
 			boolean hit = qualifies.hasNext();
 			while (qualifies.hasNext()) {
 				T next = qualifies.next();
@@ -243,12 +259,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 					}
 					break;
 				case ONE_MANY:
-					// TODO: Currently not respected
-					areas[port].insert(object);
+					// If from left insert
+					// if from right and no hit, insert (corresponding left
+					// element not found now)
+					if (port == 0 || (port == 1 && !hit)) {
+						areas[port].insert(object);
+					}
 					break;
 				case MANY_ONE:
-					// TODO: Currently not respected
-					areas[port].insert(object);
+					// If from rightt insert
+					// if from left and no hit, insert (corresponding right
+					// element not found now)
+					if (port == 1 || (port == 0 && !hit)) {
+						areas[port].insert(object);
+					}					
 					break;
 				default:
 					areas[port].insert(object);
@@ -343,10 +367,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ipo;
 
-		if (this.card != jtipo.card){
+		if (this.card != jtipo.card) {
 			return false;
 		}
-		
+
 		if (!dataMerge.getClass().toString()
 				.equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString()
@@ -372,10 +396,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>> jtipo = (JoinTIPO<? extends ITimeInterval, ? extends IStreamObject<K>>) ip;
 
-		if (this.card != jtipo.card){
+		if (this.card != jtipo.card) {
 			return false;
 		}
-		
+
 		if (!dataMerge.getClass().toString()
 				.equals(jtipo.dataMerge.getClass().toString())
 				|| !metadataMerge.getClass().toString()
