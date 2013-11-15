@@ -50,9 +50,9 @@ public class ProbabilisticAO extends UnaryLogicalOp {
 	 * @param updateProbabilisticMetadataAO
 	 *            The copy
 	 */
-	public ProbabilisticAO(final ProbabilisticAO updateProbabilisticMetadataAO) {
-		super(updateProbabilisticMetadataAO);
-		this.attribute = updateProbabilisticMetadataAO.attribute;
+    public ProbabilisticAO(final ProbabilisticAO probabilisticAO) {
+        super(probabilisticAO);
+        this.attribute = probabilisticAO.attribute;
 	}
 
 	/**
