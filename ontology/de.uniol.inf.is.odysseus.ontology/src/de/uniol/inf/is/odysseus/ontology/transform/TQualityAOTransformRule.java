@@ -15,14 +15,26 @@
  */
 package de.uniol.inf.is.odysseus.ontology.transform;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ontology.common.SDFUtils;
 import de.uniol.inf.is.odysseus.ontology.logicaloperator.QualityAO;
+import de.uniol.inf.is.odysseus.ontology.manager.impl.QueryManagerImpl;
+import de.uniol.inf.is.odysseus.ontology.manager.impl.SourceManagerImpl;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
+import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.ontology.SensorOntologyServiceImpl;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -33,9 +45,9 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
+public class TQualityAOTransformRule extends AbstractTransformationRule<QualityAO> {
     /** The Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(TQualityAORule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TQualityAOTransformRule.class);
 
     @Override
     public final int getPriority() {
@@ -49,6 +61,42 @@ public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
     @Override
     public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
         final SDFSchema schema = operator.getInputSchema();
+        List<SDFAttribute> attributes = operator.getAttributes();
+        List<String> propertyNames = operator.getProperties();
+
+        SourceManagerImpl sourceManager = new SourceManagerImpl(null);
+        QueryManagerImpl queryManager = new QueryManagerImpl(null);
+
+        for (SDFAttribute attribute : attributes) {
+
+            Map<SensingDevice, List<Property>> toJoinStreams = new HashMap<SensingDevice, List<Property>>();
+            Map<String, Map<String, String>> conditionPropertyMapping = new HashMap<String, Map<String, String>>();
+
+            Property property = new Property(SDFUtils.getPropertyURI(attribute));
+            SensingDevice sensingDevice = queryManager.getSensingDevice(SDFUtils.getSensingDeviceURI(attribute));
+            FeatureOfInterest featureOfInterest = queryManager.getFeatureOfInterest(SDFUtils.getFeatureOfInterestURI(attribute));
+
+            List<MeasurementCapability> measurementCapabilities = sensingDevice.getHasMeasurementCapabilities(property);
+            for (MeasurementCapability measurementCapability : measurementCapabilities) {
+
+                List<Condition> conditions = measurementCapability.getInConditions();
+
+                String conditionExpression = toConditionString(conditions);
+                conditionPropertyMapping.put(conditionExpression, new HashMap<String, String>());
+
+                for (String propertyName : propertyNames) {
+                    List<MeasurementProperty> measurementProperties = measurementCapability.getHasMeasurementProperty(propertyName);
+                    if (!measurementProperties.isEmpty()) {
+                        // FIXME Can we have more than one expression?
+                        for (MeasurementProperty measurementProperty : measurementProperties) {
+
+                            conditionPropertyMapping.get(conditionExpression).put(propertyName, measurementProperty.getExpression());
+                        }
+                    }
+
+                }
+            }
+        }
 
         // Required parameter:
         // - Attribute
@@ -116,4 +164,23 @@ public class TQualityAORule extends AbstractTransformationRule<QualityAO> {
         return TransformRuleFlowGroup.TRANSFORMATION;
     }
 
+    /**
+     * Concatenates the condition observing sensing devices to this stream.
+     * 
+     * @param observers
+     *            The map of sensing devices and the necessary properties.
+     */
+
+    private String toConditionString(List<Condition> conditions) {
+        StringBuilder sb = new StringBuilder();
+        for (Condition condition : conditions) {
+            if (sb.length() != 0) {
+                sb.append(" OR ");
+            }
+            sb.append(condition.toString());
+        }
+
+        return sb.toString();
+
+    }
 }

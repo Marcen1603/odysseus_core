@@ -79,6 +79,17 @@ public class MeasurementCapability extends Property {
         return Collections.unmodifiableList(this.hasMeasurementProperties);
     }
 
+    public List<MeasurementProperty> getHasMeasurementProperty(String property) {
+        SSNMeasurementProperty ssnMeasurementProperty = SSNMeasurementProperty.valueOf(property);
+        List<MeasurementProperty> measurementProperties = new ArrayList<MeasurementProperty>();
+        for (MeasurementProperty measurementProperty : this.hasMeasurementProperties) {
+            if (measurementProperty.getResource().equals(ssnMeasurementProperty.getResource())) {
+                measurementProperties.add(measurementProperty);
+            }
+        }
+        return measurementProperties;
+    }
+
     /**
      * 
      * @param hasMeasurementProperty

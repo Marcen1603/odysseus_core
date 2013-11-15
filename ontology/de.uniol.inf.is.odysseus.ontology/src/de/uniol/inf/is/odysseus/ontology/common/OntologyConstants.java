@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.ontology.model.condition;
+package de.uniol.inf.is.odysseus.ontology.common;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public interface ICondition {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString();
+public final class OntologyConstants {
+    public static final String FEATURE_OF_INTEREST_NS = "";
+    public static final String SENSING_DEVICE_NS = "";
+    public static final String PROPERTY_NS = "";
+
+    private OntologyConstants() {
+    }
 }

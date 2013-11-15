@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.ontology.model.Property;
  */
 public class MeasurementProperty extends Property implements IMeasurementProperty {
     private String unit;
+    private String expression;
     private final Resource resource;
 
     /**
@@ -42,6 +43,7 @@ public class MeasurementProperty extends Property implements IMeasurementPropert
      * @param unit
      *            the unit to set
      */
+    @Override
     public void setUnit(String unit) {
         this.unit = unit;
     }
@@ -49,6 +51,7 @@ public class MeasurementProperty extends Property implements IMeasurementPropert
     /**
      * @return the unit
      */
+    @Override
     public String getUnit() {
         return this.unit;
     }
@@ -58,5 +61,12 @@ public class MeasurementProperty extends Property implements IMeasurementPropert
      */
     public Resource getResource() {
         return this.resource;
+    }
+
+    /**
+     * @return the expression
+     */
+    public String getExpression() {
+        return this.expression;
     }
 }

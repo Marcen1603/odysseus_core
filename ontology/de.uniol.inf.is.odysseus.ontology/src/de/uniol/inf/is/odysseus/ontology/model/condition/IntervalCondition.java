@@ -44,4 +44,21 @@ public class IntervalCondition extends Condition implements ICondition {
         return this.interval;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        sb.append(getOnProperty().getUri().getFragment());
+        sb.append(" >= ");
+        sb.append(getInterval().inf());
+        sb.append(" AND ");
+        sb.append(getOnProperty().getUri().getFragment());
+        sb.append(" <= ");
+        sb.append(getInterval().sup());
+        sb.append(")");
+        return sb.toString();
+    }
 }

@@ -13,6 +13,7 @@ Embed-Transitive: true
 Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.probabilistic.base,
  de.uniol.inf.is.odysseus.probabilistic.math,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,

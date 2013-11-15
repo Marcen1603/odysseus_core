@@ -67,6 +67,8 @@ public class FFT extends AbstractListAggregation<Tuple<? extends IMetaAttribute>
             realNumbers.add(complex.getReal());
             imaginaryNumbers.add(complex.getImaginary());
         }
+        // FIXME Is the schema extended to two attributes?
+        // Maybe use Complex as an additional datatype
         ret.setAttribute(0, realNumbers);
         ret.setAttribute(1, imaginaryNumbers);
         return ret;

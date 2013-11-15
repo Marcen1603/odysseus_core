@@ -15,28 +15,38 @@
  */
 package de.uniol.inf.is.odysseus.ontology.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "Append quality information to the incoming stream object.", name = "Probabilistic", category = { LogicalOperatorCategory.ONTOLOGY })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "Append quality information to the incoming stream object.", name = "Quality", category = { LogicalOperatorCategory.ONTOLOGY })
 public class QualityAO extends UnaryLogicalOp {
 
     /**
 	 * 
 	 */
     private static final long serialVersionUID = 7153504084002972374L;
+    private List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+    private List<String> properties = new ArrayList<String>();
 
     /**
      * Class constructor.
      * 
      */
     public QualityAO() {
-        // TODO Auto-generated constructor stub
+        super();
     }
 
     /**
@@ -46,7 +56,35 @@ public class QualityAO extends UnaryLogicalOp {
      *            The instance to clone from
      */
     public QualityAO(final QualityAO qualityAO) {
+        super(qualityAO);
+        this.attributes = new ArrayList<SDFAttribute>(qualityAO.attributes);
+        this.properties = new ArrayList<String>(qualityAO.properties);
+    }
 
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = false, isList = true)
+    public void setAttributes(List<SDFAttribute> attributes) {
+        this.attributes = attributes;
+    }
+
+    @GetParameter(name = "ATTRIBUTES")
+    public List<SDFAttribute> getAttributes() {
+        if (this.attributes == null) {
+            this.attributes = new ArrayList<SDFAttribute>();
+        }
+        return this.attributes;
+    }
+
+    @Parameter(type = StringParameter.class, name = "PROPERTIES", optional = false, isList = true)
+    public void setProperties(List<String> properties) {
+        this.properties = properties;
+    }
+
+    @GetParameter(name = "PROPERTIES")
+    public List<String> getProperties() {
+        if (this.properties == null) {
+            this.properties = new ArrayList<String>();
+        }
+        return this.properties;
     }
 
     /**

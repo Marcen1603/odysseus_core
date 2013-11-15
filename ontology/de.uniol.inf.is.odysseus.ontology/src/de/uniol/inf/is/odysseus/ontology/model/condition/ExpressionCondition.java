@@ -43,4 +43,15 @@ public class ExpressionCondition extends Condition implements ICondition {
         return this.expression;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        sb.append(getExpression());
+        sb.append(")");
+        return sb.toString();
+    }
 }
