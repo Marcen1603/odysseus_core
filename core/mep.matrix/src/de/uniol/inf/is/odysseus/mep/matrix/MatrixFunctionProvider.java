@@ -48,6 +48,18 @@ public class MatrixFunctionProvider implements IFunctionProvider {
 		functions.add(new MatrixTransposeFunction());
 		functions.add(new MatrixInverseFunction());
 		functions.add(new MatrixIdentityMatrixFunction());
+
+        // Aggregation functions
+        functions.add(new MatrixSMinFunction());
+        functions.add(new MatrixSMaxFunction());
+        functions.add(new MatrixSCountFunction());
+        functions.add(new MatrixSSumFunction());
+        functions.add(new MatrixSAVGFunction());
+        functions.add(new VectorSMinFunction());
+        functions.add(new VectorSMaxFunction());
+        functions.add(new VectorSCountFunction());
+        functions.add(new VectorSSumFunction());
+        functions.add(new VectorSAVGFunction());
 		return functions;
 	}
 
