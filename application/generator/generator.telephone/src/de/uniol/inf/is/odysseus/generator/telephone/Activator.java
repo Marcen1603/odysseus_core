@@ -21,7 +21,7 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		boolean newGeneratorEachConnection = Boolean.valueOf(bundleContext.getProperty("newGeneratorEachConnection"));
-		StreamServer server = new StreamServer(65321, new TelephoneDataProvider(5000000, 7000000, 10), newGeneratorEachConnection);
+		StreamServer server = new StreamServer(65321, new TelephoneDataProvider(5000000, 7000000, 180, 360, 10), newGeneratorEachConnection);
 		server.start();
 	}
 

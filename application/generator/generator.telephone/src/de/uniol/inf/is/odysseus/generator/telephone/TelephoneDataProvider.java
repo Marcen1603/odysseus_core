@@ -14,11 +14,15 @@ public class TelephoneDataProvider extends AbstractDataGenerator implements
 
 	final private int parallelCallCount;
 	final private int noOfTelephones;
+	final private int noLatitudes;
+	final private int noLongitudes;
 	final private int blockSize;
 
-	public TelephoneDataProvider(int parallelCallCount, int noOfTelephones, int blockSize){
+	public TelephoneDataProvider(int parallelCallCount, int noOfTelephones, int noLatitudes, int noLongitudes, int blockSize){
 		this.parallelCallCount = parallelCallCount;
 		this.noOfTelephones = noOfTelephones;
+		this.noLatitudes = noLatitudes;
+		this.noLongitudes = noLongitudes;
 		this.blockSize = blockSize;
 	}
 
@@ -26,13 +30,15 @@ public class TelephoneDataProvider extends AbstractDataGenerator implements
 		super();
 		this.parallelCallCount = telephoneDataProvider.parallelCallCount;
 		this.noOfTelephones = telephoneDataProvider.noOfTelephones;
+		this.noLatitudes = telephoneDataProvider.noLatitudes;
+		this.noLongitudes = telephoneDataProvider.noLongitudes;
 		this.blockSize = telephoneDataProvider.blockSize;
 	}
 
 	@Override
 	public void process_init() {
 		elems.clear();
-		sim = new Simulation(parallelCallCount, noOfTelephones);
+		sim = new Simulation(parallelCallCount, noOfTelephones, noLatitudes, noLongitudes);
 		sim.start();
 		sim.addListener(this);
 	}

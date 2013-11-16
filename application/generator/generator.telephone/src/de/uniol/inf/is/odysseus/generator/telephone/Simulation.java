@@ -1,21 +1,33 @@
 package de.uniol.inf.is.odysseus.generator.telephone;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class Simulation extends Thread implements ICallDecriptionRecordReceiver {
 
-	final private List<String> available = new ArrayList<>();
+	final private List<String> availableTelephones = new ArrayList<>();
+	final private List<IPair<IPair<Double, Double>, Integer>> availableLocations = new ArrayList<>(); 
+	// inner pair: latitude, longitude; outer pair: coordinates, district
 	private int currentCalls;
 	final private int parallelCallCount;
 	final private Random random = new Random(1);
 
 	final List<ICallDecriptionRecordReceiver> listeners = new ArrayList<>();
 	
-	public Simulation(int parallelCallCount, int noOfTelefones) {
+	public Simulation(int parallelCallCount, int noOfTelefones, int noLatitudes, int noLongitudes) {
 		for (int i = 0; i < noOfTelefones; i++) {
-			available.add("No " + i);
+			availableTelephones.add("No " + i);
+		}
+		int districtCounter = 0;
+		for (double latitude = 0.0; latitude < noLatitudes; latitude += 1.0) {
+			for (double longitude = 0.0; longitude < noLongitudes; longitude += 1.0) {
+				IPair<Double,Double> coordinates = new Pair<Double,Double>(latitude, longitude);
+				availableLocations.add(new Pair<IPair<Double,Double>, Integer>(coordinates,districtCounter++));
+			}
 		}
 		this.parallelCallCount = parallelCallCount;
 	}
@@ -39,10 +51,16 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 	private void createNewCall() {
 		CallDescriptionRecord cdr = new CallDescriptionRecord();
 		long sleepingTime = random.nextInt(50000)+1000;
-		synchronized(available){
-			cdr.src = available.remove(random.nextInt(available.size()));
-			cdr.dst = available.remove(random.nextInt(available.size()));
+		synchronized(availableTelephones){
+			cdr.src = availableTelephones.remove(random.nextInt(availableTelephones.size()));
+			cdr.dst = availableTelephones.remove(random.nextInt(availableTelephones.size()));
 			currentCalls++;
+		}
+		synchronized(availableLocations){
+			IPair<IPair<Double,Double>,Integer> location = availableLocations.remove(random.nextInt(availableLocations.size()));
+			cdr.lat = location.getE1().getE1();
+			cdr.lon = location.getE1().getE2();
+			cdr.district = location.getE2();
 		}
 		new TelephoneCall(cdr, sleepingTime, this).start();
 		
@@ -50,10 +68,14 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 
 	@Override
 	public void newCDR(CallDescriptionRecord cdr) {
-		synchronized(available){
-			available.add(cdr.src);
-			available.add(cdr.dst);
+		synchronized(availableTelephones){
+			availableTelephones.add(cdr.src);
+			availableTelephones.add(cdr.dst);
 			currentCalls--;
+		}
+		synchronized (availableLocations) {
+			IPair<Double,Double> coordinates = new Pair<Double,Double>(cdr.lat, cdr.lon);
+			availableLocations.add(new Pair<IPair<Double,Double>, Integer>(coordinates,cdr.district));
 		}
 		cdr.ts = System.currentTimeMillis();
 		for (ICallDecriptionRecordReceiver l: listeners){
@@ -67,7 +89,7 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 	public static void main(String[] args) {
 		System.err.print("Init ");
 		long start = System.currentTimeMillis();
-		Simulation sim = new Simulation(5000000, 7000000);
+		Simulation sim = new Simulation(5000000, 7000000, 180, 360);
 		System.err.println(" took "+((System.currentTimeMillis()-start)/60)+" seconds");
 		System.err.println("Starting ");
 		sim.start();
