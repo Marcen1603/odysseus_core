@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.ontology.manager;
 import java.net.URI;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 
 /**
@@ -30,45 +32,17 @@ public interface QueryManager {
      * 
      * @return A list of URIs
      */
-    List<URI> getAllSensingDeviceURIs();
 
     List<SensingDevice> getAllSensingDevices();
 
+    List<FeatureOfInterest> getAllFeaturesOfInterest();
+
+    List<Property> getAllProperties();
+
     SensingDevice getSensingDevice(URI uri);
 
-    /**
-     * Gets all sensing devices from the ontology.
-     * 
-     * @return A list of URIs
-     */
-    List<URI> getAllPropertyURIs();
+    FeatureOfInterest getFeatureOfInterest(URI uri);
 
-    /**
-     * Gets all sensing devices from the ontology that observe the given
-     * property.
-     * 
-     * @param uri
-     *            The URI of the property
-     * @return A list of URIs
-     */
-    List<URI> getSensingDeviceURIsByObservedProperty(URI uri);
-
-    /**
-     * Gets all sensing devices from the ontology that observe the given
-     * property.
-     * 
-     * @param uri
-     *            The URI of the property
-     * @return A list of URIs
-     */
-    List<SensingDevice> getSensingDevicesByObservedProperty(URI uri);
-
-    /**
-     * Gets all properties from the ontology that are observed by the given
-     * sensing device.
-     * 
-     * @return A list of URIs
-     */
-    List<URI> getAllPropertyURIsObservedBySensingDevice(URI uri);
+    Property getProperty(URI uri);
 
 }

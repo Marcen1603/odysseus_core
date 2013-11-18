@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.wizards;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +80,7 @@ public class MeasurementCapabilitiesPage extends WizardPage {
             @SuppressWarnings("unused")
             @Override
             public void widgetSelected(final SelectionEvent e) {
+
                 final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
                         .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
                 MeasurementCapabilitiesPage.this.tblCapabilities.removeAll();
@@ -113,10 +115,11 @@ public class MeasurementCapabilitiesPage extends WizardPage {
         final GridData gd_btnAdd = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
         btnAdd.setLayoutData(gd_btnAdd);
         btnAdd.addSelectionListener(new SelectionAdapter() {
-            @SuppressWarnings("unused")
+
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                final MeasurementCapabiltyDialog measurementCapabilityDialog = new MeasurementCapabiltyDialog(btnAdd.getShell(), MeasurementCapabilitiesPage.this.sensingDevicePage.getAttributes());
+                final MeasurementCapabiltyDialog measurementCapabilityDialog = new MeasurementCapabiltyDialog(btnAdd.getShell(), MeasurementCapabilitiesPage.this.sensingDevicePage
+                        .getSensingDeviceURI(), MeasurementCapabilitiesPage.this.sensingDevicePage.getAttributes());
 
                 measurementCapabilityDialog.open();
                 if (MeasurementCapabilitiesPage.this.tblCapabilities.isDisposed()) {
@@ -124,20 +127,15 @@ public class MeasurementCapabilitiesPage extends WizardPage {
                 }
                 if (measurementCapabilityDialog.getReturnCode() == Window.OK) {
                     final TableItem item = new TableItem(MeasurementCapabilitiesPage.this.tblCapabilities, SWT.NONE);
-                    // item.setText(0,
-                    // measurementCapabilityDialog.getCondition().getInterval().toString());
-                    // item.setText(1,
-                    // measurementCapabilityDialog.getMeasurementProperty().getProperty().toString());
+                    item.setText(0, measurementCapabilityDialog.getCondition().toString());
+                    item.setText(1, measurementCapabilityDialog.getMeasurementProperty().toString());
                     final SDFAttribute attribute = (SDFAttribute) MeasurementCapabilitiesPage.this.cmbAttribute.getData(MeasurementCapabilitiesPage.this.cmbAttribute
                             .getItem(MeasurementCapabilitiesPage.this.cmbAttribute.getSelectionIndex()));
 
-                    // final MeasurementCapability capability = new
-                    // MeasurementCapability(URI.create(ODYSSEUS.NS +
-                    // MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceName()
-                    // + "/"
-                    // + attribute), attribute);
-                    // capability.addCondition(measurementCapabilityDialog.getCondition());
-                    // capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
+                    final MeasurementCapability capability = new MeasurementCapability(URI
+                            .create(MeasurementCapabilitiesPage.this.sensingDevicePage.getSensingDeviceURI().toString() + "/" + attribute), measurementCapabilityDialog.getProperty());
+                    capability.addCondition(measurementCapabilityDialog.getCondition());
+                    capability.addMeasurementProperty(measurementCapabilityDialog.getMeasurementProperty());
                     // if
                     // (!MeasurementCapabilitiesPage.this.attributeCapabilities.containsKey(attribute))
                     // {

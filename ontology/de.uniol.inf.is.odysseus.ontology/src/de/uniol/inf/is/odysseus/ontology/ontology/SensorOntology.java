@@ -42,6 +42,8 @@ import de.uniol.inf.is.odysseus.ontology.Activator;
 import de.uniol.inf.is.odysseus.ontology.manager.impl.PredicateManagerImpl;
 import de.uniol.inf.is.odysseus.ontology.manager.impl.QueryManagerImpl;
 import de.uniol.inf.is.odysseus.ontology.manager.impl.SourceManagerImpl;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
@@ -82,14 +84,20 @@ public class SensorOntology {
     }
 
     /**
-     * @param name
-     *            The name of the sensing device
-     * @param schema
-     *            The schema of the sensing device stream
+     * @param sensingDevice
+     *            The sensing device
      */
     public void createSensingDevice(final SensingDevice sensingDevice) {
         this.sourceManager.createSensingDevice(sensingDevice);
 
+    }
+
+    /**
+     * @param featureOfInterest
+     *            The feature of interest
+     */
+    public void createFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+        this.sourceManager.createFeatureOfInterest(featureOfInterest);
     }
 
     public List<SensingDevice> getSensingdeviceByProperty(final SDFAttribute attribute) {
@@ -110,6 +118,28 @@ public class SensorOntology {
         return this.queryManager.getSensingDevice(URI.create(ODYSSEUS.NS + name));
     }
 
+    /**
+     * @return
+     */
+    public List<FeatureOfInterest> getAllFeaturesOfInterest() {
+        List<FeatureOfInterest> featuresOfInterest = this.queryManager.getAllFeaturesOfInterest();
+        for (FeatureOfInterest featureOfInterest : featuresOfInterest) {
+            // System.out.println( getConditionPredicates(sensingDevice));
+        }
+        return featuresOfInterest;
+    }
+
+    /**
+     * @return
+     */
+    public List<Property> getAllProperties() {
+        List<Property> properties = this.queryManager.getAllProperties();
+        for (Property property : properties) {
+            // System.out.println( getConditionPredicates(sensingDevice));
+        }
+        out();
+        return properties;
+    }
     // public Map<SDFAttribute, Map<Property, String>>
     // getConditionPredicates(final SensingDevice sensingDevice) {
     // Map<SDFAttribute, Map<Property, String>> attributePropertyMapping = new
@@ -176,7 +206,7 @@ public class SensorOntology {
 
     private Model getTBox() throws IOException {
         if (this.tBox == null) {
-            this.tBox = ModelFactory.createDefaultModel();
+            this.tBox = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
             URL file;
             if (Activator.getContext() != null) {
                 file = Activator.getContext().getBundle().getEntry("owl/SSN.owl");
@@ -201,13 +231,13 @@ public class SensorOntology {
 
             Reasoner reasoner = null;
             try {
-                reasoner = ReasonerRegistry.getOWLReasoner().bindSchema(this.getTBox());
+                reasoner = ReasonerRegistry.getOWLMiniReasoner().bindSchema(this.getTBox());
             }
             catch (ReasonerException | IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            final OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM_RULE_INF);
+            final OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM_MINI_RULE_INF);
             spec.setReasoner(reasoner);
             this.model = ModelFactory.createOntologyModel(spec, aBox);
             this.model.setNsPrefix("ssn", SSN.getURI());
@@ -225,5 +255,6 @@ public class SensorOntology {
     public void out() {
         this.getABox().write(System.out, FileUtils.langXMLAbbrev);
     }
+
 
 }

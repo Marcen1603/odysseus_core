@@ -26,7 +26,8 @@ Export-Package: de.uniol.inf.is.odysseus.ontology,
  de.uniol.inf.is.odysseus.ontology.model.condition,
  de.uniol.inf.is.odysseus.ontology.model.property,
  de.uniol.inf.is.odysseus.ontology.ontology,
- de.uniol.inf.is.odysseus.ontology.ontology.vocabulary
+ de.uniol.inf.is.odysseus.ontology.ontology.vocabulary,
+ com.hp.hpl.jena.rdf.model
 Ignore-Package: com.sun.jdmk.comm,javax.jmdns,javax.jms,sun.io,com.ibm.u
  vm.tools,org.apache.xml.resolver,org.apache.xml.resolver.readers
 Bundle-ClassPath: .,

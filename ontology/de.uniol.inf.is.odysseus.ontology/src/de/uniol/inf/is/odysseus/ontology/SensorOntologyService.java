@@ -17,7 +17,8 @@ package de.uniol.inf.is.odysseus.ontology;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 
 /**
@@ -29,12 +30,17 @@ public interface SensorOntologyService {
 
     List<SensingDevice> getAllSensingDevices(String featureOfInterest);
 
+    List<FeatureOfInterest> getAllFeaturesOfInterest();
+
+    List<Property> getAllProperties();
+
+    List<Property> getAllProperties(String featureOfInterest);
+
     /**
      * @param sensingDevice
      */
     void createSensingDevice(SensingDevice sensingDevice);
 
-    List<SDFAttribute> getAllProperties();
+    void createFeatureOfInterest(FeatureOfInterest featureOfInterest);
 
-    List<SDFAttribute> getAllProperties(String featureOfInterest);
 }

@@ -34,25 +34,25 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
-import de.uniol.inf.is.odysseus.ontology.rcp.dialogs.AttributeDialog;
+import de.uniol.inf.is.odysseus.ontology.rcp.dialogs.PropertyDialog;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SensingDevicePage extends WizardPage {
+public class FeatureOfInterestPage extends WizardPage {
     private Text txtName;
     private Text txtURI;
-    private Table tblAttributes;
+    private Table tblProperties;
 
-    public SensingDevicePage(final String pageName, final IStructuredSelection selection) {
+    public FeatureOfInterestPage(final String pageName, final IStructuredSelection selection) {
         super(pageName);
 
-        this.setTitle("Define the sensing device");
-        this.setDescription("Set the sensing device name and observed properties.");
+        this.setTitle("Define the feature of interest");
+        this.setDescription("Set the feature of interest name and the properties.");
 
     }
 
@@ -88,13 +88,13 @@ public class SensingDevicePage extends WizardPage {
 
         final Label lblAttributes = new Label(container, SWT.NONE);
         lblAttributes.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
-        lblAttributes.setText(OdysseusNLS.Attributes + ":");
+        lblAttributes.setText(OdysseusNLS.Properties + ":");
 
-        this.tblAttributes = new Table(container, SWT.BORDER | SWT.MULTI);
+        this.tblProperties = new Table(container, SWT.BORDER | SWT.MULTI);
 
         final GridData gd_propertyTableViewer = new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1);
         gd_propertyTableViewer.widthHint = 328;
-        this.tblAttributes.setLayoutData(gd_propertyTableViewer);
+        this.tblProperties.setLayoutData(gd_propertyTableViewer);
 
         final Composite btnComposite = new Composite(container, SWT.NULL);
         btnComposite.setLayout(new GridLayout(1, false));
@@ -104,17 +104,17 @@ public class SensingDevicePage extends WizardPage {
         btnAdd.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                final AttributeDialog attributeDialog = new AttributeDialog(btnAdd.getShell());
+                final PropertyDialog propertyDialog = new PropertyDialog(btnAdd.getShell());
 
-                attributeDialog.open();
-                if (SensingDevicePage.this.tblAttributes.isDisposed()) {
+                propertyDialog.open();
+                if (FeatureOfInterestPage.this.tblProperties.isDisposed()) {
                     return;
                 }
-                if (attributeDialog.getReturnCode() == Window.OK) {
-                    final TableItem item = new TableItem(SensingDevicePage.this.tblAttributes, SWT.NONE);
-                    item.setText(0, attributeDialog.getAttribute().getAttributeName());
-                    item.setText(1, attributeDialog.getAttribute().getDatatype().getQualName());
-                    item.setData(attributeDialog.getAttribute());
+                if (propertyDialog.getReturnCode() == Window.OK) {
+                    final TableItem item = new TableItem(FeatureOfInterestPage.this.tblProperties, SWT.NONE);
+                    item.setText(0, propertyDialog.getProperty().getName());
+                    item.setText(1, propertyDialog.getProperty().getUri().toString());
+                    item.setData(propertyDialog.getProperty());
                 }
             }
         });
@@ -125,27 +125,27 @@ public class SensingDevicePage extends WizardPage {
         btnRemove.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
-                final int index = SensingDevicePage.this.tblAttributes.getSelectionIndex();
-                SensingDevicePage.this.tblAttributes.remove(index);
+                final int index = FeatureOfInterestPage.this.tblProperties.getSelectionIndex();
+                FeatureOfInterestPage.this.tblProperties.remove(index);
             }
         });
         btnRemove.setText(OdysseusNLS.Remove);
     }
 
-    public String getSensingDeviceName() {
+    public String getFeatureOfInterestName() {
         return this.txtName.getText();
     }
 
-    public URI getSensingDeviceURI() {
+    public URI getFeatureOfInterestURI() {
         return URI.create(this.txtURI.getText());
     }
 
-    public List<SDFAttribute> getAttributes() {
-        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>(this.tblAttributes.getItems().length);
-        for (int i = 0; i < this.tblAttributes.getItems().length; i++) {
-            attributes.add((SDFAttribute) this.tblAttributes.getItem(i).getData());
+    public List<Property> getProperties() {
+        final List<Property> properties = new ArrayList<Property>(this.tblProperties.getItems().length);
+        for (int i = 0; i < this.tblProperties.getItems().length; i++) {
+            properties.add((Property) this.tblProperties.getItem(i).getData());
         }
-        return attributes;
+        return properties;
     }
 
 }

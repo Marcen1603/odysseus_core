@@ -37,11 +37,17 @@ public class OdysseusNLS extends NLS {
 
     public static String Attribute;
     public static String Attributes;
+
+    public static String Property;
+    public static String Properties;
+
     public static String Datatype;
     public static String MeasurementCapability;
     public static String MeasurementCapabilities;
+
     public static String Condition;
     public static String Conditions;
+
     public static String MeasurementProperty;
     public static String MeasurementProperties;
 
@@ -54,6 +60,9 @@ public class OdysseusNLS extends NLS {
 
     public static String Interval;
     public static String Function;
+
+    public static String URI;
+
     static {
         NLS.initializeMessages(OdysseusNLS.BUNDLE_NAME, OdysseusNLS.class);
     }

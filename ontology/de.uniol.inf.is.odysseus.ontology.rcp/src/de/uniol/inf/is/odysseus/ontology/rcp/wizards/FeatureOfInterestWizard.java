@@ -31,10 +31,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
-import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
 
@@ -42,41 +41,38 @@ import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SensingDeviceWizard extends Wizard implements INewWizard {
+public class FeatureOfInterestWizard extends Wizard implements INewWizard {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SensingDeviceWizard.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FeatureOfInterestWizard.class);
 
-    private SensingDevicePage sensingDevicePage;
-    private MeasurementCapabilitiesPage measurementCapabilitiesPage;
+    private FeatureOfInterestPage featureOfInterestPage;
 
     private IWorkbench workbench;
 
-    public SensingDeviceWizard() {
+    public FeatureOfInterestWizard() {
         super();
         this.setWindowTitle(OdysseusNLS.NewSensingDevice);
     }
 
     @Override
     public void addPages() {
-        this.addPage(this.sensingDevicePage);
-        this.addPage(this.measurementCapabilitiesPage);
+        this.addPage(this.featureOfInterestPage);
     }
 
     @Override
     public void init(final IWorkbench workbench, final IStructuredSelection selection) {
         this.workbench = workbench;
-        this.sensingDevicePage = new SensingDevicePage(OdysseusNLS.DefineSensingDevices, selection);
-        this.measurementCapabilitiesPage = new MeasurementCapabilitiesPage(OdysseusNLS.DefineMeasurementCapabilities, selection, this.sensingDevicePage);
+        this.featureOfInterestPage = new FeatureOfInterestPage(OdysseusNLS.DefineSensingDevices, selection);
     }
 
     @Override
     public boolean performFinish() {
         final IWorkbenchWindow workbenchWindow = this.workbench.getActiveWorkbenchWindow();
-        final String name = this.sensingDevicePage.getSensingDeviceName();
-        final URI uri = this.sensingDevicePage.getSensingDeviceURI();
-        @SuppressWarnings("unused")
-        final List<SDFAttribute> attributes = this.sensingDevicePage.getAttributes();
-        final List<MeasurementCapability> measurementCapabilities = this.measurementCapabilitiesPage.getMeasurementCapabilities();
+
+        final String name = this.featureOfInterestPage.getFeatureOfInterestName();
+        final URI uri = this.featureOfInterestPage.getFeatureOfInterestURI();
+        final List<Property> properties = this.featureOfInterestPage.getProperties();
+
         try {
             final WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
@@ -84,11 +80,9 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
                 protected void execute(IProgressMonitor progressMonitor) throws CoreException, InvocationTargetException, InterruptedException {
                     try {
                         final SensorOntologyService ontologyService = SensorRegistryPlugIn.getSensorOntologyService();
-                        final SensingDevice sensingDevice = new SensingDevice(uri, name);
-                        for (MeasurementCapability measurementCapability : measurementCapabilities) {
-                            sensingDevice.addMeasurementCapability(measurementCapability);
-                        }
-                        ontologyService.createSensingDevice(sensingDevice);
+                        final FeatureOfInterest featureOfInterest = new FeatureOfInterest(uri, name, properties);
+
+                        ontologyService.createFeatureOfInterest(featureOfInterest);
                     }
                     catch (final Exception e) {
                         MessageDialog.openError(workbenchWindow.getShell(), OdysseusNLS.Error, e.getMessage());
@@ -103,7 +97,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
         }
         catch (final Exception e) {
             MessageDialog.openError(workbenchWindow.getShell(), OdysseusNLS.Error, e.getMessage());
-            SensingDeviceWizard.LOG.error(e.getMessage(), e);
+            FeatureOfInterestWizard.LOG.error(e.getMessage(), e);
         }
         return false;
 

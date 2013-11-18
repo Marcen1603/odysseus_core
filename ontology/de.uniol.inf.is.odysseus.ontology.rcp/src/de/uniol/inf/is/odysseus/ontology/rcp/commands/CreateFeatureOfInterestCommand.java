@@ -24,7 +24,7 @@ import org.eclipse.core.commands.IHandler;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class CreateSensingDeviceCommand extends AbstractHandler implements IHandler {
+public class CreateFeatureOfInterestCommand extends AbstractHandler implements IHandler {
     /**
      * {@inheritDoc}
      */

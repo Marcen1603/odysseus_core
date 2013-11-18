@@ -19,15 +19,25 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryCancelledException;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -65,6 +75,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class QueryManagerImpl implements QueryManager {
+    private static final Logger LOG = LoggerFactory.getLogger(QueryManagerImpl.class);
     private static final String SSN_PREFIX = "PREFIX ssn: <" + SSN.getURI() + "> ";
     private static final String XSD_PREFIX = "PREFIX xsd: <" + XSD.getURI() + "> ";
     private static final String RDF_PREFIX = "PREFIX rdf: <" + RDF.getURI() + "> ";
@@ -74,6 +85,8 @@ public class QueryManagerImpl implements QueryManager {
     private static final String QU_PREFIX = "PREFIX qu: <" + QU.getURI() + "> ";
     private static final String ODY_PREFIX = "PREFIX ody: <" + ODYSSEUS.getURI() + "> ";
     private static final String QUERY_PREFIX;
+    private static final long TIMEOUT1 = 1000l;
+    private static final long TIMEOUT2 = 1000l;
     private final OntModel aBox;
 
     static {
@@ -101,68 +114,27 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
-    @Override
-    public List<URI> getAllSensingDeviceURIs() {
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
-        }
-        qExec.close();
-        return uris;
-    }
-
-    public List<String> getAllSensingDeviceNamess() {
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<String> names = new ArrayList<String>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).getString());
-        }
-        qExec.close();
-        return names;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public List<URI> getAllFeatureOfInterestURIs() {
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
-        }
-        qExec.close();
-        return uris;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
     public List<String> getAllFeatureOfInterestNames() {
+        final List<String> names = new ArrayList<String>();
         final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " }";
         final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
         final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<String> names = new ArrayList<String>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).getString());
+
+        qExec.setTimeout(TIMEOUT1, TIMEOUT2);
+        try {
+            final ResultSet result = qExec.execSelect();
+            while (result.hasNext()) {
+
+                final QuerySolution solution = result.next();
+                names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).getString());
+            }
         }
-        qExec.close();
+        catch (QueryCancelledException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        finally {
+            qExec.close();
+        }
         return names;
     }
 
@@ -172,45 +144,35 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public List<SensingDevice> getAllSensingDevices() {
-        final List<URI> uris = this.getAllSensingDeviceURIs();
+        OntClass sensingDeviceClass = getABox().getOntClass(SSN.SensingDevice.getURI());
+        ExtendedIterator<? extends OntResource> instances = sensingDeviceClass.listInstances();
+
         final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
-        for (final URI uri : uris) {
-            final SensingDevice sensingDevice = this.getSensingDevice(uri);
-            if (sensingDevice != null) {
-                sensingDevices.add(sensingDevice);
-            }
+        while (instances.hasNext()) {
+            OntResource instance = instances.next();
+            sensingDevices.add(this.getSensingDevice(instance));
         }
+
         return sensingDevices;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public List<FeatureOfInterest> getAllFeaturesOfInterest() {
-        final List<URI> uris = this.getAllSensingDeviceURIs();
-        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
-        for (final URI uri : uris) {
-            final FeatureOfInterest featureOfInterest = this.getFeatureOfInterest(uri);
-            if (featureOfInterest != null) {
-                featuresOfInterest.add(featureOfInterest);
-            }
-        }
-        return featuresOfInterest;
+    @Override
+    public SensingDevice getSensingDevice(URI uri) {
+        OntResource instance = getABox().getOntResource(uri.toString());
+        return getSensingDevice(instance);
     }
 
     /**
      * 
      * {@inheritDoc}
      */
-    @Override
-    public SensingDevice getSensingDevice(final URI uri) {
-        Resource resource = this.getABox().getResource(uri.toString());
-        String name = this.getABox().getProperty(resource, RDFS.label).toString();
-        final SensingDevice sensingDevice = new SensingDevice(uri, name);
-        final List<URI> measurementCapabilityURIs = this.getAllMeasurementCapabilityURIsFromSensingDevice(uri);
-        for (final URI measurementCapabilityURI : measurementCapabilityURIs) {
-            final Resource measurementCapabilityResource = this.getABox().getResource(measurementCapabilityURI.toString());
+
+    public SensingDevice getSensingDevice(final OntResource instance) {
+        String name = instance.getProperty(RDFS.label).getString();
+        final SensingDevice sensingDevice = new SensingDevice(URI.create(instance.getURI()), name);
+        NodeIterator measurementCapabilityIter = instance.listPropertyValues(SSN.hasMeasurementCapability);
+        while (measurementCapabilityIter.hasNext()) {
+            OntResource measurementCapabilityResource = measurementCapabilityIter.next().as(OntResource.class);
             final MeasurementCapability measurementCapability = this.getMeasurementCapability(measurementCapabilityResource);
             if (measurementCapability != null) {
                 sensingDevice.addMeasurementCapability(measurementCapability);
@@ -221,101 +183,125 @@ public class QueryManagerImpl implements QueryManager {
     }
 
     public List<SensingDevice> getSensingDevice(final String name) {
-        // FIXME Test query
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " AND ?uri rdfs:" + RDFS.label.getLocalName() + " '"
-                + name + "'}";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            sensingDevices.add(getSensingDevice(URI.create(solution.get("uri").asResource().getURI())));
-        }
-        qExec.close();
+        OntClass sensingDeviceClass = getABox().getOntClass(SSN.SensingDevice.getURI());
+        ExtendedIterator<? extends RDFNode> instances = sensingDeviceClass.listLabels(name);
 
+        final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
+        while (instances.hasNext()) {
+            OntResource instance = instances.next().as(OntResource.class);
+            sensingDevices.add(this.getSensingDevice(instance));
+        }
         return sensingDevices;
+
     }
 
     /**
      * 
      * {@inheritDoc}
      */
-    public FeatureOfInterest getFeatureOfInterest(final URI uri) {
-        Resource resource = this.getABox().getResource(uri.toString());
-        String name = this.getABox().getProperty(resource, RDFS.label).toString();
-        final FeatureOfInterest featureOfInterest = new FeatureOfInterest(uri, name);
-        final List<URI> propertyURIs = this.getAllPropertyURIsByFeatureOfInterest(uri);
-        for (final URI propertyURI : propertyURIs) {
-            final Resource propertyResource = this.getABox().getResource(propertyURI.toString());
-            final Property property = new Property(URI.create(propertyResource.getURI()));
-            featureOfInterest.addProperty(property);
+    @Override
+    public List<FeatureOfInterest> getAllFeaturesOfInterest() {
+        OntClass featureOfInterestClass = getABox().getOntClass(SSN.FeatureOfInterest.getURI());
+        ExtendedIterator<? extends OntResource> instances = featureOfInterestClass.listInstances();
+
+        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
+        while (instances.hasNext()) {
+            OntResource instance = instances.next();
+            featuresOfInterest.add(this.getFeatureOfInterest(instance));
+        }
+
+        return featuresOfInterest;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FeatureOfInterest getFeatureOfInterest(URI uri) {
+        OntResource instance = getABox().getOntResource(uri.toString());
+        return getFeatureOfInterest(instance);
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public FeatureOfInterest getFeatureOfInterest(final OntResource instance) {
+        String name = instance.getProperty(RDFS.label).getString();
+        final FeatureOfInterest featureOfInterest = new FeatureOfInterest(URI.create(instance.getURI()), name);
+        NodeIterator propertyIter = instance.listPropertyValues(SSN.hasProperty);
+        while (propertyIter.hasNext()) {
+            OntResource propertyResource = propertyIter.next().as(OntResource.class);
+            featureOfInterest.addProperty(getProperty(propertyResource));
         }
 
         return featureOfInterest;
     }
 
     public List<FeatureOfInterest> getFeatureOfInterest(final String name) {
-        // FIXME Test query
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " AND ?uri rdfs:" + RDFS.label.getLocalName() + " '"
-                + name + "'}";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            featuresOfInterest.add(getFeatureOfInterest(URI.create(solution.get("uri").asResource().getURI())));
-        }
-        qExec.close();
+        OntClass featureOfInterestClass = getABox().getOntClass(SSN.FeatureOfInterest.getURI());
+        ExtendedIterator<? extends RDFNode> instances = featureOfInterestClass.listLabels(name);
 
+        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
+        while (instances.hasNext()) {
+            OntResource instance = instances.next().as(OntResource.class);
+            featuresOfInterest.add(this.getFeatureOfInterest(instance));
+        }
         return featuresOfInterest;
     }
 
     /**
-     * 
+     * @return
+     */
+    @Override
+    public List<Property> getAllProperties() {
+        OntClass propertyClass = getABox().getOntClass(SSN.Property.getURI());
+        ExtendedIterator<? extends OntResource> instances = propertyClass.listInstances();
+
+        final List<Property> properties = new ArrayList<Property>();
+        while (instances.hasNext()) {
+            OntResource instance = instances.next();
+            properties.add(this.getProperty(instance));
+        }
+
+        return properties;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public List<URI> getAllPropertyURIs() {
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.Property.getLocalName() + " }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
-        }
-        qExec.close();
-        return uris;
+    public Property getProperty(URI uri) {
+        OntResource instance = getABox().getOntResource(uri.toString());
+        return getProperty(instance);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Property getProperty(final OntResource instance) {
+        String name = instance.getProperty(RDFS.label).getString();
+        final Property property = new Property(URI.create(instance.getURI()), name);
+        return property;
+
     }
 
     /**
      * 
      * {@inheritDoc}
      */
-    @Override
+
     public List<SensingDevice> getSensingDevicesByObservedProperty(final URI uri) {
-        final List<URI> sensingDeviceURIs = this.getSensingDeviceURIsByObservedProperty(uri);
-        final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
-        for (final URI sensingDeviceURI : sensingDeviceURIs) {
-            sensingDevices.add(this.getSensingDevice(sensingDeviceURI));
-        }
-        return sensingDevices;
-    }
+        OntClass propertyClass = getABox().getOntClass(SSN.Property.getURI());
+        ExtendedIterator<Statement> instances = propertyClass.listProperties(SSN.observedBy);
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public List<FeatureOfInterest> getFeaturesOfInterestByProperty(final URI uri) {
-        final List<URI> featureOfInterestURIs = this.getFeatureOfInterestURIsByProperty(uri);
-        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
-        for (final URI featureOfInterestURI : featureOfInterestURIs) {
-            featuresOfInterest.add(this.getFeatureOfInterest(featureOfInterestURI));
+        final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
+        while (instances.hasNext()) {
+            Statement stmt = instances.next();
+            sensingDevices.add(this.getSensingDevice(stmt.getObject().as(OntResource.class)));
         }
-        return featuresOfInterest;
+
+        return sensingDevices;
     }
 
     /**
@@ -336,7 +322,7 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
-    public List<FeatureOfInterest> getFeaturesOfInterestByProperty(final SDFAttribute attribute) {
+    public List<FeatureOfInterest> getFeaturesOfInterestByAttribute(final SDFAttribute attribute) {
         // TODO Implement SDFAttribute mapping
         // return
         // this.getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS +
@@ -348,166 +334,123 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
-    @Override
-    public List<URI> getSensingDeviceURIsByObservedProperty(final URI uri) {
-        final String queryString = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.observes.getLocalName() + " <" + uri.toString() + "> }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+    public List<FeatureOfInterest> getFeaturesOfInterestByProperty(final URI uri) {
+        OntClass propertyClass = getABox().getOntClass(SSN.Property.getURI());
+        ExtendedIterator<Statement> instances = propertyClass.listProperties(SSN.isPropertyOf);
+
+        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
+        while (instances.hasNext()) {
+            Statement stmt = instances.next();
+            featuresOfInterest.add(this.getFeatureOfInterest(stmt.getObject().as(OntResource.class)));
         }
-        qExec.close();
-        return uris;
+
+        return featuresOfInterest;
     }
 
     /**
      * 
      * {@inheritDoc}
      */
-    public List<URI> getFeatureOfInterestURIsByProperty(final URI uri) {
-        final String queryString = "SELECT ?uri  WHERE { ?uri ssn:" + SSN.hasProperty.getLocalName() + " <" + uri.toString() + "> }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+
+    public List<Property> getAllPropertiesObservedBySensingDevice(final URI uri) {
+        OntClass sensingDeviceClass = getABox().getOntClass(SSN.SensingDevice.getURI());
+        ExtendedIterator<Statement> instances = sensingDeviceClass.listProperties(SSN.observes);
+
+        final List<Property> properties = new ArrayList<Property>();
+        while (instances.hasNext()) {
+            Statement stmt = instances.next();
+            properties.add(this.getProperty(stmt.getObject().as(OntResource.class)));
         }
-        qExec.close();
-        return uris;
+
+        return properties;
     }
 
     /**
      * 
      * {@inheritDoc}
      */
-    @Override
-    public List<URI> getAllPropertyURIsObservedBySensingDevice(final URI uri) {
-        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.observes.getLocalName() + " ?uri }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
-        }
-        qExec.close();
-        return uris;
-    }
+    public List<Property> getAllPropertiesByFeatureOfInterest(final OntResource featureOfInterest) {
+        OntClass featureOfInterestClass = getABox().getOntClass(SSN.FeatureOfInterest.getURI());
+        ExtendedIterator<Statement> instances = featureOfInterestClass.listProperties(SSN.hasProperty);
 
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    public List<URI> getAllPropertyURIsByFeatureOfInterest(final URI uri) {
-        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasProperty.getLocalName() + " ?uri }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
+        final List<Property> properties = new ArrayList<Property>();
+        while (instances.hasNext()) {
+            Statement stmt = instances.next();
+            properties.add(this.getProperty(stmt.getObject().as(OntResource.class)));
         }
-        qExec.close();
-        return uris;
+
+        return properties;
     }
 
     @SuppressWarnings("unused")
-    private List<String> getAllMeasurementCapabilityNamessFromSensingDevice(final URI uri) {
+    private List<MeasurementCapability> getAllMeasurementCapabilitiesFromSensingDevice(final OntResource sensingDevice) {
+        OntClass sensingDeviceClass = getABox().getOntClass(SSN.SensingDevice.getURI());
+        ExtendedIterator<Statement> instances = sensingDeviceClass.listProperties(SSN.hasMeasurementCapability);
 
-        // FIXME Do I need a query if already have the URI???
-        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<String> names = new ArrayList<String>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).toString());
+        final List<MeasurementCapability> measurementCapabilities = new ArrayList<MeasurementCapability>();
+        while (instances.hasNext()) {
+            Statement stmt = instances.next();
+            measurementCapabilities.add(this.getMeasurementCapability(stmt.getObject().as(OntResource.class)));
         }
-        qExec.close();
-        return names;
-    }
 
-    private List<URI> getAllMeasurementCapabilityURIsFromSensingDevice(final URI uri) {
-        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        final List<URI> uris = new ArrayList<URI>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            uris.add(URI.create(solution.get("uri").asResource().getURI()));
-        }
-        qExec.close();
-        return uris;
+        return measurementCapabilities;
     }
 
     @SuppressWarnings("unused")
     private List<MeasurementCapability> getMeasurementCapabilitiesForSDFAttribute(final SDFAttribute attribute) {
-        final String queryString = "SELECT ?uri  WHERE { ?uri rdfs:" + RDFS.label.getLocalName() + " '" + attribute.getAttributeName() + "' }";
-        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
-        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
-        final ResultSet result = qExec.execSelect();
-        List<MeasurementCapability> measurementCapabilities = new ArrayList<MeasurementCapability>();
-        while (result.hasNext()) {
-            final QuerySolution solution = result.next();
-            measurementCapabilities.add(getMeasurementCapability(solution.get("uri").asResource()));
+        String sensingDevice = attribute.getSourceName();
+        String name = attribute.getAttributeName();
+
+        OntClass measurementCapabilityClass = getABox().getOntClass(SSN.MeasurementCapability.getURI());
+        ExtendedIterator<? extends RDFNode> instances = measurementCapabilityClass.listLabels(name);
+
+        final List<MeasurementCapability> measurementCapabilities = new ArrayList<MeasurementCapability>();
+        while (instances.hasNext()) {
+            OntResource instance = instances.next().as(OntResource.class);
+            ExtendedIterator<Statement> sensingDeviceInstances = instance.listProperties(SSN.hasMeasurementCapability);
+            while (sensingDeviceInstances.hasNext()) {
+                OntResource sensingDeviceInstance = sensingDeviceInstances.next().getObject().as(OntResource.class);
+                if (sensingDeviceInstance.hasLabel(sensingDevice, "en")) {
+                    measurementCapabilities.add(this.getMeasurementCapability(instance));
+                    break;
+                }
+            }
+
         }
-        qExec.close();
         return measurementCapabilities;
+
     }
 
-    private MeasurementCapability getMeasurementCapability(final Resource measurementCapabilityResource) {
-        final Statement propertyStmt = this.getABox().getProperty(measurementCapabilityResource, SSN.forProperty);
-        if (propertyStmt != null) {
-            String name = this.getABox().getProperty(measurementCapabilityResource, RDFS.label).toString();
-            final Property property = new Property(URI.create(propertyStmt.getResource().getURI()));
-            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(measurementCapabilityResource.getURI()), name, property);
+    private MeasurementCapability getMeasurementCapability(final OntResource measurementCapabilityResource) {
 
-            QueryExecution qExec;
-            ResultSet result;
+        final Statement propertyStmt = measurementCapabilityResource.getProperty(SSN.forProperty);
+        String name = measurementCapabilityResource.getProperty(RDFS.label).getString();
+        final Property property = new Property(URI.create(propertyStmt.getResource().getURI()));
+        final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(measurementCapabilityResource.getURI()), name, property);
 
-            final String conditionQueryString = "SELECT ?uri  WHERE { <" + measurementCapabilityResource.getURI().toString() + "> ssn:" + SSN.inCondition.getLocalName() + " ?uri }";
-            final Query conditionQuery = QueryFactory.create(QUERY_PREFIX + conditionQueryString);
+        StmtIterator conditionIter = measurementCapabilityResource.listProperties(SSN.inCondition);
 
-            qExec = QueryExecutionFactory.create(conditionQuery, this.getABox());
-            result = qExec.execSelect();
-            while (result.hasNext()) {
-                final QuerySolution solution = result.next();
-                final Condition condition = this.getConditon(solution.get("uri").asResource());
-                if (condition != null) {
-                    measurementCapability.addCondition(condition);
-                }
+        while (conditionIter.hasNext()) {
+            OntResource conditionResource = conditionIter.next().getObject().as(OntResource.class);
+            final Condition condition = this.getConditon(conditionResource);
+            if (condition != null) {
+                measurementCapability.addCondition(condition);
             }
-            qExec.close();
-
-            final String measurementPropertyQueryString = "SELECT ?uri  WHERE { <" + measurementCapabilityResource.getURI().toString() + "> ssn:" + SSN.hasMeasurementProperty.getLocalName()
-                    + " ?uri }";
-            final Query measurementPropertyQuery = QueryFactory.create(QUERY_PREFIX + measurementPropertyQueryString);
-            qExec = QueryExecutionFactory.create(measurementPropertyQuery, this.getABox());
-            result = qExec.execSelect();
-            while (result.hasNext()) {
-                final QuerySolution solution = result.next();
-                final MeasurementProperty measurementProperty = this.getMeasurementProperty(solution.get("uri").asResource());
-                if (measurementProperty != null) {
-                    measurementCapability.addMeasurementProperty(measurementProperty);
-                }
-            }
-            qExec.close();
-            return measurementCapability;
         }
-        return null;
+
+        StmtIterator measurementPropertyIter = measurementCapabilityResource.listProperties(SSN.hasMeasurementProperty);
+        while (measurementPropertyIter.hasNext()) {
+            OntResource measurementPropertyResource = measurementPropertyIter.next().getObject().as(OntResource.class);
+            final MeasurementProperty measurementProperty = this.getMeasurementProperty(measurementPropertyResource);
+            if (measurementProperty != null) {
+                measurementCapability.addMeasurementProperty(measurementProperty);
+            }
+        }
+        return measurementCapability;
     }
 
-    private Condition getConditon(final Resource condition) {
-        final Statement propertyStmt = this.getABox().getProperty(condition, RDFS.subClassOf);
+    private Condition getConditon(final OntResource condition) {
+        Statement propertyStmt = condition.getProperty(RDFS.subClassOf);
         final Property property;
         if (propertyStmt != null) {
             property = new Property(URI.create(propertyStmt.getResource().getURI()));
@@ -526,7 +469,7 @@ public class QueryManagerImpl implements QueryManager {
         }
     }
 
-    private MeasurementProperty getMeasurementProperty(final Resource measurementProperty) {
+    private MeasurementProperty getMeasurementProperty(final OntResource measurementProperty) {
 
         @SuppressWarnings("unused")
         final Interval interval = this.getMeasurementPropertyInterval(measurementProperty);
@@ -565,11 +508,11 @@ public class QueryManagerImpl implements QueryManager {
         else if (measurementProperty.getPropertyResourceValue(RDFS.subClassOf).equals(SSN.Selectivity)) {
             return new Selectivity(URI.create(measurementProperty.getURI()));
         }
-        return new MeasurementProperty(URI.create(measurementProperty.getURI()), measurementProperty);
+        return new MeasurementProperty(URI.create(measurementProperty.getURI()), measurementProperty.asClass());
 
     }
 
-    private Interval getConditionInterval(final Resource condition) {
+    private Interval getConditionInterval(final OntResource condition) {
         double min = Double.MIN_VALUE;
         double max = Double.MAX_VALUE;
 
@@ -588,7 +531,7 @@ public class QueryManagerImpl implements QueryManager {
         return new Interval(min, max);
     }
 
-    private String getConditionExpression(final Resource condition) {
+    private String getConditionExpression(final OntResource condition) {
         String expression = null;
 
         final Statement conditionStmt = this.getABox().getProperty(condition, SSN.hasValue);
@@ -603,7 +546,7 @@ public class QueryManagerImpl implements QueryManager {
         return expression;
     }
 
-    private Interval getMeasurementPropertyInterval(final Resource measurementProperty) {
+    private Interval getMeasurementPropertyInterval(final OntResource measurementProperty) {
         double min = Double.MIN_VALUE;
         double max = Double.MAX_VALUE;
 

@@ -20,11 +20,15 @@
      <command
             defaultHandler="de.uniol.inf.is.odysseus.ontology.rcp.commands.RefreshSensorRegistryViewCommand"
             id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.RefreshSensorRegistryViewCommand"
-            name="Refresh Sensor Registry">
+            name="Refresh sensor registry">
       </command>
            <command
             id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
-            name="Create Sensing Device">
+            name="Create sensing device">
+      </command>
+      <command
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateFeatureOfInterestCommand"
+            name="Create feature of interest">
       </command>
       </extension>
       <extension
@@ -45,7 +49,13 @@
          <command
                commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
                icon="icons/ontology.png"
-               label="Create Sensing Device"
+               label="Create sensing device"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateFeatureOfInterestCommand"
+               icon="icons/ontology.png"
+               label="Create feature of interest"
                style="push">
          </command>
       </menuContribution>
@@ -59,6 +69,15 @@
             icon="icons/ontology.png"
             id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.SensingDeviceWizard"
             name="Sensing Device"
+            project="true">
+      </wizard>
+       <wizard
+            category="de.uniol.inf.is.odysseus.rcp.wizard.category"
+            class="de.uniol.inf.is.odysseus.ontology.rcp.wizards.FeatureOfInterestWizard"
+            finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
+            icon="icons/ontology.png"
+            id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.FeatureOfInterestWizard"
+            name="Feature of Interest"
             project="true">
       </wizard>
       <category

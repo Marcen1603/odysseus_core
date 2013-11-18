@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.ontology.ontology;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SSNMeasurementProperty;
@@ -78,8 +78,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      */
     @Override
     public List<SensingDevice> getAllSensingDevices() {
-        final List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.ontology.getAllSensingDevices();
-        return sensingDevices;
+        return SensorOntologyServiceImpl.ontology.getAllSensingDevices();
     }
 
     /**
@@ -95,6 +94,14 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
+    public List<FeatureOfInterest> getAllFeaturesOfInterest() {
+        return SensorOntologyServiceImpl.ontology.getAllFeaturesOfInterest();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void createSensingDevice(final SensingDevice sensingDevice) {
         SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
     }
@@ -103,16 +110,24 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
      * {@inheritDoc}
      */
     @Override
-    public List<SDFAttribute> getAllProperties() {
-        final List<SDFAttribute> properties = new ArrayList<SDFAttribute>();
-        return properties;
+    public void createFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+        SensorOntologyServiceImpl.ontology.createFeatureOfInterest(featureOfInterest);
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<SDFAttribute> getAllProperties(String featureOfInterest) {
+    public List<Property> getAllProperties() {
+        return SensorOntologyServiceImpl.ontology.getAllProperties();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Property> getAllProperties(String featureOfInterest) {
         // TODO Auto-generated method stub
         return null;
     }

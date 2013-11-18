@@ -293,20 +293,6 @@ public class SourceManagerImpl implements SourceManager {
     }
 
     /**
-     * Create a new measurement property with the given name under the given
-     * namespace.
-     * 
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The measurement property individual.
-     */
-    private Individual createMeasurementPropertyNS(final String name, final String namespace) {
-        return this.createMeasurementProperty(URI.create(namespace + name));
-    }
-
-    /**
      * Create a new measurement capability with the given URI.
      * 
      * @param uri
@@ -321,41 +307,6 @@ public class SourceManagerImpl implements SourceManager {
     }
 
     /**
-     * // * Create a new measurement capability with the given name under the
-     * given
-     * // * namespace.
-     * // *
-     * // * @param sensingDeviceName
-     * // * The name of the sensing device
-     * // * @param name
-     * // * The name.
-     * // * @param namespace
-     * // * The namespace.
-     * // * @return The measurement capability individual.
-     * //
-     */
-    // private Individual createMeasurementCapabilityNS(final String
-    // sensingDeviceName, final String name, final String namespace) {
-    // return this.createMeasurementCapability(URI.create(namespace +
-    // sensingDeviceName + name));
-    // }
-    //
-    // /**
-    // * Create a new measurement capability with the given name under the given
-    // * namespace.
-    // *
-    // * @param name
-    // * The name.
-    // * @param namespace
-    // * The namespace.
-    // * @return The measurement capability individual.
-    // */
-    // private Individual createMeasurementCapabilityNS(final String name, final
-    // String namespace) {
-    // return this.createMeasurementCapability(URI.create(namespace + name));
-    // }
-
-    /**
      * Create a new condition with the given URI.
      * 
      * @param uri
@@ -366,37 +317,6 @@ public class SourceManagerImpl implements SourceManager {
         this.getABox().createClass(SSN.Condition.getURI());
         final Individual condition = this.getABox().createIndividual(uri.toString(), SSN.Condition);
         return condition;
-    }
-
-    /**
-     * Create a new condition with the given name under the given
-     * namespace.
-     * 
-     * @param sensingDeviceName
-     *            The name of the sensing device
-     *            param propertyName The name of the property
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The condition individual.
-     */
-    private Individual createConditionNS(final String sensingDeviceName, final String propertyName, final String name, final String namespace) {
-        return this.createCondition(URI.create(namespace + sensingDeviceName + propertyName + name));
-    }
-
-    /**
-     * Create a new condition with the given name under the given
-     * namespace.
-     * 
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The condition individual.
-     */
-    private Individual createConditionNS(final String name, final String namespace) {
-        return this.createCondition(URI.create(namespace + name));
     }
 
     /**
@@ -424,22 +344,6 @@ public class SourceManagerImpl implements SourceManager {
         throw new IllegalArgumentException("Not implemented yet");
     }
 
-    //
-    // /**
-    // * Create a new feature of interest with the given name under the given
-    // * namespace.
-    // *
-    // * @param name
-    // * The name.
-    // * @param namespace
-    // * The namespace.
-    // * @return The feature of interest individual.
-    // */
-    // private Individual createFeatureOfInterestNS(final String name, final
-    // String namespace) {
-    // return this.createFeatureOfInterest(URI.create(namespace + name));
-    // }
-
     /**
      * Create a new sensing device with the given URI.
      * 
@@ -465,22 +369,6 @@ public class SourceManagerImpl implements SourceManager {
         throw new IllegalArgumentException("Not implemented yet");
     }
 
-    //
-    // /**
-    // * Create a new sensing device with the given name under the given
-    // * namespace.
-    // *
-    // * @param name
-    // * The name.
-    // * @param namespace
-    // * The namespace.
-    // * @return The sensing device individual.
-    // */
-    // private Individual createSensingDeviceNS(final String name, final String
-    // namespace) {
-    // return this.createSensingDevice(URI.create(namespace + name));
-    // }
-
     /**
      * Create a new property with the given URI.
      * 
@@ -494,38 +382,6 @@ public class SourceManagerImpl implements SourceManager {
         this.getABox().add(property, RDFS.label, name);
         return property;
     }
-
-    // /**
-    // * Create a new property with the given name under the given namespace.
-    // *
-    // * @param name
-    // * The name.
-    // * @param namespace
-    // * The namespace.
-    // * @return The property individual.
-    // */
-    // private Individual createPropertyNS(final String name, final String
-    // namespace) {
-    // return this.createProperty(URI.create(namespace + name));
-    // }
-    //
-    // /**
-    // * Create a new property of the given feature of interest with the given
-    // * name under the given namespace.
-    // *
-    // * @param featureOfInterest
-    // * The feature of interest.
-    // * @param name
-    // * The name.
-    // * @param namespace
-    // * The namespace.
-    // * @return The property individual.
-    // */
-    // private Individual createPropertyNS(final String featureOfInterest, final
-    // String name, final String namespace) {
-    // return this.createProperty(URI.create(namespace + featureOfInterest +
-    // name));
-    // }
 
     /**
      * Gets the A box.

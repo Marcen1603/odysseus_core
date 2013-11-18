@@ -51,28 +51,24 @@ public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider
         return super.getImage(element);
     }
 
-    @SuppressWarnings("unused")
     @Override
     public String getText(final Object element) {
         if (element instanceof SensingDevice) {
             final SensingDevice sensingDevice = (SensingDevice) element;
             final StringBuilder sb = new StringBuilder();
-            // sb.append(sensingDevice.getName()).append(" [").append(sensingDevice.getUri().toString()).append("]");
+            sb.append(sensingDevice.getName()).append(" [").append(sensingDevice.getUri().toString()).append("]");
             return sb.toString();
         }
         else if (element instanceof MeasurementCapability) {
             final MeasurementCapability measurementCapability = (MeasurementCapability) element;
-            // final SDFAttribute attribute =
-            // measurementCapability.getAttribute();
             final StringBuilder sb = new StringBuilder();
-            // sb.append(attribute.getAttributeName()).append(" [").append(attribute.getURI().toString()).append("]");
+            sb.append(measurementCapability.getName()).append(" [").append(measurementCapability.getUri().toString()).append("]");
             return sb.toString();
         }
         else if (element instanceof Condition) {
             final Condition condition = (Condition) element;
             final StringBuilder sb = new StringBuilder();
-            // sb.append(condition.getAttribute().getAttributeName()).append(" [").append(condition.getAttribute().getURI().toString()).append("]").append(" [").append(condition.getInterval())
-            // .append("]");
+            sb.append(condition.getOnProperty().getName()).append(" [").append(condition.getUri().toString()).append("]").append(" [").append(condition.toString()).append("]");
             return sb.toString();
         }
         return super.getText(element);

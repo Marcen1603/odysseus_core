@@ -30,6 +30,7 @@ public enum SSNMeasurementProperty {
     private Resource resource;
 
     // Constructor
+
     SSNMeasurementProperty(Resource resource) {
         this.resource = resource;
     }
