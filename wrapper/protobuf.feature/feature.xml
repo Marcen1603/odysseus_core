@@ -69,7 +69,7 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="com.google.protobuf_2.5"
+         id="com.google.protobuf"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
