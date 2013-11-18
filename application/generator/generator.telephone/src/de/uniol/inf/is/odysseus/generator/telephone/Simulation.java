@@ -22,11 +22,12 @@ public class Simulation extends Thread implements ICallDecriptionRecordReceiver 
 		for (int i = 0; i < noOfTelefones; i++) {
 			availableTelephones.add("No " + i);
 		}
-		int districtCounter = 0;
 		for (double latitude = 0.0; latitude < noLatitudes; latitude += 1.0) {
 			for (double longitude = 0.0; longitude < noLongitudes; longitude += 1.0) {
 				IPair<Double,Double> coordinates = new Pair<Double,Double>(latitude, longitude);
-				availableLocations.add(new Pair<IPair<Double,Double>, Integer>(coordinates,districtCounter++));
+				int district = (int) (Math.floor(noLongitudes / 5) * Math.floor(latitude / 5) + Math.floor(longitude / 5));
+				// creates districts with a size of 5*5 coordinates
+				availableLocations.add(new Pair<IPair<Double,Double>, Integer>(coordinates,district));
 			}
 		}
 		this.parallelCallCount = parallelCallCount;
