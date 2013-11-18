@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
@@ -149,7 +148,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                     }
                     else {
                         ByteBuffer buffer = ByteBuffer.allocate(1024);
-                        int c =0;
                         while (this.input.ready()) {
                             int r = this.input.read();
                             buffer.putInt(r);
