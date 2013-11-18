@@ -149,6 +149,7 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
                     }
                     else {
                         ByteBuffer buffer = ByteBuffer.allocate(1024);
+                        int c =0;
                         while (this.input.ready()) {
                             int r = this.input.read();
                             buffer.putInt(r);
@@ -182,12 +183,6 @@ public class RS232TransportHandler extends AbstractTransportHandler implements S
     public OutputStream getOutputStream() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public ITransportExchangePattern getExchangePattern() {
-        // TODO: Is this correct?
-        return ITransportExchangePattern.InOut;
     }
 
     @Override

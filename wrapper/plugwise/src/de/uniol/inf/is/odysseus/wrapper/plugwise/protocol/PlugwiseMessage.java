@@ -21,8 +21,6 @@ public class PlugwiseMessage {
 	
 	byte[] serialize(){
 		
-		// TODO: NOT WORKING. CHECK IN VERSION
-		
 		StringBuffer msg = new StringBuffer();
 		msg.append(ID);
 		msg.append(mac);

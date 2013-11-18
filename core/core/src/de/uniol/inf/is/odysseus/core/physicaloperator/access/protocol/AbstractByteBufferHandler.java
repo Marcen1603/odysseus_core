@@ -56,8 +56,6 @@ abstract public class AbstractByteBufferHandler<T> extends AbstractProtocolHandl
 		if (this.getDirection().equals(ITransportDirection.IN)) {
 			return ITransportExchangePattern.InOnly;
 		} 
-		
 		return ITransportExchangePattern.OutOnly;
-		
 	}
 }

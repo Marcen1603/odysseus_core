@@ -17,73 +17,92 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	public static final String NAME = "Plugwise";
 	public static final String CIRCLE_MAC = "circle_mac";
-	
-	@SuppressWarnings("unused")
+
 	private String circleMac = null;
-	
+
 	public PlugwiseProtocolHandler() {
 	}
-	
+
 	public PlugwiseProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
 			IDataHandler<T> dataHandler) {
 		super(direction, access, dataHandler);
 		init(options);
 	}
-	
+
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
-		// TODO: Is this always correct?
-		return ITransportExchangePattern.InOptionalOut;
+		if (this.getDirection().equals(ITransportDirection.IN)) {
+			return ITransportExchangePattern.InOnly;
+		}
+		return ITransportExchangePattern.OutOnly;
 	}
-	
-	
+
 	private void init(Map<String, String> options) {
-		if (options.containsKey(CIRCLE_MAC)){
+		if (options.containsKey(CIRCLE_MAC)) {
 			circleMac = options.get(CIRCLE_MAC);
-		}else{
+		} else {
 			throw new IllegalArgumentException("No Circle Mac defined!");
 		}
 	}
 
+	private byte[] getMessage(byte[] id, byte[] mac, byte[] args){
+		
+		
+		byte[] header = { 0x05, 0x05, 0x03, 0x03 };
+		byte[] footer = { 0x0d, 0x0a };
+
+		int messageLength = id.length;
+		if (mac != null){
+			messageLength+=mac.length;
+		}
+		if(args != null){
+			messageLength+=args.length;
+		}
+		
+		byte[] message = new byte[messageLength];
+		System.arraycopy(id, 0, message, 0, id.length);
+		int curPos = id.length;
+		if (mac!=null){
+			System.arraycopy(mac, 0, message, curPos, mac.length);
+			curPos += mac.length;
+		}
+
+		if (args!=null){
+			System.arraycopy(args, 0, message, curPos, args.length);
+			curPos += args.length;
+		}
+		
+		
+		byte[] chksum = Checksum.getCRC16_bytes(message);
+
+		byte[] toSend = new byte[header.length+footer.length+id.length+chksum.length];
+
+		System.arraycopy(header, 0, toSend, 0, header.length);
+		System.arraycopy(message, 0, toSend, header.length, message.length);
+		System.arraycopy(chksum, 0, toSend, header.length+message.length, chksum.length);
+		System.arraycopy(footer, 0, toSend, header.length+message.length+chksum.length, footer.length);
+		return toSend;
+		
+	}
+	
+	
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
-		byte[] init_0 = {0x00, 0x0a};
-		
-		byte[] chksum = Checksum.getCRC16_bytes(init_0);
+		// init:
+//		byte[] id = { 0x00, 0x0a };
+//		byte[] toSend = getMessage(id,null,null);
+//		getTransportHandler().send(toSend);
 
-		getTransportHandler().send(init_0);
-		getTransportHandler().send(chksum);
+		byte[] init = {0x00, 0x0a, (byte) 0xb4, (byte) 0xc3};
+		getTransportHandler().send(init);
 		
-
-//		
-//		byte[] init = {0x00, 0x0a, (byte) 0xb4, 0x3c};
-//		byte[] endline = {0x0d, 0x0a};
-//		
-//		
-//		
-//		String startMessage = "";
-//		byte[] header = {0x05,0x05,0x03,0x03};
-//		int powerchangecode = 0017;
-//		
-//		int on = 01;
-//		ByteBuffer command = ByteBuffer.allocate(800);
-//		command.putInt(powerchangecode);
-//		command.put(this.circleMac.getBytes());
-//		command.putInt(on);
-//		command.flip();
-//		
-//		ByteBuffer buffer = ByteBuffer.allocate(1024);
-//		buffer.put(header);
-//		buffer.put(command);
-//		buffer.put(Checksum.getCRC16_bytes(command.array()));
-//		buffer.put(endline);
-//		
-//		getTransportHandler().send(buffer.array());
+		//0017000D6F0000B1B9A90180CC
+		byte[] on1 = {0x00,0x17,0x00,0x0D,0x6F,0x00,0x00,(byte) 0xB1,(byte) 0xB9,(byte) 0xA9,0x01,(byte) 0x80,(byte) 0xCC};
+		getTransportHandler().send(on1);
 	}
-	
- 
+
 	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
@@ -94,7 +113,8 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
 			IDataHandler<T> dataHandler) {
-		return new PlugwiseProtocolHandler<>(direction, access, options, dataHandler);
+		return new PlugwiseProtocolHandler<>(direction, access, options,
+				dataHandler);
 
 	}
 
@@ -117,11 +137,11 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public void process(ByteBuffer message) {
-		// TODO Auto-generated method stub
-		message.limit();
-		byte[] out = message.array();
-		for (byte b:out){
-			System.out.print(b);
+		int size = message.limit();
+		byte[] out = new byte[size];
+		message.get(out, 0,	size);
+		for (byte b : out) {
+			System.out.print(Integer.toHexString(b));
 		}
 		System.out.println();
 	}
