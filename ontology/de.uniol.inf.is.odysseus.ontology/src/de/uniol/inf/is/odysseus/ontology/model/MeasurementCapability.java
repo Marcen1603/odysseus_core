@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
  * 
  */
 public class MeasurementCapability extends Property {
+    private final String name;
     private final Property forProperty;
     private final List<Condition> inConditions = new ArrayList<Condition>();
     private final List<MeasurementProperty> hasMeasurementProperties = new ArrayList<MeasurementProperty>();
@@ -38,8 +39,25 @@ public class MeasurementCapability extends Property {
      * @param uri
      */
     public MeasurementCapability(URI uri, Property forProperty) {
+        this(uri, uri.getFragment(), forProperty);
+    }
+
+    /**
+     * Class constructor.
+     * 
+     * @param uri
+     */
+    public MeasurementCapability(URI uri, String name, Property forProperty) {
         super(uri);
+        this.name = name;
         this.forProperty = forProperty;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**

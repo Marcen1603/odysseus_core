@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class FeatureOfInterest {
     private final URI uri;
+    private final String name;
     private final List<Property> hasProperties = new ArrayList<Property>();
 
     /**
@@ -33,7 +34,15 @@ public class FeatureOfInterest {
      * 
      */
     public FeatureOfInterest(URI uri) {
-        this.uri = uri;
+        this(uri, new ArrayList<Property>());
+    }
+
+    /**
+     * Class constructor.
+     * 
+     */
+    public FeatureOfInterest(URI uri, String name) {
+        this(uri, name, new ArrayList<Property>());
     }
 
     /**
@@ -41,8 +50,24 @@ public class FeatureOfInterest {
      * 
      */
     public FeatureOfInterest(URI uri, List<Property> hasProperties) {
+        this(uri, uri.getFragment(), hasProperties);
+    }
+
+    /**
+     * Class constructor.
+     * 
+     */
+    public FeatureOfInterest(URI uri, String name, List<Property> hasProperties) {
         this.uri = uri;
+        this.name = name;
         this.hasProperties.addAll(hasProperties);
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**

@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.ontology.manager;
 import java.net.URI;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 
 /**
@@ -63,8 +62,6 @@ public interface QueryManager {
      * @return A list of URIs
      */
     List<SensingDevice> getSensingDevicesByObservedProperty(URI uri);
-
-    List<SensingDevice> getSensingDevicesByObservedProperty(SDFAttribute attribute);
 
     /**
      * Gets all properties from the ontology that are observed by the given

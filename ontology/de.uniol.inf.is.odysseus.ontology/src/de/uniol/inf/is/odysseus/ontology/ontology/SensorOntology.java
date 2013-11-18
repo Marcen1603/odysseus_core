@@ -93,7 +93,9 @@ public class SensorOntology {
     }
 
     public List<SensingDevice> getSensingdeviceByProperty(final SDFAttribute attribute) {
-        return this.queryManager.getSensingDevicesByObservedProperty(attribute);
+        // return
+        // this.queryManager.getSensingDevicesByObservedProperty(attribute);
+        throw new IllegalArgumentException("Not implemented yet");
     }
 
     public List<SensingDevice> getAllSensingDevices() {

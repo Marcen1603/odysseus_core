@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class SensingDevice {
     private final URI uri;
+    private final String name;
     private final List<MeasurementCapability> hasMeasurementCapabilities = new ArrayList<MeasurementCapability>();
 
     /**
@@ -33,7 +34,16 @@ public class SensingDevice {
      * 
      */
     public SensingDevice(final URI uri) {
+        this(uri, uri.getFragment());
+    }
+
+    /**
+     * Class constructor.
+     * 
+     */
+    public SensingDevice(final URI uri, String name) {
         this.uri = uri;
+        this.name = name;
     }
 
     /**
@@ -41,6 +51,13 @@ public class SensingDevice {
      */
     public URI getUri() {
         return this.uri;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
     }
 
     /**

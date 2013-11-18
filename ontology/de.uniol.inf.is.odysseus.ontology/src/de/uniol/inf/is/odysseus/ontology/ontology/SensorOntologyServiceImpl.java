@@ -44,8 +44,15 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ontology.SensorOntologyService;
+import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
+import de.uniol.inf.is.odysseus.ontology.model.SSNMeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
+import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.condition.IntervalCondition;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
+import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -242,16 +249,21 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
     }
 
     private void createSensingDevice(final String name, final SDFSchema schema) {
-        final SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name));
-        // for (final SDFAttribute attribute : schema.getAttributes()) {
-        // final MeasurementCapability measurementCapability = new
-        // MeasurementCapability(URI.create(ODYSSEUS.NS + name + "/" +
-        // attribute.getAttributeName()), attribute);
-        // final AbstractCondition condition = new AbstractCondition(attribute,
-        // Interval.MAX);
-        // measurementCapability.addCondition(condition);
-        // sensingDevice.addMeasurementCapability(measurementCapability);
-        // }
+        final SensingDevice sensingDevice = new SensingDevice(URI.create(ODYSSEUS.NS + name), name);
+        for (final SDFAttribute attribute : schema.getAttributes()) {
+            Property property = new Property(URI.create(ODYSSEUS.NS + attribute.getAttributeName()));
+            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(ODYSSEUS.NS + name + "/" + attribute.getAttributeName()), attribute.getAttributeName(), property);
+            final Condition condition = new IntervalCondition(URI.create(ODYSSEUS.NS + name + "/" + attribute.getAttributeName() + "/" + attribute.getAttributeName()), property, Interval.MAX);
+            measurementCapability.addCondition(condition);
+
+            for (SSNMeasurementProperty ssnMeasurementProperty : SSNMeasurementProperty.values()) {
+                MeasurementProperty measurementProperty = new MeasurementProperty(URI.create(ODYSSEUS.NS + name + "/" + attribute.getAttributeName() + "/" + attribute.getAttributeName() + "/"
+                        + ssnMeasurementProperty.toString()), ssnMeasurementProperty.getResource());
+                measurementCapability.addMeasurementProperty(measurementProperty);
+            }
+
+            sensingDevice.addMeasurementCapability(measurementCapability);
+        }
         SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
     }
 }

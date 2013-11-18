@@ -116,6 +116,20 @@ public class QueryManagerImpl implements QueryManager {
         return uris;
     }
 
+    public List<String> getAllSensingDeviceNamess() {
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<String> names = new ArrayList<String>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).getString());
+        }
+        qExec.close();
+        return names;
+    }
+
     /**
      * 
      * {@inheritDoc}
@@ -132,6 +146,24 @@ public class QueryManagerImpl implements QueryManager {
         }
         qExec.close();
         return uris;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    public List<String> getAllFeatureOfInterestNames() {
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<String> names = new ArrayList<String>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).getString());
+        }
+        qExec.close();
+        return names;
     }
 
     /**
@@ -173,7 +205,9 @@ public class QueryManagerImpl implements QueryManager {
      */
     @Override
     public SensingDevice getSensingDevice(final URI uri) {
-        final SensingDevice sensingDevice = new SensingDevice(uri);
+        Resource resource = this.getABox().getResource(uri.toString());
+        String name = this.getABox().getProperty(resource, RDFS.label).toString();
+        final SensingDevice sensingDevice = new SensingDevice(uri, name);
         final List<URI> measurementCapabilityURIs = this.getAllMeasurementCapabilityURIsFromSensingDevice(uri);
         for (final URI measurementCapabilityURI : measurementCapabilityURIs) {
             final Resource measurementCapabilityResource = this.getABox().getResource(measurementCapabilityURI.toString());
@@ -186,12 +220,31 @@ public class QueryManagerImpl implements QueryManager {
         return sensingDevice;
     }
 
+    public List<SensingDevice> getSensingDevice(final String name) {
+        // FIXME Test query
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " AND ?uri rdfs:" + RDFS.label.getLocalName() + " '"
+                + name + "'}";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            sensingDevices.add(getSensingDevice(URI.create(solution.get("uri").asResource().getURI())));
+        }
+        qExec.close();
+
+        return sensingDevices;
+    }
+
     /**
      * 
      * {@inheritDoc}
      */
     public FeatureOfInterest getFeatureOfInterest(final URI uri) {
-        final FeatureOfInterest featureOfInterest = new FeatureOfInterest(uri);
+        Resource resource = this.getABox().getResource(uri.toString());
+        String name = this.getABox().getProperty(resource, RDFS.label).toString();
+        final FeatureOfInterest featureOfInterest = new FeatureOfInterest(uri, name);
         final List<URI> propertyURIs = this.getAllPropertyURIsByFeatureOfInterest(uri);
         for (final URI propertyURI : propertyURIs) {
             final Resource propertyResource = this.getABox().getResource(propertyURI.toString());
@@ -200,6 +253,23 @@ public class QueryManagerImpl implements QueryManager {
         }
 
         return featureOfInterest;
+    }
+
+    public List<FeatureOfInterest> getFeatureOfInterest(final String name) {
+        // FIXME Test query
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " AND ?uri rdfs:" + RDFS.label.getLocalName() + " '"
+                + name + "'}";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<FeatureOfInterest> featuresOfInterest = new ArrayList<FeatureOfInterest>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            featuresOfInterest.add(getFeatureOfInterest(URI.create(solution.get("uri").asResource().getURI())));
+        }
+        qExec.close();
+
+        return featuresOfInterest;
     }
 
     /**
@@ -252,12 +322,13 @@ public class QueryManagerImpl implements QueryManager {
      * 
      * {@inheritDoc}
      */
-    @Override
-    public List<SensingDevice> getSensingDevicesByObservedProperty(final SDFAttribute attribute) {
+
+    public List<SensingDevice> getSensingDevicesBySDFAttribute(final SDFAttribute attribute) {
         // TODO Implement SDFAttribute mapping
         // return
         // this.getSensingDevicesByObservedProperty(URI.create(ODYSSEUS.NS +
         // attribute.getAttributeName()));
+
         throw new IllegalArgumentException("Not implemented yet");
     }
 
@@ -347,6 +418,23 @@ public class QueryManagerImpl implements QueryManager {
         return uris;
     }
 
+    @SuppressWarnings("unused")
+    private List<String> getAllMeasurementCapabilityNamessFromSensingDevice(final URI uri) {
+
+        // FIXME Do I need a query if already have the URI???
+        final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        final List<String> names = new ArrayList<String>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            names.add(this.getABox().getProperty(solution.get("uri").asResource(), RDFS.label).toString());
+        }
+        qExec.close();
+        return names;
+    }
+
     private List<URI> getAllMeasurementCapabilityURIsFromSensingDevice(final URI uri) {
         final String queryString = "SELECT ?uri  WHERE { <" + uri.toString() + "> ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?uri }";
         final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
@@ -361,11 +449,27 @@ public class QueryManagerImpl implements QueryManager {
         return uris;
     }
 
+    @SuppressWarnings("unused")
+    private List<MeasurementCapability> getMeasurementCapabilitiesForSDFAttribute(final SDFAttribute attribute) {
+        final String queryString = "SELECT ?uri  WHERE { ?uri rdfs:" + RDFS.label.getLocalName() + " '" + attribute.getAttributeName() + "' }";
+        final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+        final QueryExecution qExec = QueryExecutionFactory.create(query, this.getABox());
+        final ResultSet result = qExec.execSelect();
+        List<MeasurementCapability> measurementCapabilities = new ArrayList<MeasurementCapability>();
+        while (result.hasNext()) {
+            final QuerySolution solution = result.next();
+            measurementCapabilities.add(getMeasurementCapability(solution.get("uri").asResource()));
+        }
+        qExec.close();
+        return measurementCapabilities;
+    }
+
     private MeasurementCapability getMeasurementCapability(final Resource measurementCapabilityResource) {
         final Statement propertyStmt = this.getABox().getProperty(measurementCapabilityResource, SSN.forProperty);
         if (propertyStmt != null) {
+            String name = this.getABox().getProperty(measurementCapabilityResource, RDFS.label).toString();
             final Property property = new Property(URI.create(propertyStmt.getResource().getURI()));
-            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(measurementCapabilityResource.getURI()), property);
+            final MeasurementCapability measurementCapability = new MeasurementCapability(URI.create(measurementCapabilityResource.getURI()), name, property);
 
             QueryExecution qExec;
             ResultSet result;

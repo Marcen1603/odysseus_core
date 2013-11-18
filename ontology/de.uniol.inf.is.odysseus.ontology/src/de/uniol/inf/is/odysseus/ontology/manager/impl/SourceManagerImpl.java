@@ -24,6 +24,7 @@ import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import de.uniol.inf.is.odysseus.ontology.manager.SourceManager;
 import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.Property;
@@ -43,7 +44,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 @SuppressWarnings("unused")
-public class SourceManagerImpl {
+public class SourceManagerImpl implements SourceManager {
     private final OntModel aBox;
 
     /**
@@ -54,14 +55,15 @@ public class SourceManagerImpl {
         this.aBox = aBox;
     }
 
+    @Override
     public void createFeatureOfInterest(FeatureOfInterest featureOfInterest) {
         if (this.getABox().supportsTransactions()) {
             this.getABox().begin();
         }
 
-        final Individual thisFeatureOfInterest = this.createFeatureOfInterest(featureOfInterest.getUri());
+        final Individual thisFeatureOfInterest = this.createFeatureOfInterest(featureOfInterest.getUri(), featureOfInterest.getName());
         for (final Property property : featureOfInterest.getHasProperties()) {
-            final Individual thisProperty = this.createProperty(property.getUri());
+            final Individual thisProperty = this.createProperty(property.getUri(), property.getName());
             this.addPropertyToFeatureOfInterest(thisFeatureOfInterest, thisProperty);
         }
 
@@ -82,12 +84,13 @@ public class SourceManagerImpl {
         }
     }
 
+    @Override
     public void createSensingDevice(final SensingDevice sensingDevice) {
         if (this.getABox().supportsTransactions()) {
             this.getABox().begin();
         }
 
-        final Individual thisSensingDevice = this.createSensingDevice(sensingDevice.getUri());
+        final Individual thisSensingDevice = this.createSensingDevice(sensingDevice.getUri(), sensingDevice.getName());
         final List<Individual> properties = new ArrayList<Individual>();
         if (!sensingDevice.getHasMeasurementCapabilities().isEmpty()) {
             for (final MeasurementCapability capability : sensingDevice.getHasMeasurementCapabilities()) {
@@ -158,9 +161,9 @@ public class SourceManagerImpl {
 
     private Individual createMeasurementCapability(MeasurementCapability measurementCapability) {
         this.getABox().createObjectProperty(SSN.forProperty.getURI());
-        Individual thisMeasurementCapability = this.createMeasurementCapability(measurementCapability.getUri());
-        Individual property = this.createProperty(measurementCapability.getForProperty().getUri());
+        Individual thisMeasurementCapability = this.createMeasurementCapability(measurementCapability.getUri(), measurementCapability.getName());
 
+        Individual property = this.createProperty(measurementCapability.getForProperty().getUri(), measurementCapability.getForProperty().getName());
         this.getABox().add(thisMeasurementCapability, SSN.forProperty, property);
         return thisMeasurementCapability;
     }
@@ -196,7 +199,7 @@ public class SourceManagerImpl {
         else {
             thisCondition = this.createCondition(condition.getUri());
         }
-        Individual property = this.createProperty(condition.getOnProperty().getUri());
+        Individual property = this.createProperty(condition.getOnProperty().getUri(), condition.getOnProperty().getName());
         this.getABox().add(thisCondition, RDFS.subClassOf, property);
         return thisCondition;
     }
@@ -310,41 +313,47 @@ public class SourceManagerImpl {
      *            The URI.
      * @return The measurement capability individual.
      */
-    private Individual createMeasurementCapability(URI uri) {
+    private Individual createMeasurementCapability(URI uri, String name) {
         this.getABox().createClass(SSN.MeasurementCapability.getURI());
         final Individual measurementCapability = this.getABox().createIndividual(uri.toString(), SSN.MeasurementCapability);
+        this.getABox().add(measurementCapability, RDFS.label, name);
         return measurementCapability;
     }
 
     /**
-     * Create a new measurement capability with the given name under the given
-     * namespace.
-     * 
-     * @param sensingDeviceName
-     *            The name of the sensing device
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The measurement capability individual.
+     * // * Create a new measurement capability with the given name under the
+     * given
+     * // * namespace.
+     * // *
+     * // * @param sensingDeviceName
+     * // * The name of the sensing device
+     * // * @param name
+     * // * The name.
+     * // * @param namespace
+     * // * The namespace.
+     * // * @return The measurement capability individual.
+     * //
      */
-    private Individual createMeasurementCapabilityNS(final String sensingDeviceName, final String name, final String namespace) {
-        return this.createMeasurementCapability(URI.create(namespace + sensingDeviceName + name));
-    }
-
-    /**
-     * Create a new measurement capability with the given name under the given
-     * namespace.
-     * 
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The measurement capability individual.
-     */
-    private Individual createMeasurementCapabilityNS(final String name, final String namespace) {
-        return this.createMeasurementCapability(URI.create(namespace + name));
-    }
+    // private Individual createMeasurementCapabilityNS(final String
+    // sensingDeviceName, final String name, final String namespace) {
+    // return this.createMeasurementCapability(URI.create(namespace +
+    // sensingDeviceName + name));
+    // }
+    //
+    // /**
+    // * Create a new measurement capability with the given name under the given
+    // * namespace.
+    // *
+    // * @param name
+    // * The name.
+    // * @param namespace
+    // * The namespace.
+    // * @return The measurement capability individual.
+    // */
+    // private Individual createMeasurementCapabilityNS(final String name, final
+    // String namespace) {
+    // return this.createMeasurementCapability(URI.create(namespace + name));
+    // }
 
     /**
      * Create a new condition with the given URI.
@@ -397,9 +406,10 @@ public class SourceManagerImpl {
      *            The URI.
      * @return The feature of interest individual.
      */
-    private Individual createFeatureOfInterest(URI uri) {
+    private Individual createFeatureOfInterest(URI uri, String name) {
         this.getABox().createClass(SSN.FeatureOfInterest.getURI());
         final Individual featureOfInterest = this.getABox().createIndividual(uri.toString(), SSN.FeatureOfInterest);
+        this.getABox().add(featureOfInterest, RDFS.label, name);
         return featureOfInterest;
     }
 
@@ -414,19 +424,21 @@ public class SourceManagerImpl {
         throw new IllegalArgumentException("Not implemented yet");
     }
 
-    /**
-     * Create a new feature of interest with the given name under the given
-     * namespace.
-     * 
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The feature of interest individual.
-     */
-    private Individual createFeatureOfInterestNS(final String name, final String namespace) {
-        return this.createFeatureOfInterest(URI.create(namespace + name));
-    }
+    //
+    // /**
+    // * Create a new feature of interest with the given name under the given
+    // * namespace.
+    // *
+    // * @param name
+    // * The name.
+    // * @param namespace
+    // * The namespace.
+    // * @return The feature of interest individual.
+    // */
+    // private Individual createFeatureOfInterestNS(final String name, final
+    // String namespace) {
+    // return this.createFeatureOfInterest(URI.create(namespace + name));
+    // }
 
     /**
      * Create a new sensing device with the given URI.
@@ -435,9 +447,10 @@ public class SourceManagerImpl {
      *            The URI.
      * @return The sensing device individual.
      */
-    private Individual createSensingDevice(final URI uri) {
+    private Individual createSensingDevice(final URI uri, String name) {
         this.getABox().createClass(SSN.SensingDevice.getURI());
         final Individual sensingDevice = this.getABox().createIndividual(uri.toString(), SSN.SensingDevice);
+        this.getABox().add(sensingDevice, RDFS.label, name);
         return sensingDevice;
     }
 
@@ -452,19 +465,21 @@ public class SourceManagerImpl {
         throw new IllegalArgumentException("Not implemented yet");
     }
 
-    /**
-     * Create a new sensing device with the given name under the given
-     * namespace.
-     * 
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The sensing device individual.
-     */
-    private Individual createSensingDeviceNS(final String name, final String namespace) {
-        return this.createSensingDevice(URI.create(namespace + name));
-    }
+    //
+    // /**
+    // * Create a new sensing device with the given name under the given
+    // * namespace.
+    // *
+    // * @param name
+    // * The name.
+    // * @param namespace
+    // * The namespace.
+    // * @return The sensing device individual.
+    // */
+    // private Individual createSensingDeviceNS(final String name, final String
+    // namespace) {
+    // return this.createSensingDevice(URI.create(namespace + name));
+    // }
 
     /**
      * Create a new property with the given URI.
@@ -473,40 +488,44 @@ public class SourceManagerImpl {
      *            The URI.
      * @return The property individual.
      */
-    private Individual createProperty(final URI uri) {
+    private Individual createProperty(final URI uri, String name) {
         this.getABox().createClass(SSN.Property.getURI());
         final Individual property = this.getABox().createIndividual(uri.toString(), SSN.Property);
+        this.getABox().add(property, RDFS.label, name);
         return property;
     }
 
-    /**
-     * Create a new property with the given name under the given namespace.
-     * 
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The property individual.
-     */
-    private Individual createPropertyNS(final String name, final String namespace) {
-        return this.createProperty(URI.create(namespace + name));
-    }
-
-    /**
-     * Create a new property of the given feature of interest with the given
-     * name under the given namespace.
-     * 
-     * @param featureOfInterest
-     *            The feature of interest.
-     * @param name
-     *            The name.
-     * @param namespace
-     *            The namespace.
-     * @return The property individual.
-     */
-    private Individual createPropertyNS(final String featureOfInterest, final String name, final String namespace) {
-        return this.createProperty(URI.create(namespace + featureOfInterest + name));
-    }
+    // /**
+    // * Create a new property with the given name under the given namespace.
+    // *
+    // * @param name
+    // * The name.
+    // * @param namespace
+    // * The namespace.
+    // * @return The property individual.
+    // */
+    // private Individual createPropertyNS(final String name, final String
+    // namespace) {
+    // return this.createProperty(URI.create(namespace + name));
+    // }
+    //
+    // /**
+    // * Create a new property of the given feature of interest with the given
+    // * name under the given namespace.
+    // *
+    // * @param featureOfInterest
+    // * The feature of interest.
+    // * @param name
+    // * The name.
+    // * @param namespace
+    // * The namespace.
+    // * @return The property individual.
+    // */
+    // private Individual createPropertyNS(final String featureOfInterest, final
+    // String name, final String namespace) {
+    // return this.createProperty(URI.create(namespace + featureOfInterest +
+    // name));
+    // }
 
     /**
      * Gets the A box.
