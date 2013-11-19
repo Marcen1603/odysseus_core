@@ -18,150 +18,45 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
-abstract public class AbstractTransportHandler implements ITransportHandler {
+abstract public class AbstractTransportHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler {
 
-	private final List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
-	private int openCounter = 0;
-	private final ITransportExchangePattern exchangePattern;
+	final AbstractTransportHandlerDelegate delegate;
+
+	public AbstractTransportHandler(){
+		delegate = new AbstractTransportHandlerDelegate(null, this);
+	}
 	
-	private Map<String, String> optionsMap;
-
-	public AbstractTransportHandler() {
-		this.exchangePattern = null;
-	}
-
 	public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
-		this.exchangePattern = protocolHandler.getExchangePattern();
+		delegate = new AbstractTransportHandlerDelegate(protocolHandler.getExchangePattern(), this);
 		protocolHandler.setTransportHandler(this);
-		addListener(protocolHandler);
+		delegate.addListener(protocolHandler);
 	}
 
 	@Override
-	public void addListener(ITransportHandlerListener listener) {
-		this.transportHandlerListener.add(listener);
-	}
-
-	@Override
-	public void removeListener(ITransportHandlerListener listener) {
-		this.transportHandlerListener.remove(listener);
-	}
-
-	public void fireProcess(ByteBuffer message) {
-		for (ITransportHandlerListener l : transportHandlerListener) {
-			// TODO: flip() erases the contents of the message if
-			// it was already flipped or just created...
-			// In other words: This method expects that the byte buffer
-			// is not fully prepared
-			message.flip();
-			l.process(message);
-		}
-	}
-
-	public void fireProcess(String[] message) {
-		for (ITransportHandlerListener l : transportHandlerListener) {
-			l.process(message);
-		}
-	}
-
-	public void fireOnConnect() {
-		for (ITransportHandlerListener l : transportHandlerListener) {
-			l.onConnect(this);
-		}
-	}
-
-	public void fireOnDisconnect() {
-		for (ITransportHandlerListener l : transportHandlerListener) {
-			l.onDisonnect(this);
-		}
-	}
-
-	@Override
-	public ITransportExchangePattern getExchangePattern() {
-		return this.exchangePattern;
-	}
-
-	@Override
-	final synchronized public void open() throws UnknownHostException,
-			IOException {
-		if (openCounter == 0) {
-			if (getExchangePattern() != null
-					&& (getExchangePattern().equals(
-							ITransportExchangePattern.InOnly)
-							|| getExchangePattern().equals(
-									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
-							.equals(ITransportExchangePattern.InOut))) {
-				processInOpen();
-			}
-			if (getExchangePattern() != null
-					&& (getExchangePattern().equals(
-							ITransportExchangePattern.OutOnly)
-							|| getExchangePattern().equals(
-									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
-							.equals(ITransportExchangePattern.InOut))) {
-				processOutOpen();
-			}
-		}
-		openCounter++;
-	}
-
 	abstract public void processInOpen() throws IOException;
-
+	
+	@Override
 	abstract public void processOutOpen() throws IOException;
 
 	@Override
-	final synchronized public void close() throws IOException {
-		openCounter--;
-		if (openCounter == 0) {
-			if (getExchangePattern() != null
-					&& (getExchangePattern().equals(
-							ITransportExchangePattern.InOnly)
-							|| getExchangePattern().equals(
-									ITransportExchangePattern.InOptionalOut) || getExchangePattern()
-							.equals(ITransportExchangePattern.InOut))) {
-				processInClose();
-			}
-			if (getExchangePattern() != null
-					&& (getExchangePattern().equals(
-							ITransportExchangePattern.OutOnly)
-							|| getExchangePattern().equals(
-									ITransportExchangePattern.OutOptionalIn) || getExchangePattern()
-							.equals(ITransportExchangePattern.InOut))) {
-				processOutClose();
-			}
-		}
-	}
-
 	abstract public void processInClose() throws IOException;
 
+	@Override
 	abstract public void processOutClose() throws IOException;
 
 	@Override
 	public boolean isDone() {
 		return false;
 	}
-	
-    /**
-     * This method is supposed to retrieve the options for an instance, which were used during the call of {@link ITransportHandler#createInstance(IProtocolHandler, Map))}
-     * based on the current configuration. This is useful for comparing and serialising different TransportHandler-instances.
-     * @return
-     */
-	public Map<String, String> getOptionsMap() {
-		return optionsMap;
-	}
-	
-	public void setOptionsMap(Map<String, String> options) {
-		this.optionsMap = options;
-	}
+
 	
 	@Override
 	public boolean isSemanticallyEqual(ITransportHandler other) {
-		if(!this.exchangePattern.equals(other.getExchangePattern())) {
+		if(!this.getExchangePattern().equals(other.getExchangePattern())) {
 			return false;
 		} else if(!this.getName().equals(other.getName())) {
 			return false;
@@ -170,5 +65,58 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 	}
 	
 	public abstract boolean isSemanticallyEqualImpl(ITransportHandler other);
+
+	@Override
+	public void addListener(ITransportHandlerListener listener) {
+		delegate.addListener(listener);
+	}
+
+	@Override
+	public void removeListener(ITransportHandlerListener listener) {
+		delegate.removeListener(listener);
+	}
+
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		delegate.open();
+	}
+
+	@Override
+	public void close() throws IOException {
+		delegate.close();
+	}
+
+
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		return delegate.getExchangePattern();
+	}
+	
+	public Map<String, String> getOptionsMap() {
+		return delegate.getOptionsMap();
+	}
+	
+	public void setOptionsMap(Map<String, String> options) {
+		delegate.setOptionsMap(options);
+	}
+	
+	
+	public void fireProcess(ByteBuffer message) {
+		delegate.fireProcess(message);
+	}
+
+	public void fireProcess(String[] message) {
+		delegate.fireProcess(message);
+	}
+
+	public void fireOnConnect() {
+		delegate.fireOnConnect(this);
+	}
+
+	public void fireOnDisconnect() {
+		delegate.fireOnDisconnect(this);
+	}
+	
+
 
 }
