@@ -65,6 +65,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IClientExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IQueryListener;
@@ -425,7 +426,10 @@ public class WsClient implements IExecutor, IClientExecutor {
 		if (receivers.containsKey(queryId)) {
 			return Optional.of(receivers.get(queryId));
 		}
-		IProtocolHandler h = ProtocolHandlerRegistry.getInstance("TCP Client", ITransportDirection.IN, IAccessPattern.PUSH, options, dataHandler);
+		IProtocolHandler h = ProtocolHandlerRegistry.getInstance("SizeByteBuffer", ITransportDirection.IN, IAccessPattern.PUSH, options, dataHandler);
+		// Must be done to add the transport to the protocoll ... seems not really intuitive ...
+		TransportHandlerRegistry.getInstance("TCP Client", h,options);
+		
 		ClientReceiver receiver = new ClientReceiver(h);
 		receiver.open(null, 0, 0, null, null);
 		receivers.put(queryId, receiver);
