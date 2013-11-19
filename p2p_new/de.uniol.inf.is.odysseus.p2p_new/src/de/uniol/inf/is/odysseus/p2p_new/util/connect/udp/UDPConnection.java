@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaConnection;
 
@@ -22,7 +23,6 @@ public class UDPConnection extends AbstractJxtaConnection {
 	public static final byte ACK_BYTE = 2;
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UDPConnection.class);
-	private static final int BUFFER_SIZE = 4096;
 
 	private final InetAddress address;
 	private final int port;
@@ -59,8 +59,8 @@ public class UDPConnection extends AbstractJxtaConnection {
 			public void doJob() {
 				
 				try {
-					byte[] buffer = new byte[BUFFER_SIZE];
-					DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
+					byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
+					DatagramPacket packet = new DatagramPacket(buffer, P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 					socket.receive(packet);
 					
 					recieve(packet.getData());

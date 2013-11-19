@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaServerConnection;
@@ -21,7 +22,6 @@ import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaServerConnectio
 public class UDPServerConnection extends AbstractJxtaServerConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UDPServerConnection.class);
-	private static final int BUFFER_SIZE = 4096;
 
 	private final Map<ConnectionData, IJxtaConnection> activeConnectionsMap = Maps.newHashMap();
 
@@ -37,8 +37,8 @@ public class UDPServerConnection extends AbstractJxtaServerConnection {
 			public void doJob() {
 
 				try {
-					byte[] buffer = new byte[BUFFER_SIZE];
-					DatagramPacket packet = new DatagramPacket(buffer, BUFFER_SIZE);
+					byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
+					DatagramPacket packet = new DatagramPacket(buffer, P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 
 					socket.receive(packet);
 

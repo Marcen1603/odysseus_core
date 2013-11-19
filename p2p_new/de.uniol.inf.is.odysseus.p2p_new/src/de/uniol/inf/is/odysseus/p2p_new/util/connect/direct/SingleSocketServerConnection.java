@@ -14,6 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
@@ -24,8 +25,6 @@ public class SingleSocketServerConnection extends AbstractJxtaServerConnection i
 	private static final Logger LOG = LoggerFactory.getLogger(SingleSocketServerConnection.class);
 	
 	private final List<IJxtaConnection> connections = Lists.newArrayList();
-	
-	private static final int SEND_BUFFER_SIZE = 4096;
 	
 	private boolean started = false;
 	private ServerSocket serverSocket;
@@ -52,7 +51,7 @@ public class SingleSocketServerConnection extends AbstractJxtaServerConnection i
 			public void doJob() {
 				try {
 					Socket clientSocket = serverSocket.accept();
-					clientSocket.setSendBufferSize(SEND_BUFFER_SIZE);
+					clientSocket.setSendBufferSize(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 					IJxtaConnection connection = new SocketConnection(clientSocket);
 					connection.addListener(SingleSocketServerConnection.this);
 					

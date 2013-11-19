@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.p2p_new.util.connect.AbstractJxtaConnection;
 
 public class SocketConnection extends AbstractJxtaConnection {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SocketConnection.class);
-	private static final int BUFFER_SIZE = 4096;
 	
-	private final byte[] buffer = new byte[BUFFER_SIZE];
+	private final byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
 	
 	private Socket socket;
 	private OutputStream outStream;
