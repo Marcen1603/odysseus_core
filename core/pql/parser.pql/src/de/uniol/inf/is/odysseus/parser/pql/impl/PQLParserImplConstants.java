@@ -12,29 +12,31 @@ public interface PQLParserImplConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int IDENTIFIER = 5;
+  int BOOLEAN = 5;
   /** RegularExpression Id. */
-  int LETTER = 6;
+  int IDENTIFIER = 6;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 7;
+  int LETTER = 7;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 8;
+  int SPECIAL_CHARS = 8;
   /** RegularExpression Id. */
-  int PLUS = 9;
+  int CHAR_LITERAL = 9;
   /** RegularExpression Id. */
-  int MINUS = 10;
+  int PLUS = 10;
   /** RegularExpression Id. */
-  int MULTIPLY = 11;
+  int MINUS = 11;
   /** RegularExpression Id. */
-  int DIVIDE = 12;
+  int MULTIPLY = 12;
   /** RegularExpression Id. */
-  int FLOAT = 13;
+  int DIVIDE = 13;
   /** RegularExpression Id. */
-  int INTEGER = 14;
+  int FLOAT = 14;
   /** RegularExpression Id. */
-  int NUMBER = 15;
+  int INTEGER = 15;
   /** RegularExpression Id. */
-  int DIGIT = 16;
+  int NUMBER = 16;
+  /** RegularExpression Id. */
+  int DIGIT = 17;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -46,6 +48,7 @@ public interface PQLParserImplConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
+    "<BOOLEAN>",
     "<IDENTIFIER>",
     "<LETTER>",
     "<SPECIAL_CHARS>",

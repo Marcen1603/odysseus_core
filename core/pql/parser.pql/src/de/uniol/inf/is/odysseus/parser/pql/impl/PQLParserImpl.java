@@ -239,29 +239,29 @@ public class PQLParserImpl implements PQLParserImplConstants {
   Map < String, Object > parameters = new HashMap < String, Object > ();
     name = jj_consume_token(IDENTIFIER);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 17:
-      jj_consume_token(17);
-      parameters = parameterMap();
+    case 18:
       jj_consume_token(18);
+      parameters = parameterMap();
+      jj_consume_token(19);
       break;
     default:
       jj_la1[1] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 19:
-      jj_consume_token(19);
-      break;
     case 20:
       jj_consume_token(20);
-      isSharedSource = true;
       break;
     case 21:
       jj_consume_token(21);
-      isView = true;
+      isSharedSource = true;
       break;
     case 22:
       jj_consume_token(22);
+      isView = true;
+      break;
+    case 23:
+      jj_consume_token(23);
       subscribeToSink = true;
       break;
     default:
@@ -331,15 +331,15 @@ public class PQLParserImpl implements PQLParserImplConstants {
   List < InputOperatorItem > inputOps = new ArrayList < InputOperatorItem > ();
     if (jj_2_1(2147483647)) {
       identifier = jj_consume_token(IDENTIFIER);
-      jj_consume_token(23);
+      jj_consume_token(24);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 17:
-        jj_consume_token(17);
-        parameters = parameterMap();
+      case 18:
         jj_consume_token(18);
+        parameters = parameterMap();
+        jj_consume_token(19);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
-          jj_consume_token(24);
+        case 25:
+          jj_consume_token(25);
           inputOps = operatorList(namedOps);
           break;
         default:
@@ -351,7 +351,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         jj_la1[4] = jj_gen;
         inputOps = operatorList(namedOps);
       }
-      jj_consume_token(25);
+      jj_consume_token(26);
       {if (true) return createOperator(identifier.image, parameters, inputOps);}
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -386,14 +386,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 24:
+      case 25:
         ;
         break;
       default:
         jj_la1[6] = jj_gen;
         break label_2;
       }
-      jj_consume_token(24);
+      jj_consume_token(25);
       parameter(parameters);
     }
     {if (true) return parameters;}
@@ -404,9 +404,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
   Token id;
   Object value;
     id = jj_consume_token(IDENTIFIER);
-    jj_consume_token(19);
+    jj_consume_token(20);
     value = parameterValue();
-    parameters.put(id.image.toUpperCase(), value);
+        String key = id.image.toUpperCase();
+    if (!parameters.containsKey(key)){
+      parameters.put(key, value);
+    }else{
+      {if (true) throw new QueryParseException("Parameter "+key+" is used more than once!");}
+    }
   }
 
   static final public Object parameterValue() throws ParseException {
@@ -425,6 +430,10 @@ public class PQLParserImpl implements PQLParserImplConstants {
       t = jj_consume_token(CHAR_LITERAL);
       value = t.image.substring(1, t.image.length() - 1);
       break;
+    case BOOLEAN:
+      t = jj_consume_token(BOOLEAN);
+          value = Boolean.valueOf(t.image);
+      break;
     default:
       jj_la1[7] = jj_gen;
       if (jj_2_2(4)) {
@@ -434,7 +443,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         case IDENTIFIER:
           value = predicate();
           break;
-        case 26:
+        case 27:
           value = map();
           break;
         default:
@@ -451,26 +460,27 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static final public List < Object > list() throws ParseException {
   Object value;
   List < Object > list = new ArrayList < Object > ();
-    jj_consume_token(26);
+    jj_consume_token(27);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case BOOLEAN:
     case IDENTIFIER:
     case CHAR_LITERAL:
     case FLOAT:
     case INTEGER:
-    case 26:
+    case 27:
       value = parameterValue();
       list.add(value);
       label_3:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
+        case 25:
           ;
           break;
         default:
           jj_la1[9] = jj_gen;
           break label_3;
         }
-        jj_consume_token(24);
+        jj_consume_token(25);
         value = parameterValue();
         list.add(value);
       }
@@ -479,7 +489,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       jj_la1[10] = jj_gen;
       ;
     }
-    jj_consume_token(27);
+    jj_consume_token(28);
     {if (true) return list;}
     throw new Error("Missing return statement in function");
   }
@@ -488,30 +498,31 @@ public class PQLParserImpl implements PQLParserImplConstants {
   Object key;
   Object value;
   Map < Object, Object > map = new HashMap < Object, Object > ();
-    jj_consume_token(26);
+    jj_consume_token(27);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case BOOLEAN:
     case IDENTIFIER:
     case CHAR_LITERAL:
     case FLOAT:
     case INTEGER:
-    case 26:
+    case 27:
       key = parameterValue();
-      jj_consume_token(19);
+      jj_consume_token(20);
       value = parameterValue();
       map.put(key, value);
       label_4:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
+        case 25:
           ;
           break;
         default:
           jj_la1[11] = jj_gen;
           break label_4;
         }
-        jj_consume_token(24);
+        jj_consume_token(25);
         key = parameterValue();
-        jj_consume_token(19);
+        jj_consume_token(20);
         value = parameterValue();
         map.put(key, value);
       }
@@ -520,7 +531,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       jj_la1[12] = jj_gen;
       ;
     }
-    jj_consume_token(27);
+    jj_consume_token(28);
     {if (true) return map;}
     throw new Error("Missing return statement in function");
   }
@@ -536,7 +547,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case INTEGER:
         tPort = jj_consume_token(INTEGER);
-        jj_consume_token(28);
+        jj_consume_token(29);
         break;
       default:
         jj_la1[13] = jj_gen;
@@ -548,18 +559,18 @@ public class PQLParserImpl implements PQLParserImplConstants {
       label_5:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 24:
+        case 25:
           ;
           break;
         default:
           jj_la1[14] = jj_gen;
           break label_5;
         }
-        jj_consume_token(24);
+        jj_consume_token(25);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case INTEGER:
           tPort = jj_consume_token(INTEGER);
-          jj_consume_token(28);
+          jj_consume_token(29);
           break;
         default:
           jj_la1[15] = jj_gen;
@@ -582,9 +593,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
   Token predicateType;
   Token predicate;
     predicateType = jj_consume_token(IDENTIFIER);
-    jj_consume_token(23);
+    jj_consume_token(24);
     predicate = jj_consume_token(CHAR_LITERAL);
-    jj_consume_token(25);
+    jj_consume_token(26);
     {if (true) return new PredicateItem(predicateType.image, predicate.image.substring(1, predicate.image.length() - 1));}
     throw new Error("Missing return statement in function");
   }
@@ -603,6 +614,73 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_16() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(24)) return true;
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_18() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(20)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(24)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_9()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_scan_token(27)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
+    if (jj_scan_token(28)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(27)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_7()) jj_scanpos = xsp;
+    if (jj_scan_token(28)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
+    if (jj_scan_token(INTEGER)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_10() {
     if (jj_scan_token(FLOAT)) return true;
     return false;
@@ -617,11 +695,14 @@ public class PQLParserImpl implements PQLParserImplConstants {
     jj_scanpos = xsp;
     if (jj_3R_12()) {
     jj_scanpos = xsp;
-    if (jj_3_2()) {
-    jj_scanpos = xsp;
     if (jj_3R_13()) {
     jj_scanpos = xsp;
-    if (jj_3R_14()) return true;
+    if (jj_3_2()) {
+    jj_scanpos = xsp;
+    if (jj_3R_14()) {
+    jj_scanpos = xsp;
+    if (jj_3R_15()) return true;
+    }
     }
     }
     }
@@ -630,9 +711,8 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return false;
   }
 
-  static private boolean jj_3_1() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(23)) return true;
+  static private boolean jj_3R_15() {
+    if (jj_3R_17()) return true;
     return false;
   }
 
@@ -641,70 +721,9 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return false;
   }
 
-  static private boolean jj_3R_13() {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_9() {
-    if (jj_scan_token(24)) return true;
+    if (jj_scan_token(25)) return true;
     if (jj_3R_8()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(23)) return true;
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(19)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_12() {
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_3R_8()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_9()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_16() {
-    if (jj_scan_token(26)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_17()) jj_scanpos = xsp;
-    if (jj_scan_token(27)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(INTEGER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(26)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_7()) jj_scanpos = xsp;
-    if (jj_scan_token(27)) return true;
     return false;
   }
 
@@ -726,7 +745,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x20,0x20000,0x780000,0x1000000,0x20000,0x20,0x1000000,0x6100,0x4000020,0x1000000,0x4006120,0x1000000,0x4006120,0x4000,0x1000000,0x4000,0x4020,};
+      jj_la1_0 = new int[] {0x40,0x40000,0xf00000,0x2000000,0x40000,0x40,0x2000000,0xc220,0x8000040,0x2000000,0x800c260,0x2000000,0x800c260,0x8000,0x2000000,0x8000,0x8040,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[2];
   static private boolean jj_rescan = false;
@@ -933,7 +952,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[29];
+    boolean[] la1tokens = new boolean[30];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -947,7 +966,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
         }
       }
     }
-    for (int i = 0; i < 29; i++) {
+    for (int i = 0; i < 30; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -731,14 +731,18 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 		} catch (OdysseusScriptException e) {
 			if (e.getFailedStatement() != null) {
-				String message = "Odysseus Script error in statement " + e.getFailedStatement().getKeywordText() + " in line " + e.getFailedStatement().getLine();
+				StringBuffer message = new StringBuffer("Odysseus Script error in statement " + e.getFailedStatement().getKeywordText() + " in line " + e.getFailedStatement().getLine());
 				if (e.getCause() instanceof QueryParseException) {
 					QueryParseException qpe = (QueryParseException) e.getCause();
+					if (qpe.getCause() != null && qpe.getCause() instanceof QueryParseException){
+						qpe = (QueryParseException) qpe.getCause();
+					}
+					message.append("\n").append(qpe.getMessage());
 					int line = qpe.getLine() + e.getFailedStatement().getLine() + 2; 
 					int column = qpe.getColumn();
-					throw new QueryParseException(message, e, line, column);
+					throw new QueryParseException(message.toString(), e, line, column);
 				}
-				throw new QueryParseException(message, e);
+				throw new QueryParseException(message.toString(), e);
 			}
 			throw new QueryParseException("Parsing Odysseus script failed with an unknown reason!", e);
 		}
