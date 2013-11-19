@@ -193,11 +193,6 @@ public class OdysseusBenchmarkRunner implements IApplication {
 			benchmark.setBufferPlacementStrategy(bufferPlacement);
 		}
 
-		if (arguments.hasParameter(DATA_TYPE)) {
-			String dataType = arguments.get(DATA_TYPE);
-			benchmark.setDataType(dataType);
-		}
-
 		String[] metaTypes = benchmark.getMetadataTypes();
 		if (arguments.hasParameter(METADATA_TYPES)) {
 			String metaTypesStr = arguments.get(METADATA_TYPES);

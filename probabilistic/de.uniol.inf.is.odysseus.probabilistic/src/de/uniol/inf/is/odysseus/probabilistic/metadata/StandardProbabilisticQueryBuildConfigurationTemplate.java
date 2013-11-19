@@ -15,9 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -39,10 +37,7 @@ public class StandardProbabilisticQueryBuildConfigurationTemplate extends Abstra
 	 * Default constructor.
 	 */
 	public StandardProbabilisticQueryBuildConfigurationTemplate() {
-		final Set<String> dataTypes = new HashSet<String>();
-		dataTypes.add("probabilistic");
-		dataTypes.add("relational");
-		this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration(dataTypes, ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class)));
+		this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration(ITimeInterval.class, IProbabilistic.class, ITimeIntervalProbabilistic.class)));
 		this.settings.add(ParameterDoRewrite.TRUE);
 		this.settings.add(ParameterPerformQuerySharing.TRUE);
 		this.settings.add(ParameterShareSimilarOperators.FALSE);

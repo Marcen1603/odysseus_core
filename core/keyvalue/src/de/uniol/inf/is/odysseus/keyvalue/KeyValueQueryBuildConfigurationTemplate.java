@@ -49,7 +49,6 @@ public class KeyValueQueryBuildConfigurationTemplate extends
 	public KeyValueQueryBuildConfigurationTemplate() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
-						"keyvalue", 
 						ITimeInterval.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);

@@ -49,7 +49,6 @@ public class StandardQueryBuildConfigurationTemplate extends
 	public StandardQueryBuildConfigurationTemplate() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
-						"relational", 
 						ITimeInterval.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);

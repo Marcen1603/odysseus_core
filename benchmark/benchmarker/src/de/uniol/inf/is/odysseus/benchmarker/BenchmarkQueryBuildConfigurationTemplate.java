@@ -32,9 +32,7 @@ public class BenchmarkQueryBuildConfigurationTemplate extends
 		AbstractQueryBuildConfigurationTemplate {
 	
 	public BenchmarkQueryBuildConfigurationTemplate() {
-		TransformationConfiguration trafoconfig = new TransformationConfiguration(
-				"relational", 
-				ITimeInterval.class, ILatency.class);
+		TransformationConfiguration trafoconfig = new TransformationConfiguration(ITimeInterval.class, ILatency.class);
 		trafoconfig.setOption("NO_METADATA", true);
 		settings.add(new ParameterTransformationConfiguration(trafoconfig));
 		settings.add(ParameterDoRewrite.TRUE);

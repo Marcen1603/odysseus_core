@@ -198,11 +198,6 @@ public class OdysseusBenchmarkUtil extends Thread {
 			ibenchmark.setBufferPlacementStrategy(bufferPlacement);
 		}
 
-		if (benchmarkParam.getDataType() != null) {
-			String dataType = benchmarkParam.getDataType();
-			ibenchmark.setDataType(dataType);
-		}
-
 		String[] metaTypes = benchmarkParam.getMetadataCombination();
 
 		if (benchmarkParam.isPriority()) {

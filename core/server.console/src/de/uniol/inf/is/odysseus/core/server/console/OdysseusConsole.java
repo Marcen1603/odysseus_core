@@ -255,7 +255,7 @@ public class OdysseusConsole implements CommandProvider,
 					"SELECT p.id, p.name, a.reserve FROM nexmark:person2 [SIZE 12 HOURS ADVANCE 1 TIME] AS p, nexmark:auction2 [SIZE 12 HOURS ADVANCE 1 TIME] AS a WHERE p.id = a.seller" } };
 
 	private ParameterTransformationConfiguration trafoConfigParam = new ParameterTransformationConfiguration(
-			new TransformationConfiguration("relational", ITimeInterval.class));
+			new TransformationConfiguration(ITimeInterval.class));
 
 	private LinkedList<Command> currentCommands;
 

@@ -50,7 +50,6 @@ public class StandardLatencyQueryBuildConfigurationTemplate extends
 	public StandardLatencyQueryBuildConfigurationTemplate() {
 		settings.add(new ParameterTransformationConfiguration(
 				new TransformationConfiguration(
-						"relational", 
 						ITimeInterval.class, ILatency.class)));
 		settings.add(ParameterDoRewrite.TRUE);
 		settings.add(ParameterPerformQuerySharing.TRUE);

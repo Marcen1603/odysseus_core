@@ -33,7 +33,6 @@ public class SecurityPunctuationBenchmarkQueryBuildConfigurationTemplate extends
 
 	public SecurityPunctuationBenchmarkQueryBuildConfigurationTemplate() {
 		TransformationConfiguration transformationConfiguration = new TransformationConfiguration(
-				"relational", 
 				ITimeInterval.class, ILatency.class);
 //		transformationConfiguration.setOption("isSecurityAware", true);
 		settings.add(new ParameterTransformationConfiguration(transformationConfiguration));

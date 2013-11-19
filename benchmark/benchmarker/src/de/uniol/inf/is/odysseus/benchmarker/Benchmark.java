@@ -63,7 +63,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private String scheduler;
 	private String schedulingStrategy;
 	private String bufferPlacement;
-	private String dataType;
 	private IBenchmarkResultFactory<ILatency> resultFactory;
 	private String[] metadataTypes;
 	private ArrayList<IQueryBuildSetting<?>> buildParameters;
@@ -89,7 +88,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	private ArrayList<BenchmarkSink<ILatency>> sinks = new ArrayList<BenchmarkSink<ILatency>>();
 
 	public Benchmark() {
-		this.dataType = "relational";
 		this.maxResults = -1;
 		this.buildParameters = null;
 		this.queries = new ArrayList<IPair<String, String>>();
@@ -158,7 +156,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			this.sinks.add(sink);
 		}
 
-		TransformationConfiguration trafoConfig = new TransformationConfiguration(dataType, getMetadataTypes());
+		TransformationConfiguration trafoConfig = new TransformationConfiguration(getMetadataTypes());
 		trafoConfig.setOption("usePunctuations", this.usePunctuations);
 		trafoConfig.setOption("useLoadShedding", this.useLoadShedding);
 		trafoConfig.setOption("useExtendedPostPriorisation", this.extendedPostPriorisation);
@@ -283,11 +281,6 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	@Override
 	public void setBufferPlacementStrategy(String schedStrat) {
 		this.bufferPlacement = schedStrat;
-	}
-
-	@Override
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
 	}
 
 	@Override

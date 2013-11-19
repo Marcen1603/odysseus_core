@@ -31,8 +31,6 @@ public interface IBenchmark {
 
 	public void addQuery(String language, String query);
 
-	public void setDataType(String dataType);
-
 	public void setMetadataTypes(String... types);
 
 	public void setOption(String name, Object value);

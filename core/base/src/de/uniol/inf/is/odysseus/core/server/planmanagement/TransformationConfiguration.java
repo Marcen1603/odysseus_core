@@ -26,18 +26,11 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class TransformationConfiguration {
 	private final Set<String> metaTypes;
-	private final Set<String> dataTypes;
 	private Map<String, Object> options;
 	private ITransformationHelper transformHelper;
 	private boolean virtualTransformation;
-
-	public TransformationConfiguration(ITransformationHelper transformHelper,
-			String dataType, String... metaTypes) {
-		this(transformHelper, toSet(new String[] { dataType }), metaTypes);
-	}
 	
-	public TransformationConfiguration(ITransformationHelper transformHelper, Set<String> dataTypes, String... metaTypes) {
-		this.dataTypes = dataTypes;
+	public TransformationConfiguration(ITransformationHelper transformHelper, String... metaTypes) {
 		this.metaTypes = toSet(metaTypes);
 		this.options = new HashMap<String, Object>();	
 		this.transformHelper = transformHelper;
@@ -45,15 +38,8 @@ public class TransformationConfiguration {
 	
 
 	@SafeVarargs
-	public TransformationConfiguration(ITransformationHelper transformHelper, final String dataType,
+	public TransformationConfiguration(ITransformationHelper transformHelper,
 			Class<? extends IMetaAttribute>... metaTypes) {
-		this(transformHelper, toSet(new String[] { dataType }), metaTypes);
-	}
-
-	@SafeVarargs
-	public TransformationConfiguration(ITransformationHelper transformHelper, final Set<String> dataTypes,
-			Class<? extends IMetaAttribute>... metaTypes) {
-		this.dataTypes = dataTypes;
 		HashSet<String> tmp = new HashSet<String>();
 		for(Class<? extends IMetaAttribute> type : metaTypes) {
 			tmp.add(type.getName());
@@ -63,27 +49,17 @@ public class TransformationConfiguration {
 		this.transformHelper = transformHelper;
 	}
 
-	public TransformationConfiguration(String dataType, String... metaTypes) {
-		this(toSet(new String[] { dataType }), metaTypes);
-	}
 	
-	public TransformationConfiguration(Set<String> dataTypes, String... metaTypes) {
-		this.dataTypes = dataTypes;
+	public TransformationConfiguration(String... metaTypes) {
+
 		this.metaTypes = toSet(metaTypes);
 		this.options = new HashMap<String, Object>();	
 		this.transformHelper = new StandardTransformationHelper();
 	}
 
-	@SafeVarargs
-	public TransformationConfiguration(final String dataType,
-			Class<? extends IMetaAttribute>... metaTypes) {
-		this(toSet(new String[] { dataType }), metaTypes);
-	}
 	
 	@SafeVarargs
-	public TransformationConfiguration(final Set<String> dataTypes,
-			Class<? extends IMetaAttribute>... metaTypes) {
-		this.dataTypes = dataTypes;
+	public TransformationConfiguration(Class<? extends IMetaAttribute>... metaTypes) {
 		HashSet<String> tmp = new HashSet<String>();
 		for(Class<? extends IMetaAttribute> type : metaTypes) {
 			tmp.add(type.getName());
@@ -106,11 +82,6 @@ public class TransformationConfiguration {
 				.asList(strings)));
 	}
 
-	@Deprecated
-	public Set<String> getDataTypes() {
-		return dataTypes;
-	}
-
 	public Set<String> getMetaTypes() {
 		return metaTypes;
 	}
@@ -126,16 +97,8 @@ public class TransformationConfiguration {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("data type: ");
+		builder.append("metadata types: ");
 		int i = 0;
-		for (String s : dataTypes) {
-			if (++i > 1) {
-				builder.append(", ");
-			}
-			builder.append(s);
-		}
-		builder.append("; metadata types: ");
-		i = 0;
 		for (String s : metaTypes) {
 			if (++i > 1) {
 				builder.append(", ");
