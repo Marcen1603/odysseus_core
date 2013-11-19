@@ -18,10 +18,6 @@ package de.uniol.inf.is.odysseus.core.server;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.CSVTransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.TransformerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull.ObjectInputStream2ObjectInputStreamTransformer;
-
 public class Activator implements BundleActivator {
 	
 
@@ -42,8 +38,6 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {		
 		//OperatorBuilderFactory.addOperatorBuilder(new AccessAOBuilder());
 		//OperatorBuilderFactory.addOperatorBuilder(new SenderAOBuilder());
-		TransformerRegistry.register(new CSVTransformer());
-		TransformerRegistry.register(new ObjectInputStream2ObjectInputStreamTransformer());
 		
 		bundleContext = context;
 	}

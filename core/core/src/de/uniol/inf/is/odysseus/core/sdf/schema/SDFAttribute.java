@@ -144,18 +144,7 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public String getAttributeName() {
 		return getQualName();
-	}
-	
-	/**
-	 * 
-	 * @return
-	 * @deprecated use getAddInfo instead
-	 */
-	@Deprecated
-	public List<?> getCovariance() {
-		return getAddInfo();
-	}
-	
+	}	
 	
 	/**
 	 * Returns the additional informations of this attribute
@@ -306,28 +295,6 @@ public class SDFAttribute extends SDFElement implements
 			return getSourceName() + "." + getAttributeName();
 		}
         return "."+getAttributeName();
-	}
-
-	/**
-	 * This method returns the attribute uri with a point as
-	 * separator
-	 * @return
-	 * @deprecated use getURI() instead
-	 */
-	@Deprecated
-	public String getPointURI() {
-		return getURI(false, ".");
-	}
-
-	/**
-	 * This method returns the attribute uri with a point as
-	 * separator
-	 * @return
-	 * @deprecated use getURI() instead
-	 */
-	@Deprecated
-	public String toPointString() {
-		return getURI(false, ".");
 	}
 
 	public SDFSchema getSubSchema() {

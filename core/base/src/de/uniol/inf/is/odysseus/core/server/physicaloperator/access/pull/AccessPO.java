@@ -18,14 +18,11 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.access.pull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToObjectInputStreamTransformer;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IToStringArrayTransformer;
 
 /**
  * This class represents all sources that need to be scheduled to deliver input
@@ -44,42 +41,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 
 	private boolean isDone = false;
 
-	private IInputHandler<R> input;
-
-	private IDataHandler<W> dataHandler;
-
-	// Use different kinds of transformer to transform to
-	// the format the IDataHandler can read
-	private IToStringArrayTransformer<R> stringTransformer;
-	private IToObjectInputStreamTransformer<R> oisTransformer;
-
 	private IProtocolHandler<W> protocolHandler;
-
-	/**
-	 * 
-	 * @param input
-	 * @param transformer
-	 * @param dataHandler
-	 */
-	@Deprecated
-	public AccessPO(IInputHandler<R> input,
-			IToStringArrayTransformer<R> transformer,
-			IDataHandler<W> dataHandler) {
-		this.input = input;
-		this.stringTransformer = transformer;
-		this.dataHandler = dataHandler;
-		this.oisTransformer = null;
-	}
-
-	@Deprecated
-	public AccessPO(IInputHandler<R> input,
-			IToObjectInputStreamTransformer<R> transformer,
-			IDataHandler<W> dataHandler) {
-		this.input = input;
-		this.stringTransformer = null;
-		this.dataHandler = dataHandler;
-		this.oisTransformer = transformer;
-	}
 
 	public AccessPO(IProtocolHandler<W> protocolHandler) {
 		this.protocolHandler = protocolHandler;
@@ -92,16 +54,12 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		}
 
 		try {
-			if (protocolHandler != null) {
-				if (protocolHandler.isDone()){
-					isDone = true;
-					propagateDone();
-					return false;
-				}else{
-					return protocolHandler.hasNext();
-				}
+			if (protocolHandler.isDone()) {
+				isDone = true;
+				propagateDone();
+				return false;
 			} else {
-				return input.hasNext();
+				return protocolHandler.hasNext();
 			}
 		} catch (Exception e) {
 			LOG.error("Exception during input", e);
@@ -125,23 +83,8 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	public synchronized void transferNext() {
 		if (isOpen() && !isDone()) {
 			W toTransfer = null;
-			R object = null;
 			try {
-				if (protocolHandler != null) {
-					toTransfer = protocolHandler.getNext();
-				} else {
-					object = input.getNext();
-					if (object != null) {
-						if (stringTransformer != null) {
-							String[] data = stringTransformer.transform(object);
-							toTransfer = dataHandler.readData(data);
-
-						} else if (oisTransformer != null) {
-							toTransfer = dataHandler.readData(oisTransformer
-									.transform(object));
-						}
-					}
-				}
+				toTransfer = protocolHandler.getNext();
 				if (toTransfer == null) {
 					isDone = true;
 					propagateDone();
@@ -149,11 +92,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 					transfer(toTransfer);
 				}
 			} catch (Exception e) {
-				if (object != null) {
-					LOG.error("Cannot not transform object " + object, e);
-				} else {
-					LOG.error("Error Reading from input", e);
-				}
+				LOG.error("Error Reading from input", e);
 			}
 		}
 	}
@@ -168,15 +107,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 		if (!isOpen()) {
 			try {
 				isDone = false;
-				if (protocolHandler != null) {
-					protocolHandler.open();
-				} else {
-					input.init();
-					if (dataHandler.isPrototype()) {
-						throw new IllegalArgumentException(
-								"Data handler is not configured correctly!");
-					}
-				}
+				protocolHandler.open();
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
 			}
@@ -187,11 +118,7 @@ public class AccessPO<R, W> extends AbstractIterableSource<W> {
 	protected void process_close() {
 		try {
 			if (isOpen()) {
-				if (protocolHandler != null) {
-					protocolHandler.close();
-				} else {
-					input.terminate();
-				}
+				protocolHandler.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
