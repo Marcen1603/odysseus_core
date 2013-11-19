@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
@@ -41,7 +42,6 @@ import de.uniol.inf.is.odysseus.p2p_new.util.connect.udp.UDPServerConnection;
 public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> implements IJxtaConnectionListener, IJxtaServerConnectionListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JxtaSenderPO.class);
-	private static final int BUFFER_SIZE_BYTES = 1024;
 	private static final String PIPE_NAME = "Odysseus Pipe";
 
 	private final PipeID pipeID;
@@ -219,7 +219,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (!dataTransmissionConnectionMap.isEmpty()) {
-			final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+			final ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 			buffer.put(ObjectByteConverter.objectToBytes(punctuation));
 			buffer.flip();
 
@@ -250,7 +250,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 	@Override
 	protected void process_next(T object, int port) {
 		if (!dataTransmissionConnectionMap.isEmpty()) {
-			final ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+			final ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 			dataHandler.writeData(buffer, object);
 			if (object.getMetadata() != null) {
 				final byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
@@ -329,7 +329,7 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 		rawBytes[0] = type;
 		JxtaPOUtil.insertInt(rawBytes, 1, messageSizeBytes);
 
-		// buffer.array() returns the complete array (1024 bytes) and
+		// buffer.array() returns the complete array (P2PNewPlugIn.TRANSPORT_BUFFER_SIZE bytes) and
 		// did not apply the "real" size of the object
 		buffer.get(rawBytes, 5, messageSizeBytes);
 

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 
 @Deprecated
@@ -52,7 +53,7 @@ public abstract class AbstractJxtaConnection implements IJxtaConnectionOld {
 		isConnected = true;
 		readingDataThread = new RepeatingJobThread() {
 
-			private final byte[] buffer = new byte[1024];
+			private final byte[] buffer = new byte[P2PNewPlugIn.TRANSPORT_BUFFER_SIZE];
 
 			@Override
 			public void doJob() {

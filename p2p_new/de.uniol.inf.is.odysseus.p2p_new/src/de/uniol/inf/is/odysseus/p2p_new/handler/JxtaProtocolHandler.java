@@ -17,11 +17,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SizeByteBu
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.util.ObjectByteConverter;
 
 public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByteBufferHandler<T> {
 
-	private static final int BUFFER_SIZE_BYTES = 1024;
 	private static final Logger LOG = LoggerFactory.getLogger(SizeByteBufferHandler.class);
 	private static final String HANDLER_NAME = "JxtaSizeByteBuffer";
 	private static final byte NONE_BYTE = 0;
@@ -32,7 +32,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
 	private byte currentTypeByte = NONE_BYTE;
-	private ByteBuffer messageBuffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+	private ByteBuffer messageBuffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 
 	private JxtaByteBufferHandler<T> jxtaBufferHandler;
 
@@ -72,7 +72,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 
 	@Override
 	public void write(T object) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+		ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 		getDataHandler().writeData(buffer, object);
 		if (object.getMetadata() != null) {
 			byte[] metadataBytes = ObjectByteConverter.objectToBytes(object.getMetadata());
@@ -85,7 +85,7 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 
 	@Override
 	public void writePunctuation(IPunctuation punctuation) throws IOException {
-		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+		ByteBuffer buffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 		buffer.put(ObjectByteConverter.objectToBytes(punctuation));
 		buffer.flip();
 

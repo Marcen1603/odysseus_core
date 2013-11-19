@@ -29,6 +29,8 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementIn
 
 public class P2PNewPlugIn implements BundleActivator {
 
+	public static final int TRANSPORT_BUFFER_SIZE = 1024;
+	
 	private static final String PEER_NAME_SYS_PROPERTY = "peer.name";
 	private static final String PEER_GROUP_NAME_SYS_PROPERTY = "peer.group.name";
 	
