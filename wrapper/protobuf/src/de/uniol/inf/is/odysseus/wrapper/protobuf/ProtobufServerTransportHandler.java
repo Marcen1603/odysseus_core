@@ -57,14 +57,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerOpenCloseHandler;
 
-public class ChannelReceiverDelegate<R extends MessageLite,T> extends
+public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		SimpleChannelHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler{
 
 	final AbstractTransportHandlerDelegate<T> delegate;
 	
 	private static final String NAME = "ProtobufServer";
 	public static Logger logger = LoggerFactory
-			.getLogger(ChannelReceiverDelegate.class);
+			.getLogger(ProtobufServerTransportHandler.class);
 	private ServerBootstrap bootstrap;
 	private Channel openChannel;
 	private long printMessageEach = 10000;
@@ -73,14 +73,14 @@ public class ChannelReceiverDelegate<R extends MessageLite,T> extends
 	final private SocketAddress address;
 	final private R messagePrototype;
 			
-	public ChannelReceiverDelegate() {
+	public ProtobufServerTransportHandler() {
 		delegate = new AbstractTransportHandlerDelegate<>(null, this);
 		address = null;
 		messagePrototype = null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ChannelReceiverDelegate(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	public ProtobufServerTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
 		int port = Integer.parseInt(options.get("port"));
 		
 		this.address = new InetSocketAddress("0.0.0.0",port);
@@ -89,6 +89,9 @@ public class ChannelReceiverDelegate<R extends MessageLite,T> extends
 			throw new RuntimeException( new IllegalArgumentException("No valid type given: " +options.get("type")));
 		}
 		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this); 
+		
+		protocolHandler.setTransportHandler(this);
+		delegate.addListener(protocolHandler);
 		
 	}
 
@@ -182,7 +185,7 @@ public class ChannelReceiverDelegate<R extends MessageLite,T> extends
 	 */
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		logger.error("Exception caught: " + e.toString());
+		logger.error("Exception caught: " + e);
 		ctx.getChannel().close();
 	}
 	
@@ -219,7 +222,7 @@ public class ChannelReceiverDelegate<R extends MessageLite,T> extends
 					MessageLite m = message.getDefaultInstanceForType();
 					ProtobufDecoder dec = new ProtobufDecoder(m);
 					cp.addLast("protobufDecoder", dec);
-					cp.addLast("application", ChannelReceiverDelegate.this);
+					cp.addLast("application", ProtobufServerTransportHandler.this);
 					return cp;
 				}
 			};
@@ -273,8 +276,7 @@ public class ChannelReceiverDelegate<R extends MessageLite,T> extends
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		
-		return new ChannelReceiverDelegate<>( protocolHandler, options);
+		return new ProtobufServerTransportHandler<>( protocolHandler, options);
 	}
 
 	@Override
