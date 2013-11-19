@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
@@ -44,13 +45,12 @@ public class JxtaReceiverPO<T extends IStreamObject> extends AbstractSource<T> i
 	private static final boolean FORCE_JXTA_DATA_TRANSMISSION = determineForceJxtaSetting();
 	private static final String FORCE_JXTA_TRANSMISSION_SYS_PROPERTY = "peer.forcejxta";
 	private static final String PIPE_NAME = "Odysseus Pipe";
-	private static final int BUFFER_SIZE_BYTES = 4096;
 
 	private byte currentTypeByte = JxtaPOUtil.NONE_BYTE;
 	private int size = -1;
 	private ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
 	private int currentSize = 0;
-	private ByteBuffer messageBuffer = ByteBuffer.allocate(BUFFER_SIZE_BYTES);
+	private ByteBuffer messageBuffer = ByteBuffer.allocate(P2PNewPlugIn.TRANSPORT_BUFFER_SIZE);
 
 	private final PipeID pipeID;
 	private final PipeAdvertisement pipeAdvertisement; 
