@@ -43,15 +43,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
 import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
-import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
-import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaAttributeList;
@@ -60,19 +58,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 /**
  * ReceiverPO without AbstractSource but with ISource
  * 
- * @author Merlin Wasmann
+ * @author Merlin Wasmann, Marco Grawunder
  */
-@SuppressWarnings("deprecation")
 public class ClientReceiver<R, W> implements ISource<W>,
 		IAccessConnectionListener<R>, ITransferHandler<W>, IPhysicalOperator {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
-	protected IObjectHandler<W> objectHandler;
+	private IProtocolHandler<W> protocolHandler;
 	private boolean opened;
-
-	final IAccessConnectionHandler<R> accessHandler;
-	final private IInputDataHandler<R, W> inputDataHandler;
 
 	private AtomicBoolean open = new AtomicBoolean(false);
 
@@ -104,24 +98,16 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	
 	// ------------------------------------------------------------------
 
-	public ClientReceiver(IObjectHandler<W> objectHandler,
-			IInputDataHandler<R, W> inputDataHandler,
-			IAccessConnectionHandler<R> accessHandler) {
-		this.objectHandler = objectHandler;
-		this.inputDataHandler = inputDataHandler;
-		this.accessHandler = accessHandler;
-		this.name = "ClientReceiver " + accessHandler;
+	public ClientReceiver(IProtocolHandler<W> protocolHandler) {
+		this.protocolHandler = protocolHandler;
+		this.protocolHandler.setTransfer(this);
+		this.name = "ClientReceiver " + protocolHandler;
 		this.opened = false;
 		this.ownerHandler = new OwnerHandler();
 	}
 
-	@SuppressWarnings("unchecked")
 	public ClientReceiver(ClientReceiver<R, W> other) {
-		objectHandler = (IObjectHandler<W>) other.objectHandler.clone();
-		inputDataHandler = other.inputDataHandler.clone();
-		accessHandler = (IAccessConnectionHandler<R>) other.clone();
-		opened = other.opened;
-		this.ownerHandler = new OwnerHandler(other.ownerHandler);
+		throw new IllegalArgumentException("Currently not implemented");
 	}
 
 	@Override
@@ -532,10 +518,6 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		return null;
 	}
 	
-	@Override
-	public void process(R buffer) throws ClassNotFoundException {
-		inputDataHandler.process(buffer, objectHandler, accessHandler, this);
-	}
 
 	// ------------------------------------------------------------------------
 	// DONE
@@ -618,9 +600,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
-				objectHandler.clear();
-				inputDataHandler.init();
-				accessHandler.open(this);
+				protocolHandler.open();
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
@@ -661,10 +641,8 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		getLogger().debug("Process_close");
 		if (opened) {
 			try {
-				opened = false;
-				accessHandler.close(this);
-				inputDataHandler.done();
-				objectHandler.clear();
+				opened = false; // Do not read any data anymore
+				protocolHandler.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -688,12 +666,7 @@ public class ClientReceiver<R, W> implements ISource<W>,
 		if (!(ipo instanceof ClientReceiver)) {
 			return false;
 		}
-		@SuppressWarnings("rawtypes")
-		ClientReceiver cr = (ClientReceiver) ipo;
-		if (this.objectHandler.equals(cr.objectHandler)
-				&& this.accessHandler.equals(cr.accessHandler)) {
-			return true;
-		}
+
 		return false;
 	}
 
@@ -750,5 +723,11 @@ public class ClientReceiver<R, W> implements ISource<W>,
 	@Override
 	public boolean hasInput() {
 		return true;
+	}
+
+	@Override
+	public void process(R buffer) throws ClassNotFoundException {
+		// TODO Auto-generated method stub
+		
 	}
 }

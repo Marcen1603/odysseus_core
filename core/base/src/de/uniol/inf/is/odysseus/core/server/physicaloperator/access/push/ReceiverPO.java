@@ -20,18 +20,14 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.IInputDataHandler;
-import de.uniol.inf.is.odysseus.core.objecthandler.IObjectHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
-@SuppressWarnings("deprecation")
 public class ReceiverPO<R, W> extends AbstractSource<W> implements
-		 ITransferHandler<W> {
+		ITransferHandler<W> {
 
 	volatile protected static Logger _logger = null;
 
@@ -42,24 +38,9 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		return _logger;
 	}
 
-	protected IObjectHandler<W> objectHandler;
 	private boolean opened;
 
-	IAccessConnectionHandler<R> accessHandler;
-	private IInputDataHandler<R, W> inputDataHandler;
-
 	private IProtocolHandler<W> protocolHandler;
-
-	public ReceiverPO(IObjectHandler<W> objectHandler,
-			IInputDataHandler<R, W> inputDataHandler,
-			IAccessConnectionHandler<R> accessHandler) {
-		super();
-		this.objectHandler = objectHandler;
-		this.inputDataHandler = inputDataHandler;
-		this.accessHandler = accessHandler;
-		setName("ReceiverPO " + accessHandler);
-		this.opened = false;
-	}
 
 	public ReceiverPO(IProtocolHandler<W> protocolHandler) {
 		this.protocolHandler = protocolHandler;
@@ -77,19 +58,11 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		this.protocolHandler = ph;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ReceiverPO(ReceiverPO<R, W> other) {
-		super();
-		objectHandler = (IObjectHandler<W>) other.objectHandler.clone();
-		inputDataHandler = other.inputDataHandler.clone();
-		accessHandler = (IAccessConnectionHandler<R>) other.clone();
-
-		opened = other.opened;
-
 		throw new IllegalArgumentException("CLONE CURRENTLY NOT SUPPORTED.");
 	}
 
-//	@Override
+	// @Override
 	public boolean isOpened() {
 		return super.isOpen();
 	}
@@ -99,13 +72,7 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		getLogger().debug("Process_open");
 		if (!opened) {
 			try {
-				if (protocolHandler != null) {
-					protocolHandler.open();
-				} else {
-					objectHandler.clear();
-					inputDataHandler.init();
-					//accessHandler.open(this);
-				}
+				protocolHandler.open();
 				opened = true;
 			} catch (Exception e) {
 				throw new OpenFailedException(e);
@@ -119,38 +86,22 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 		if (opened) {
 			try {
 				opened = false; // Do not read any data anymore
-
-				if (protocolHandler != null) {
-					protocolHandler.close();
-				}
-				else {
-					//accessHandler.close(this);
-					inputDataHandler.done();
-					objectHandler.clear();
-				}
+				protocolHandler.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-//	@Override
+	// @Override
 	public void done() {
 		propagateDone();
 	}
 
-	@Override
-	public synchronized void transfer(W toTransfer) {
-		super.transfer(toTransfer);
-	}
-
 //	@Override
-	public void process(R object) throws ClassNotFoundException {
-		if (isOpen()) {
-			inputDataHandler
-					.process(object, objectHandler, accessHandler, this);
-		}
-	}
+//	public synchronized void transfer(W toTransfer) {
+//		super.transfer(toTransfer);
+//	}
 
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
@@ -158,21 +109,10 @@ public class ReceiverPO<R, W> extends AbstractSource<W> implements
 			return false;
 		}
 
-		@SuppressWarnings("rawtypes")
-		ReceiverPO bbrpo = (ReceiverPO) ipo;
-		
-		if((this.accessHandler == null && bbrpo.accessHandler != null) ||
-				(this.accessHandler != null && bbrpo.accessHandler == null) ||
-				(this.objectHandler == null && bbrpo.objectHandler != null) ||
-				(this.objectHandler != null && bbrpo.objectHandler == null)) {
-			return false;
-		}
-		if (((this.objectHandler == null && bbrpo.objectHandler == null) ||
-				(this.objectHandler.getName().equals(bbrpo.objectHandler.getName())))
-				&& (this.accessHandler != null && this.accessHandler.equals(bbrpo.accessHandler))
-				&& this.protocolHandler.isSemanticallyEqual(bbrpo.getProtocolHandler())) {
-			return true;
-		}
+//		@SuppressWarnings("rawtypes")
+//		ReceiverPO bbrpo = (ReceiverPO) ipo;
+
+		// TODO: Implement me
 		return false;
 	}
 
