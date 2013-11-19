@@ -167,11 +167,6 @@ public class JxtaProtocolHandler<T extends IStreamObject<?>> extends AbstractByt
 			currentTypeByte = NONE_BYTE;
 		} 
 	}
-	
-	@Override
-	public void process(String[] message) {
-		throw new RuntimeException("Not implemented yet");
-	}
 
 	private static <T extends IStreamObject<?>> T tryCreate(JxtaByteBufferHandler<T> handler) {
 		try {

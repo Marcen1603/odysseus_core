@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -244,18 +243,7 @@ public class DocumentProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void process(ByteBuffer message) {
-		getTransfer().transfer(getDataHandler().readData(message));
-	}
 	
-	@Override
-	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(message));
-	}
-
-
 	protected void init(Map<String, String> options) {
 		if (options.containsKey("delay")) {
 			setDelay(Long.parseLong(options.get("delay")));

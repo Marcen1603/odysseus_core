@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -293,15 +292,6 @@ public class HTMLProtocolHandler<T extends Tuple<?>> extends
 	public void onDisonnect(final ITransportHandler caller) {
 	}
 
-	@Override
-	public void process(final ByteBuffer message) {
-		this.getTransfer().transfer(this.getDataHandler().readData(message));
-	}
-
-	@Override
-	public void process(final String[] message) {
-		this.getTransfer().transfer(this.getDataHandler().readData(message));
-	}
 
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> o) {

@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AbstractTransportHandlerDelegate{
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+
+public class AbstractTransportHandlerDelegate<T>{
 	
-	private final List<ITransportHandlerListener> transportHandlerListener = new ArrayList<ITransportHandlerListener>();
+	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
 	private int openCounter = 0;
 	private final ITransportExchangePattern exchangePattern;
 	final private ITransportHandlerOpenCloseHandler callOnMe;
@@ -21,16 +23,16 @@ public class AbstractTransportHandlerDelegate{
 		this.callOnMe = callOnMe;
 	}
 
-	public void addListener(ITransportHandlerListener listener) {
+	public void addListener(ITransportHandlerListener<T> listener) {
 		this.transportHandlerListener.add(listener);
 	}
 
-	public void removeListener(ITransportHandlerListener listener) {
+	public void removeListener(ITransportHandlerListener<T> listener) {
 		this.transportHandlerListener.remove(listener);
 	}
 
 	public void fireProcess(ByteBuffer message) {
-		for (ITransportHandlerListener l : transportHandlerListener) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			// TODO: flip() erases the contents of the message if
 			// it was already flipped or just created...
 			// In other words: This method expects that the byte buffer
@@ -39,21 +41,29 @@ public class AbstractTransportHandlerDelegate{
 			l.process(message);
 		}
 	}
+	
+
+	@SuppressWarnings("rawtypes")
+	public void fireProcess(Tuple m) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
+			l.process(m);
+		}		
+	}
 
 	public void fireProcess(String[] message) {
-		for (ITransportHandlerListener l : transportHandlerListener) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(message);
 		}
 	}
 
 	public void fireOnConnect(ITransportHandler handler) {
-		for (ITransportHandlerListener l : transportHandlerListener) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.onConnect(handler);
 		}
 	}
 
 	public void fireOnDisconnect(ITransportHandler handler) {
-		for (ITransportHandlerListener l : transportHandlerListener) {
+		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.onDisonnect(handler);
 		}
 	}
@@ -120,5 +130,6 @@ public class AbstractTransportHandlerDelegate{
 	public void setOptionsMap(Map<String, String> options) {
 		this.optionsMap = options;
 	}
+
 
 }

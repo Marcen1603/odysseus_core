@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -136,16 +135,6 @@ public class SunspotProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	public void onDisonnect(ITransportHandler caller) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void process(ByteBuffer message) {
-		getTransfer().transfer(getDataHandler().readData(message));
-	}
-
-	@Override
-	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(message));
 	}
 
 	@Override

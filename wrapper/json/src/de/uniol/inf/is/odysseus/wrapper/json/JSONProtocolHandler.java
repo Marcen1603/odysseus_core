@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -1158,16 +1157,6 @@ public class JSONProtocolHandler extends
 	public void onDisonnect(ITransportHandler caller) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void process(ByteBuffer message) {
-		throw new RuntimeException("Not implemented yet");
-	}
-	
-	@Override
-	public void process(String[] message) {
-		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Override

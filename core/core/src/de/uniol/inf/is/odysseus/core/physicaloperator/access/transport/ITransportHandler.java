@@ -25,9 +25,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 public interface ITransportHandler {
 
-    public void addListener(ITransportHandlerListener listener);
+    @SuppressWarnings("rawtypes")
+	public void addListener(ITransportHandlerListener listener);
 
-    public void removeListener(ITransportHandlerListener listener);
+    @SuppressWarnings("rawtypes")
+	public void removeListener(ITransportHandlerListener listener);
 
     public void open() throws UnknownHostException, IOException;
 

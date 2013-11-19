@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -71,14 +70,6 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
 	@Override
 	public void onDisonnect(ITransportHandler caller) {
-	}
-
-	@Override
-	public void process(ByteBuffer message) {
-	}
-
-	@Override
-	public void process(String[] message) {
 	}
 
 	@Override

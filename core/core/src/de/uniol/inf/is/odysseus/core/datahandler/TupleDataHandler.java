@@ -124,6 +124,11 @@ public class TupleDataHandler extends AbstractDataHandler<Tuple<?>> {
 		}
 		return tuple;
 	}
+	
+	@Override
+	public Tuple<?> readData(Tuple<?> input) {
+		return input;
+	}
 
 	/*
 	 * (non-Javadoc)

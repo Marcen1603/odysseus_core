@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 
+@SuppressWarnings("rawtypes")
 public interface IProtocolHandler<T> extends ITransportHandlerListener {
 
     public void open() throws UnknownHostException, IOException;
@@ -60,4 +61,5 @@ public interface IProtocolHandler<T> extends ITransportHandlerListener {
 	public boolean isDone();
 	
 	public boolean isSemanticallyEqual(IProtocolHandler<?> other);
+
 }

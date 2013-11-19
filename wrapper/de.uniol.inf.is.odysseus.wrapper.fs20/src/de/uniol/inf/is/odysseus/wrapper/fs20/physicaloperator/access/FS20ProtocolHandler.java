@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -136,18 +135,6 @@ public class FS20ProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void write(T object) throws IOException {
 		writer.write(object.toString());
-	}
-
-	@Override
-	public void process(ByteBuffer message) {
-		// getTransfer().transfer(getDataHandler().readData(message));
-		throw new RuntimeException("Not implemented yet");
-	}
-
-	@Override
-	public void process(String[] message) {
-		// getTransfer().transfer(getDataHandler().readData(message));
-		throw new RuntimeException("Not implemented yet");
 	}
 	
 	/**

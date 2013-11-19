@@ -24,14 +24,15 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 abstract public class AbstractTransportHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler {
 
-	final AbstractTransportHandlerDelegate delegate;
+	final AbstractTransportHandlerDelegate<?> delegate;
 
 	public AbstractTransportHandler(){
-		delegate = new AbstractTransportHandlerDelegate(null, this);
+		delegate = new AbstractTransportHandlerDelegate<>(null, this);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
-		delegate = new AbstractTransportHandlerDelegate(protocolHandler.getExchangePattern(), this);
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this);
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
 	}
@@ -66,11 +67,13 @@ abstract public class AbstractTransportHandler implements ITransportHandler, ITr
 	
 	public abstract boolean isSemanticallyEqualImpl(ITransportHandler other);
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addListener(ITransportHandlerListener listener) {
 		delegate.addListener(listener);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void removeListener(ITransportHandlerListener listener) {
 		delegate.removeListener(listener);

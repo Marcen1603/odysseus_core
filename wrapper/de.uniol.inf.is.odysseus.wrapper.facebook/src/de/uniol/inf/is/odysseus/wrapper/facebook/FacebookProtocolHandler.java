@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -164,17 +163,6 @@ public class FacebookProtocolHandler extends
 
 	}
 
-	@Override
-	public void process(ByteBuffer message) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void process(String[] message) {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 * read the JSONObject and return it as a string

@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -104,9 +106,20 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 	
 	@Override
 	public void process(String[] message) {
-		throw new RuntimeException("Sorry. Currently not implemented!");
+		getTransfer().transfer(getDataHandler().readData(message));
 	}
 	
+	@Override
+	public void process(ByteBuffer message) {
+		getTransfer().transfer(getDataHandler().readData(message));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void process(Tuple m) {
+		getTransfer().transfer(getDataHandler().readData(m));		
+	}
+		
     @Override
     public boolean hasNext() throws IOException {
         throw new RuntimeException("Sorry. Currently not implemented");

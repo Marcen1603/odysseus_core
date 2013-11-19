@@ -147,11 +147,6 @@ public class MarkerByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
                }
            }
     }
-
-	@Override
-	public void process(String[] message) {
-		throw new RuntimeException("Not implemented!");
-	}
     
 	private static void insertInt(byte[] destArray, int offset, int value) {
 		destArray[offset] = (byte) (value >>> 24);

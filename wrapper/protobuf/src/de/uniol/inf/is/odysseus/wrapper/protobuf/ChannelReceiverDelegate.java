@@ -15,10 +15,16 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.protobuf;
 
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
@@ -39,23 +45,51 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.MessageLite;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 
-public class ChannelReceiverDelegate<R extends MessageLite> extends
-		SimpleChannelHandler {
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandlerDelegate;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerOpenCloseHandler;
 
+public class ChannelReceiverDelegate<R extends MessageLite,T> extends
+		SimpleChannelHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler{
+
+	final AbstractTransportHandlerDelegate<T> delegate;
+	
+	private static final String NAME = "ProtobufServer";
 	public static Logger logger = LoggerFactory
 			.getLogger(ChannelReceiverDelegate.class);
-	private ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO;
 	private ServerBootstrap bootstrap;
 	private Channel openChannel;
 	private long printMessageEach = 10000;
 	private long counter = 0;
 	private List<ChannelHandlerContext> channelHandlerContextList = new CopyOnWriteArrayList<ChannelHandlerContext>();
+	final private SocketAddress address;
+	final private R messagePrototype;
 			
-	public ChannelReceiverDelegate(
-			ChannelHandlerReceiverPO<R, ?> channelHandlerReceiverPO) {
-		this.channelHandlerReceiverPO = channelHandlerReceiverPO;
+	public ChannelReceiverDelegate() {
+		delegate = new AbstractTransportHandlerDelegate<>(null, this);
+		address = null;
+		messagePrototype = null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ChannelReceiverDelegate(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		int port = Integer.parseInt(options.get("port"));
+		
+		this.address = new InetSocketAddress("0.0.0.0",port);
+		this.messagePrototype = (R) ProtobufTypeRegistry.getMessageType(options.get("type"));
+		if (messagePrototype == null){
+			throw new RuntimeException( new IllegalArgumentException("No valid type given: " +options.get("type")));
+		}
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this); 
+		
 	}
 
 	/*
@@ -112,7 +146,6 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 	 * .netty.channel.ChannelHandlerContext,
 	 * org.jboss.netty.channel.MessageEvent)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 		Object m = e.getMessage();
@@ -121,7 +154,22 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 				logger.debug(new Date() + ":Received message No." + counter);
 			}
 		}
-		channelHandlerReceiverPO.newMessage((R) m);
+		
+		GeneratedMessage input = (GeneratedMessage) m;
+		
+		Map<FieldDescriptor, Object> test = input.getAllFields();
+		@SuppressWarnings("rawtypes")
+		Tuple<?> ret = new Tuple(test.size(), false);
+
+		for (Entry<FieldDescriptor, Object> ent : test.entrySet()) {
+			if (ent.getValue() != null && ent.getKey() != null) {
+				// Numbers starting with 1
+				ret.setAttribute(ent.getKey().getNumber()-1, ent.getValue());
+			}
+		}
+
+		
+		delegate.fireProcess(ret);
 	}
 
 	/*
@@ -137,7 +185,22 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 		logger.error("Exception caught: " + e.toString());
 		ctx.getChannel().close();
 	}
-
+	
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		delegate.open();
+	}
+	
+	@Override
+	public void processInOpen() throws IOException {
+		open(address, messagePrototype);		
+	}
+	
+	@Override
+	public void processOutOpen() throws IOException {
+		
+	}
+	
 	public void open(SocketAddress address, final R message) {
 		if (bootstrap == null) {
 			ChannelFactory factory = new NioServerSocketChannelFactory(
@@ -170,12 +233,80 @@ public class ChannelReceiverDelegate<R extends MessageLite> extends
 		}
 	}
 
-	public synchronized void close() {
+	
+	@Override
+	public void processInClose() throws IOException {
 		for (ChannelHandlerContext ctx:channelHandlerContextList){
 			ctx.getChannel().close();
 		}
 		openChannel.disconnect();
 		openChannel.close().awaitUninterruptibly();
+	}
+	
+	@Override
+	public void processOutClose() throws IOException {
+		throw new RuntimeException("Not implemented");
+
+	}
+	
+	public synchronized void close() throws IOException {
+		delegate.close();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addListener(ITransportHandlerListener listener) {
+		delegate.addListener(listener);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void removeListener(ITransportHandlerListener listener) {
+		delegate.removeListener(listener);
+	}
+
+	@Override
+	public void send(byte[] message) throws IOException {
+		throw new RuntimeException("Not implemented");
+	}
+
+	@Override
+	public ITransportHandler createInstance(
+			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+		
+		return new ChannelReceiverDelegate<>( protocolHandler, options);
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		return null;
+	}
+
+	@Override
+	public OutputStream getOutputStream() {
+		return null;
+	}
+
+	@Override
+	public ITransportExchangePattern getExchangePattern() {
+		return delegate.getExchangePattern();
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
+	public boolean isDone() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSemanticallyEqual(ITransportHandler other) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

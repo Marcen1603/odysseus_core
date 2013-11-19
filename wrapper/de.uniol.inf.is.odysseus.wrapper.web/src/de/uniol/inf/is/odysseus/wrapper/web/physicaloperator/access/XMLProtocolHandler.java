@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -317,16 +316,6 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 	@Override
 	public void onDisonnect(final ITransportHandler caller) {
 
-	}
-
-	@Override
-	public void process(final ByteBuffer message) {
-		this.getTransfer().transfer(this.getDataHandler().readData(message));
-	}
-
-	@Override
-	public void process(String[] message) {
-		getTransfer().transfer(getDataHandler().readData(message));
 	}
 
 	@Override

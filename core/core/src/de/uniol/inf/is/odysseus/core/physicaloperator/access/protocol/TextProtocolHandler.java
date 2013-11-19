@@ -181,11 +181,6 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		}
 		scanner.close();
     }
-    
-	@Override
-	public void process(String[] message) {
-		throw new RuntimeException("Not implemented yet");
-	}
 	
 	public void setOptionsMap(Map<String, String> optionsMap) {
 		this.optionsMap = optionsMap;

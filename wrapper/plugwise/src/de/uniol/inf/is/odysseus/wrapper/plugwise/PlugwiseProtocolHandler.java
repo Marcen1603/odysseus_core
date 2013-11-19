@@ -149,12 +149,6 @@ public class PlugwiseProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	}
 
 	@Override
-	public void process(String[] message) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
 		// TODO Auto-generated method stub
 		return false;

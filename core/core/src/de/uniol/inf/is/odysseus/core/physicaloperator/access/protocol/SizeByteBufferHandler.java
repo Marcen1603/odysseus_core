@@ -166,10 +166,6 @@ public class SizeByteBufferHandler<T> extends AbstractByteBufferHandler<T> {
 			LOG.error(e.getMessage(), e);
 		}
 	}
-	@Override
-	public void process(String[] message) {
-		throw new RuntimeException("Not implemented!");
-	}
 	
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction, IAccessPattern access, Map<String, String> options, IDataHandler<T> dataHandler) {
