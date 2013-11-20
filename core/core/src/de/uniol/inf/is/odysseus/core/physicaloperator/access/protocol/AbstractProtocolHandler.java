@@ -20,7 +20,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
@@ -114,9 +113,8 @@ abstract public class AbstractProtocolHandler<T> implements IProtocolHandler<T> 
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void process(Tuple m) {
+	public void process(T m) {
 		getTransfer().transfer(getDataHandler().readData(m));		
 	}
 		

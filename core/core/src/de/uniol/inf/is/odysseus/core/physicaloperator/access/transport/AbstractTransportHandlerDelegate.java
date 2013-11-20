@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-
 public class AbstractTransportHandlerDelegate<T>{
 	
 	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
@@ -43,8 +41,7 @@ public class AbstractTransportHandlerDelegate<T>{
 	}
 	
 
-	@SuppressWarnings("rawtypes")
-	public void fireProcess(Tuple m) {
+	public void fireProcess(T m) {
 		for (ITransportHandlerListener<T> l : transportHandlerListener) {
 			l.process(m);
 		}		

@@ -50,6 +50,7 @@ import com.google.protobuf.MessageLite;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandlerDelegate;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -60,7 +61,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		SimpleChannelHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler{
 
-	final AbstractTransportHandlerDelegate<T> delegate;
+	final AbstractTransportHandlerDelegate<Tuple<IMetaAttribute>> delegate;
 	
 	private static final String NAME = "ProtobufServer";
 	public static Logger logger = LoggerFactory
@@ -79,8 +80,8 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		messagePrototype = null;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public ProtobufServerTransportHandler(IProtocolHandler<?> protocolHandler, Map<String, String> options) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public ProtobufServerTransportHandler(IProtocolHandler protocolHandler, Map<String, String> options) {
 		int port = Integer.parseInt(options.get("port"));
 		
 		this.address = new InetSocketAddress("0.0.0.0",port);
@@ -161,8 +162,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		GeneratedMessage input = (GeneratedMessage) m;
 		
 		Map<FieldDescriptor, Object> test = input.getAllFields();
-		@SuppressWarnings("rawtypes")
-		Tuple<?> ret = new Tuple(test.size(), false);
+		Tuple<IMetaAttribute> ret = new Tuple<>(test.size(), false);
 
 		for (Entry<FieldDescriptor, Object> ent : test.entrySet()) {
 			if (ent.getValue() != null && ent.getKey() != null) {

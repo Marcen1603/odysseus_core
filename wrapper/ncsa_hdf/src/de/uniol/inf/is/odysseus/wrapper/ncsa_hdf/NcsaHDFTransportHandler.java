@@ -17,13 +17,15 @@ import ncsa.hdf.object.h5.H5File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IIteratable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProvidesStringArray;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractFileHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class NcsaHDFTransportHandler extends AbstractFileHandler implements
-		IProvidesStringArray {
+		IIteratable<Tuple<IMetaAttribute>> {
 
 	public static Logger LOG = LoggerFactory
 			.getLogger(NcsaHDFTransportHandler.class);
@@ -32,7 +34,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	public static final String PATH = "path";
 
 	private String path;
-	private List<String[]> read = new LinkedList<>();
+	private List<Tuple<IMetaAttribute>> read = new LinkedList<>();
 
 	public NcsaHDFTransportHandler() {
 		try {
@@ -170,15 +172,15 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 
 	private void readValues(int tupleSize, int p, float[] values) {
 		for (int i = 0; i < values.length; i++) {
-			String[] t;
+			Tuple<IMetaAttribute> t;
 			if (p == 0) {
-				t = new String[tupleSize + 1];
-				t[0] = "" + i;
-				t[1] = "" + values[i];
+				t = new Tuple<>(tupleSize + 1, false);
+				t.setAttribute(0, i);
+				t.setAttribute(1, values[i]);
 				read.add(t);
 			} else {
 				t = read.get(i);
-				t[p + 1] = "" + values[i];
+				t.setAttribute(p + 1,values[i]);
 			}
 		}
 	}
@@ -186,45 +188,45 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	// DO NOT MODIFY CONTENT. COPY FROM ABOVE!!
 	private void readValues(int tupleSize, int p, int[] values) {
 		for (int i = 0; i < values.length; i++) {
-			String[] t;
+			Tuple<IMetaAttribute> t;
 			if (p == 0) {
-				t = new String[tupleSize + 1];
-				t[0] = "" + i;
-				t[1] = "" + values[i];
+				t = new Tuple<>(tupleSize + 1, false);
+				t.setAttribute(0, i);
+				t.setAttribute(1, values[i]);
 				read.add(t);
 			} else {
 				t = read.get(i);
-				t[p + 1] = "" + values[i];
+				t.setAttribute(p + 1,values[i]);
 			}
 		}
 	}
 
 	private void readValues(int tupleSize, int p, long[] values) {
 		for (int i = 0; i < values.length; i++) {
-			String[] t;
+			Tuple<IMetaAttribute> t;
 			if (p == 0) {
-				t = new String[tupleSize + 1];
-				t[0] = "" + i;
-				t[1] = "" + values[i];
+				t = new Tuple<>(tupleSize + 1, false);
+				t.setAttribute(0, i);
+				t.setAttribute(1, values[i]);
 				read.add(t);
 			} else {
 				t = read.get(i);
-				t[p + 1] = "" + values[i];
+				t.setAttribute(p + 1,values[i]);
 			}
 		}
 	}
 	
 	private void readValues(int tupleSize, int p, String[] values) {
 		for (int i = 0; i < values.length; i++) {
-			String[] t;
+			Tuple<IMetaAttribute> t;
 			if (p == 0) {
-				t = new String[tupleSize + 1];
-				t[0] = "" + i;
-				t[1] = "" + values[i];
+				t = new Tuple<>(tupleSize + 1, false);
+				t.setAttribute(0, i);
+				t.setAttribute(1, values[i]);
 				read.add(t);
 			} else {
 				t = read.get(i);
-				t[p + 1] = "" + values[i];
+				t.setAttribute(p + 1,values[i]);
 			}
 		}
 	}
@@ -240,7 +242,7 @@ public class NcsaHDFTransportHandler extends AbstractFileHandler implements
 	}
 
 	@Override
-	public String[] getNext() {
+	public Tuple<IMetaAttribute> getNext() {
 		return read.remove(0);
 	}
 

@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ICSVToString;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
@@ -64,10 +63,10 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		if (input.size() != 1) throw new IllegalArgumentException("Input-size must be one!");
 		return readData(input.get(0));
 	}
-	
+		
 	@Override
-	public T readData(Tuple<?> input) {
-		throw new IllegalArgumentException("Read data with tuple input is not defined for "+input);
+	public T readData(T input) {
+		return input;
 	}
 	
 	@Override

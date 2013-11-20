@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
+import java.io.IOException;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -8,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 
-	private static final String NAME = "None";
+	public static final String NAME = "None";
 
 	public NoProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
@@ -37,4 +38,21 @@ public class NoProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean hasNext() throws IOException {
+		return ((IIteratable<T>) getTransportHandler()).hasNext();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getNext() throws IOException {
+		T next = ((IIteratable<T>) getTransportHandler())
+				.getNext();
+		if (next != null) {
+			return getDataHandler().readData(next);
+		} else {
+			return null;
+		}
+	}
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.NoProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.StringArrayProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -28,7 +29,7 @@ public class HDFSource extends AbstractAccessAO {
 		setTransportHandler(NcsaHDFTransportHandler.NAME);
 		setDataHandler(new TupleDataHandler().getSupportedDataTypes().get(0));
 		setWrapper(Constants.GENERIC_PULL);
-		setProtocolHandler(StringArrayProtocolHandler.NAME);
+		setProtocolHandler(NoProtocolHandler.NAME);
 	}
 
 	public HDFSource(Resource name, String wrapper, String transportHandler,

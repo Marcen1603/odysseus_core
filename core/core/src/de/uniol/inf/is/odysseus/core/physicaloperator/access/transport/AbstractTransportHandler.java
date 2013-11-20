@@ -30,8 +30,8 @@ abstract public class AbstractTransportHandler implements ITransportHandler, ITr
 		delegate = new AbstractTransportHandlerDelegate<>(null, this);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public AbstractTransportHandler(IProtocolHandler<?> protocolHandler) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public AbstractTransportHandler(IProtocolHandler protocolHandler) {
 		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), this);
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);

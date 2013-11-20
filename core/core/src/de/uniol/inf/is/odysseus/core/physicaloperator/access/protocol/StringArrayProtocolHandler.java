@@ -27,7 +27,7 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	@Override
 	public void setTransfer(ITransferHandler<T> transfer) {
 		if (transfer != null) {
-			if (!(transfer instanceof IProvidesStringArray)) {
+			if (!(transfer instanceof IIteratable)) {
 				throw new IllegalArgumentException("Illegal transport handler "
 						+ transfer);
 			}
@@ -77,14 +77,16 @@ public class StringArrayProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean hasNext() throws IOException {
-		return ((IProvidesStringArray) getTransportHandler()).hasNext();
+		return ((IIteratable<String[]>) getTransportHandler()).hasNext();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T getNext() throws IOException {
-		String[] next = ((IProvidesStringArray) getTransportHandler())
+		String[] next = ((IIteratable<String[]>) getTransportHandler())
 				.getNext();
 		if (next != null) {
 			return getDataHandler().readData(next);

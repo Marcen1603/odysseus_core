@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
 import java.nio.ByteBuffer;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-
 
 public interface ITransportHandlerListener<T> {
 	
@@ -28,6 +26,6 @@ public interface ITransportHandlerListener<T> {
 
 	public void process(ByteBuffer message);
 	public void process(String[] message);
-	public void process(Tuple<?> m);
+	public void process(T m);
 	
 }

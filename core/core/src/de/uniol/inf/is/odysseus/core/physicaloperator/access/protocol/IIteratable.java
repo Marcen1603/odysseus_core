@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
-public interface IProvidesStringArray {
+public interface IIteratable<T> {
 	
 	boolean hasNext();
-	String[] getNext();
+	T getNext();
 
 }

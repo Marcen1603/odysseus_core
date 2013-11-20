@@ -21,14 +21,13 @@ import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface IDataHandler<T> {
 	public T readData(ByteBuffer buffer);
 	public T readData(ObjectInputStream inputStream) throws IOException;
 	public T readData(String[] input);
-	public T readData(Tuple<?> input);
+	public T readData(T input);
 	public T readData(List<String> input);
 	public T readData(String string);
 	public void writeData(ByteBuffer buffer, Object data);
