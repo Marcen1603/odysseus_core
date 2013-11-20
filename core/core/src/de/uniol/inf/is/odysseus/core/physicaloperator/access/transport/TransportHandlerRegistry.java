@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class TransportHandlerRegistry {
 
