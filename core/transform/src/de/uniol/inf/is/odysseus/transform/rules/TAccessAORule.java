@@ -96,6 +96,12 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 					throw new TransformationException("No transport handler "
 							+ operator.getTransportHandler() + " found.");
 				}
+				
+			
+				// In some cases the transport handler needs to know the schema
+				if (dataHandler != null){
+					transportHandler.setSchema(dataHandler.getSchema());
+				}
 
 				if (Constants.GENERIC_PULL.equalsIgnoreCase(operator
 						.getWrapper())) {

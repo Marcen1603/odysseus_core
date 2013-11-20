@@ -22,6 +22,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public interface ITransportHandler {
 
@@ -38,6 +39,8 @@ public interface ITransportHandler {
     public void send(byte[] message) throws IOException;
 
     public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, Map<String, String> options);
+    
+    public void setSchema(SDFSchema schema);
 
     public InputStream getInputStream();
 

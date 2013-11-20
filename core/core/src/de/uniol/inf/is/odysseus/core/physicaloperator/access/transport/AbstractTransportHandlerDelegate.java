@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+
 public class AbstractTransportHandlerDelegate<T>{
 	
 	private final List<ITransportHandlerListener<T>> transportHandlerListener = new ArrayList<ITransportHandlerListener<T>>();
@@ -15,6 +17,8 @@ public class AbstractTransportHandlerDelegate<T>{
 	final private ITransportHandlerOpenCloseHandler callOnMe;
 	
 	private Map<String, String> optionsMap;
+	private SDFSchema schema;
+
 	
 	public AbstractTransportHandlerDelegate(ITransportExchangePattern exchangePattern, ITransportHandlerOpenCloseHandler callOnMe) {
 		this.exchangePattern = exchangePattern;
@@ -126,6 +130,14 @@ public class AbstractTransportHandlerDelegate<T>{
 	
 	public void setOptionsMap(Map<String, String> options) {
 		this.optionsMap = options;
+	}
+	
+	public void setSchema(SDFSchema schema) {
+		this.schema = schema;
+	}
+	
+	public SDFSchema getSchema() {
+		return schema;
 	}
 
 

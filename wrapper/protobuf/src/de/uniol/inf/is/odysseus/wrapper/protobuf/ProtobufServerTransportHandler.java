@@ -57,6 +57,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandlerOpenCloseHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		SimpleChannelHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler{
@@ -162,7 +163,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 		GeneratedMessage input = (GeneratedMessage) m;
 		
 		Map<FieldDescriptor, Object> test = input.getAllFields();
-		Tuple<IMetaAttribute> ret = new Tuple<>(test.size(), false);
+		Tuple<IMetaAttribute> ret = new Tuple<>(delegate.getSchema().size(), false);
 
 		for (Entry<FieldDescriptor, Object> ent : test.entrySet()) {
 			if (ent.getValue() != null && ent.getKey() != null) {
@@ -197,6 +198,11 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	@Override
 	public void processInOpen() throws IOException {
 		open(address, messagePrototype);		
+	}
+	
+	@Override
+	public void setSchema(SDFSchema schema) {
+		delegate.setSchema(schema);
 	}
 	
 	@Override

@@ -21,11 +21,12 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 abstract public class AbstractTransportHandler implements ITransportHandler, ITransportHandlerOpenCloseHandler {
 
 	final AbstractTransportHandlerDelegate<?> delegate;
-
+	
 	public AbstractTransportHandler(){
 		delegate = new AbstractTransportHandlerDelegate<>(null, this);
 	}
@@ -37,6 +38,15 @@ abstract public class AbstractTransportHandler implements ITransportHandler, ITr
 		delegate.addListener(protocolHandler);
 	}
 
+	@Override
+	public void setSchema(SDFSchema schema) {
+		delegate.setSchema(schema);
+	}
+	
+	public SDFSchema getSchema() {
+		return delegate.getSchema();
+	}
+	
 	@Override
 	abstract public void processInOpen() throws IOException;
 	
