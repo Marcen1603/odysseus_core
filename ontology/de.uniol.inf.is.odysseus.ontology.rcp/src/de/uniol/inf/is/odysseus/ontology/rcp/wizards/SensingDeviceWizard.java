@@ -91,6 +91,7 @@ public class SensingDeviceWizard extends Wizard implements INewWizard {
                         ontologyService.createSensingDevice(sensingDevice);
                     }
                     catch (final Exception e) {
+						LOG.error(e.getMessage(), e);
                         MessageDialog.openError(workbenchWindow.getShell(), OdysseusNLS.Error, e.getMessage());
                     }
                     finally {

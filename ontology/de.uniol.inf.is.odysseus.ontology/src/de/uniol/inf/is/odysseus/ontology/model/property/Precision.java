@@ -30,8 +30,8 @@ public class Precision extends MeasurementProperty implements IMeasurementProper
      * 
      * @param uri
      */
-    public Precision(URI uri) {
-        super(uri, SSN.Precision);
+    public Precision(URI uri, String expression) {
+        super(uri, SSN.Precision, expression);
     }
 
 }

@@ -23,15 +23,16 @@ import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class Selectivity extends MeasurementProperty implements IMeasurementProperty {
+public class Selectivity extends MeasurementProperty implements
+		IMeasurementProperty {
 
-    /**
-     * Class constructor.
-     * 
-     * @param uri
-     */
-    public Selectivity(URI uri) {
-        super(uri, SSN.Selectivity);
-    }
+	/**
+	 * Class constructor.
+	 * 
+	 * @param uri
+	 */
+	public Selectivity(URI uri, String expression) {
+		super(uri, SSN.Selectivity, expression);
+	}
 
 }

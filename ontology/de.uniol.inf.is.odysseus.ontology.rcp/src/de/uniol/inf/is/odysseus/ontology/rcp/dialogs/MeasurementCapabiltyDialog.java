@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.ontology.rcp.dialogs;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -52,266 +51,293 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class MeasurementCapabiltyDialog extends Dialog {
-    private Combo cmbProperty;
-    private Combo cmbAttribute;
-    private Text txtAttributeValueMin;
-    private Text txtAttributeValueMax;
-    private Text txtAttributeFunction;
+	private Combo cmbForProperty;
+	private Combo cmbConditionProperty;
 
-    private Combo cmbMeasurementProperty;
-    private Text txtMeasurementPropertyValueMin;
-    private Text txtMeasurementPropertyValueMax;
+	private Text txtConditionValueMin;
+	private Text txtConditionValueMax;
+	private Text txtConditionExpression;
 
-    private Condition condition;
-    private MeasurementProperty measurementPropery;
-    private Property property;
-    private final List<SDFAttribute> attributes;
-    private final URI uri;
+	private Combo cmbMeasurementProperty;
+	private Text txtMeasurementPropertyExpression;
 
-    /**
-     * Class constructor.
-     * 
-     * @param parentShell
-     */
-    public MeasurementCapabiltyDialog(final Shell parent, URI uri, final List<SDFAttribute> attributes) {
-        super(parent);
-        this.attributes = attributes;
-        this.uri = uri;
-    }
+	private Condition condition;
+	private MeasurementProperty measurementPropery;
+	private Property property;
+	private SDFAttribute attribute;
+	private final URI uri;
 
-    @Override
-    protected Control createDialogArea(final Composite parent) {
-        final Composite container = (Composite) super.createDialogArea(parent);
+	/**
+	 * Class constructor.
+	 * 
+	 * @param parentShell
+	 */
+	public MeasurementCapabiltyDialog(final Shell parent, URI uri,
+			final SDFAttribute attribute) {
+		super(parent);
+		this.attribute = attribute;
+		this.uri = uri;
+	}
 
-        final Monitor monitor = parent.getMonitor();
-        final int maxWidth = (monitor.getBounds().width * 2) / 3;
+	@Override
+	protected Control createDialogArea(final Composite parent) {
+		final Composite container = (Composite) super.createDialogArea(parent);
 
-        container.setLayout(new GridLayout(2, false));
-        GridData gd = new GridData();
+		final Monitor monitor = parent.getMonitor();
+		final int maxWidth = (monitor.getBounds().width * 2) / 3;
 
-        final Label lblCondition = new Label(container, SWT.WRAP);
-        lblCondition.setText(OdysseusNLS.Condition);
-        gd = new GridData();
-        final int lblConditionWidth = lblCondition.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 2;
-        gd.widthHint = Math.min(lblConditionWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        lblCondition.setLayoutData(gd);
+		container.setLayout(new GridLayout(2, false));
+		GridData gd = new GridData();
 
-        this.cmbProperty = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-        gd = new GridData();
-        final int cmbPropertyWidth = cmbProperty.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 2;
-        gd.widthHint = Math.min(cmbPropertyWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        cmbProperty.setLayoutData(gd);
+		final Label lblForCondition = new Label(container, SWT.WRAP);
+		lblForCondition.setText(OdysseusNLS.Property);
+		gd = new GridData();
+		final int lblForConditionWidth = lblForCondition.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(lblForConditionWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		lblForCondition.setLayoutData(gd);
 
-        this.fillPropertyCombo(this.cmbProperty);
+		this.cmbForProperty = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN
+				| SWT.BORDER | SWT.READ_ONLY);
+		gd = new GridData();
+		final int cmbForPropertyWidth = cmbForProperty.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(cmbForPropertyWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		cmbForProperty.setLayoutData(gd);
 
-        this.cmbAttribute = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-        gd = new GridData();
-        final int cmbAttributeWidth = cmbAttribute.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 2;
-        gd.widthHint = Math.min(cmbAttributeWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        cmbAttribute.setLayoutData(gd);
+		this.fillPropertyCombo(this.cmbForProperty);
 
-        this.fillAttributeCombo(this.cmbAttribute);
+		final Label lblCondition = new Label(container, SWT.WRAP);
+		lblCondition.setText(OdysseusNLS.Condition);
+		gd = new GridData();
+		final int lblConditionWidth = lblCondition.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(lblConditionWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		lblCondition.setLayoutData(gd);
 
-        Button[] radios = new Button[2];
+		this.cmbConditionProperty = new Combo(container, SWT.VERTICAL
+				| SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		gd = new GridData();
+		final int cmbConditionPropertyWidth = cmbConditionProperty.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(cmbConditionPropertyWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		cmbConditionProperty.setLayoutData(gd);
 
-        radios[0] = new Button(container, SWT.RADIO);
-        radios[0].setText(OdysseusNLS.Interval);
-        radios[0].addListener(SWT.Selection, new Listener() {
+		this.fillPropertyCombo(this.cmbConditionProperty);
 
-            @Override
-            public void handleEvent(Event event) {
-                txtAttributeFunction.setText("");
-                txtAttributeFunction.setEnabled(false);
-                txtAttributeFunction.setVisible(false);
-                txtAttributeValueMin.setEnabled(true);
-                txtAttributeValueMax.setEnabled(true);
-                txtAttributeValueMin.setVisible(true);
-                txtAttributeValueMax.setVisible(true);
+		Button[] radios = new Button[2];
 
-            }
-        });
-        radios[1] = new Button(container, SWT.RADIO);
-        radios[1].setText(OdysseusNLS.Function);
-        radios[1].addListener(SWT.Selection, new Listener() {
+		radios[0] = new Button(container, SWT.RADIO);
+		radios[0].setText(OdysseusNLS.Interval);
+		radios[0].addListener(SWT.Selection, new Listener() {
 
-            @Override
-            public void handleEvent(Event event) {
-                txtAttributeValueMin.setText("");
-                txtAttributeValueMax.setText("");
-                txtAttributeValueMin.setEnabled(false);
-                txtAttributeValueMax.setEnabled(false);
-                txtAttributeValueMin.setVisible(false);
-                txtAttributeValueMax.setVisible(false);
-                txtAttributeFunction.setEditable(true);
-                txtAttributeFunction.setEnabled(true);
-                txtAttributeFunction.setVisible(true);
+			@Override
+			public void handleEvent(Event event) {
+				txtConditionExpression.setText("");
+				txtConditionExpression.setEnabled(false);
+				txtConditionExpression.setVisible(false);
+				txtConditionValueMin.setEnabled(true);
+				txtConditionValueMax.setEnabled(true);
+				txtConditionValueMin.setVisible(true);
+				txtConditionValueMax.setVisible(true);
 
-            }
-        });
+			}
+		});
+		radios[1] = new Button(container, SWT.RADIO);
+		radios[1].setText(OdysseusNLS.Function);
+		radios[1].addListener(SWT.Selection, new Listener() {
 
-        this.txtAttributeFunction = new Text(container, SWT.BORDER);
-        gd = new GridData();
-        final int txtAttributeFunctionWidth = txtAttributeFunction.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 2;
-        gd.widthHint = Math.min(txtAttributeFunctionWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        txtAttributeFunction.setLayoutData(gd);
-        txtAttributeFunction.setVisible(false);
-        txtAttributeFunction.setEnabled(false);
+			@Override
+			public void handleEvent(Event event) {
+				txtConditionValueMin.setText("");
+				txtConditionValueMax.setText("");
+				txtConditionValueMin.setEnabled(false);
+				txtConditionValueMax.setEnabled(false);
+				txtConditionValueMin.setVisible(false);
+				txtConditionValueMax.setVisible(false);
+				txtConditionExpression.setEditable(true);
+				txtConditionExpression.setEnabled(true);
+				txtConditionExpression.setVisible(true);
 
-        this.txtAttributeValueMin = new Text(container, SWT.BORDER);
-        gd = new GridData();
-        final int txtAttributeValueMinWidth = txtAttributeValueMin.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 1;
-        gd.widthHint = Math.min(txtAttributeValueMinWidth, maxWidth / 2);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        txtAttributeValueMin.setLayoutData(gd);
+			}
+		});
 
-        this.txtAttributeValueMax = new Text(container, SWT.BORDER);
-        gd = new GridData();
-        final int txtAttributeValueMaxWidth = txtAttributeValueMax.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 1;
-        gd.widthHint = Math.min(txtAttributeValueMaxWidth, maxWidth / 2);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        txtAttributeValueMax.setLayoutData(gd);
-        new Label(container, SWT.NONE);
+		this.txtConditionExpression = new Text(container, SWT.BORDER);
+		gd = new GridData();
+		final int txtAttributeFunctionWidth = txtConditionExpression
+				.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(txtAttributeFunctionWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		txtConditionExpression.setLayoutData(gd);
+		txtConditionExpression.setVisible(false);
+		txtConditionExpression.setEnabled(false);
 
-        final Label lblProperty = new Label(container, SWT.WRAP);
-        lblProperty.setText(OdysseusNLS.MeasurementProperty);
-        gd = new GridData();
-        final int lblPropertyWidth = lblProperty.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 2;
-        gd.widthHint = Math.min(lblPropertyWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        lblProperty.setLayoutData(gd);
+		this.txtConditionValueMin = new Text(container, SWT.BORDER);
+		gd = new GridData();
+		final int txtAttributeValueMinWidth = txtConditionValueMin.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 1;
+		gd.widthHint = Math.min(txtAttributeValueMinWidth, maxWidth / 2);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		txtConditionValueMin.setLayoutData(gd);
 
-        this.cmbMeasurementProperty = new Combo(container, SWT.VERTICAL | SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
-        gd = new GridData();
-        final int cmbMeasurementPropertyWidth = cmbMeasurementProperty.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 2;
-        gd.widthHint = Math.min(cmbMeasurementPropertyWidth, maxWidth);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        cmbMeasurementProperty.setLayoutData(gd);
+		this.txtConditionValueMax = new Text(container, SWT.BORDER);
+		gd = new GridData();
+		final int txtAttributeValueMaxWidth = txtConditionValueMax.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 1;
+		gd.widthHint = Math.min(txtAttributeValueMaxWidth, maxWidth / 2);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		txtConditionValueMax.setLayoutData(gd);
+		new Label(container, SWT.NONE);
 
-        this.fillMeasurementPropertyCombo(this.cmbMeasurementProperty);
+		final Label lblProperty = new Label(container, SWT.WRAP);
+		lblProperty.setText(OdysseusNLS.MeasurementProperty);
+		gd = new GridData();
+		final int lblPropertyWidth = lblProperty.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(lblPropertyWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		lblProperty.setLayoutData(gd);
 
-        this.txtMeasurementPropertyValueMin = new Text(container, SWT.BORDER);
-        gd = new GridData();
-        final int txtMeasurementPropertyValueMinWidth = txtMeasurementPropertyValueMin.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 1;
-        gd.widthHint = Math.min(txtMeasurementPropertyValueMinWidth, maxWidth / 2);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        txtMeasurementPropertyValueMin.setLayoutData(gd);
+		this.cmbMeasurementProperty = new Combo(container, SWT.VERTICAL
+				| SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
+		gd = new GridData();
+		final int cmbMeasurementPropertyWidth = cmbMeasurementProperty
+				.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(cmbMeasurementPropertyWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		cmbMeasurementProperty.setLayoutData(gd);
 
-        this.txtMeasurementPropertyValueMax = new Text(container, SWT.BORDER);
-        gd = new GridData();
-        final int txtMeasurementPropertyValueMaxWidth = txtMeasurementPropertyValueMax.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-        gd.horizontalSpan = 1;
-        gd.widthHint = Math.min(txtMeasurementPropertyValueMaxWidth, maxWidth / 2);
-        gd.horizontalAlignment = GridData.FILL;
-        gd.grabExcessHorizontalSpace = true;
-        txtMeasurementPropertyValueMax.setLayoutData(gd);
+		this.fillMeasurementPropertyCombo(this.cmbMeasurementProperty);
 
-        radios[0].setSelection(true);
+		this.txtMeasurementPropertyExpression = new Text(container, SWT.BORDER);
+		gd = new GridData();
+		final int txtMeasurementPropertyValueMinWidth = txtMeasurementPropertyExpression
+				.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		gd.horizontalSpan = 2;
+		gd.widthHint = Math.min(txtMeasurementPropertyValueMinWidth, maxWidth);
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		txtMeasurementPropertyExpression.setLayoutData(gd);
 
-        return container;
-    }
+		radios[0].setSelection(true);
 
-    @Override
-    protected void configureShell(final Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText("Selection dialog");
-    }
+		return container;
+	}
 
-    @SuppressWarnings("unused")
-    private void saveInput() {
-        final Property property = (Property) this.cmbProperty.getData(this.cmbProperty.getItem(this.cmbProperty.getSelectionIndex()));
-        final SDFAttribute attribute = (SDFAttribute) this.cmbAttribute.getData(this.cmbAttribute.getItem(this.cmbAttribute.getSelectionIndex()));
+	@Override
+	protected void configureShell(final Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText("Selection dialog");
+	}
 
-        if (this.txtAttributeFunction.isEnabled()) {
-            final String attributeFunction = this.txtAttributeFunction.getText();
-            this.condition = new ExpressionCondition(URI.create(this.uri + "/" + attribute.getAttributeName()), this.property, attributeFunction);
-        }
-        else {
-            final double attributeMinValue = Double.parseDouble(this.txtAttributeValueMin.getText());
-            final double attributeMaxValue = Double.parseDouble(this.txtAttributeValueMax.getText());
-            final Interval attributeInterval = new Interval(attributeMinValue, attributeMaxValue);
-            this.condition = new IntervalCondition(URI.create(this.uri + "/" + attribute.getAttributeName()), this.property, attributeInterval);
-        }
-        final SSNMeasurementProperty measurementProperty = (SSNMeasurementProperty) this.cmbMeasurementProperty.getData(this.cmbMeasurementProperty.getItem(this.cmbMeasurementProperty
-                .getSelectionIndex()));
-        final double measurementPropertyMinValue = Double.parseDouble(this.txtMeasurementPropertyValueMin.getText());
-        final double measurementPropertyMaxValue = Double.parseDouble(this.txtMeasurementPropertyValueMax.getText());
+	private void saveInput() {
+		this.property = (Property) this.cmbForProperty
+				.getData(this.cmbForProperty.getItem(this.cmbForProperty
+						.getSelectionIndex()));
 
-        final Interval measurementPropertyInterval = new Interval(measurementPropertyMinValue, measurementPropertyMaxValue);
+		Property conditionProperty = (Property) this.cmbConditionProperty
+				.getData(this.cmbConditionProperty
+						.getItem(this.cmbConditionProperty.getSelectionIndex()));
+		if (this.txtConditionExpression.isEnabled()) {
+			final String attributeFunction = this.txtConditionExpression
+					.getText();
+			this.condition = new ExpressionCondition(URI.create(this.uri + "/"
+					+ conditionProperty.getName()), conditionProperty,
+					attributeFunction);
+		} else {
+			final double attributeMinValue = Double
+					.parseDouble(this.txtConditionValueMin.getText());
+			final double attributeMaxValue = Double
+					.parseDouble(this.txtConditionValueMax.getText());
+			final Interval attributeInterval = new Interval(attributeMinValue,
+					attributeMaxValue);
+			this.condition = new IntervalCondition(URI.create(this.uri + "/"
+					+ conditionProperty.getName()), conditionProperty,
+					attributeInterval);
+		}
+		final SSNMeasurementProperty measurementProperty = (SSNMeasurementProperty) this.cmbMeasurementProperty
+				.getData(this.cmbMeasurementProperty
+						.getItem(this.cmbMeasurementProperty
+								.getSelectionIndex()));
+		final String measurementPropertyExpression = this.txtMeasurementPropertyExpression
+				.getText();
 
-        this.measurementPropery = new MeasurementProperty(URI.create(this.uri + "/" + attribute.getAttributeName() + "/" + measurementProperty.name()), measurementProperty.getResource());
-    }
+		this.measurementPropery = new MeasurementProperty(URI.create(this.uri
+				+ "/" + conditionProperty.getName() + "/"
+				+ measurementProperty.name()),
+				measurementProperty.getResource(),
+				measurementPropertyExpression);
+	}
 
-    public Condition getCondition() {
-        return this.condition;
-    }
+	public Condition getCondition() {
+		return this.condition;
+	}
 
-    public MeasurementProperty getMeasurementProperty() {
-        return this.measurementPropery;
-    }
+	public MeasurementProperty getMeasurementProperty() {
+		return this.measurementPropery;
+	}
 
-    /**
-     * @return
-     */
-    public Property getProperty() {
-        return this.property;
-    }
+	public SDFAttribute getAttribute() {
+		return attribute;
+	}
 
-    @Override
-    protected void okPressed() {
-        this.saveInput();
-        super.okPressed();
-    }
+	/**
+	 * @return
+	 */
+	public Property getProperty() {
+		return this.property;
+	}
 
-    private void fillAttributeCombo(final Combo combo) {
-        combo.removeAll();
-        for (final SDFAttribute attribute : this.attributes) {
-            combo.add(attribute.getAttributeName());
-            combo.setData(attribute.getAttributeName(), attribute);
-        }
-        combo.select(0);
-    }
+	@Override
+	protected void okPressed() {
+		this.saveInput();
+		super.okPressed();
+	}
 
-    private void fillMeasurementPropertyCombo(final Combo combo) {
-        combo.removeAll();
-        for (SSNMeasurementProperty property : SSNMeasurementProperty.values()) {
-            combo.add(property.toString());
-            combo.setData(property.toString(), property);
-        }
-        combo.select(0);
-    }
+	private void fillMeasurementPropertyCombo(final Combo combo) {
+		combo.removeAll();
+		for (SSNMeasurementProperty measurementProperty : SSNMeasurementProperty
+				.values()) {
+			combo.add(measurementProperty.toString());
+			combo.setData(measurementProperty.toString(), measurementProperty);
+		}
+		combo.select(0);
+	}
 
-    private void fillPropertyCombo(final Combo combo) {
-        final SensorOntologyService ontology = SensorRegistryPlugIn.getSensorOntologyService();
-        combo.removeAll();
-        final Set<Property> properties = new HashSet<Property>(ontology.getAllProperties());
+	private void fillPropertyCombo(final Combo combo) {
+		final SensorOntologyService ontology = SensorRegistryPlugIn
+				.getSensorOntologyService();
+		combo.removeAll();
+		final Set<Property> properties = new HashSet<Property>(
+				ontology.getAllProperties());
 
-        for (Property property : properties) {
-            combo.add(property.getName());
-            combo.setData(property.getName(), property);
-        }
-        combo.select(0);
-    }
+		for (Property property : properties) {
+			combo.add(property.getName());
+			combo.setData(property.getName(), property);
+		}
+		combo.select(0);
+	}
 
 }

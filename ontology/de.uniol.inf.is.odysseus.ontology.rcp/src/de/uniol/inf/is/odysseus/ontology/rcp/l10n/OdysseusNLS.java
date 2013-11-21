@@ -63,6 +63,9 @@ public class OdysseusNLS extends NLS {
 
     public static String URI;
 
+	public static String Expression;
+	public static String Expressions;
+	
     static {
         NLS.initializeMessages(OdysseusNLS.BUNDLE_NAME, OdysseusNLS.class);
     }

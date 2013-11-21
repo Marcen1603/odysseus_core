@@ -30,8 +30,8 @@ public class Latency extends MeasurementProperty implements IMeasurementProperty
      * 
      * @param uri
      */
-    public Latency(URI uri) {
-        super(uri, SSN.Latency);
+    public Latency(URI uri, String expression) {
+        super(uri, SSN.Latency, expression);
     }
 
 }

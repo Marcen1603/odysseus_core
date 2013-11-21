@@ -273,7 +273,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
 
             for (SSNMeasurementProperty ssnMeasurementProperty : SSNMeasurementProperty.values()) {
                 MeasurementProperty measurementProperty = new MeasurementProperty(URI.create(ODYSSEUS.NS + name + "/" + attribute.getAttributeName() + "/" + attribute.getAttributeName() + "/"
-                        + ssnMeasurementProperty.toString()), ssnMeasurementProperty.getResource());
+                        + ssnMeasurementProperty.toString()), ssnMeasurementProperty.getResource(), "1.0");
                 measurementCapability.addMeasurementProperty(measurementProperty);
             }
 

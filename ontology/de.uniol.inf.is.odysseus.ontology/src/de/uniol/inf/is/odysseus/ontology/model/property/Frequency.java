@@ -30,8 +30,8 @@ public class Frequency extends MeasurementProperty implements IMeasurementProper
      * 
      * @param uri
      */
-    public Frequency(URI uri) {
-        super(uri, SSN.Frequency);
+    public Frequency(URI uri, String expression) {
+        super(uri, SSN.Frequency, expression);
     }
 
 }

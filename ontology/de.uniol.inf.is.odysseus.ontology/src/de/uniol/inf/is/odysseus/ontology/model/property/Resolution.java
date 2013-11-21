@@ -30,8 +30,8 @@ public class Resolution extends MeasurementProperty implements IMeasurementPrope
      * 
      * @param uri
      */
-    public Resolution(URI uri) {
-        super(uri, SSN.Resolution);
+    public Resolution(URI uri, String expression) {
+        super(uri, SSN.Resolution, expression);
     }
 
 }

@@ -30,8 +30,8 @@ public class ResponseTime extends MeasurementProperty implements IMeasurementPro
      * 
      * @param uri
      */
-    public ResponseTime(URI uri) {
-        super(uri, SSN.ResponseTime);
+    public ResponseTime(URI uri, String expression) {
+        super(uri, SSN.ResponseTime, expression);
     }
 
 }

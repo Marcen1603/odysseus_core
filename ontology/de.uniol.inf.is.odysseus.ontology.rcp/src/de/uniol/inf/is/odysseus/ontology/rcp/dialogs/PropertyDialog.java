@@ -19,6 +19,8 @@ import java.net.URI;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -74,7 +76,22 @@ public class PropertyDialog extends Dialog {
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
         this.txtName.setLayoutData(gd);
+        this.txtName.addModifyListener(new ModifyListener() {
 
+			@Override
+			public void modifyText(ModifyEvent e) {
+				int fragmentPos = txtURI.getText().indexOf("#");
+				if (fragmentPos > 0) {
+					txtURI.setText(txtURI.getText().substring(0,
+							fragmentPos + 1)
+							+ txtName.getText());
+				} else {
+					txtURI.setText(ODYSSEUS.NS + txtName.getText());
+				}
+			}
+
+		});
+        
         final Label lblURI = new Label(container, SWT.WRAP);
         lblURI.setText(OdysseusNLS.URI);
         gd = new GridData();

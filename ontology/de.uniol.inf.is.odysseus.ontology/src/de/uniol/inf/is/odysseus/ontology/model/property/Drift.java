@@ -30,8 +30,8 @@ public class Drift extends MeasurementProperty implements IMeasurementProperty {
      * 
      * @param uri
      */
-    public Drift(URI uri) {
-        super(uri, SSN.Drift);
+    public Drift(URI uri, String expression) {
+        super(uri, SSN.Drift, expression);
     }
 
 }

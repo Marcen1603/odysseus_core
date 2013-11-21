@@ -23,15 +23,16 @@ import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class Sensitivity extends MeasurementProperty implements IMeasurementProperty {
+public class Sensitivity extends MeasurementProperty implements
+		IMeasurementProperty {
 
-    /**
-     * Class constructor.
-     * 
-     * @param uri
-     */
-    public Sensitivity(URI uri) {
-        super(uri, SSN.Sensitivity);
-    }
+	/**
+	 * Class constructor.
+	 * 
+	 * @param uri
+	 */
+	public Sensitivity(URI uri, String expression) {
+		super(uri, SSN.Sensitivity, expression);
+	}
 
 }

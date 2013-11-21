@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -75,7 +77,22 @@ public class FeatureOfInterestPage extends WizardPage {
         final GridData gd_txtName = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
         gd_txtName.widthHint = 328;
         this.txtName.setLayoutData(gd_txtName);
+        this.txtName.addModifyListener(new ModifyListener() {
 
+			@Override
+			public void modifyText(ModifyEvent e) {
+				int fragmentPos = txtURI.getText().indexOf("#");
+				if (fragmentPos > 0) {
+					txtURI.setText(txtURI.getText().substring(0,
+							fragmentPos + 1)
+							+ txtName.getText());
+				} else {
+					txtURI.setText(ODYSSEUS.NS + txtName.getText());
+				}
+			}
+
+		});
+        
         final Label lblURI = new Label(container, SWT.NONE);
         lblURI.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
         lblURI.setText(OdysseusNLS.URI + ":");
