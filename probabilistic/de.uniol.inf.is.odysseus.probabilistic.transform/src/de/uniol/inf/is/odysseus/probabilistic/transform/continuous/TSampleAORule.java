@@ -65,8 +65,8 @@ public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
 	@Override
 	public final boolean isExecutable(final SampleAO operator,
 			final TransformationConfiguration config) {
-		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-			if (operator.isAllPhysicalInputSet()) {
+		if (operator.isAllPhysicalInputSet()) {
+			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 				return true;
 			}
 		}
