@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -332,8 +333,9 @@ public class WsClient implements IExecutor, IClientExecutor {
 
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName)
+			ISession user, String queryBuildConfigurationName, Context context)
 			throws PlanManagementException {
+		// TODO: Add Context!
 		Collection<Integer> response = getWebserviceServer().addQuery(
 				user.getToken(), parserID, query, queryBuildConfigurationName)
 				.getResponseValue();
@@ -635,8 +637,8 @@ public class WsClient implements IExecutor, IClientExecutor {
 	}
 
 	@Override
-	public SDFSchema determinedOutputSchema(String query, String parserID,
-			ISession user, int port) {
+	public SDFSchema determineOutputSchema(String query, String parserID,
+			ISession user, int port, Context context) {
 		// TODO Auto-generated method stub
 		return null;
 	}

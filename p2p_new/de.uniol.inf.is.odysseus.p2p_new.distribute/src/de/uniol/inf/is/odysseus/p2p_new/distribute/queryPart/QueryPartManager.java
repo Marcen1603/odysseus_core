@@ -94,7 +94,7 @@ public class QueryPartManager implements IAdvertisementListener,
 		final List<IExecutorCommand> queries = CompilerService.get()
 				.translateQuery(adv.getPqlStatement(), "PQL",
 						SessionManagementService.getActiveSession(),
-						getDataDictionary());
+						getDataDictionary(), null);
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -147,7 +147,7 @@ public class QueryPartManager implements IAdvertisementListener,
 			final Collection<Integer> ids = executor.addQuery(
 					adv.getPqlStatement(), "PQL",
 					SessionManagementService.getActiveSession(),
-					adv.getTransCfgName(), configuration);
+					adv.getTransCfgName(), null, configuration);
 
 			QueryPartController.getInstance().registerAsSlave(ids,
 					adv.getSharedQueryID());

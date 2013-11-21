@@ -31,6 +31,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -72,7 +73,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public List<IExecutorCommand> parse(Reader reader, ISession user,
-			IDataDictionary dd) throws QueryParseException {
+			IDataDictionary dd, Context context) throws QueryParseException {
 		this.user = user;
 		this.dd = dd;
 		SaseLexer lex = null;
@@ -86,7 +87,7 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	@Override
 	public List<IExecutorCommand> parse(String text, ISession user,
-			IDataDictionary dd) throws QueryParseException {
+			IDataDictionary dd, Context context) throws QueryParseException {
 		return parse(text, user, dd, true, false);
 	}
 

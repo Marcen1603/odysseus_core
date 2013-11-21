@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
@@ -48,17 +49,17 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context)
 			throws QueryParseException {
 //		this.user = user;
 //		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
-		return parse(new StringReader(query),user, dd);		
+		return parse(new StringReader(query),user, dd, context);		
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context)
 			throws QueryParseException {
 //		this.user = user;
 //		this.dataDictionary = dd;

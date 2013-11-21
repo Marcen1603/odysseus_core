@@ -24,6 +24,7 @@ import javax.security.auth.login.Configuration;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -71,7 +72,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 		IPlanManager, IErrorEventHandler, IErrorEventListener, IInfoProvider {
 
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName,
+			ISession user, String queryBuildConfigurationName, Context context,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException;
 
@@ -191,7 +192,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 
 	// Facade for Compiler
 	public List<IExecutorCommand> translateQuery(String query, String parserID,
-			ISession user) throws QueryParseException;
+			ISession user, Context context) throws QueryParseException;
 
 	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,

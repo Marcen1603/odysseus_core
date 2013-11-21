@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -94,14 +95,18 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			IExecutor executor = getServerExecutor();
 
 			Collection<Integer> queriesToStart = null;
+			
+			// TODO: Create context!
+			Context context = null;
+			
 			if (addSettings != null) {
 				if (!(executor instanceof IServerExecutor)) {
 					throw new QueryParseException("Additional transformation parameter currently not supported on clients");
 				}
-				queriesToStart = ((IServerExecutor) executor).addQuery(queryText, parserID, queryCaller, transCfgName, addSettings);
+				queriesToStart = ((IServerExecutor) executor).addQuery(queryText, parserID, queryCaller, transCfgName, context, addSettings);
 
 			} else {
-				queriesToStart = executor.addQuery(queryText, parserID, queryCaller, transCfgName);
+				queriesToStart = executor.addQuery(queryText, parserID, queryCaller, transCfgName, context);
 			}
 
 			ISink defaultSink = variables.containsKey("_defaultSink") ? (ISink) variables.get("_defaultSink") : null;

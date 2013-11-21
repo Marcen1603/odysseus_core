@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -241,14 +242,14 @@ public class StandardExecutor extends AbstractExecutor implements
 	 *             Opening an sink or source failed.
 	 */
 	private List<IExecutorCommand> createQueries(String queryStr,
-			ISession user, QueryBuildConfiguration parameters)
+			ISession user, QueryBuildConfiguration parameters, Context context)
 			throws NoCompilerLoadedException, QueryParseException,
 			OpenFailedException {
 		LOG.debug("Translating query into logical plans");
 		// translate query and build logical plans
 		List<IExecutorCommand> commands = getCompiler().translateQuery(
 				queryStr, parameters.getParserID(), user,
-				getDataDictionary(user.getTenant()));
+				getDataDictionary(user.getTenant()), context);
 		LOG.trace("Number of commands: " + commands.size());
 		LOG.debug("Translation done.");
 		annotateQueries(commands, queryStr, user, parameters);
@@ -548,14 +549,14 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String buildConfigurationName)
+			ISession user, String buildConfigurationName, Context context)
 			throws PlanManagementException {
-		return addQuery(query, parserID, user, buildConfigurationName, null);
+		return addQuery(query, parserID, user, buildConfigurationName, context, null);
 	}
 
 	@Override
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String buildConfigurationName,
+			ISession user, String buildConfigurationName, Context context,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException {
 		LOG.info("Adding textual query using " + parserID + " for user "
@@ -565,15 +566,15 @@ public class StandardExecutor extends AbstractExecutor implements
 		QueryBuildConfiguration params = buildAndValidateQueryBuildConfigurationFromSettings(
 				buildConfigurationName, overwriteSetting);
 		params.set(new ParameterParserID(parserID));
-		return addQuery(query, parserID, user, params);
+		return addQuery(query, parserID, user, params, context);
 	}
 
 	private Collection<Integer> addQuery(String query, String parserID,
-			ISession user, QueryBuildConfiguration buildConfiguration)
+			ISession user, QueryBuildConfiguration buildConfiguration, Context context)
 			throws PlanManagementException {
 		try {
 			List<IExecutorCommand> newQueries = createQueries(query, user,
-					buildConfiguration);
+					buildConfiguration, context);
 
 			if (newQueries != null && !newQueries.isEmpty()) {
 				Collection<IPhysicalQuery> addedQueries = addQueries(
@@ -725,10 +726,10 @@ public class StandardExecutor extends AbstractExecutor implements
 	// -------------------------------------------------------------------------------------------------
 
 	@Override
-	public SDFSchema determinedOutputSchema(String query, String parserID,
-			ISession user, int port) {
+	public SDFSchema determineOutputSchema(String query, String parserID,
+			ISession user, int port,Context context) {
 		List<IExecutorCommand> commands = getCompiler().translateQuery(query,
-				parserID, user, getDataDictionary(user.getTenant()));
+				parserID, user, getDataDictionary(user.getTenant()), context);
 		if (commands.size() != 1) {
 			throw new IllegalArgumentException(
 					"Method can only be called for one query statement!");

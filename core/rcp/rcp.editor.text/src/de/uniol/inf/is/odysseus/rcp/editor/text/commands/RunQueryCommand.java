@@ -147,7 +147,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					String text = readLinesFromFile(scriptFile);
 					text = ParserClientUtil.replaceClientReplacements(text, scriptFile);
 					IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-					executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard");
+					executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard", null);
 				} catch (Throwable ex) {
 					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}

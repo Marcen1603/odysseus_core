@@ -18,12 +18,13 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement;
 import java.io.Reader;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IQueryParser {
 	public String getLanguage();
-	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException;
-	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException;
+	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context) throws QueryParseException;
+	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context) throws QueryParseException;
 }

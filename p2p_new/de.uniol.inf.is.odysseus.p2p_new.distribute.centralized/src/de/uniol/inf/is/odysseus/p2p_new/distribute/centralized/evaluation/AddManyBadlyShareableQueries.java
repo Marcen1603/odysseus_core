@@ -31,7 +31,7 @@ public class AddManyBadlyShareableQueries extends Thread {
 			windowSize = counter % 3 == 0 ? windowSize * 2 : windowSize;
 			String source1 = counter%2 == 0 ? "auction" : "SELECT({predicate=RelationalPredicate('initialbid > 10')}, auction)";
 			String pqlQuery = "s" + counter + " = join({predicate = RelationalPredicate('id = auction')}, WINDOW({size = " + windowSize + ",advance = 1,type = 'time'}, " + source1 + "), WINDOW({size = " + windowSize + ",advance = 1,type = 'time'}, bid))";
-			Iterator<Integer> it = executor.addQuery(pqlQuery, "PQL", user, "Standard", newSettings).iterator();
+			Iterator<Integer> it = executor.addQuery(pqlQuery, "PQL", user, "Standard", null, newSettings).iterator();
 			while(it.hasNext()) {
 				executor.startQuery(it.next(), user);
 			}

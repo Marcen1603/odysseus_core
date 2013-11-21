@@ -22,6 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -58,7 +59,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 	}
 
 	private static Collection<Integer> createQueryToSelectAllDataFromSource(Resource sourceName, ISession caller) {
-		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard");
+		return OdysseusRCPServerPlugIn.getServerExecutor().addQuery("SELECT * FROM " + sourceName + ";", "CQL", caller, "Standard",(Context) null);
 	}
 
 	private static void startQueries(Collection<Integer> queryIDs, ISession caller) {

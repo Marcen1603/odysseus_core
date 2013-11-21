@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -71,11 +72,12 @@ public interface IExecutor extends IClientPlanManager{
 	 *            vorhandenen Eintrag in parameters
 	 * @param queryBuildConfigurationName
 	 *            Name der zu verwendeden Build-Configuration
+	 * @param context TODO
 	 * @return vorläufige ID der neuen Anfrage
 	 * @throws PlanManagementException
 	 */
 	public Collection<Integer> addQuery(String query, String parserID,
-			ISession user, String queryBuildConfigurationName)
+			ISession user, String queryBuildConfigurationName, Context context)
 			throws PlanManagementException;
 
 	/**
@@ -114,8 +116,8 @@ public interface IExecutor extends IClientPlanManager{
 	 * @param port The port for which the schema should be returned
 	 * @return The output schema from the top operator for the given port
 	 */	
-	public SDFSchema determinedOutputSchema(String query, String parserID,
-			ISession user, int port);
+	public SDFSchema determineOutputSchema(String query, String parserID,
+			ISession user, int port, Context context);
 	// TODO, Multiple roots
 //	public SDFSchema determinedOutputSchema(String query, String parserID,
 //			ISession user, String queryBuildConfigurationName, String rootName, int port);	

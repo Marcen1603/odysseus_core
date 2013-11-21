@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.action.output.StreamAttributeParameter;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuator;
 import de.uniol.inf.is.odysseus.action.services.actuator.IActuatorFactory;
 import de.uniol.inf.is.odysseus.action.services.exception.ActuatorException;
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -218,14 +219,14 @@ public class ECAParser implements IQueryParser {
 	}
 
 	@Override
-	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		return null;
 	}
 
 	@Override
-	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		this.user = user;
 		this.dataDictionary = dd;
 		HashMap<Action, List<IActionParameter>> actions = new HashMap<Action, List<IActionParameter>>();
@@ -247,7 +248,7 @@ public class ECAParser implements IQueryParser {
 
 				// create logical plan and retrieve schema
 				List<IExecutorCommand> plan = compiler.translateQuery(
-						interalQuery, lang, user, dataDictionary);
+						interalQuery, lang, user, dataDictionary, null);
 				SDFSchema schema = this.determineSchema(plan);
 
 				// extract action part of query

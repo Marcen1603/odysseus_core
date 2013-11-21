@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -154,7 +155,9 @@ public class OperatorNode extends Observable implements Observer {
 				if (!query.isEmpty()) {
 					int port = connection.getTargetPort();
 					int outPutport = connection.getSourcePort();
-					SDFSchema schema = Activator.getDefault().getExecutor().determinedOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport);
+					// TODO: Determine Context?
+					Context context = null;
+					SDFSchema schema = Activator.getDefault().getExecutor().determineOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport, context);
 					inputSchemas.put(port, schema);
 				}
 			} catch (Exception e) {
@@ -171,7 +174,9 @@ public class OperatorNode extends Observable implements Observer {
 			String query = ScriptGenerator.buildPQL(Arrays.asList(this));
 			if (!query.isEmpty()) {
 				int outPutport = 0;
-				SDFSchema schema = Activator.getDefault().getExecutor().determinedOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport);
+				// TODO: Determine Context?
+				Context context = null;
+				SDFSchema schema = Activator.getDefault().getExecutor().determineOutputSchema(query, "PQL", Activator.getDefault().getCaller(), outPutport, context);
 				outputSchemas.put(0, schema);
 			}
 		} catch (Exception e) {
@@ -231,9 +236,10 @@ public class OperatorNode extends Observable implements Observer {
 			// completeQuery = completeQuery + ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort())+System.lineSeparator();
 			// }
 			// completeQuery = completeQuery+ScriptGenerator.buildPQL(graph);
-
+			// TODO: Determine Context?
+			Context context = null;
 			if (!completeQuery.isEmpty()) {
-				Activator.getDefault().getExecutor().determinedOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0);
+				Activator.getDefault().getExecutor().determineOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0,context);
 			}
 		} catch (Exception e) {
 			return false;

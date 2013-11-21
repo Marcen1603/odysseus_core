@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -879,7 +880,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			for (ILogicalQuery query : q) {
 				try {
 					if (query.getQueryText() != null) {
-						addQuery(query.getQueryText(), query.getParserId(), caller, getDataDictionary(caller.getTenant()).getQueryBuildConfigName(query.getID()));
+						addQuery(query.getQueryText(), query.getParserId(), caller, getDataDictionary(caller.getTenant()).getQueryBuildConfigName(query.getID()), (Context) null);
 					} else if (query.getLogicalPlan() != null) {
 						addQuery(query.getLogicalPlan(), caller, getDataDictionary(caller.getTenant()).getQueryBuildConfigName(query.getID()));
 					} else {
@@ -907,8 +908,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	// Compiler Facade
 	@Override
-	public List<IExecutorCommand> translateQuery(String queries, String parser, ISession currentUser) {
-		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary(currentUser.getTenant()));
+	public List<IExecutorCommand> translateQuery(String queries, String parser, ISession currentUser, Context context) {
+		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary(currentUser.getTenant()), context);
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -65,12 +66,12 @@ public class SPARQL implements IQueryParser{
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context)
 			throws QueryParseException {
 //		this.user= user;
 //		this.dd = dd;
 		try{
-			return parse(new StringReader(query), user, dd);
+			return parse(new StringReader(query), user, dd, context);
 		}catch(QueryParseException e){
 			System.out.println("Query: " + query);
 			throw e;
@@ -79,7 +80,7 @@ public class SPARQL implements IQueryParser{
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd)
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context)
 			throws QueryParseException {
 		
 //		this.user = user;

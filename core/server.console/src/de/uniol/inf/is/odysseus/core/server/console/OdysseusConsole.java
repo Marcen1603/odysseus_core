@@ -45,6 +45,7 @@ import org.osgi.service.prefs.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -725,7 +726,7 @@ public class OdysseusConsole implements CommandProvider,
 			try {
 				resetBuildConfig();
 				this.executor.addQuery(s, parser(), currentUser,
-						defaultBuildConfiguration);
+						defaultBuildConfiguration, (Context)null);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -752,7 +753,7 @@ public class OdysseusConsole implements CommandProvider,
 			try {
 				resetBuildConfig();
 				this.executor.addQuery(s, parser(), currentUser,
-						defaultBuildConfiguration);
+						defaultBuildConfiguration, (Context)null);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
@@ -811,7 +812,7 @@ public class OdysseusConsole implements CommandProvider,
 		try {
 			resetBuildConfig();
 			this.executor.addQuery(q, parser(), currentUser,
-					defaultBuildConfiguration);
+					defaultBuildConfiguration, (Context)null);
 
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
@@ -854,7 +855,7 @@ public class OdysseusConsole implements CommandProvider,
 			q.append(args[args.length - 1]);
 			resetBuildConfig();
 			this.executor.addQuery(q.toString(), parser(), currentUser,
-					defaultBuildConfiguration);
+					defaultBuildConfiguration, (Context)null);
 		} catch (Exception e) {
 			ci.println(e.getMessage());
 		}
@@ -909,7 +910,7 @@ public class OdysseusConsole implements CommandProvider,
 				// .getConfiguration()
 				// .add(new ParameterDefaultRoot(new ConsoleSink()));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
-						defaultBuildConfiguration);
+						defaultBuildConfiguration, (Context)null);
 			} else if (args[args.length - 2].toUpperCase().equals("<F>")) {
 				// this.executor
 				// .getQueryBuildConfiguration(defaultBuildConfiguration)
@@ -917,7 +918,7 @@ public class OdysseusConsole implements CommandProvider,
 				// .add(new ParameterDefaultRoot(new FileSinkPO(
 				// args[args.length - 1], "", -1, true, false)));
 				this.executor.addQuery(q.toString(), parser(), currentUser,
-						defaultBuildConfiguration);
+						defaultBuildConfiguration, (Context)null);
 
 			} else if (args[args.length - 1].toUpperCase().equals("<E>")) {
 				q.append(args[args.length - 2]).append(" ");
@@ -926,7 +927,7 @@ public class OdysseusConsole implements CommandProvider,
 				q.append(args[args.length - 2]).append(" ");
 				q.append(args[args.length - 1]).append(" ");
 				this.executor.addQuery(q.toString(), parser(), currentUser,
-						defaultBuildConfiguration);
+						defaultBuildConfiguration, (Context)null);
 			}
 		} catch (Exception e) {
 			ci.println(e.getMessage());
@@ -1070,7 +1071,7 @@ public class OdysseusConsole implements CommandProvider,
 
 			try {
 				List<IExecutorCommand> plans = executor.translateQuery(queries,
-						parser(), currentUser);
+						parser(), currentUser, null);
 
 				// DEBUG: Print the logical plan.
 				PrintGraphVisitor<ILogicalOperator> pv = new PrintGraphVisitor<ILogicalOperator>();
@@ -1165,7 +1166,7 @@ public class OdysseusConsole implements CommandProvider,
 		}
 
 		this.executor.addQuery(query, parser(), currentUser,
-				defaultBuildConfiguration);
+				defaultBuildConfiguration, (Context)null);
 		return;
 	}
 
@@ -1731,7 +1732,7 @@ public class OdysseusConsole implements CommandProvider,
 			// this.executor.getQueryBuildConfiguration(defaultBuildConfiguration)
 			// .getConfiguration().add(new ParameterDefaultRoot(ecSink));
 			this.executor.addQuery(query, parser(), currentUser,
-					defaultBuildConfiguration);
+					defaultBuildConfiguration, (Context)null);
 		} catch (ClassNotFoundException e) {
 			System.err.println("Eclipse Console Plugin is missing!");
 		} catch (Exception e) {

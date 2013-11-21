@@ -196,7 +196,7 @@ public class Helper {
 				getActiveSession(),
 				DataDictionaryProvider.getDataDictionary(
 						getActiveSession().getTenant()),
-								config.getTransformationConfiguration());
+								config.getTransformationConfiguration(), null);
 		return query;
 	}
 	
@@ -204,7 +204,7 @@ public class Helper {
 		List<IExecutorCommand> commands = executor.getCompiler().translateQuery(pqlStatement, "PQL",
 				getActiveSession(),
 				DataDictionaryProvider.getDataDictionary(
-						getActiveSession().getTenant()));
+						getActiveSession().getTenant()),null);
 		List<ILogicalQuery> list = Lists.newArrayList();
 		for (IExecutorCommand q : commands) {
 

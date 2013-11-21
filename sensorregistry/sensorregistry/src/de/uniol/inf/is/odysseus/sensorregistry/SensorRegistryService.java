@@ -87,7 +87,7 @@ public class SensorRegistryService extends WebserviceServer {
 				LOG.debug("Sensor " + name + " registered");
 				String query = "CREATE STREAM " + name + "(" + buildParamList(schema) + ") CHANNEL " + host + " : " + port;
 				LOG.debug("Creating Stream in Odysseus: " + query);
-				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION);				
+				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION, null);				
 			}else{
 				LOG.debug("Sensor "+name+" was already registered");
 			}
@@ -118,7 +118,7 @@ public class SensorRegistryService extends WebserviceServer {
 				LOG.debug("Sensor " + name + " unregistered");
 				String query = "DROP STREAM " + name;
 				LOG.debug("Creating Stream in Odysseus: " + query);
-				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION);				
+				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION, null);				
 			}else{
 				LOG.debug("Sensor "+name+" was never registered");
 			}

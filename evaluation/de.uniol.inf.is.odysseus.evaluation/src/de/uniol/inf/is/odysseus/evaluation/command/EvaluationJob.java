@@ -132,7 +132,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				}
 			}
 			
-			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", buildSettings);
+			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", null, buildSettings);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			this.wait();
 			monitor.worked(1);

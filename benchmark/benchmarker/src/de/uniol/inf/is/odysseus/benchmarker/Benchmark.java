@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.benchmark.BenchmarkException;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResult;
 import de.uniol.inf.is.odysseus.benchmark.result.IBenchmarkResultFactory;
 import de.uniol.inf.is.odysseus.benchmark.result.LatencyBenchmarkResultFactory;
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.IPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
@@ -188,7 +189,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			for (IPair<String, String> query : getQueries()) {
 				String parserId = query.getE1();
 				String queryString = query.getE2();
-				executor.addQuery(queryString, parserId, user, qbc.getName());
+				executor.addQuery(queryString, parserId, user, qbc.getName(), (Context)null);
 			}
 			int i = 0;
 			for (IPhysicalOperator curRoot : executor.getExecutionPlan().getRoots()) {
@@ -265,7 +266,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 		q[3] = "CREATE STREAM nexmark:category2 (id INTEGER, name STRING, description STRING, parentid INTEGER) CHANNEL localhost : 65443";
 		for (String s : q) {
 			try {
-				this.executor.addQuery(s, "CQL", user, "Standard");
+				this.executor.addQuery(s, "CQL", user, "Standard", (Context)null);
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}

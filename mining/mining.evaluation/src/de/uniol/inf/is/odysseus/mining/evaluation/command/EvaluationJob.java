@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -123,7 +124,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			}
 			monitor.subTask(prefix + "Executing Script \"" + file.getName() + "\"... ");
 			long timeStarted = System.currentTimeMillis();
-			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard");
+			Collection<Integer> ids = executor.addQuery(thislines, "OdysseusScript", caller, "Standard", (Context)null);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			this.wait();
 			monitor.worked(1);

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -132,14 +133,14 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
-		return parse(new StringReader(query), user, dd);
+		return parse(new StringReader(query), user, dd, context);
 	}
 
 	@Override
-	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public synchronized List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		this.caller = user;
 		this.dataDictionary = dd;
 		try {

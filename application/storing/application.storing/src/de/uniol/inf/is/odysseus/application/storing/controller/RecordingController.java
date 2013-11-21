@@ -143,8 +143,8 @@ public class RecordingController {
 		String createSink = "CREATE SINK " + sinkName + " AS DATABASE " + record.getDatabaseConnection() + " TABLE " + record.getTableName() + " AND DROP";
 		String createStreamTo = "STREAM TO " + sinkName + " SELECT * FROM " + record.getFromStream();
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
-		Collection<Integer> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, "Standard");
-		Collection<Integer> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, "Standard");
+		Collection<Integer> sinkQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createSink, "CQL", user, "Standard", null);
+		Collection<Integer> streamToQueries = OdysseusRCPPlugIn.getExecutor().addQuery(createStreamTo, "CQL", user, "Standard", null);
 		record.clearQueries();
 		record.setSinkQueries(sinkQueries);
 		record.setStreamToQueries(streamToQueries);

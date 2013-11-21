@@ -37,6 +37,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -716,7 +717,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	@Override
-	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		List<ILogicalQuery> queries = new ArrayList<ILogicalQuery>();
 		try {
 			List<?> commands = this.parseAndExecute(query, user, null);
@@ -750,7 +751,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	@Override
-	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd) throws QueryParseException {
+	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		return new ArrayList<>();
 	}
 

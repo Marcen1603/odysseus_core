@@ -178,7 +178,7 @@ public class WebserviceServer {
 		try {
 			IntegerCollectionResponse response = new IntegerCollectionResponse(
 					ExecutorServiceBinding.getExecutor().addQuery(query,
-							parser, user, transCfg), true);
+							parser, user, transCfg, null), true);
 			return response;
 		} catch (Throwable e) {
 			e.printStackTrace();

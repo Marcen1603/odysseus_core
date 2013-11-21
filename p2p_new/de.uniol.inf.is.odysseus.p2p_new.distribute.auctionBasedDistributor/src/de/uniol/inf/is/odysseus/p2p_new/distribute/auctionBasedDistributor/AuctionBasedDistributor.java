@@ -183,7 +183,7 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 		
 		return sender.addQuery(qryText, "PQL",
 				UserManagementProvider.getSessionmanagement().loginSuperUser(null, ""),
-				transCfg.getName());	
+				transCfg.getName(), null);	
 	}
 	
 	private CostSummary calcRelativeCosts(

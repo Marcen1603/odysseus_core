@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -242,9 +243,9 @@ public class StandardCompiler implements ICompiler {
 	 */
 	@Override
 	public List<IExecutorCommand> translateQuery(String query, String parserID,
-			ISession user, IDataDictionary dd) throws QueryParseException {
+			ISession user, IDataDictionary dd, Context context) throws QueryParseException {
 		if (this.parserList.containsKey(parserID)) {
-			return this.parserList.get(parserID).parse(query, user, dd);
+			return this.parserList.get(parserID).parse(query, user, dd, context);
 		}
 
 		throw new QueryParseException("Parser with ID " + parserID
@@ -377,10 +378,10 @@ public class StandardCompiler implements ICompiler {
 	@Override
 	public List<IPhysicalQuery> translateAndTransformQuery(String query,
 			String parserID, ISession user, IDataDictionary dd,
-			TransformationConfiguration transformationConfiguration)
+			TransformationConfiguration transformationConfiguration, Context context)
 			throws QueryParseException, TransformationException {
 		List<IExecutorCommand> translate = translateQuery(query, parserID,
-				user, dd);
+				user, dd, context);
 		List<IPhysicalQuery> translated = new ArrayList<IPhysicalQuery>();
 		for (IExecutorCommand q : translate) {
 			if (q instanceof CreateQueryCommand) {
