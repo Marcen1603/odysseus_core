@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -23,7 +24,7 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String KEYWORD = "EXPORTALL";
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		final String transCfgName = (String) variables.get("TRANSCFG");
 		
 		if( Strings.isNullOrEmpty(transCfgName)) {
@@ -41,7 +42,7 @@ public class ExportAllPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		final String transCfgName = (String) variables.get("TRANSCFG");
 
 		List<String> sources = determineCurrentSourceNames();

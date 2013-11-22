@@ -10,10 +10,12 @@ public class OperatorTestPlugin implements BundleActivator {
 
 	public static BundleContext context;
 	
+	@Override
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
 	}
 	
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		context = null;
 	}

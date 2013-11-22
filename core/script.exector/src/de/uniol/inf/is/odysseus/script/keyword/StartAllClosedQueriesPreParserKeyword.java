@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -27,7 +28,7 @@ AbstractPreParserExecutorKeyword {
 	public static final String STARTQUERIES = "STARTQUERIES";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)
@@ -35,7 +36,7 @@ AbstractPreParserExecutorKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)

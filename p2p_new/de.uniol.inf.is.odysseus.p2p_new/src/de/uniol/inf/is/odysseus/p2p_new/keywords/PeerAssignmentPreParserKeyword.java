@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.parameter.PeerAssignmentParameter;
@@ -28,7 +29,7 @@ public class PeerAssignmentPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		
 		if(!PeerAssignmentProvider.getInstance().getPeerAssignmentNames().contains(parameter))
 			throw new OdysseusScriptException("Specified peer assignment strategy '" + parameter + 
@@ -38,7 +39,7 @@ public class PeerAssignmentPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
 		

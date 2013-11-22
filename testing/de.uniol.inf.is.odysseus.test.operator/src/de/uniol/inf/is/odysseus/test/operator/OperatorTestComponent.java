@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
@@ -129,14 +130,14 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 		return "Success";
 	}
 
-	private void test(String key, String queryText, List<File> results, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException, IOException {
+	private void test(String key, String queryText, List<File> results, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException {
 		checkNotNull(results, "Results must not be null or empty");
 		
 		String text = "Testing query " + key + " with results from files " + results;
 		LOG.debug(text);
 		tryWrite(out, text + NEWLINE);
 		
-		parser.parseAndExecute(queryText, user, null);
+		parser.parseAndExecute(queryText, user, null, Context.emptyContext());
 	}
 	
 	private void evaluateResults(String key, List<File> results) {
@@ -148,14 +149,15 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 			for(StatusCode code : codes) {
 				if(code == StatusCode.EQUIVALENT_FILES) {
 					break;
+				} 
+				
+				tryWrite(out, code.toString());
+				if (errortext == null) {
+					errortext = code.toString() + NEWLINE;
 				} else {
-					tryWrite(out, code.toString());
-					if (errortext == null) {
-						errortext = code.toString() + NEWLINE;
-					} else {
-						errortext += code.toString() + NEWLINE;
-					}
+					errortext += code.toString() + NEWLINE;
 				}
+				
 			}
 		}
 	}

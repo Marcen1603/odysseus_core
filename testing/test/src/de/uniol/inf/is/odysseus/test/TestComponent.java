@@ -37,6 +37,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -261,7 +262,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
         tryWrite(out, text + NEWLINE);
 		
 		startTime = System.nanoTime();
-		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this));
+		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this), Context.emptyContext());
 	}
 
 	private static String getQueryString(File query) throws IOException {

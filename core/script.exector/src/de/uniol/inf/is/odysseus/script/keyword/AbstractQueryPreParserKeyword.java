@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			IExecutor executor = ExecutorHandler.getServerExecutor();
 			if (executor == null) {
@@ -70,7 +70,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
@@ -95,9 +95,6 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 			IExecutor executor = getServerExecutor();
 
 			Collection<Integer> queriesToStart = null;
-			
-			// TODO: Create context!
-			Context context = null;
 			
 			if (addSettings != null) {
 				if (!(executor instanceof IServerExecutor)) {

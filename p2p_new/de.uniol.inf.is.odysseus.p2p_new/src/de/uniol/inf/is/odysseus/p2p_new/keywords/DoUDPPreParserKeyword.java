@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.parameter.UseUDPParameter;
@@ -17,13 +18,13 @@ public class DoUDPPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
 		if ("TRUE".equals(parameter.toUpperCase())) {

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.script.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -29,14 +30,11 @@ public class CyclicQueryPreParserKeyword extends
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			IExecutor executor = getServerExecutor();
 			if (executor == null)
 				throw new OdysseusScriptException("No executor found");
-
-			// if( executor.getCompiler() == null )
-			// throw new OdysseusScriptException("No compiler found");
 
 			String parserID = (String) variables.get("PARSER");
 			if (parserID == null)
@@ -57,59 +55,9 @@ public class CyclicQueryPreParserKeyword extends
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 
 		throw new QueryParseException("The keyword "+CYCLICQUERY+" can currently not be used!");
-
-//		String queries = parameter;
-//		String parserID = (String) variables.get("PARSER");
-//		String transCfgID = (String) variables.get("TRANSCFG");
-//		
-//		if (!(getExecutor() instanceof IServerExecutor))
-//			throw new QueryParseException("The keyword "+CYCLICQUERY+" can only be used on server side!");
-//		
-//		IServerExecutor executor = (IServerExecutor) getExecutor();	
-//		
-//		@SuppressWarnings("unchecked")
-//		List<IQueryBuildSetting<?>> transCfg = (List<IQueryBuildSetting<?>>) variables
-//				.get("QueryBuildConfig");
-//		if (transCfg == null) {
-//			transCfg = executor.getQueryBuildConfiguration(transCfgID)
-//					.getConfiguration();
-//		}
-//		try {
-//			List<ILogicalQuery> plans = executor.translateQuery(queries,
-//					parserID, caller);
-//
-//			// HACK
-//			ParameterTransformationConfiguration cfg = null;
-//			for (IQueryBuildSetting<?> s : transCfg) {
-//				if (s instanceof ParameterTransformationConfiguration) {
-//					cfg = (ParameterTransformationConfiguration) s;
-//					break;
-//				}
-//			}
-//
-//			if (cfg != null) {
-//				// the last plan is the complete plan
-//				// so transform this one
-//				ILogicalQuery query = plans.get(plans.size() - 1);
-//				IPhysicalQuery newQuery = executor.transform(query,
-//						cfg.getValue(), caller);
-//
-//				IPhysicalQuery addedQuery = executor.addQuery(
-//						newQuery.getRoots(), caller, transCfgID);
-//				executor.startQuery(addedQuery.getID(), caller);
-//			}
-//
-//		} catch (QueryParseException e1) {
-//			e1.printStackTrace();
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		} catch (Throwable ex) {
-//			// ex.printStackTrace();
-//		}
-//		return null;
 	}
 
 }

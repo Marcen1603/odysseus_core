@@ -33,6 +33,7 @@ package de.uniol.inf.is.odysseus.script.keyword;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -48,14 +49,14 @@ public class DropAllSourcesPreParserKeyword extends AbstractPreParserExecutorKey
 	public static final String DROPALLSOURCES = "DROPALLSOURCES";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -61,7 +62,7 @@ public class ScriptExecutor {
 				text = text + scanner.nextLine() + "\n";
 			}
 			scanner.close();
-			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(text, caller, dummy);
+			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(text, caller, dummy, Context.emptyContext());
 			List<ISource<?>> sources = new ArrayList<ISource<?>>();
 			List<PhysicalSubscription<?>> toRemove = new ArrayList<PhysicalSubscription<?>>();
 

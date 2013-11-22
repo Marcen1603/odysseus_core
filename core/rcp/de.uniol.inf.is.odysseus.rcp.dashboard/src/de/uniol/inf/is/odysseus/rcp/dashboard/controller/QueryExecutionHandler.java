@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -71,7 +72,7 @@ public class QueryExecutionHandler {
 				lines = ParserClientUtil.replaceClientReplacements(lines, scriptFile);
 			}
 			//TODO: you cannot access the parser directly!!
-			List<?> results = parser.execute(parser.parseScript(lines, caller), caller, null);
+			List<?> results = parser.parseAndExecute(lines, caller, null, Context.emptyContext());
 			
 			queryIDs = getExecutedQueryIDs(results);
 			queryRoots = determineRoots(queryIDs);

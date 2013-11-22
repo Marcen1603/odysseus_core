@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -32,7 +33,7 @@ public class QueryNamePreParserKeyword extends AbstractPreParserKeyword {
 	public static final String QNAME = "QNAME";
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #"+QNAME);
 
@@ -40,7 +41,7 @@ public class QueryNamePreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		variables.put(QNAME, parameter);
 		return null;
 	}

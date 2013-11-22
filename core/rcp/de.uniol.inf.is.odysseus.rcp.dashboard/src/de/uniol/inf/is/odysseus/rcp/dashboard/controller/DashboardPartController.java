@@ -64,6 +64,7 @@ public final class DashboardPartController implements IDashboardPartListener {
 			
 			Collection<IPhysicalOperator> queryRoots = queryHandler.getRoots();
 			streamConnection = new DefaultStreamConnection<IStreamObject<?>>(queryRoots);
+//			streamConnection.setTransferHandler( (ITransferArea<IStreamObject<?>, IStreamObject<?>>)new TITransferArea());
 			dashboardPart.onStart(queryRoots);
 			
 			addAsListener();

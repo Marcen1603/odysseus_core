@@ -40,6 +40,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -55,12 +56,12 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String RELOADFROMLOG = "RELOADFROMLOG";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		logger.debug("Start reloading queries from reload log file...");
 		loadData(caller);
 		logger.debug("Reloading queries from reload log file done.");
@@ -81,7 +82,7 @@ public class ReloadFromLogPreParserKeyword extends AbstractPreParserKeyword {
 					toParse = toParse + newline + zeile;
 				}
 			}
-			getParser().parseAndExecute(toParse, caller, null);
+			getParser().parseAndExecute(toParse, caller, null, Context.emptyContext());
 			in.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

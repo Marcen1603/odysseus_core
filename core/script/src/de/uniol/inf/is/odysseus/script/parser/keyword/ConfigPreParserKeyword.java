@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -19,7 +20,7 @@ public class ConfigPreParserKeyword extends AbstractPreParserKeyword {
 	private String key;
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String[] params = getSimpleParameters(parameter);
 		
 		if( params.length != 2 ) {
@@ -42,7 +43,7 @@ public class ConfigPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String[] params = parameter.split(" |\t");
 		
 		key = params[0].trim();

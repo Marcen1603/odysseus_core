@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -27,17 +28,17 @@ public interface IOdysseusScriptParser {
 	
 	public IExecutor getExecutor();
 
-	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
+	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException;
 
-	public List<?> parseAndExecute(String[] textlines, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
+	public List<?> parseAndExecute(String[] textlines, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException;
 
-	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink) throws OdysseusScriptException;
+	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException;
 
-	public void validate(String[] textlines, ISession caller) throws OdysseusScriptException;
+	public void validate(String[] textlines, ISession caller, Context context) throws OdysseusScriptException;
 	
-	public List<PreParserStatement> parseScript(String completeText, ISession caller) throws OdysseusScriptException;
+	public List<PreParserStatement> parseScript(String completeText, ISession caller, Context context) throws OdysseusScriptException;
 
-	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller) throws OdysseusScriptException;
+	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller, Context context) throws OdysseusScriptException;
 
 	public Map<String, String> getReplacements(String text) throws OdysseusScriptException;
 

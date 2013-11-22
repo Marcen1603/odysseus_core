@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -26,13 +27,13 @@ public class UseFragmentationPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
 		

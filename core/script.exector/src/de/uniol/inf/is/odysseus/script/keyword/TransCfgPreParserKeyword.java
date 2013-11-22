@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -33,7 +34,7 @@ public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	public static final String TRANSCFG = "TRANSCFG";	
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("Parameter needed for #"+TRANSCFG);
 
@@ -41,7 +42,7 @@ public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		variables.put(TRANSCFG, parameter);
 		return null;
 	}

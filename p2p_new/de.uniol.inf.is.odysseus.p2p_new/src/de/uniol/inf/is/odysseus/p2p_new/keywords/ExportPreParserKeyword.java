@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
@@ -16,7 +17,7 @@ public class ExportPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String KEYWORD = "EXPORT";
 	
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		final String transCfgName = (String) variables.get("TRANSCFG");
 		
 		if( Strings.isNullOrEmpty(transCfgName)) {
@@ -33,7 +34,7 @@ public class ExportPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		final String sourceToPublish = parameter.trim();
 		final String transCfgName = (String) variables.get("TRANSCFG");
 

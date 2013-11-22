@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -529,7 +530,7 @@ public class MapEditorModel extends ModelObject {
 	public static void execute(final String[] text) {
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(concat(text), user, null);
+			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(concat(text), user, null, Context.emptyContext());
 		} catch (OdysseusScriptException ex) {
 			LOG.error("Exception during executing script", ex);
 			if (!ex.getRootMessage().contains("multiple")) {

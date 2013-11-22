@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -27,13 +28,13 @@ public class OdysseusDefaultsPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String ODYSSEUS_PARAM = "ODYSSEUS_PARAM";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		// Ignore
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		String[] params = getSimpleParameters(parameter);
 		if (params.length >= 2) {

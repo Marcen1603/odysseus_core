@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -12,7 +13,7 @@ public class ResumeOnErrorPreParserKeyword extends AbstractPreParserKeyword {
 	public static final String KEYWORD = "RESUMEONERROR";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			Boolean.valueOf(parameter);
 		} catch( Throwable t ) {
@@ -21,7 +22,7 @@ public class ResumeOnErrorPreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		variables.put(RESUME_ON_ERROR_FLAG, Boolean.valueOf(parameter));
 		
 		return null;

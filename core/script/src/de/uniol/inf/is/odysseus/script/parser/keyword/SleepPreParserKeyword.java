@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.script.parser.keyword;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -22,14 +23,14 @@ public class SleepPreParserKeyword extends AbstractPreParserKeyword {
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException("#"+SLEEP+" time needed");
 	}
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			Thread.sleep(Long.parseLong(parameter));
 		} catch (NumberFormatException | InterruptedException e) {

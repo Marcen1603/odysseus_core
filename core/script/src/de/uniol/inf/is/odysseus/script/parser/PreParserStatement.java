@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 
@@ -42,19 +43,19 @@ public final class PreParserStatement {
 		this.line = line;
 	}
 	
-	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+	void validate( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser, Context context ) throws OdysseusScriptException {
 		keyword.setParser(parser);
 		
-		keyword.validate(variables, parameter, caller);
+		keyword.validate(variables, parameter, caller, context);
 	}
 	
-	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser ) throws OdysseusScriptException {
+	Optional<?> execute( Map<String, Object> variables, ISession caller, IOdysseusScriptParser parser, Context context ) throws OdysseusScriptException {
 		if( keyword.isDeprecated() ) {
 			logDeprecation();
 		}
 		
 		keyword.setParser(parser);
-		Object result = keyword.execute(variables, parameter, caller);
+		Object result = keyword.execute(variables, parameter, caller, context);
 		return result == null ? Optional.absent() : Optional.of(result);
 	}
 

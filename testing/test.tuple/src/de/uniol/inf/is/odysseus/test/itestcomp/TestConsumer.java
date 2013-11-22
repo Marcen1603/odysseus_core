@@ -34,6 +34,7 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
@@ -146,7 +147,7 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 	private void test(String queryName, File query, File expcetedResults, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException, IOException {
 		String path = "#DEFINE PATH " + query.getAbsolutePath() + " \n";
 		
-		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareSinkPO(expcetedResults, this));
+		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareSinkPO(expcetedResults, this), Context.emptyContext());
 	}
 
 	private static String getQueryString(File query) throws IOException {

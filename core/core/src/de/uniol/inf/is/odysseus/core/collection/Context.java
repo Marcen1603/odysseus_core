@@ -26,4 +26,7 @@ public class Context {
 		return contextMap.get(key);
 	}
 
+	public static Context emptyContext() {
+		return new Context();
+	}
 }

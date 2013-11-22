@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -28,7 +29,7 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 	public static final String SCHEDULER = "SCHEDULER";
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller)
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)
@@ -49,7 +50,7 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller)
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context)
 			throws OdysseusScriptException {
 		IExecutor executor = getServerExecutor();
 		if (executor == null)

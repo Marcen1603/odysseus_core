@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -21,7 +22,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 	private static List<String> includingFiles = Lists.newArrayList();
 
 	@Override
-	public void validate(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		File includingFile = new File(parameter);
 		if( !includingFile.exists() ) {
 			throw new OdysseusScriptException("File for including '" + parameter + "' does not exist!");
@@ -35,7 +36,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 			includingFiles.add(parameter);
 			
 			String[] lines = readTextLinesFromFile(includingFile);
-			getParser().validate(lines, caller);
+			getParser().validate(lines, caller, context);
 			
 		} catch( Exception ex ) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for validating", ex );
@@ -63,12 +64,12 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 	}
 
 	@Override
-	public Object execute(Map<String, Object> variables, String parameter, ISession caller) throws OdysseusScriptException {
+	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		try {
 			String[] lines = readTextLinesFromFile(new File(parameter));
 			
 			ISink<?> defaultSink = variables.containsKey("_defaultSink") ? (ISink<?>) variables.get("_defaultSink") : null;
-			getParser().parseAndExecute(lines, caller, defaultSink);
+			getParser().parseAndExecute(lines, caller, defaultSink, context);
 			
 		} catch (IOException ex) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for execution", ex );

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -35,7 +36,7 @@ public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		if (parameter.length() == 0)
 			throw new OdysseusScriptException(
 					"Parameter needed for #PARSER");
@@ -44,7 +45,7 @@ public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 
 	@Override
 	public Object execute(Map<String, Object> variables, String parameter,
-			ISession caller) throws OdysseusScriptException {
+			ISession caller, Context context) throws OdysseusScriptException {
 		variables.put(PARSER, parameter);
 		return null;
 	}

@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.NamedList;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
@@ -47,7 +48,7 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 				replacements.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(text).entrySet());
 				childs.add(replacements);			
 				// statements				
-				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user));
+				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user, Context.emptyContext()));
 
 				return childs.toArray();
 			} catch (Exception e) {
