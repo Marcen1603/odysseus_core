@@ -52,8 +52,18 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 	private ISource<? extends IStreamObject<?>> connectingSource;
 
 	public DataSourceObserverSink( ISource<? extends IStreamObject<?>> source ) {
+		super();
+		
 		this.source = source;
 		connect();
+	}
+	
+	public DataSourceObserverSink(DataSourceObserverSink other) {
+		super();
+		
+		source = other.source;
+		listeners.addAll(other.listeners);
+		connectingSource = other.connectingSource;
 	}
 	
 	@Override
@@ -68,14 +78,15 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 
 	@Override
 	public AbstractSink<IStreamObject<?>> clone() {
-		return null;
+		return new DataSourceObserverSink(this);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void connect() {
 		Optional<ISource> connectingSource = getMetadataUpdatePOAsSource(source);
 		if( connectingSource.isPresent() ) {
-			connectingSource.get().connectSink(this, 0, 0, connectingSource.get().getOutputSchema());
+			
+			subscribeToSource(connectingSource.get(), 0, 0, connectingSource.get().getOutputSchema());
 			this.connectingSource = connectingSource.get(); 
 			getLogger().debug("Source {} connected", source);					
 		} else {
