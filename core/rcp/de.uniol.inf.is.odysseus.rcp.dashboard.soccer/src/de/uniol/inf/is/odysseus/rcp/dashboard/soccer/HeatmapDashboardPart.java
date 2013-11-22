@@ -47,16 +47,16 @@ public class HeatmapDashboardPart extends AbstractSoccerDashboardPart {
 	private int selectedPlayerID = 16;
 
 	public HeatmapDashboardPart() {
-		colorMap.put(1, new Color(PlatformUI.getWorkbench().getDisplay(), 255,255,178));
-		colorMap.put(2, new Color(PlatformUI.getWorkbench().getDisplay(), 254,204,92));
-		colorMap.put(3, new Color(PlatformUI.getWorkbench().getDisplay(), 253,141,60));
-		colorMap.put(4, new Color(PlatformUI.getWorkbench().getDisplay(), 240,59,32));
 	}
 	
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		String selPlayerID = saved.get("selectedPlayerID");
 		
+		colorMap.put(1, new Color(PlatformUI.getWorkbench().getDisplay(), 255,255,178));
+		colorMap.put(2, new Color(PlatformUI.getWorkbench().getDisplay(), 254,204,92));
+		colorMap.put(3, new Color(PlatformUI.getWorkbench().getDisplay(), 253,141,60));
+		colorMap.put(4, new Color(PlatformUI.getWorkbench().getDisplay(), 240,59,32));
 		selectedPlayerIDString = Strings.isNullOrEmpty(selPlayerID) ? "16" : selPlayerID;
 	}
 
