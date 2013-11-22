@@ -15,8 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.ontology.common;
 
-import java.net.URI;
-
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
@@ -24,33 +22,34 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * 
  */
 public final class SDFUtils {
-    public static URI getFeatureOfInterestURI(SDFAttribute attribute) {
-        String sourceName = attribute.getSourceName();
-        if (sourceName != null) {
-            String[] sourceArray = sourceName.split(":");
-            if (sourceArray.length >= 2) {
-                return URI.create(OntologyConstants.FEATURE_OF_INTEREST_NS + "/" + sourceArray[0]);
-            }
-        }
-        return null;
-    }
+	public static String getFeatureOfInterestLabel(SDFAttribute attribute) {
+		String sourceName = attribute.getSourceName();
+		if (sourceName != null) {
+			String[] sourceArray = sourceName.split(":");
+			if (sourceArray.length >= 2) {
+				int pos = sourceArray[0].indexOf(".");
+				if (pos > 0) {
+					return sourceArray[0].substring(pos + 1,
+							sourceArray[0].length());
+				} else {
+					return sourceArray[0];
+				}
+			}
+		}
+		return null;
+	}
 
-    public static URI getSensingDeviceURI(SDFAttribute attribute) {
-        String sourceName = attribute.getSourceName();
-        if (sourceName != null) {
-            String[] sourceArray = sourceName.split(":");
-            if (sourceArray.length >= 2) {
-                return URI.create(OntologyConstants.SENSING_DEVICE_NS + "/" + sourceArray[1]);
-            }
-        }
-        return null;
-    }
+	public static String getSensingDeviceLabel(SDFAttribute attribute) {
+		String sourceName = attribute.getSourceName();
+		if (sourceName != null) {
+			String[] sourceArray = sourceName.split(":");
+			if (sourceArray.length >= 2) {
+				return sourceArray[1];
+			}
+		}
+		return null;
+	}
 
-    public static URI getPropertyURI(SDFAttribute attribute) {
-        String attributeName = attribute.getAttributeName();
-        return URI.create(OntologyConstants.PROPERTY_NS + "/" + attributeName);
-    }
-
-    private SDFUtils() {
-    }
+	private SDFUtils() {
+	}
 }

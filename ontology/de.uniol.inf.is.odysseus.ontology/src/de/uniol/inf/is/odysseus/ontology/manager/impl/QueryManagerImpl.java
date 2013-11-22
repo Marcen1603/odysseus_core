@@ -45,6 +45,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.ontology.common.SDFUtils;
 import de.uniol.inf.is.odysseus.ontology.manager.QueryManager;
 import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
@@ -326,6 +328,109 @@ public class QueryManagerImpl implements QueryManager {
 				name);
 		return property;
 
+	}
+
+	public List<SensingDevice> getSensingDevices(SDFAttribute attribute) {
+		List<SensingDevice> sensingDevices = new ArrayList<SensingDevice>();
+		String featureOfInterestLabel = SDFUtils
+				.getFeatureOfInterestLabel(attribute);
+		String sensingDeviceLabel = SDFUtils.getSensingDeviceLabel(attribute);
+		String measurementCapabilityLabel = attribute.getAttributeName();
+
+		final String queryString = "SELECT *  WHERE { " + "?foi rdf:"
+				+ RDF.type.getLocalName() + " ssn:"
+				+ SSN.FeatureOfInterest.getLocalName() + " ; " + "ssn:"
+				+ SSN.hasProperty.getLocalName() + " ?p . " + "?sd rdf:"
+				+ RDF.type.getLocalName() + " ssn:"
+				+ SSN.SensingDevice.getLocalName() + " ; " + "ssn:"
+				+ SSN.observes.getLocalName() + " ?p ; " + "ssn:"
+				+ SSN.hasMeasurementCapability.getLocalName() + " ?mc . "
+				+ "?mc  rdf:" + RDF.type.getLocalName() + " ssn:"
+				+ SSN.MeasurementCapability.getLocalName() + " ; " + "ssn:"
+				+ SSN.forProperty.getLocalName() + " ?p . " + "" + "?foi rdfs:"
+				+ RDFS.label.getLocalName() + " \"" + featureOfInterestLabel
+				+ "\" . " + "?sd rdfs:" + RDFS.label.getLocalName() + " \""
+				+ sensingDeviceLabel + "\" . " + "?mc rdfs:"
+				+ RDFS.label.getLocalName() + " \""
+				+ measurementCapabilityLabel + "\"" + "}";
+
+		final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+		final QueryExecution qExec = QueryExecutionFactory.create(query,
+				this.getInferenceModel());
+
+		// qExec.setTimeout(TIMEOUT1, TIMEOUT2);
+		try {
+			final ResultSet result = qExec.execSelect();
+			while (result.hasNext()) {
+
+				final QuerySolution solution = result.next();
+				sensingDevices.add(getSensingDevice(solution.get("sd").as(
+						OntResource.class)));
+			}
+		} catch (QueryCancelledException e) {
+			LOG.error(e.getMessage(), e);
+		} finally {
+			qExec.close();
+		}
+		return sensingDevices;
+	}
+
+	public List<SDFAttribute> getAttributes(Property property) {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+
+		// final String queryString = "SELECT *  WHERE { "
+		// + "?foi ssn:"+ SSN.hasProperty.getLocalName() + " ?p . "
+		// + "?sd  ssn:"+SSN.observes.getLocalName()+" ?p ; "
+		// + "ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?mc ."
+		// + "?mc  ssn:"+SSN.forProperty.getLocalName()+" ?p ."
+		// + ""
+		// + "?foi  ssn:"+RDFS.label.getLocalName()+" ?foiLabel ."
+		// + "?sd  ssn:"+RDFS.label.getLocalName()+" ?sdLabel ."
+		// + "?mc  ssn:"+RDFS.label.getLocalName()+" ?mcLabel ."
+		// + "}";
+
+		final String queryString = "SELECT *  WHERE { " + "?foi rdf:"
+				+ RDF.type.getLocalName() + " ssn:"
+				+ SSN.FeatureOfInterest.getLocalName() + " ; " + "ssn:"
+				+ SSN.hasProperty.getLocalName() + " ?p . " + "?sd rdf:"
+				+ RDF.type.getLocalName() + " ssn:"
+				+ SSN.SensingDevice.getLocalName() + " ; " + "ssn:"
+				+ SSN.observes.getLocalName() + " ?p ; " + "ssn:"
+				+ SSN.hasMeasurementCapability.getLocalName() + " ?mc . "
+				+ "?mc  rdf:" + RDF.type.getLocalName() + " ssn:"
+				+ SSN.MeasurementCapability.getLocalName() + " ; " + "ssn:"
+				+ SSN.forProperty.getLocalName() + " ?p . " 
+				+"<"+ property.getUri().toString() + "> rdfs:"+RDFS.subClassOf.getLocalName()+" ?p . "
+				
+				+  "?foi rdfs:"
+				+ RDFS.label.getLocalName() + " ?foiLabel . " + "?sd rdfs:"
+				+ RDFS.label.getLocalName() + " ?sdLabel . " + "?mc rdfs:"
+				+ RDFS.label.getLocalName() + " ?mcLabel" + "}";
+
+		final Query query = QueryFactory.create(QUERY_PREFIX + queryString);
+		final QueryExecution qExec = QueryExecutionFactory.create(query,
+				this.getInferenceModel());
+
+		// qExec.setTimeout(TIMEOUT1, TIMEOUT2);
+		try {
+			final ResultSet result = qExec.execSelect();
+			while (result.hasNext()) {
+
+				final QuerySolution solution = result.next();
+				attributes.add(new SDFAttribute(
+						solution.get("foiLabel").asLiteral().getString()
+								+ ":"
+								+ solution.get("sdLabel").asLiteral()
+										.getString(), solution.get("mcLabel")
+								.asLiteral().getString(), SDFDatatype.OBJECT));
+			}
+		} catch (QueryCancelledException e) {
+			LOG.error(e.getMessage(), e);
+		} finally {
+			qExec.close();
+		}
+
+		return attributes;
 	}
 
 	/**
@@ -614,7 +719,7 @@ public class QueryManagerImpl implements QueryManager {
 		}
 		return new MeasurementProperty(
 				URI.create(measurementProperty.getURI()),
-				measurementProperty.asClass(), expression);
+				measurementProperty, expression);
 
 	}
 

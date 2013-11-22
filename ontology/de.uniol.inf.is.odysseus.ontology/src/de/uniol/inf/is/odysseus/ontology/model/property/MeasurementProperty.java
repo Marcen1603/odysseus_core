@@ -71,4 +71,9 @@ public class MeasurementProperty extends Property implements
 	public String getExpression() {
 		return this.expression;
 	}
+
+	@Override
+	public String toString() {
+		return getExpression() != null ? getExpression() : "";
+	}
 }

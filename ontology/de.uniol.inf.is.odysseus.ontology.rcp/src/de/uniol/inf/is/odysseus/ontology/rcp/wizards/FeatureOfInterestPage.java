@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
@@ -112,7 +113,17 @@ public class FeatureOfInterestPage extends WizardPage {
         final GridData gd_propertyTableViewer = new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1);
         gd_propertyTableViewer.widthHint = 328;
         this.tblProperties.setLayoutData(gd_propertyTableViewer);
-
+		this.tblProperties.setLinesVisible(true);
+		this.tblProperties.setHeaderVisible(true);
+		String[] titles = { OdysseusNLS.Property };
+		for (int i = 0; i < titles.length; i++) {
+			TableColumn column = new TableColumn(this.tblProperties, SWT.NONE);
+			column.setText(titles[i]);
+		}
+		for (int i = 0; i < titles.length; i++) {
+			this.tblProperties.getColumn(i).pack();
+		}
+		
         final Composite btnComposite = new Composite(container, SWT.NULL);
         btnComposite.setLayout(new GridLayout(1, false));
         final Button btnAdd = new Button(btnComposite, SWT.NONE);

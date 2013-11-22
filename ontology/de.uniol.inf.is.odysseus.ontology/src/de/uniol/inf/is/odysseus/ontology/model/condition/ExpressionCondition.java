@@ -48,10 +48,6 @@ public class ExpressionCondition extends Condition implements ICondition {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        sb.append(getExpression());
-        sb.append(")");
-        return sb.toString();
+        return getExpression();
     }
 }

@@ -105,9 +105,10 @@ public class MeasurementCapabilitiesPage extends WizardPage {
 										.getName());
 								item.setText(1, condition.getOnProperty()
 										.getName());
-								item.setText(2, measurementProperty
+								item.setText(2, condition.toString());
+								item.setText(3, measurementProperty
 										.getResource().getLocalName());
-								item.setText(3,
+								item.setText(4,
 										measurementProperty.getExpression());
 							}
 						}
@@ -129,7 +130,8 @@ public class MeasurementCapabilitiesPage extends WizardPage {
 		this.tblCapabilities.setLinesVisible(true);
 		this.tblCapabilities.setHeaderVisible(true);
 		String[] titles = { OdysseusNLS.Property, OdysseusNLS.Condition,
-				OdysseusNLS.MeasurementProperty, OdysseusNLS.Expression };
+				OdysseusNLS.Expression, OdysseusNLS.MeasurementProperty,
+				OdysseusNLS.Expression };
 		for (int i = 0; i < titles.length; i++) {
 			TableColumn column = new TableColumn(this.tblCapabilities, SWT.NONE);
 			column.setText(titles[i]);
@@ -176,10 +178,12 @@ public class MeasurementCapabilitiesPage extends WizardPage {
 							.getName());
 					item.setText(1, measurementCapabilityDialog.getCondition()
 							.getOnProperty().getName());
-					item.setText(2, measurementCapabilityDialog
+					item.setText(2, measurementCapabilityDialog.getCondition()
+							.toString());
+					item.setText(3, measurementCapabilityDialog
 							.getMeasurementProperty().getResource()
 							.getLocalName());
-					item.setText(3, measurementCapabilityDialog
+					item.setText(4, measurementCapabilityDialog
 							.getMeasurementProperty().getExpression());
 
 					final MeasurementCapability capability = new MeasurementCapability(

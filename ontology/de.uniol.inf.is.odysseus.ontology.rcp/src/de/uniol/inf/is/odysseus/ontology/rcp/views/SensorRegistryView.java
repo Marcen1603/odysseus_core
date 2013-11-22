@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
@@ -138,6 +139,11 @@ public class SensorRegistryView extends ViewPart implements IDataDictionaryListe
                             final List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().getAllSensingDevices();
                             SensorRegistryView.this.getTreeViewer().setInput(sensingDevices);
 
+                            for (SensingDevice device:sensingDevices){
+                            	for (MeasurementCapability measurementCapability:device.getHasMeasurementCapabilities()){
+                            		SensorRegistryPlugIn.getSensorOntologyService().getAttributes(measurementCapability.getForProperty());
+                            	}
+                            }
                             if (!sensingDevices.isEmpty()) {
                                 SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this.getTreeViewer().getTree();
                             }

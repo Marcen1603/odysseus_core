@@ -15,7 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,48 +31,69 @@ import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
  */
 public class SensingDeviceContentProvider implements ITreeContentProvider {
 
-    @Override
-    public void dispose() {
-    }
+	@Override
+	public void dispose() {
+	}
 
-    @Override
-    public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
-    }
+	@Override
+	public void inputChanged(final Viewer viewer, final Object oldInput,
+			final Object newInput) {
+	}
 
-    @Override
-    public Object[] getElements(final Object inputElement) {
-        return this.getChildren(inputElement);
-    }
+	@Override
+	public Object[] getElements(final Object inputElement) {
+		return this.getChildren(inputElement);
+	}
 
-    @Override
-    public Object[] getChildren(final Object parentElement) {
-        if (parentElement instanceof Collection) {
-            return ((Collection<?>) parentElement).toArray();
-        }
-        if (parentElement instanceof SensingDevice) {
-            final SensingDevice sensingDevice = (SensingDevice) parentElement;
-            return sensingDevice.getHasMeasurementCapabilities().toArray();
-        }
-        if (parentElement instanceof MeasurementCapability) {
-            final MeasurementCapability measurementCapability = (MeasurementCapability) parentElement;
-            return measurementCapability.getInConditions().toArray();
-        }
-        return null;
-    }
+	@Override
+	public Object[] getChildren(final Object parentElement) {
+		if (parentElement instanceof Collection) {
+			return ((Collection<?>) parentElement).toArray();
+		}
+		if (parentElement instanceof SensingDevice) {
+			final SensingDevice sensingDevice = (SensingDevice) parentElement;
+			return sensingDevice.getHasMeasurementCapabilities().toArray();
+		}
+		if (parentElement instanceof MeasurementCapability) {
+			final MeasurementCapability measurementCapability = (MeasurementCapability) parentElement;
 
-    @Override
-    public Object getParent(final Object element) {
-        return null;
-    }
+			List<Object> children = new ArrayList<Object>();
+			if (measurementCapability.getInConditions() != null) {
+				children.addAll(measurementCapability.getInConditions());
+			}
+			if (measurementCapability.getHasMeasurementProperties() != null) {
+				children.addAll(measurementCapability
+						.getHasMeasurementProperties());
+			}
+			return children.toArray();
+		}
+		return null;
+	}
 
-    @Override
-    public boolean hasChildren(final Object element) {
-        if (element instanceof SensingDevice) {
-            return !((SensingDevice) element).getHasMeasurementCapabilities().isEmpty();
-        }
-        if (element instanceof MeasurementCapability) {
-            return !((MeasurementCapability) element).getInConditions().isEmpty();
-        }
-        return false;
-    }
+	@Override
+	public Object getParent(final Object element) {
+		return null;
+	}
+
+	@Override
+	public boolean hasChildren(final Object element) {
+		if (element instanceof SensingDevice) {
+			return !((SensingDevice) element).getHasMeasurementCapabilities()
+					.isEmpty();
+		}
+		if (element instanceof MeasurementCapability) {
+			boolean hasChildren = false;
+			MeasurementCapability measurementCapability = (MeasurementCapability) element;
+			if (measurementCapability.getInConditions() != null) {
+				hasChildren = !measurementCapability.getInConditions()
+						.isEmpty();
+			}
+			if (measurementCapability.getHasMeasurementProperties() != null) {
+				hasChildren = !measurementCapability
+						.getHasMeasurementProperties().isEmpty();
+			}
+			return hasChildren;
+		}
+		return false;
+	}
 }

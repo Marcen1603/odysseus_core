@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
+import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
 
@@ -27,50 +28,67 @@ import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SensingDeviceContentLabelProvider extends AbstractViewLabelProvider {
+public class SensingDeviceContentLabelProvider extends
+		AbstractViewLabelProvider {
 
-    private final String sensingDeviceImage;
-    private final String measurementCapabilityImage = "measurementCapability";
-    private final String conditionImage = "condition";
+	private final String sensingDeviceImage;
+	private final String measurementCapabilityImage = "measurementCapability";
+	private final String measurementPropertyImage = "measurementProperty";
+	private final String conditionImage = "condition";
 
-    public SensingDeviceContentLabelProvider(final String sensingDeviceImage) {
-        this.sensingDeviceImage = sensingDeviceImage;
-    }
+	public SensingDeviceContentLabelProvider(final String sensingDeviceImage) {
+		this.sensingDeviceImage = sensingDeviceImage;
+	}
 
-    @Override
-    public Image getImage(final Object element) {
-        if (element instanceof SensingDevice) {
-            return SensorRegistryPlugIn.getImageManager().get(this.sensingDeviceImage);
-        }
-        if (element instanceof MeasurementCapability) {
-            return SensorRegistryPlugIn.getImageManager().get(this.measurementCapabilityImage);
-        }
-        if (element instanceof Condition) {
-            return SensorRegistryPlugIn.getImageManager().get(this.conditionImage);
-        }
-        return super.getImage(element);
-    }
+	@Override
+	public Image getImage(final Object element) {
+		if (element instanceof SensingDevice) {
+			return SensorRegistryPlugIn.getImageManager().get(
+					this.sensingDeviceImage);
+		}
+		if (element instanceof MeasurementCapability) {
+			return SensorRegistryPlugIn.getImageManager().get(
+					this.measurementCapabilityImage);
+		}
+		if (element instanceof Condition) {
+			return SensorRegistryPlugIn.getImageManager().get(
+					this.conditionImage);
+		}
+		if (element instanceof MeasurementProperty) {
+			return SensorRegistryPlugIn.getImageManager().get(
+					this.measurementPropertyImage);
+		}
+		return super.getImage(element);
+	}
 
-    @Override
-    public String getText(final Object element) {
-        if (element instanceof SensingDevice) {
-            final SensingDevice sensingDevice = (SensingDevice) element;
-            final StringBuilder sb = new StringBuilder();
-            sb.append(sensingDevice.getName()).append(" [").append(sensingDevice.getUri().toString()).append("]");
-            return sb.toString();
-        }
-        else if (element instanceof MeasurementCapability) {
-            final MeasurementCapability measurementCapability = (MeasurementCapability) element;
-            final StringBuilder sb = new StringBuilder();
-            sb.append(measurementCapability.getName()).append(" [").append(measurementCapability.getUri().toString()).append("]");
-            return sb.toString();
-        }
-        else if (element instanceof Condition) {
-            final Condition condition = (Condition) element;
-            final StringBuilder sb = new StringBuilder();
-            sb.append(condition.getOnProperty().getName()).append(" [").append(condition.getUri().toString()).append("]").append(" [").append(condition.toString()).append("]");
-            return sb.toString();
-        }
-        return super.getText(element);
-    }
+	@Override
+	public String getText(final Object element) {
+		if (element instanceof SensingDevice) {
+			final SensingDevice sensingDevice = (SensingDevice) element;
+			final StringBuilder sb = new StringBuilder();
+			sb.append(sensingDevice.getName()).append(" [")
+					.append(sensingDevice.getUri().toString()).append("]");
+			return sb.toString();
+		} else if (element instanceof MeasurementCapability) {
+			final MeasurementCapability measurementCapability = (MeasurementCapability) element;
+			final StringBuilder sb = new StringBuilder();
+			sb.append(measurementCapability.getName()).append(" [")
+					.append(measurementCapability.getUri().toString())
+					.append("]");
+			return sb.toString();
+		} else if (element instanceof Condition) {
+			final Condition condition = (Condition) element;
+			final StringBuilder sb = new StringBuilder();
+			sb.append(condition.getName()).append(" [")
+					.append(condition.toString()).append("]");
+			return sb.toString();
+		} else if (element instanceof MeasurementProperty) {
+			final MeasurementProperty measurementProperty = (MeasurementProperty) element;
+			final StringBuilder sb = new StringBuilder();
+			sb.append(measurementProperty.getResource().getLocalName()).append(" [")
+					.append(measurementProperty.getExpression()).append("]");
+			return sb.toString();
+		}
+		return super.getText(element);
+	}
 }

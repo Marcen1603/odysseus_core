@@ -16,8 +16,6 @@
 package de.uniol.inf.is.odysseus.ontology.manager.impl;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.hp.hpl.jena.datatypes.TypeMapper;
 import com.hp.hpl.jena.ontology.Individual;
@@ -29,7 +27,6 @@ import de.uniol.inf.is.odysseus.ontology.manager.SourceManager;
 import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.Property;
-import de.uniol.inf.is.odysseus.ontology.model.SSNMeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.model.condition.ExpressionCondition;
@@ -44,7 +41,7 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@SuppressWarnings("unused")
+
 public class SourceManagerImpl implements SourceManager {
 	private final OntModel aBox;
 
@@ -96,15 +93,15 @@ public class SourceManagerImpl implements SourceManager {
 		try {
 			final Individual thisSensingDevice = this.createSensingDevice(
 					sensingDevice.getUri(), sensingDevice.getName());
-			final List<Individual> properties = new ArrayList<Individual>();
 			if (!sensingDevice.getHasMeasurementCapabilities().isEmpty()) {
 				for (final MeasurementCapability capability : sensingDevice
 						.getHasMeasurementCapabilities()) {
 					this.addMeasurementCapabilityToSensingDevice(
 							thisSensingDevice, capability);
+					this.addPropertyToSensingDevice(thisSensingDevice,
+							capability.getForProperty());
 				}
 			}
-
 			if (this.getABox().supportsTransactions()) {
 				this.getABox().commit();
 			}
@@ -150,7 +147,6 @@ public class SourceManagerImpl implements SourceManager {
 		}
 		this.getABox().add(sensingDevice, SSN.hasMeasurementCapability,
 				thisMeasurementCapability);
-
 	}
 
 	private void addMeasurementPropertyToMeasurementCapability(
@@ -170,9 +166,11 @@ public class SourceManagerImpl implements SourceManager {
 	}
 
 	private void addPropertyToSensingDevice(final Individual sensingDevice,
-			final Individual property) {
+			final Property property) {
 		this.getABox().createObjectProperty(SSN.observes.getURI());
-		this.getABox().add(sensingDevice, SSN.observes, property);
+		Individual thisProperty = this.createProperty(property.getUri(),
+				property.getName());
+		this.getABox().add(sensingDevice, SSN.observes, thisProperty);
 	}
 
 	/**
@@ -203,14 +201,6 @@ public class SourceManagerImpl implements SourceManager {
 		return thisMeasurementCapability;
 	}
 
-	private void addMeasurementCapabilityToSensingDevice(
-			final Individual sensingDevice,
-			final Individual measurementCapability) {
-		this.getABox().createObjectProperty(
-				SSN.hasMeasurementCapability.getURI());
-		this.getABox().add(sensingDevice, SSN.hasMeasurementCapability,
-				measurementCapability);
-	}
 
 	private Individual createMeasurementProperty(
 			MeasurementProperty measurementProperty) {

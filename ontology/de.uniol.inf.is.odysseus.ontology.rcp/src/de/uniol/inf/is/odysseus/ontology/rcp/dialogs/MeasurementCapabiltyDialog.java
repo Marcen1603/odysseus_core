@@ -23,13 +23,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -40,11 +37,9 @@ import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SSNMeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.model.condition.ExpressionCondition;
-import de.uniol.inf.is.odysseus.ontology.model.condition.IntervalCondition;
 import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
 import de.uniol.inf.is.odysseus.ontology.rcp.l10n.OdysseusNLS;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -54,8 +49,8 @@ public class MeasurementCapabiltyDialog extends Dialog {
 	private Combo cmbForProperty;
 	private Combo cmbConditionProperty;
 
-	private Text txtConditionValueMin;
-	private Text txtConditionValueMax;
+	// private Text txtConditionValueMin;
+	// private Text txtConditionValueMax;
 	private Text txtConditionExpression;
 
 	private Combo cmbMeasurementProperty;
@@ -137,42 +132,42 @@ public class MeasurementCapabiltyDialog extends Dialog {
 
 		this.fillPropertyCombo(this.cmbConditionProperty);
 
-		Button[] radios = new Button[2];
-
-		radios[0] = new Button(container, SWT.RADIO);
-		radios[0].setText(OdysseusNLS.Interval);
-		radios[0].addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				txtConditionExpression.setText("");
-				txtConditionExpression.setEnabled(false);
-				txtConditionExpression.setVisible(false);
-				txtConditionValueMin.setEnabled(true);
-				txtConditionValueMax.setEnabled(true);
-				txtConditionValueMin.setVisible(true);
-				txtConditionValueMax.setVisible(true);
-
-			}
-		});
-		radios[1] = new Button(container, SWT.RADIO);
-		radios[1].setText(OdysseusNLS.Function);
-		radios[1].addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				txtConditionValueMin.setText("");
-				txtConditionValueMax.setText("");
-				txtConditionValueMin.setEnabled(false);
-				txtConditionValueMax.setEnabled(false);
-				txtConditionValueMin.setVisible(false);
-				txtConditionValueMax.setVisible(false);
-				txtConditionExpression.setEditable(true);
-				txtConditionExpression.setEnabled(true);
-				txtConditionExpression.setVisible(true);
-
-			}
-		});
+		// Button[] radios = new Button[2];
+		//
+		// radios[0] = new Button(container, SWT.RADIO);
+		// radios[0].setText(OdysseusNLS.Interval);
+		// radios[0].addListener(SWT.Selection, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(Event event) {
+		// txtConditionExpression.setText("");
+		// txtConditionExpression.setEnabled(false);
+		// txtConditionExpression.setVisible(false);
+		// txtConditionValueMin.setEnabled(true);
+		// txtConditionValueMax.setEnabled(true);
+		// txtConditionValueMin.setVisible(true);
+		// txtConditionValueMax.setVisible(true);
+		//
+		// }
+		// });
+		// radios[1] = new Button(container, SWT.RADIO);
+		// radios[1].setText(OdysseusNLS.Function);
+		// radios[1].addListener(SWT.Selection, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(Event event) {
+		// txtConditionValueMin.setText("");
+		// txtConditionValueMax.setText("");
+		// txtConditionValueMin.setEnabled(false);
+		// txtConditionValueMax.setEnabled(false);
+		// txtConditionValueMin.setVisible(false);
+		// txtConditionValueMax.setVisible(false);
+		// txtConditionExpression.setEditable(true);
+		// txtConditionExpression.setEnabled(true);
+		// txtConditionExpression.setVisible(true);
+		//
+		// }
+		// });
 
 		this.txtConditionExpression = new Text(container, SWT.BORDER);
 		gd = new GridData();
@@ -183,29 +178,31 @@ public class MeasurementCapabiltyDialog extends Dialog {
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		txtConditionExpression.setLayoutData(gd);
-		txtConditionExpression.setVisible(false);
-		txtConditionExpression.setEnabled(false);
+		// txtConditionExpression.setVisible(false);
+		// txtConditionExpression.setEnabled(false);
 
-		this.txtConditionValueMin = new Text(container, SWT.BORDER);
-		gd = new GridData();
-		final int txtAttributeValueMinWidth = txtConditionValueMin.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT).x;
-		gd.horizontalSpan = 1;
-		gd.widthHint = Math.min(txtAttributeValueMinWidth, maxWidth / 2);
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		txtConditionValueMin.setLayoutData(gd);
-
-		this.txtConditionValueMax = new Text(container, SWT.BORDER);
-		gd = new GridData();
-		final int txtAttributeValueMaxWidth = txtConditionValueMax.computeSize(
-				SWT.DEFAULT, SWT.DEFAULT).x;
-		gd.horizontalSpan = 1;
-		gd.widthHint = Math.min(txtAttributeValueMaxWidth, maxWidth / 2);
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		txtConditionValueMax.setLayoutData(gd);
-		new Label(container, SWT.NONE);
+		// this.txtConditionValueMin = new Text(container, SWT.BORDER);
+		// gd = new GridData();
+		// final int txtAttributeValueMinWidth =
+		// txtConditionValueMin.computeSize(
+		// SWT.DEFAULT, SWT.DEFAULT).x;
+		// gd.horizontalSpan = 1;
+		// gd.widthHint = Math.min(txtAttributeValueMinWidth, maxWidth / 2);
+		// gd.horizontalAlignment = GridData.FILL;
+		// gd.grabExcessHorizontalSpace = true;
+		// txtConditionValueMin.setLayoutData(gd);
+		//
+		// this.txtConditionValueMax = new Text(container, SWT.BORDER);
+		// gd = new GridData();
+		// final int txtAttributeValueMaxWidth =
+		// txtConditionValueMax.computeSize(
+		// SWT.DEFAULT, SWT.DEFAULT).x;
+		// gd.horizontalSpan = 1;
+		// gd.widthHint = Math.min(txtAttributeValueMaxWidth, maxWidth / 2);
+		// gd.horizontalAlignment = GridData.FILL;
+		// gd.grabExcessHorizontalSpace = true;
+		// txtConditionValueMax.setLayoutData(gd);
+		// new Label(container, SWT.NONE);
 
 		final Label lblProperty = new Label(container, SWT.WRAP);
 		lblProperty.setText(OdysseusNLS.MeasurementProperty);
@@ -241,7 +238,7 @@ public class MeasurementCapabiltyDialog extends Dialog {
 		gd.grabExcessHorizontalSpace = true;
 		txtMeasurementPropertyExpression.setLayoutData(gd);
 
-		radios[0].setSelection(true);
+		// radios[0].setSelection(true);
 
 		return container;
 	}
@@ -260,23 +257,22 @@ public class MeasurementCapabiltyDialog extends Dialog {
 		Property conditionProperty = (Property) this.cmbConditionProperty
 				.getData(this.cmbConditionProperty
 						.getItem(this.cmbConditionProperty.getSelectionIndex()));
-		if (this.txtConditionExpression.isEnabled()) {
-			final String attributeFunction = this.txtConditionExpression
-					.getText();
-			this.condition = new ExpressionCondition(URI.create(this.uri + "/"
-					+ conditionProperty.getName()), conditionProperty,
-					attributeFunction);
-		} else {
-			final double attributeMinValue = Double
-					.parseDouble(this.txtConditionValueMin.getText());
-			final double attributeMaxValue = Double
-					.parseDouble(this.txtConditionValueMax.getText());
-			final Interval attributeInterval = new Interval(attributeMinValue,
-					attributeMaxValue);
-			this.condition = new IntervalCondition(URI.create(this.uri + "/"
-					+ conditionProperty.getName()), conditionProperty,
-					attributeInterval);
-		}
+		// if (this.txtConditionExpression.isEnabled()) {
+		final String attributeFunction = this.txtConditionExpression.getText();
+		this.condition = new ExpressionCondition(URI.create(this.uri + "/"
+				+ conditionProperty.getName()), conditionProperty,
+				attributeFunction);
+		// } else {
+		// final double attributeMinValue = Double
+		// .parseDouble(this.txtConditionValueMin.getText());
+		// final double attributeMaxValue = Double
+		// .parseDouble(this.txtConditionValueMax.getText());
+		// final Interval attributeInterval = new Interval(attributeMinValue,
+		// attributeMaxValue);
+		// this.condition = new IntervalCondition(URI.create(this.uri + "/"
+		// + conditionProperty.getName()), conditionProperty,
+		// attributeInterval);
+		// }
 		final SSNMeasurementProperty measurementProperty = (SSNMeasurementProperty) this.cmbMeasurementProperty
 				.getData(this.cmbMeasurementProperty
 						.getItem(this.cmbMeasurementProperty

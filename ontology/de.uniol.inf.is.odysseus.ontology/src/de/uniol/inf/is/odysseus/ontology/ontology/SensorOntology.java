@@ -29,17 +29,15 @@ import org.slf4j.LoggerFactory;
 import com.hp.hpl.jena.ontology.OntDocumentManager;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
-import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.reasoner.ReasonerRegistry;
+import com.hp.hpl.jena.reasoner.rulesys.OWLMiniReasoner;
+import com.hp.hpl.jena.reasoner.transitiveReasoner.TransitiveReasoner;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -165,6 +163,18 @@ public class SensorOntology {
 		return properties;
 	}
 
+	public List<SensingDevice> getSensingDevices(SDFAttribute attribute) {
+		List<SensingDevice> sensingDevices = this.queryManager
+				.getSensingDevices(attribute);
+		return sensingDevices;
+	}
+
+	public List<SDFAttribute> getAttributes(Property property) {
+		List<SDFAttribute> attributes = this.queryManager
+				.getAttributes(property);
+		return attributes;
+	}
+
 	// public Map<SDFAttribute, Map<Property, String>>
 	// getConditionPredicates(final SensingDevice sensingDevice) {
 	// Map<SDFAttribute, Map<Property, String>> attributePropertyMapping = new
@@ -272,6 +282,7 @@ public class SensorOntology {
 			OntModelSpec ontModelSpec = new OntModelSpec(OntModelSpec.OWL_MEM);
 			ontModelSpec.setBaseModelMaker(maker);
 			ontModelSpec.setDocumentManager(new OntDocumentManager());
+			ontModelSpec.setReasoner(OntModelSpec.OWL_MEM_MICRO_RULE_INF.getReasoner());
 
 			Model base = maker.openModel(this.MODEL, false);
 			this.model = ModelFactory.createOntologyModel(ontModelSpec, base);

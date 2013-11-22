@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.ontology.transform;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,22 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.ontology.common.SDFUtils;
 import de.uniol.inf.is.odysseus.ontology.logicaloperator.QualityAO;
-import de.uniol.inf.is.odysseus.ontology.manager.impl.QueryManagerImpl;
-import de.uniol.inf.is.odysseus.ontology.manager.impl.SourceManagerImpl;
-import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
-import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.ontology.ontology.SensorOntologyServiceImpl;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -49,120 +45,197 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
-    /** The Logger. */
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(TQualityAOTransformRule.class);
+	/** The Logger. */
+	@SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory
+			.getLogger(TQualityAOTransformRule.class);
 
-    @Override
-    public final int getPriority() {
-        return 0;
-    }
+	@Override
+	public final int getPriority() {
+		return 0;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unused")
-    @Override
-    public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
-        final SDFSchema schema = operator.getInputSchema();
-        List<SDFAttribute> attributes = operator.getAttributes();
-        List<String> propertyNames = operator.getProperties();
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unused")
+	@Override
+	public final void execute(final QualityAO operator,
+			final TransformationConfiguration transformConfig) {
+		final SDFSchema schema = operator.getInputSchema();
+		List<SDFAttribute> attributes = operator.getAttributes();
+		List<String> measurementPropertyNames = operator.getProperties();
 
-        SourceManagerImpl sourceManager = new SourceManagerImpl(null);
-        QueryManagerImpl queryManager = new QueryManagerImpl(null);
+		Map<String, List<SDFAttribute>> toJoinStreams = new HashMap<String, List<SDFAttribute>>();
 
-        Map<SensingDevice, List<Property>> toJoinStreams = new HashMap<SensingDevice, List<Property>>();
+		for (SDFAttribute attribute : attributes) {
 
-        for (SDFAttribute attribute : attributes) {
+			Map<String, Map<String, String>> conditionPropertyMapping = new HashMap<String, Map<String, String>>();
 
-            Map<String, Map<String, String>> conditionPropertyMapping = new HashMap<String, Map<String, String>>();
+			List<SensingDevice> sensingDevices = SensorOntologyServiceImpl
+					.getOntology().getSensingDevices(attribute);
+			if (!sensingDevices.isEmpty()) {
+				// FIXME What happens if there are more than one sensing device?
+				SensingDevice sensingDevice = sensingDevices.get(0);
+				List<MeasurementCapability> measurementCapabilities = sensingDevice
+						.getHasMeasurementCapabilities(attribute
+								.getAttributeName());
+				for (MeasurementCapability measurementCapability : measurementCapabilities) {
 
-            Property property = new Property(SDFUtils.getPropertyURI(attribute));
-            SensingDevice sensingDevice = queryManager.getSensingDevice(SDFUtils.getSensingDeviceURI(attribute));
-            FeatureOfInterest featureOfInterest = queryManager.getFeatureOfInterest(SDFUtils.getFeatureOfInterestURI(attribute));
+					List<Condition> conditions = measurementCapability
+							.getInConditions();
 
-            List<MeasurementCapability> measurementCapabilities = sensingDevice.getHasMeasurementCapabilities(property);
-            for (MeasurementCapability measurementCapability : measurementCapabilities) {
+					for (Condition condition : conditions) {
+						List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl
+								.getOntology().getAttributes(condition);
 
-                List<Condition> conditions = measurementCapability.getInConditions();
+						boolean inSchema = false;
+						if (!observerAttributes.isEmpty()) {
+							for (SDFAttribute observerAttribute : observerAttributes) {
+								if (schema.contains(observerAttribute)) {
+									inSchema = true;
+								}
+							}
+							if (!inSchema) {
+								if (!toJoinStreams
+										.containsKey(observerAttributes.get(0)
+												.getSourceName())) {
+									toJoinStreams.put(observerAttributes.get(0)
+											.getSourceName(),
+											new ArrayList<SDFAttribute>());
+								}
+								toJoinStreams.get(
+										observerAttributes.get(0)
+												.getSourceName()).add(
+										observerAttributes.get(0));
+							}
+						}
+					}
 
-                for (Condition condition : conditions) {
-                    Property onProperty = condition.getOnProperty();
-                    List<SensingDevice> observers = queryManager.getSensingDevicesByObservedProperty(onProperty.getUri());
-                    if (!observers.contains(sensingDevice)) {
-                        if (!toJoinStreams.containsKey(observers.get(0))) {
-                            toJoinStreams.put(observers.get(0), new ArrayList<Property>());
-                        }
-                        toJoinStreams.get(observers.get(0)).add(onProperty);
-                    }
-                }
+				}
+				concatConditionObserverStreams(operator, toJoinStreams);
+			}
+		}
 
-            }
-            concatConditionObserverStreams(operator, toJoinStreams);
-        }
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final boolean isExecutable(final QualityAO operator,
+			final TransformationConfiguration transformConfig) {
+		// if (operator.getInputSchema().getType() == ProbabilisticTuple.class)
+		// {
+		if (!hasJoinAOAsChild(operator)) {
+			return true;
+		}
+		// }
+		return false;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final boolean isExecutable(final QualityAO operator, final TransformationConfiguration transformConfig) {
-        if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-            return true;
-        }
-        return false;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return "QualityAO -> QualityAO|JoinAO|ProjectAO|StreamAO";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return "QualityAO -> QualityPO(probabilistic)";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.INIT;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.INIT;
-    }
+	/**
+	 * Concatenates the condition observing sensing devices to this stream.
+	 * 
+	 * @param observers
+	 *            The map of sensing devices and the necessary properties.
+	 */
 
-    /**
-     * Concatenates the condition observing sensing devices to this stream.
-     * 
-     * @param observers
-     *            The map of sensing devices and the necessary properties.
-     */
+	private void concatConditionObserverStreams(ILogicalOperator operator,
+			Map<String, List<SDFAttribute>> observers) {
+		SDFSchema schema = operator.getInputSchema(0);
 
-    private void concatConditionObserverStreams(ILogicalOperator operator, Map<SensingDevice, List<Property>> observers) {
-        for (SensingDevice sensingDevice : observers.keySet()) {
-            JoinAO joinAO = insertJoinAO(operator, sensingDevice);
-            insertProjectAO(joinAO, observers.get(sensingDevice));
-            // FIXME Insert Window?
-        }
-    }
+		for (String sourceName : observers.keySet()) {
+			JoinAO joinAO = insertJoinAO(operator);
+			joinAO.setName("Join "+sourceName);
+			ILogicalOperator viewOrStream = insertViewOrStream(joinAO,
+					sourceName);
+			ProjectAO projectAO = insertProjectAO(joinAO,
+					observers.get(sourceName));
 
-    private JoinAO insertJoinAO(ILogicalOperator operator, SensingDevice sensingDevice) {
-        JoinAO joinAO = new JoinAO();
-        joinAO.subscribeToSource(null, 1, 0, null);
+			viewOrStream.initialize();
+			insert(viewOrStream);
+			projectAO.initialize();
+			insert(projectAO);
+			joinAO.initialize();
+			insert(joinAO);
 
-        RestructHelper.insertOperatorBefore(joinAO, operator);
-        // FIXME Get view/source of sensing device
+			joinAO.setOutputSchema(SDFSchema.union(schema,
+					viewOrStream.getOutputSchema()));
 
-        joinAO.initialize();
-        insert(joinAO);
-        return joinAO;
-    }
+			// FIXME Insert Window?
+		}
+	}
 
-    private void insertProjectAO(ILogicalOperator operator, List<Property> properties) {
-        ProjectAO projectAO = new ProjectAO();
-        // FIXME set output schema to projected attributes
-        projectAO.setOutputSchema(null);
-        RestructHelper.insertOperatorBefore(projectAO, operator);
-        projectAO.initialize();
-        insert(projectAO);
-    }
+	private ILogicalOperator insertViewOrStream(ILogicalOperator parent,
+			String sourceName) {
+		ILogicalOperator viewOrStream = getDataDictionary().getViewOrStream(
+				sourceName, getCaller());
+
+		parent.subscribeToSource(viewOrStream, 1, 0,
+				viewOrStream.getOutputSchema());
+
+		return viewOrStream;
+	}
+
+	private JoinAO insertJoinAO(ILogicalOperator parent) {
+		ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+
+		System.out.println(child);
+		JoinAO joinAO = new JoinAO();
+
+		Collection<LogicalSubscription> subs = child.getSubscriptions();
+		for (LogicalSubscription sub : subs) {
+			child.unsubscribeSink(sub);
+			// What about the source out port
+			joinAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+					sub.getSourceOutPort(), sub.getSchema());
+		}
+		joinAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+
+		return joinAO;
+	}
+
+	private ProjectAO insertProjectAO(ILogicalOperator parent,
+			List<SDFAttribute> attributes) {
+		ProjectAO projectAO = new ProjectAO();
+		ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
+		List<SDFAttribute> userAwareAttributes = new ArrayList<SDFAttribute>();
+		for (SDFAttribute attr : attributes) {
+			userAwareAttributes.add(child.getOutputSchema().findAttribute(
+					attr.getAttributeName()));
+		}
+
+		Collection<LogicalSubscription> subs = child.getSubscriptions();
+		for (LogicalSubscription sub : subs) {
+			child.unsubscribeSink(sub);
+			projectAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+					sub.getSourceOutPort(), sub.getSchema());
+		}
+		projectAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+		projectAO.setOutputSchemaWithList(userAwareAttributes);
+
+		return projectAO;
+	}
+
+	private boolean hasJoinAOAsChild(ILogicalOperator operator) {
+		LogicalSubscription child = operator.getSubscribedToSource(0);
+		return ((child != null) && (child.getTarget() instanceof JoinAO));
+	}
 }
