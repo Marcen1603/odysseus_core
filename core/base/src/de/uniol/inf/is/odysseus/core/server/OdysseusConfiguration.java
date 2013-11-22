@@ -185,8 +185,13 @@ public class OdysseusConfiguration {
 		// Web-Service
 		props.setProperty("WebService.Endpoint","http://0.0.0.0:9669/odysseus");
 		
-		// security and crypto
-		props.setProperty("security.maincertificate", "odysseus.der");
+		// security and crypto stuff, e.g. for creating self-signed certificates
+		props.setProperty("security.applicationName", "Odysseus");
+		props.setProperty("security.organization","University of Oldenburg");		
+		props.setProperty("security.dir", odysseusHome+"certificates"+File.separator);
+		props.setProperty("security.default.certificate", "odysseus.default.der");
+		props.setProperty("security.default.privatekey", "odysseus.default.private.pem");
+		props.setProperty("security.default.privatekey.password", "ithaka");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {
