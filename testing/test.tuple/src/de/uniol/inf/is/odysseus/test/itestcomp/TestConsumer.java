@@ -147,7 +147,7 @@ public class TestConsumer implements Runnable, ICompareSinkListener {
 	private void test(String queryName, File query, File expcetedResults, IOdysseusScriptParser parser, ISession user) throws OdysseusScriptException, IOException {
 		String path = "#DEFINE PATH " + query.getAbsolutePath() + " \n";
 		
-		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareSinkPO(expcetedResults, this), Context.emptyContext());
+		parser.parseAndExecute(path + getQueryString(query), user, new TupleCompareSinkPO(expcetedResults, this), Context.empty());
 	}
 
 	private static String getQueryString(File query) throws IOException {

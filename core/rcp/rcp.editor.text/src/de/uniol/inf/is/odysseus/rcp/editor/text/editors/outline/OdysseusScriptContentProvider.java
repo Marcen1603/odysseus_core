@@ -48,7 +48,7 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 				replacements.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(text).entrySet());
 				childs.add(replacements);			
 				// statements				
-				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user, Context.emptyContext()));
+				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user, Context.empty()));
 
 				return childs.toArray();
 			} catch (Exception e) {

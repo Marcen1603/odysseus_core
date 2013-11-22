@@ -137,7 +137,7 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
 		LOG.debug(text);
 		tryWrite(out, text + NEWLINE);
 		
-		parser.parseAndExecute(queryText, user, null, Context.emptyContext());
+		parser.parseAndExecute(queryText, user, null, Context.empty());
 	}
 	
 	private void evaluateResults(String key, List<File> results) {

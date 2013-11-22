@@ -76,7 +76,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	private int currentLine;
 	private int keyStartedAtLine;
 
-	private Map<String, String> defaultReplacements = new HashMap<>();
+//	private Map<String, String> defaultReplacements = new HashMap<>();
 
 	@Override
 	public String getParameterKey() {
@@ -220,8 +220,8 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			// after that, we are looking for procedures and replace them
 			text = runProcedures(text, caller);
 
-			// initialize the replacement using the defaults
-			Map<String, String> replacements = new HashMap<String, String>(this.defaultReplacements);
+			ReplacementContainer replacements = new ReplacementContainer();
+			replacements.connect(context);
 
 			IfController ifController = new IfController(text, caller);
 			StringBuffer sb = null;
@@ -241,34 +241,17 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				line = line.trim();
 				// use replacements if we are not in procedure
 				if (!isInProcedure) {
-					// first, we use replacements we know so far
-					line = useReplacements(line, replacements).trim();
-					// if there is a define-key for replacements, we add this to
-					// the replacements
-					if (line.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY) != -1) {
-						String[] parts = line.split(" |\t", 3);
-						// parts[0] is #DEFINE
-						// parts[1] is replacement name
-						// parts[2] is replacement value (optional!)
-						if (parts.length >= 3) {
-							replacements.put(parts[1].trim().toUpperCase(), parts[2].trim());
-						}
+					line = replacements.use(line);
+					if( replacements.parse(line)) {
 						continue;
 					}
 
-					// same with loop-definition lines: jump to next line,
-					// because
-					// we normally handled that before
-					if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1)
+					if (line.indexOf(PARAMETER_KEY + LOOP_END_KEY) != -1) {
 						continue;
+					}
 
-					if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1)
+					if (line.indexOf(PARAMETER_KEY + LOOP_START_KEY) != -1) {
 						continue;
-
-					// If we find an UNDEFINE, we remove the replacement
-					if (line.indexOf(PARAMETER_KEY + IfController.UNDEF_KEY) != -1) {
-						String[] parts = line.trim().split(" |\t", 3);
-						replacements.remove(parts[1].toUpperCase());
 					}
 				}
 				// dropping procedures was already done
@@ -364,12 +347,12 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 
 			return statements;
-		} catch (OdysseusScriptException ex) {
+		} catch (OdysseusScriptException | ReplacementException ex) {
 			throw new OdysseusScriptException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
-		}
+		} 
 	}
 
-	private String[] removeAllComments(String[] textToParse) {
+	private static String[] removeAllComments(String[] textToParse) {
 		List<String> resultText = Lists.newArrayList();
 		for (String line : textToParse) {
 			String result = removeComments(line);
@@ -390,7 +373,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	@Override
 	public void setReplacement(String key, String value) {
-		defaultReplacements.put(key, value);
+		ReplacementContainer.addDefault(key, value);
 	}
 
 	private String[] runProcedures(String[] text, ISession caller) throws OdysseusScriptException {
@@ -533,80 +516,54 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			throw new OdysseusScriptException("Loop has missing start or end!");
 		}
 
-		// System.out.println("------------------");
-		// for (String s : text) {
-		// System.out.println(s);
-		// }
-		// System.out.println("------------------");
 		return text.toArray(new String[0]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements
-	 * (java.lang.String)
-	 */
 	@Override
 	public Map<String, String> getReplacements(String text) throws OdysseusScriptException {
 		return getReplacements(splitToList(text).toArray(new String[0]));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser#getReplacements
-	 * (java.lang.String[])
-	 */
 	@Override
 	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
-		Map<String, String> repl = new HashMap<String, String>();
-		addDefaultReplacements(repl);
+		ReplacementContainer repl = new ReplacementContainer();
 		boolean isInProcedure = false;
 
-		for (String line : text) {
-
-			String correctLine = removeComments(line).trim();
-			// maybe, we have replacements within definitions...
-			if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
-				isInProcedure = true;
-				continue;
-			}
-			if (isInProcedure) {
-				if (line.indexOf(STORED_PROCEDURE_END) != -1) {
-					isInProcedure = false;
+		try {
+			for (String line : text) {
+	
+				String correctLine = removeComments(line).trim();
+				// maybe, we have replacements within definitions...
+				if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
+					isInProcedure = true;
+					continue;
 				}
-				continue;
-			}
-			String replacedLine = useReplacements(correctLine, repl);
-			final int pos = replacedLine.indexOf(PARAMETER_KEY + REPLACEMENT_DEFINITION_KEY);
-			if (pos != -1) {
-				String[] parts = replacedLine.split(" |\t", 3);
-				// parts[0] is #DEFINE
-				// parts[1] is replacement name
-				// parts[2] is replacement value (optional!)
-				if (parts.length >= 3) {
-					repl.put(parts[1].trim().toUpperCase(), parts[2].trim());
+				if (isInProcedure) {
+					if (line.indexOf(STORED_PROCEDURE_END) != -1) {
+						isInProcedure = false;
+					}
+					continue;
 				}
-			}
-			final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
-			if (posLoop != -1) {
-				String[] parts = replacedLine.split(" |\t");
-				repl.put(parts[1].trim().toUpperCase(), parts[1].trim());
-				if(parts.length>6){
-					repl.put(parts[6].trim().toUpperCase(), parts[6].trim());
+				String replacedLine = repl.use(correctLine); 
+				repl.parse(correctLine);
+				
+				final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
+				if (posLoop != -1) {
+					String[] parts = replacedLine.split(" |\t");
+					String key = parts[1].trim();
+					repl.put(key.toUpperCase(), key);
+					
+					if(parts.length>6){
+						repl.put(parts[6].trim().toUpperCase(), parts[6].trim());
+					}
 				}
 			}
+			
+			return repl.toMap();
+		} catch( ReplacementException ex ) {
+			throw new OdysseusScriptException(ex);
 		}
-		return repl;
-	}
-
-	private void addDefaultReplacements(Map<String, String> repl) {
-		for (Entry<String, String> def : this.defaultReplacements.entrySet()) {
-			repl.put(def.getKey().toUpperCase(), def.getValue());
-		}
+		
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
@@ -654,7 +611,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return keys;
 	}
 
-	protected String removeComments(String line) {
+	private static String removeComments(String line) {
 		if (line == null || line.length() == 0)
 			return "";
 

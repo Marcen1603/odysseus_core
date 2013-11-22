@@ -530,7 +530,7 @@ public class MapEditorModel extends ModelObject {
 	public static void execute(final String[] text) {
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(concat(text), user, null, Context.emptyContext());
+			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(concat(text), user, null, Context.empty());
 		} catch (OdysseusScriptException ex) {
 			LOG.error("Exception during executing script", ex);
 			if (!ex.getRootMessage().contains("multiple")) {

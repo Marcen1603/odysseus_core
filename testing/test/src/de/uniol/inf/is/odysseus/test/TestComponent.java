@@ -262,7 +262,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
         tryWrite(out, text + NEWLINE);
 		
 		startTime = System.nanoTime();
-		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this), Context.emptyContext());
+		parser.parseAndExecute(getQueryString(query), user, new SimpleCompareSink(result, this), Context.empty());
 	}
 
 	private static String getQueryString(File query) throws IOException {

@@ -72,7 +72,7 @@ public class QueryExecutionHandler {
 				lines = ParserClientUtil.replaceClientReplacements(lines, scriptFile);
 			}
 			//TODO: you cannot access the parser directly!!
-			List<?> results = parser.parseAndExecute(lines, caller, null, Context.emptyContext());
+			List<?> results = parser.parseAndExecute(lines, caller, null, Context.empty());
 			
 			queryIDs = getExecutedQueryIDs(results);
 			queryRoots = determineRoots(queryIDs);

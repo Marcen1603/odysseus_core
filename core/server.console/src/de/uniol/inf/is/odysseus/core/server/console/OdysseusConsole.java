@@ -1872,14 +1872,14 @@ public class OdysseusConsole implements CommandProvider,
 				if (i == 0) {
 					ci.println("parsing and running query :");
 					ci.println(query1);
-					scriptParser.parseAndExecute(query1, user, null, Context.emptyContext());
+					scriptParser.parseAndExecute(query1, user, null, Context.empty());
 				}
 				ci.println("parsing and running query :");
 				ci.println(query2);
-				scriptParser.parseAndExecute(query2[i], user, null, Context.emptyContext());
+				scriptParser.parseAndExecute(query2[i], user, null, Context.empty());
 				ci.println("parsing and running query :");
 				ci.println(query3);
-				scriptParser.parseAndExecute(query3, user, null, Context.emptyContext());
+				scriptParser.parseAndExecute(query3, user, null, Context.empty());
 			} catch (OdysseusScriptException e) {
 				e.printStackTrace();
 			}

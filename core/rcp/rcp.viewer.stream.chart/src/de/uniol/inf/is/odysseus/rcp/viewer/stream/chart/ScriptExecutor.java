@@ -62,7 +62,7 @@ public class ScriptExecutor {
 				text = text + scanner.nextLine() + "\n";
 			}
 			scanner.close();
-			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(text, caller, dummy, Context.emptyContext());
+			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(text, caller, dummy, Context.empty());
 			List<ISource<?>> sources = new ArrayList<ISource<?>>();
 			List<PhysicalSubscription<?>> toRemove = new ArrayList<PhysicalSubscription<?>>();
 
