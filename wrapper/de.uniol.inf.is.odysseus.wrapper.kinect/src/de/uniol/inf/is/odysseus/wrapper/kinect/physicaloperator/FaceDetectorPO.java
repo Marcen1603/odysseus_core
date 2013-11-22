@@ -41,7 +41,7 @@ public class FaceDetectorPO
 	private CascadeClassifier faceDetector;
 	private static String trainingData;
 
-	private static final boolean SEND_TEST_IMAGES = false;
+	private static final boolean SEND_TEST_IMAGES = true;
 	private static List<BufferedImage> SAMPLES;
 	private Iterator<BufferedImage> sampleIterator;
 
