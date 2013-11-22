@@ -38,7 +38,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartAdvertisem
 
 public class DefaultCommunicator implements Communicator, IAdvertisementListener{
 	private static final Logger log = LoggerFactory.getLogger(DefaultCommunicator.class);
-	private static final long WAIT_TIME = 10000;
+	private static final long WAIT_TIME = 4000;
 	private ExecutorService executorService;
 	
 	private IP2PDictionary dictionary;
@@ -196,7 +196,7 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 						
 						CostSummary relativeCosts = this.calculator.calcBearableCostsInPercentage(sum);
 						
-						double bid = calculator.calcBid(plan.getLogicalPlan(),sum);
+						double bid = calculator.calcBid(plan.getLogicalPlan(),sum,false);
 						
 						CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 						costAdv.setCostSummary(costsProOperator);

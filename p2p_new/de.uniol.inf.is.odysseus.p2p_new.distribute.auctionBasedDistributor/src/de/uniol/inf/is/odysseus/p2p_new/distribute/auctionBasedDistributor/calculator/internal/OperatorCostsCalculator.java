@@ -83,6 +83,6 @@ public class OperatorCostsCalculator {
 	}
 
 	private String getOperatorId(SubPlan part) {
-		return part.getOperators().get(0).getParameterInfos().get("id".toUpperCase()).replace("'","");
+		return Helper.getId(part.getOperators().get(0));
 	}			
 }

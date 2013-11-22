@@ -38,73 +38,74 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public abstract class AbstractPartitioner implements Partitioner {
 	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(AbstractPartitioner.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(AbstractPartitioner.class);
 	protected Communicator communicator;
 	protected IPQLGenerator generator;
 	protected CostCalculator costCalculator;
 	protected SubPlanManipulator manipulator;
 	protected IServerExecutor executor;
-	
+
 	public static interface TargetSize {
 		public double getNextSize(double totalAbsoluteCosts);
-	}	
-	
-	
+	}
+
 	public AbstractPartitioner() {
 		manipulator = new SubPlanManipulator();
 	}
-	
+
 	public void bindPQLGenerator(IPQLGenerator generator) {
 		this.generator = generator;
 	}
-	
+
 	public void unbindPQLGenerator(IPQLGenerator generator) {
-		if( this.generator == generator ) {
+		if (this.generator == generator) {
 			generator = null;
 		}
-	}	
-	
+	}
+
 	public void bindCommunicator(Communicator communicator) {
 		this.communicator = communicator;
 	}
-	
+
 	public void unbindCommunicator(Communicator communicator) {
-		if( this.communicator == communicator ) {
+		if (this.communicator == communicator) {
 			communicator = null;
 		}
-	}	
+	}
 
 	public void bindCostCalculator(CostCalculator calculator) {
 		this.costCalculator = calculator;
 	}
-	
+
 	public void unbindCostCalculator(CostCalculator calculator) {
-		if( this.costCalculator == calculator ) {
+		if (this.costCalculator == calculator) {
 			calculator = null;
 		}
-	}		
-	
-	
-	public void bindExecutor(IExecutor executor) {
-		if(!(executor instanceof IServerExecutor))
-			throw new RuntimeException("An ServerExecutor is needed");
-		this.executor = (IServerExecutor)executor;
 	}
+
+	public void bindExecutor(IExecutor executor) {
+		if (!(executor instanceof IServerExecutor))
+			throw new RuntimeException("An ServerExecutor is needed");
+		this.executor = (IServerExecutor) executor;
+	}
+
 	public void unbindExecutor(IExecutor executor) {
-		if( this.executor == executor ) {
+		if (this.executor == executor) {
 			executor = null;
 		}
-	}				
-	
-	public List<CostResponseAdvertisement> requestCostsForPlan(ILogicalOperator plan, ID sharedQueryId,
-			String transCfgName) {
+	}
+
+	public List<CostResponseAdvertisement> requestCostsForPlan(
+			ILogicalOperator plan, ID sharedQueryId, String transCfgName) {
 		final CostQueryAdvertisement adv = (CostQueryAdvertisement) AdvertisementFactory
 				.newAdvertisement(CostQueryAdvertisement.getAdvertisementType());
 		adv.setPqlStatement(generator.generatePQLStatement(plan));
 		adv.setSharedQueryID(sharedQueryId);
 		adv.setTransCfgName(transCfgName);
-		Future<List<CostResponseAdvertisement>> futureResult = communicator.askPeersForPlanCosts(adv);
-		
+		Future<List<CostResponseAdvertisement>> futureResult = communicator
+				.askPeersForPlanCosts(adv);
+
 		try {
 			return futureResult.get();
 		} catch (InterruptedException | ExecutionException e) {
@@ -112,86 +113,105 @@ public abstract class AbstractPartitioner implements Partitioner {
 		}
 		return null;
 	}
-	
+
 	public List<SubPlan> _partition(SubPlan planToDistribute,
 			final Map<String, CostSummary> planCost, final TargetSize targetSize) {
 		final ILogicalOperator startOperator = getSomeLeafOperator(planToDistribute);
 		final List<SubPlan> subPlans = Lists.newArrayList();
 		final List<ILogicalOperator> visitedOperators = Lists.newArrayList();
 
-		
 		final double targetAbsoluteCosts[] = new double[1];
-		final double currentAbsoluteSubPlanCosts[] =  new double[1];
-		final double currentAbsoluteTotalCosts[] =  new double[1];
-		final double totalAbsoluteCosts = CostSummary.calcSum(planCost.values()).getCpuCost();
-		final List<ILogicalOperator> currentSubPlanOperators = Lists.newArrayList();
-		
+		final double currentAbsoluteSubPlanCosts[] = new double[1];
+		final double currentAbsoluteTotalCosts[] = new double[1];
+		final double totalAbsoluteCosts = CostSummary
+				.calcSum(planCost.values()).getCpuCost();
+		final List<ILogicalOperator> currentSubPlanOperators = Lists
+				.newArrayList();
+
 		currentAbsoluteSubPlanCosts[0] = 0;
 		targetAbsoluteCosts[0] = targetSize.getNextSize(totalAbsoluteCosts);
-		
+
 		Helper.iterateThroughPlan(startOperator, visitedOperators,
 				new Function<ILogicalOperator, Void>() {
 					@Override
 					public Void apply(ILogicalOperator operator) {
-						String id = operator.getParameterInfos().get("id".toUpperCase());
-						double operatorAbsoluteCosts = planCost.get(id).getCpuCost();
-						double newSubPlanCost = currentAbsoluteSubPlanCosts[0] + operatorAbsoluteCosts;
-						
+						String id = Helper.getId(operator);
+						double operatorAbsoluteCosts = (id != null) ? operatorAbsoluteCosts = planCost
+								.get(id).getCpuCost() : 0;
+						double newSubPlanCost = currentAbsoluteSubPlanCosts[0]
+								+ operatorAbsoluteCosts;
+
 						currentAbsoluteTotalCosts[0] += operatorAbsoluteCosts;
-						if(currentAbsoluteTotalCosts[0]<totalAbsoluteCosts) {
-							if(newSubPlanCost<=targetAbsoluteCosts[0]) {
+						if (currentAbsoluteTotalCosts[0] < totalAbsoluteCosts) {
+							if (newSubPlanCost <= targetAbsoluteCosts[0]) {
 								currentSubPlanOperators.add(operator);
 								currentAbsoluteSubPlanCosts[0] += operatorAbsoluteCosts;
-							}
-							else {
-								subPlans.add(new SubPlan(null,
-										currentSubPlanOperators.toArray(new ILogicalOperator[0])));
-								// sollte kein fehler auftreten, da vorher schon überprüft wurde,
-								// ob der plan in seiner gänze zerlegt werden kann
-								targetAbsoluteCosts[0] = targetSize.getNextSize(totalAbsoluteCosts);
+							} else {
+								subPlans.add(new SubPlan(
+										null,
+										currentSubPlanOperators
+												.toArray(new ILogicalOperator[0])));
+								// sollte kein fehler auftreten, da vorher schon
+								// überprüft wurde,
+								// ob der plan in seiner gänze zerlegt werden
+								// kann
+								targetAbsoluteCosts[0] = targetSize
+										.getNextSize(totalAbsoluteCosts);
 								currentAbsoluteSubPlanCosts[0] = operatorAbsoluteCosts;
 								currentSubPlanOperators.clear();
 								currentSubPlanOperators.add(operator);
-								
-								if(currentAbsoluteTotalCosts[0] + operatorAbsoluteCosts >= totalAbsoluteCosts) {
-									subPlans.add(new SubPlan(null,
-											currentSubPlanOperators.toArray(new ILogicalOperator[0])));
+
+								if (currentAbsoluteTotalCosts[0]
+										+ operatorAbsoluteCosts >= totalAbsoluteCosts) {
+									subPlans.add(new SubPlan(
+											null,
+											currentSubPlanOperators
+													.toArray(new ILogicalOperator[0])));
 								}
 							}
-						}
-						else {
+						} else {
 							currentSubPlanOperators.add(operator);
 							subPlans.add(new SubPlan(null,
-									currentSubPlanOperators.toArray(new ILogicalOperator[0])));
+									currentSubPlanOperators
+											.toArray(new ILogicalOperator[0])));
+							targetAbsoluteCosts[0] = targetSize
+									.getNextSize(totalAbsoluteCosts);
+							currentAbsoluteSubPlanCosts[0] = 0;
+							currentSubPlanOperators.clear();
 						}
 						return null;
-					}				
-		});
-		// correct 
-		if(subPlans.isEmpty()) {
-			subPlans.add(new SubPlan(null,
-					currentSubPlanOperators.toArray(new ILogicalOperator[0])));
+					}
+				});
+		// correct
+		if (subPlans.isEmpty()) {
+			subPlans.add(new SubPlan(null, currentSubPlanOperators
+					.toArray(new ILogicalOperator[0])));
 		}
 		return subPlans;
-	}	
-	
+	}
+
 	protected List<SubPlan> seperateLocalSubPlansLogical(ILogicalOperator plan) {
 		List<SubPlan> newSubPlans = Lists.newArrayList();
-		
-		SubPlan totalPlan = new SubPlan(null,
-				DistributionHelper.collectOperators(plan).toArray(new ILogicalOperator[0]));
-		
-//		List<ILogicalOperator> localOperators = totalPlan.findOperatorsByType(AccessAO.class, StreamAO.class, TopAO.class);
-		List<ILogicalOperator> localOperators = totalPlan.findOperatorsByType(AccessAO.class, TopAO.class);
+
+		SubPlan totalPlan = new SubPlan(null, DistributionHelper
+				.collectOperators(plan).toArray(new ILogicalOperator[0]));
+
+		// List<ILogicalOperator> localOperators =
+		// totalPlan.findOperatorsByType(AccessAO.class, StreamAO.class,
+		// TopAO.class);
+		List<ILogicalOperator> localOperators = totalPlan.findOperatorsByType(
+				AccessAO.class, TopAO.class);
 		List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
-		if(!localOperators.isEmpty()) {
+		if (!localOperators.isEmpty()) {
 			// applicationtime und topao...
-			
-			for(ILogicalOperator localOperator : Lists.newArrayList(localOperators)) {
+
+			for (ILogicalOperator localOperator : Lists
+					.newArrayList(localOperators)) {
 				if (localOperator instanceof TopAO) {
-					for(LogicalSubscription sub : localOperator.getSubscribedToSource()) {
+					for (LogicalSubscription sub : localOperator
+							.getSubscribedToSource()) {
 						ILogicalOperator src = sub.getTarget();
-						if(!localOperators.contains(src)) {
+						if (!localOperators.contains(src)) {
 							localOperators.add(src);
 						}
 					}
@@ -199,94 +219,106 @@ public abstract class AbstractPartitioner implements Partitioner {
 					operatorsToRemove.add(localOperator);
 				}
 			}
-			
-			for(ILogicalOperator localOperator : Lists.newArrayList(localOperators)) {
-				for(LogicalSubscription sub : localOperator.getSubscriptions()) {
-					if(sub.getTarget() instanceof TimestampAO) {
+
+			for (ILogicalOperator localOperator : Lists
+					.newArrayList(localOperators)) {
+				for (LogicalSubscription sub : localOperator.getSubscriptions()) {
+					if (sub.getTarget() instanceof TimestampAO) {
 						localOperators.add(sub.getTarget());
-						localOperators.addAll(Helper.allSubscriptions(sub.getTarget()));
+						localOperators.addAll(Helper.allSubscriptions(sub
+								.getTarget()));
 					}
 				}
 			}
-			
-			totalPlan.removeOperators(localOperators.toArray(new ILogicalOperator[0]));
-			totalPlan.removeOperators(operatorsToRemove.toArray(new ILogicalOperator[0]));
+
+			totalPlan.removeOperators(localOperators
+					.toArray(new ILogicalOperator[0]));
+			totalPlan.removeOperators(operatorsToRemove
+					.toArray(new ILogicalOperator[0]));
 			localOperators.removeAll(operatorsToRemove);
-			
-			
+
 			List<SubPlan> localPlans = defineLocalPlans(localOperators);
 			newSubPlans.addAll(localPlans);
 		}
 		newSubPlans.add(totalPlan);
 		return Lists.reverse(newSubPlans);
-	}	
-	
+	}
+
 	private List<SubPlan> defineLocalPlans(List<ILogicalOperator> localOperators) {
 		List<SubPlan> subPlans = Lists.newArrayList();
-		for(ILogicalOperator operator : Lists.newArrayList(localOperators)) {
+		for (ILogicalOperator operator : Lists.newArrayList(localOperators)) {
 			subPlans.add(new SubPlan("local", operator));
 		}
-		
+
 		return subPlans;
 	}
 
-	protected Map<String, CostSummary> calcAvgCostsProOperator(final ILogicalOperator query,
-			final List<CostResponseAdvertisement> advertisements, String transCfgName) {
-		advertisements.add(calcCostsProOperator(query,  transCfgName));
+	protected Map<String, CostSummary> calcAvgCostsProOperator(
+			final ILogicalOperator query,
+			final List<CostResponseAdvertisement> advertisements,
+			String transCfgName) {
+		advertisements.add(calcCostsProOperator(query, transCfgName));
 		Map<String, CostSummary> costs = Maps.newHashMap();
-		for(CostResponseAdvertisement adv : advertisements) {
-			for(String operatorId : adv.getCostSummary().keySet()) {
+		for (CostResponseAdvertisement adv : advertisements) {
+			for (String operatorId : adv.getCostSummary().keySet()) {
 				CostSummary newCost = adv.getCostSummary().get(operatorId);
 				CostSummary costTotal = costs.get(operatorId);
-				if(costTotal==null) {
+				if (costTotal == null) {
 					costTotal = new CostSummary(operatorId, 0, 0, query);
 				}
-				costTotal = new CostSummary(operatorId, costTotal.getCpuCost()+newCost.getCpuCost(),
-						costTotal.getMemCost()+newCost.getMemCost(), query);
+				costTotal = new CostSummary(operatorId, costTotal.getCpuCost()
+						+ newCost.getCpuCost(), costTotal.getMemCost()
+						+ newCost.getMemCost(), query);
 				costs.put(operatorId, costTotal);
 			}
 		}
-		
-		costs = Maps.transformEntries(costs, new EntryTransformer<String, CostSummary, CostSummary>() {
-			@Override
-			public CostSummary transformEntry(String key, CostSummary value) {
-				return new CostSummary(key, value.getCpuCost()/advertisements.size(),
-						value.getMemCost()/advertisements.size(), query);
-			}
-		
-		});
-		
+
+		costs = Maps.transformEntries(costs,
+				new EntryTransformer<String, CostSummary, CostSummary>() {
+					@Override
+					public CostSummary transformEntry(String key,
+							CostSummary value) {
+						return new CostSummary(key, value.getCpuCost()
+								/ advertisements.size(), value.getMemCost()
+								/ advertisements.size(), query);
+					}
+
+				});
+
 		costs = addCostsForIgnoredOperators(query, costs);
-		
+
 		return costs;
-	}	
+	}
 
 	private ILogicalOperator getSomeLeafOperator(SubPlan planToDistribute) {
 		try {
-			if(!planToDistribute.getSources().isEmpty()) {
+			if (!planToDistribute.getSources().isEmpty()) {
 				return planToDistribute.getSources().get(0);
-			}
-			else {
+			} else {
 				return planToDistribute.getDummySources().get(0);
 			}
+		} catch (IndexOutOfBoundsException | NoSuchElementException e) {
+			throw new RuntimeException(
+					"Could not find any source/leaf operator in the query plan");
 		}
-		catch(IndexOutOfBoundsException | NoSuchElementException e) {
-			throw new RuntimeException("Could not find any source/leaf operator in the query plan");	
-		}
-	}	
-	
+	}
+
 	private CostResponseAdvertisement calcCostsProOperator(
 			ILogicalOperator plan, String transCfgName) {
-		
-		Map<String, CostSummary> costsProOperator = 
-				this.costCalculator.calcCostsProOperator(
-						Helper.wrapInLogicalQuery(plan, null, null), transCfgName, false);
-		
+
+		Map<String, CostSummary> costsProOperator = this.costCalculator
+				.calcCostsProOperator(
+						Helper.wrapInLogicalQuery(plan, null, null),
+						transCfgName, false);
+
 		CostSummary sum = CostSummary.calcSum(costsProOperator.values());
-		CostSummary relativeCosts = this.costCalculator.calcBearableCostsInPercentage(sum);
+		CostSummary relativeCosts = this.costCalculator
+				.calcBearableCostsInPercentage(sum);
 		double bid = this.costCalculator.calcBid(plan, sum);
-		
-		CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
+
+		CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory
+				.newAdvertisement(CostResponseAdvertisement
+						.getAdvertisementType());
 		costAdv.setCostSummary(costsProOperator);
 		costAdv.setOwnerPeerId(communicator.getLocalPeerID());
 		costAdv.setPqlStatement(null);
@@ -296,20 +328,20 @@ public abstract class AbstractPartitioner implements Partitioner {
 		costAdv.setPercentageOfBearableCpuCosts(relativeCosts.getCpuCost());
 		costAdv.setPercentageOfBearableMemCosts(relativeCosts.getMemCost());
 		costAdv.setBid(bid);
-		
+
 		return costAdv;
 	}
 
-	private Map<String, CostSummary> addCostsForIgnoredOperators(ILogicalOperator query,
-			Map<String, CostSummary> costs) {
+	private Map<String, CostSummary> addCostsForIgnoredOperators(
+			ILogicalOperator query, Map<String, CostSummary> costs) {
 		costs = Maps.newHashMap(costs);
-		for(ILogicalOperator op : DistributionHelper.collectOperators(query)) {
-			String opId = op.getParameterInfos().get("id".toUpperCase());
+		for (ILogicalOperator op : DistributionHelper.collectOperators(query)) {
+			String opId = Helper.getId(op);
 			CostSummary cost = costs.get(opId);
-			if(cost==null) {
+			if (cost == null) {
 				costs.put(opId, new CostSummary(opId, 0, 0, query));
 			}
 		}
 		return costs;
-	}	
+	}
 }

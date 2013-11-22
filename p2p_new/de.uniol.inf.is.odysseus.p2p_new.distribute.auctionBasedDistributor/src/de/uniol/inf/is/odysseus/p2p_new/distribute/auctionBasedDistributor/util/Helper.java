@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -46,7 +47,15 @@ import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 
 public class Helper {
 	private static final Logger log = LoggerFactory.getLogger(Helper.class);
-
+	
+	public static String getId(ILogicalOperator operator) {
+		String id =  operator.getParameterInfos().get("id".toUpperCase());
+		if(id!=null)
+			return id.replace("'", "");
+		else
+			return null;
+	}
+	
 	/**
 	 * Determines if the target {@link ILogicalOperator} of any {@link LogicalSubscription} is not in a given 
 	 * collection of {@link IlogicalOperator}s.
@@ -144,30 +153,6 @@ public class Helper {
 			iterateThroughPlan(sub.getTarget(), visitedOperators, func);
 		}		
 	}	
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static double calcCost(IServerExecutor executor, OperatorCostModel costModel, IPhysicalQuery q) {
-		ICost<IPhysicalOperator> cost = costModel.estimateCost(q.getPhysicalChilds(), false);
-		OperatorCost<IPhysicalOperator>  c = ((OperatorCost<IPhysicalOperator> )cost);
-		log.debug("CPU cost for query {}: {}", c.getCpuCost());
-		log.debug("Mem cost for query {}: {}", c.getMemCost());
-		
-		log.debug("Free Memory: {}", getFreeMemory());
-		log.debug("Max Memory: {}", getMaxMemory());
-		double remainingMem = Math.max(0,( getFreeMemory()-c.getMemCost() ) /
-				getMaxMemory() );
-		log.debug("Remaining memory: {}", remainingMem);
-		
-		double remainingCpu = 1 - Math.min((getCpuCostTotal(executor, costModel)+c.getCpuCost()),1);
-		log.debug("Remaining CPU performance: {}", remainingCpu);
-		
-		if(remainingMem > 0 && remainingCpu > 0) {
-			return 0.5 * remainingMem + 0.5 * remainingCpu;
-		}
-		else {
-			return 0;
-		}
-	}
 	
 	public static IPhysicalQuery getPhysicalQuery(IServerExecutor executor, ILogicalQuery query, String transCfgName) {		
 		IQueryBuildConfigurationTemplate settings = executor.getQueryBuildConfiguration(transCfgName);

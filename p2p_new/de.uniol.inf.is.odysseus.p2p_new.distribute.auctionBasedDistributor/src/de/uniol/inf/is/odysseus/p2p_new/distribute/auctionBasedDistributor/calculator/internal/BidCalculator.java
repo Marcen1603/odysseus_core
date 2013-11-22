@@ -29,23 +29,28 @@ public class BidCalculator {
 	
 	@SuppressWarnings("unchecked")
 	public double calcBid(String pqlStatement, String transCfgName) {
+		return calcBid(pqlStatement, transCfgName, true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public double calcBid(String pqlStatement, String transCfgName, boolean respectSourceAvailability) {
 		ILogicalQuery query = Helper.getLogicalQuery(executor, pqlStatement).get(0);
 		
 		IPhysicalQuery q = Helper.getPhysicalQuery(executor, query, transCfgName);
-		ICost<IPhysicalOperator> cost = costModel.estimateCost(q.getPhysicalChilds(), false);
+		ICost<IPhysicalOperator> cost = costModel.estimateCost(q.getPhysicalChilds(), respectSourceAvailability);
 		if(cost instanceof OperatorCost) {
 			OperatorCost<IPhysicalOperator>  c = ((OperatorCost<IPhysicalOperator> )cost);
-			return calcBid(query.getLogicalPlan(), c.getCpuCost(), c.getMemCost());
+			return calcBid(query.getLogicalPlan(), c.getCpuCost(), c.getMemCost(), respectSourceAvailability);
 		}
 		else {
 			throw new RuntimeException("Did not expect this implementation of ICost: "+ cost.getClass().getName());
 		}
-	}
+	}	
 	
 
 
-	public double calcBid(ILogicalOperator query, double cpuCosts, double memCosts) {		
-		if(!Helper.allSourcesAvailable(query))
+	public double calcBid(ILogicalOperator query, double cpuCosts, double memCosts, boolean respectSourceAvailability) {		
+		if(respectSourceAvailability && !Helper.allSourcesAvailable(query))
 			return 0;
 //		log.debug("CPU cost for query {}: {}", cpuCosts);
 //		log.debug("Mem cost for query {}: {}", memCosts);

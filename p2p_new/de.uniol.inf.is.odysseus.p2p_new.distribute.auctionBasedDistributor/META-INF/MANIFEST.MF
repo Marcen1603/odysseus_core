@@ -12,6 +12,7 @@ Bundle-ClassPath: src/,
  lib/gson-2.2.4.jar
 Import-Package: de.uniol.inf.is.odysseus.costmodel.opcount,
  de.uniol.inf.is.odysseus.costmodel.operator,
+ de.uniol.inf.is.odysseus.costmodel.operator.util,
  de.uniol.inf.is.odysseus.p2p_new.distribute,
  de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart,
  de.uniol.inf.is.odysseus.parser.pql.generator,

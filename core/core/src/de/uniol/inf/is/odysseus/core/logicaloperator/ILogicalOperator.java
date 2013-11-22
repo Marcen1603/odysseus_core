@@ -305,4 +305,15 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 */
 	String getUniqueIdentifier();
 
+	/**
+	 * Specifies to record the data rate to the given destination.
+	 * @param pathToRecordDataRate destination
+	 */
+	void setRecordDataRate(String pathToRecordDataRate);
+	
+	/**
+	 * @return Path to the recorded daterate
+	 */
+	String getRecordDataRate();
+
 }

@@ -49,11 +49,16 @@ public class SurveyBasedPartitioner extends AbstractPartitioner {
 		List<SubPlan> result = _partition(planToDistribute, costsProOperator, new TargetSize() {
 			@Override
 			public double getNextSize(double totalAbsoluteCosts) {
-				return totalAbsoluteCosts * votes.iterator().next().getPercentageOfBearableCosts();
+				if(votes.iterator().hasNext())
+					return totalAbsoluteCosts * votes.iterator().next().getPercentageOfBearableCosts();
+				else
+					return 0;
 			}
 		});
-		result.add(subPlans.get(0));
-		return subPlans;
+		
+		if(subPlans.size()>1)
+			result.addAll(subPlans.subList(1, subPlans.size()));
+		return result;
 	}
 	
 	private List<Vote> summariseVotes(List<CostResponseAdvertisement> votes) throws CouldNotPartitionException {

@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 public class P2PNewPlugIn implements BundleActivator {
 
-	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3*10;
+	public static final int TRANSPORT_BUFFER_SIZE = 640*480*3+(1+4);
 
 	private P2PActivatorThread activatorThread;
 

@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.wrapper.kinect.datatype.KinectColorMap;
+import de.uniol.inf.is.odysseus.wrapper.kinect.utils.Constants;
 
 /**
  * This handler can search a given buffer for a {@link KinectColorMap} and return it as an
@@ -74,7 +75,13 @@ public class KinectColorMapHandler extends AbstractDataHandler<KinectColorMap> {
 
     @Override
     public void writeData(ByteBuffer buffer, Object data) {
-        throw new RuntimeException("Method is not implemented.");
+    	buffer.clear();
+    	KinectColorMap map = (KinectColorMap) data;
+    	buffer.put((byte)1);
+    	buffer.put(Constants.COLORMAP_MARKER);
+    	buffer.putInt(6);
+    	buffer.put(map.getData());
+//        throw new RuntimeException("Method is not implemented.");
     }
 
     @Override

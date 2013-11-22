@@ -26,4 +26,7 @@ public interface CostCalculator {
 	
 	public CostSummary calcBearableCostsInPercentage(CostSummary cost);
 	public double calcBid(ILogicalOperator plan, CostSummary cost);
+
+	public double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts,
+			boolean respectSourceAvailibility);
 }

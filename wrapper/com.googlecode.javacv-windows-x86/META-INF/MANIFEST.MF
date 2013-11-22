@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Javacv-win-x86
+Bundle-SymbolicName: com.googlecode.javacv-win-x86
+Bundle-Version: 0.6
+Bundle-Vendor: JavaCV
+Fragment-Host: com.googlecode.javacv;bundle-version="0.6"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86))
+Bundle-ClassPath: javacv-windows-x86.jar,
+ .

@@ -11,6 +11,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.OpenNI;bundle-version="1.5.4"
 Import-Package: com.google.common.collect,
  com.google.gson,
+ com.googlecode.javacpp,
+ com.googlecode.javacv.cpp,
  de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
  de.uniol.inf.is.odysseus.core.physicaloperator,
@@ -36,14 +38,19 @@ Import-Package: com.google.common.collect,
  org.eclipse.swt.opengl,
  org.eclipse.swt.widgets,
  org.eclipse.ui,
- org.opencv.core,
- org.opencv.highgui,
- org.opencv.objdetect,
  org.osgi.framework;version="1.6.0",
  org.slf4j
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/KinectTransportHandler.xml, OSGI-INF/KinectProtocolHandler.xml, OSGI-INF/KinectColorMapHandler.xml, OSGI-INF/KinectSkeletonMapHandler.xml, OSGI-INF/KinectDepthMapHandler.xml, OSGI-INF/KinectDatatypeProvider.xml, OSGI-INF/KinectFunctionProvider.xml
-Bundle-ClassPath: .
+Service-Component: OSGI-INF/KinectTransportHandler.xml,
+ OSGI-INF/KinectProtocolHandler.xml,
+ OSGI-INF/KinectColorMapHandler.xml,
+ OSGI-INF/KinectSkeletonMapHandler.xml,
+ OSGI-INF/KinectDepthMapHandler.xml,
+ OSGI-INF/KinectDatatypeProvider.xml,
+ OSGI-INF/KinectFunctionProvider.xml,
+ OSGI-INF/BufferedImageHandler.xml
+Bundle-ClassPath: .,
+ ImageResizer.jar
 Export-Package: de.uniol.inf.is.odysseus.wrapper.kinect,
  de.uniol.inf.is.odysseus.wrapper.kinect.datahandler,
  de.uniol.inf.is.odysseus.wrapper.kinect.datatype,

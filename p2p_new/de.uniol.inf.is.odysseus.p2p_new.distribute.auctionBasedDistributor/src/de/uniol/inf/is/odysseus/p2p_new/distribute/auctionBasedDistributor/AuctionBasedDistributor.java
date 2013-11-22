@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
@@ -25,6 +27,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.SubPlan;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.Partitioner;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.DataRateRecorder;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.Helper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.StopWatch;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartController;
@@ -43,6 +46,7 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 	private CostCalculator costCalculator;
 	private Communicator communicator;
 	private IPQLGenerator generator;
+	private DataRateRecorder recorder;
 
 	// called by OSGi-DS
 	public final void activate() {
@@ -57,6 +61,8 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 		executorService = null;
 		partitioner = null;
 		log.debug("{} deactivated", AuctionBasedDistributor.class.getName());
+		if(recorder!=null)
+			recorder.shutdown();
 	}
 
 	public void bindAllocator(Allocator allocator) {
@@ -114,6 +120,12 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 	public List<ILogicalQuery> distributeLogicalQueries(final IExecutor sender,
 			final List<ILogicalQuery> queriesToDistribute,
 			final QueryBuildConfiguration transCfg) {
+		
+		if(recorder==null) {
+			//10minutes
+			recorder = new DataRateRecorder((IServerExecutor)sender, 600*1000);
+		}
+		
 		if (queriesToDistribute == null || queriesToDistribute.isEmpty()) {
 			return queriesToDistribute;
 		}
@@ -129,7 +141,8 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 						CostSummary relativeCosts = calcRelativeCosts(transCfg,
 								query);
 						
-						if(relativeCosts.getCpuCost() < 1 || relativeCosts.getMemCost() <1 || FORCE_DISTRIBUTION) {
+						if(communicator.getRemotePeerIds().size()>0 &&
+								(relativeCosts.getCpuCost() < 1 || relativeCosts.getMemCost() <1 || FORCE_DISTRIBUTION)) {
 							log.info("Decided to distribute the query (relative costs: {})", relativeCosts);	
 							try {						
 								final ID sharedQueryID = communicator.generateSharedQueryId();
@@ -153,13 +166,16 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 								log.info("Subplans allocated in {} ms", sw.stop().getTimeInMillis());
 								
 								// Lokalen plan als Master-Query registrieren
-								sender.addQuery(q.getLogicalPlan(),
+								int id = sender.addQuery(q.getLogicalPlan(),
 										UserManagementProvider.getSessionmanagement().loginSuperUser(null, ""),
 										transCfg.getName());
 		
 								if(Helper.containsJxtaOperators(q.getLogicalPlan())) {
 									QueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
-								}								
+								}							
+								
+								List<IPhysicalOperator> roots = sender.getPhysicalRoots(id);
+								recorder.recordDataRate(roots.iterator().next());								
 							}
 							catch (CouldNotPartitionException e) {
 								e.printStackTrace();					
@@ -167,20 +183,23 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 						}
 						else {
 							log.info("Query can be processed locally. No need to distribute it");	
-							addQuery(sender, query.getQueryText(), transCfg);		
+							Collection<Integer> ids = addQuery(sender, query.getQueryText(), transCfg);		
+							
+							List<IPhysicalOperator> roots = sender.getPhysicalRoots(ids.iterator().next());
+							recorder.recordDataRate(roots.iterator().next());
 						}
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
 			}	
-		});
+		});		
+		
 		return Lists.newLinkedList();
 	}
 	
 	private Collection<Integer> addQuery(IExecutor sender, String qryText,
 			QueryBuildConfiguration transCfg) {
-		
 		return sender.addQuery(qryText, "PQL",
 				UserManagementProvider.getSessionmanagement().loginSuperUser(null, ""),
 				transCfg.getName(), null);	

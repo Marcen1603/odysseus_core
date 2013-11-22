@@ -34,4 +34,8 @@ public class SDFKinectDatatype extends SDFDatatype {
     /** Data type: Skeleton map. */
     public static final SDFDatatype KINECT_SKELETON_MAP = new SDFKinectDatatype(
             "SkeletonMap");
+    
+    /** Data type: Rectangles to detected faces. */
+    public static final SDFDatatype BUFFERED_IMAGE = new SDFKinectDatatype(
+            "DetectedFace");   
 }

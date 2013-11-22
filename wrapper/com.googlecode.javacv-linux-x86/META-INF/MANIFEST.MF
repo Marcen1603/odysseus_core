@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Javacv-linux-x86
+Bundle-SymbolicName: com.googlecode.javacv-linux-x86;singleton:=true
+Bundle-Version: 0.6
+Bundle-Vendor: JavaCV
+Fragment-Host: com.googlecode.javacv;bundle-version="0.6"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Eclipse-PlatformFilter: (& (osgi.os=linux) (osgi.arch=x86))
+Bundle-ClassPath: .,
+ javacv-linux-x86.jar

@@ -33,17 +33,19 @@ public class FixedSizePartitioner extends AbstractPartitioner {
 		
 		List<SubPlan> subPlans = this.seperateLocalSubPlansLogical(queryPlan);
 		manipulator.insertDummyAOs(subPlans);
-		SubPlan planToDistribute = subPlans.get(1); // 0=localPlan
+		SubPlan planToDistribute = subPlans.get(0); // >1=localPlan
 		
 		List<SubPlan> result = _partition(planToDistribute, costsProOperator, new TargetSize() {
 
 			@Override
 			public double getNextSize(double totalAbsoluteCosts) {
-				return 0.3; // 0,3 cpu costs pro partition
+				return 0.1; // 0,1 cpu costs pro partition
 			}
 			
 		});
-		result.add(subPlans.get(0));
-		return subPlans;
+		
+		if(subPlans.size()>1)
+			result.addAll(subPlans.subList(1, subPlans.size()));
+		return result;
 	}
 }

@@ -19,6 +19,7 @@ public class KinectDatatypeProvider implements IDatatypeProvider{
 		ret.add(SDFKinectDatatype.KINECT_DEPTH_MAP);
 		ret.add(SDFKinectDatatype.KINECT_POINT_CLOUD);
 		ret.add(SDFKinectDatatype.KINECT_SKELETON_MAP);
+		ret.add(SDFKinectDatatype.BUFFERED_IMAGE);
 		return ret;
 	}
 

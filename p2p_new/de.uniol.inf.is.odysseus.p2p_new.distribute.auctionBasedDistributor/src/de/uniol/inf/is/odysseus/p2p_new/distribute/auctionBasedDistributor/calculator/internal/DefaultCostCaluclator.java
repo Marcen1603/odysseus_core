@@ -133,8 +133,13 @@ public class DefaultCostCaluclator implements CostCalculator {
 
 	@Override
 	public double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts) {
-		return bidCalculator.calcBid(plan, absolutePlanCosts.getCpuCost(), absolutePlanCosts.getMemCost());
+		return calcBid(plan, absolutePlanCosts, true);
 	}
+	
+	@Override
+	public double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts, boolean respectSourceAvailibility) {
+		return bidCalculator.calcBid(plan, absolutePlanCosts.getCpuCost(), absolutePlanCosts.getMemCost(), respectSourceAvailibility);
+	}	
 
 	@Override
 	public Map<String, CostSummary> calcCostsProOperator(ILogicalQuery plan,

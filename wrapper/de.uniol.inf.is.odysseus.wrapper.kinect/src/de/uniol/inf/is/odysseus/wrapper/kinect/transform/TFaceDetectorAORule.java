@@ -21,7 +21,7 @@ public class TFaceDetectorAORule extends
 	public void execute(FaceDetectorAO ao,
 			TransformationConfiguration transformConfig) {
         try {
-        	FaceDetectorPO po = new FaceDetectorPO(ao.getOutputSchema());
+        	FaceDetectorPO po = new FaceDetectorPO(ao.getInputSchema());
             po.setOutputSchema(ao.getOutputSchema());
             defaultExecute(ao, po, transformConfig, true, true);		
         } catch (final Exception e) {

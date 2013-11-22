@@ -20,6 +20,7 @@ public class SliceImageAO extends UnaryLogicalOp {
 	}
 	
 	public SliceImageAO(SliceImageAO sliceImageAO) {
+		super(sliceImageAO);
 		this.slice = sliceImageAO.slice;
 	}
 

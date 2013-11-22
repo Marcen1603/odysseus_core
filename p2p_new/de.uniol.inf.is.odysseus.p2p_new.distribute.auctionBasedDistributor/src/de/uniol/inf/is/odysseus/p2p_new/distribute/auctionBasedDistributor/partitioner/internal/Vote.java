@@ -29,8 +29,17 @@ public class Vote implements Comparable<Vote> {
 
 	@Override
 	public int compareTo(Vote o) {
-		double thisValue = this.getPercentageOfBearableCosts()*this.calcAverageBid();
-		double otherValue = o.getPercentageOfBearableCosts()*o.calcAverageBid();
+		double thisValue = this.getPercentageOfBearableCosts();
+		double otherValue =  o.getPercentageOfBearableCosts();
+		
+		// workaround, falls die peers ein gebot von 0 abgeben, weil sie die quellen nicht besitzen
+		// das werden sieimmer tun, wenn sie den gesamten plan bewerten sollen
+		if(this.calcAverageBid()>0)
+			thisValue *= this.calcAverageBid();
+		
+		if(o.calcAverageBid()>0)
+			otherValue *= o.calcAverageBid();
+		
 		if(thisValue>otherValue) {
 			return 1;
 		}

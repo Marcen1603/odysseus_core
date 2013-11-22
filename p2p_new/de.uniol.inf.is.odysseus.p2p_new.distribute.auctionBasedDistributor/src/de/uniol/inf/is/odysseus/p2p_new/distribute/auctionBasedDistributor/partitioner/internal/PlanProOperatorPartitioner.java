@@ -91,7 +91,7 @@ public class PlanProOperatorPartitioner extends AbstractPartitioner {
 //				log.debug("StreamAO operator found");
 
 				if(!visitedOperators.contains(operator)) {
-//					parts.add(new SubPlan("local", operator));
+					parts.add(new SubPlan(null, operator));
 					visitedOperators.add(operator);
 				}
 			}

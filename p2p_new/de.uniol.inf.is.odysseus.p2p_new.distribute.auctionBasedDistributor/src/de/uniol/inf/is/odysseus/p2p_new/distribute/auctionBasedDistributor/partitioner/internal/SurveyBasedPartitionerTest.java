@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.CostSummary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.model.SubPlan;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.partitioner.internal.AbstractPartitioner.TargetSize;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util.Helper;
 
 public class SurveyBasedPartitionerTest {
 	@Test
@@ -83,7 +84,7 @@ public class SurveyBasedPartitionerTest {
 		Map<String, CostSummary> costs=Maps.newHashMap();
 		double cpuCosts=0;		
 		for(ILogicalOperator operator : DistributionHelper.collectOperators(plan)) {
-			String id = operator.getParameterInfos().get("ID");
+			String id = Helper.getId(operator);
 			cpuCosts += 0.001*100;
 			costs.put(id, new CostSummary(id, cpuCosts/100, 0, plan));
 		}

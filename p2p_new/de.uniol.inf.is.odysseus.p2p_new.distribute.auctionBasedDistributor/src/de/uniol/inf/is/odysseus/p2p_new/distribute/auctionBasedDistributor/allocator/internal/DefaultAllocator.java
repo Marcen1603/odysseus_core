@@ -73,6 +73,8 @@ public class DefaultAllocator extends AbstractAllocator {
 			for(AuctionSummary auction : auctions) {
 				List<AuctionResponseAdvertisement> bids = auction.getResponses().get();
 				
+				log.info("Got {} bids from remote peers", bids.size());
+				
 				// calc own bid
 				bids.add(wrapInAuctionResponseAdvertisement(
 						auction.getAuction().getAuctionId(),
