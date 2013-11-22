@@ -182,8 +182,11 @@ public class OdysseusConfiguration {
 		props.setProperty("adaption_timer", "5000");
 		props.setProperty("adaption_blockingTime", "30000");
 		
-		// Web-Serive
+		// Web-Service
 		props.setProperty("WebService.Endpoint","http://0.0.0.0:9669/odysseus");
+		
+		// security and crypto
+		props.setProperty("security.maincertificate", "odysseus.der");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {

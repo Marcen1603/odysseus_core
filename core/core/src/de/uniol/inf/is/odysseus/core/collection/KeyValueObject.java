@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
@@ -123,6 +124,14 @@ implements Serializable{
 		return retBuff.toString();
 	}
 
+	public String toStringWithNewlines(){
+		StringBuffer retBuff = new StringBuffer();
+		for(Entry<String, Object> e : attributes.entrySet()){
+			retBuff.append(e.getKey()+" = "+e.getValue());
+			retBuff.append(System.lineSeparator());			
+		}
+		return retBuff.toString();
+	}
 	// ------------------------------------
 	
 	@Override
