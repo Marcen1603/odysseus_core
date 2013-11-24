@@ -103,13 +103,14 @@ public class MEPFunctionsView extends ViewPart {
             functionInfos = determineFunctionInfos(functionSymbols);
         }
         else {
+        	String regexFilter = wildcardToRegexPattern(filter);
             HashSet<FunctionSignature> filteredSymbols = new HashSet<FunctionSignature>();
             Iterator<FunctionSignature> functionsIter = functionSymbols.iterator();
             while (functionsIter.hasNext()) {
                 FunctionSignature function = functionsIter.next();
                 MEPFunctionInfo funtionInfo = MEPFunctionInfo.fromMEPFunction(MEP.getFunction(function));
                 try {
-                    if ((funtionInfo.getSymbol().matches(filter)) || (funtionInfo.getSymbol().contains(filter))) {
+                    if (funtionInfo.getSymbol().matches(regexFilter)) {
                         filteredSymbols.add(function);
                     }
                 }
@@ -203,4 +204,13 @@ public class MEPFunctionsView extends ViewPart {
         tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(weight, 25, true));
         return column;
     }
+    
+	private static String wildcardToRegexPattern(String wildcard) {
+		String regex = wildcard;
+		regex = regex.replace(".", "\\.");
+		regex = regex.replace("*", ".*");
+		regex = regex.replace("?", ".");
+		regex = regex.replace("!", "^");
+		return regex;
+	}
 }
