@@ -106,6 +106,7 @@ import de.uniol.inf.is.odysseus.core.server.mep.functions.time.NowFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.SecondFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.ToDateFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.WeekFunction;
+import de.uniol.inf.is.odysseus.core.server.mep.functions.time.WeekdayFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.time.YearFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.DoubleToByteFunction;
 import de.uniol.inf.is.odysseus.core.server.mep.functions.transform.DoubleToFloatFunction;
@@ -259,9 +260,11 @@ public class MEP implements IExpressionParser {
         registerFunction(new MinuteFunction());
         registerFunction(new HourFunction());
         registerFunction(new DayFunction());
+        registerFunction(new WeekdayFunction());
         registerFunction(new WeekFunction());
         registerFunction(new MonthFunction());
         registerFunction(new YearFunction());
+        
         registerFunction(new NowFunction());
         registerFunction(new CurDateFunction());
         registerFunction(new NanoTimeFunction());

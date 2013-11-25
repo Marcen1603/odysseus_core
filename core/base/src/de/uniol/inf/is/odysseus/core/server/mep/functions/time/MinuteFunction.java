@@ -18,39 +18,17 @@ package de.uniol.inf.is.odysseus.core.server.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-
 /**
  * Extracts the minute part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class MinuteFunction extends AbstractFunction<Integer> {
+public class MinuteFunction extends AbstractDateFunction{
 
 	/**
      * 
      */
 	private static final long serialVersionUID = 4347133590398246468L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): a date");
-		}
-		return accTypes;
-	}
 
 	@Override
 	public String getSymbol() {
@@ -64,9 +42,5 @@ public class MinuteFunction extends AbstractFunction<Integer> {
 		return calendar.get(Calendar.MINUTE);
 	}
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
-	}
 
 }

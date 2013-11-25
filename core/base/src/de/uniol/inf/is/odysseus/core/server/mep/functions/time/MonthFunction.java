@@ -18,39 +18,14 @@ package de.uniol.inf.is.odysseus.core.server.mep.functions.time;
 import java.util.Calendar;
 import java.util.Date;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
-
 /**
  * Extracts the month part of the date
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class MonthFunction extends AbstractFunction<Integer> {
+public class MonthFunction extends AbstractDateFunction{
 
-	/**
-     * 
-     */
 	private static final long serialVersionUID = -3089145220450028398L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.DATE };
-
-	@Override
-	public int getArity() {
-		return 1;
-	}
-
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s): a date");
-		}
-		return accTypes;
-	}
 
 	@Override
 	public String getSymbol() {
@@ -63,11 +38,6 @@ public class MonthFunction extends AbstractFunction<Integer> {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime((Date) getInputValue(0));
 		return calendar.get(Calendar.MONTH + 1);
-	}
-
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFDatatype.INTEGER;
 	}
 
 }
