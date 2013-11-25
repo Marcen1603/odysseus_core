@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.p2p_new.dictionary;
 
 import net.jxta.peer.PeerID;
-import net.jxta.peergroup.PeerGroupID;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -41,8 +40,5 @@ public interface IP2PDictionary {
 	boolean existsRemotePeer( String peerName );
 	Optional<String> getRemotePeerName( PeerID peerID );
 	Optional<String> getRemotePeerAddress( PeerID peerID );
-	PeerID getLocalPeerID();
-	String getLocalPeerName();
-	PeerGroupID getLocalPeerGroupID();
-	String getLocalPeerGroupName();
+
 }

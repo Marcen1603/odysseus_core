@@ -3,14 +3,20 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import net.jxta.document.Advertisement;
+import net.jxta.document.AdvertisementFactory;
+import net.jxta.document.MimeMediaType;
+import net.jxta.id.ID;
+import net.jxta.id.IDFactory;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-
-import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -35,18 +41,12 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.Re
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.IResourceUsageUpdateListener;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.ResourceUsageMonitor;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.AdvertisementManagerService;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.JxtaServicesProviderService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.SimulationResult;
-
-import net.jxta.document.Advertisement;
-import net.jxta.document.AdvertisementFactory;
-import net.jxta.document.MimeMediaType;
-import net.jxta.id.ID;
-import net.jxta.id.IDFactory;
-import net.jxta.peer.PeerID;
 
 public class CentralizedDistributorAdvertisementManager implements IAdvertisementListener, IResourceUsageUpdateListener, IServiceStatusListener, IP2PDictionaryListener {
 	private static final Logger LOG = LoggerFactory.getLogger(CentralizedDistributorAdvertisementManager.class);
@@ -71,6 +71,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 
 	}
 	
+	@Override
 	public void serviceBound(Object o) {
 		if(activated) {
 			return;
@@ -112,7 +113,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		PhysicalQueryPartController.getInstance().bindExecutor(getExecutor());
 		
 		instance = this;
-		localID = P2PDictionaryService.get().getLocalPeerID();
+		localID = P2PNetworkManagerService.get().getLocalPeerID();
 		LOG.debug("The local ID of this peer is " + localID);
 		//check via parameters, if this peer is designated as the master
 		boolean isMaster = determineMasterStatus();
@@ -252,7 +253,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			LOG.debug("no queries in the plan, sending the empty plan anyway to inform master of this peer's status");
 		}
 		final PhysicalQueryPlanAdvertisement adv = (PhysicalQueryPlanAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPlanAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 		adv.setMasterPeerID(this.masterID);
 		adv.setPeerID(this.localID);
 
@@ -277,7 +278,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	public void sendPhysicalPlanToPeer(SimulationResult r, ID sharedQueryID) {
 		final PhysicalQueryPartAdvertisement adv = (PhysicalQueryPartAdvertisement) AdvertisementFactory.newAdvertisement(PhysicalQueryPartAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 		adv.setSharedQueryID(sharedQueryID);
 		adv.setPeerID(r.getPeer());
 		adv.setMasterPeerID(this.masterID);
@@ -299,7 +300,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	public void sendIdenticalQueryAdvertisementToPeer(SimulationResult r, ID oldSharedQueryID, ID newSharedQueryID) {
 		final IdenticalQueryAdvertisement adv = (IdenticalQueryAdvertisement) AdvertisementFactory.newAdvertisement(IdenticalQueryAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 		adv.setNewSharedQueryID(newSharedQueryID);
 		adv.setMasterPeerID(localID);
 		adv.setPeerID(r.getPeer());
@@ -311,6 +312,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 		CentralizedDistributor.getInstance().setOpsForQueryForPeer(r.getPeer(), newSharedQueryID, opIDsOfOldAndNewQuery);
 	}
 	
+	@Override
 	public void updateResourceUsage(double cpuUsage, double mem_free, double mem_total, double mem_used, double networkUsage) {
 		sendResourceUsageToMaster(cpuUsage, mem_free, mem_total, mem_used, networkUsage);
 	}
@@ -320,7 +322,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 			return;
 		}
 		ResourceUsageUpdateAdvertisement adv = new ResourceUsageUpdateAdvertisement();
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 		adv.setCpu_usage(cpuUsage);
 		adv.setNetworkUsage(networkUsage);
 		adv.setMem_free(mem_free);
@@ -357,7 +359,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	private static void notifyPeerOfMaster(PeerID masterPeer, PeerID destinationPeer) {
 		final MasterNotificationAdvertisement adv = (MasterNotificationAdvertisement) AdvertisementFactory.newAdvertisement(MasterNotificationAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeer);
 		adv.setMasterPeerID(masterPeer);
 		JxtaServicesProviderService.get().getDiscoveryService().remotePublish(destinationPeer.toString(), adv, 15000);
@@ -467,7 +469,7 @@ public class CentralizedDistributorAdvertisementManager implements IAdvertisemen
 	
 	@Override
 	public String getPeerName() {
-		return P2PDictionaryService.get().getLocalPeerName();
+		return P2PNetworkManagerService.get().getLocalPeerName();
 	}
 
 	public IDataDictionary getDd() {

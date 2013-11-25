@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.AdvertisementManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.CompilerService;
-import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.SessionManagementService;
 
 // TODO javaDoc M.B.
@@ -63,10 +63,10 @@ public class QueryPartManager implements IAdvertisementListener,
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 
 			if (adv.getPeerID().equals(
-					P2PDictionaryService.get().getLocalPeerID())) {
+					P2PNetworkManagerService.get().getLocalPeerID())) {
 
 				LOG.debug("PQL statement to be executed on peer {}: {}",
-						P2PDictionaryService.get().getLocalPeerName(),
+						P2PNetworkManagerService.get().getLocalPeerName(),
 						((QueryPartAdvertisement) advertisement)
 								.getPqlStatement());
 

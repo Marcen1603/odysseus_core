@@ -23,8 +23,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -286,9 +286,9 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 			LOG.debug("{} : Send connection info", getName());
 			LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
-			LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
+			LOG.debug("{} : PeerID is {}", getName(), P2PNetworkManager.getInstance().getLocalPeerID());
 
-			sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), false));
+			sender.send(JxtaPOUtil.generateSetAddressPacket(P2PNetworkManager.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), false));
 			return directConnectionServer;
 		}
 		
@@ -298,9 +298,9 @@ public class JxtaSenderPO<T extends IStreamObject<?>> extends AbstractSink<T> im
 
 		LOG.debug("{} : Send connection info", getName());
 		LOG.debug("{} : Port is {}", getName(), directConnectionServer.getLocalPort());
-		LOG.debug("{} : PeerID is {}", getName(), P2PDictionary.getInstance().getLocalPeerID());
+		LOG.debug("{} : PeerID is {}", getName(), P2PNetworkManager.getInstance().getLocalPeerID());
 
-		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PDictionary.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), true));
+		sender.send(JxtaPOUtil.generateSetAddressPacket(P2PNetworkManager.getInstance().getLocalPeerID(), directConnectionServer.getLocalPort(), true));
 
 		return directConnectionServer;
 	}

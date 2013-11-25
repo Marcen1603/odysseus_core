@@ -15,8 +15,6 @@ import net.jxta.endpoint.router.RouteController;
 import net.jxta.id.IDFactory;
 import net.jxta.impl.endpoint.router.EndpointRouter;
 import net.jxta.peer.PeerID;
-import net.jxta.peergroup.PeerGroup;
-import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
 import net.jxta.protocol.RouteAdvertisement;
 
@@ -47,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
@@ -70,11 +69,6 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	
 	private static P2PDictionary instance;
 
-	private static String localPeerName;
-	private static PeerID localPeerID;
-	private static PeerGroup localPeerGroup;
-	private static PeerGroupID localPeerGroupID;
-	
 	private final List<IP2PDictionaryListener> listeners = Lists.newArrayList();
 
 	private final List<SourceAdvertisement> publishedSources = Lists.newArrayList();
@@ -489,56 +483,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 		return knownPeersMap.containsValue(peerName);
 	}
-	
-	@Override
-	public PeerID getLocalPeerID() {
-		return localPeerID;
-	}
-	
-	@Override
-	public String getLocalPeerName() {
-		return localPeerName;
-	}
-	
-	@Override
-	public PeerGroupID getLocalPeerGroupID() {
-		return localPeerGroupID;
-	}
-	
-	public PeerGroup getLocalPeerGroup() {
-		return localPeerGroup;
-	}
-	
-	@Override
-	public String getLocalPeerGroupName() {
-		return localPeerGroup.getPeerGroupName();
-	}
-	
-	// called by activator
-	public static void setLocalPeerID( PeerID peerID ) {
-		Preconditions.checkNotNull(peerID, "PeerID to set locally must not be null!");
-		Preconditions.checkArgument(localPeerID == null, "Local peer id can only be set once");
-		
-		localPeerID = peerID;
-	}
-	
-	// called by activator
-	public static void setLocalPeerName( String peerName ) {
-		Preconditions.checkNotNull(!Strings.isNullOrEmpty(peerName), "Peername to set locally must not be null or empty!");
-		Preconditions.checkArgument(localPeerName == null, "Local peer name can only be set once");
-		
-		localPeerName = peerName;
-	}
-	
-	// called by activator
-	public static void setLocalPeerGroup( PeerGroup id ) {
-		Preconditions.checkNotNull(id, "PeerGroup must not be null!");
-		Preconditions.checkArgument(localPeerGroup == null, "Local peer group id can only be set once");
-		
-		localPeerGroup = id;
-		localPeerGroupID = id.getPeerGroupID();
-	}
-	
+			
 	@Override
 	public ImmutableList<PeerID> getRemotePeerIDs() {
 		return ImmutableList.copyOf(knownPeersMap.keySet());
@@ -548,8 +493,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public Optional<String> getRemotePeerName(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID to get the name from must not be null!");
 		
-		if( peerID.equals(localPeerID)) {
-			return Optional.of(localPeerName);
+		if( peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
+			return Optional.of(P2PNetworkManager.getInstance().getLocalPeerName());
 		}
 		return Optional.fromNullable(knownPeersMap.get(peerID));
 	}
@@ -587,7 +532,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		}
 		removeSourceExport(realSourceName);
 
-		Optional<SourceAdvertisement> optOwnAdvertisement = find(localPeerID, realSourceName);
+		Optional<SourceAdvertisement> optOwnAdvertisement = find(P2PNetworkManager.getInstance().getLocalPeerID(), realSourceName);
 		if (optOwnAdvertisement.isPresent()) {
 			SourceAdvertisement ownAdvertisement = optOwnAdvertisement.get();
 
@@ -740,9 +685,9 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		if (optAccessAO.isPresent()) {
 
 			SourceAdvertisement srcAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-			srcAdvertisement.setID(IDFactory.newPipeID(localPeerGroupID));
+			srcAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
 			srcAdvertisement.setName(removeUserFromName(streamName));
-			srcAdvertisement.setPeerID(localPeerID);
+			srcAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 			srcAdvertisement.setAccessAO(optAccessAO.get());
 			srcAdvertisement.setOutputSchema(stream.getOutputSchema());
 
@@ -765,14 +710,14 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private SourceAdvertisement exportView(String viewName, String queryBuildConfigurationName, final ILogicalOperator view) throws PeerException {
 		try {
-			final PipeID pipeID = IDFactory.newPipeID(localPeerGroupID);
+			final PipeID pipeID = IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID());
 
 			SourceAdvertisement viewAdvertisement = (SourceAdvertisement) AdvertisementFactory.newAdvertisement(SourceAdvertisement.getAdvertisementType());
-			viewAdvertisement.setID(IDFactory.newPipeID(localPeerGroupID));
+			viewAdvertisement.setID(IDFactory.newPipeID(P2PNetworkManager.getInstance().getLocalPeerGroupID()));
 			viewAdvertisement.setOutputSchema(view.getOutputSchema());
 			viewAdvertisement.setPipeID(pipeID);
 			viewAdvertisement.setName(removeUserFromName(viewName));
-			viewAdvertisement.setPeerID(localPeerID);
+			viewAdvertisement.setPeerID(P2PNetworkManager.getInstance().getLocalPeerID());
 
 			JxtaServicesProvider.getInstance().getDiscoveryService().publish(viewAdvertisement, EXPORT_LIFETIME_MILLIS, EXPORT_LIFETIME_MILLIS);
 			JxtaServicesProvider.getInstance().getDiscoveryService().remotePublish(viewAdvertisement, EXPORT_LIFETIME_MILLIS);
@@ -891,7 +836,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 
 	private static boolean checkViewAdvertisement(SourceAdvertisement srcAdvertisement) {
 		PeerID sourcePeerID = srcAdvertisement.getPeerID();
-		if( sourcePeerID.equals(P2PDictionary.getInstance().getLocalPeerID())) {
+		if( sourcePeerID.equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 			return true;
 		}
 		
@@ -912,7 +857,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 			return false;
 		}
 		
-		if( host.equalsIgnoreCase("localhost") && srcAdvertisement.getPeerID().equals(P2PDictionary.getInstance().getLocalPeerID())) {
+		if( host.equalsIgnoreCase("localhost") && srcAdvertisement.getPeerID().equals(P2PNetworkManager.getInstance().getLocalPeerID())) {
 			LOG.error("SourceAdvertisement has localhost as host (with non local origin peer): {}", srcAdvertisement.getName());
 			return false;
 		}

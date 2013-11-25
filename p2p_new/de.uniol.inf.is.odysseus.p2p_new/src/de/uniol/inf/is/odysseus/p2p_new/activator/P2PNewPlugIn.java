@@ -17,6 +17,5 @@ public class P2PNewPlugIn implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
-		activatorThread.stopNetwork();
 	}
 }

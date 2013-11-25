@@ -14,7 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
@@ -40,7 +40,7 @@ public class JxtaBiDiServerConnection extends AbstractJxtaServerConnection imple
 	public void start() throws IOException {
 		Preconditions.checkState(accepterThread == null, "JxtaServerConnection is already running!");
 				
-		serverPipe = new JxtaServerPipe(P2PDictionary.getInstance().getLocalPeerGroup(), pipeAdvertisement);
+		serverPipe = new JxtaServerPipe(P2PNetworkManager.getInstance().getLocalPeerGroup(), pipeAdvertisement);
 		serverPipe.setPipeTimeout(0);
 
 		accepterThread = new RepeatingJobThread() {

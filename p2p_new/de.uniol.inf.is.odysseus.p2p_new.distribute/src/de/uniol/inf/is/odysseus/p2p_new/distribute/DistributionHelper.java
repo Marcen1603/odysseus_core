@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartAdvertisem
 import de.uniol.inf.is.odysseus.p2p_new.distribute.queryPart.QueryPartController;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.PeerAssignmentProviderService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.service.ServerExecutorService;
@@ -102,7 +103,7 @@ public class DistributionHelper {
 	 */
 	public static PeerID getLocalPeerID() {
 
-		return P2PDictionaryService.get().getLocalPeerID();
+		return P2PNetworkManagerService.get().getLocalPeerID();
 
 	}
 
@@ -206,7 +207,7 @@ public class DistributionHelper {
 		Preconditions.checkNotNull(parameters, "transCfg must be not null!");
 
 		// Generate an ID for the shared query
-		final ID sharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false,
+		final ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false,
 				String.valueOf(System.currentTimeMillis()).getBytes());
 
 		// Get all queryParts of this query mapped with the executing peer
@@ -278,7 +279,7 @@ public class DistributionHelper {
 		// The mapping of all available peers to their names
 		final Map<String, PeerID> peerIDToNameMap = Maps.newHashMap();
 		peerIDToNameMap.put(DistributionHelper.LOCAL_DESTINATION_NAME,
-				P2PDictionaryService.get().getLocalPeerID());
+				P2PNetworkManagerService.get().getLocalPeerID());
 		for(final PeerID remotePeerID : remotePeerIDs) {
 
 			// The name of the peer
@@ -523,7 +524,7 @@ public class DistributionHelper {
 		Preconditions.checkNotNull(accessName);
 
 		// The ID of the connecting pipe
-		final PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+		final PipeID pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID());
 		LOG.debug("PipeID {} created", pipeID.toString());
 
 		// The access operator
@@ -569,7 +570,7 @@ public class DistributionHelper {
 		// Create a new advertisement for the query part
 		final QueryPartAdvertisement adv =
 				(QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-		adv.setID(IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 		adv.setPeerID(destinationPeerID);
 		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(queryPart.getLogicalPlan()));
 		adv.setSharedQueryID(sharedQueryID);
@@ -634,7 +635,7 @@ public class DistributionHelper {
 		final List<QueryPart> localParts = Lists.newArrayList();
 
 		// The ID of the local peer
-		final PeerID ownPeerID = P2PDictionaryService.get().getLocalPeerID();
+		final PeerID ownPeerID = P2PNetworkManagerService.get().getLocalPeerID();
 
 		for(final QueryPart part : queryPartDistributionMap.keySet()) {
 

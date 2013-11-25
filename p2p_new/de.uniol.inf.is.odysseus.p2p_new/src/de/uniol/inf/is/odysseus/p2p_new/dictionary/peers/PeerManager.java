@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
@@ -74,7 +75,7 @@ public class PeerManager {
 		
 		final Map<PeerID, String> newIds = Maps.newHashMap();
 		final Map<PeerID, String> oldIDs = Maps.newHashMap(P2PDictionary.getInstance().getKnownPeersMap());
-		final PeerID localPeerID = P2PDictionary.getInstance().getLocalPeerID();
+		final PeerID localPeerID = P2PNetworkManager.getInstance().getLocalPeerID();
 
 		for( PeerAdvertisement peerAdvertisement : advertisements ) {
 			final PeerID peerID = peerAdvertisement.getPeerID();

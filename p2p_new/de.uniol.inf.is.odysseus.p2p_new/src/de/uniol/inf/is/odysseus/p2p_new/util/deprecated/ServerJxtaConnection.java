@@ -7,7 +7,7 @@ import java.net.Socket;
 
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 
 @Deprecated
 public class ServerJxtaConnection extends AbstractJxtaConnection {
@@ -23,7 +23,7 @@ public class ServerJxtaConnection extends AbstractJxtaConnection {
 	@Override
 	public void connect() throws IOException {
 
-		serverSocket = new JxtaServerSocket(P2PDictionary.getInstance().getLocalPeerGroup(), getPipeAdvertisement());
+		serverSocket = new JxtaServerSocket(P2PNetworkManager.getInstance().getLocalPeerGroup(), getPipeAdvertisement());
 		serverSocket.setSoTimeout(0);
 		serverSocket.setPerformancePreferences(0, 1, 2);
 		socket = serverSocket.accept();

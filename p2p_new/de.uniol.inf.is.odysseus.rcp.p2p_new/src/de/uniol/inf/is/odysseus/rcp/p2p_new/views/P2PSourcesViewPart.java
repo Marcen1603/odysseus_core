@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PNetworkManagerService;
 
 public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener {
 
@@ -391,7 +392,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 	}
 
 	private static String determinePeerName( IP2PDictionary dict, PeerID peerID ) {
-		if( peerID.equals(dict.getLocalPeerID())) {
+		if( peerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 			return "_local_";
 		}
 		

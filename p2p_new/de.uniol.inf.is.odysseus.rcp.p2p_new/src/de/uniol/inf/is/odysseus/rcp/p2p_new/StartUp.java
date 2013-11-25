@@ -5,7 +5,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PNetworkManagerService;
 
 public class StartUp implements IStartup {
 
@@ -25,6 +25,6 @@ public class StartUp implements IStartup {
 	}
 
 	private static String determineP2PTitleSuffix() {
-		return P2PDictionaryService.get().getLocalPeerGroupName() + ":" + P2PDictionaryService.get().getLocalPeerName();
+		return P2PNetworkManagerService.get().getLocalPeerGroupName() + ":" + P2PNetworkManagerService.get().getLocalPeerName();
 	}
 }

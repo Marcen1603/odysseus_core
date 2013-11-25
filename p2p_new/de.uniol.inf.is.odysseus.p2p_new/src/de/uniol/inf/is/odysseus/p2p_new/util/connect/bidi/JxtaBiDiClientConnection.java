@@ -3,12 +3,13 @@ package de.uniol.inf.is.odysseus.p2p_new.util.connect.bidi;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import net.jxta.protocol.PipeAdvertisement;
+import net.jxta.util.JxtaBiDiPipe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.protocol.PipeAdvertisement;
-import net.jxta.util.JxtaBiDiPipe;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 
 public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 
@@ -29,7 +30,7 @@ public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 			final long startTime = System.currentTimeMillis();
 			while( !connected ) {
 				try {
-					getPipe().connect(P2PDictionary.getInstance().getLocalPeerGroup(), null, pipeAdvertisement, 1000, this);
+					getPipe().connect(P2PNetworkManager.getInstance().getLocalPeerGroup(), null, pipeAdvertisement, 1000, this);
 					connected = true;
 				} catch( SocketTimeoutException ex ) {
 					if( System.currentTimeMillis() - startTime > MAX_CONNECT_WAITING_TIME_MILLIS) {

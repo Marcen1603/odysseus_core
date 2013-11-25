@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 import net.jxta.pipe.PipeID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -48,6 +48,7 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.graph.GraphNodeSw
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.resourceusage.ResourceUsage;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.CostModelService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanJunction;
@@ -241,7 +242,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// for now, we only generate the PipeID we intend to use in case this SimulationResult will be chosen
 				
 				
-				PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+				PipeID pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID());
 
 				List<GraphNode> topNodes = baseGraph.getSinkNodes(true,false);
 				for(GraphNode gn : topNodes) {
@@ -321,7 +322,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			// and to associate it with the operators already present in the plan
 			if(placeableResults.size() == results.size() && bestResult.getFullyIdenticalToSharedQuery() != null) {
 				ID oldSharedQueryID = bestResult.getFullyIdenticalToSharedQuery();
-				ID newSharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+				ID newSharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 				
 				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
 				String queryBuildConfigurationName = "Standard";
@@ -402,7 +403,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 				// looping means that there were still some results who couldn't be realized
 			}
 			// if we reached this point, we have one or more results waiting to get placed on their respective peers.
-			ID sharedQueryID = IDFactory.newContentID(P2PDictionaryService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+			ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 			ICost<IPhysicalOperator> endCost = this.getCostModel().getZeroCost();
 			for(SimulationResult sr : placeableResults) {
 				// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
@@ -527,7 +528,7 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					}
 				}
 				// insert a receive and a send-operator
-				PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+				PipeID pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID());
 				JxtaSenderPO senderOp = new JxtaSenderPO(pipeID.toURI().toString(), true);
 				GraphNode sendGn = new GraphNode(senderOp, senderOp.hashCode(), false);
 				// ports fixed for now, could handle different ports for different outputs

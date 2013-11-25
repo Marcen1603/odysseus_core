@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.calculator.CostCalculator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.internal.advertisement.AuctionQueryAdvertisement;
@@ -42,6 +43,7 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 	private ExecutorService executorService;
 	
 	private IP2PDictionary dictionary;
+	private IP2PNetworkManager networkManager;
 	private IJxtaServicesProvider jxtaServiceProvider;
 	private CostCalculator calculator;
 	private IServerExecutor executor;
@@ -70,6 +72,16 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 			dictionary = null;
 		}
 	}	
+	
+	public void bindP2PNetworkManager( IP2PNetworkManager manager ) {
+		networkManager = manager;
+	}
+	
+	public void unbindP2PNetworkManager( IP2PNetworkManager manager ) {
+		if( manager == networkManager ) {
+			networkManager = null;
+		}
+	}
 	
 	public void bindCostCalculator(CostCalculator calculator) {
 		this.calculator = calculator;
@@ -112,10 +124,10 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 			}			
 		}
 		
-		adv.setID(IDFactory.newPipeID(dictionary.getLocalPeerGroupID()));
-		adv.setOwnerPeerId(dictionary.getLocalPeerID());
+		adv.setID(IDFactory.newPipeID(networkManager.getLocalPeerGroupID()));
+		adv.setOwnerPeerId(networkManager.getLocalPeerID());
 		for (PeerID id : dictionary.getRemotePeerIDs()) {
-			if (!id.equals(dictionary.getLocalPeerID())) {
+			if (!id.equals(networkManager.getLocalPeerID())) {
 				jxtaServiceProvider.getDiscoveryService().remotePublish(
 						id.toString(), adv, WAIT_TIME);
 			}
@@ -145,10 +157,10 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 			}			
 		}
 		
-		adv.setID(IDFactory.newPipeID(dictionary.getLocalPeerGroupID()));
-		adv.setOwnerPeerId(dictionary.getLocalPeerID());
+		adv.setID(IDFactory.newPipeID(networkManager.getLocalPeerGroupID()));
+		adv.setOwnerPeerId(networkManager.getLocalPeerID());
 		for (PeerID id : dictionary.getRemotePeerIDs()) {
-			if (!id.equals(dictionary.getLocalPeerID())) {
+			if (!id.equals(networkManager.getLocalPeerID())) {
 				jxtaServiceProvider.getDiscoveryService().remotePublish(
 						id.toString(), adv, WAIT_TIME);
 			}
@@ -172,7 +184,7 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 			Advertisement advertisement) {		
 		if(advertisement instanceof CostResponseAdvertisement) {
 			CostResponseAdvertisement adv = (CostResponseAdvertisement) advertisement;
-			if(!adv.getOwnerPeerId().equals(dictionary.getLocalPeerID())) {
+			if(!adv.getOwnerPeerId().equals(networkManager.getLocalPeerID())) {
 				log.debug("Received response to query to calculate costs for plan {}", adv.getSharedQueryID().toString());
 				synchronized(mailboxForPlanCosts) {
 					Mailbox<CostResponseAdvertisement> mailbox = mailboxForPlanCosts.get(adv.getSharedQueryID());
@@ -183,8 +195,8 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 		}
 		else if (advertisement instanceof CostQueryAdvertisement) {
 			CostQueryAdvertisement adv = ((CostQueryAdvertisement) advertisement);
-			if(!adv.getOwnerPeerId().equals(dictionary.getLocalPeerID())) {
-				if(!adv.getOwnerPeerId().equals(dictionary.getLocalPeerID())) {
+			if(!adv.getOwnerPeerId().equals(networkManager.getLocalPeerID())) {
+				if(!adv.getOwnerPeerId().equals(networkManager.getLocalPeerID())) {
 					try {
 						log.debug("Received query to calculate costs for plan {}", adv.getSharedQueryID().toString());
 						ILogicalQuery plan = Helper.getLogicalQuery(executor, adv.getPqlStatement()).get(0);
@@ -200,11 +212,11 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 						
 						CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 						costAdv.setCostSummary(costsProOperator);
-						costAdv.setOwnerPeerId(dictionary.getLocalPeerID());
+						costAdv.setOwnerPeerId(networkManager.getLocalPeerID());
 						costAdv.setPqlStatement(adv.getPqlStatement());
 						costAdv.setTransCfgName(adv.getTransCfgName());
 						costAdv.setSharedQueryID(adv.getSharedQueryID());
-						costAdv.setID(IDFactory.newPipeID(dictionary.getLocalPeerGroupID()));
+						costAdv.setID(IDFactory.newPipeID(networkManager.getLocalPeerGroupID()));
 						costAdv.setPercentageOfBearableCpuCosts(relativeCosts.getCpuCost());
 						costAdv.setPercentageOfBearableMemCosts(relativeCosts.getMemCost());
 						costAdv.setBid(bid);
@@ -220,7 +232,7 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 		}
 		else if(advertisement instanceof AuctionResponseAdvertisement) {
 			AuctionResponseAdvertisement adv = (AuctionResponseAdvertisement) advertisement;
-			if(!adv.getOwnerPeerId().equals(dictionary.getLocalPeerID())) {
+			if(!adv.getOwnerPeerId().equals(networkManager.getLocalPeerID())) {
 				synchronized(this.mailboxForAuctions) {
 					Mailbox<AuctionResponseAdvertisement> mailbox = mailboxForAuctions.get(adv.getAuctionId());
 					if(mailbox!=null) // es werden noch antworten mehr entgegegen genommen
@@ -230,8 +242,8 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 		}	
 		else if (advertisement instanceof AuctionQueryAdvertisement) {
 			AuctionQueryAdvertisement adv = ((AuctionQueryAdvertisement) advertisement);
-			if(!adv.getOwnerPeerId().equals(dictionary.getLocalPeerID())) {
-				if(!adv.getOwnerPeerId().equals(dictionary.getLocalPeerID())) {
+			if(!adv.getOwnerPeerId().equals(networkManager.getLocalPeerID())) {
+				if(!adv.getOwnerPeerId().equals(networkManager.getLocalPeerID())) {
 					log.debug("Received query to bid to auction {}", adv.getAuctionId());
 					ILogicalQuery query = Helper.getLogicalQuery(executor, adv.getPqlStatement()).get(0);
 					CostSummary costs = calculator.calcCostsForPlan(query, adv.getTransCfgName());
@@ -242,11 +254,11 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 						final AuctionResponseAdvertisement bid = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
 						bid.setAuctionId(adv.getAuctionId());
 						bid.setBid(bidValue);
-						bid.setOwnerPeerId(dictionary.getLocalPeerID());
+						bid.setOwnerPeerId(networkManager.getLocalPeerID());
 						bid.setPqlStatement(adv.getPqlStatement());
 						bid.setTransCfgName(adv.getTransCfgName());
 						bid.setSharedQueryID(adv.getSharedQueryID());
-						bid.setID(IDFactory.newPipeID(dictionary.getLocalPeerGroupID()));
+						bid.setID(IDFactory.newPipeID(networkManager.getLocalPeerGroupID()));
 						this.jxtaServiceProvider.getDiscoveryService().remotePublish(
 								adv.getOwnerPeerId().toString(), bid, WAIT_TIME);
 						log.info("Sent bid {} to auction {} of peer {}",
@@ -273,18 +285,18 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 
 	@Override
 	public PeerGroupID getLocalPeerGroupId() {
-		return dictionary.getLocalPeerGroupID();
+		return networkManager.getLocalPeerGroupID();
 	}
 	
 	@Override
 	public PeerID getLocalPeerID() {
-		return dictionary.getLocalPeerID();
+		return networkManager.getLocalPeerID();
 	}	
 
 	@Override
 	public void sendSubPlan(String destination,
 			QueryPartAdvertisement adv) {
-		adv.setID(IDFactory.newPipeID(dictionary.getLocalPeerGroupID()));
+		adv.setID(IDFactory.newPipeID(networkManager.getLocalPeerGroupID()));
 		adv.setPeerID(destination);
 		jxtaServiceProvider.getDiscoveryService().remotePublish(destination, adv, WAIT_TIME);	
 	}
@@ -292,6 +304,6 @@ public class DefaultCommunicator implements Communicator, IAdvertisementListener
 	@Override
 	public ID generateSharedQueryId() {
 		final String timestamp = String.valueOf(System.currentTimeMillis());
-		return IDFactory.newContentID(dictionary.getLocalPeerGroupID(), false, timestamp.getBytes());
+		return IDFactory.newContentID(networkManager.getLocalPeerGroupID(), false, timestamp.getBytes());
 	}
 }

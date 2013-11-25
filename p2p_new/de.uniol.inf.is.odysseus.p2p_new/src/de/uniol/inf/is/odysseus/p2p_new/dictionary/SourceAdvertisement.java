@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOConverter;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
@@ -183,7 +183,7 @@ public class SourceAdvertisement extends Advertisement implements Serializable {
 	}
 	
 	public boolean isLocal() {
-		return this.peerID.equals(P2PDictionary.getInstance().getLocalPeerID());
+		return this.peerID.equals(P2PNetworkManager.getInstance().getLocalPeerID());
 	}
 	
 	public boolean isStream() {

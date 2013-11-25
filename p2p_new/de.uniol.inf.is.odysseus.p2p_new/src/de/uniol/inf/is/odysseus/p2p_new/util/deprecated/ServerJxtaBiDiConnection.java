@@ -5,7 +5,7 @@ import java.io.IOException;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.util.JxtaBiDiPipe;
 import net.jxta.util.JxtaServerPipe;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 
 @Deprecated
 public class ServerJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
@@ -19,7 +19,7 @@ public class ServerJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
 
 	@Override
 	public void connect() throws IOException {		
-		pipe = new JxtaServerPipe(P2PDictionary.getInstance().getLocalPeerGroup(), getPipeAdvertisement());
+		pipe = new JxtaServerPipe(P2PNetworkManager.getInstance().getLocalPeerGroup(), getPipeAdvertisement());
 		pipe.setPipeTimeout(0);
 		
 		bidiPipe = pipe.accept();
