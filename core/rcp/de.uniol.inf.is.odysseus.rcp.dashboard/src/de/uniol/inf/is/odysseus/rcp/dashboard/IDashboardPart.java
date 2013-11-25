@@ -51,6 +51,9 @@ public interface IDashboardPart extends IStreamElementListener<IStreamObject<?>>
 	
 	public void setSinkNames( String sinkNames );
 	public String getSinkNames();
+	public boolean isSinkSynchronized();
+	public void setSinkSynchronized( boolean doSync );
+	
 	public Point getPreferredSize();
 	
 	public void addListener(IDashboardPartListener listener);

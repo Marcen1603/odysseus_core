@@ -102,6 +102,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private boolean opened = false;
 	private String sinkNames;
+	private boolean sinkSynced;
 	private ChartComposite chartComposite;
 	private IWorkbenchPart workbenchpart;
 	private IFile dashboardPartFile;
@@ -513,5 +514,15 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	@Override
 	public Point getPreferredSize() {
 		return new Point(500, 300);
+	}
+	
+	@Override	
+	public boolean isSinkSynchronized() {
+		return sinkSynced;
+	}
+	
+	@Override	
+	public void setSinkSynchronized( boolean doSync ) {
+		sinkSynced = doSync;
 	}
 }

@@ -39,6 +39,7 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	private IDashboardPartQueryTextProvider queryTextProvider;
 	private List<IDashboardPartListener> listeners = new ArrayList<>();
 	private String sinkNames;
+	private boolean sinkSynced = false;
 	
 	private IDashboardActionBarContributor editorActionBarContributor;
 	private IWorkbenchPart workbenchpart;
@@ -178,5 +179,15 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Override
 	public Point getPreferredSize() {
 		return new Point(500, 300);
+	}
+	
+	@Override
+	public boolean isSinkSynchronized() {
+		return sinkSynced;
+	}
+	
+	@Override
+	public void setSinkSynchronized(boolean doSync) {
+		sinkSynced = doSync;
 	}
 }

@@ -13,7 +13,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
@@ -23,6 +22,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
+import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
@@ -37,6 +37,7 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 	private static final String DISPLAY_TITLE = "Dashboard Part settings";
 	
 	private String selectedSinks;
+	private boolean sinksSynced;
 	private Button okButton;
 
 	private IDashboardPart dashboardPart; 
@@ -50,6 +51,7 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		
 		this.dashboardPart = dashboardPart;
 		this.selectedSinks = dashboardPart.getSinkNames();
+		this.sinksSynced = dashboardPart.isSinkSynchronized();
 		this.controller = controller;
 	}
 
@@ -83,9 +85,24 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		}
 		
 		createSinkSelectControls(parent);
+		createSyncSinksControls(parent);
 		
 		configComposite.pack();
 		return configComposite;
+	}
+
+	private void createSyncSinksControls(Composite parent) {
+		Composite syncSinkComposite = new Composite(parent, SWT.NONE);
+		syncSinkComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		syncSinkComposite.setLayout(new GridLayout(1, false));
+		
+		final Button syncCheckBox = DashboardPartUtil.createCheckBox(syncSinkComposite, "Synchronize sinks", sinksSynced );
+		syncCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				sinksSynced = syncCheckBox.getSelection();
+			}
+		});
 	}
 
 	private void createSinkSelectControls(Composite parent) {
@@ -93,14 +110,9 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		sinkNameComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		sinkNameComposite.setLayout(new GridLayout(3, false));
 		
-		createLabel(sinkNameComposite, "Name of sink");
+		DashboardPartUtil.createLabel(sinkNameComposite, "Name of sink");
 		Text sinkNameText = createSinkSelectText(sinkNameComposite);
 		createSinkSelectResetButton(sinkNameComposite, sinkNameText);
-	}
-
-	private static void createLabel(Composite sinkNameComposite, String text) {
-		Label sinkNameLabel = new Label(sinkNameComposite, SWT.NONE);
-		sinkNameLabel.setText(text);
 	}
 
 	private static void createSinkSelectResetButton(Composite sinkNameComposite, final Text sinkNameText) {
@@ -148,5 +160,9 @@ public class DashboardPartConfigWindow extends TitleAreaDialog {
 		if( dashboardPartConfigurer != null ) {
 			dashboardPartConfigurer.dispose();
 		}
+	}
+
+	public boolean isSinkSynced() {
+		return sinksSynced;
 	}
 }

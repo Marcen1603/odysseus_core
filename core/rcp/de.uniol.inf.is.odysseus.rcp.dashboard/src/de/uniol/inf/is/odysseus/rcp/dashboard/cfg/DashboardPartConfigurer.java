@@ -25,7 +25,7 @@ public class DashboardPartConfigurer {
 		DashboardPartConfigWindow window = new DashboardPartConfigWindow(EditorUtil.determineCurrentShell(), dashboardPart, dashboardPartController);
 		window.open();
 
-		if (applyNewSettings(window.getSelectedSinkName()) && EditorUtil.isActiveEditorDashboardEditor()) {
+		if (applyNewSettings(window.getSelectedSinkName(), window.isSinkSynced()) && EditorUtil.isActiveEditorDashboardEditor()) {
 			DashboardEditor dashboardEditor = (DashboardEditor) EditorUtil.determineActiveEditor();
 			dashboardEditor.setDirty(true);
 
@@ -33,8 +33,9 @@ public class DashboardPartConfigurer {
 		}
 	}
 
-	private boolean applyNewSettings(String selectedSinkNames) {
+	private boolean applyNewSettings(String selectedSinkNames, boolean sinksSynced) {
 		dashboardPart.setSinkNames(selectedSinkNames);
+		dashboardPart.setSinkSynchronized(sinksSynced);
 		return true;
 	}
 }
