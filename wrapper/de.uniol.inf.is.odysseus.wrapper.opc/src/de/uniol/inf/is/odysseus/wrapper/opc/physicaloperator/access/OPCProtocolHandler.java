@@ -69,6 +69,9 @@ public class OPCProtocolHandler<T> extends AbstractProtocolHandler<T> {
 	private Server server;
 	private AccessBase access;
 
+	public OPCProtocolHandler() {
+	}
+
 	public OPCProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, Map<String, String> options,
 			IDataHandler<T> dataHandler) {
