@@ -800,13 +800,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public String getDoc() {
-		return String.format(
-				"No documentation available for the logical operator %s",
-				getClass().getCanonicalName());
-	}
-
-	@Override
 	public Map<String, String> getParameterInfos() {
 		return infos;
 	}

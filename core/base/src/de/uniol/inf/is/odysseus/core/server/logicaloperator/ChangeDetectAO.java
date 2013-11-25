@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, doc="This operator can be used to filter out equal elements and reduce data rate.", category={LogicalOperatorCategory.PATTERN})
+@LogicalOperator(name = "CHANGEDETECT", minInputPorts = 1, maxInputPorts = 1, doc="This operator can reduce traffic. It lets an event pass if its different than the last event, if specified, numeric values can have a tolerance band (relative or absolute defined) e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)", category={LogicalOperatorCategory.PATTERN})
 public class ChangeDetectAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -9042464546094886480L;
@@ -155,10 +155,4 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		return attributes != null && attributes.size() > 0;
 	}
 
-	@Override
-	public String getDoc() {
-		return "This operator can reduce traffic. It lets an event pass if its different than "+
-				"the last event, if specified, numeric values can have a tolerance band (relative or absolute defined) "+
-				"e.i. only if the new values lies outside this band, it is send (aka known as deadband or histerese band)";
-	}
 }

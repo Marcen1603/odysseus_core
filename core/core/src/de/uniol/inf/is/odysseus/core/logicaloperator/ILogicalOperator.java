@@ -279,13 +279,6 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	public ILogicalOperator clone();
 
 	/**
-	 * Human readable description of the logical operator.
-	 * 
-	 * @return The description of the logical operator
-	 */
-	public String getDoc();
-
-	/**
 	 * This method can be used to reinit the schema infos all currently not set
 	 * schemata are calced new
 	 */
