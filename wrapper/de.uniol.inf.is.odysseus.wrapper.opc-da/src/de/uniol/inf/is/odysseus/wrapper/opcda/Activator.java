@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.opc;
+package de.uniol.inf.is.odysseus.wrapper.opcda;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

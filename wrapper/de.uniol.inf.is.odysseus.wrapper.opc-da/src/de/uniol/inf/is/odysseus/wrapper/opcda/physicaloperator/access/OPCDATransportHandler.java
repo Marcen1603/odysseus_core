@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.wrapper.opc.physicaloperator.access;
+package de.uniol.inf.is.odysseus.wrapper.opcda.physicaloperator.access;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,11 +53,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
-public class OPCTransportHandler<T> extends AbstractTransportHandler implements
+public class OPCDATransportHandler<T> extends AbstractTransportHandler implements
 		IIteratable<Tuple<IMetaAttribute>> {
 	/** Logger */
 	private final Logger LOG = LoggerFactory
-			.getLogger(OPCTransportHandler.class);
+			.getLogger(OPCDATransportHandler.class);
 
 	private String host;
 
@@ -74,10 +74,10 @@ public class OPCTransportHandler<T> extends AbstractTransportHandler implements
 
 	private List<Tuple<IMetaAttribute>> read = new LinkedList<>();
 
-	public OPCTransportHandler() {
+	public OPCDATransportHandler() {
 	}
 
-	public OPCTransportHandler(IProtocolHandler<?> protocolHandler,
+	public OPCDATransportHandler(IProtocolHandler<?> protocolHandler,
 			Map<String, String> options) {
 		super(protocolHandler);
 		setOptionsMap(options);
@@ -111,7 +111,7 @@ public class OPCTransportHandler<T> extends AbstractTransportHandler implements
 	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, Map<String, String> options) {
-		return new OPCTransportHandler<T>(protocolHandler, options);
+		return new OPCDATransportHandler<T>(protocolHandler, options);
 	}
 
 	@Override
