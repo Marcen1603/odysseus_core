@@ -126,7 +126,6 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	
 	private Tuple<M> transform(Tuple<M> element){
 		
-		Tuple<M> newTuple = new Tuple<M>(this.getOutputSchema().size(), false);
 		Object[] attrs = new Object[this.getOutputSchema().size()];
 		
 		int curI = 0;
@@ -145,8 +144,8 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 		if(this.graphVar != null){
 			attrs[curI++] = this.stream_name;
 		}
-		
-		newTuple.setAttributes(attrs);
+
+		Tuple<M> newTuple = new Tuple<M>(attrs, false);
 		newTuple.setMetadata(element.getMetadata());
 		
 		return newTuple;
