@@ -9,7 +9,7 @@ import net.jxta.util.JxtaBiDiPipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 

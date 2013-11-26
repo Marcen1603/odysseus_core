@@ -6,7 +6,7 @@ import net.jxta.endpoint.EndpointService;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class JxtaServicesProvider implements IJxtaServicesProvider {
 

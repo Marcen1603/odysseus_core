@@ -7,7 +7,7 @@ import java.net.Socket;
 
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaServerSocket;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 @Deprecated
 public class ServerJxtaConnection extends AbstractJxtaConnection {

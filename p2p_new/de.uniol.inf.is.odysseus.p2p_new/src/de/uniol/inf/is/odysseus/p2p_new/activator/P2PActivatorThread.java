@@ -15,6 +15,7 @@ import com.google.common.base.Strings;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class P2PActivatorThread extends Thread {
 

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.p2p_new.activator;
+package de.uniol.inf.is.odysseus.p2p_new.network;
 
 import java.io.File;
 import java.util.Random;

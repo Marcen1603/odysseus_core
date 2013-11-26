@@ -14,7 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnection;
 import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;

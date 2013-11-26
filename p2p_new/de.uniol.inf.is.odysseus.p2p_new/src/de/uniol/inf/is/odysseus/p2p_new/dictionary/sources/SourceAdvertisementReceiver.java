@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class SourceAdvertisementReceiver implements IAdvertisementListener {
 

@@ -5,7 +5,7 @@ import java.io.IOException;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.util.JxtaBiDiPipe;
 import net.jxta.util.JxtaServerPipe;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 @Deprecated
 public class ServerJxtaBiDiConnection extends AbstractJxtaBiDiConnection {

@@ -45,12 +45,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.InvalidP2PSource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;

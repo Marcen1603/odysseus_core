@@ -32,8 +32,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.AccessAOConverter;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.p2p_new.service.SessionManagementService;
 

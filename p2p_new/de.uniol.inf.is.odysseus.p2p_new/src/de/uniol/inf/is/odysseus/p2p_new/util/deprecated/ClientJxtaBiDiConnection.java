@@ -5,7 +5,7 @@ import java.net.SocketTimeoutException;
 
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.util.JxtaBiDiPipe;
-import de.uniol.inf.is.odysseus.p2p_new.activator.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 @Deprecated
 public class ClientJxtaBiDiConnection extends AbstractJxtaBiDiConnection {
