@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.parser.pql;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -174,4 +175,8 @@ public class PQLParser implements IQueryParser {
 		}
 	}
 
+	@Override
+	public List<String> getStaticKeyWords() {
+		return new ArrayList<>();
+	}
 }

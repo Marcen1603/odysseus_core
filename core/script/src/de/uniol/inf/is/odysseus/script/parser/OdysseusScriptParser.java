@@ -712,5 +712,10 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public IExecutor getExecutor() {
 		return Activator.getExecutor();
 	}
+	
+	@Override
+	public List<String> getStaticKeyWords() {
+		return new ArrayList<>();
+	}
 
 }

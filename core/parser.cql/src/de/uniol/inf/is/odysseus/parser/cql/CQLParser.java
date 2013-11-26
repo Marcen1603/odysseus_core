@@ -1372,4 +1372,9 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return null;
 	}
 
+	@Override
+	public List<String> getStaticKeyWords() {
+		return new ArrayList<>();
+	}
+
 }

@@ -27,4 +27,5 @@ public interface IQueryParser {
 	public String getLanguage();
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context) throws QueryParseException;
 	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context) throws QueryParseException;
+	public List<String> getStaticKeyWords();
 }

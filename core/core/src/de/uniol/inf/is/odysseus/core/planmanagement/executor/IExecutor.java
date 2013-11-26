@@ -214,6 +214,8 @@ public interface IExecutor extends IClientPlanManager{
 
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller);
 	
+	public Set<String> getRegisteredWrapperNames(ISession caller);
+	
 	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller);
 	
 	public String getName();

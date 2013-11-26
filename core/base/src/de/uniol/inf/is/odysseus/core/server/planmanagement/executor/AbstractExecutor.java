@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ListParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitorFactory;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
@@ -1099,5 +1100,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			return new ArrayList<>();
 		}
 
+	}
+	
+	@Override
+	public Set<String> getRegisteredWrapperNames(ISession caller) {
+		return new TreeSet<String>(WrapperRegistry.getWrapperNames());		
 	}
 }

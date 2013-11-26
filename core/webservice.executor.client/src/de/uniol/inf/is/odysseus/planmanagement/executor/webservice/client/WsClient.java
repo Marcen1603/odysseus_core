@@ -671,4 +671,10 @@ public class WsClient implements IExecutor, IClientExecutor {
 		return null;
 	}
 
+	@Override
+	public Set<String> getRegisteredWrapperNames(ISession caller) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
