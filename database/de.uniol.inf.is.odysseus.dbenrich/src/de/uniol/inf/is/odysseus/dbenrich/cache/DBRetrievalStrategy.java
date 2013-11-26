@@ -26,22 +26,19 @@ public class DBRetrievalStrategy implements
 
 	private String connectionName;
 	private String query;
-	private boolean multiTupleOutput;
 
 	// Initialized in open()
 	private SDFSchema dbFetchSchema;
 	private PreparedStatement preparedStatement;
 
-	public DBRetrievalStrategy(String connectionName, String query, boolean multiTupleOutput) {
+	public DBRetrievalStrategy(String connectionName, String query) {
 		this.connectionName = connectionName;
 		this.query = query;
-		this.multiTupleOutput = multiTupleOutput;
 	}
 
 	public DBRetrievalStrategy(DBRetrievalStrategy dbRetrievalStrategy) {
 		this.connectionName = dbRetrievalStrategy.connectionName;
 		this.query = dbRetrievalStrategy.query;
-		this.multiTupleOutput = dbRetrievalStrategy.multiTupleOutput;
 	}
 
 	@Override

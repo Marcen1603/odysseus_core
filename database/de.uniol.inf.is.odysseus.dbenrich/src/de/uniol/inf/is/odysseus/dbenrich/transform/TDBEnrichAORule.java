@@ -43,13 +43,17 @@ public class TDBEnrichAORule extends AbstractTransformationRule<DBEnrichAO> {
 
 		IMetadataMergeFunction<ITimeInterval> metaMerge = new UseLeftInputMetadata<>();
 		IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> retrievalStrategy = new DBRetrievalStrategy(
-				logical.getConnectionName(), logical.getQuery(),
-				logical.isMultiTupleOutput());
-		
-		ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<Object, CacheEntry>(logical.getCacheSize() + 1);
-		IRemovalStrategy removalStrategy = RemovalStrategyRegistry.getInstance(logical.getRemovalStrategy(), cacheStore);
-		ICache cache = new Cache(cacheStore, removalStrategy, logical.getExpirationTime(), logical.getCacheSize());	
-		int[] uniqueKeys = null;
+				logical.getConnectionName(), logical.getQuery());
+		ICache cache = null;
+		if (logical.getCacheSize() > 0) {
+			ICacheStore<Object, CacheEntry> cacheStore = new MainMemoryStore<Object, CacheEntry>(
+					logical.getCacheSize() + 1);
+			IRemovalStrategy removalStrategy = RemovalStrategyRegistry
+					.getInstance(logical.getRemovalStrategy(), cacheStore);
+			cache = new Cache(cacheStore, removalStrategy,
+					logical.getExpirationTime(), logical.getCacheSize());
+		}
+		int[] uniqueKeys = logical.getUniqueKeysAsArray();
 
 		// Maybe check, if operator is already existent (when is it 100% equal?)
 		DBEnrichPO<ITimeInterval> physical = new DBEnrichPO<ITimeInterval>(

@@ -16,7 +16,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
@@ -36,12 +35,11 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	private String connectionName;
 	private String query;
 	private List<String> attributes; // for pstmt parameters
-	private boolean multiTupleOutput = false; // n output tuples for n db
-												// results
-	private boolean noCache = false;
 	private int cacheSize = 20;
 	private long expirationTime = 1000 * 60 * 5; // 5 Minuten
 	private String removalStrategy = "fifo";
+
+	private List<Integer> uniqueKeys;
 
 	public DBEnrichAO() {
 		super();
@@ -52,8 +50,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		connectionName = dBEnrichAO.connectionName;
 		query = dBEnrichAO.query;
 		attributes = dBEnrichAO.attributes;
-		multiTupleOutput = dBEnrichAO.multiTupleOutput;
-		noCache = dBEnrichAO.noCache;
 		cacheSize = dBEnrichAO.cacheSize;
 		expirationTime = dBEnrichAO.expirationTime;
 		removalStrategy = dBEnrichAO.removalStrategy;
@@ -68,13 +64,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	public boolean isValid() {
 		// System.out.println("isValid() call; " + getDebugString());
 		boolean valid = true;
-
-		if (cacheSize < 1) {
-			addError(new IllegalParameterException(
-					"CacheSize must be at least 1. You may "
-							+ "use the parameter \"nocache='True'\" instead."));
-			valid = false;
-		}
 
 		if (expirationTime < 0) {
 			addError(new IllegalParameterException(
@@ -210,20 +199,12 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		this.attributes = attributes;
 	}
 
-	public boolean isMultiTupleOutput() {
-		return multiTupleOutput;
-	}
-
-	@Parameter(type = BooleanParameter.class, optional = true, name = "multiTupleOutput")
-	public void setMultiTupleOutput(boolean multiTupleOutput) {
-		this.multiTupleOutput = multiTupleOutput;
-	}
 
 	public int getCacheSize() {
 		return cacheSize;
 	}
 
-	@Parameter(type = IntegerParameter.class, optional = true, name = "cacheSize")
+	@Parameter(type = IntegerParameter.class, optional = false, name = "cacheSize")
 	public void setCacheSize(int cacheSize) {
 		this.cacheSize = cacheSize;
 	}
@@ -237,15 +218,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		this.removalStrategy = removalStrategy;
 	}
 
-	public boolean isNoCache() {
-		return noCache;
-	}
-
-	@Parameter(type = BooleanParameter.class, optional = true, name = "noCache")
-	public void setNoCache(boolean noCache) {
-		this.noCache = noCache;
-	}
-
 	public long getExpirationTime() {
 		return expirationTime;
 	}
@@ -254,4 +226,37 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	public void setExpirationTime(long expirationTime) {
 		this.expirationTime = expirationTime;
 	}
+	
+	
+	/**
+	 * @return the unique key attributes of the input stream
+	 */
+	public List<Integer> getUniqueKeysAsList() {
+		return this.uniqueKeys;
+	}
+	
+	/**
+	 * @return the unique key attributes as a int-Array
+	 */
+	public int[] getUniqueKeysAsArray() {
+		if(this.uniqueKeys == null) {
+			return null;
+		} else {
+			int[] keys = new int[this.uniqueKeys.size()];
+			for(int i = 0; i < this.uniqueKeys.size(); i++) {
+				keys[i] = this.uniqueKeys.get(i);
+			}
+			return keys;
+		}
+	}
+	
+	/**
+	 * Setter for the unique keys of the input stream
+	 * @param keys the keys
+	 */
+	@Parameter(type = IntegerParameter.class, name = "uniqueKeys", isList = true, optional = true)
+	public void setUniqueKey(List<Integer> keys) {
+		this.uniqueKeys = keys;
+	}
+
 }
