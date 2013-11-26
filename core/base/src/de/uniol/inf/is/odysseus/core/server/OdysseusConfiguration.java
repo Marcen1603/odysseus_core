@@ -189,9 +189,14 @@ public class OdysseusConfiguration {
 		props.setProperty("security.applicationName", "Odysseus");
 		props.setProperty("security.organization","University of Oldenburg");		
 		props.setProperty("security.dir", odysseusHome+"certificates"+File.separator);
-		props.setProperty("security.default.certificate", "odysseus.default.der");
-		props.setProperty("security.default.privatekey", "odysseus.default.private.pem");
-		props.setProperty("security.default.privatekey.password", "ithaka");
+		// the private information exchange (PKCS#12) pfx file, containing the private key and an according certificate
+		props.setProperty("security.default.pfx", "odysseus.default.pfx");
+		// the alias within the key store that contains the default key 
+		props.setProperty("security.default.pfx.alias", "odysseus.default");
+		// destination for the X.509 certificate that will be automatically exported from the pfx file 
+		props.setProperty("security.default.der", "odysseus.default.der");
+		// TODO: find a way to hide this?!
+		props.setProperty("security.default.password", "ithaka");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {
