@@ -5,13 +5,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.dbenrich.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
 /**
@@ -19,7 +22,7 @@ import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
  * data source.
  */
 public class DBRetrievalStrategy implements
-		IRetrievalStrategy<ComplexParameterKey, Tuple<?>[]> {
+		IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> {
 
 	private String connectionName;
 	private String query;
@@ -42,7 +45,7 @@ public class DBRetrievalStrategy implements
 	}
 
 	@Override
-	public Tuple<?>[] get(ComplexParameterKey key) {
+	public List<IStreamObject<?>> get(ComplexParameterKey key) {
 		return getTuplesFromDB(key);
 	}
 
@@ -88,13 +91,12 @@ public class DBRetrievalStrategy implements
 		dbFetchSchema = null;
 	}
 
-	private Tuple<?>[] getTuplesFromDB(ComplexParameterKey complexParameterKey) {
+	private List<IStreamObject<?>> getTuplesFromDB(ComplexParameterKey complexParameterKey) {
 
 		ResultSet rs = null;
 		/* Will be converted to an array at the end; replace it with a 
 		 * more efficient data structure, if you find one for this use */
-		ArrayList<Tuple<?>> dbTuples = 
-				(multiTupleOutput?new ArrayList<Tuple<?>>():null);
+		List<IStreamObject<?>> dbTuples = new ArrayList<>();
 
 		try {
 			// Insert parameters corresponding to variables in prepared statement...
@@ -114,13 +116,7 @@ public class DBRetrievalStrategy implements
 					dbTuple.setAttribute(i, newAttribute);
 				}
 				
-				// Return only the first, if multiTupleOutput is not set
-				if(!multiTupleOutput) {
-					// direct return without using the list to speed the process up
-					return new Tuple[] {dbTuple};
-				} else {
 					dbTuples.add(dbTuple);
-				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -128,9 +124,7 @@ public class DBRetrievalStrategy implements
 					"Could not retrieve entry from Database", e);
 		}
 
-		return (dbTuples!=null)?
-				dbTuples.toArray(new Tuple[dbTuples.size()]):
-				new Tuple[0];
+		return dbTuples;
 	}
 
 	private Object getWithType(ResultSet rs, SDFAttribute sdfAttributeTarget,

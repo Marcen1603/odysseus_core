@@ -3,55 +3,47 @@ package de.uniol.inf.is.odysseus.dbenrich.physicaloperator;
 import java.util.Arrays;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.cache.ICache;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.dbenrich.IRetrievalStrategy;
 import de.uniol.inf.is.odysseus.dbenrich.cache.ComplexParameterKey;
-import de.uniol.inf.is.odysseus.dbenrich.cache.IReadOnlyCache;
 
-public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
+public class DBEnrichPO<T extends IMetaAttribute> extends
+		AbstractEnrichPO<Tuple<T>, T> {
 
 	// Initialized in the constructor
 	private final String connectionName;
 	private final String query;
 	private final List<String> variables;
-	private final boolean multiTupleOutput;
-	private final boolean noCache;
-	private final int cacheSize;
-	private final long expirationTime;
-	private final String removalStrategy;
-	// Fully initialized after process_open()
-	private final IDataMergeFunction<Tuple<T>, T> dataMergeFunction;
-	private final IMetadataMergeFunction<T> metaMergeFunction;
-	private final IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager;
-	/** The positions of the db query parameters in the inputTuple attributes,
-	 * ordered as in the db query */
+	/**
+	 * The positions of the db query parameters in the inputTuple attributes,
+	 * ordered as in the db query
+	 */
 	private final int[] parameterPositions;
+	private IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> retrievalStrategie;
 
-	public DBEnrichPO(String connectionName, String query,
-			List<String> variables, boolean noCache, boolean multiTupleOutput, 
-			int cacheSize, long expirationTime, String removalStrategy,
+	public DBEnrichPO(
+			String connectionName,
+			String query,
+			List<String> variables,
 			IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
 			IMetadataMergeFunction<T> metaMergeFunction,
-			IReadOnlyCache<ComplexParameterKey, Tuple<?>[]> cacheManager) {
-		super();
+			IRetrievalStrategy<ComplexParameterKey, List<IStreamObject<?>>> retrievalStrategie,
+			ICache cache, int[] uniqueKeys) {
+		super(cache, dataMergeFunction, metaMergeFunction, uniqueKeys);
 		this.connectionName = connectionName;
 		this.query = query;
 		this.variables = variables;
-		this.multiTupleOutput = multiTupleOutput;
-		this.noCache = noCache;
-		this.cacheSize = cacheSize;
-		this.expirationTime = expirationTime;
-		this.removalStrategy = removalStrategy;
-		this.dataMergeFunction = dataMergeFunction;
-		this.metaMergeFunction = metaMergeFunction;
-		this.cacheManager = cacheManager;
+		this.retrievalStrategie = retrievalStrategie;
 		this.parameterPositions = new int[variables.size()];
 	}
 
@@ -60,19 +52,11 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		this.connectionName = dBEnrichPO.connectionName;
 		this.query = dBEnrichPO.query;
 		this.variables = dBEnrichPO.variables;
-		this.multiTupleOutput = dBEnrichPO.multiTupleOutput;
-		this.noCache = dBEnrichPO.noCache;
-		this.cacheSize = dBEnrichPO.cacheSize;
-		this.expirationTime = dBEnrichPO.expirationTime;
-		this.removalStrategy = dBEnrichPO.removalStrategy;
-		this.dataMergeFunction = dBEnrichPO.dataMergeFunction.clone();
-		this.metaMergeFunction = dBEnrichPO.metaMergeFunction.clone();
-		this.cacheManager = dBEnrichPO.cacheManager; // better provide clone();
-		this.parameterPositions = Arrays.copyOf(
-				dBEnrichPO.parameterPositions,
+		this.parameterPositions = Arrays.copyOf(dBEnrichPO.parameterPositions,
 				dBEnrichPO.parameterPositions.length);
-		System.err.println("The use of a copy constructor is only parially " +
-				"supported in DBEnrichPO. The cacheManager will not be copied.");
+		System.err
+				.println("The use of a copy constructor is only parially "
+						+ "supported in DBEnrichPO. The cacheManager will not be copied.");
 	}
 
 	@Override
@@ -81,82 +65,58 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 
 	@Override
-	@SuppressWarnings("unchecked") // Suppress metadata-cast warnings
-	protected  void process_next(Tuple<T> inputTuple, int port) {
-		// System.out.println(String.format("(%28s-------", getName()).replace(' ', '-'));
-		// System.out.println("Tuple(before):  "+inputTuple);
+	protected List<IStreamObject<?>> internal_process(Tuple<T> input) {
+		Object[] queryParameters = getQueryParameters(input);
+		ComplexParameterKey complexKey = new ComplexParameterKey(
+				queryParameters);
 
-		// get the parameters used for the db query from the tuple attributes
-		Object[] queryParameters = getQueryParameters(inputTuple);
-		ComplexParameterKey complexKey = new ComplexParameterKey(queryParameters);
+		List<IStreamObject<?>> dbTupels = retrievalStrategie.get(complexKey);
 
-		Tuple<?>[] dbTupels = cacheManager.get(complexKey);
-		
-		/*
-		 * If multiTupleOutput is set, there will be as many output-tuples 
-		 * generated as there are tuples in the db resultset.
-		 * Otherwise the array dbTupels has the length '1' and only the first 
-		 * result tuple from the db will used for the single output tuple.
-		 * If the db resultset was empty, no tuple will be transfered.
-		 */
-		for(int i=0; i<dbTupels.length; i++) {
-			// System.out.println("Tuple(dbcache): " + dbTupels[i]);
-
-			Tuple<T> outputTuple = dataMergeFunction.merge(
-					inputTuple, (Tuple<T>)dbTupels[i], metaMergeFunction, Order.LeftRight);
-			// The the metadata of the inputtuple
-			outputTuple.setMetadata((T)inputTuple.getMetadata().clone());
-
-			// System.out.println("Tuple(after,"+i+1+"): "+outputTuple);
-
-			transfer(outputTuple);
-		}
-		
-		// System.out.println("-----------------------------------)");
+		return dbTupels;
 	}
 
 	/**
 	 * Returns the attributes, that correspond to the positions defined in
 	 * parameterPositions. E.g. if the tuple contains the attributes
-	 * [SomeText|123|456.7] and the positions are [2|1|3|2], then the
-	 * result is [123|SomeText|456.7|123].
-	 * @param inputTuple the current tuple from the input stream
+	 * [SomeText|123|456.7] and the positions are [2|1|3|2], then the result is
+	 * [123|SomeText|456.7|123].
+	 * 
+	 * @param inputTuple
+	 *            the current tuple from the input stream
 	 * @return the corresponding parameters for a query
 	 */
 	private Object[] getQueryParameters(Tuple<T> inputTuple) {
 		Object[] queryParameters = new Object[parameterPositions.length];
 
-		for(int i=0; i<queryParameters.length; i++) {
-			queryParameters[i] =
-					inputTuple.getAttribute(parameterPositions[i]);
+		for (int i = 0; i < queryParameters.length; i++) {
+			queryParameters[i] = inputTuple.getAttribute(parameterPositions[i]);
 		}
 
 		return queryParameters;
 	}
 
 	@Override
-	protected synchronized void process_open() throws OpenFailedException {
+	protected void internal_process_open() throws OpenFailedException {
 		initParameterPositions();
-
-		cacheManager.open();
-
-		dataMergeFunction.init();
+		retrievalStrategie.open();
 	}
 
 	/**
-	 * Goes through the variables (a set of inputTuples attribute
-	 * names) and saves each position in parameterPositions[]. This has to be
-	 * done only once and prevents therefore a search of the positions for
-	 * each input tuple/ process_next-call.
+	 * Goes through the variables (a set of inputTuples attribute names) and
+	 * saves each position in parameterPositions[]. This has to be done only
+	 * once and prevents therefore a search of the positions for each input
+	 * tuple/ process_next-call.
 	 */
 	private void initParameterPositions() {
-		for(int i=0; i<variables.size(); i++) {
-			String variableName  = variables.get(i);
+		for (int i = 0; i < variables.size(); i++) {
+			String variableName = variables.get(i);
 
 			// Get desired parameter from input tuple
-			SDFAttribute attribute = getOutputSchema().findAttribute(variableName);
-			if(attribute==null) {
-				throw new RuntimeException("Could not find attribute '" + variableName +"' in input tuple.");
+			SDFAttribute attribute = getOutputSchema().findAttribute(
+					variableName);
+			if (attribute == null) {
+				throw new RuntimeException("Could not find attribute '"
+						+ variableName + "' in input tuple.");
 			}
 
 			// save it's position
@@ -165,8 +125,8 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 	}
 
 	@Override
-	protected synchronized void process_close() {
-		cacheManager.close();
+	protected void internal_process_close() {
+		retrievalStrategie.close();
 	}
 
 	@Override
@@ -185,28 +145,15 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 			return false;
 		@SuppressWarnings("rawtypes")
 		DBEnrichPO other = (DBEnrichPO) ipo;
-		if (cacheSize != other.cacheSize)
-			return false;
 		if (connectionName == null) {
 			if (other.connectionName != null)
 				return false;
 		} else if (!connectionName.equals(other.connectionName))
 			return false;
-		if (expirationTime != other.expirationTime)
-			return false;
-		if (multiTupleOutput != other.multiTupleOutput)
-			return false;
-		if (noCache != other.noCache)
-			return false;
 		if (query == null) {
 			if (other.query != null)
 				return false;
 		} else if (!query.equals(other.query))
-			return false;
-		if (removalStrategy == null) {
-			if (other.removalStrategy != null)
-				return false;
-		} else if (!removalStrategy.equals(other.removalStrategy))
 			return false;
 		if (variables == null) {
 			if (other.variables != null)
@@ -214,7 +161,6 @@ public class DBEnrichPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>,
 		} else if (!variables.equals(other.variables))
 			return false;
 		return true;
-		
-		
+
 	}
 }

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.dbenrich.cache;
+package de.uniol.inf.is.odysseus.dbenrich;
 
 /**
  * This interface describes, how read only retrievalStrategies can be accessed.
