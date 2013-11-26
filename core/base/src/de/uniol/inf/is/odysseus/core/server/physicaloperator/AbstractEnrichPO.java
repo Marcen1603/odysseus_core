@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,8 +10,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 
 abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute> extends
 		AbstractPipe<T, T> {
@@ -46,24 +43,32 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 	}
 	
 	@Override
-	protected void process_open() throws OpenFailedException {
+	final protected void process_open() throws OpenFailedException {
 		dataMergeFunction.init();
+		internal_process_open();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		List<IStreamObject<?>> result = null;
 		
 		if (cacheManager == null) {
-			result = process(object);
+			result = internal_process(object);
 		} else if (uniqueKeys == null) {
 			result = process_with_cache(object, object.hashCode());
 		} else {
 			result = process_with_cache(object,
 					object.restrictedHashCode(uniqueKeys));
 		}
-		enrichAndTransfer(object, result);
-	}
+		// enrichAndTransfer
+		for (int i = 0; i < result.size(); i++) {
+			T output = dataMergeFunction.merge(object,
+					(T) result.get(i), metaMergeFunction,
+					Order.LeftRight);
+			output.setMetadata((M) object.getMetadata().clone());
+			transfer(output);
+		}	}
 
 	private List<IStreamObject<?>> process_with_cache(T input,
 			Object key) {
@@ -74,29 +79,15 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		}
 
 		// Else retrieve new elements
-		List<IStreamObject<?>> queryResult = process(input);
+		List<IStreamObject<?>> queryResult = internal_process(input);
 
 		cacheManager.put(key, queryResult);
 		return queryResult;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void enrichAndTransfer(T input,
-			List<IStreamObject<?>> elements) {
-		for (int i = 0; i < elements.size(); i++) {
-			T output = dataMergeFunction.merge(input,
-					(T) elements.get(i), metaMergeFunction,
-					Order.LeftRight);
-			output.setMetadata((M) input.getMetadata().clone());
-			transfer(output);
-		}
-	}
-
-	abstract protected ArrayList<IStreamObject<?>> process(T input);
-
 
 	@Override
-	protected void process_close() {
+	final protected void process_close() {
 		// Print the Caching Statistics
 		if (this.cacheManager != null) {
 			System.out.println("Caching Statistics: ");
@@ -108,15 +99,8 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 					+ cacheManager.getCacheRemoves());
 			cacheManager.close();
 		}
+		internal_process_close();
 
-	}
-
-	public IDataMergeFunction<T, M> getDataMergeFunction() {
-		return dataMergeFunction;
-	}
-
-	public IMetadataMergeFunction<M> getMetaMergeFunction() {
-		return metaMergeFunction;
 	}
 
 	@Override
@@ -134,5 +118,10 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 		;
 		return true;
 	}
+
+
+	abstract protected void internal_process_open();
+	abstract protected List<IStreamObject<?>> internal_process(T input);
+	abstract protected void internal_process_close();
 
 }

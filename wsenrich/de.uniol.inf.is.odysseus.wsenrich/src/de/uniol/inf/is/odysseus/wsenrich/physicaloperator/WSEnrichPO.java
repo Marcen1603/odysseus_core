@@ -110,16 +110,15 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void internal_process_open() throws OpenFailedException {
 		if (soapMessageCreator != null) {
 			soapMessageCreator.buildSoapMessage();
 		}
 		initParameterPositions();
-		super.process_open();
 	}
 	
 	@Override
-	protected ArrayList<IStreamObject<?>> process(Tuple<M> inputTuple) {
+	protected List<IStreamObject<?>> internal_process(Tuple<M> inputTuple) {
 
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		String postData = "";
@@ -175,9 +174,8 @@ public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple
 	
 
 	@Override
-	protected void process_close() {
+	protected void internal_process_close() {
 		connection.closeConnection();
-		super.process_close();
 	}
 
 	@Override
