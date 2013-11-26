@@ -33,6 +33,7 @@ public class LogicalOperatorInformation {
 	private int maxPorts;
 	private int minPorts;
 	private String[] categories;
+	private boolean hidden;
 
 	public String getOperatorName() {
 		return operatorName;
@@ -90,6 +91,14 @@ public class LogicalOperatorInformation {
 
 	public LogicalParameterInformation getParameter(String name) {
 		return parameters.get(name);
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}	
 
 }
