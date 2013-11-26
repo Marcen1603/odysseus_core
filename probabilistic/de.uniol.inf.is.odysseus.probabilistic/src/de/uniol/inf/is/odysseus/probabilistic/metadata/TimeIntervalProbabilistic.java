@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import java.text.NumberFormat;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -108,6 +110,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 */
 	@Override
 	public final void setExistence(final double existence) {
+		Preconditions.checkArgument(existence >= 0.0 && existence <= 1.0);
 		this.probabilistic.setExistence(existence);
 	}
 

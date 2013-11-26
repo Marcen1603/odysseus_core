@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
@@ -60,6 +63,9 @@ public class ToProbabilisticDoubleFunction extends AbstractFunction<Probabilisti
 	@Override
 	public final ProbabilisticDouble getValue() {
 		final double[][] values = (double[][]) this.getInputValue(0);
+		Objects.requireNonNull(values);
+		Preconditions.checkArgument(values.length>0);
+		Preconditions.checkArgument(values[0].length==2);
 		final Map<Double, Double> valueMap = new HashMap<Double, Double>();
 		for (final double[] value : values) {
 			valueMap.put(value[0], value[1]);

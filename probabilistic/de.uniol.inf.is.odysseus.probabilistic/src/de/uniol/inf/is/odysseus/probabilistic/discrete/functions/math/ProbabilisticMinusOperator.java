@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -64,6 +65,8 @@ public class ProbabilisticMinusOperator extends AbstractProbabilisticBinaryOpera
 	public ProbabilisticDouble getValue() {
 		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
 		final AbstractProbabilisticValue<?> b = this.getInputValue(1);
+		Objects.requireNonNull(a);
+		Objects.requireNonNull(b);
 		return this.getValueInternal(a, b);
 	}
 

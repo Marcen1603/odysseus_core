@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.util.FastMath;
@@ -84,6 +85,7 @@ public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<Pro
 	@Override
 	public final ProbabilisticDouble getValue() {
 		final AbstractProbabilisticValue<?> a = this.getInputValue(0);
+		Objects.requireNonNull(a);
 		return this.getValueInternal(a);
 	}
 

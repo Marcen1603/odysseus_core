@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -77,6 +80,8 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
     public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
+	    Objects.requireNonNull(dependentAttributes);
+	    Preconditions.checkArgument(!dependentAttributes.isEmpty());
 		this.dependentAttributes = dependentAttributes;
 	}
 
@@ -101,6 +106,8 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
     public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
+	    Objects.requireNonNull(explanatoryAttributes);
+	    Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
 		this.explanatoryAttributes = explanatoryAttributes;
 	}
 
@@ -148,6 +155,12 @@ public class LinearRegressionAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public final void initialize() {
+		super.initialize();
+		Objects.requireNonNull(explanatoryAttributes);
+		Objects.requireNonNull(dependentAttributes);
+		Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
+		Preconditions.checkArgument(!dependentAttributes.isEmpty());
+
 		final Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
 			if (this.getExplanatoryAttributes().contains(inAttr)) {

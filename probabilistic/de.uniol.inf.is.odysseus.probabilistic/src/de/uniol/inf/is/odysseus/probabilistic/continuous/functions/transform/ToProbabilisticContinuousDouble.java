@@ -17,9 +17,12 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.transform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
@@ -64,7 +67,11 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
 	public final NormalDistributionMixture getValue() {
 		final double[] means = ((double[][]) this.getInputValue(0))[0];
 		final double[][] variances = (double[][]) this.getInputValue(1);
-
+		Objects.requireNonNull(means);
+		Objects.requireNonNull(variances);
+		Preconditions.checkArgument(means.length>0);
+		Preconditions.checkArgument(means.length==variances.length);
+		Preconditions.checkArgument(variances.length==variances[0].length);
 		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
 		mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));

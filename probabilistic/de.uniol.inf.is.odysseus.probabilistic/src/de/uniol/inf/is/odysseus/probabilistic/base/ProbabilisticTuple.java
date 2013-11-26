@@ -25,6 +25,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.util.Pair;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -59,6 +61,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final int count, final boolean requiresDeepClone) {
 		super(count, requiresDeepClone);
+		Preconditions.checkArgument(count >= 0);
 		this.distributions = new NormalDistributionMixture[0];
 	}
 
@@ -74,6 +77,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final int count, final int distributions, final boolean requiresDeepClone) {
 		super(count, requiresDeepClone);
+		Preconditions.checkArgument(count >= 0);
+		Preconditions.checkArgument(distributions >= 0);
 		this.distributions = new NormalDistributionMixture[distributions];
 	}
 
@@ -87,6 +92,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final Object[] attributes, final boolean requiresDeepClone) {
 		super(attributes, requiresDeepClone);
+		Preconditions.checkNotNull(attributes);
 		this.distributions = new NormalDistributionMixture[0];
 	}
 
@@ -102,6 +108,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final Object[] attributes, final NormalDistributionMixture[] distributions, final boolean requiresDeepClone) {
 		super(attributes, requiresDeepClone);
+		Preconditions.checkNotNull(attributes);
+		Preconditions.checkNotNull(distributions);
 		this.distributions = distributions;
 	}
 
@@ -117,7 +125,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final ProbabilisticTuple<T> copy, final Object[] newAttrs, final boolean requiresDeepClone) {
 		super(copy, newAttrs, requiresDeepClone);
+		Preconditions.checkNotNull(copy);
 		if (copy.distributions != null) {
+			this.distributions=new NormalDistributionMixture[copy.distributions.length];
 			for (int i = 0; i < copy.distributions.length; i++) {
 				this.distributions[i] = copy.distributions[i].clone();
 			}
@@ -140,6 +150,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final ProbabilisticTuple<T> copy, final Object[] newAttrs, final NormalDistributionMixture[] newDistrs, final boolean requiresDeepClone) {
 		super(copy, newAttrs, requiresDeepClone);
+		Preconditions.checkNotNull(copy);
+		Preconditions.checkNotNull(copy.distributions);
 		if (newDistrs != null) {
 			this.distributions = new NormalDistributionMixture[newDistrs.length];
 			for (int i = 0; i < newDistrs.length; i++) {
@@ -147,6 +159,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			}
 		} else {
 			if (copy.distributions != null) {
+				this.distributions=new NormalDistributionMixture[copy.distributions.length];
 				for (int i = 0; i < copy.distributions.length; i++) {
 					this.distributions[i] = copy.distributions[i].clone();
 				}
@@ -164,6 +177,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 */
 	public ProbabilisticTuple(final ProbabilisticTuple<T> copy) {
 		super(copy);
+		Preconditions.checkNotNull(copy);
+		Preconditions.checkNotNull(copy.distributions);
 		if (copy.distributions != null) {
 			this.distributions = new NormalDistributionMixture[copy.distributions.length];
 			for (int i = 0; i < copy.distributions.length; i++) {
@@ -182,9 +197,8 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 * @return The distribution at the given position or <code>null</code> if no distribution exists at the given position
 	 */
 	public final NormalDistributionMixture getDistribution(final int index) {
-		if ((index < 0) || (index >= this.distributions.length)) {
-			return null;
-		}
+		Preconditions.checkArgument(index >= 0
+				&& index < this.distributions.length);
 		return this.distributions[index];
 	}
 
@@ -197,6 +211,9 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            The distribution
 	 */
 	public final void setDistribution(final int index, final NormalDistributionMixture distribution) {
+		Preconditions.checkArgument(index >= 0
+				&& index < this.distributions.length);
+		Preconditions.checkNotNull(distribution);
 		this.distributions[index] = distribution;
 	}
 
@@ -207,6 +224,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            The distributions
 	 */
 	public final void setDistributions(final NormalDistributionMixture[] distributions) {
+		Preconditions.checkNotNull(distributions);
 		this.distributions = distributions;
 	}
 

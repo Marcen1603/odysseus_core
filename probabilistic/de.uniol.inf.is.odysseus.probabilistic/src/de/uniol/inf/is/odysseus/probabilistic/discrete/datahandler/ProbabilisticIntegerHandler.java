@@ -24,7 +24,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -65,6 +68,8 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 	 */
 	@Override
 	public final ProbabilisticInteger readData(final ObjectInputStream inputStream) throws IOException {
+		Objects.requireNonNull(inputStream);
+		Preconditions.checkArgument(inputStream.available()>=4);
 		final int length = inputStream.readInt();
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
@@ -81,6 +86,8 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 	 */
 	@Override
 	public final ProbabilisticInteger readData(final String string) {
+		Objects.requireNonNull(string);
+		Preconditions.checkArgument(!string.isEmpty());
 		final String[] discreteValues = string.split(";");
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -96,6 +103,8 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 	 */
 	@Override
 	public final ProbabilisticInteger readData(final ByteBuffer buffer) {
+		Objects.requireNonNull(buffer);
+		Preconditions.checkArgument(buffer.remaining()>=4);
 		final int length = buffer.getInt();
 		final Map<Integer, Double> values = new HashMap<Integer, Double>();
 		for (int i = 0; i < length; i++) {
@@ -112,6 +121,8 @@ public class ProbabilisticIntegerHandler extends AbstractDataHandler<Probabilist
 	 */
 	@Override
 	public final void writeData(final ByteBuffer buffer, final Object data) {
+		Objects.requireNonNull(buffer);
+		Objects.requireNonNull(data);
 		final ProbabilisticInteger values = (ProbabilisticInteger) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<Integer, Double> value : values.getValues().entrySet()) {

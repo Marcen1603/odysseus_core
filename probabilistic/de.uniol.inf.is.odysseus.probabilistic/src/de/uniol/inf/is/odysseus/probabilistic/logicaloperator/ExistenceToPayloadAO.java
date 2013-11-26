@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -56,14 +58,15 @@ public class ExistenceToPayloadAO extends AbstractLogicalOperator {
 	 */
 	@Override
 	public final SDFSchema getOutputSchemaIntern(final int pos) {
+		Preconditions.checkPositionIndex(pos, 1);
 		final SDFAttribute existence = new SDFAttribute(null, "meta_existence", SDFDatatype.DOUBLE);
 
 		final List<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		String name = "";
 
-		if (this.getInputSchema(0) != null) {
-			outputAttributes.addAll(this.getInputSchema(0).getAttributes());
-			name = this.getInputSchema(0).getURI();
+		if (this.getInputSchema(pos) != null) {
+			outputAttributes.addAll(this.getInputSchema(pos).getAttributes());
+			name = this.getInputSchema(pos).getURI();
 		}
 		outputAttributes.add(existence);
 

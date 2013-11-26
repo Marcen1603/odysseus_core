@@ -119,6 +119,9 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
     /** Probabilistic continuous double vector datatype. */
     public static final SDFDatatype VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticContinuousDouble");
 
+    public static final SDFDatatype[] PROBABILISTIC_NUMBERS = new SDFDatatype[] { PROBABILISTIC_BYTE, PROBABILISTIC_BOOLEAN, PROBABILISTIC_SHORT, PROBABILISTIC_INTEGER, PROBABILISTIC_LONG, PROBABILISTIC_FLOAT, PROBABILISTIC_DOUBLE};
+
+    
     /**
      * Checks whether the data type is a probabilistic data type.
      * 

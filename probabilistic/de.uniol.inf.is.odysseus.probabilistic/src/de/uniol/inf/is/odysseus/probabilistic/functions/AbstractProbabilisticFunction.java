@@ -17,7 +17,10 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
@@ -45,6 +48,7 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 * @return The normal distribution mixtures at the given position
 	 */
 	public final NormalDistributionMixture getDistributions(final int pos) {
+		Preconditions.checkPositionIndex(pos, distributions.size());
 		return this.distributions.get(pos);
 	}
 
@@ -54,6 +58,6 @@ public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<
 	 * @return All normal distribution mixtures
 	 */
 	public final List<NormalDistributionMixture> getDistributions() {
-		return this.distributions;
+		return Collections.unmodifiableList(this.distributions);
 	}
 }

@@ -24,7 +24,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -66,6 +69,8 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 	 */
 	@Override
 	public final ProbabilisticShort readData(final ObjectInputStream inputStream) throws IOException {
+		Objects.requireNonNull(inputStream);
+		Preconditions.checkArgument(inputStream.available()>=4);
 		final int length = inputStream.readInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {
@@ -82,6 +87,8 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 	 */
 	@Override
 	public final ProbabilisticShort readData(final String string) {
+		Objects.requireNonNull(string);
+		Preconditions.checkArgument(!string.isEmpty());
 		final String[] discreteValues = string.split(";");
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (final String discreteValue2 : discreteValues) {
@@ -97,6 +104,8 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 	 */
 	@Override
 	public final ProbabilisticShort readData(final ByteBuffer buffer) {
+		Objects.requireNonNull(buffer);
+		Preconditions.checkArgument(buffer.remaining()>=4);
 		final int length = buffer.getInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {
@@ -113,6 +122,8 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 	 */
 	@Override
 	public final void writeData(final ByteBuffer buffer, final Object data) {
+		Objects.requireNonNull(buffer);
+		Objects.requireNonNull(data);
 		final ProbabilisticShort values = (ProbabilisticShort) data;
 		buffer.putInt(values.getValues().size());
 		for (final Entry<Short, Double> value : values.getValues().entrySet()) {

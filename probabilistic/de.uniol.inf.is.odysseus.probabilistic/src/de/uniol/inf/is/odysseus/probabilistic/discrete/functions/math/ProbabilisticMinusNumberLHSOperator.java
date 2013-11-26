@@ -16,6 +16,8 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
@@ -41,7 +43,8 @@ public class ProbabilisticMinusNumberLHSOperator extends ProbabilisticMinusOpera
     public final ProbabilisticDouble getValue() {
         final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
         final AbstractProbabilisticValue<?> b = this.getInputValue(1);
-        return this.getValueInternal(a, b);
+		Objects.requireNonNull(b);
+		return this.getValueInternal(a, b);
     }
 
     /**

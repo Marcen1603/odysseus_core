@@ -2,7 +2,11 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -35,7 +39,7 @@ public class SampleAO extends UnaryLogicalOp {
 	 * Creates a new Sample logical operator.
 	 */
 	public SampleAO() {
-
+super();
 	}
 
 	/**
@@ -58,6 +62,8 @@ public class SampleAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false, doc = "The distribution to sample from.")
 	public final void setAttributes(final List<SDFAttribute> attributes) {
+	    Objects.requireNonNull(attributes);
+	    Preconditions.checkArgument(!attributes.isEmpty());
 		this.attributes = attributes;
 	}
 
@@ -71,7 +77,7 @@ public class SampleAO extends UnaryLogicalOp {
 		if (this.attributes == null) {
 			this.attributes = new ArrayList<SDFAttribute>();
 		}
-		return this.attributes;
+		return Collections.unmodifiableList(this.attributes);
 	}
 
 	/**
@@ -82,6 +88,7 @@ public class SampleAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = IntegerParameter.class, name = "SAMPLES", isList = false, optional = false, doc = "The number of samples to create.")
 	public final void setSamples(final int samples) {
+		Preconditions.checkArgument(samples>0);
 		this.samples = samples;
 	}
 
@@ -121,6 +128,10 @@ public class SampleAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public final void initialize() {
+		super.initialize();
+	    Objects.requireNonNull(attributes);
+	    Preconditions.checkArgument(!attributes.isEmpty());
+	    Preconditions.checkArgument(samples>0);
 		final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
 			if (this.getAttributes().contains(inAttr)) {

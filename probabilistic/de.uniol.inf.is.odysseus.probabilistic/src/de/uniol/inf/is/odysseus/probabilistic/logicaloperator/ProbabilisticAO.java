@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.logicaloperator;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -63,6 +65,7 @@ public class ProbabilisticAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true, doc = "The name of the attribute for the existence uncertainty.")
 	public final void setAttribute(final SDFAttribute attribute) {
+		Objects.requireNonNull(attribute);
 		this.attribute = attribute;
 	}
 

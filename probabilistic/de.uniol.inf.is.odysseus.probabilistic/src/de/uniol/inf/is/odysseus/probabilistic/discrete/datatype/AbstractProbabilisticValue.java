@@ -19,7 +19,10 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.datatype;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
@@ -63,6 +66,7 @@ public abstract class AbstractProbabilisticValue<V> implements Serializable, ICl
 	 *            The values
 	 */
 	public AbstractProbabilisticValue(final Map<V, Double> values) {
+		Objects.requireNonNull(values);
 		this.values.putAll(values);
 	}
 
@@ -75,7 +79,10 @@ public abstract class AbstractProbabilisticValue<V> implements Serializable, ICl
 	 *            The associated probabilities
 	 */
 	public AbstractProbabilisticValue(final V[] values, final Double[] probabilities) {
-		final int length = Math.min(values.length, probabilities.length);
+		Objects.requireNonNull(values);
+		Objects.requireNonNull(probabilities);
+		Preconditions.checkArgument(values.length==probabilities.length);
+		final int length = values.length;
 		for (int i = 0; i < length; i++) {
 			this.values.put(values[i], probabilities[i]);
 		}
@@ -88,6 +95,7 @@ public abstract class AbstractProbabilisticValue<V> implements Serializable, ICl
 	 *            The object to copy from
 	 */
 	public AbstractProbabilisticValue(final AbstractProbabilisticValue<V> other) {
+		Objects.requireNonNull(other);
 		for (final Entry<V, Double> value : other.values.entrySet()) {
 			this.values.put(value.getKey(), value.getValue());
 		}

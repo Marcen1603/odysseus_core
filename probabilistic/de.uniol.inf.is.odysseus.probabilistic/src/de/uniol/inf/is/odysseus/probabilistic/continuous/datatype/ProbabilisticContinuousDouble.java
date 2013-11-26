@@ -16,6 +16,9 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.datatype;
 
 import java.io.Serializable;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 
@@ -37,6 +40,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	 *            The index of the associated distribution
 	 */
 	public ProbabilisticContinuousDouble(final int distribution) {
+		Preconditions.checkArgument(distribution>=0);
 		this.distribution = distribution;
 	}
 
@@ -47,6 +51,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	 *            The object to clone from
 	 */
 	public ProbabilisticContinuousDouble(final ProbabilisticContinuousDouble copy) {
+		Objects.requireNonNull(copy);
 		this.distribution = copy.distribution;
 	}
 
@@ -66,6 +71,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	 *            the distribution to set
 	 */
 	public final void setDistribution(final int distribution) {
+		Preconditions.checkArgument(distribution>=0);
 		this.distribution = distribution;
 	}
 

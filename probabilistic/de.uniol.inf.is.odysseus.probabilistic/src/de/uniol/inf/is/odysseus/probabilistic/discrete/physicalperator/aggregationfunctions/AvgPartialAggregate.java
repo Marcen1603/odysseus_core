@@ -19,6 +19,8 @@ import org.apache.commons.math3.util.ArithmeticUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.math.Polynomial;
 
@@ -182,9 +184,9 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		final double rho = 1.0 / (1.0 - this.alpha);
 
 		if (AvgPartialAggregate.LOG.isTraceEnabled()) {
-			assert this.checkCorollary24();
-			assert this.checkClaim211(this.k0);
-			assert this.checkClaim211(this.k1);
+			Preconditions.checkState( this.checkCorollary24());
+			Preconditions.checkState( this.checkClaim211(this.k0));
+			Preconditions.checkState( this.checkClaim211(this.k1));
 		}
 		if (this.isLongStream(this.pBig[0])) {
 			// Large Stream use SUM/COUNT
@@ -234,16 +236,16 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 
 		if (this.pBig[0] >= ((3.0 / this.theta) * Math.log(2.0 / this.epsilon))) {
 			if (AvgPartialAggregate.LOG.isTraceEnabled()) {
-				assert this.checkProof27(this.pBig, this.aBig, z0);
-				assert this.checkClaim28(this.pBig, this.aBig, z0) : z0;
-				assert this.checkLemma210(this.pBig, smallestEvenInteger, z0);
+				Preconditions.checkState(  this.checkProof27(this.pBig, this.aBig, z0));
+				Preconditions.checkState( this.checkClaim28(this.pBig, this.aBig, z0) , z0);
+				Preconditions.checkState(  this.checkLemma210(this.pBig, smallestEvenInteger, z0));
 			}
 			q = this.getQBig(rho, smallestEvenInteger, z0);
 		} else {
 			if (AvgPartialAggregate.LOG.isTraceEnabled()) {
-				assert this.checkProof27(this.pSmall, this.aSmall, z0);
-				assert this.checkClaim28(this.pSmall, this.aSmall, z0) : z0;
-				assert this.checkLemma210(this.pSmall, smallestEvenInteger, z0);
+				Preconditions.checkState( this.checkProof27(this.pSmall, this.aSmall, z0));
+				Preconditions.checkState( this.checkClaim28(this.pSmall, this.aSmall, z0), z0);
+				Preconditions.checkState(  this.checkLemma210(this.pSmall, smallestEvenInteger, z0));
 			}
 			q = this.getQSmall(rho, smallestEvenInteger, z0);
 		}
@@ -293,7 +295,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		final Polynomial polynomial = new Polynomial(rho / (1.0 - this.epsilon), 0);
 		final Polynomial gTilde = this.gTilde(this.pBig, l);
 		if (AvgPartialAggregate.LOG.isTraceEnabled()) {
-			assert this.checkLemma29(gTilde, z0) : gTilde;
+			Preconditions.checkState( this.checkLemma29(gTilde, z0) , gTilde);
 		}
 		final Polynomial hTilde = this.hTilde(this.aBig);
 		return polynomial.multiply(gTilde.multiply(hTilde));
@@ -314,7 +316,7 @@ public class AvgPartialAggregate<T> implements IPartialAggregate<T> {
 		final Polynomial polynomial = new Polynomial(rho / (1.0 - this.epsilon), 0);
 		final Polynomial gTilde = this.gTilde(this.pSmall, l);
 		if (AvgPartialAggregate.LOG.isTraceEnabled()) {
-			assert this.checkLemma29(gTilde, z0) : gTilde;
+			Preconditions.checkState( this.checkLemma29(gTilde, z0) , gTilde);
 		}
 
 		Polynomial fJ = new Polynomial(0.0, 0);

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +160,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final ProbabilisticTuple<?> readData(final ObjectInputStream inputStream) throws IOException {
-        ProbabilisticTuple<?> r = null;
+		Objects.requireNonNull(inputStream);
+		ProbabilisticTuple<?> r = null;
         final Object[] attributes = new Object[this.dataHandlers.length];
         for (int i = 0; i < this.dataHandlers.length; i++) {
             attributes[i] = this.dataHandlers[i].readData(inputStream);
@@ -185,7 +187,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final ProbabilisticTuple<?> readData(final String string) {
-        return this.readData(new String[] { string });
+    	Objects.requireNonNull(string);
+    	return this.readData(new String[] { string });
     }
 
     /*
@@ -196,7 +199,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final ProbabilisticTuple<?> readData(final String[] input) {
-        ProbabilisticTuple<?> r = null;
+    	Objects.requireNonNull(input);
+    	ProbabilisticTuple<?> r = null;
         final Object[] attributes = new Object[this.dataHandlers.length];
         for (int i = 0; i < attributes.length; i++) {
             try {
@@ -234,7 +238,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final ProbabilisticTuple<?> readData(final List<String> input) {
-        ProbabilisticTuple<?> r = null;
+    	Objects.requireNonNull(input);
+    	ProbabilisticTuple<?> r = null;
         final Object[] attributes = new Object[this.dataHandlers.length];
         for (int i = 0; i < attributes.length; i++) {
             try {
@@ -272,7 +277,8 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final ProbabilisticTuple<?> readData(final ByteBuffer buffer) {
-        ProbabilisticTuple<?> r = null;
+    	Objects.requireNonNull(buffer);
+    	ProbabilisticTuple<?> r = null;
         synchronized (buffer) {
             final Object[] attributes = new Object[this.dataHandlers.length];
             for (int i = 0; i < this.dataHandlers.length; i++) {
@@ -327,7 +333,9 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 
     @Override
     public void writeData(List<String> output, Object data) {
-        ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
+    	Objects.requireNonNull(output);
+		Objects.requireNonNull(data);
+		 ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
 
         synchronized (output) {
             for (int i = 0; i < dataHandlers.length; i++) {
@@ -341,7 +349,9 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
 
     @Override
     public void writeData(StringBuilder string, Object data) {
-        super.writeData(string, data);
+    	Objects.requireNonNull(string);
+		Objects.requireNonNull(data);
+		super.writeData(string, data);
         ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
 
         synchronized (string) {
@@ -362,7 +372,9 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final void writeData(final ByteBuffer buffer, final Object data) {
-        final ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
+    	Objects.requireNonNull(buffer);
+		Objects.requireNonNull(data);
+		final ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) data;
         synchronized (buffer) {
             for (int i = 0; i < dataHandlers.length; i++) {
                 Object v = r.getAttribute(i);

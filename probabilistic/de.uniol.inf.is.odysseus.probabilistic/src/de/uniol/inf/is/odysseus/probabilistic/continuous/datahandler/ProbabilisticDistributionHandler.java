@@ -21,11 +21,14 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -53,6 +56,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 */
 	@Override
 	public final NormalDistributionMixture readData(final ByteBuffer buffer) {
+		Objects.requireNonNull(buffer);
+		Preconditions.checkArgument(buffer.remaining()>=4);
 		NormalDistributionMixture distributionMixture = null;
 		final int size = buffer.getInt();
 		if (size > 0) {
@@ -96,6 +101,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 */
 	@Override
 	public final NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
+		Objects.requireNonNull(inputStream);
+		Preconditions.checkArgument(inputStream.available()>=4);
 		final int size = inputStream.readInt();
 		final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final int dimension = inputStream.readInt();
@@ -133,6 +140,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 */
 	@Override
 	public final NormalDistributionMixture readData(final String string) {
+		Objects.requireNonNull(string);
+		Preconditions.checkArgument(!string.isEmpty());
 		final String[] covarianceMatrix = string.split(":");
 		final double[] entries = new double[covarianceMatrix.length];
 		for (int i = 0; i < covarianceMatrix.length; i++) {
@@ -149,6 +158,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 */
 	@Override
 	public final void writeData(final ByteBuffer buffer, final Object data) {
+		Objects.requireNonNull(buffer);
+		Objects.requireNonNull(data);
 		final NormalDistributionMixture value = (NormalDistributionMixture) data;
 		buffer.putInt(value.getMixtures().getComponents().size());
 		buffer.putInt(value.getDimension());
@@ -180,6 +191,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	 */
 	@Override
 	public final int memSize(final Object attribute) {
+		Objects.requireNonNull(attribute);
 		final NormalDistributionMixture value = (NormalDistributionMixture) attribute;
 		final int numberOfMixtures = value.getMixtures().getComponents().size();
 		final int dimension = value.getDimension();

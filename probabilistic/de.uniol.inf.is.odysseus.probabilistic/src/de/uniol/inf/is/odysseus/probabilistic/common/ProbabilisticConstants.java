@@ -36,5 +36,6 @@ public final class ProbabilisticConstants {
 	 * Private constructor.
 	 */
 	private ProbabilisticConstants() {
+        throw new UnsupportedOperationException();
 	}
 }

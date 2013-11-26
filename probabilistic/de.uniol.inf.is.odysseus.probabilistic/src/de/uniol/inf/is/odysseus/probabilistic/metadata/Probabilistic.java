@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
 import java.text.NumberFormat;
 
+import com.google.common.base.Preconditions;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 /**
@@ -49,6 +51,7 @@ public class Probabilistic implements IProbabilistic {
 	 *            The existence value
 	 */
 	public Probabilistic(final double existence) {
+		Preconditions.checkArgument(existence >= 0.0 && existence <= 1.0);
 		this.existence = existence;
 	}
 

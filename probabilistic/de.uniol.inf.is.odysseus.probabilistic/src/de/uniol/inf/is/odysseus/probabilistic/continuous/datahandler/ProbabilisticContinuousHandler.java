@@ -21,6 +21,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -52,6 +55,8 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	 */
 	@Override
 	public final ProbabilisticContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
+		Objects.requireNonNull(inputStream);
+		Preconditions.checkArgument(inputStream.available()>=4);
 		final int distributionIndex = inputStream.readInt();
 		return new ProbabilisticContinuousDouble(distributionIndex);
 	}
@@ -62,6 +67,8 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	 */
 	@Override
 	public final ProbabilisticContinuousDouble readData(final String string) {
+		Objects.requireNonNull(string);
+		Preconditions.checkArgument(!string.isEmpty());
 		final int distributionIndex = Integer.parseInt(string);
 		return new ProbabilisticContinuousDouble(distributionIndex);
 	}
@@ -72,6 +79,8 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	 */
 	@Override
 	public final ProbabilisticContinuousDouble readData(final ByteBuffer buffer) {
+		Objects.requireNonNull(buffer);
+		Preconditions.checkArgument(buffer.remaining()>=4);
 		final int distributionIndex = buffer.getInt();
 		return new ProbabilisticContinuousDouble(distributionIndex);
 	}
@@ -82,6 +91,8 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	 */
 	@Override
 	public final void writeData(final ByteBuffer buffer, final Object data) {
+		Objects.requireNonNull(buffer);
+		Objects.requireNonNull(data);
 		final ProbabilisticContinuousDouble value = (ProbabilisticContinuousDouble) data;
 		buffer.putInt(value.getDistribution());
 	}

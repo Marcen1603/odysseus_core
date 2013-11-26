@@ -160,5 +160,6 @@ public final class PredicateUtils {
 	 * Private constructor.
 	 */
 	private PredicateUtils() {
+        throw new UnsupportedOperationException();
 	}
 }

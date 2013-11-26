@@ -19,6 +19,9 @@ package de.uniol.inf.is.odysseus.probabilistic.sdf.schema;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -129,7 +132,9 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 */
 	private void init(final IExpression<?> expression, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
 		if (this.getMEPExpression() instanceof AbstractProbabilisticFunction) {
-			this.setDistributions(((AbstractProbabilisticFunction<?>) this.getMEPExpression()).getDistributions());
+			AbstractProbabilisticFunction<?> probabilisticExpression = ((AbstractProbabilisticFunction<?>) this
+					.getMEPExpression());
+			this.setDistributions(probabilisticExpression.getDistributions());
 		}
 	}
 
@@ -143,6 +148,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 		if ((this.getMEPExpression() instanceof Constant) || (this.getMEPExpression() instanceof Variable)) {
 			return;
 		}
+		Objects.requireNonNull(newDistributions);
 		this.distributions.clear();
 		this.distributions.addAll(Arrays.asList(newDistributions));
 	}
@@ -155,6 +161,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 * @return The distribution at the given index
 	 */
 	public final NormalDistributionMixture getDistributions(final int distributionIndex) {
+		Preconditions.checkPositionIndex(distributionIndex, this.distributions.size());
 		return this.distributions.get(distributionIndex);
 	}
 
@@ -165,11 +172,8 @@ public class SDFProbabilisticExpression extends SDFExpression {
 	 *            The distributions
 	 */
 	private void setDistributions(final List<NormalDistributionMixture> distributions) {
-		if (distributions == null) {
-			this.distributions.clear();
-		} else {
-			this.distributions = distributions;
-		}
+		Objects.requireNonNull(distributions);
+		this.distributions = distributions;
 	}
 
 	/*

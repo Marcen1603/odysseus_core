@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -57,7 +60,9 @@ public class LinearRegressionMergeAO extends UnaryLogicalOp {
      */
     @Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
     public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
-        this.dependentAttributes = dependentAttributes;
+	    Objects.requireNonNull(dependentAttributes);
+	    Preconditions.checkArgument(!dependentAttributes.isEmpty());
+    	this.dependentAttributes = dependentAttributes;
     }
 
     /**
@@ -81,7 +86,9 @@ public class LinearRegressionMergeAO extends UnaryLogicalOp {
      */
     @Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
     public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
-        this.explanatoryAttributes = explanatoryAttributes;
+	    Objects.requireNonNull(explanatoryAttributes);
+	    Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
+    	this.explanatoryAttributes = explanatoryAttributes;
     }
 
     /**
@@ -103,6 +110,7 @@ public class LinearRegressionMergeAO extends UnaryLogicalOp {
      * @return The position of the regression coefficients
      */
     public final int getRegressionCoefficientsPos() {
+	    Preconditions.checkArgument(this.getInputSchema().findAttribute("$coefficients")!=null);
         final SDFSchema schema = this.getInputSchema();
         return schema.indexOf(schema.findAttribute("$coefficients"));
     }
@@ -113,6 +121,7 @@ public class LinearRegressionMergeAO extends UnaryLogicalOp {
      * @return The position of the residual
      */
     public final int getResidualPos() {
+    	 Preconditions.checkArgument(this.getInputSchema().findAttribute("$residual")!=null);
         final SDFSchema schema = this.getInputSchema();
         return schema.indexOf(schema.findAttribute("$residual"));
     }
@@ -138,4 +147,12 @@ public class LinearRegressionMergeAO extends UnaryLogicalOp {
         return new LinearRegressionMergeAO(this);
     }
 
+	@Override
+	public void initialize() {
+		super.initialize();
+		Objects.requireNonNull(explanatoryAttributes);
+		Objects.requireNonNull(dependentAttributes);
+		Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
+		Preconditions.checkArgument(!dependentAttributes.isEmpty());
+	}
 }

@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -74,6 +77,8 @@ public class AssignDistributionAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false, doc = "The attributes holding the expected value.")
 	public final void setAttributes(final List<SDFAttribute> attributes) {
+		Objects.requireNonNull(attributes);
+		Preconditions.checkArgument(!attributes.isEmpty());
 		this.attributes = attributes;
 	}
 
@@ -108,6 +113,7 @@ public class AssignDistributionAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "VARIANCE", isList = false, optional = false, doc = "The attribute holding the variance of the distribution.")
 	public final void setVariance(final SDFAttribute variance) {
+		Objects.requireNonNull(variance);
 		this.variance = variance;
 	}
 
@@ -146,6 +152,10 @@ public class AssignDistributionAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public final void initialize() {
+		Objects.requireNonNull(attributes);
+		Objects.requireNonNull(variance);
+		Preconditions.checkArgument(!attributes.isEmpty());
+		Preconditions.checkArgument(this.getInputSchema().contains(variance));
 		final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
 			if (this.getAttributes().contains(inAttr)) {

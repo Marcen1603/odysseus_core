@@ -179,6 +179,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
 	 *             if the other interval contains zero
 	 */
 	public final Interval div(final Interval other) throws IntervalArithmeticException {
+	//FIXME Use Int Ari from abstract interpretation slides (26.11.2013)!! (Moore 66)
 		if (!other.contains(0.0)) {
 			final double newInf = Math.min(Math.min(this.inf / other.inf, this.inf / other.sup), Math.min(this.sup / other.inf, this.sup / other.sup));
 			final double newSup = Math.max(Math.max(this.inf / other.inf, this.inf / other.sup), Math.max(this.sup / other.inf, this.sup / other.sup));

@@ -114,5 +114,6 @@ public final class ProbabilisticContinuousUtils {
 	 * Private constructor.
 	 */
 	private ProbabilisticContinuousUtils() {
+        throw new UnsupportedOperationException();
 	}
 }
