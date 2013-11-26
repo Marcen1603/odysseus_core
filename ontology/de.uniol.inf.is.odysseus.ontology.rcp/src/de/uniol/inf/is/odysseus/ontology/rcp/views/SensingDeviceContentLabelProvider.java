@@ -17,7 +17,9 @@ package de.uniol.inf.is.odysseus.ontology.rcp.views;
 
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
+import de.uniol.inf.is.odysseus.ontology.model.Property;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.model.condition.Condition;
 import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
@@ -31,13 +33,15 @@ import de.uniol.inf.is.odysseus.rcp.server.views.AbstractViewLabelProvider;
 public class SensingDeviceContentLabelProvider extends
 		AbstractViewLabelProvider {
 
-	private final String sensingDeviceImage;
+	private final String sensingDeviceImage = "sensingDevice";
+	private final String featureOfInterestImage = "featureOfInterest";
 	private final String measurementCapabilityImage = "measurementCapability";
 	private final String measurementPropertyImage = "measurementProperty";
 	private final String conditionImage = "condition";
+	private final String propertyImage = "property";
 
-	public SensingDeviceContentLabelProvider(final String sensingDeviceImage) {
-		this.sensingDeviceImage = sensingDeviceImage;
+	public SensingDeviceContentLabelProvider() {
+
 	}
 
 	@Override
@@ -45,18 +49,21 @@ public class SensingDeviceContentLabelProvider extends
 		if (element instanceof SensingDevice) {
 			return SensorRegistryPlugIn.getImageManager().get(
 					this.sensingDeviceImage);
-		}
-		if (element instanceof MeasurementCapability) {
+		} else if (element instanceof FeatureOfInterest) {
+			return SensorRegistryPlugIn.getImageManager().get(
+					this.featureOfInterestImage);
+		} else if (element instanceof MeasurementCapability) {
 			return SensorRegistryPlugIn.getImageManager().get(
 					this.measurementCapabilityImage);
-		}
-		if (element instanceof Condition) {
+		} else if (element instanceof Condition) {
 			return SensorRegistryPlugIn.getImageManager().get(
 					this.conditionImage);
-		}
-		if (element instanceof MeasurementProperty) {
+		} else if (element instanceof MeasurementProperty) {
 			return SensorRegistryPlugIn.getImageManager().get(
 					this.measurementPropertyImage);
+		} else if (element instanceof Property) {
+			return SensorRegistryPlugIn.getImageManager().get(
+					this.propertyImage);
 		}
 		return super.getImage(element);
 	}
@@ -68,6 +75,12 @@ public class SensingDeviceContentLabelProvider extends
 			final StringBuilder sb = new StringBuilder();
 			sb.append(sensingDevice.getName()).append(" [")
 					.append(sensingDevice.getUri().toString()).append("]");
+			return sb.toString();
+		} else if (element instanceof FeatureOfInterest) {
+			final FeatureOfInterest featureOfInterest = (FeatureOfInterest) element;
+			final StringBuilder sb = new StringBuilder();
+			sb.append(featureOfInterest.getName()).append(" [")
+					.append(featureOfInterest.getUri().toString()).append("]");
 			return sb.toString();
 		} else if (element instanceof MeasurementCapability) {
 			final MeasurementCapability measurementCapability = (MeasurementCapability) element;
@@ -85,8 +98,15 @@ public class SensingDeviceContentLabelProvider extends
 		} else if (element instanceof MeasurementProperty) {
 			final MeasurementProperty measurementProperty = (MeasurementProperty) element;
 			final StringBuilder sb = new StringBuilder();
-			sb.append(measurementProperty.getResource().getLocalName()).append(" [")
-					.append(measurementProperty.getExpression()).append("]");
+			sb.append(measurementProperty.getResource().getLocalName())
+					.append(" [").append(measurementProperty.getExpression())
+					.append("]");
+			return sb.toString();
+		} else if (element instanceof Property) {
+			final Property property = (Property) element;
+			final StringBuilder sb = new StringBuilder();
+			sb.append(property.getName()).append(" [")
+					.append(property.toString()).append("]");
 			return sb.toString();
 		}
 		return super.getText(element);

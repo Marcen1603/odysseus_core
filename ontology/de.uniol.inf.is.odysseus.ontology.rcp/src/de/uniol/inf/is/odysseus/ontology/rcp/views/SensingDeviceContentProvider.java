@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 
@@ -49,14 +50,14 @@ public class SensingDeviceContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(final Object parentElement) {
 		if (parentElement instanceof Collection) {
 			return ((Collection<?>) parentElement).toArray();
-		}
-		if (parentElement instanceof SensingDevice) {
+		} else if (parentElement instanceof SensingDevice) {
 			final SensingDevice sensingDevice = (SensingDevice) parentElement;
 			return sensingDevice.getHasMeasurementCapabilities().toArray();
-		}
-		if (parentElement instanceof MeasurementCapability) {
+		} else if (parentElement instanceof FeatureOfInterest) {
+			final FeatureOfInterest featureOfInterest = (FeatureOfInterest) parentElement;
+			return featureOfInterest.getHasProperties().toArray();
+		} else if (parentElement instanceof MeasurementCapability) {
 			final MeasurementCapability measurementCapability = (MeasurementCapability) parentElement;
-
 			List<Object> children = new ArrayList<Object>();
 			if (measurementCapability.getInConditions() != null) {
 				children.addAll(measurementCapability.getInConditions());
@@ -80,8 +81,9 @@ public class SensingDeviceContentProvider implements ITreeContentProvider {
 		if (element instanceof SensingDevice) {
 			return !((SensingDevice) element).getHasMeasurementCapabilities()
 					.isEmpty();
-		}
-		if (element instanceof MeasurementCapability) {
+		} else if (element instanceof FeatureOfInterest) {
+			return !((FeatureOfInterest) element).getHasProperties().isEmpty();
+		} else if (element instanceof MeasurementCapability) {
 			boolean hasChildren = false;
 			MeasurementCapability measurementCapability = (MeasurementCapability) element;
 			if (measurementCapability.getInConditions() != null) {

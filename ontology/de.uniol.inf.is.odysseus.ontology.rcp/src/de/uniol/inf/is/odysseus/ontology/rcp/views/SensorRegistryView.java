@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.ontology.rcp.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
@@ -39,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListen
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.ontology.model.FeatureOfInterest;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
 import de.uniol.inf.is.odysseus.ontology.rcp.SensorRegistryPlugIn;
@@ -48,160 +51,185 @@ import de.uniol.inf.is.odysseus.rcp.server.views.OperatorDragListener;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SensorRegistryView extends ViewPart implements IDataDictionaryListener, IUserManagementListener, ISessionListener {
-    private static final Logger LOG = LoggerFactory.getLogger(SensorRegistryView.class);
+public class SensorRegistryView extends ViewPart implements
+		IDataDictionaryListener, IUserManagementListener, ISessionListener {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SensorRegistryView.class);
 
-    private Composite parent;
-    private TreeViewer viewer;
-    private StackLayout stackLayout;
-    private Label label;
+	private Composite parent;
+	private TreeViewer viewer;
+	private StackLayout stackLayout;
+	private Label label;
 
-    volatile boolean isRefreshing;
-    private boolean refreshEnabled = true;
+	volatile boolean isRefreshing;
+	private boolean refreshEnabled = true;
 
-    @Override
-    public void createPartControl(final Composite parent) {
-        this.parent = parent;
+	@Override
+	public void createPartControl(final Composite parent) {
+		this.parent = parent;
 
-        this.stackLayout = new StackLayout();
-        parent.setLayout(this.stackLayout);
+		this.stackLayout = new StackLayout();
+		parent.setLayout(this.stackLayout);
 
-        this.setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI));
-        this.getTreeViewer().setContentProvider(new SensingDeviceContentProvider());
-        this.getTreeViewer().setLabelProvider(new SensingDeviceContentLabelProvider("sensingDevice"));
+		this.setTreeViewer(new TreeViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL
+				| SWT.MULTI));
+		this.getTreeViewer().setContentProvider(
+				new SensingDeviceContentProvider());
+		this.getTreeViewer().setLabelProvider(
+				new SensingDeviceContentLabelProvider());
 
-        final int operations = DND.DROP_MOVE;
-        final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer.getTransfer() };
-        this.getTreeViewer().addDragSupport(operations, transferTypes, new OperatorDragListener(this.getTreeViewer(), "STREAM"));
+		final int operations = DND.DROP_MOVE;
+		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+				.getTransfer() };
+		this.getTreeViewer().addDragSupport(operations, transferTypes,
+				new OperatorDragListener(this.getTreeViewer(), "STREAM"));
 
-        this.refresh();
+		this.refresh();
 
-        // UserManagement.getInstance().addUserManagementListener(this);
-        this.getSite().setSelectionProvider(this.getTreeViewer());
+		// UserManagement.getInstance().addUserManagementListener(this);
+		this.getSite().setSelectionProvider(this.getTreeViewer());
 
-        // Contextmenu
-        final MenuManager menuManager = new MenuManager();
-        final Menu contextMenu = menuManager.createContextMenu(this.getTreeViewer().getControl());
-        // Set the MenuManager
-        this.getTreeViewer().getControl().setMenu(contextMenu);
-        this.getSite().registerContextMenu(menuManager, this.getTreeViewer());
+		// Contextmenu
+		final MenuManager menuManager = new MenuManager();
+		final Menu contextMenu = menuManager.createContextMenu(this
+				.getTreeViewer().getControl());
+		// Set the MenuManager
+		this.getTreeViewer().getControl().setMenu(contextMenu);
+		this.getSite().registerContextMenu(menuManager, this.getTreeViewer());
 
-        this.label = new Label(parent, SWT.NONE);
-        this.label.setText("No sources available");
+		this.label = new Label(parent, SWT.NONE);
+		this.label.setText("No sources available");
 
-        this.stackLayout.topControl = this.label;
-        parent.layout();
+		this.stackLayout.topControl = this.label;
+		parent.layout();
 
-    }
+	}
 
-    @Override
-    public void dispose() {
+	@Override
+	public void dispose() {
 
-        super.dispose();
-    }
+		super.dispose();
+	}
 
-    @Override
-    public void setFocus() {
-        this.getTreeViewer().getControl().setFocus();
-    }
+	@Override
+	public void setFocus() {
+		this.getTreeViewer().getControl().setFocus();
+	}
 
-    public TreeViewer getTreeViewer() {
-        return this.viewer;
-    }
+	public TreeViewer getTreeViewer() {
+		return this.viewer;
+	}
 
-    public final void setSorting(final boolean doSorting) {
-        if (doSorting) {
-            this.viewer.setSorter(new ViewerSorter());
-        }
-        else {
-            this.viewer.setSorter(null);
-        }
-    }
+	public final void setSorting(final boolean doSorting) {
+		if (doSorting) {
+			this.viewer.setSorter(new ViewerSorter());
+		} else {
+			this.viewer.setSorter(null);
+		}
+	}
 
-    public final boolean isSorting() {
-        return this.viewer.getSorter() != null;
-    }
+	public final boolean isSorting() {
+		return this.viewer.getSorter() != null;
+	}
 
-    public void refresh() {
+	public void refresh() {
 
-        if (this.refreshEnabled) {
-            if (this.isRefreshing) {
-                return;
-            }
-            this.isRefreshing = true;
-            PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		if (this.refreshEnabled) {
+			if (this.isRefreshing) {
+				return;
+			}
+			this.isRefreshing = true;
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-                @Override
-                public void run() {
-                    try {
-                        SensorRegistryView.this.isRefreshing = false;
-                        if (!SensorRegistryView.this.getTreeViewer().getTree().isDisposed()) {
-                            final List<SensingDevice> sensingDevices = SensorRegistryPlugIn.getSensorOntologyService().getAllSensingDevices();
-                            SensorRegistryView.this.getTreeViewer().setInput(sensingDevices);
+				@Override
+				public void run() {
+					try {
+						SensorRegistryView.this.isRefreshing = false;
+						if (!SensorRegistryView.this.getTreeViewer().getTree()
+								.isDisposed()) {
+							final List<SensingDevice> sensingDevices = SensorRegistryPlugIn
+									.getSensorOntologyService()
+									.getAllSensingDevices();
+							final List<FeatureOfInterest> featuresOfInterest = SensorRegistryPlugIn
+									.getSensorOntologyService()
+									.getAllFeaturesOfInterest();
+							Collection<Object> entities = new ArrayList<Object>();
+							entities.addAll(sensingDevices);
+							entities.addAll(featuresOfInterest);
+							SensorRegistryView.this.getTreeViewer().setInput(
+									entities);
 
-                            for (SensingDevice device:sensingDevices){
-                            	for (MeasurementCapability measurementCapability:device.getHasMeasurementCapabilities()){
-                            		SensorRegistryPlugIn.getSensorOntologyService().getAttributes(measurementCapability.getForProperty());
-                            	}
-                            }
-                            if (!sensingDevices.isEmpty()) {
-                                SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this.getTreeViewer().getTree();
-                            }
-                            else {
-                                SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this.label;
-                            }
-                            SensorRegistryView.this.parent.layout();
-                        }
-                    }
-                    catch (final Exception e) {
-                        SensorRegistryView.LOG.error("Exception during setting input for treeViewer in sourcesView", e);
-                    }
-                }
+							for (SensingDevice device : sensingDevices) {
+								for (MeasurementCapability measurementCapability : device
+										.getHasMeasurementCapabilities()) {
+									SensorRegistryPlugIn
+											.getSensorOntologyService()
+											.getAttributes(
+													measurementCapability
+															.getForProperty());
+								}
+							}
+							if (!sensingDevices.isEmpty()) {
+								SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this
+										.getTreeViewer().getTree();
+							} else {
+								SensorRegistryView.this.stackLayout.topControl = SensorRegistryView.this.label;
+							}
+							SensorRegistryView.this.parent.layout();
+						}
+					} catch (final Exception e) {
+						SensorRegistryView.LOG
+								.error("Exception during setting input for treeViewer in sourcesView",
+										e);
+					}
+				}
 
-            });
-        }
-    }
+			});
+		}
+	}
 
-    protected void setTreeViewer(final TreeViewer viewer) {
-        this.viewer = viewer;
-    }
+	protected void setTreeViewer(final TreeViewer viewer) {
+		this.viewer = viewer;
+	}
 
-    @Override
-    public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
-        this.refresh();
-    }
+	@Override
+	public void addedViewDefinition(final IDataDictionary sender,
+			final String name, final ILogicalOperator op) {
+		this.refresh();
+	}
 
-    @Override
-    public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op) {
-        this.refresh();
-    }
+	@Override
+	public void removedViewDefinition(final IDataDictionary sender,
+			final String name, final ILogicalOperator op) {
+		this.refresh();
+	}
 
-    @Override
-    public void usersChangedEvent() {
-        this.refresh();
-    }
+	@Override
+	public void usersChangedEvent() {
+		this.refresh();
+	}
 
-    @Override
-    public void roleChangedEvent() {
-        this.refresh();
-    }
+	@Override
+	public void roleChangedEvent() {
+		this.refresh();
+	}
 
-    @Override
-    public void dataDictionaryChanged(final IDataDictionary sender) {
-        this.refresh();
-    }
+	@Override
+	public void dataDictionaryChanged(final IDataDictionary sender) {
+		this.refresh();
+	}
 
-    public boolean isRefreshEnabled() {
-        return this.refreshEnabled;
-    }
+	public boolean isRefreshEnabled() {
+		return this.refreshEnabled;
+	}
 
-    public void setRefreshEnabled(final boolean refreshEnabled) {
-        this.refreshEnabled = refreshEnabled;
-    }
+	public void setRefreshEnabled(final boolean refreshEnabled) {
+		this.refreshEnabled = refreshEnabled;
+	}
 
-    @Override
-    public void sessionEventOccured(final ISessionEvent event) {
-        this.refresh();
-    }
+	@Override
+	public void sessionEventOccured(final ISessionEvent event) {
+		this.refresh();
+	}
 
 }
