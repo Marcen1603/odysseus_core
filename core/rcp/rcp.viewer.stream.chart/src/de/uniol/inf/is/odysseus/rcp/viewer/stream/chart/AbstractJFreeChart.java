@@ -40,10 +40,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.jfree.chart.JFreeChart;
 import org.jfree.experimental.chart.swt.ChartComposite;
 import org.slf4j.Logger;
@@ -90,12 +87,11 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 	protected final static Color DEFAULT_BACKGROUND = Color.WHITE;
 	protected final static Color DEFAULT_BACKGROUND_GRID = Color.GRAY;
 	protected final static String VIEW_ID_PREFIX = "de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.charts";
-	private static final String QUERY_FILE_NAME = "QueryFileName";
+
 
 	private JFreeChart chart;
 	private ChangeSelectedAttributesAction<T> changeAttributesAction;
-	private ChangeSettingsAction changeSettingsAction;
-	private String queryFileName = null;
+	private ChangeSettingsAction changeSettingsAction;	
 	private final Map<Integer, List<String>> loadedChoosenAttributes = Maps.newHashMap();
 	
 	private List<IDashboardPartListener> listener = new ArrayList<>();
@@ -142,23 +138,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		createActions(parent.getShell());
 	}
 
-
-	@Override
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		if (memento != null) {
-			this.queryFileName = memento.getString(QUERY_FILE_NAME);
-			if (this.queryFileName != null && !this.queryFileName.isEmpty()) {
-				List<ISource<?>> sources = ScriptExecutor.loadAndExecuteQueryScript(this.queryFileName);
-				this.initWithOperator(sources.get(0));
-			}
-		}
-	}
-
-	@Override
-	public void saveState(IMemento memento) {
-		memento.putString(QUERY_FILE_NAME, queryFileName);
-	}
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
@@ -284,9 +263,6 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends Ab
 		return findMethod(otherMethod.name(), Type.SET);
 	}
 
-	public void setFileName(String queryFile) {
-		this.queryFileName = queryFile;
-	}
 
 	@Override
 	public void createPartControl(Composite parent, ToolBar toolbar) {

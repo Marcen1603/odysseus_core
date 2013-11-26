@@ -32,8 +32,6 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.ChooseOperatorWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
