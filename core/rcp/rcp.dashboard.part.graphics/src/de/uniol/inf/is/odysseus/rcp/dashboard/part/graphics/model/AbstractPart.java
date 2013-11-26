@@ -14,8 +14,8 @@ import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 

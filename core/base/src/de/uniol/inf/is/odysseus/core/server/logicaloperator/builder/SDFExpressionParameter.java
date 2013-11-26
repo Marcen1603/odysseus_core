@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
 
 public class SDFExpressionParameter extends
 		AbstractParameter<NamedExpressionItem> {

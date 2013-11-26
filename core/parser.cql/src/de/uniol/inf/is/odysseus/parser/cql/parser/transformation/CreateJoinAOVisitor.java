@@ -33,14 +33,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO.Type;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAllPredicate;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAnyPredicate;
@@ -313,7 +314,9 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		for (SDFAttribute attr : subquery.getOutputSchema()) {
 			tmpResolver.addAttribute((SDFAttribute) attr);
 		}
-		RelationalPredicate predicate = new RelationalPredicate(new SDFExpression("", expression, tmpResolver, MEP.getInstance()));
+		SDFExpression expr = new SDFExpression("", expression, tmpResolver, MEP.getInstance());
+		expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+		RelationalPredicate predicate = new RelationalPredicate(expr);
 		existsAO.setPredicate(predicate);
 		return existsAO;
 	}

@@ -4,8 +4,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator;
 
 /**
  * 
@@ -68,7 +68,7 @@ public class MatrixPowerOperator extends AbstractBinaryOperator<double[][]> {
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return null;
 	}
 

@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterEqualsOperator;
@@ -101,7 +101,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider#getFunctions()
+	 * @see de.uniol.inf.is.odysseus.mep.IFunctionProvider#getFunctions()
 	 */
 	@Override
 	public final List<IFunction<?>> getFunctions() {

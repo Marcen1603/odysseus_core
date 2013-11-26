@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.kinect.functions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.wrapper.kinect.datatype.KinectColorMap;
 import de.uniol.inf.is.odysseus.wrapper.kinect.sdf.schema.SDFKinectDatatype;
 

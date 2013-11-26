@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDifferenceFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDivisionOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalIntersectionFunction;
@@ -32,6 +31,7 @@ import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalMultiplicatio
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPlusOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPowerOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalUnionFunction;
+import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
  * 

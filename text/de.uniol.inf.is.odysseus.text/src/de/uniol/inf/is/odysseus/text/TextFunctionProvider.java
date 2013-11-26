@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.text.function.ColognePhoneticFunction;
 import de.uniol.inf.is.odysseus.text.function.LevensteinFunction;
 import de.uniol.inf.is.odysseus.text.function.MetaphoneFunction;

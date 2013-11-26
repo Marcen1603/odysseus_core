@@ -17,7 +17,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.SmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -40,7 +40,7 @@ public class ProbabilisticSmallerEqualsOperator extends SmallerEqualsOperator {
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.functions.compare.SmallerEqualsOperator#getAcceptedTypes(int)
+	 * @see de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator#getAcceptedTypes(int)
 	 */
 	@Override
 	public final SDFDatatype[] getAcceptedTypes(final int argPos) {

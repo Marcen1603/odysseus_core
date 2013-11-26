@@ -22,7 +22,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.logicaloperator.builder;bundle-version=
  de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.intervalapproach
+ de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Service-Component: OSGI-INF/DataDictionaryService.xml,
  OSGI-INF/OperatorBuilderFactory.xml
 Export-Package: de.uniol.inf.is.odysseus.mining,

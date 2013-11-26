@@ -28,16 +28,16 @@ import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.EqualsOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.GreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.GreaterThanOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.SmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
+import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterEqualsOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**

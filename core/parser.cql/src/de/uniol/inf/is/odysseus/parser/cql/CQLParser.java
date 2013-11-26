@@ -79,7 +79,7 @@ import de.uniol.inf.is.odysseus.core.server.sla.factories.ScopeFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.factories.UnitFactory;
 import de.uniol.inf.is.odysseus.core.server.sla.unit.TimeUnit;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistException;

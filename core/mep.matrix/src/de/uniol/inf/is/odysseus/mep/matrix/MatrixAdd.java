@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import org.apache.commons.math.linear.RealMatrixImpl;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @deprecated Use + operator

@@ -16,7 +16,8 @@
 package de.uniol.inf.is.odysseus.text.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+
 import org.apache.commons.codec.language.ColognePhonetic;
 
 /**

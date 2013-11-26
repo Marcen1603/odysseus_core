@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.debs2013.mep.functions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 
 public class DebsIntensityCalc_Numeric extends AbstractFunction<Integer> {

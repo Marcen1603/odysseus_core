@@ -17,7 +17,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.compare.GreaterThanOperator;
+import de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
@@ -40,7 +40,7 @@ public class ProbabilisticGreaterThanOperator extends GreaterThanOperator {
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.functions.compare.GreaterThanOperator#getAcceptedTypes(int)
+	 * @see de.uniol.inf.is.odysseus.mep.functions.compare.GreaterThanOperator#getAcceptedTypes(int)
 	 */
 	@Override
 	public final SDFDatatype[] getAcceptedTypes(final int argPos) {

@@ -17,12 +17,12 @@
 package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractBinaryOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.math.MinusOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.functions.math.PlusOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
 import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
+import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 
 
 /**
@@ -74,7 +74,7 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
 	}
 
 	@Override
-	public de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
 

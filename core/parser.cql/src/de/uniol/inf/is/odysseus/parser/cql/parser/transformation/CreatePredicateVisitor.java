@@ -18,10 +18,11 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAndPredicate;
@@ -52,6 +53,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) throws QueryParseException {
 		SDFExpression expression = new SDFExpression("", node.getPredicate(), (IAttributeResolver) data, MEP.getInstance());
+		expression.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
 		RelationalPredicate rp = new RelationalPredicate(expression);
 		return rp;
 	}

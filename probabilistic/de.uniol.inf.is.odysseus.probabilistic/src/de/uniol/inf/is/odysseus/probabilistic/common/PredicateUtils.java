@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;

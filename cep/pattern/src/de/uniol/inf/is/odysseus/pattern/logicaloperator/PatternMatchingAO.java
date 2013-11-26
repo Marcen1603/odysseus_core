@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.SDFExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.pattern.util.PatternOutput;
 import de.uniol.inf.is.odysseus.pattern.util.PatternType;
 

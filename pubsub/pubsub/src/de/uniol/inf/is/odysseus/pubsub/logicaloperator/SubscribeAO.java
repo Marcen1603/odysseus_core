@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBu
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 
 /**
  * Logical Subscribe Operator. The Operator provides the subscribe functionality in publish/Subscribe systems.

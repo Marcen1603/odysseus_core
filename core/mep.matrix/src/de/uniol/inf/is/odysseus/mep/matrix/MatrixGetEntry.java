@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.mep.matrix;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 
 /*

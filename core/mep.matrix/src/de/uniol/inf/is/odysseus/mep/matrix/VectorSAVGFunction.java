@@ -20,7 +20,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.linear.RealVectorPreservingVisitor;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

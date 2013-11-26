@@ -28,10 +28,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionItem;
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
 import de.uniol.inf.is.odysseus.parser.cql.VisitorFactory;
 import de.uniol.inf.is.odysseus.parser.cql.parser.ASTAggregateExpression;
@@ -146,7 +147,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		for (SDFAttribute attribute : _top.getOutputSchema().getAttributes()) {
 			aliasAttributes.add(attribute);
 			outputAttributes.add(attribute);
-			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
+			SDFExpression expr = new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance());
+			expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+			expressions.add(expr);
 		}
 		return null;
 	}
@@ -176,6 +179,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				constant = new Constant<Long>(Long.parseLong(node.getValue()), datatype);
 			}
 			SDFExpression exp = new SDFExpression(constant, this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
+			exp.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
 			expressions.add(exp);
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);
 			outputAttributes.add(attribute);
@@ -197,6 +201,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			} else {
 				mathematicalExpressionNeeded = true;
 				SDFExpression expr = new SDFExpression(null, expression.toString(), this.attributeResolver, MEP.getInstance());
+				expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
 				expressions.add(expr);
 				SDFDatatype type = expr.getMEPExpression().getReturnType();
 				SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type);
@@ -220,6 +225,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		} else {
 			mathematicalExpressionNeeded = true;
 			SDFExpression expr = new SDFExpression(null, expression.toString(), this.attributeResolver, MEP.getInstance());
+			expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
 			expressions.add(expr);
 			SDFDatatype type = expr.getMEPExpression().getReturnType();
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), type);
@@ -250,7 +256,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			for (SDFAttribute attribute : liste) {
 				outputAttributes.add(attribute);
 				aliasAttributes.add(attribute);
-				expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
+				SDFExpression expr = new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance());
+				expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+				expressions.add(expr);
 			}
 		} else {
 			SDFAttribute attribute = this.attributeResolver.getAttribute(node.getName());
@@ -264,7 +272,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 				// otherwise we use the normal attribute
 				aliasAttributes.add(attribute);
 			}
-			expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
+			SDFExpression expr = new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance());
+			expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+			expressions.add(expr);
 		}
 		return null;
 	}
@@ -280,6 +290,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 			mathematicalExpressionNeeded = true;
 			SDFDatatype datatype = SDFDatatype.STRING;
 			SDFExpression exp = new SDFExpression(new Constant<String>(node.getValue(), datatype), this.attributeResolver, MEP.getInstance(), aliasExpression.getAlias());
+			exp.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
 			expressions.add(exp);
 			SDFAttribute attribute = new SDFAttribute(null, aliasExpression.getAlias(), datatype);
 			outputAttributes.add(attribute);
@@ -296,7 +307,9 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		String aggregateName = node.jjtGetChild(0).toString();
 		SDFAttribute attribute = this.attributeResolver.getAggregateAttribute(name, aggregateName);
 		outputAttributes.add(attribute);
-		expressions.add(new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance()));
+		SDFExpression exp = new SDFExpression(null, attribute.getURI(), this.attributeResolver, MEP.getInstance());
+		exp.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+		expressions.add(exp);
 		// if it has an alias, we use a clone with new alias name
 		if (aliasExpression.hasAlias()) {
 			SDFAttribute aliasAttribute = attribute.clone(null, aliasExpression.getAlias());

@@ -16,9 +16,9 @@
 package de.uniol.inf.is.odysseus.datatype.interval.function;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
 import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
  * 

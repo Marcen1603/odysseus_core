@@ -14,4 +14,5 @@ Export-Package: de.uniol.inf.is.odysseus.parser.pql.relational
 Bundle-Activator: de.uniol.inf.is.odysseus.parser.pql.relational.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"

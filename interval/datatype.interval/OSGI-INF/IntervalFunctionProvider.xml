@@ -17,6 +17,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.datatype.interval.IntervalFunctionProvider">
    <implementation class="de.uniol.inf.is.odysseus.datatype.interval.IntervalFunctionProvider"/>
    <service>
-      <provide interface="de.uniol.inf.is.odysseus.core.server.mep.IFunctionProvider"/>
+      <provide interface="de.uniol.inf.is.odysseus.mep.IFunctionProvider"/>
    </service>
 </scr:component>

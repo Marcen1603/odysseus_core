@@ -41,8 +41,8 @@ import org.eclipse.ui.part.ViewPart;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.server.mep.FunctionSignature;
-import de.uniol.inf.is.odysseus.core.server.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.FunctionSignature;
+import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.server.l10n.OdysseusNLS;
 
 public class MEPFunctionsView extends ViewPart {

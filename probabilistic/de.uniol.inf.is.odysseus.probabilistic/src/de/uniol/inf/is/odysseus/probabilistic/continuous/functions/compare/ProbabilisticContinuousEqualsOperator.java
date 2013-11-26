@@ -21,7 +21,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
 import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
@@ -42,7 +42,7 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 
     /*
      * 
-     * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
+     * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
      */
     @Override
     public final int getPrecedence() {
@@ -97,17 +97,17 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
     /*
      * 
      * @see
-     * de.uniol.inf.is.odysseus.core.server.mep.IOperator#getAssociativity()
+     * de.uniol.inf.is.odysseus.mep.IOperator#getAssociativity()
      */
     @Override
-    public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+    public final de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
         return ASSOCIATIVITY.LEFT_TO_RIGHT;
     }
 
     /*
      * 
      * @see
-     * de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isCommutative()
+     * de.uniol.inf.is.odysseus.mep.IBinaryOperator#isCommutative()
      */
     @Override
     public final boolean isCommutative() {
@@ -117,7 +117,7 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
     /*
      * 
      * @see
-     * de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isAssociative()
+     * de.uniol.inf.is.odysseus.mep.IBinaryOperator#isAssociative()
      */
     @Override
     public final boolean isAssociative() {
@@ -126,9 +126,9 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 
     /*
      * 
-     * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#
+     * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#
      * isLeftDistributiveWith
-     * (de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+     * (de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
     public final boolean isLeftDistributiveWith(final IOperator<NormalDistributionMixture> operator) {
@@ -137,9 +137,9 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
 
     /*
      * 
-     * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#
+     * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#
      * isRightDistributiveWith
-     * (de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+     * (de.uniol.inf.is.odysseus.mep.IOperator)
      */
     @Override
     public final boolean isRightDistributiveWith(final IOperator<NormalDistributionMixture> operator) {

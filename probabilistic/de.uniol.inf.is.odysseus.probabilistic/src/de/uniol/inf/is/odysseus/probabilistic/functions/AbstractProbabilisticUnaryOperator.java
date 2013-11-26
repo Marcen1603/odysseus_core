@@ -16,7 +16,7 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator;
 
 /**
  * 
@@ -33,7 +33,7 @@ public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProb
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isBinary()
+	 * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()
 	 */
 	@Override
 	public final boolean isBinary() {
@@ -42,7 +42,7 @@ public abstract class AbstractProbabilisticUnaryOperator<T> extends AbstractProb
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isUnary()
+	 * @see de.uniol.inf.is.odysseus.mep.IOperator#isUnary()
 	 */
 	@Override
 	public final boolean isUnary() {

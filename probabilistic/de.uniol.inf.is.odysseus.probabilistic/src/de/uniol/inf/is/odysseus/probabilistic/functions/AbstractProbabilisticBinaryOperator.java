@@ -16,8 +16,8 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
-import de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator;
-import de.uniol.inf.is.odysseus.core.server.mep.IOperator;
+import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
+import de.uniol.inf.is.odysseus.mep.IOperator;
 
 /**
  * 
@@ -43,7 +43,7 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isBinary()
+	 * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()
 	 */
 	@Override
 	public final boolean isBinary() {
@@ -52,7 +52,7 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#isUnary()
+	 * @see de.uniol.inf.is.odysseus.mep.IOperator#isUnary()
 	 */
 	@Override
 	public final boolean isUnary() {
@@ -61,7 +61,7 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
+	 * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#isDistributiveWith(de.uniol.inf.is.odysseus.mep.IOperator)
 	 */
 	@Override
 	public final boolean isDistributiveWith(final IOperator<T> operator) {
@@ -70,7 +70,7 @@ public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractPro
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction#_internalToString(()
+	 * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#_internalToString(()
 	 */
 	@Override
 	protected String _internalToString() {

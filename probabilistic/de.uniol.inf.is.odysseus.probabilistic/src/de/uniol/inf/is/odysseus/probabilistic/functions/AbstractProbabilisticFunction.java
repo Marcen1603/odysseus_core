@@ -22,7 +22,7 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import de.uniol.inf.is.odysseus.core.server.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
 
 /**
