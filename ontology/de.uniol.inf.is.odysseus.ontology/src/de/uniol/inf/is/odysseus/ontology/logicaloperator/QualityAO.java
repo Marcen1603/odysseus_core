@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -69,6 +72,7 @@ public class QualityAO extends UnaryLogicalOp {
 	 */
 	public QualityAO(final QualityAO qualityAO) {
 		super(qualityAO);
+		Objects.requireNonNull(qualityAO);
 		this.attributes = new ArrayList<SDFAttribute>(qualityAO.attributes);
 		this.properties = new ArrayList<String>(qualityAO.properties);
 		if (qualityAO.expressions != null) {
@@ -78,6 +82,8 @@ public class QualityAO extends UnaryLogicalOp {
 
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = false, isList = true)
 	public void setAttributes(List<SDFAttribute> attributes) {
+		Objects.requireNonNull(attributes);
+		Preconditions.checkArgument(!attributes.isEmpty());
 		this.attributes = attributes;
 	}
 
@@ -91,6 +97,8 @@ public class QualityAO extends UnaryLogicalOp {
 
 	@Parameter(type = StringParameter.class, name = "PROPERTIES", optional = false, isList = true)
 	public void setProperties(List<String> properties) {
+		Objects.requireNonNull(properties);
+		Preconditions.checkArgument(!properties.isEmpty());
 		this.properties = properties;
 	}
 
@@ -118,6 +126,16 @@ public class QualityAO extends UnaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new QualityAO(this);
+	}
+	
+	@Override
+	public void initialize() {
+		super.initialize();
+		Objects.requireNonNull(attributes);
+		Objects.requireNonNull(properties);
+		Preconditions.checkArgument(!attributes.isEmpty());
+		Preconditions.checkArgument(!properties.isEmpty());
+		Preconditions.checkState(SensorOntologyServiceImpl.getOntology()!=null);
 	}
 
 	private void calcOutputSchema() {

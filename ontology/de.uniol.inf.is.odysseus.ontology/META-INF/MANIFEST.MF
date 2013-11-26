@@ -10,7 +10,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Bundle-ActivationPolicy: lazy
 Embed-Dependency: *
 Embed-Transitive: true
-Import-Package: de.uniol.inf.is.odysseus.core.planmanagement.executor,
+Import-Package: com.google.common.base,
+ de.uniol.inf.is.odysseus.core.planmanagement.executor,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.probabilistic.base,
  de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator,
