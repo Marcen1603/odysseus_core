@@ -6,24 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.metadata,
- de.uniol.inf.is.odysseus.core.monitoring,
- de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.core.planmanagement,
- de.uniol.inf.is.odysseus.core.planmanagement.executor,
- de.uniol.inf.is.odysseus.core.planmanagement.query,
- de.uniol.inf.is.odysseus.core.predicate,
- de.uniol.inf.is.odysseus.core.sdf,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.streamconnection,
- de.uniol.inf.is.odysseus.rcp,
+Import-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.util,
  org.eclipse.core.commands,
- org.eclipse.core.expressions,
  org.eclipse.core.runtime;version="3.4.0",
  org.eclipse.jface.action,
- org.eclipse.jface.layout,
  org.eclipse.jface.resource,
  org.eclipse.jface.viewers,
  org.eclipse.swt,
@@ -50,4 +37,5 @@ Export-Package: de.uniol.inf.is.odysseus.rcp.viewer,
  de.uniol.inf.is.odysseus.rcp.viewer.view.impl
 Service-Component: OSGI-INF/Executor.xml
 Require-Bundle: com.google.guava;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core,
+ org.eclipse.core.expressions;bundle-version="3.4.300"

@@ -140,7 +140,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 		return lines;
 	}
 
-	private static void execute(final IFile scriptFile) throws CoreException, IOException {
+	private static void execute(final IFile scriptFile) {
 		Job job = new Job("Parsing and Executing Query") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
