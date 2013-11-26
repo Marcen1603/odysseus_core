@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.ontology.ontology;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -88,8 +89,8 @@ public class SensorOntologyServiceImpl implements SensorOntologyService,
 	 */
 	@Override
 	public List<SensingDevice> getAllSensingDevices(String featureOfInterest) {
-		// TODO Auto-generated method stub
-		return null;
+		Objects.requireNonNull(featureOfInterest);
+	throw new IllegalArgumentException("Not implemented");
 	}
 
 	/**
@@ -105,6 +106,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService,
 	 */
 	@Override
 	public void createSensingDevice(final SensingDevice sensingDevice) {
+		Objects.requireNonNull(sensingDevice);
 		SensorOntologyServiceImpl.ontology.createSensingDevice(sensingDevice);
 	}
 
@@ -113,6 +115,7 @@ public class SensorOntologyServiceImpl implements SensorOntologyService,
 	 */
 	@Override
 	public void createFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+		Objects.requireNonNull(featureOfInterest);
 		SensorOntologyServiceImpl.ontology
 				.createFeatureOfInterest(featureOfInterest);
 
@@ -131,15 +134,17 @@ public class SensorOntologyServiceImpl implements SensorOntologyService,
 	 */
 	@Override
 	public List<Property> getAllProperties(String featureOfInterest) {
-		// TODO Auto-generated method stub
-		return null;
+		Objects.requireNonNull(featureOfInterest);
+		throw new IllegalArgumentException("Not implemented");
 	}
 
 	public List<SensingDevice> getSensingDevices(SDFAttribute attribute) {
+		Objects.requireNonNull(attribute);
 		return SensorOntologyServiceImpl.ontology.getSensingDevices(attribute);
 	}
 
 	public List<SDFAttribute> getAttributes(Property property) {
+		Objects.requireNonNull(property);
 		return SensorOntologyServiceImpl.ontology.getAttributes(property);
 	}
 

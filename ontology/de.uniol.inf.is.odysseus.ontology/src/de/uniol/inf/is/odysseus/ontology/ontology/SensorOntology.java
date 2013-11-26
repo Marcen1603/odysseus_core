@@ -92,7 +92,6 @@ public class SensorOntology {
 	public SensorOntology() {
 		try {
 			this.sourceManager = new SourceManagerImpl(this.getModel());
-
 			this.predicateManager = new PredicateManagerImpl(this.getModel());
 			this.queryManager = new QueryManagerImpl(this.getModel());
 		} catch (IOException e) {
@@ -128,9 +127,6 @@ public class SensorOntology {
 	public List<SensingDevice> getAllSensingDevices() {
 		List<SensingDevice> sensingDevices = this.queryManager
 				.getAllSensingDevices();
-		for (SensingDevice sensingDevice : sensingDevices) {
-			System.out.println(sensingDevice);
-		}
 		return sensingDevices;
 	}
 
@@ -145,9 +141,6 @@ public class SensorOntology {
 	public List<FeatureOfInterest> getAllFeaturesOfInterest() {
 		List<FeatureOfInterest> featuresOfInterest = this.queryManager
 				.getAllFeaturesOfInterest();
-		for (FeatureOfInterest featureOfInterest : featuresOfInterest) {
-			System.out.println(featureOfInterest);
-		}
 		return featuresOfInterest;
 	}
 
@@ -156,10 +149,6 @@ public class SensorOntology {
 	 */
 	public List<Property> getAllProperties() {
 		List<Property> properties = this.queryManager.getAllProperties();
-		for (Property property : properties) {
-			System.out.println(property);
-		}
-		out();
 		return properties;
 	}
 
