@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.cache;
+package de.uniol.inf.is.odysseus.core.server.cache;
 
 import java.util.List;
 

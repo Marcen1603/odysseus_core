@@ -19,6 +19,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Export-Package: 
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core.server.ac,
+ de.uniol.inf.is.odysseus.core.server.cache,
  de.uniol.inf.is.odysseus.core.server.collection,
  de.uniol.inf.is.odysseus.core.server.costmodel,
  de.uniol.inf.is.odysseus.core.server.datadictionary,

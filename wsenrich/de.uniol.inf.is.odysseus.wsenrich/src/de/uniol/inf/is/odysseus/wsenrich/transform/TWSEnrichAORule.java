@@ -1,8 +1,15 @@
 package de.uniol.inf.is.odysseus.wsenrich.transform;
 
+import de.uniol.inf.is.odysseus.cache.Cache;
+import de.uniol.inf.is.odysseus.cache.CacheEntry;
+import de.uniol.inf.is.odysseus.cache.ICacheStore;
+import de.uniol.inf.is.odysseus.cache.MainMemoryStore;
+import de.uniol.inf.is.odysseus.cache.removalstrategy.IRemovalStrategy;
+import de.uniol.inf.is.odysseus.cache.removalstrategy.RemovalStrategyRegistry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.metadata.UseLeftInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -23,13 +30,6 @@ import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.MessageManipulatorRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.SoapMessageCreatorRegistry;
-import de.uniol.inf.is.odysseus.cache.CacheEntry;
-import de.uniol.inf.is.odysseus.cache.ICacheStore;
-import de.uniol.inf.is.odysseus.cache.ICache;
-import de.uniol.inf.is.odysseus.cache.MainMemoryStore;
-import de.uniol.inf.is.odysseus.cache.Cache;
-import de.uniol.inf.is.odysseus.cache.removalstrategy.IRemovalStrategy;
-import de.uniol.inf.is.odysseus.cache.removalstrategy.RemovalStrategyRegistry;
 
 public class TWSEnrichAORule extends AbstractTransformationRule<WSEnrichAO> {
 
