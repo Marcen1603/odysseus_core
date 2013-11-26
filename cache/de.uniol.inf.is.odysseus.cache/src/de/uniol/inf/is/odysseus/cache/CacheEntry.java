@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cache;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
@@ -22,7 +23,7 @@ public class CacheEntry {
 	/**
 	 * The ArrayList of IStreamObjects
 	 */
-	private ArrayList<IStreamObject<?>> tuples;
+	private List<IStreamObject<?>> tuples;
 	
 	/**
 	 * The reference as a key the cache entry can be found in the cache
@@ -47,9 +48,9 @@ public class CacheEntry {
 	/**
 	 * Constructor for the Cache entry
 	 * @param key the key to reference this cache entry in the cache
-	 * @param tuples the ArrayList of IStreamObjects which this entry holds
+	 * @param tuples the List of IStreamObjects which this entry holds
 	 */
-	public CacheEntry(Object key, ArrayList<IStreamObject<?>> tuples) {
+	public CacheEntry(Object key, List<IStreamObject<?>> tuples) {
 		this.key = key;
 		this.tuples = tuples;
 		this.insertionTime = this.lastAccessTime = System.currentTimeMillis();
@@ -60,7 +61,7 @@ public class CacheEntry {
 	 * This method refreshs the metadata when this entry was accessed through the cache
 	 * @return the ArrayList of IStreamObjects, no metadata 
 	 */
-	public ArrayList<IStreamObject<?>> accesData() {
+	public List<IStreamObject<?>> accesData() {
 		this.lastAccessTime = System.currentTimeMillis();
 		this.accessCount++;
 		return tuples;
@@ -87,7 +88,7 @@ public class CacheEntry {
 	/**
 	 * @return the data of this cache entry
 	 */
-	public ArrayList<IStreamObject<?>> getData() {
+	public List<IStreamObject<?>> getData() {
 		return this.tuples;
 	}
 	/**

@@ -296,17 +296,17 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 		return this;
 	}
 
-	/**
-	 * Sets the attribute values of this tuple to the specified values in
-	 * attributes.
-	 * 
-	 * @param attributes
-	 *            The new attribute values for this tuple.
-	 */
-	public void setAttributes(Object[] attributes) {
-		this.attributes = attributes;
-		this.valueChanged = true;
-	}
+//	/**
+//	 * Sets the attribute values of this tuple to the specified values in
+//	 * attributes.
+//	 * 
+//	 * @param attributes
+//	 *            The new attribute values for this tuple.
+//	 */
+//	public void setAttributes(Object[] attributes) {
+//		this.attributes = attributes;
+//		this.valueChanged = true;
+//	}
 
 	public Object[] getAttributes() {
 		return attributes;

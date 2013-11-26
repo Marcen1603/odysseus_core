@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.cache;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
@@ -12,7 +12,7 @@ public interface ICache {
 	 * @return the ArrayList of IStreamObjects. If no entry is 
 	 * found with the given key, the method returns null
 	 */
-	public ArrayList<IStreamObject<?>> get(Object key);
+	public List<IStreamObject<?>> get(Object key);
 	
 	/**
 	 * Puts A new ArrayList of IStreamObjects in the cache.
@@ -21,7 +21,7 @@ public interface ICache {
 	 * @param key the key
 	 * @param value the ArrayList of IStreamObjects
 	 */
-	public void put(Object key, ArrayList<IStreamObject<?>> value);
+	public void put(Object key, List<IStreamObject<?>> value);
 	
 	/**
 	 * Clears the cache

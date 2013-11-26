@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.cache;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.cache.removalstrategy.IRemovalStrategy;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
@@ -68,8 +69,8 @@ public class Cache implements ICache {
 	}
 	
 	@Override
-	public ArrayList<IStreamObject<?>> get(Object key) {
-		ArrayList<IStreamObject<?>> tuple;
+	public List<IStreamObject<?>> get(Object key) {
+		List<IStreamObject<?>> tuple;
 		CacheEntry cacheEntry = this.cacheStore.get(key);
 		if(cacheEntry == null || cacheEntry.isExpired(this.expirationTime)) {
 			this.cachemiss++;
@@ -83,7 +84,7 @@ public class Cache implements ICache {
 	}
 
 	@Override
-	public void put(Object key, ArrayList<IStreamObject<?>> value) {
+	public void put(Object key, List<IStreamObject<?>> value) {
 		CacheEntry cacheEntry = new CacheEntry(key, value);
 		while(this.cacheStore.size() >= this.maxSize && this.actualSize >= this.maxSize) {
 			this.cacheremove++;
