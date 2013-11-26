@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableCollection;
 
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 
 public final class P2PNetworkManager implements IP2PNetworkManager {
@@ -98,6 +100,8 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 			
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
 			started = true;
+			
+			fireStartEvent();
 	
 		} catch( Exception ex ) {
 			LOG.error("Could not initialize/connect p2p network", ex );
@@ -105,6 +109,17 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		}		
 	}
 	
+	private void fireStartEvent() {
+		ImmutableCollection<IP2PNetworkListener> listeners = P2PNetworkListenerRegistry.getInstance().getAllListeners();
+		for( IP2PNetworkListener listener : listeners ) {
+			try {
+				listener.networkStarted(this);
+			} catch( Throwable t ) {
+				LOG.error("Exception in p2p network listener", t);
+			}
+		}
+	}
+
 	private static void configureNetwork(NetworkConfigurator configurator, PeerID peerID, String peerName) {
 		configurator.setTcpPort(PORT);
 		configurator.setTcpEnabled(true);
@@ -129,6 +144,19 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		}
 		
 		started = false;
+		
+		fireStopEvent();
+	}
+	
+	private void fireStopEvent() {
+		ImmutableCollection<IP2PNetworkListener> listeners = P2PNetworkListenerRegistry.getInstance().getAllListeners();
+		for( IP2PNetworkListener listener : listeners ) {
+			try {
+				listener.networkStopped(this);
+			} catch( Throwable t ) {
+				LOG.error("Exception in p2p network listener", t);
+			}
+		}
 	}
 	
 	@Override
