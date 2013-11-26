@@ -73,40 +73,43 @@ public class SensingDeviceContentLabelProvider extends
 		if (element instanceof SensingDevice) {
 			final SensingDevice sensingDevice = (SensingDevice) element;
 			final StringBuilder sb = new StringBuilder();
-			sb.append(sensingDevice.getName()).append(" [")
-					.append(sensingDevice.getUri().toString()).append("]");
+			sb.append(sensingDevice.getName()).append(" [ns:")
+					.append(sensingDevice.getUri().getFragment()).append("]");
 			return sb.toString();
 		} else if (element instanceof FeatureOfInterest) {
 			final FeatureOfInterest featureOfInterest = (FeatureOfInterest) element;
 			final StringBuilder sb = new StringBuilder();
-			sb.append(featureOfInterest.getName()).append(" [")
-					.append(featureOfInterest.getUri().toString()).append("]");
+			sb.append(featureOfInterest.getName()).append(" [ns:")
+					.append(featureOfInterest.getUri().getFragment())
+					.append("]");
 			return sb.toString();
 		} else if (element instanceof MeasurementCapability) {
 			final MeasurementCapability measurementCapability = (MeasurementCapability) element;
 			final StringBuilder sb = new StringBuilder();
-			sb.append(measurementCapability.getName()).append(" [")
-					.append(measurementCapability.getUri().toString())
+			sb.append(measurementCapability.getName()).append(" [ns:")
+					.append(measurementCapability.getUri().getFragment())
 					.append("]");
 			return sb.toString();
 		} else if (element instanceof Condition) {
 			final Condition condition = (Condition) element;
 			final StringBuilder sb = new StringBuilder();
-			sb.append(condition.getName()).append(" [")
-					.append(condition.toString()).append("]");
+			sb.append(
+					String.format(condition.toString(), condition
+							.getOnProperty().getName())).append(" [ns:")
+					.append(condition.getOnProperty().getUri().getFragment())
+					.append("]");
 			return sb.toString();
 		} else if (element instanceof MeasurementProperty) {
 			final MeasurementProperty measurementProperty = (MeasurementProperty) element;
 			final StringBuilder sb = new StringBuilder();
 			sb.append(measurementProperty.getResource().getLocalName())
-					.append(" [").append(measurementProperty.getExpression())
-					.append("]");
+					.append(": ").append(measurementProperty.getExpression());
 			return sb.toString();
 		} else if (element instanceof Property) {
 			final Property property = (Property) element;
 			final StringBuilder sb = new StringBuilder();
-			sb.append(property.getName()).append(" [")
-					.append(property.toString()).append("]");
+			sb.append(property.getName()).append(" [ns:")
+					.append(property.getUri().getFragment()).append("]");
 			return sb.toString();
 		}
 		return super.getText(element);

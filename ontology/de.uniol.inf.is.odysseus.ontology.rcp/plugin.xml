@@ -48,13 +48,13 @@
          </separator>
          <command
                commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateSensingDeviceCommand"
-               icon="icons/ontology.png"
+               icon="icons/sensingDevice.png"
                label="Create sensing device"
                style="push">
          </command>
          <command
                commandId="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.commands.CreateFeatureOfInterestCommand"
-               icon="icons/ontology.png"
+               icon="icons/featureOfInterest.png"
                label="Create feature of interest"
                style="push">
          </command>
@@ -66,7 +66,7 @@
             category="de.uniol.inf.is.odysseus.rcp.wizard.category"
             class="de.uniol.inf.is.odysseus.ontology.rcp.wizards.SensingDeviceWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
-            icon="icons/ontology.png"
+            icon="icons/sensingDevice.png"
             id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.SensingDeviceWizard"
             name="Sensing Device"
             project="true">
@@ -75,7 +75,7 @@
             category="de.uniol.inf.is.odysseus.rcp.wizard.category"
             class="de.uniol.inf.is.odysseus.ontology.rcp.wizards.FeatureOfInterestWizard"
             finalPerspective="de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective"
-            icon="icons/ontology.png"
+            icon="icons/featureOfInterest.png"
             id="de.uniol.inf.is.odysseus.probabilistic.sensor.rcp.wizards.FeatureOfInterestWizard"
             name="Feature of Interest"
             project="true">
