@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 
 public class RelationalDistinctPO<R extends Tuple<? extends ITimeInterval>>
 		extends AbstractPipe<R, R> {

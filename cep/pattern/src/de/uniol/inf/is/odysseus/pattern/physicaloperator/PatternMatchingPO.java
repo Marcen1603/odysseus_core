@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IInputStreamSyncAre
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IProcessInternal;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.pattern.util.AttributeMap;
 import de.uniol.inf.is.odysseus.pattern.util.EventBuffer;
 import de.uniol.inf.is.odysseus.pattern.util.EventObject;

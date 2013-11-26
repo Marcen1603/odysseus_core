@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 
 /**
  * A {@link ReplicationMergePO} can be used to realize a {@link ReplicationMergeAO}. <br />

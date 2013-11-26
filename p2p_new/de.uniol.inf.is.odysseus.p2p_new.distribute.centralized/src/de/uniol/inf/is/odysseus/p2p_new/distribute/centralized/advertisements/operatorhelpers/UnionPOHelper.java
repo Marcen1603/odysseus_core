@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.UnionPO;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 
 @SuppressWarnings("rawtypes")
 public class UnionPOHelper extends AbstractPhysicalOperatorHelper<UnionPO> {

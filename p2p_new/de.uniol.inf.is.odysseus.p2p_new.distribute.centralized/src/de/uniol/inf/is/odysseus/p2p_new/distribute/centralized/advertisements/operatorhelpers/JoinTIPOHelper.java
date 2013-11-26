@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSwe
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
 

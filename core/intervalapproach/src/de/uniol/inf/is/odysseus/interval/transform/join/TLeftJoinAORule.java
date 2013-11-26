@@ -15,10 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.interval.transform.join;
 
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
