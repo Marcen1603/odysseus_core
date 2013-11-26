@@ -290,5 +290,11 @@
             class="de.uniol.inf.is.odysseus.rcp.p2p_new.StartUp">
       </startup>
    </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.LoginContribution">
+      <loginContribution
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.login.P2PLoginContribution">
+      </loginContribution>
+   </extension>
 
 </plugin>

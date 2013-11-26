@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableCollection;
 
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
 
 public final class P2PNetworkManager implements IP2PNetworkManager {
 
@@ -82,7 +83,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 	}
 	
 	@Override
-	public void start() {
+	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
 		
 		final File conf = new File(System.getProperty("user.home") + System.getProperty("file.separator") + peerName);
@@ -104,8 +105,9 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 			fireStartEvent();
 	
 		} catch( Exception ex ) {
-			LOG.error("Could not initialize/connect p2p network", ex );
 			manager = null;
+			
+			throw new P2PNetworkException("Could not initialize/connect p2p network", ex);
 		}		
 	}
 	
@@ -132,6 +134,11 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 
 	private static PeerGroup createSubGroup(PeerGroup parentPeerGroup, PeerGroupID subGroupID, String subGroupName) throws Exception {
 		return parentPeerGroup.newGroup(subGroupID, parentPeerGroup.getAllPurposePeerGroupImplAdvertisement(), subGroupName, "");
+	}
+	
+	@Override
+	public boolean isStarted() {
+		return started;
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.activator;
 
-import net.jxta.document.AdvertisementFactory;
 import net.jxta.platform.NetworkManager;
 
 import org.apache.log4j.PropertyConfigurator;
@@ -13,8 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.p2p_new.dictionary.sources.SourceAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class P2PActivatorThread extends Thread {
@@ -56,9 +54,11 @@ public class P2PActivatorThread extends Thread {
 		P2PNetworkManager.getInstance().setLocalPeerName(ownPeerName);
 		P2PNetworkManager.getInstance().setLocalPeerGroupName(ownPeerGroupName);
 		
-		P2PNetworkManager.getInstance().start();
-		
-		registerAdvertisementTypes();
+		try {
+			P2PNetworkManager.getInstance().start();
+		} catch (P2PNetworkException ex) {
+			LOG.error("Could not start p2p network automatically", ex);
+		}
 	}
 	
 	private static void waitForP2PNetworkManager() {
@@ -113,9 +113,5 @@ public class P2PActivatorThread extends Thread {
 		jxtaLogger.setLevel(java.util.logging.Level.OFF);
 		
 		PropertyConfigurator.configure(bundle.getResource(LOG_PROPERTIES_FILENAME));
-	}
-
-	private static void registerAdvertisementTypes() {
-		AdvertisementFactory.registerAdvertisementInstance(SourceAdvertisement.getAdvertisementType(), new SourceAdvertisementInstantiator());
 	}
 }

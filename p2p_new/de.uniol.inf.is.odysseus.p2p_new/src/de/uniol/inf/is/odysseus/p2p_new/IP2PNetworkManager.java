@@ -11,8 +11,9 @@ public interface IP2PNetworkManager {
 	public void setLocalPeerGroupName( String name );
 	public String getLocalPeerGroupName();
 	
-	public void start();
+	public void start() throws P2PNetworkException;
 	public void stop();
+	public boolean isStarted();
 	
 	public PeerID getLocalPeerID();
 	public PeerGroup getLocalPeerGroup();

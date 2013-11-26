@@ -19,12 +19,32 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	// called by OSGi
 	public void activate() {
-		PeerGroup ownPeerGroup = P2PNetworkManager.getInstance().getLocalPeerGroup();
+		Thread thread = new Thread( new Runnable() {
+			@Override
+			public void run() {
+				waitForStartedP2PNetwork();
+				
+				PeerGroup ownPeerGroup = P2PNetworkManager.getInstance().getLocalPeerGroup();
+				
+				contentService = ownPeerGroup.getContentService();
+				discoveryService = ownPeerGroup.getDiscoveryService();
+				endpointService = ownPeerGroup.getEndpointService();
+				pipeService = ownPeerGroup.getPipeService();				
+			}
+
+			private void waitForStartedP2PNetwork() {
+				while( !P2PNetworkManager.getInstance().isStarted() ) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException ex) {
+					}
+				}
+			}
+		});
 		
-		contentService = ownPeerGroup.getContentService();
-		discoveryService = ownPeerGroup.getDiscoveryService();
-		endpointService = ownPeerGroup.getEndpointService();
-		pipeService = ownPeerGroup.getPipeService();
+		thread.setName("Jxta Services providing thread");
+		thread.setDaemon(true);
+		thread.start();
 		
 		instance = this;
 	}
@@ -64,6 +84,6 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	}
 
 	public static boolean isActivated() {
-		return instance != null;
+		return instance != null && P2PNetworkManager.getInstance().isStarted();
 	}
 }
