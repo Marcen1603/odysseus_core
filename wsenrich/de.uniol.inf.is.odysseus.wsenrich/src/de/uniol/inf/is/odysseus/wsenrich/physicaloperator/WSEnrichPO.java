@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractEnrichPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.wsenrich.util.HttpEntityToStringConverter;
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IMessageManipulator;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.IRequestBuilder;
 import de.uniol.inf.is.odysseus.wsenrich.util.interfaces.ISoapMessageCreator;
 
-public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
+public class WSEnrichPO<M extends IMetaAttribute> extends AbstractEnrichPO<Tuple<M>,M> {
 
 	private final String serviceMethod;
 	private final String method;
@@ -54,8 +55,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 			List<SDFAttribute> receivedData, String charset,
 			String parsingMethod, boolean outerJoin, boolean keyValueOutput,
 			boolean multiTupleOutput, int[] uniqueKey,
-			IDataMergeFunction<Tuple<T>, T> dataMergeFunction,
-			IMetadataMergeFunction<T> metaMergeFunction,
+			IDataMergeFunction<Tuple<M>, M> dataMergeFunction,
+			IMetadataMergeFunction<M> metaMergeFunction,
 			IConnectionForWebservices connection,
 			IRequestBuilder requestBuilder,
 			HttpEntityToStringConverter converter, IKeyFinder keyFinder,
@@ -84,7 +85,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 		this.soapMessageManipulator = soapMessageManipulator;
 	}
 
-	public WSEnrichPO(WSEnrichPO<T> wsEnrichPO) {
+	public WSEnrichPO(WSEnrichPO<M> wsEnrichPO) {
 		super(wsEnrichPO);
 		this.serviceMethod = wsEnrichPO.serviceMethod;
 		this.method = wsEnrichPO.method;
@@ -118,7 +119,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 	}
 	
 	@Override
-	protected ArrayList<IStreamObject<?>> process(Tuple<T> inputTuple) {
+	protected ArrayList<IStreamObject<?>> process(Tuple<M> inputTuple) {
 
 		List<Option> queryParameters = getQueryParameters(inputTuple, arguments);
 		String postData = "";
@@ -154,7 +155,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 				keyFinder.getTupleCount());
 
 		for (int i = 0; i < keyFinder.getTupleCount(); i++) {
-			Tuple<T> wsTuple = new Tuple<>(receivedData.size(), false);
+			Tuple<M> wsTuple = new Tuple<>(receivedData.size(), false);
 			for (int j = 0; j < receivedData.size(); j++) {
 				keyFinder.setSearch(receivedData.get(j).getAttributeName());
 				Object value = keyFinder.getValueOf(keyFinder.getSearch(),
@@ -180,8 +181,8 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 	}
 
 	@Override
-	public AbstractPipe<Tuple<T>, Tuple<T>> clone() {
-		return new WSEnrichPO<T>(this);
+	public AbstractPipe<Tuple<M>, Tuple<M>> clone() {
+		return new WSEnrichPO<M>(this);
 	}
 
 	/**
@@ -211,7 +212,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 	 *            the current tuple from the input stream
 	 * @return the attributes for the webservicequery
 	 */
-	private List<Option> getQueryParameters(Tuple<T> inputTuple,
+	private List<Option> getQueryParameters(Tuple<M> inputTuple,
 			List<Option> arguments) {
 		List<Option> queryParameters = arguments;
 		for (int i = 0; i < parameterPositions.length; i++) {
@@ -233,7 +234,7 @@ public class WSEnrichPO<T extends IMetaAttribute> extends AbstractEnrichPO<T> {
 			return false;
 		if (getClass() != ipo.getClass())
 			return false;
-		WSEnrichPO<T> other = (WSEnrichPO<T>) ipo;
+		WSEnrichPO<M> other = (WSEnrichPO<M>) ipo;
 
 		if (!super.isSemanticallyEqual(other)) {
 			return false;

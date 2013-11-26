@@ -103,5 +103,7 @@ public interface IStreamObject<M extends IMetaAttribute> extends
     @Override
     public int hashCode();
 
+	int restrictedHashCode(int[] attributeNumbers);
+
 
 }

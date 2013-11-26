@@ -139,4 +139,10 @@ abstract public class AbstractStreamObject<T extends IMetaAttribute> implements
 		return false;
 	}
 	
+	@Override
+	public int restrictedHashCode(int[] restriction) {
+		// Default implementation will not restrict input
+		return hashCode();
+	}
+	
 }

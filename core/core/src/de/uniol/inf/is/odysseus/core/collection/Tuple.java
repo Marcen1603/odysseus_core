@@ -592,7 +592,8 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	 * @param attributeNumbers the position of the attributes in the tuple
 	 * @return the generated hash code for the given attributes
 	 */
-	public final int hashCodeOfSpecifiedAttributes(int[] attributeNumbers) {
+	@Override
+	public final int restrictedHashCode(int[] attributeNumbers) {
 		if(attributeNumbers.length > this.attributes.length) {
 			throw new IllegalArgumentException("The number of attributes for the hash code " +
 												"should be less or equal to the number of all attributes of the Tupel");
