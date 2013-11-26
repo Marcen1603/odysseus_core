@@ -180,9 +180,9 @@ public class ProbabilisticContinuousMapPO<T extends IMetaAttribute> extends Abst
 					}
 					final SDFAttribute newAttribute = new SDFAttribute(newSource, newName, curAttribute);
 					final int index = schema.indexOf(newAttribute);
-					newArray[j++] = new VarHelper(index, pos);
+					newArray[j++] = new VarHelper(index, pos, newAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
 				} else {
-					newArray[j++] = new VarHelper(restrictedSchema.indexOf(curAttribute), 0);
+					newArray[j++] = new VarHelper(restrictedSchema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
 				}
 			}
 			if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {

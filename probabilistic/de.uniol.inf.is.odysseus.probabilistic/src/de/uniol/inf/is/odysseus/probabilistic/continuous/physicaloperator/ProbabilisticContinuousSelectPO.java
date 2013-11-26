@@ -127,7 +127,7 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
 			this.variables[i++] = newArray;
 			int j = 0;
 			for (final SDFAttribute curAttribute : neededAttributes) {
-				newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0);
+				newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
 			}
 			// if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
 			// distributions++;
