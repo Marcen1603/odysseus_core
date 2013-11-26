@@ -169,19 +169,20 @@ public class DistributionHelper {
 			for(final ILogicalOperator relativeSink : queryPart.getRelativeSinks()) {
 
 				// The mapping of all operators next to the sink to their query parts
-				final Map<QueryPart, ILogicalOperator> nextOperatorsToQueryPartMap =
+				final Map<QueryPart, List<ILogicalOperator>> nextOperatorsToQueryPartMap =
 						DistributionHelper.determineNextQueryParts(relativeSink, queryPart, peerIDToQueryPartMap.keySet());
 
 				if(!nextOperatorsToQueryPartMap.isEmpty()) {
 
-					for(final QueryPart destQueryPart : nextOperatorsToQueryPartMap.keySet()) {
+					for(QueryPart destQueryPart : nextOperatorsToQueryPartMap.keySet()) {
 
-						// Generate connection
-						DistributionHelper.generatePeerConnection(queryPart, destQueryPart, relativeSink,
-								nextOperatorsToQueryPartMap.get(destQueryPart), SENDER_BASE_NAME + globalConnectionCounter,
-								ACCESS_BASE_NAME + globalConnectionCounter);
-						globalConnectionCounter++;
-
+						for( ILogicalOperator targetOperator : nextOperatorsToQueryPartMap.get(destQueryPart)) {
+							// Generate connection
+							DistributionHelper.generatePeerConnection(queryPart, destQueryPart, relativeSink,
+									targetOperator, SENDER_BASE_NAME + globalConnectionCounter,
+									ACCESS_BASE_NAME + globalConnectionCounter);
+							globalConnectionCounter++;
+						}
 					}
 
 				}
@@ -446,7 +447,7 @@ public class DistributionHelper {
 	 * @param queryParts A list of all query parts.
 	 * @return A mapping of all operators subscribed to the relative sink to their query parts.
 	 */
-	private static Map<QueryPart, ILogicalOperator> determineNextQueryParts(ILogicalOperator relativeSink, QueryPart currentQueryPart,
+	private static Map<QueryPart, List<ILogicalOperator>> determineNextQueryParts(ILogicalOperator relativeSink, QueryPart currentQueryPart,
 			Collection<QueryPart> queryParts) {
 
 		Preconditions.checkNotNull(relativeSink);
@@ -454,7 +455,7 @@ public class DistributionHelper {
 		Preconditions.checkNotNull(queryParts);
 
 		// The return value
-		final Map<QueryPart, ILogicalOperator> operatorToQueryPartMap = Maps.newHashMap();
+		final Map<QueryPart, List<ILogicalOperator>> operatorToQueryPartMap = Maps.newHashMap();
 
 		if(relativeSink.getSubscriptions().size() > 0) {
 
@@ -470,8 +471,16 @@ public class DistributionHelper {
 					// The query part which has to be connected to the processed one
 					Optional<QueryPart> nextPart = DistributionHelper.findLogicalOperatorAsRelativeSource(target, queryParts);
 
-					if(nextPart.isPresent())
-						operatorToQueryPartMap.put(nextPart.get(), target);
+					if(nextPart.isPresent()) {
+						QueryPart nextQueryPart = nextPart.get();
+						if( operatorToQueryPartMap.containsKey(nextQueryPart)) {
+							operatorToQueryPartMap.get(nextQueryPart).add(target);
+						} else {
+							List<ILogicalOperator> targets = Lists.newArrayList();
+							targets.add(target);
+							operatorToQueryPartMap.put(nextQueryPart, targets);
+						}
+					}
 
 				}
 
