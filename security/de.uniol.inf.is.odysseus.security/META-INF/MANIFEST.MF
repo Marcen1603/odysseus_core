@@ -13,3 +13,5 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
 Bundle-ClassPath: lib/bcpkix-jdk15on-147.jar,
  lib/bcprov-jdk15on-147.jar,
  .
+Service-Component: OSGI-INF/securityprovider.xml
+Export-Package: de.uniol.inf.is.odysseus.security.provider
