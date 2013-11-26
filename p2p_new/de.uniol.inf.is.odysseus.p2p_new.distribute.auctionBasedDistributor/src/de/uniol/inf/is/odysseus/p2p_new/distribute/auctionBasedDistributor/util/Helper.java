@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.util;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

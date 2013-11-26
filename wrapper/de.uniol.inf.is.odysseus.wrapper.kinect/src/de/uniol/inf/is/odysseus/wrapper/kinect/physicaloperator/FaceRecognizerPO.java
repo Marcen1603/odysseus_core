@@ -2,15 +2,11 @@ package de.uniol.inf.is.odysseus.wrapper.kinect.physicaloperator;
 
 import static com.googlecode.javacv.cpp.opencv_contrib.*;
 import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-
-import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

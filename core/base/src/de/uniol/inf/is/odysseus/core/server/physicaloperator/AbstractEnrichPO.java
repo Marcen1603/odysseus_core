@@ -59,6 +59,7 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 	protected void process_next(T object, int port) {
 		List<IStreamObject<?>> result = null;
 		Object key = null;
+		
 		if (cache != null) {
 			if (uniqueKeys != null) {
 				key = object.restrictedHashCode(uniqueKeys);
@@ -89,8 +90,8 @@ abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMe
 
 	@Override
 	final protected void process_close() {
-		// Print the Caching Statistics
 		if (this.cache != null) {
+			// Print the Caching Statistics
 			if (logger.isDebugEnabled()) {
 				logger.debug("Caching Statistics: ");
 				logger.debug("Cache hits: " + cache.getCacheHits());
