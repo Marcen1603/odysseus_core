@@ -39,7 +39,7 @@ public class TuplePredicate {
 
 	Logger logger = LoggerFactory.getLogger(TuplePredicate.class);
 	
-	protected SDFExpression expression;
+	private SDFExpression expression;
 
 	// stores which attributes are needed at which position for
 	// variable bindings
@@ -211,5 +211,11 @@ public class TuplePredicate {
 			logger.warn("Replacement " + curAttr + " --> " + newAttr + " not added because they are equal!");
 		}
 	}
+
+
+	public SDFExpression getExpression() {
+		return expression;
+	}
+	
 
 }
