@@ -127,4 +127,9 @@ public class SPARQL implements IQueryParser{
 			throw new QueryParseException("error.");
 		}
 	}
+	
+	@Override
+	public List<String> getStaticKeyWords() {
+		return new ArrayList<>();
+	}
 }

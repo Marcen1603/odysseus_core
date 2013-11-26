@@ -392,4 +392,9 @@ public class ECAParser implements IQueryParser {
 	public ISession getUser() {
 		return user;
 	}
+
+	@Override
+	public List<String> getStaticKeyWords() {
+		return new ArrayList<>();
+	}
 }

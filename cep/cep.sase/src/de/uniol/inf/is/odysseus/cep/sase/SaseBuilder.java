@@ -146,5 +146,10 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 		}
 		return retList;
 	}
+	
+	@Override
+	public List<String> getStaticKeyWords() {
+		return new ArrayList<>();
+	}
 
 }
