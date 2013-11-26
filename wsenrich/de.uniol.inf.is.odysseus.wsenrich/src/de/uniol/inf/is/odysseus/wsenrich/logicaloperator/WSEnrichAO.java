@@ -1,22 +1,22 @@
 package de.uniol.inf.is.odysseus.wsenrich.logicaloperator;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableList;
-import de.uniol.inf.is.odysseus.cache.removalstrategy.RemovalStrategyRegistry;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractEnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.KeyFinderRegistry;
 import de.uniol.inf.is.odysseus.wsenrich.util.serviceregistry.RequestBuilderRegistry;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "WSENRICH", doc="Enrich tuples with data from external web services.", category={LogicalOperatorCategory.ENRICH})
-public class WSEnrichAO extends UnaryLogicalOp {
+public class WSEnrichAO extends AbstractEnrichAO {
 
 	/**
 	 * 
@@ -123,55 +123,14 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	private String getOrPost;
 
 	/**
-	 * If false, tuples with a null-response will be filtered (they will not
-	 * appear in the output True, tuples with a null-response will appear in the
-	 * output
-	 */
-	private boolean outerJoin = false;
-
-	/**
 	 * If true, received Data from a Webservice are returned as keyValuePairs
 	 */
 	private boolean keyValueOutput = false;
 
 	/**
-	 * Enables multi tuple output
-	 */
-	private boolean multiTupleOutput = false;
-
-	/**
 	 * the location of the wsdl-file
 	 */
 	private String wsdlLocation;
-
-	/*
-	 * Caching-Parameters
-	 */
-
-	/**
-	 * Parameter for caching functionality
-	 */
-	private boolean caching = false;
-
-	/**
-	 * Parameter for the removal strategy
-	 */
-	private String removalStrategy = "FIFO";
-
-	/**
-	 * The expiration time of cache entrys
-	 */
-	private long expirationTime = 1000 * 60 * 5; // 5 minutes
-
-	/**
-	 * The number of tuples a cache can maximal hold
-	 */
-	private int cacheSize = 20;
-	
-	/**
-	 * The position of the unique key in the input stream
-	 */
-	private List<Integer> uniqueKeys = null;
 
 	/**
 	 * Default-Constructor for the WSEnrichAO
@@ -197,15 +156,9 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		this.charset = wsEnrichAO.charset;
 		this.parsingMethod = wsEnrichAO.parsingMethod;
 		this.getOrPost = wsEnrichAO.setGetOrPost();
-		this.outerJoin = wsEnrichAO.outerJoin;
 		this.keyValueOutput = wsEnrichAO.keyValueOutput;
-		this.multiTupleOutput = wsEnrichAO.multiTupleOutput;
 		this.wsdlLocation = wsEnrichAO.wsdlLocation;
-		this.caching = wsEnrichAO.caching;
-		this.removalStrategy = wsEnrichAO.removalStrategy;
-		this.expirationTime = wsEnrichAO.expirationTime;
-		this.cacheSize = wsEnrichAO.cacheSize;
-		this.uniqueKeys = wsEnrichAO.uniqueKeys;
+
 	}
 
 	@Override
@@ -213,96 +166,6 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		return new WSEnrichAO(this);
 	}
 
-	@Override
-	public boolean isValid() {
-		boolean valid = true;
-
-		/*
-		 * Check for correct Handler names
-		 */
-
-		// Walk through the registered Handlers of IRequestBuilder and check if
-		// theres a matching handler
-		ImmutableList<String> requestHandlers = RequestBuilderRegistry
-				.getHandlerNames();
-		if (!requestHandlers.contains(method.toLowerCase())) {
-			addError(new IllegalParameterException(
-					"Method must be \"GET\" or \"POST_ARGUMENTS\" or \"POST_DOCUMENT\""));
-			valid = false;
-		}
-		// Walk through the registered Handlers of IRequestBuilder and check if
-		// theres a matching handler
-		ImmutableList<String> parserHandlers = KeyFinderRegistry
-				.getHandlerNames();
-		if (!parserHandlers.contains(parsingMethod.toLowerCase())) {
-			addError(new IllegalParameterException(
-					"You have to declare the Parsing Method to parse the webservice-response. This can be XMLEXPERIMENTAL  "
-							+ "or XPATH for XML-Documents or JSONEXPERIMENTAL or JSONPATH for JSON Documents."));
-			valid = false;
-		}
-		if (caching) {
-			ImmutableList<String> removalStrategies = RemovalStrategyRegistry
-					.getHandlerNames();
-			if (!removalStrategies.contains(removalStrategy.toLowerCase())) {
-				addError(new IllegalParameterException(
-						"Removal Strategy must be FIFO, LRU, LFU or Random!"));
-				valid = false;
-			}
-		}
-		// Can´t be checked with the List of Handlers of
-		// SoapMessageCeatorRegistry because "REST" is not registered there
-		if (!(serviceMethod.equals(SERVICE_METHOD_REST) || serviceMethod
-				.equals(SERVICE_METHOD_SOAP))) {
-			addError(new IllegalParameterException(
-					"The serviceMethod must be \"REST\" or \"SOAP\""));
-			valid = false;
-		}
-
-		/*
-		 * Check dependencies beetween the variables
-		 */
-
-		if ((operation != null && serviceMethod.equals(SERVICE_METHOD_REST))) {
-			addError(new IllegalParameterException(
-					"If you want to receive Data from a REST-Service you don´t have to define a operation!"));
-			valid = false;
-		}
-		if ((operation == null && serviceMethod.equals(SERVICE_METHOD_SOAP))) {
-			addError(new IllegalParameterException(
-					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
-			valid = false;
-		}
-		if ((wsdlLocation == null || wsdlLocation.equals(""))
-				&& serviceMethod.equals(SERVICE_METHOD_SOAP)) {
-			addError(new IllegalParameterException(
-					"If you want to receive Data from a SOAP-Service you have to define the location to the wsdl file of this webservice"));
-			valid = false;
-		}
-		if (multiTupleOutput && !parsingMethod.equals(PARSING_XML_XPATH)) {
-			addError(new IllegalParameterException(
-					"MultiTupleOutput currently only works with the XPATH-Parser. You have to declare the parameter 'paringMethod' with 'XPATH'"));
-			valid = false;
-		}
-		if (arguments == null) {
-			addError(new IllegalParameterException(
-					"Missing Parameter 'arguments'. You have to declare min 1 Datafield you wand to submit to the webservice."));
-			valid = false;
-		}
-		if (receivedData == null) {
-			addError(new IllegalParameterException(
-					"Missing Parameter 'datafields'. You have to declare min 1 Datafield of the webservice for the Outputschema."));
-			valid = false;
-		}
-		if (expirationTime < 0) {
-			addError(new IllegalParameterException("ExpirationTime must be > 0"));
-			valid = false;
-		}
-		if (cacheSize <= 0) {
-			addError(new IllegalParameterException("cacheSize must be > 0"));
-			valid = false;
-		}
-		return valid;
-	}
 
 	@Override
 	public void initialize() {
@@ -487,25 +350,7 @@ public class WSEnrichAO extends UnaryLogicalOp {
 		return this.getOrPost;
 	}
 
-	/**
-	 * Setter for filtering Null Tuples. If true, Tuples with a null-response
-	 * will not appear in the output stream, If false, Tuples with a
-	 * null-response will appear in the output stream with "null"
-	 * 
-	 * @param filterNullTuples
-	 */
-	@Parameter(type = BooleanParameter.class, optional = true, name = "outerJoin")
-	public void setOuterJoin(boolean outerJoin) {
-		this.outerJoin = outerJoin;
-	}
-
-	/**
-	 * @return Null Tuples will be filtered or not
-	 */
-	public boolean getOuterJoin() {
-		return this.outerJoin;
-	}
-
+	
 	/**
 	 * Setter to enable or disable key value output in the output stream
 	 * 
@@ -539,119 +384,82 @@ public class WSEnrichAO extends UnaryLogicalOp {
 	public void setWsdlLocaton(String wsdlLocation) {
 		this.wsdlLocation = wsdlLocation;
 	}
-
-	/**
-	 * @return mulit tuple output
-	 */
-	public boolean getMultiTupleOutput() {
-		return this.multiTupleOutput;
-	}
-
-	/**
-	 * Setter to enable or disable multi tuple output
-	 * 
-	 * @param multiTupleOutput
-	 */
-	@Parameter(type = BooleanParameter.class, optional = true, name = "multiTupleOutput")
-	public void setMultiTupleOutput(boolean multiTupleOutput) {
-		this.multiTupleOutput = multiTupleOutput;
-	}
-
-	/**
-	 * @return true if caching is enable, false then
-	 */
-	public boolean getCache() {
-		return this.caching;
-	}
-
-	/**
-	 * Setter to enable or disable caching
-	 * 
-	 * @param cache
-	 */
-	@Parameter(type = BooleanParameter.class, optional = true, name = "caching")
-	public void setCache(boolean cache) {
-		this.caching = cache;
-	}
-
-	/**
-	 * @return the removal strategy of the cache
-	 */
-	public String getRemovalStrategy() {
-		return this.removalStrategy;
-	}
-
-	/**
-	 * Setter for the removal strategy
-	 * 
-	 * @param removalStrategy
-	 */
-	@Parameter(type = StringParameter.class, optional = true, name = "removalStrategy")
-	public void setRemovalStrategy(String removalStrategy) {
-		this.removalStrategy = removalStrategy;
-	}
-
-	/**
-	 * @return the expiration time of cache entrys
-	 */
-	public long getExpirationTime() {
-		return this.expirationTime;
-	}
-
-	/**
-	 * Setter for the expiration time. One minute is 1000 * 60
-	 * 
-	 * @param expirationTime
-	 */
-	@Parameter(type = LongParameter.class, optional = true, name = "expirationTime")
-	public void setExpirationTime(long expirationTime) {
-		this.expirationTime = expirationTime;
-	}
-
-	/**
-	 * @return the max number of tuples the cache can hold
-	 */
-	public int getCacheSize() {
-		return this.cacheSize;
-	}
-
-	/**
-	 * Setter for the max number of tuples a cache can hold
-	 * @param cacheSize
-	 */
-	@Parameter(type = IntegerParameter.class, optional = true, name = "cacheSize")
-	public void setCacheSize(int cacheSize) {
-		this.cacheSize = cacheSize;
-	}
 	
-	/**
-	 * @return the unique key attributes of the input stream
-	 */
-	public List<Integer> getUniqueKeysAsList() {
-		return this.uniqueKeys;
-	}
-	
-	/**
-	 * @return the unique key attributes as a int-Array
-	 */
-	public int[] getUniqueKeysAsArray() {
-		if(this.uniqueKeys == null) {
-			return null;
-		} else {
-			int[] keys = new int[this.uniqueKeys.size()];
-			for(int i = 0; i < this.uniqueKeys.size(); i++) {
-				keys[i] = this.uniqueKeys.get(i);
-			}
-			return keys;
+	@Override
+	public boolean isValid() {
+		boolean valid = super.isValid();
+
+		/*
+		 * Check for correct Handler names
+		 */
+
+		// Walk through the registered Handlers of IRequestBuilder and check if
+		// theres a matching handler
+		ImmutableList<String> requestHandlers = RequestBuilderRegistry
+				.getHandlerNames();
+		if (!requestHandlers.contains(method.toLowerCase())) {
+			addError(new IllegalParameterException(
+					"Method must be \"GET\" or \"POST_ARGUMENTS\" or \"POST_DOCUMENT\""));
+			valid = false;
 		}
+		// Walk through the registered Handlers of IRequestBuilder and check if
+		// theres a matching handler
+		ImmutableList<String> parserHandlers = KeyFinderRegistry
+				.getHandlerNames();
+		if (!parserHandlers.contains(parsingMethod.toLowerCase())) {
+			addError(new IllegalParameterException(
+					"You have to declare the Parsing Method to parse the webservice-response. This can be XMLEXPERIMENTAL  "
+							+ "or XPATH for XML-Documents or JSONEXPERIMENTAL or JSONPATH for JSON Documents."));
+			valid = false;
+		}
+
+		// Can´t be checked with the List of Handlers of
+		// SoapMessageCeatorRegistry because "REST" is not registered there
+		if (!(serviceMethod.equals(SERVICE_METHOD_REST) || serviceMethod
+				.equals(SERVICE_METHOD_SOAP))) {
+			addError(new IllegalParameterException(
+					"The serviceMethod must be \"REST\" or \"SOAP\""));
+			valid = false;
+		}
+
+		/*
+		 * Check dependencies beetween the variables
+		 */
+
+		if ((operation != null && serviceMethod.equals(SERVICE_METHOD_REST))) {
+			addError(new IllegalParameterException(
+					"If you want to receive Data from a REST-Service you don´t have to define a operation!"));
+			valid = false;
+		}
+		if ((operation == null && serviceMethod.equals(SERVICE_METHOD_SOAP))) {
+			addError(new IllegalParameterException(
+					"If you want to receive Data from a SOAP-Servie you have to define a operation!"));
+			valid = false;
+		}
+		if ((wsdlLocation == null || wsdlLocation.equals(""))
+				&& serviceMethod.equals(SERVICE_METHOD_SOAP)) {
+			addError(new IllegalParameterException(
+					"If you want to receive Data from a SOAP-Service you have to define the location to the wsdl file of this webservice"));
+			valid = false;
+		}
+		if (getMultiTupleOutput() && !parsingMethod.equals(PARSING_XML_XPATH)) {
+			addError(new IllegalParameterException(
+					"MultiTupleOutput currently only works with the XPATH-Parser. You have to declare the parameter 'paringMethod' with 'XPATH'"));
+			valid = false;
+		}
+		if (arguments == null) {
+			addError(new IllegalParameterException(
+					"Missing Parameter 'arguments'. You have to declare min 1 Datafield you wand to submit to the webservice."));
+			valid = false;
+		}
+		if (receivedData == null) {
+			addError(new IllegalParameterException(
+					"Missing Parameter 'datafields'. You have to declare min 1 Datafield of the webservice for the Outputschema."));
+			valid = false;
+		}
+
+		return valid;
 	}
-	
-	/**
-	 * Setter for the unique keys of the input stream
-	 * @param keys the keys
-	 */
-	@Parameter(type = IntegerParameter.class, name = "uniqueKeys", isList = true, optional = true)
-	public void setUniqueKey(List<Integer> keys) {
-		this.uniqueKeys = keys;
-	}
+
+
 }

@@ -12,20 +12,17 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractEnrichAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.dbenrich.util.Conversions;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "DBENRICH", doc="Enrich stream objects with information from a database.", category={LogicalOperatorCategory.ENRICH, LogicalOperatorCategory.DATABASE})
-public class DBEnrichAO extends UnaryLogicalOp {
+public class DBEnrichAO extends AbstractEnrichAO {
 
 	private static final long serialVersionUID = 7829900765149450355L;
 
@@ -35,11 +32,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	private String connectionName;
 	private String query;
 	private List<String> attributes; // for pstmt parameters
-	private int cacheSize = 20;
-	private long expirationTime = 1000 * 60 * 5; // 5 Minuten
-	private String removalStrategy = "fifo";
-
-	private List<Integer> uniqueKeys;
 
 	public DBEnrichAO() {
 		super();
@@ -50,9 +42,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		connectionName = dBEnrichAO.connectionName;
 		query = dBEnrichAO.query;
 		attributes = dBEnrichAO.attributes;
-		cacheSize = dBEnrichAO.cacheSize;
-		expirationTime = dBEnrichAO.expirationTime;
-		removalStrategy = dBEnrichAO.removalStrategy;
 	}
 
 	@Override
@@ -64,12 +53,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	public boolean isValid() {
 		// System.out.println("isValid() call; " + getDebugString());
 		boolean valid = true;
-
-		if (expirationTime < 0) {
-			addError(new IllegalParameterException(
-					"ExpirationTime may not be negative."));
-			valid = false;
-		}
 
 		return valid;
 	}
@@ -121,11 +104,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		}
 	}
 
-	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return super.getOutputSchemaIntern(pos);
-	}
-
 	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
 		StringBuilder sb = new StringBuilder(140);
 		sb.append(identifier + ", Schema=[");
@@ -159,17 +137,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 		return sb.toString();
 	}
 
-	// private String getDebugString() {
-	// String variablesStr = "{";
-	// for (String var : attributes) {
-	// variablesStr += "'" + var + "' ";
-	// }
-	// variablesStr = variablesStr.trim() + "}";
-	// return
-	// String.format("connectionName:%s, query:%s, variables:%s, multiTupleOutput:%s, noCache:%s, cacheSize:%s, expirationTime:%s, removalStrategy:%s",
-	// connectionName, query, variablesStr, multiTupleOutput, noCache,
-	// cacheSize, expirationTime, removalStrategy);
-	// }
 
 	// Getters / Setters below
 	public String getConnectionName() {
@@ -197,66 +164,6 @@ public class DBEnrichAO extends UnaryLogicalOp {
 	@Parameter(type = StringParameter.class, name = "attributes", isList = true)
 	public void setAttributes(List<String> attributes) {
 		this.attributes = attributes;
-	}
-
-
-	public int getCacheSize() {
-		return cacheSize;
-	}
-
-	@Parameter(type = IntegerParameter.class, optional = false, name = "cacheSize")
-	public void setCacheSize(int cacheSize) {
-		this.cacheSize = cacheSize;
-	}
-
-	public String getRemovalStrategy() {
-		return removalStrategy;
-	}
-
-	@Parameter(type = StringParameter.class, optional = true, name = "removalStrategy")
-	public void setRemovalStrategy(String removalStrategy) {
-		this.removalStrategy = removalStrategy;
-	}
-
-	public long getExpirationTime() {
-		return expirationTime;
-	}
-
-	@Parameter(type = LongParameter.class, optional = true, name = "expirationTime")
-	public void setExpirationTime(long expirationTime) {
-		this.expirationTime = expirationTime;
-	}
-	
-	
-	/**
-	 * @return the unique key attributes of the input stream
-	 */
-	public List<Integer> getUniqueKeysAsList() {
-		return this.uniqueKeys;
-	}
-	
-	/**
-	 * @return the unique key attributes as a int-Array
-	 */
-	public int[] getUniqueKeysAsArray() {
-		if(this.uniqueKeys == null) {
-			return null;
-		} else {
-			int[] keys = new int[this.uniqueKeys.size()];
-			for(int i = 0; i < this.uniqueKeys.size(); i++) {
-				keys[i] = this.uniqueKeys.get(i);
-			}
-			return keys;
-		}
-	}
-	
-	/**
-	 * Setter for the unique keys of the input stream
-	 * @param keys the keys
-	 */
-	@Parameter(type = IntegerParameter.class, name = "uniqueKeys", isList = true, optional = true)
-	public void setUniqueKey(List<Integer> keys) {
-		this.uniqueKeys = keys;
 	}
 
 }
