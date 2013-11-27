@@ -124,9 +124,8 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 							IFile res = (IFile) element;
 							if (validFileResouce(res)) {
 								return true;
-							} else {
-								return false;
-							}
+							} 
+							return false;
 						}
 						return true;
 					}
@@ -138,17 +137,16 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 						dialog.getOkButton().setEnabled(false);
 						if (selection.length <= 0) {
 							return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You have to choose at least one image");
-						} else {
-							Object sel = selection[0];
-							if (sel instanceof IFile) {
-								IFile file = (IFile) sel;
-								if (validFileResouce(file)) {
-									dialog.getOkButton().setEnabled(true);
-									return Status.OK_STATUS;
-								}
+						} 
+						Object sel = selection[0];
+						if (sel instanceof IFile) {
+							IFile file = (IFile) sel;
+							if (validFileResouce(file)) {
+								dialog.getOkButton().setEnabled(true);
+								return Status.OK_STATUS;
 							}
-							return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You can only choose images");
 						}
+						return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You can only choose images");
 					}
 				});
 

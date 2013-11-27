@@ -85,12 +85,11 @@ public abstract class AbstractPart extends Observable implements Observer {
 	public <T> T loadValue(T value, T defaultValue) {
 		if (value == null) {
 			return defaultValue;
-		} else {
-			if (value.toString().isEmpty()) {
-				return defaultValue;
-			}
-			return value;
 		}
+		if (value.toString().isEmpty()) {
+			return defaultValue;
+		}
+		return value;
 	}
 
 	public void getXML(Node parent, Document builder) {

@@ -98,9 +98,8 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 							IFile res = (IFile) element;
 							if (validFileResouce(res)) {
 								return true;
-							} else {
-								return false;
-							}
+							} 
+							return false;
 						}
 						return true;
 					}
@@ -111,16 +110,15 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 					public IStatus validate(Object[] selection) {
 						if (selection.length != 1) {
 							return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You have to choose a single image");	
-						} else {
-							Object sel = selection[0];
-							if (sel instanceof IFile) {
-								IFile file = (IFile) sel;
-								if (validFileResouce(file)) {
-									return Status.OK_STATUS;
-								}
+						} 
+						Object sel = selection[0];
+						if (sel instanceof IFile) {
+							IFile file = (IFile) sel;
+							if (validFileResouce(file)) {
+								return Status.OK_STATUS;
 							}
-							return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You can only choose an image");	
 						}
+						return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You can only choose an image");
 					}
 				});
 				dialog.setTitle("Choose an image");
