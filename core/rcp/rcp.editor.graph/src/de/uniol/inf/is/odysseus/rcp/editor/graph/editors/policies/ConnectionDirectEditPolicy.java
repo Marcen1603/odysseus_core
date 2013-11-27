@@ -67,9 +67,8 @@ public class ConnectionDirectEditPolicy extends DirectEditPolicy {
 		double distanceToStart = figure.getSourcePortLabel().getLocation().getDistance(p);
 		if (distanceToEnd < distanceToStart) {
 			return true;
-		} else {
-			return false;
-		}
+		} 
+		return false;
 	}
 
 }

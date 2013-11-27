@@ -41,7 +41,7 @@ public class BooleanParameterPresentation extends AbstractParameterPresentation<
 	public Control createParameterWidget(Composite parent) {
 		Boolean newValue = null;
 		if (getValue() != null) {
-			newValue = (Boolean) getValue();
+			newValue = getValue();
 		}
 		dropDown = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		if (!getLogicalParameterInformation().isMandatory()) {

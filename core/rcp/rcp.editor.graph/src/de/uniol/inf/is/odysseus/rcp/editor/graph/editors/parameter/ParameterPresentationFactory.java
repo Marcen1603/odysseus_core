@@ -25,17 +25,15 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ParameterPresentationFactory {
 
-
-	
-	public static <V> IParameterPresentation<V> createPresentation(LogicalParameterInformation lpi, OperatorNode operator, V initialValue) { if (lpi.isList()) {
+	public static <V> IParameterPresentation<V> createPresentation(LogicalParameterInformation lpi, OperatorNode operator, V initialValue) {
+		if (lpi.isList()) {
 			IParameterPresentation<V> param = new ListParameterPresentation();
 			param.init(lpi, operator, initialValue);
 			return param;
-		} else {
-			IParameterPresentation<V> param = createPresentation(lpi.getParameterClass());
-			param.init(lpi, operator, initialValue);
-			return param;
 		}
+		IParameterPresentation<V> param = createPresentation(lpi.getParameterClass());
+		param.init(lpi, operator, initialValue);
+		return param;
 	}
 
 	public static <V> IParameterPresentation<V> createPresentationByClass(LogicalParameterInformation lpi, OperatorNode operator, V initialValue) {

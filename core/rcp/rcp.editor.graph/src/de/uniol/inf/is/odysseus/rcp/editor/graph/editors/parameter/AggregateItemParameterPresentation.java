@@ -266,13 +266,13 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 	public boolean hasValidValue() {
 		if(getValue()==null){
 			return false;
-		}else{
-			if(getValue().isEmpty()){
-				return false;
-			}else{
-				return true;
-			}
-		}		
+		}
+		
+		if(getValue().isEmpty()){
+			return false;
+		}
+		
+		return true;
 	}
 
 }

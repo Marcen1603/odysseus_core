@@ -111,9 +111,8 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 		double distanceToStart = figure.getSourcePortLabel().getLocation().getDistance(location);
 		if (distanceToEnd < distanceToStart) {
 			return figure.getTargetPortLabel();
-		} else {
-			return figure.getSourcePortLabel();
-		}
+		} 
+		return figure.getSourcePortLabel();
 	}
 
 	/*

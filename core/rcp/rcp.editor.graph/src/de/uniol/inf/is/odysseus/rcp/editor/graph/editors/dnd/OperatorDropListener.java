@@ -52,10 +52,8 @@ public class OperatorDropListener extends AbstractTransferDropTargetListener {
 			LogicalOperatorInformation loi = Activator.getDefault().getExecutor().getOperatorInformation(operatorName, Activator.getDefault().getCaller());
 			request.setFactory(new DropOperatorNodeFactory(loi, resourceName));
 			return request;
-		} else {
-			return super.createTargetRequest();
-		}
-
+		} 
+		return super.createTargetRequest();
 	}
 
 	@Override

@@ -75,7 +75,7 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 	@Override
 	public void dispose() {
 		for (int i = 0; i < retargetActions.size(); i++) {
-			RetargetAction action = (RetargetAction) retargetActions.get(i);
+			RetargetAction action = retargetActions.get(i);
 			getPage().removePartListener(action);
 			action.dispose();
 		}

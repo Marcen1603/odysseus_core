@@ -101,11 +101,11 @@ public class GraphPalette {
 			int newW = MAX_IMAGE_SIZE;
 			int newH = (int) ((oldH / oldW) * MAX_IMAGE_SIZE);			
 			return oldData.scaledTo(newW, newH);
-		} else {
-			int newH = MAX_IMAGE_SIZE;
-			int newW = (int) (oldW / oldH) * MAX_IMAGE_SIZE;
-			return oldData.scaledTo(newW, newH);
 		}
+		int newH = MAX_IMAGE_SIZE;
+		int newW = (int) (oldW / oldH) * MAX_IMAGE_SIZE;
+		
+		return oldData.scaledTo(newW, newH);
 	}
 
 	private static void createToolsGroup(PaletteRoot palette) {

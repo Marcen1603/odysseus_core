@@ -46,12 +46,10 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 				valueChanged();
 			}
 			return;
-		} else {
-			if (!this.value.equals(oldValue)) {
-				valueChanged();
-			}
+		} 
+		if (!this.value.equals(oldValue)) {
+			valueChanged();
 		}
-
 	}
 
 	private synchronized void valueChanged() {
@@ -168,9 +166,8 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	public boolean hasValidValue() {
 		if(value==null){
 			return false;
-		}else{
-			return true;
 		}
+		return true;
 	}
 	
 	public OperatorNode getOperator(){

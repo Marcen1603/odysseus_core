@@ -202,7 +202,7 @@ public class OperatorGraphPropertyView extends ViewPart implements Observer {
 	}
 
 	private void setLabelColor(Label label, IParameterPresentation<?> value) {
-		if (value.getLogicalParameterInformation().isMandatory() && (value == null || !value.hasValidValue())) {
+		if (value.getLogicalParameterInformation().isMandatory() && !value.hasValidValue()) {
 			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
 		} else {
 			label.setForeground(parameterContainer.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
