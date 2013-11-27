@@ -544,7 +544,7 @@ public class TimeSliderComposite extends Composite implements
 
 		// Set the time-range-label
 		long timeInMs = ((long) rangeSlider.getUpperValue() - (long) rangeSlider
-				.getLowerValue()) * (long) sliderFactor;
+				.getLowerValue()) * sliderFactor;
 		timeRangeLabel.setText(msToTimeString(timeInMs));
 	}
 

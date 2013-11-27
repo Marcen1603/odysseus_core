@@ -169,7 +169,9 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			// This deletes the oldest element. If more than one element
 			// is in this time-window, more than one element will
 			// be deleted.
-			puffer.purgeElementsBefore(deleteTime.plus(1));
+			if( deleteTime != null ) {
+				puffer.purgeElementsBefore(deleteTime.plus(1));
+			}
 
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp

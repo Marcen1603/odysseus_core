@@ -80,7 +80,10 @@ public abstract class Style {
 			style = new PolygonStyle(lineWidth, lineColor, fillColor);
 		} else if (pStyle.getType().equals("collection")) {
 			style = new CollectionStyle();
+		} else {
+			throw new IllegalArgumentException("styletype " + pStyle.getType() + " not known");
 		}
+		
 		List<PersistentStyle> substyles = pStyle.getSubstyles();
 		if (substyles != null){
 			for (PersistentStyle substyle : substyles) {
