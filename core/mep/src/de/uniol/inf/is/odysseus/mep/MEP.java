@@ -371,10 +371,9 @@ public class MEP implements IExpressionParser {
             if (function != null) {
                 return function.getClass().newInstance();
             }
-            else {
-                getLogger().debug("No such function: " + symbol + " for parameter " + parameter);
-                return null;
-            }
+            
+            getLogger().debug("No such function: " + symbol + " for parameter " + parameter);
+            return null;
         }
         catch (Exception e) {
             throw new RuntimeException(e);

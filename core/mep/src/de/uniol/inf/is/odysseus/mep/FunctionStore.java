@@ -48,9 +48,8 @@ public class FunctionStore {
     public boolean containsSymbol(String symbol) {
 		if ((symbol != null) && (!symbol.isEmpty())) {
 			return symbols.containsKey(symbol.toUpperCase());
-		} else {
-			return false;
-		}
+		} 
+		return false;
     }
 
     public boolean containsSignature(FunctionSignature signature) {
