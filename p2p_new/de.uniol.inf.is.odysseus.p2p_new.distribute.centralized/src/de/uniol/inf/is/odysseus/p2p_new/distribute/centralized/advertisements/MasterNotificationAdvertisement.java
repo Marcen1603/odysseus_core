@@ -35,10 +35,8 @@ public class MasterNotificationAdvertisement extends Advertisement {
 	}
 	
 	public MasterNotificationAdvertisement(Element<?> root) {
-		if(root != null) {
-			root = (TextElement<?>) root;
-		} else {
-			LOG.debug("can't instantiate from null");
+		if( root == null) {
+			throw new IllegalArgumentException("Can't instantiate from null");
 		}
 		final Enumeration<?> elements = root.getChildren();
 

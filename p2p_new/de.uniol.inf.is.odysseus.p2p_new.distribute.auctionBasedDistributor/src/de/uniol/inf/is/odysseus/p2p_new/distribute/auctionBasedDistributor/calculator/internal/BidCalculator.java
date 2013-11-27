@@ -27,7 +27,6 @@ public class BidCalculator {
 		this.costModel = costModel;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public double calcBid(String pqlStatement, String transCfgName) {
 		return calcBid(pqlStatement, transCfgName, true);
 	}
@@ -42,9 +41,8 @@ public class BidCalculator {
 			OperatorCost<IPhysicalOperator>  c = ((OperatorCost<IPhysicalOperator> )cost);
 			return calcBid(query.getLogicalPlan(), c.getCpuCost(), c.getMemCost(), respectSourceAvailability);
 		}
-		else {
-			throw new RuntimeException("Did not expect this implementation of ICost: "+ cost.getClass().getName());
-		}
+		
+		throw new RuntimeException("Did not expect this implementation of ICost: "+ cost.getClass().getName());
 	}	
 	
 
@@ -67,8 +65,7 @@ public class BidCalculator {
 		if(remainingMem > 0 && remainingCpu > 0) {
 			return 0.5 * remainingMem + 0.5 * remainingCpu;
 		}
-		else {
-			return 0;
-		}
+		
+		return 0;
 	}
 }

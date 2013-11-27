@@ -62,8 +62,7 @@ public class PlanProOperatorPartitioner extends AbstractPartitioner {
 	}
 
 	private List<SubPlan> partitionLogical(ILogicalOperator query,
-			ID sharedQueryId, QueryBuildConfiguration transCfg)
-			throws CouldNotPartitionException {
+			ID sharedQueryId, QueryBuildConfiguration transCfg) {
 		
 		final List<ILogicalOperator> operators = collectOperators(query);
 		List<SubPlan> parts = Lists.newArrayList();

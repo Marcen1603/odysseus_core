@@ -45,10 +45,11 @@ public class CostSummary {
 	
 	public static CostSummary calcAvg(Collection<CostSummary> costs) {
 		CostSummary sum = calcSum(costs);
-		if(costs.size()>0)
-			return new CostSummary(sum.getOperatorId(), sum.getCpuCost()/costs.size(), sum.getMemCost()/costs.size(), sum.getPlan());
-		else
-			return new CostSummary(sum.getOperatorId(), 0, 0, sum.getPlan());
+		if (costs.size() > 0) {
+			return new CostSummary(sum.getOperatorId(), sum.getCpuCost() / costs.size(), sum.getMemCost() / costs.size(), sum.getPlan());
+		}
+
+		return new CostSummary(sum.getOperatorId(), 0, 0, sum.getPlan());
 	}
 	
 	public static CostSummary calcSum(Collection<CostSummary> costs) {

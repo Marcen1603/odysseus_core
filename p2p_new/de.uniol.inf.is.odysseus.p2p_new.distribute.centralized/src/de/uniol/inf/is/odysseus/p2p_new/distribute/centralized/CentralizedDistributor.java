@@ -281,148 +281,151 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					bestAlternative = x;
 				}
 			}
-			// at this point, we simulated each of the alternatives once, let's continue with the most
-			// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
-			List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true,false);
-			chosenMasterPeerConnectionPipeID = masterPeerConnectionPipeID.get(bestAlternative);
 			
-			for(GraphNode gn : topNodes) {
-				SDFSchema schema = gn.getOperator().getOutputSchema();
-				// The receivers for those would be unconnected and thus not transformable in the traditional manner
-				// no GraphNode for the receiver, because it goes to the master
-				// and thus has to find its way into the resulting query as a logical operator
-				JxtaReceiverAO receiverOp = new JxtaReceiverAO();
-				receiverOp.setPipeID(chosenMasterPeerConnectionPipeID.toURI().toString());
-				receiverOp.setOutputSchema(schema);
-				receiverOp.setAssignedSchema(schema);
+			if( bestResult != null ) {
+				// at this point, we simulated each of the alternatives once, let's continue with the most
+				// promising, i.e. the one who yielded the maximum cost-savings on its initial placement
+				List<GraphNode> topNodes = bestResult.getGraph().getSinkNodes(true,false);
+				chosenMasterPeerConnectionPipeID = masterPeerConnectionPipeID.get(bestAlternative);
 				
-				// Put a selection on top of the receiver, because the query won't start otherwise
-//				SelectAO selection = new SelectAO();
-//				selection.setPredicate(new TruePredicate());
-//				selection.setOutputSchema(schema);
-				
-				RenameAO rename = new RenameAO();
-				rename.setNoOp(true);
-				rename.setOutputSchema(schema);
-				
-				rename.subscribeToSource(receiverOp, 0, 0, schema);
-				
-				// we can now also set the proper receivers on the master, couldn't do that before
-				// it wasn't yet clear which alternative would be chosen
-				q.setLogicalPlan(rename,true);
-			}
-			
-			results.add(bestResult);
-			usedPeers.add(bestResult.getPeer());
-
-			List<SimulationResult> placeableResults = placeable(results);
-			// the first result is placeable and fully identical to another, already placed query.
-			// this means, we can try and add the receiving operator again on the master, which should merge because of local QS
-			// TODO: Send a message to the peer running the sharedQuery telling it to create an additional query under a different ID
-			// and to associate it with the operators already present in the plan
-			if(placeableResults.size() == results.size() && bestResult.getFullyIdenticalToSharedQuery() != null) {
-				ID oldSharedQueryID = bestResult.getFullyIdenticalToSharedQuery();
-				ID newSharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
-				
-				ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
-				String queryBuildConfigurationName = "Standard";
-
-				int idOfRunningQuery = PhysicalQueryPartController.getInstance().getLocalQueryCorrespondingToSharedQueryID(oldSharedQueryID);
-				int newQueryID = this.getExecutor().addIdenticalQuery(idOfRunningQuery, q, user, queryBuildConfigurationName);
-				Collection<Integer> ids = new ArrayList<Integer>();
-				ids.add(newQueryID);
-				PhysicalQueryPartController.getInstance().registerAsMaster(q, newSharedQueryID);
-				this.manager.sendIdenticalQueryAdvertisementToPeer(bestResult, oldSharedQueryID, newSharedQueryID);
-				sharedQueryIDtoMasterReceiverPipeID.put(newSharedQueryID,this.sharedQueryIDtoMasterReceiverPipeID.get(oldSharedQueryID));
-				this.getExecutor().startQuery(newQueryID, user);
-				return new ArrayList<ILogicalQuery>();
-			}
-			
-			
-			// only stop, if we have successfully placed every result on some peer
-			while(placeableResults.size() != results.size()) {
-				List<SimulationResult> currentlyUnplaceable = new ArrayList<SimulationResult>();
-				for(SimulationResult s : results) {
-					if(!placeableResults.contains(s)) {
-						currentlyUnplaceable.add(s);
-					}
-				}
-				for(SimulationResult s : currentlyUnplaceable) {
-					SplitSimulationResult splitResult;
-					List<GraphNode> sinkNodes = s.getGraph().getSinkNodes(true,false);
+				for(GraphNode gn : topNodes) {
+					SDFSchema schema = gn.getOperator().getOutputSchema();
+					// The receivers for those would be unconnected and thus not transformable in the traditional manner
+					// no GraphNode for the receiver, because it goes to the master
+					// and thus has to find its way into the resulting query as a logical operator
+					JxtaReceiverAO receiverOp = new JxtaReceiverAO();
+					receiverOp.setPipeID(chosenMasterPeerConnectionPipeID.toURI().toString());
+					receiverOp.setOutputSchema(schema);
+					receiverOp.setAssignedSchema(schema);
 					
-					if(sinkNodes.size() == 1 && sinkNodes.get(0).getOperatorType().equals(JxtaSenderPO.class.getName())) {
-						splitResult = null;
-						LOG.debug("Can't split Graph, because there's nothing to split apart from the JxtaSenderPO, trying on other peers instead");
-					} else {
-						LOG.debug("Trying to split Graph");
-						splitResult = splitGraph(s);
+					// Put a selection on top of the receiver, because the query won't start otherwise
+	//				SelectAO selection = new SelectAO();
+	//				selection.setPredicate(new TruePredicate());
+	//				selection.setOutputSchema(schema);
+					
+					RenameAO rename = new RenameAO();
+					rename.setNoOp(true);
+					rename.setOutputSchema(schema);
+					
+					rename.subscribeToSource(receiverOp, 0, 0, schema);
+					
+					// we can now also set the proper receivers on the master, couldn't do that before
+					// it wasn't yet clear which alternative would be chosen
+					q.setLogicalPlan(rename,true);
+				}
+				
+				results.add(bestResult);
+				usedPeers.add(bestResult.getPeer());
+	
+				List<SimulationResult> placeableResults = placeable(results);
+				// the first result is placeable and fully identical to another, already placed query.
+				// this means, we can try and add the receiving operator again on the master, which should merge because of local QS
+				// TODO: Send a message to the peer running the sharedQuery telling it to create an additional query under a different ID
+				// and to associate it with the operators already present in the plan
+				if(placeableResults.size() == results.size() && bestResult.getFullyIdenticalToSharedQuery() != null) {
+					ID oldSharedQueryID = bestResult.getFullyIdenticalToSharedQuery();
+					ID newSharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+					
+					ISession user = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
+					String queryBuildConfigurationName = "Standard";
+	
+					int idOfRunningQuery = PhysicalQueryPartController.getInstance().getLocalQueryCorrespondingToSharedQueryID(oldSharedQueryID);
+					int newQueryID = this.getExecutor().addIdenticalQuery(idOfRunningQuery, q, user, queryBuildConfigurationName);
+					Collection<Integer> ids = new ArrayList<Integer>();
+					ids.add(newQueryID);
+					PhysicalQueryPartController.getInstance().registerAsMaster(q, newSharedQueryID);
+					this.manager.sendIdenticalQueryAdvertisementToPeer(bestResult, oldSharedQueryID, newSharedQueryID);
+					sharedQueryIDtoMasterReceiverPipeID.put(newSharedQueryID,this.sharedQueryIDtoMasterReceiverPipeID.get(oldSharedQueryID));
+					this.getExecutor().startQuery(newQueryID, user);
+					return new ArrayList<ILogicalQuery>();
+				}
+				
+				
+				// only stop, if we have successfully placed every result on some peer
+				while(placeableResults.size() != results.size()) {
+					List<SimulationResult> currentlyUnplaceable = new ArrayList<SimulationResult>();
+					for(SimulationResult s : results) {
+						if(!placeableResults.contains(s)) {
+							currentlyUnplaceable.add(s);
+						}
 					}
-					SimulationResult additionalResult;
-					if(splitResult == null) {
+					for(SimulationResult s : currentlyUnplaceable) {
+						SplitSimulationResult splitResult;
+						List<GraphNode> sinkNodes = s.getGraph().getSinkNodes(true,false);
 						
-						// if we can't split anything and can't place the plan either, we have to place it on another peer completely.
-						// Let's extract the basic graph, i.e. the new node and every source node on its way
-						Graph baseGraph = s.getGraph().extractBaseGraph();
-						additionalResult = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
-						results.remove(s);
-					} else {
-						Graph newGraph = splitResult.getSurplusNodes();
-						additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
-						// it's only a jxta-sender left from the original plan, we don't have to worry about its costs anymore
-						s.setClearedForPlacement(true);
-
-						// currently handled via the splitGraph-method
-						//				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
-						//				for(PlanJunction j : junctions) {
-						//					PeerID targetPeer = s.getPeer();
-						//					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
-						//					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
-						//					jxtaSenderLOp.setPipeID(pipeID.toString());
-						//					jxtaSenderLOp.setOutputSchema(j.getJunctionSchema());
-						//					
-						//					JxtaSenderPO jxtaOp = new JxtaSenderPO(jxtaSenderLOp);
-						//					GraphNode jxtaSendNode = new GraphNode(jxtaOp, jxtaOp.hashCode(), false);
-						//					s.getGraph().addAdditionalNode(jxtaSendNode,j.getFlowOriginNode().getOperatorID(), false, j.getJunctionSinkInPort(), j.getJunctionSourceOutPort(), j.getJunctionSchema());
-						//					j.setSendingNode(jxtaSendNode);
-						//					j.setFlowTargetResult(additionalResult);
-						//				}
+						if(sinkNodes.size() == 1 && sinkNodes.get(0).getOperatorType().equals(JxtaSenderPO.class.getName())) {
+							splitResult = null;
+							LOG.debug("Can't split Graph, because there's nothing to split apart from the JxtaSenderPO, trying on other peers instead");
+						} else {
+							LOG.debug("Trying to split Graph");
+							splitResult = splitGraph(s);
+						}
+						SimulationResult additionalResult;
+						if(splitResult == null) {
+							
+							// if we can't split anything and can't place the plan either, we have to place it on another peer completely.
+							// Let's extract the basic graph, i.e. the new node and every source node on its way
+							Graph baseGraph = s.getGraph().extractBaseGraph();
+							additionalResult = getMostPromisingPlacement(baseGraph, null, parameters, usedPeers);
+							results.remove(s);
+						} else {
+							Graph newGraph = splitResult.getSurplusNodes();
+							additionalResult = getMostPromisingPlacement(newGraph, splitResult.getJunctions(), parameters, usedPeers);
+							// it's only a jxta-sender left from the original plan, we don't have to worry about its costs anymore
+							s.setClearedForPlacement(true);
+	
+							// currently handled via the splitGraph-method
+							//				// we have to update the junctions and create the jxta-send-operators in the source-graph of the "old" simulationResult
+							//				for(PlanJunction j : junctions) {
+							//					PeerID targetPeer = s.getPeer();
+							//					JxtaSenderAO jxtaSenderLOp = new JxtaSenderAO();
+							//					PipeID pipeID = IDFactory.newPipeID(P2PDictionaryService.get().getLocalPeerGroupID());
+							//					jxtaSenderLOp.setPipeID(pipeID.toString());
+							//					jxtaSenderLOp.setOutputSchema(j.getJunctionSchema());
+							//					
+							//					JxtaSenderPO jxtaOp = new JxtaSenderPO(jxtaSenderLOp);
+							//					GraphNode jxtaSendNode = new GraphNode(jxtaOp, jxtaOp.hashCode(), false);
+							//					s.getGraph().addAdditionalNode(jxtaSendNode,j.getFlowOriginNode().getOperatorID(), false, j.getJunctionSinkInPort(), j.getJunctionSourceOutPort(), j.getJunctionSchema());
+							//					j.setSendingNode(jxtaSendNode);
+							//					j.setFlowTargetResult(additionalResult);
+							//				}
+						}
+						if(additionalResult == null) {
+							LOG.debug("Can't split plan any more and can't place it anywhere else either, distribution impossible.");
+							this.evaluationFinished = true;
+							return new ArrayList<ILogicalQuery>();
+						}
+						results.add(additionalResult);
+						usedPeers.add(additionalResult.getPeer());
 					}
-					if(additionalResult == null) {
-						LOG.debug("Can't split plan any more and can't place it anywhere else either, distribution impossible.");
-						this.evaluationFinished = true;
-						return new ArrayList<ILogicalQuery>();
+					// we now have additional results in the results-list,
+					// as well as the former non-placeable results which should be placeable now that they've been cut down a little
+					placeableResults = placeable(results);
+					// continuing means, that all the results were placeable,
+					// looping means that there were still some results who couldn't be realized
+				}
+				// if we reached this point, we have one or more results waiting to get placed on their respective peers.
+				ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+				ICost<IPhysicalOperator> endCost = this.getCostModel().getZeroCost();
+				for(SimulationResult sr : placeableResults) {
+					// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
+					// in order to generate the subscription-statements properly.
+					sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
+					List<IPhysicalOperator> remainingNewOperators = sr.getGraph().getAllOperatorsInvolved(true);
+					endCost = endCost.merge(this.getCostModel().estimateCost(remainingNewOperators, false));
+					// there's a chance, that graphs were split and that the new operators added
+					// don't have an owner yet
+					for(IPhysicalOperator o : remainingNewOperators) {
+						o.addOwner(physQ);
 					}
-					results.add(additionalResult);
-					usedPeers.add(additionalResult.getPeer());
+					this.addOperators(sr.getPeer(), sr.getPlan(true));
+					this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
 				}
-				// we now have additional results in the results-list,
-				// as well as the former non-placeable results which should be placeable now that they've been cut down a little
-				placeableResults = placeable(results);
-				// continuing means, that all the results were placeable,
-				// looping means that there were still some results who couldn't be realized
+				sharedQueryIDtoMasterReceiverPipeID.put(sharedQueryID,chosenMasterPeerConnectionPipeID);
+				PhysicalQueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
+				this.costsOfAllDistributedPlans = this.costsOfAllDistributedPlans.merge(endCost);
+				this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(initialCost.substract(endCost));
 			}
-			// if we reached this point, we have one or more results waiting to get placed on their respective peers.
-			ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
-			ICost<IPhysicalOperator> endCost = this.getCostModel().getZeroCost();
-			for(SimulationResult sr : placeableResults) {
-				// up until now, we only shuffled the GraphNodes around. But we have to reconnect the underlying operators accordingly,
-				// in order to generate the subscription-statements properly.
-				sr.getGraph().reconnectAssociatedOperatorsAccordingToGraphLayout(false);
-				List<IPhysicalOperator> remainingNewOperators = sr.getGraph().getAllOperatorsInvolved(true);
-				endCost = endCost.merge(this.getCostModel().estimateCost(remainingNewOperators, false));
-				// there's a chance, that graphs were split and that the new operators added
-				// don't have an owner yet
-				for(IPhysicalOperator o : remainingNewOperators) {
-					o.addOwner(physQ);
-				}
-				this.addOperators(sr.getPeer(), sr.getPlan(true));
-				this.manager.sendPhysicalPlanToPeer(sr, sharedQueryID);
-			}
-			sharedQueryIDtoMasterReceiverPipeID.put(sharedQueryID,chosenMasterPeerConnectionPipeID);
-			PhysicalQueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
-			this.costsOfAllDistributedPlans = this.costsOfAllDistributedPlans.merge(endCost);
-			this.costsSavedByQuerySharing = costsSavedByQuerySharing.merge(initialCost.substract(endCost));
 		}
 		LOG.debug("Costs of all distributed Plans: " + this.costsOfAllDistributedPlans + ", Costs saved by sharing query-operators: " + this.costsSavedByQuerySharing);
 		long timeToOptimize = (System.currentTimeMillis() - timeStart)/60;
@@ -591,10 +594,9 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 			result.setPlaceableResult(r);
 			
 			return result;
-		} else {
-			// no shareableNodes yet, don't split
-			return null;
-		}
+		} 
+		// no shareableNodes yet, don't split
+		return null;
 	}
 	
 	public SimulationResult getMostPromisingPlacement(Graph baseGraph, List<PlanJunction> junctions, QueryBuildConfiguration parameters, List<PeerID> usedPeers) {
@@ -949,9 +951,8 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 		Map<Integer,IPhysicalOperator> operators = this.getOperatorPlans().get(peerID);
 		if(operators != null) {
 			return operators.values().size();
-		} else {
-			return 0;
-		}
+		} 
+		return 0;
 	}
 	
 	public int getNumberOfRunningOperators() {
@@ -1022,10 +1023,9 @@ public class CentralizedDistributor implements ILogicalQueryDistributor {
 					res.getCost());
 			if(projectedUsage < this.getResourceUsageForPeer(res.getPeer()).getCOMBINED_THRESHOLD()) {
 				return res;
-			} else {
-				// recursive call, will return null if no peers are left to try or placement isn't possible anywhere.
-				return getValidRoundRobinPlacement(baseGraph, parameters, usedPeers);
-			}
+			} 
+			// recursive call, will return null if no peers are left to try or placement isn't possible anywhere.
+			return getValidRoundRobinPlacement(baseGraph, parameters, usedPeers);
 		}
 		return null;
 	}

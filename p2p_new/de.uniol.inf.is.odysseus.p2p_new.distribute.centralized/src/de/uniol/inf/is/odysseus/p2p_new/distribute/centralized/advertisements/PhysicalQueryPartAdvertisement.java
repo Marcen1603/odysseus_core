@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.op
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.operatorhelpers.SubscriptionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanIntersection;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.simulation.PlanJunction;
-
 import net.jxta.document.Advertisement;
 import net.jxta.document.Document;
 import net.jxta.document.Element;
@@ -67,10 +66,8 @@ public class PhysicalQueryPartAdvertisement extends Advertisement {
 	 */
 	@SuppressWarnings("unchecked")
 	public PhysicalQueryPartAdvertisement(Element<?> root) {
-		if(root != null) {
-			root = (TextElement<?>) root;
-		} else {
-			LOG.debug("can't instantiate from null");
+		if( root == null) {
+			throw new IllegalArgumentException("Can't instantiate from null");
 		}
 		final Enumeration<?> elements = root.getChildren();
 

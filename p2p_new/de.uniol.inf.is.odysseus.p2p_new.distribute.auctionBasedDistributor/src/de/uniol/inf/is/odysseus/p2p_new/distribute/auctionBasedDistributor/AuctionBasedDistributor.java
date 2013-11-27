@@ -131,7 +131,6 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 		}
 
 		executorService.execute(new Runnable() {
-			@SuppressWarnings("unused")
 			@Override
 			public void run() {
 				for (ILogicalQuery query : queriesToDistribute) {

@@ -62,9 +62,8 @@ public class HelperProvider {
 	public IPhysicalOperatorHelper<? extends IPhysicalOperator> getPhysicalOperatorHelper(IPhysicalOperator operator) {
 		if(operator == null) {
 			return null;
-		} else {
-			return this.getPhysicalOperatorHelper(operator.getClass().getName());
-		}
+		} 
+		return this.getPhysicalOperatorHelper(operator.getClass().getName());
 	}
 	
 	public IPhysicalOperatorHelper<? extends IPhysicalOperator> getPhysicalOperatorHelper(String className) {

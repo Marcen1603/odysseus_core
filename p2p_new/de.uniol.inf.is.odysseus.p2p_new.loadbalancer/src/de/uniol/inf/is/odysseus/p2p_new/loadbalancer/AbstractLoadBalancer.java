@@ -317,8 +317,7 @@ public abstract class AbstractLoadBalancer implements ILogicalQueryDistributor {
 			RestructHelper.removeTopAOs(operators);
 			
 			queryCopies.add(queryCopy);
-			operatorsToQueryCopyNoMap.put(queryCopy, (List<ILogicalOperator>) operators);		
-			
+			operatorsToQueryCopyNoMap.put(queryCopy, operators);		
 		}
 		
 	}

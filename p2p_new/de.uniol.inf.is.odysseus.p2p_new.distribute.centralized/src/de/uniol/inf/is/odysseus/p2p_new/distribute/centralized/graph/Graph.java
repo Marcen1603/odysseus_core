@@ -161,7 +161,7 @@ public class Graph {
 				if(gn.isSink()) {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscriber<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscribedToSource()) {
 						GraphNode sourceNode = null;// this.getGraphNode(sub.getTarget());
-						if(sourceNode == null && sub.getTarget() != null) {
+						if(sub.getTarget() != null) {
 							List<GraphNode> matchingNodes = nodes.get(sub.getTarget().getClass().getName());
 							if(matchingNodes != null) {
 								for(GraphNode gn2 : matchingNodes) {
@@ -182,7 +182,7 @@ public class Graph {
 					for(ISubscription<IPhysicalOperator> sub : ((ISubscribable<?,? extends ISubscription<IPhysicalOperator>>)o).getSubscriptions()) {
 						System.out.println("Trying to connect sink-GN" + sub.getTarget().hashCode() + " with GN" + gn.getOperatorID());
 						GraphNode sinkNode = null;//this.getGraphNode(sub.getTarget());
-						if(sinkNode == null && sub.getTarget() != null) {
+						if(sub.getTarget() != null) {
 							List<GraphNode> matchingNodes = nodes.get(sub.getTarget().getClass().getName());
 							if(matchingNodes != null) {
 								for(GraphNode gn2 : matchingNodes) {

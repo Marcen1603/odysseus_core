@@ -21,17 +21,18 @@ public class GraphNodeSwapper {
 		Collection<Pair<GraphNode,GraphNode>> eligiblePairs = eligiblePairs(g, SlidingAdvanceTimeWindowTIPO.class, SelectPO.class);
 		if(eligiblePairs.isEmpty()) {
 			return null;
-		} else {
-			Graph graphCopy = g.clone();
-			for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
-				// since we found the eligible pairs in the old graph but are now working on a copy of the graph,
-				// we have to get the corresponding Nodes of this new graph via their associated IDs
-				GraphNode windowNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
-				GraphNode selectNode = graphCopy.getGraphNode(pair.getE2().getOperatorID());
-				switchUnaryGraphNodes(windowNode, selectNode);
-			}
-			return graphCopy;
+		} 
+		Graph graphCopy = g.clone();
+		for (Pair<GraphNode, GraphNode> pair : eligiblePairs) {
+			// since we found the eligible pairs in the old graph but are now
+			// working on a copy of the graph,
+			// we have to get the corresponding Nodes of this new graph via
+			// their associated IDs
+			GraphNode windowNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
+			GraphNode selectNode = graphCopy.getGraphNode(pair.getE2().getOperatorID());
+			switchUnaryGraphNodes(windowNode, selectNode);
 		}
+		return graphCopy;
 	}
 	
 	public static Graph pullSelectionsAboveJoins(Graph g) {
@@ -48,19 +49,21 @@ public class GraphNodeSwapper {
 		}
 		if(eligiblePairs.isEmpty()) {
 			return null;
-		} else {
-			Graph graphCopy = g.clone();
-			for(Pair<GraphNode,GraphNode> pair : eligiblePairs) {
-				// since we found the eligible pairs in the old graph but are now working on a copy of the graph,
-				// we have to get the corresponding Nodes of this new graph via their associated IDs
-				GraphNode joinNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
-				GraphNode selectNode = graphCopy.getGraphNode(pair.getE2().getOperatorID());
-				if(selectNode.getSinkSubscriptions().size() == 1) {
-					switchUnarySourceNodeWithBinarySink(joinNode, selectNode);
-				}
+		} 
+		Graph graphCopy = g.clone();
+		for (Pair<GraphNode, GraphNode> pair : eligiblePairs) {
+			// since we found the eligible pairs in the old graph but are now
+			// working on a copy of the graph,
+			// we have to get the corresponding Nodes of this new graph via
+			// their associated IDs
+			GraphNode joinNode = graphCopy.getGraphNode(pair.getE1().getOperatorID());
+			GraphNode selectNode = graphCopy.getGraphNode(pair.getE2().getOperatorID());
+			if (selectNode.getSinkSubscriptions().size() == 1) {
+				switchUnarySourceNodeWithBinarySink(joinNode, selectNode);
 			}
-			return graphCopy;
 		}
+		return graphCopy;
+		
 	}
 	
 	/**

@@ -50,10 +50,8 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 	 * @param root the document from which to re-create the Advertisement
 	 */
 	public PhysicalQueryPlanAdvertisement(Element<?> root) {
-		if(root != null) {
-			root = (TextElement<?>) root;
-		} else {
-			LOG.debug("can't instantiate from null");
+		if( root == null) {
+			throw new IllegalArgumentException("Can't instantiate from null");
 		}
 		final Enumeration<?> elements = root.getChildren();
 		TextElement<?> subscriptionElement = null;
@@ -100,7 +98,7 @@ public class PhysicalQueryPlanAdvertisement extends Advertisement implements Ser
 			String operatorType = elem.getName();
 			IPhysicalOperatorHelper<?> helper = HelperProvider.getInstance().getPhysicalOperatorHelper(operatorType);
 			if(helper != null) {
-				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement((TextElement<?>)elem, false);
+				Entry<Integer,? extends IPhysicalOperator> e = helper.createOperatorFromStatement(elem, false);
 				opObjects.put(e.getKey(),e.getValue());
 			}
 		}

@@ -188,16 +188,15 @@ public class GraphNode implements Comparable<GraphNode> {
 	public int getDepth() {
 		if(this.getSubscribedToSource().isEmpty()) {
 			return 0;
-		} else {
-			int highestDepth = -1;
-			for(Subscription<GraphNode> sub : this.getSubscribedToSource()) {
-				int depth = sub.getTarget().getDepth();
-				if(depth > highestDepth) {
-					highestDepth = depth;
-				}
+		} 
+		int highestDepth = -1;
+		for (Subscription<GraphNode> sub : this.getSubscribedToSource()) {
+			int depth = sub.getTarget().getDepth();
+			if (depth > highestDepth) {
+				highestDepth = depth;
 			}
-			return highestDepth + 1;
 		}
+		return highestDepth + 1;
 	}
 	
 	/**

@@ -49,10 +49,11 @@ public class Helper {
 	
 	public static String getId(ILogicalOperator operator) {
 		String id =  operator.getParameterInfos().get("id".toUpperCase());
-		if(id!=null)
+		if(id!=null) {
 			return id.replace("'", "");
-		else
-			return null;
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -242,9 +243,8 @@ public class Helper {
 			OperatorCost<IPhysicalOperator>  c = ((OperatorCost<IPhysicalOperator> )cost);
 			return c.getCpuCost();
 		}
-		else {
-			throw new RuntimeException("Did not expect this implementation of ICost: "+ cost.getClass().getName());
-		}		
+		
+		throw new RuntimeException("Did not expect this implementation of ICost: "+ cost.getClass().getName());
 	}
 	
 	public static ILogicalQuery transformToQueryWithTopAO(List<SubPlan> queryParts, IPQLGenerator generator, String name) {

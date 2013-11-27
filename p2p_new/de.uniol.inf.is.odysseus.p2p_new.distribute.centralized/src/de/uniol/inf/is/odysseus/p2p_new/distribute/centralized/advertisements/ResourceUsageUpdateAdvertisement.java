@@ -48,11 +48,10 @@ public class ResourceUsageUpdateAdvertisement extends Advertisement {
 	}
 	
 	public ResourceUsageUpdateAdvertisement(Element<?> root) {
-		if(root != null) {
-			root = (TextElement<?>) root;
-		} else {
-			LOG.debug("can't instantiate from null");
+		if( root == null) {
+			throw new IllegalArgumentException("Can't instantiate from null");
 		}
+
 		final Enumeration<?> elements = root.getChildren();
 
 		while (elements.hasMoreElements()) {

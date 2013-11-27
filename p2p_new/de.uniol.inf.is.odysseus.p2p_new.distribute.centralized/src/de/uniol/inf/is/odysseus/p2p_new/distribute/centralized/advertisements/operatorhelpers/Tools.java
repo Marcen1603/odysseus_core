@@ -73,10 +73,8 @@ public class Tools<T extends Object> {
 			public int compare(GraphNode gn1, GraphNode gn2) {
 				if(gn1.equals(gn2)) {
 					return 0;
-				} else {
-					return -1;
-				}
-
+				} 
+				return -1;
 			}
 		});
 		List<GraphNode> result = new ArrayList<GraphNode>();

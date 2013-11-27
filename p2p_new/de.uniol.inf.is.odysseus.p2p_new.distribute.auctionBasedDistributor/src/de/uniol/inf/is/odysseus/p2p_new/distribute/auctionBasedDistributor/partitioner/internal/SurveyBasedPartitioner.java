@@ -49,10 +49,11 @@ public class SurveyBasedPartitioner extends AbstractPartitioner {
 		List<SubPlan> result = _partition(planToDistribute, costsProOperator, new TargetSize() {
 			@Override
 			public double getNextSize(double totalAbsoluteCosts) {
-				if(votes.iterator().hasNext())
+				if(votes.iterator().hasNext()) {
 					return totalAbsoluteCosts * votes.iterator().next().getPercentageOfBearableCosts();
-				else
-					return 0;
+				}
+				
+				return 0;
 			}
 		});
 		

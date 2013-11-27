@@ -294,9 +294,8 @@ public abstract class AbstractPartitioner implements Partitioner {
 		try {
 			if (!planToDistribute.getSources().isEmpty()) {
 				return planToDistribute.getSources().get(0);
-			} else {
-				return planToDistribute.getDummySources().get(0);
-			}
+			} 
+			return planToDistribute.getDummySources().get(0);
 		} catch (IndexOutOfBoundsException | NoSuchElementException e) {
 			throw new RuntimeException(
 					"Could not find any source/leaf operator in the query plan");

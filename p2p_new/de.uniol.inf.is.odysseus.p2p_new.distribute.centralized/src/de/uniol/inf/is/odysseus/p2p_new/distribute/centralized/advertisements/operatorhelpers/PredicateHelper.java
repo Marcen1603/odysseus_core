@@ -71,12 +71,13 @@ public class PredicateHelper {
 					rightSchema = SchemaHelper.createSchemaFromStatement(e);
 				}
 			}
-			if(rightSchema != null) {
-				((RelationalPredicate)pred).init(leftSchema, rightSchema, true);
-			} else {
-				((RelationalPredicate)pred).init(leftSchema, rightSchema, false);
+			if( pred != null ) {
+				if(rightSchema != null) {
+					((RelationalPredicate)pred).init(leftSchema, rightSchema, true);
+				} else {
+					((RelationalPredicate)pred).init(leftSchema, rightSchema, false);
+				}
 			}
-			
 		}
 
 		return pred;
