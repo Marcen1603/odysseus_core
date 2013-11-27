@@ -31,11 +31,11 @@ import org.w3c.dom.NodeList;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ConnectionDialog;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * @author DGeesen
@@ -52,7 +52,7 @@ public class Connection extends AbstractPart {
 
 	private int width = 2;
 	private Color currentColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-	private List<Pair<Color, RelationalPredicate>> entries = new ArrayList<>();
+	private List<Pair<Color, TuplePredicate>> entries = new ArrayList<>();
 
 	private String bottomText = "";
 	private SDFExpression bottomExpression;
@@ -83,7 +83,7 @@ public class Connection extends AbstractPart {
 		this.topText = old.topText;
 		this.width = old.width;
 		this.currentColor = old.currentColor;
-		for (Pair<Color, RelationalPredicate> e : entries) {
+		for (Pair<Color, TuplePredicate> e : entries) {
 			this.addColor(e.getE1(), e.getE2().getExpression().getExpressionString());
 		}
 	}
@@ -205,7 +205,7 @@ public class Connection extends AbstractPart {
 	public void getXML(Node parent, Document builder) {
 		super.getXML(parent, builder);
 		Element colorsElement = builder.createElement("colors");
-		for (Pair<Color, RelationalPredicate> ce : this.entries) {
+		for (Pair<Color, TuplePredicate> ce : this.entries) {
 			Element colorElement = builder.createElement("color");
 			colorElement.setAttribute("predicate", ce.getE2().getExpression().getExpressionString());
 			colorElement.setAttribute("r", Integer.toString(ce.getE1().getRGB().red));
@@ -248,7 +248,7 @@ public class Connection extends AbstractPart {
 	@Override
 	protected void open(IPhysicalOperator root) {
 		try {
-			for (Pair<Color, RelationalPredicate> ce : this.entries) {
+			for (Pair<Color, TuplePredicate> ce : this.entries) {
 				ce.getE2().init(root.getOutputSchema(), null);
 			}
 			if (this.bottomExpression != null) {
@@ -289,7 +289,7 @@ public class Connection extends AbstractPart {
 		if (this.sourceExpression != null) {
 			this.currentTextSource = getExpressionValue(this.sourceExpression, tuple);
 		}
-		for (Pair<Color, RelationalPredicate> ce : entries) {
+		for (Pair<Color, TuplePredicate> ce : entries) {
 			if (ce.getE2().evaluate(tuple)) {
 				setCurrentColor(ce.getE1());
 				break;
@@ -323,8 +323,8 @@ public class Connection extends AbstractPart {
 	 * @param predicate
 	 */
 	public void addColor(Color color, String predicate) {
-		RelationalPredicate relPredicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
-		Pair<Color, RelationalPredicate> ce = new Pair<Color, RelationalPredicate>(color, relPredicate);
+		TuplePredicate relPredicate = new TuplePredicate(new SDFExpression(predicate, MEP.getInstance()));
+		Pair<Color, TuplePredicate> ce = new Pair<Color, TuplePredicate>(color, relPredicate);
 		this.entries.add(ce);
 	}
 
@@ -358,7 +358,7 @@ public class Connection extends AbstractPart {
 		this.currentColor = currentColor;
 	}
 
-	public List<Pair<Color, RelationalPredicate>> getColorPredicates() {
+	public List<Pair<Color, TuplePredicate>> getColorPredicates() {
 		return Collections.unmodifiableList(this.entries);
 	}
 

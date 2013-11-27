@@ -26,7 +26,6 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.templates.OdysseusScriptTemplateRegistry;
-import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 
@@ -38,8 +37,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	public static final String ODYSSEUS_ANNOTATION_HIGHLIGHTING = "de.uniol.inf.is.odysseus.rcp.editor.highlightannotation";
 
 	private static OdysseusRCPEditorTextPlugIn plugin;
-	private static IExecutor executor;
-	private static IOdysseusScriptParser scriptParser;
+	private static IExecutor executor;	
 	private static Map<String, IEditorLanguagePropertiesProvider> completionproviders = new HashMap<String, IEditorLanguagePropertiesProvider>();
 	
 	@Override
@@ -47,7 +45,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		
-		Platform.getExtensionRegistry().addListener(KeywordRegistry.getInstance());
+
 	}
 
 	@Override
@@ -55,8 +53,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		plugin = null;
 		super.stop(context);
 		
-		Platform.getExtensionRegistry().removeListener(KeywordRegistry.getInstance());
-		OdysseusScriptTemplateRegistry.getInstance().unregisterAll();
+		
 	}
 
 	/**
@@ -68,36 +65,16 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	/**
-	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
-	 * <code>IExecutor</code> auf das gegebene gesetzt. Über die
-	 * statische Methode <code>getExecutor()</code> kann diese zurückgeliefert
-	 * werden.
-	 * <p>
-	 * Der Nutzer sollte diese Funktion nicht selbst aufrufen.
-	 * 
-	 * @param e
-	 *            Der neue <code>IExecutor</code>. Darf nicht
-	 *            <code>null</code> sein.
-	 */
+	
 	public void bindExecutor(IExecutor e) {
 		executor = e;
+		Platform.getExtensionRegistry().addListener(KeywordRegistry.getInstance());
 	}
 
-	/**
-	 * Wird vom Declarative Service aufgerufen. Damit wird der aktuelle
-	 * <code>IExecutor</code> auf <code>null</code> gesetzt. Der
-	 * Parameter wird ignoriert. Ab sofort liefert die statische Methode
-	 * <code>getExecutor()</code> ausschließlich <code>null</code>.
-	 * <p>
-	 * Der Nutzer sollte diese Funktion nicht selbst aufrufen.
-	 * 
-	 * @param e
-	 *            Der neue <code>IExecutor</code>. Kann
-	 *            <code>null</code> sein.
-	 */
 	public void unbindExecutor(IExecutor e) {
 		executor = null;
+		Platform.getExtensionRegistry().removeListener(KeywordRegistry.getInstance());
+		OdysseusScriptTemplateRegistry.getInstance().unregisterAll();
 	}
 	
 	/**
@@ -119,25 +96,10 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		return executor;
 	}
 	
-	/**
-	 * 
-	 * @param parser
-	 */
-	public void bindScriptParser(IOdysseusScriptParser parser){
-		scriptParser = parser;		
-	}
-	
-	public void unbindScriptParser(IOdysseusScriptParser parser){
-		scriptParser = null;
-	}
-
-	public static IOdysseusScriptParser getScriptParser() {
-		return scriptParser;
-	}
 	
 	
 	public static void bindCompletionProvider(IEditorLanguagePropertiesProvider ecp){		
-		completionproviders.put(ecp.supportsParser(), ecp);
+		completionproviders.put(ecp.getSupportedParser(), ecp);
 	}
 	
 	public static void unbindCompletionProvider(IEditorLanguagePropertiesProvider ecp){

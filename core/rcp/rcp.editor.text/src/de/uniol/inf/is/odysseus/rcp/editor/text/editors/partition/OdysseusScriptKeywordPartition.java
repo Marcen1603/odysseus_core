@@ -32,9 +32,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptStructureProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.KeyWordFormattingStrategy;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
 
 /**
  * @author Dennis Geesen
@@ -63,7 +62,7 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		List<IRule> rules = new ArrayList<>();
 		
 		rules.add(new MultiLineRule("'", "'", createToken(SWT.COLOR_BLUE)));
-		rules.add(new EndOfLineRule(OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY, createToken(SWT.COLOR_DARK_GREEN, false)));
+		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.SINGLE_LINE_COMMENT_KEY, createToken(SWT.COLOR_DARK_GREEN, false)));
 		
 		// if a keyword is found, color it red
 		IToken parameter = createToken(SWT.COLOR_RED, false);
@@ -71,22 +70,22 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		
 		// everything else should be undefined (this gets the default color)
 		WordRule wr = new WordRule(getWordDetector(), Token.UNDEFINED, true);
-		for (String key : OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames()) {
-			if(!OdysseusRCPEditorTextPlugIn.getScriptParser().getPreParserKeywordRegistry().isDeprecated(key)) {
-				wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, parameter);
+		for (String key : OdysseusScriptStructureProvider.getKeywords()) {
+			if(!OdysseusScriptStructureProvider.isDeprecated(key)) {
+				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, parameter);
 			} else {
-				wr.addWord(OdysseusRCPEditorTextPlugIn.getScriptParser().getParameterKey() + key, deprecatedParameter);
+				wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + key, deprecatedParameter);
 			}
 		}
 		rules.add(wr);
 
 		IToken variable = createToken(SWT.COLOR_DARK_MAGENTA);
-		rules.add(new SingleLineRule(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacementStartKey(), OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacementEndKey(),
+		rules.add(new SingleLineRule(OdysseusScriptStructureProvider.REPLACEMENT_START_KEY, OdysseusScriptStructureProvider.REPLACEMENT_END_KEY,
 				variable));
 		IToken staticKeywords = createToken(SWT.COLOR_DARK_GRAY);
 
-		for (String s : OdysseusRCPEditorTextPlugIn.getScriptParser().getStaticWords()) {
-			wr.addWord(OdysseusScriptParser.PARAMETER_KEY + s, staticKeywords);
+		for (String s : OdysseusScriptStructureProvider.getStaticWords()) {
+			wr.addWord(OdysseusScriptStructureProvider.PARAMETER_KEY + s, staticKeywords);
 			wr.addWord(s, staticKeywords);
 		}
 		return rules;
@@ -116,13 +115,13 @@ public class OdysseusScriptKeywordPartition extends AbstractOdysseusScriptPariti
 		List<IPredicateRule> rules = new ArrayList<>();
 
 		List<String> end = new ArrayList<>();
-		end.add(OdysseusScriptParser.PARAMETER_KEY);		
+		end.add(OdysseusScriptStructureProvider.PARAMETER_KEY);		
 		List<String> ignore = new ArrayList<>();
 		ignore.add("#IFDEF");
 		ignore.add("#ELSE");
 		ignore.add("#ENDIF");
-		rules.add(new SimpleMultiLineRule(OdysseusScriptParser.PARAMETER_KEY, end, ignore, getPartitioningToken(), true, true));
-		rules.add(new EndOfLineRule(OdysseusScriptParser.PARAMETER_KEY, getPartitioningToken()));
+		rules.add(new SimpleMultiLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY, end, ignore, getPartitioningToken(), true, true));
+		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.PARAMETER_KEY, getPartitioningToken()));
 
 		return rules;
 	}

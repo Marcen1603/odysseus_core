@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.ColorManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 public class ConnectionDialog extends AbstractPartDialog<Connection> {
 
@@ -215,7 +215,7 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 	@Override
 	public void loadValues(Connection connection) {
 		width = Integer.toString(connection.getWidth());
-		for (Pair<Color, RelationalPredicate> co : connection.getColorPredicates()) {
+		for (Pair<Color, TuplePredicate> co : connection.getColorPredicates()) {
 			ColorContainer cc = new ColorContainer();
 			cc.color = co.getE1();
 			cc.predicate = co.getE2().getExpression().getExpressionString();

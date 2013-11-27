@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
 
 public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusScriptParser.class);
 	private static final PreParserKeywordRegistry KEYWORD_REGISTRY = new PreParserKeywordRegistry();
 	private static final String PARSER_NAME = "OdysseusScript";
@@ -76,7 +76,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	private int currentLine;
 	private int keyStartedAtLine;
 
-//	private Map<String, String> defaultReplacements = new HashMap<>();
+	// private Map<String, String> defaultReplacements = new HashMap<>();
 
 	@Override
 	public String getParameterKey() {
@@ -181,7 +181,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	private static Boolean isResumeOnError(Map<String, Object> variables) {
 		try {
 			Object o = variables.get(ResumeOnErrorPreParserKeyword.RESUME_ON_ERROR_FLAG);
-			Boolean val = (Boolean) o; 
+			Boolean val = (Boolean) o;
 			return val != null ? val : false;
 		} catch (Throwable t) {
 			LOG.error("Exception during determining if resume on error was set", t);
@@ -242,7 +242,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 				// use replacements if we are not in procedure
 				if (!isInProcedure) {
 					line = replacements.use(line);
-					if( replacements.parse(line)) {
+					if (replacements.parse(line)) {
 						continue;
 					}
 
@@ -349,7 +349,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			return statements;
 		} catch (OdysseusScriptException | ReplacementException ex) {
 			throw new OdysseusScriptException("[Line " + (currentLine + 1) + "]" + ex.getMessage(), ex);
-		} 
+		}
 	}
 
 	private static String[] removeAllComments(String[] textToParse) {
@@ -453,7 +453,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 			if (from != -1 && to != -1) {
 				String loopDef = textToParse[from].replaceFirst(PARAMETER_KEY + LOOP_START_KEY, "").trim();
-				try {					
+				try {
 					String[] parts = loopDef.split(" ");
 					if (parts.length < 4) {
 						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 TO 10\"");
@@ -468,16 +468,16 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					if (toStr.startsWith(REPLACEMENT_START_KEY) && toStr.endsWith(REPLACEMENT_END_KEY)) {
 						toStr = repl.get(toStr.substring(2, toStr.length() - 1).toUpperCase());
 					}
-					
+
 					String offsetVariable = "";
 					int offsetValue = 0;
-					if(parts.length>4){
-						if(parts.length!=7){
+					if (parts.length > 4) {
+						if (parts.length != 7) {
 							throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 UPTO 10 WITH offset 5\"");
 						}
 						offsetVariable = parts[5];
 						offsetValue = Integer.parseInt(parts[6]);
-						
+
 					}
 
 					int startCount = Integer.parseInt(fromStr);
@@ -492,9 +492,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "-1" + REPLACEMENT_END_KEY), Integer.toString(counter - 1));
 							// replace ${i+1}
 							toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + variable + "+1" + REPLACEMENT_END_KEY), Integer.toString(counter + 1));
-							if(!offsetVariable.isEmpty()){
-							// replace ${i+1}
-								toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + offsetVariable + REPLACEMENT_END_KEY), Integer.toString(counter+offsetValue));
+							if (!offsetVariable.isEmpty()) {
+								// replace ${i+1}
+								toChange = toChange.replaceAll(Pattern.quote(REPLACEMENT_START_KEY + offsetVariable + REPLACEMENT_END_KEY), Integer.toString(counter + offsetValue));
 							}
 							text.add(toChange);
 						}
@@ -531,7 +531,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 		try {
 			for (String line : text) {
-	
+
 				String correctLine = removeComments(line).trim();
 				// maybe, we have replacements within definitions...
 				if (line.indexOf(PARAMETER_KEY + STORED_PROCEDURE_PROCEDURE) != -1) {
@@ -544,26 +544,26 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					}
 					continue;
 				}
-				String replacedLine = repl.use(correctLine); 
+				String replacedLine = repl.use(correctLine);
 				repl.parse(correctLine);
-				
+
 				final int posLoop = replacedLine.indexOf(PARAMETER_KEY + LOOP_START_KEY);
 				if (posLoop != -1) {
 					String[] parts = replacedLine.split(" |\t");
 					String key = parts[1].trim();
 					repl.put(key.toUpperCase(), key);
-					
-					if(parts.length>6){
+
+					if (parts.length > 6) {
 						repl.put(parts[6].trim().toUpperCase(), parts[6].trim());
 					}
 				}
 			}
-			
+
 			return repl.toMap();
-		} catch( ReplacementException ex ) {
+		} catch (ReplacementException ex) {
 			throw new OdysseusScriptException(ex);
 		}
-		
+
 	}
 
 	protected String useReplacements(String line, Map<String, String> replacements) throws OdysseusScriptException {
@@ -681,7 +681,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		} catch (OdysseusScriptException e) {
 			processScriptException(e);
 		}
-		
+
 		return new ArrayList<IExecutorCommand>();
 	}
 
@@ -690,11 +690,11 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			StringBuffer message = new StringBuffer("Odysseus Script error in statement " + e.getFailedStatement().getKeywordText() + " in line " + e.getFailedStatement().getLine());
 			if (e.getCause() instanceof QueryParseException) {
 				QueryParseException qpe = (QueryParseException) e.getCause();
-				if (qpe.getCause() != null && qpe.getCause() instanceof QueryParseException){
+				if (qpe.getCause() != null && qpe.getCause() instanceof QueryParseException) {
 					qpe = (QueryParseException) qpe.getCause();
 				}
 				message.append("\n").append(qpe.getMessage());
-				int line = qpe.getLine() + e.getFailedStatement().getLine() + 2; 
+				int line = qpe.getLine() + e.getFailedStatement().getLine() + 2;
 				int column = qpe.getColumn();
 				throw new QueryParseException(message.toString(), e, line, column);
 			}
@@ -712,9 +712,34 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	public IExecutor getExecutor() {
 		return Activator.getExecutor();
 	}
-	
+
 	@Override
-	public List<String> getStaticKeyWords() {
+	public Map<String, List<String>> getTokens(ISession user) {
+		Map<String, List<String>> tokens = new HashMap<>();
+		List<String> staticKeywords = new ArrayList<>(getStaticWords());
+		tokens.put("STATIC", staticKeywords);
+		tokens.put("KEYWORDS", new ArrayList<>(getKeywordNames()));
+		tokens.put("DEPRECATED", getDeprecated());
+
+		return tokens;
+	}
+
+	private List<String> getDeprecated() {
+		List<String> deprecated = new ArrayList<>();
+		for (String key : getKeywordNames()) {
+			if (getPreParserKeywordRegistry().isDeprecated(key)) {
+				deprecated.add(key);
+			}
+		}
+		return deprecated;
+	}
+
+	@Override
+	public List<String> getSuggestions(String hint, ISession user) {
+		if (getPreParserKeywordRegistry().existsKeyword(hint)) {
+			IPreParserKeyword keyword = getPreParserKeywordRegistry().createKeywordExecutor(hint);
+			return new ArrayList<>(keyword.getAllowedParameters(user));
+		}
 		return new ArrayList<>();
 	}
 

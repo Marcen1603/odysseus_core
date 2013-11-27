@@ -34,7 +34,7 @@ public interface IEditorLanguagePropertiesProvider {
 	public List<Character> getTokenSplitters();
 	public List<ICompletionProposal> getCompletionSuggestions(String currentToken, String lastSplitters[], IExecutor executor, ISession iSession, IDocument document, int offset, Point selection);
 	public boolean ignoreWhitespaces();
-	public String supportsParser();
+	public String getSupportedParser();
 	public List<String> getTerminals();	
 	public IOdysseusScriptFormattingStrategy getFormattingStrategy();		
 }

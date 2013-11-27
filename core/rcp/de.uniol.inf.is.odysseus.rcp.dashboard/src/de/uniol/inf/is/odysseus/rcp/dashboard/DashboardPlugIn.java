@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.dashboard.extension.DashboardPartExtensionPointResolver;
-import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 
 public class DashboardPlugIn extends AbstractUIPlugin {
 
@@ -44,8 +43,7 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 
 	private static DashboardPartExtensionPointResolver extensionResolver;
 
-	private static DashboardPlugIn plugin;
-	private static IOdysseusScriptParser scriptParser;
+	private static DashboardPlugIn plugin;	
 	private static IExecutor executor;
 	private static ImageManager imageManager;
 
@@ -55,11 +53,6 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		LOG.debug("Executor {} bound.", exec);
 	}
 
-	public void bindScriptParser(IOdysseusScriptParser parser) {
-		LOG.debug("ScriptParser {} bound.", parser);
-
-		scriptParser = parser;
-	}
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -85,14 +78,6 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 		}
 	}
 
-	public void unbindScriptParser(IOdysseusScriptParser parser) {
-		if (parser == scriptParser) {
-			LOG.debug("ScriptParser {} unbound.", parser);
-
-			scriptParser = null;
-		}
-	}
-
 	public static DashboardPlugIn getDefault() {
 		return plugin;
 	}
@@ -103,10 +88,6 @@ public class DashboardPlugIn extends AbstractUIPlugin {
 
 	public static ImageManager getImageManager() {
 		return imageManager;
-	}
-
-	public static IOdysseusScriptParser getScriptParser() {
-		return scriptParser;
 	}
 
 	private static void startImpl(BundleContext context) {

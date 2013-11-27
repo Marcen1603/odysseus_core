@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql.windows;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -46,22 +47,22 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLEditorTextPlugIn;
 
 class InputSchemaTableViewer {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(InputSchemaTableViewer.class);
-	
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(InputSchemaTableViewer.class);
+
 	private final TableViewer tableViewer;
 	private final List<TypeIndex> typeIndices = Lists.newArrayList();
-	
-	private final List<String> dataTypes;
-	
-	public InputSchemaTableViewer( Composite parent ) {
-		dataTypes = determineAttributeTypes();		
-		
+
+	private final List<SDFDatatype> dataTypes;
+
+	public InputSchemaTableViewer(Composite parent) {
+		dataTypes = determineAttributeTypes();
+
 		parent.setLayout(new GridLayout());
 
 		Composite tableComposite = new Composite(parent, SWT.NONE);
@@ -69,19 +70,23 @@ class InputSchemaTableViewer {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 
-		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(tableComposite, SWT.BORDER
+				| SWT.FULL_SELECTION);
 		Table table = tableViewer.getTable();
 
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
-		insertTableButtons(buttonComposite, tableViewer, typeIndices, TypeIndex.class);
+		insertTableButtons(buttonComposite, tableViewer, typeIndices,
+				TypeIndex.class);
 
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		TableViewerColumn indexColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableViewerColumn indexColumn = new TableViewerColumn(tableViewer,
+				SWT.NONE);
 		indexColumn.getColumn().setText("#");
-		tableColumnLayout.setColumnData(indexColumn.getColumn(), new ColumnWeightData(1, 25, true));
+		tableColumnLayout.setColumnData(indexColumn.getColumn(),
+				new ColumnWeightData(1, 25, true));
 		indexColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -90,14 +95,16 @@ class InputSchemaTableViewer {
 			}
 		});
 
-		TableViewerColumn typeColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableViewerColumn typeColumn = new TableViewerColumn(tableViewer,
+				SWT.NONE);
 		typeColumn.getColumn().setText("Type");
-		tableColumnLayout.setColumnData(typeColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(typeColumn.getColumn(),
+				new ColumnWeightData(5, 25, true));
 		typeColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
 				TypeIndex typeIndex = (TypeIndex) cell.getElement();
-				cell.setText(dataTypes.get(typeIndex.index));
+				cell.setText(dataTypes.get(typeIndex.index).getQualName());
 			}
 		});
 
@@ -117,35 +124,41 @@ class InputSchemaTableViewer {
 			public void modify(Object element, String property, Object value) {
 				TableItem item = (TableItem) element;
 				TypeIndex setting = (TypeIndex) item.getData();
-				
-				setting.index = (Integer)value;
+
+				setting.index = (Integer) value;
 				tableViewer.refresh();
 			}
 
 		});
 
 		tableViewer.setColumnProperties(new String[] { "index", "type" });
-		tableViewer.setCellEditors(new CellEditor[] { null, new ComboBoxCellEditor(tableViewer.getTable(), dataTypes.toArray(new String[0]), SWT.READ_ONLY) });
+		tableViewer.setCellEditors(new CellEditor[] {
+				null,
+				new ComboBoxCellEditor(tableViewer.getTable(), dataTypes
+						.toArray(new String[0]), SWT.READ_ONLY) });
 		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 
-		tableViewer.setInput(typeIndices);		
+		tableViewer.setInput(typeIndices);
 	}
-	
+
 	public TableViewer getTableViewer() {
 		return tableViewer;
 	}
-	
+
 	public List<String> getData() {
 		List<String> types = Lists.newArrayList();
-		for( TypeIndex index : typeIndices ) {
-			types.add(dataTypes.get(index.index));
+		for (TypeIndex index : typeIndices) {
+			types.add(dataTypes.get(index.index).getQualName());
 		}
 		return types;
 	}
-	
-	private static <T> void insertTableButtons(Composite outputSchemaTableButtonComposite, final TableViewer tableViewer, final List<T> inputList, final Class<T> inputClass) {
+
+	private static <T> void insertTableButtons(
+			Composite outputSchemaTableButtonComposite,
+			final TableViewer tableViewer, final List<T> inputList,
+			final Class<T> inputClass) {
 		outputSchemaTableButtonComposite.setLayout(new GridLayout(2, true));
-		
+
 		Button addButton = createButton(outputSchemaTableButtonComposite, "Add");
 		addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -156,52 +169,56 @@ class InputSchemaTableViewer {
 					inputList.add(obj);
 					tableViewer.refresh();
 				} catch (InstantiationException ex) {
-					LOG.error("Could not create instance of class {} to insert in table.", inputClass, ex);
+					LOG.error(
+							"Could not create instance of class {} to insert in table.",
+							inputClass, ex);
 				} catch (IllegalAccessException ex) {
-					LOG.error("Could not create instance of class {} to insert in table.", inputClass, ex);
+					LOG.error(
+							"Could not create instance of class {} to insert in table.",
+							inputClass, ex);
 				}
 			}
 		});
-		
-		final Button removeButton = createButton(outputSchemaTableButtonComposite, "Remove");
+
+		final Button removeButton = createButton(
+				outputSchemaTableButtonComposite, "Remove");
 		removeButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		removeButton.setEnabled(false);
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( tableViewer.getSelection() != null ) {
-					IStructuredSelection structSelection = (IStructuredSelection)tableViewer.getSelection();
+				if (tableViewer.getSelection() != null) {
+					IStructuredSelection structSelection = (IStructuredSelection) tableViewer
+							.getSelection();
 					inputList.remove(structSelection.getFirstElement());
 					tableViewer.refresh();
-					
-					if( inputList.isEmpty() ) {
+
+					if (inputList.isEmpty()) {
 						removeButton.setEnabled(false);
 					}
 				}
 			}
 		});
-		
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				removeButton.setEnabled( event.getSelection() != null );
-			}
-		});
+
+		tableViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						removeButton.setEnabled(event.getSelection() != null);
+					}
+				});
 	}
-	
-	private static List<String> determineAttributeTypes() {
-		IDataDictionary dd = PQLEditorTextPlugIn.getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant());
-		if( dd == null ) {
-			return Lists.newArrayList();
-		}
-		
-		return ImmutableList.copyOf(dd.getDatatypeNames());
+
+	private static List<SDFDatatype> determineAttributeTypes() {
+		Set<SDFDatatype> dts = OdysseusRCPPlugIn.getExecutor()
+				.getRegisteredDatatypes(OdysseusRCPPlugIn.getActiveSession());
+		return ImmutableList.copyOf(dts);
 	}
-	
+
 	private static Button createButton(Composite composite, String text) {
 		Button button = new Button(composite, SWT.PUSH);
 		button.setText(text);
 		return button;
 	}
-	
+
 }

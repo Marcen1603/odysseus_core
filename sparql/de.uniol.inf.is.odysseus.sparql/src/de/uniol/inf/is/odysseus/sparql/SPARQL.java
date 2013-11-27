@@ -18,8 +18,10 @@ package de.uniol.inf.is.odysseus.sparql;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -129,7 +131,13 @@ public class SPARQL implements IQueryParser{
 	}
 	
 	@Override
-	public List<String> getStaticKeyWords() {
+	public Map<String, List<String>> getTokens(ISession user) {
+		Map<String, List<String>> tokens = new HashMap<>();		
+		return tokens;
+	}
+	
+	@Override
+	public List<String> getSuggestions(String hint, ISession user) {
 		return new ArrayList<>();
 	}
 }

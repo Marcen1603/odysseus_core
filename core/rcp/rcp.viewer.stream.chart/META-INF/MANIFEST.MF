@@ -18,7 +18,6 @@ Import-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.viewer.editors,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.view,
- de.uniol.inf.is.odysseus.script.parser,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.rcp.viewer.stream.chart,
  de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action,

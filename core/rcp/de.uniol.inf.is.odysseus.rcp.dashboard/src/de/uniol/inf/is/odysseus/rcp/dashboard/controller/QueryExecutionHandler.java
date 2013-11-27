@@ -24,8 +24,6 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTex
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
-import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class QueryExecutionHandler {
 
@@ -56,11 +54,9 @@ public class QueryExecutionHandler {
 		
 	}
 	
-	public void start() throws OdysseusScriptException {
-		final IOdysseusScriptParser parser = DashboardPlugIn.getScriptParser();
+	public void start() throws ControllerException {
+		
 		final ISession caller = OdysseusRCPPlugIn.getActiveSession();
-
-	
 		
 		try {
 			if( lines == null ) {
@@ -71,34 +67,20 @@ public class QueryExecutionHandler {
 			if( scriptFile != null ) {
 				lines = ParserClientUtil.replaceClientReplacements(lines, scriptFile);
 			}
-			//TODO: you cannot access the parser directly!!
-			List<?> results = parser.parseAndExecute(lines, caller, null, Context.empty());
+			String query = "";
+			for(String line : lines){
+				query = query + System.lineSeparator() + line;
+			}
+			Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, "Standard", Context.empty());
 			
-			queryIDs = getExecutedQueryIDs(results);
+			
+			queryIDs = ids;
 			queryRoots = determineRoots(queryIDs);
 		} catch (CoreException ex) {
-			throw new OdysseusScriptException("Could not start query", ex);
+			throw new ControllerException("Could not start query", ex);
 		}
 	}
 	
-	
-	private static Collection<Integer> getExecutedQueryIDs(List<?> results) {
-		final Collection<Integer> ids = Lists.newArrayList();
-
-		for (final Object result : results) {
-			if (result instanceof List) {
-				@SuppressWarnings("rawtypes")
-				final List list = (List) result;
-				for (final Object obj : list) {
-					if (obj instanceof Integer) {
-						ids.add((Integer) obj);
-					}
-				}
-			}
-		}
-
-		return ids;
-	}
 
 	private static Collection<IPhysicalOperator> determineRoots(Collection<Integer> queryIDs) {
 		final Collection<IPhysicalOperator> roots = Lists.newArrayList();

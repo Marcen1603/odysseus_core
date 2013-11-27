@@ -44,13 +44,12 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.graphics.Point;
 
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.KeywordRegistry;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptStructureProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.DocumentUtils;
-import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 
 /**
  * 
@@ -68,29 +67,28 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			if (OdysseusRCPEditorTextPlugIn.getExecutor() == null) {
 				return null;
 			}
-			ISession caller = OdysseusRCPPlugIn.getActiveSession();
+
 			Point selection = viewer.getSelectedRange();
 			IDocument document = viewer.getDocument();
 			String prefix = lastWord(document, offset);
 			String tokenBefore = tokenBefore(document, offset);
 			int qlen = prefix.length();
 			List<String> words = new ArrayList<String>();
-			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();			
+			List<ICompletionProposal> result = new ArrayList<ICompletionProposal>();
 			String token = tokenBefore.trim().toUpperCase();
-			if(token.length()>0){
+			if (token.length() > 0) {
 				token = token.substring(1);
 			}
 			// first we look, if we are behind a script command like #PARSER, so
 			// we try to loads its possible parameters
-			boolean keyWordSearchfailed = false;
-			try {
-				IPreParserKeyword keyword = OdysseusRCPEditorTextPlugIn.getScriptParser().getPreParserKeywordRegistry().createKeywordExecutor(token);
-				words.addAll(keyword.getAllowedParameters(caller));
-			} catch (Exception e) {
-				keyWordSearchfailed = true;
-			}
-			// if we are not behind a #-Keyword, we try other things...
-			if (keyWordSearchfailed) {
+			List<String> keywords = OdysseusScriptStructureProvider.getKeywords();
+			if (keywords.contains(token)) {
+
+				List<String> parameters = OdysseusScriptStructureProvider.getParametersForKeyword(token);
+				words.addAll(parameters);
+
+				// if we are not behind a #-Keyword, we try other things...
+			} else {
 				// maybe, we currently started to write a keyword, then add all
 				// possible words
 				if (tokenBefore.trim().startsWith("#")) {
@@ -104,12 +102,16 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 							IEditorLanguagePropertiesProvider ecp = OdysseusRCPEditorTextPlugIn.getEditorCompletionProvider(parser);
 							if (ecp != null) {
 								String currentToken = lastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
-								// String beforeCurrentToken = lastLastWord(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
+								// String beforeCurrentToken =
+								// lastLastWord(document, offset,
+								// ecp.getTokenSplitters(),
+								// ecp.ignoreWhitespaces());
 								String stopToken[] = lastStopTokens(document, offset, ecp.getTokenSplitters(), ecp.ignoreWhitespaces());
 								List<ICompletionProposal> parserWords = ecp.getCompletionSuggestions(currentToken, stopToken, OdysseusRCPEditorTextPlugIn.getExecutor(), OdysseusRCPPlugIn.getActiveSession(), document, offset, selection);
 								result.addAll(parserWords);
 								// for (String s : parserWords) {
-								// result.add(new CompletionProposal(s, offset, 0, s.length()));
+								// result.add(new CompletionProposal(s, offset,
+								// 0, s.length()));
 								// }
 							}
 						}
@@ -125,7 +127,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 			for (String word : words) {
 				if (word.toUpperCase().startsWith(prefix.toUpperCase())) {
 					result.add(new CompletionProposal(word, offset - qlen, qlen, word.length()));
-				} 
+				}
 			}
 
 			return result.toArray(new ICompletionProposal[result.size()]);
@@ -194,7 +196,8 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 		return "";
 	}
 
-	// private static String lastLastWord(IDocument doc, int offset, List<Character> stopChars, boolean ignoreWhitespaces) {
+	// private static String lastLastWord(IDocument doc, int offset,
+	// List<Character> stopChars, boolean ignoreWhitespaces) {
 	// boolean foundFirst = false;
 	// int foundAt = offset;
 	// try {
@@ -219,7 +222,7 @@ public class OdysseusScriptCompletionProcessor implements IContentAssistProcesso
 
 	private static List<String> getScriptKeywords() {
 		List<String> words = new ArrayList<String>();
-		String scriptkeywords[] = OdysseusRCPEditorTextPlugIn.getScriptParser().getKeywordNames().toArray(new String[] {});
+		String scriptkeywords[] = OdysseusScriptStructureProvider.getKeywords().toArray(new String[] {});
 		for (int i = 0; i < scriptkeywords.length; i++) {
 			words.add("#" + scriptkeywords[i]);
 		}

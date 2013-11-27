@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -148,5 +149,15 @@ public interface ICompiler extends IInfoProvider, IRewrite, IPlanGenerator {
 	
 	public void addCompilerListener(ICompilerListener listener);
 	public void removeCompilerListener(ICompilerListener listener);
+	
+	/**
+	 * A list of tokens like static key words for a certain query parser that
+	 * can be, e.g. used for visualization. 
+	 * @param queryParser
+	 * @return a parser dependent key-multiple-values map
+	 */
+	public Map<String, List<String>> getQueryParserTokens(String parserID, ISession user);
+	
+	public List<String> getQueryParserSuggestions(String parserID, String hint, ISession user);
 	
 }

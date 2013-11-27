@@ -18,7 +18,9 @@ package de.uniol.inf.is.odysseus.cep.sase;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.runtime.ANTLRReaderStream;
 import org.antlr.runtime.ANTLRStringStream;
@@ -148,7 +150,13 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	}
 	
 	@Override
-	public List<String> getStaticKeyWords() {
+	public Map<String, List<String>> getTokens(ISession user) {
+		Map<String, List<String>> tokens = new HashMap<>();		
+		return tokens;
+	}
+	
+	@Override
+	public List<String> getSuggestions(String hint, ISession user) {
 		return new ArrayList<>();
 	}
 

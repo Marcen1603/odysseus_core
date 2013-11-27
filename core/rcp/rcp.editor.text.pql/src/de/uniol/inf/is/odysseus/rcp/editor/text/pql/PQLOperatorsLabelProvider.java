@@ -23,18 +23,18 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 
 public class PQLOperatorsLabelProvider extends CellLabelProvider {
 
 	@Override
 	public String getToolTipText(Object element) {
-		if (element instanceof IOperatorBuilder) {
-			return ((IOperatorBuilder) element).getDoc();
+		if (element instanceof LogicalOperatorInformation) {
+			return ((LogicalOperatorInformation) element).getDoc();
 		}
-		if (element instanceof IParameter) {
-			return ((IParameter<?>) element).getDoc();
+		if (element instanceof LogicalParameterInformation) {
+			return ((LogicalParameterInformation) element).getDoc();
 		}
 		if (element instanceof String) {
 			return (String) element;
@@ -62,19 +62,19 @@ public class PQLOperatorsLabelProvider extends CellLabelProvider {
 		Object element = cell.getElement();
 		String text = "";
 		Image image = null;
-		if (element instanceof IOperatorBuilder) {
-			text = ((IOperatorBuilder) element).getName().toUpperCase();
+		if (element instanceof LogicalOperatorInformation) {
+			text = ((LogicalOperatorInformation) element).getOperatorName().toUpperCase();
 			image = PQLEditorTextPlugIn.getImageManager().get("pqlOperator");
 		}
-		if (element instanceof IParameter) {
-			IParameter<?> param = (IParameter<?>) element;
+		if (element instanceof LogicalParameterInformation) {
+			LogicalParameterInformation param = (LogicalParameterInformation) element;
 			String name = param.getName().toUpperCase();
 			if (!param.isMandatory()) {
 				name = "[Optional] " + name;
 			}
 			text = name;
 			
-			if( ((IParameter<?>)element).isMandatory() ) {
+			if( ((LogicalParameterInformation)element).isMandatory() ) {
 				image = PQLEditorTextPlugIn.getImageManager().get("pqlAttribute");
 			} else {
 				image = PQLEditorTextPlugIn.getImageManager().get("pqlOptionalAttribute");

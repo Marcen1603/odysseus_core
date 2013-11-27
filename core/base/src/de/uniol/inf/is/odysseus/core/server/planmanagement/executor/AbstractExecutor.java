@@ -1172,4 +1172,14 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public Set<String> getRegisteredWrapperNames(ISession caller) {
 		return new TreeSet<String>(WrapperRegistry.getWrapperNames());
 	}
+	
+	@Override
+	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession user) {
+		return getCompiler().getQueryParserSuggestions(queryParser, hint, user);
+	}
+	
+	@Override
+	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user) {
+		return getCompiler().getQueryParserTokens(queryParser, user);		
+	}
 }

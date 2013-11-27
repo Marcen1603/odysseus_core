@@ -37,7 +37,7 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class PQLAccessStatementGenWindow {
 
@@ -309,7 +309,7 @@ public class PQLAccessStatementGenWindow {
 	}
 
 	private static String[] determineWrapperNameList() {
-		return WrapperRegistry.getWrapperNames().toArray(new String[0]);
+		return OdysseusRCPPlugIn.getExecutor().getRegisteredWrapperNames(OdysseusRCPPlugIn.getActiveSession()).toArray(new String[0]);		
 	}
 
 	private static String getComboSelection(Combo c) {

@@ -23,7 +23,7 @@ import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptStructureProvider;
 
 /**
  * @author Dennis Geesen
@@ -37,7 +37,7 @@ public class SimpleMultiLineRule implements IPredicateRule {
 	private IToken successToken;
 	private boolean eofisend;
 	private boolean endSequenceExclusively;
-	private char[] comment = OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY.toCharArray();
+	private char[] comment = OdysseusScriptStructureProvider.SINGLE_LINE_COMMENT_KEY.toCharArray();
 
 	public SimpleMultiLineRule(String startSequence, String endSequence, IToken token, boolean eofIsEnd, boolean endSequenceExclusively) {
 		this.startSequnce = startSequence.toCharArray();

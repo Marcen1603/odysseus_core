@@ -677,4 +677,18 @@ public class WsClient implements IExecutor, IClientExecutor {
 		return null;
 	}
 
+	@Override
+	public Map<String, List<String>> getQueryParserTokens(String queryParser,
+			ISession user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getQueryParserSuggestions(String queryParser,
+			String hint, ISession user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

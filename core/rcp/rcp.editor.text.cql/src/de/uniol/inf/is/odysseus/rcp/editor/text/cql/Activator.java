@@ -1,11 +1,17 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.cql;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -46,8 +52,18 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	
-	public static IDataDictionary getDataDictionary(ITenant tenant) {
-		return DataDictionaryProvider.getDataDictionary(tenant);
+	public static IExecutor getExecutor(){
+		return OdysseusRCPEditorTextPlugIn.getExecutor();
+	}
+	
+	public static List<String> getDatatypeNames(){
+		List<String> list = new ArrayList<>();
+		ISession caller = OdysseusRCPPlugIn.getActiveSession();
+		Set<SDFDatatype> dts = OdysseusRCPEditorTextPlugIn.getExecutor().getRegisteredDatatypes(caller);
+		for(SDFDatatype dt : dts){
+			list.add(dt.getQualName());
+		}
+		return list;
 	}
 	
 }

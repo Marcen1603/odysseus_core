@@ -17,17 +17,12 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.editors.outline;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.NamedList;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 public class OdysseusScriptContentProvider implements ITreeContentProvider {
 
@@ -39,16 +34,18 @@ public class OdysseusScriptContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ScriptNode) {
-			String text = ((ScriptNode) parentElement).getString();
+			
 			try {
-				ISession user = OdysseusRCPPlugIn.getActiveSession();
 				List<Object> childs = new ArrayList<>();
-				// replacements
-				NamedList<Entry<String, String>> replacements = new NamedList<>("Definitions");
-				replacements.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(text).entrySet());
-				childs.add(replacements);			
-				// statements				
-				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user, Context.empty()));
+				//TODO: really periodically sending the script to server?!
+//				ISession user = OdysseusRCPPlugIn.getActiveSession();
+//				String text = ((ScriptNode) parentElement).getString();
+//				// replacements
+//				NamedList<Entry<String, String>> replacements = new NamedList<>("Definitions");
+//				replacements.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().getReplacements(text).entrySet());
+//				childs.add(replacements);			
+//				// statements				
+//				childs.addAll(OdysseusRCPEditorTextPlugIn.getScriptParser().parseScript(text, user, Context.empty()));
 
 				return childs.toArray();
 			} catch (Exception e) {

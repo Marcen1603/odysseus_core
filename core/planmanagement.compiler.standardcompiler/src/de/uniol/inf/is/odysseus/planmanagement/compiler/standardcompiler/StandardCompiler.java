@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -396,6 +397,26 @@ public class StandardCompiler implements ICompiler {
 	public List<ILogicalOperator> generatePlans(ILogicalOperator plan,
 			PlanGenerationConfiguration conf, IOperatorOwner owner) {
 		return planGenerator.generatePlans(plan, conf, owner);
+	}
+
+	@Override
+	public Map<String, List<String>> getQueryParserTokens(String parserID, ISession user) {
+		if (this.parserList.containsKey(parserID)) {
+			return this.parserList.get(parserID).getTokens(user);
+		}
+
+		throw new QueryParseException("Parser with ID " + parserID
+				+ " not registered.");		
+	}
+
+	@Override
+	public List<String> getQueryParserSuggestions(String parserID, String hint, ISession user) {
+		if (this.parserList.containsKey(parserID)) {
+			return this.parserList.get(parserID).getSuggestions(hint, user);
+		}
+
+		throw new QueryParseException("Parser with ID " + parserID
+				+ " not registered.");
 	}
 
 }

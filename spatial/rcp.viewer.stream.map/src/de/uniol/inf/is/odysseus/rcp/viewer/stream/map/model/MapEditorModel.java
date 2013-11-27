@@ -28,6 +28,7 @@ import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -53,7 +54,6 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerC
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.VectorLayerConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.heatmap.Heatmap;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.thematic.tracemap.TraceLayer;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class MapEditorModel extends ModelObject {
 
@@ -530,8 +530,8 @@ public class MapEditorModel extends ModelObject {
 	public static void execute(final String[] text) {
 		try {
 			ISession user = OdysseusRCPPlugIn.getActiveSession();
-			OdysseusRCPEditorTextPlugIn.getScriptParser().parseAndExecute(concat(text), user, null, Context.empty());
-		} catch (OdysseusScriptException ex) {
+			OdysseusRCPEditorTextPlugIn.getExecutor().addQuery(concat(text), "OdysseusScript", user, null, Context.empty());					
+		} catch (PlanManagementException ex) {
 			LOG.error("Exception during executing script", ex);
 			if (!ex.getRootMessage().contains("multiple")) {
 				MessageDialog.openError(getCurrentShell(), ex.getMessage(), ex.getRootMessage());

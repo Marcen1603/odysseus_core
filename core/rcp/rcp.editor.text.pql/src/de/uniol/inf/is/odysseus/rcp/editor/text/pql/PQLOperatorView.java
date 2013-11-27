@@ -10,10 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import com.google.common.collect.Lists;
-
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilderFactory;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 public class PQLOperatorView extends ViewPart {
 
@@ -87,16 +85,15 @@ public class PQLOperatorView extends ViewPart {
 		refresh();
 	}
 
-	private List<IOperatorBuilder> determineInput() {
-		IOperatorBuilderFactory factory = PQLEditorTextPlugIn.getOperatorBuilderFactory();
-		return factory != null ? Lists.newArrayList(factory.getOperatorBuilder()) : Lists.<IOperatorBuilder>newArrayList();
+	private List<LogicalOperatorInformation> determineInput() {
+		return OdysseusRCPPlugIn.getExecutor().getOperatorInformations(OdysseusRCPPlugIn.getActiveSession());		
 	}
 
-	private static List<IOperatorBuilder> sortInput(List<IOperatorBuilder> unsortedList) {
-		Collections.sort(unsortedList, new Comparator<IOperatorBuilder>() {
+	private static List<LogicalOperatorInformation> sortInput(List<LogicalOperatorInformation> unsortedList) {
+		Collections.sort(unsortedList, new Comparator<LogicalOperatorInformation>() {
 			@Override
-			public int compare(IOperatorBuilder o1, IOperatorBuilder o2) {
-				return o1.getName().compareTo(o2.getName());
+			public int compare(LogicalOperatorInformation o1, LogicalOperatorInformation o2) {
+				return o1.getOperatorName().compareTo(o2.getOperatorName());
 			}
 		});
 		return unsortedList;

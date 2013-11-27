@@ -176,7 +176,13 @@ public class PQLParser implements IQueryParser {
 	}
 
 	@Override
-	public List<String> getStaticKeyWords() {
+	public Map<String, List<String>> getTokens(ISession user) {
+		Map<String, List<String>> tokens = new HashMap<>();		
+		return tokens;
+	}
+	
+	@Override
+	public List<String> getSuggestions(String hint, ISession user) {
 		return new ArrayList<>();
 	}
 }

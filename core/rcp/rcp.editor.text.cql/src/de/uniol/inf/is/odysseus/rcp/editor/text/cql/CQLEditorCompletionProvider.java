@@ -17,15 +17,16 @@ package de.uniol.inf.is.odysseus.rcp.editor.text.cql;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Point;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserConstants;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 
@@ -46,17 +47,17 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 	}
 
 	@Override
-	public String supportsParser() {
+	public String getSupportedParser() {
 		return "CQL";
 	}
 
 	@Override
 	public List<String> getTerminals() {
-
+		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		// add all parser tokens
 		List<String> liste = new ArrayList<String>();
-		String[] tokens = NewSQLParserConstants.tokenImage;
-		for (String token : tokens) {
+		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor().getQueryParserTokens(getSupportedParser(), caller);		
+		for (String token : values.get("TOKEN")) {
 			if (!token.startsWith("<")) {
 				if (token.startsWith("\"")) {
 					token = token.substring(1, token.length());
@@ -70,7 +71,8 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 			}
 		}
 		// then, add also all datatypes
-		liste.addAll(DataDictionaryProvider.getAllDatatypeNames());
+		
+		liste.addAll(Activator.getDatatypeNames());
 		return liste;
 	}
 

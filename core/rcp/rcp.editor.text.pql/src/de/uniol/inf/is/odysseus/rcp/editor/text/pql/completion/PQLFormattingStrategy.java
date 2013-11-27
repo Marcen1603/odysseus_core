@@ -29,7 +29,6 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.DefaultFormattingStrategy;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.MultiLineBracketRule;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.partition.OdysseusScriptPartitioner;
@@ -67,7 +66,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 	private final IToken replacementToken = new Token(PARTITION_REPLACEMENT);
 
 	@Override
-	public String format(String content, boolean isLineStart, String indentation, int[] positions) {
+	public String format(String content, boolean isLineStart,
+			String indentation, int[] positions) {
 		final String originalContent = content;
 		try {
 			final IPredicateRule[] rules = new IPredicateRule[4];
@@ -76,14 +76,18 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 			rules[2] = new MultiLineBracketRule('{', '}', parametersToken);
 			rules[3] = new MultiLineBracketRule('\'', '\'', stringToken);
 
-			final ITypedRegion[] partitions = calculatePartitions(content, rules, new String[] { PARTITION_COMMENT, PARTITION_OPERATOR, PARTITION_PARAMETERS, PARTITION_STRING });
+			final ITypedRegion[] partitions = calculatePartitions(content,
+					rules, new String[] { PARTITION_COMMENT,
+							PARTITION_OPERATOR, PARTITION_PARAMETERS,
+							PARTITION_STRING });
 
 			final String indent = indentation;
 			String newContent = "";
 			for (final ITypedRegion part : partitions) {
 				String fPart = getPart(part, content);
 				if (part.getType().equalsIgnoreCase(PARTITION_OPERATOR)) {
-					final String lineAtOff = lineAtOffset(content, part.getOffset());
+					final String lineAtOff = lineAtOffset(content,
+							part.getOffset());
 					String correctTab = indent;
 					// is this the first operator?!
 					if (lineAtOff.contains("=")) {
@@ -92,7 +96,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 							index++;
 						}
 						if (!lineAtOff.startsWith(TAB)) {
-							final int tabs = (int) Math.ceil(index / getTabSize());
+							final int tabs = (int) Math.ceil(index
+									/ getTabSize());
 							for (int i = 0; i < tabs; i++) {
 								correctTab = correctTab + TAB;
 							}
@@ -115,9 +120,11 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		}
 	}
 
-	protected String insertInstead(String text, String insert, int position, int length) {
+	protected String insertInstead(String text, String insert, int position,
+			int length) {
 		final String firstPart = text.substring(0, position);
-		final String lastPart = text.substring(position + length, text.length());
+		final String lastPart = text
+				.substring(position + length, text.length());
 		return firstPart + insert + lastPart;
 	}
 
@@ -131,7 +138,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		return buffer.toString();
 	}
 
-	protected String simpleReplace(String content, String toRepalce, String replaceWith) {
+	protected String simpleReplace(String content, String toRepalce,
+			String replaceWith) {
 		final String[] parts = content.split(toRepalce);
 		final StringBuffer buffer = new StringBuffer();
 		for (final String part : parts) {
@@ -140,7 +148,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		return buffer.toString();
 	}
 
-	private String addAfter(String content, String search, String add, boolean trimAfter) {
+	private String addAfter(String content, String search, String add,
+			boolean trimAfter) {
 		final String[] parts = content.split(search);
 		String sep = "";
 		content = "";
@@ -174,12 +183,14 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		return partText;
 	}
 
-	private ITypedRegion[] calculatePartitions(String content, IPredicateRule[] rules, String[] legalPartitions) {
+	private ITypedRegion[] calculatePartitions(String content,
+			IPredicateRule[] rules, String[] legalPartitions) {
 		final Document queryDocument = new Document(content);
 		final RuleBasedPartitionScanner partitionscanner = new RuleBasedPartitionScanner();
 
 		partitionscanner.setPredicateRules(rules);
-		final OdysseusScriptPartitioner partitioner = new OdysseusScriptPartitioner(partitionscanner, legalPartitions);
+		final OdysseusScriptPartitioner partitioner = new OdysseusScriptPartitioner(
+				partitionscanner, legalPartitions);
 		partitioner.connect(queryDocument);
 		queryDocument.setDocumentPartitioner(partitioner);
 		partitioner.printPartitions(queryDocument);
@@ -208,7 +219,9 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		rules[1] = new MultiLineRule("${", "}", replacementToken);
 		rules[2] = new MultiLineBracketRule('{', '}', parametersToken);
 
-		final ITypedRegion[] partitions = calculatePartitions(fPart, rules, new String[] { PARTITION_PARAMETERS, PARTITION_REPLACEMENT, PARTITION_OPERATOR });
+		final ITypedRegion[] partitions = calculatePartitions(fPart, rules,
+				new String[] { PARTITION_PARAMETERS, PARTITION_REPLACEMENT,
+						PARTITION_OPERATOR });
 
 		String result = "";
 		for (final ITypedRegion part : partitions) {
@@ -257,7 +270,9 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		rules[3] = new MultiLineBracketRule('$', '}', replacementToken);
 		rules[4] = new MultiLineBracketRule('{', '=', oneParamToken);
 
-		final ITypedRegion[] partitions = calculatePartitions(fPart, rules, new String[] { PARTITION_ONEPARAM, PARTITION_PARAMLIST, PARTITION_REPLACEMENT, PARTITION_STRING });
+		final ITypedRegion[] partitions = calculatePartitions(fPart, rules,
+				new String[] { PARTITION_ONEPARAM, PARTITION_PARAMLIST,
+						PARTITION_REPLACEMENT, PARTITION_STRING });
 
 		String result = "";
 		for (final ITypedRegion part : partitions) {
@@ -266,10 +281,12 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 				// partText = addAfter(partText, "=", " = ");
 				partText = partText.toLowerCase();
 				if (partText.trim().startsWith(",")) {
-					partText = addAfter(partText, ",", System.lineSeparator() + newIndent + TAB, true);
+					partText = addAfter(partText, ",", System.lineSeparator()
+							+ newIndent + TAB, true);
 				}
 				if (partText.trim().startsWith("{")) {
-					partText = "{" + System.lineSeparator() + newIndent + TAB + partText.substring(1).trim();
+					partText = "{" + System.lineSeparator() + newIndent + TAB
+							+ partText.substring(1).trim();
 				}
 			} else if (part.getType().equalsIgnoreCase(PARTITION_PARAMLIST)) {
 				partText = formatParamlist(partText, indent + TAB);
@@ -282,7 +299,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 			result = result + partText;
 		}
 		if (result.endsWith("}")) {
-			result = result.substring(0, result.length() - 1) + System.lineSeparator() + newIndent + "}";
+			result = result.substring(0, result.length() - 1)
+					+ System.lineSeparator() + newIndent + "}";
 		}
 		return result;
 	}
@@ -314,7 +332,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 		final IPredicateRule[] rules = new IPredicateRule[1];
 		rules[0] = new MultiLineBracketRule('[', ']', paramlistToken);
 
-		final ITypedRegion[] partitions = calculatePartitions(text, rules, new String[] { PARTITION_PARAMLIST });
+		final ITypedRegion[] partitions = calculatePartitions(text, rules,
+				new String[] { PARTITION_PARAMLIST });
 
 		String result = "";
 		for (final ITypedRegion part : partitions) {
@@ -343,14 +362,15 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 	}
 
 	private String getPart(ITypedRegion region, String content) {
-		return content.substring(region.getOffset(), region.getOffset() + region.getLength());
+		return content.substring(region.getOffset(), region.getOffset()
+				+ region.getLength());
 	}
 
 	private int getTabSize() {
 		if (TAB.equals("\t")) {
 			return 8;
 		}
-		
+
 		return TAB.length();
 	}
 
@@ -375,8 +395,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 	private String operatorNamesToUpperCase(String partText) {
 		// print all operator build in upper case
 		final String upperContent = partText.toUpperCase();
-		for (final IOperatorBuilder b : PQLEditorTextPlugIn.getOperatorBuilderFactory().getOperatorBuilder()) {
-			final String name = b.getName().toUpperCase();
+		for (String name : PQLEditorTextPlugIn.getOperatorNames()) {
+			name = name.toUpperCase();
 			int index = upperContent.indexOf(name, 0);
 			while (index >= 0 && index <= partText.length()) {
 				partText = insertInstead(partText, name, index, name.length());
@@ -389,7 +409,8 @@ public class PQLFormattingStrategy extends DefaultFormattingStrategy {
 	private String removeNewLinesWithoutComment(String text) {
 		final ArrayList<String> lines = new ArrayList<>();
 		try {
-			final BufferedReader reader = new BufferedReader(new StringReader(text));
+			final BufferedReader reader = new BufferedReader(new StringReader(
+					text));
 			String line = reader.readLine();
 			while (line != null) {
 				lines.add(line);

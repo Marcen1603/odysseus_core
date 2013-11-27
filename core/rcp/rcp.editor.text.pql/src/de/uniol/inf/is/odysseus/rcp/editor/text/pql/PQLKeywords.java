@@ -21,7 +21,7 @@ public class PQLKeywords implements IKeywordGroup {
 
 	@Override
 	public String[] getKeywords() {
-		return PQLEditorTextPlugIn.getPQLKeywords();
+		return PQLEditorTextPlugIn.getOperatorNames().toArray(new String[0]);
 	}
 
 }

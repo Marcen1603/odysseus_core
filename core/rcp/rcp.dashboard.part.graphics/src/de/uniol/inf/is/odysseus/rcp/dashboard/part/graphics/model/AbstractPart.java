@@ -14,10 +14,10 @@ import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPartDialog;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * This part reflects anything that can be visualized and changed by a tuple. This includes e.g. connections, pictograms, images...
@@ -29,7 +29,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 
 	private boolean visibile = true;
 	private GraphicsLayer graphicsLayer;
-	private RelationalPredicate relevancePredicate = new RelationalPredicate(new SDFExpression("true", MEP.getInstance()));
+	private TuplePredicate relevancePredicate = new TuplePredicate(new SDFExpression("true", MEP.getInstance()));
 	private String selectedRootName;
 	private boolean dirty = true;
 	private Collection<IPhysicalOperator> roots;
@@ -164,7 +164,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 		this.graphicsLayer = graphicsLayer;
 	}
 
-	public RelationalPredicate getRelevancePredicate() {
+	public TuplePredicate getRelevancePredicate() {
 		return relevancePredicate;
 	}
 
@@ -172,7 +172,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 		if (relevancePredicate == null || relevancePredicate.isEmpty()) {
 			relevancePredicate = "true";
 		}
-		this.relevancePredicate = new RelationalPredicate(new SDFExpression(relevancePredicate, MEP.getInstance()));
+		this.relevancePredicate = new TuplePredicate(new SDFExpression(relevancePredicate, MEP.getInstance()));
 		setDirty();
 	}
 

@@ -17,6 +17,7 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.pql.windows;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -47,9 +48,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.rcp.editor.text.pql.PQLEditorTextPlugIn;
 
 class OutputSchemaTableViewer {
 
@@ -58,7 +58,7 @@ class OutputSchemaTableViewer {
 	private final TableViewer tableViewer;
 	private final List<AttributeTypePair> attributes = Lists.newArrayList();
 	
-	private final List<String> dataTypes;
+	private final List<SDFDatatype> dataTypes;
 	
 	public OutputSchemaTableViewer( Composite parent ) {
 		dataTypes = determineAttributeTypes();		
@@ -109,7 +109,7 @@ class OutputSchemaTableViewer {
 			@Override
 			public void update(ViewerCell cell) {
 				AttributeTypePair attributeTypePair = (AttributeTypePair) cell.getElement();
-				cell.setText(dataTypes.get(attributeTypePair.getTypeIndex()));
+				cell.setText(dataTypes.get(attributeTypePair.getTypeIndex()).getQualName());
 			}
 		});
 
@@ -174,7 +174,7 @@ class OutputSchemaTableViewer {
 	}
 	
 	public String getDataType( int index ) {
-		return dataTypes.get(index);
+		return dataTypes.get(index).getQualName();
 	}
 	
 	private static <T> void insertTableButtons(Composite outputSchemaTableButtonComposite, final TableViewer tableViewer, final List<T> inputList, final Class<T> inputClass) {
@@ -223,13 +223,10 @@ class OutputSchemaTableViewer {
 		});
 	}
 	
-	private static List<String> determineAttributeTypes() {
-		IDataDictionary dd = PQLEditorTextPlugIn.getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant());
-		if( dd == null ) {
-			return Lists.newArrayList();
-		}
-		
-		return ImmutableList.copyOf(dd.getDatatypeNames());
+	private static List<SDFDatatype> determineAttributeTypes() {
+		Set<SDFDatatype> dts = OdysseusRCPPlugIn.getExecutor()
+				.getRegisteredDatatypes(OdysseusRCPPlugIn.getActiveSession());
+		return ImmutableList.copyOf(dts);
 	}
 	
 	private static Button createButton(Composite composite, String text) {

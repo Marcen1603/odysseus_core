@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1373,7 +1374,15 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	}
 
 	@Override
-	public List<String> getStaticKeyWords() {
+	public Map<String, List<String>> getTokens(ISession user) {
+		Map<String, List<String>> tokens = new HashMap<>();
+		List<String> staticTokens = Arrays.asList(NewSQLParserConstants.tokenImage);
+		tokens.put("TOKEN", staticTokens);
+		return tokens;
+	}
+	
+	@Override
+	public List<String> getSuggestions(String hint, ISession user) {
 		return new ArrayList<>();
 	}
 

@@ -24,7 +24,7 @@ import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptParser;
+import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusScriptStructureProvider;
 
 /**
  * @author Dennis Geesen
@@ -52,7 +52,7 @@ public class OdysseusScriptSimpleCommentPartition extends AbstractOdysseusScript
 	@Override
 	public List<IPredicateRule> getPartitioningRules() {
 		List<IPredicateRule> rules = new ArrayList<>();
-		rules.add(new EndOfLineRule(OdysseusScriptParser.SINGLE_LINE_COMMENT_KEY, getPartitioningToken()));
+		rules.add(new EndOfLineRule(OdysseusScriptStructureProvider.SINGLE_LINE_COMMENT_KEY, getPartitioningToken()));
 		return rules;
 	}	
 

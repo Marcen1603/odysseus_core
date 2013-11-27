@@ -27,13 +27,12 @@ import org.eclipse.swt.widgets.Display;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.TuplePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.AbstractPictogramDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.dialog.ImagePictogramDialog;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.figure.ImagePictogramFigure;
-import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 /**
  * @author DGeesen
@@ -42,7 +41,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 public class ImagePictogram extends AbstractPictogram {
 
 	private String filename = "";
-	private RelationalPredicate predicate;
+	private TuplePredicate predicate;
 	private boolean stretch;
 	private boolean center = true;
 	private boolean keepRatio = true;
@@ -123,7 +122,7 @@ public class ImagePictogram extends AbstractPictogram {
 
 	public void setPredicate(String predicate) {
 		try {
-			this.predicate = new RelationalPredicate(new SDFExpression(predicate, MEP.getInstance()));
+			this.predicate = new TuplePredicate(new SDFExpression(predicate, MEP.getInstance()));
 			setDirty();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -131,7 +130,7 @@ public class ImagePictogram extends AbstractPictogram {
 
 	}
 
-	public IPredicate<Tuple<?>> getPredicate() {
+	public TuplePredicate getPredicate() {
 		return this.predicate;
 	}
 

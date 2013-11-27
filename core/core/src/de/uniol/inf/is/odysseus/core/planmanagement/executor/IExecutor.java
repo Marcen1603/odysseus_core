@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -60,6 +61,16 @@ public interface IExecutor extends IClientPlanManager{
 	 */
 	public Set<String> getSupportedQueryParsers()
 			throws PlanManagementException;
+	
+	/**
+	 * A list of tokens like static key words for a certain query parser that
+	 * can be, e.g. used for visualization. 
+	 * @param queryParser
+	 * @return a parser dependent key-multiple-values map
+	 */
+	public Map<String, List<String>> getQueryParserTokens(String queryParser, ISession user);
+	
+	public List<String> getQueryParserSuggestions(String queryParser, String hint, ISession user);
 
 	/**
 	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als Zeichenkette

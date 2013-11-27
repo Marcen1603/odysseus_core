@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartConfigurer;
+import de.uniol.inf.is.odysseus.rcp.dashboard.controller.ControllerException;
 import de.uniol.inf.is.odysseus.rcp.dashboard.controller.QueryExecutionHandler;
-import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class DashboardPartTypeSelectionPage extends WizardPage {
 
@@ -106,7 +106,7 @@ public class DashboardPartTypeSelectionPage extends WizardPage {
 			}
 			
 			setPageComplete(true);
-		} catch (OdysseusScriptException ex) {
+		} catch (ControllerException ex) {
 			LOG.error("Could not execute query", ex);
 			setErrorMessage("Selected Odysseus Script has some errors. See log for details.");
 		}

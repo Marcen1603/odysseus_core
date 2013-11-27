@@ -50,4 +50,12 @@ public class PlanManagementException extends RuntimeException {
 	public PlanManagementException(String message, Throwable e) {
 		super(message,e);
 	}
+	
+	public String getRootMessage(){
+		Throwable current = this;
+		while(current.getCause()!=null){
+			current = current.getCause();
+		}
+		return current.getMessage();				
+	}
 }

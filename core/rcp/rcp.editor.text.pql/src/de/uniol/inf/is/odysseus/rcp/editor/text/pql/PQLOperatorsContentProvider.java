@@ -23,14 +23,13 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBuilder;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
 
 public class PQLOperatorsContentProvider implements ITreeContentProvider {
 
 	private boolean showOptionalParameters = true;
-	
+
 	@Override
 	public void dispose() {
 	}
@@ -47,36 +46,36 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if( parentElement instanceof List ) {
-			List<IOperatorBuilder> set = (List<IOperatorBuilder>)parentElement;
-			List<IOperatorBuilder> nonHiddenSet = selectNonHidden(set);
+		if (parentElement instanceof List) {
+			List<LogicalOperatorInformation> set = (List<LogicalOperatorInformation>) parentElement;
+			List<LogicalOperatorInformation> nonHiddenSet = selectNonHidden(set);
 			return nonHiddenSet.toArray();
 		}
-		if( parentElement instanceof IOperatorBuilder ) {
-			IOperatorBuilder builder = (IOperatorBuilder)parentElement;
-			List<IParameter<?>> manParams = Lists.newArrayList();
-			List<IParameter<?>> optParams = Lists.newArrayList();
-			for( IParameter<?> param : builder.getParameters()) {
-				if( param.isMandatory() ) {
+		if (parentElement instanceof LogicalParameterInformation) {
+			LogicalOperatorInformation builder = (LogicalOperatorInformation) parentElement;
+			List<LogicalParameterInformation> manParams = Lists.newArrayList();
+			List<LogicalParameterInformation> optParams = Lists.newArrayList();
+			for (LogicalParameterInformation param : builder.getParameters()) {
+				if (param.isMandatory()) {
 					manParams.add(param);
-				} else if( showOptionalParameters ){
+				} else if (showOptionalParameters) {
 					optParams.add(param);
 				}
 			}
-			List<IParameter<?>> result = Lists.newArrayList();
+			List<LogicalParameterInformation> result = Lists.newArrayList();
 			result.addAll(manParams);
 			result.addAll(optParams);
 			return result.toArray();
 		}
-		
+
 		return null;
 	}
 
-	private List<IOperatorBuilder> selectNonHidden(List<IOperatorBuilder> builders) {
-		List<IOperatorBuilder> nonHidden = Lists.newArrayList();
-		for( IOperatorBuilder builder : builders ) {
-			LogicalOperator annotation = builder.getOperatorClass().getAnnotation(LogicalOperator.class);
-			if( annotation != null && !annotation.hidden() ) {
+	private List<LogicalOperatorInformation> selectNonHidden(
+			List<LogicalOperatorInformation> builders) {
+		List<LogicalOperatorInformation> nonHidden = Lists.newArrayList();
+		for (LogicalOperatorInformation builder : builders) {
+			if (!builder.isHidden()) {
 				nonHidden.add(builder);
 			}
 		}
@@ -90,17 +89,18 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if( element instanceof List ) {
-			return !((List<?>)element).isEmpty();
+		if (element instanceof List) {
+			return !((List<?>) element).isEmpty();
 		}
-		if( element instanceof IOperatorBuilder) {
-			return !((IOperatorBuilder)element).getParameters().isEmpty();
+		if (element instanceof LogicalOperatorInformation) {
+			return !((LogicalOperatorInformation) element).getParameters()
+					.isEmpty();
 		}
-		
+
 		return false;
 	}
-	
-	public void showOptionalParameters( boolean show ) {
+
+	public void showOptionalParameters(boolean show) {
 		showOptionalParameters = show;
 	}
 
