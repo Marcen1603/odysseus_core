@@ -366,6 +366,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 		return getActionRegistry();
 	}
 
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		updateActions(getSelectionActions());
 	}

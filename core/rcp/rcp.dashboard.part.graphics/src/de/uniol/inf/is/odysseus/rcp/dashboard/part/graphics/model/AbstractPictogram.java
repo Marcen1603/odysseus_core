@@ -147,6 +147,7 @@ public abstract class AbstractPictogram extends AbstractPart {
 	 * de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPart
 	 * #loadFromXML(org.w3c.dom.Node)
 	 */
+	@Override
 	public void loadFromXML(Node parent, GraphicsLayer layer) {
 		super.loadFromXML(parent, layer);
 		NodeList list = parent.getChildNodes();
@@ -290,5 +291,6 @@ public abstract class AbstractPictogram extends AbstractPart {
 	@Override
 	public abstract AbstractPictogram clone();
 
+	@Override
 	public abstract Class<? extends AbstractPictogramDialog<? extends AbstractPictogram>> getConfigurationDialog();
 }

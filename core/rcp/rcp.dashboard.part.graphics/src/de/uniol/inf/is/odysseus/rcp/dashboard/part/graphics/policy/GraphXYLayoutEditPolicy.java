@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 
 public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 	
+	@Override
 	protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
 		PictogramChangeConstraintCommand changeConstraintCommand = new PictogramChangeConstraintCommand();
 		changeConstraintCommand.setNode((AbstractPictogram) child.getModel());

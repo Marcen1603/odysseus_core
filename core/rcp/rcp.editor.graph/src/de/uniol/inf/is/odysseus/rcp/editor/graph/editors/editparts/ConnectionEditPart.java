@@ -45,12 +45,14 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 		setModel(connection);
 	}
 
+	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.CONNECTION_ROLE, new ConnectionEditPolicy());
 		installEditPolicy(EditPolicy.CONNECTION_ENDPOINTS_ROLE, new ConnectionEndpointEditPolicy());
 		installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new ConnectionDirectEditPolicy());
 	}
 
+	@Override
 	public void refreshVisuals() {
 		ConnectionFigure figure = (ConnectionFigure) getFigure();
 		Connection connection = (Connection) getModel();
@@ -59,16 +61,19 @@ public class ConnectionEditPart extends AbstractConnectionEditPart implements Ob
 		figure.repaint();
 	}
 
+	@Override
 	protected IFigure createFigure() {
 		return new ConnectionFigure();
 	}
 
+	@Override
 	public void activate() {
 		if (!isActive())
 			((Connection) getModel()).addObserver(this);
 		super.activate();
 	}
 
+	@Override
 	public void deactivate() {
 		if (isActive())
 			((Connection) getModel()).deleteObserver(this);

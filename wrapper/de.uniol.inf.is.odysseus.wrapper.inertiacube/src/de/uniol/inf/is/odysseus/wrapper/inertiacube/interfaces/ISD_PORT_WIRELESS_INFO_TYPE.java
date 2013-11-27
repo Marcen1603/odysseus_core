@@ -26,11 +26,15 @@ public class ISD_PORT_WIRELESS_INFO_TYPE extends Structure<ISD_PORT_WIRELESS_INF
 	public ISD_PORT_WIRELESS_INFO_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("valid", "status", "wireless", "channel", "id", "radioVersion", "dReserved1", "dReserved2", "dReserved3", "dReserved4");
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_PORT_WIRELESS_INFO_TYPE newInstance() { return new ISD_PORT_WIRELESS_INFO_TYPE(); }
 	public static ISD_PORT_WIRELESS_INFO_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_PORT_WIRELESS_INFO_TYPE.class, arrayLength);

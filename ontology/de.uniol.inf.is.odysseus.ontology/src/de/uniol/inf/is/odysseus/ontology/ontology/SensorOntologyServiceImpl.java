@@ -138,11 +138,13 @@ public class SensorOntologyServiceImpl implements SensorOntologyService,
 		throw new IllegalArgumentException("Not implemented");
 	}
 
+	@Override
 	public List<SensingDevice> getSensingDevices(SDFAttribute attribute) {
 		Objects.requireNonNull(attribute);
 		return SensorOntologyServiceImpl.ontology.getSensingDevices(attribute);
 	}
 
+	@Override
 	public List<SDFAttribute> getAttributes(Property property) {
 		Objects.requireNonNull(property);
 		return SensorOntologyServiceImpl.ontology.getAttributes(property);

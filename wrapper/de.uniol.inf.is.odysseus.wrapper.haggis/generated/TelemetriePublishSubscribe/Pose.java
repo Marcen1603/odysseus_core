@@ -48,7 +48,8 @@ public class Pose implements java.lang.Cloneable, java.io.Serializable
         this.orientation = orientation;
     }
 
-    public boolean
+    @Override
+	public boolean
     equals(java.lang.Object rhs)
     {
         if(this == rhs)
@@ -93,7 +94,8 @@ public class Pose implements java.lang.Cloneable, java.io.Serializable
         return false;
     }
 
-    public int
+    @Override
+	public int
     hashCode()
     {
         int __h = 0;
@@ -105,7 +107,8 @@ public class Pose implements java.lang.Cloneable, java.io.Serializable
         return __h;
     }
 
-    public java.lang.Object
+    @Override
+	public java.lang.Object
     clone()
     {
         java.lang.Object o = null;

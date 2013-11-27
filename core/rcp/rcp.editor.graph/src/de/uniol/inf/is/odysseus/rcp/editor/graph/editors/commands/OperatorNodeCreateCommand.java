@@ -33,6 +33,7 @@ public class OperatorNodeCreateCommand extends Command {
 	private Rectangle constraint;
 	private Graph parent;
 
+	@Override
 	public void execute() {
 		setNodeConstraint();	
 		parent.addNode(node);
@@ -44,6 +45,7 @@ public class OperatorNodeCreateCommand extends Command {
 			node.setConstraint(constraint);
 	}
 
+	@Override
 	public void undo() {
 		parent.removeNode(node);
 	}

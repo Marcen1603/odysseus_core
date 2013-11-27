@@ -34,26 +34,31 @@ public class SenderAO extends AbstractSenderAO {
 		super(senderAO);
 	}
 	
+	@Override
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options for different handler.")
 	public void setOptions(List<Option> value) {
 		super.setOptions(value);
 	}
 	
+	@Override
 	@Parameter(name = "wrapper", type = StringParameter.class, optional = false)
 	public void setWrapper(String wrapper) {
 		super.setWrapper(wrapper);
 	}
 	
+	@Override
 	@Parameter(name = "dataHandler", type = StringParameter.class, optional = false)
 	public void setDataHandler(String dataHandler) {
 		super.setDataHandler(dataHandler);
 	}
 	
+	@Override
 	@Parameter(name = "protocol", type = StringParameter.class, optional = false)
 	public void setProtocolHandler(String protocolHandler) {
 		super.setProtocolHandler(protocolHandler);
 	}
 
+	@Override
 	@Parameter(name = "transport", type = StringParameter.class, optional = false)
 	public void setTransportHandler(String transportHandler) {
 		super.setTransportHandler(transportHandler);

@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  */
 public class GraphXYLayoutEditPolicy extends XYLayoutEditPolicy {
 
+	@Override
 	protected Command createChangeConstraintCommand(EditPart child, Object constraint) {
 		OperatorNodeChangeConstraintCommand changeConstraintCommand = new OperatorNodeChangeConstraintCommand();
 		changeConstraintCommand.setNode((OperatorNode) child.getModel());

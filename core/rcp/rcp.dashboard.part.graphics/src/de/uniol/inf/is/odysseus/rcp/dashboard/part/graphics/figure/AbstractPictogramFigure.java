@@ -44,6 +44,7 @@ public abstract class AbstractPictogramFigure<T extends AbstractPictogram> exten
 		add(bottomTextlabel);
 	}
 
+	@Override
 	public void paintFigure(Graphics g) {
 		Rectangle r = getBounds().getCopy();
 		Point center = new Point(r.width / 2, r.height / 2);

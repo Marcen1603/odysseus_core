@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictog
 public class PictogramGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 		
 	
+	@Override
 	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = new ConnectionCreateCommand();
 		result.setSource((AbstractPictogram) getHost().getModel());

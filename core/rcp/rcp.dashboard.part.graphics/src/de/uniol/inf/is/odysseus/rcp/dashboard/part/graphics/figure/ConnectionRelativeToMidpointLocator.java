@@ -39,6 +39,7 @@ public class ConnectionRelativeToMidpointLocator extends ConnectionLocator {
 	}
 	
 	
+	@Override
 	protected Point getReferencePoint() {
 		Connection conn = getConnection();
 		Point p = Point.SINGLETON;

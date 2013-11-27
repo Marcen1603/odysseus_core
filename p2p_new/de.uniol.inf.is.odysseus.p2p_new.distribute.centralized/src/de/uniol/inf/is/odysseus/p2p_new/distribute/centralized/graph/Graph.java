@@ -234,6 +234,7 @@ public class Graph {
 		this.nodesGroupedByOpType = nodesGroupedByOpType;
 	}
 
+	@Override
 	public Graph clone() {
 		return new Graph(this);
 	}

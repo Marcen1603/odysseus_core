@@ -53,6 +53,7 @@ public class PasteAction extends WorkbenchPartAction {
 		return cmd.canExecute();
 	}
 
+	@Override
 	public void run() {
 		execute(createPasteCopyCommand());
 	}
@@ -76,6 +77,7 @@ public class PasteAction extends WorkbenchPartAction {
 //		return compoundCmd;
 	}
 
+	@Override
 	protected void init() {
 		super.init();
 		setText("&Paste");

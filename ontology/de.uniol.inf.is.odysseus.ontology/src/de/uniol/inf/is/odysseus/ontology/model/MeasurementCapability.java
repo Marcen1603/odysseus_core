@@ -56,7 +56,8 @@ public class MeasurementCapability extends Property {
     /**
      * @return the name
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return this.name;
     }
 

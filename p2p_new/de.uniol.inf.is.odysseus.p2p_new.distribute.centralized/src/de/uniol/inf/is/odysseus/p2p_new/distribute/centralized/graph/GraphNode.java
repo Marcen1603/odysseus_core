@@ -151,6 +151,7 @@ public class GraphNode implements Comparable<GraphNode> {
 		this.operatorID = operatorID;
 	}
 	
+	@Override
 	public GraphNode clone() {
 		return new GraphNode(this);
 	}

@@ -26,15 +26,18 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 		setModel(node);
 	}
 
+	@Override
 	protected IFigure createFigure() {
 		return ((AbstractPictogram) getModel()).createPictogramFigure();
 	}
 
+	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new PictogramGraphicalNodeEditPolicy());
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new PictogramComponentEditPolicy());
 	}
 
+	@Override
 	public void refreshVisuals() {
 		@SuppressWarnings("unchecked")
 		AbstractPictogramFigure<AbstractPictogram> figure = (AbstractPictogramFigure<AbstractPictogram>) getFigure();
@@ -76,6 +79,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 		super.performRequest(req);
 	}
 
+	@Override
 	public void activate() {
 		if (!isActive()) {
 			((AbstractPictogram) getModel()).addObserver(this);
@@ -83,6 +87,7 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 		super.activate();
 	}
 
+	@Override
 	public void deactivate() {
 		if (isActive()) {
 			((AbstractPictogram) getModel()).deleteObserver(this);
@@ -98,10 +103,12 @@ public class PictogramEditPart extends AbstractGraphicalEditPart implements Obse
 	}
 	
 	
+	@Override
 	protected List<Connection> getModelSourceConnections() {
 		return ((AbstractPictogram) getModel()).getSourceConnections();
 	}
 
+	@Override
 	protected List<Connection> getModelTargetConnections() {
 		return ((AbstractPictogram) getModel()).getTargetConnections();
 	}

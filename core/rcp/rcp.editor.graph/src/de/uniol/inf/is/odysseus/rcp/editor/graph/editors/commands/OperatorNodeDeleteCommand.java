@@ -46,11 +46,13 @@ public class OperatorNodeDeleteCommand extends Command {
 		this.graph = graph;
 	}
 
+	@Override
 	public void execute() {
 		detachConnections();
 		graph.removeNode(node);
 	}
 
+	@Override
 	public void undo() {
 		graph.addNode(node);		
 		reattachConnections();

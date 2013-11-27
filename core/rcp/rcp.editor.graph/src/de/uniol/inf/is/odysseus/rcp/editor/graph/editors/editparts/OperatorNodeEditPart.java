@@ -45,15 +45,18 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 		setModel(node);
 	}
 
+	@Override
 	protected IFigure createFigure() {
 		return new OperatorNodeFigure((OperatorNode) getModel());
 	}
 
+	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.GRAPHICAL_NODE_ROLE, new OperatorNodeGraphicalNodeEditPolicy());
 		installEditPolicy(EditPolicy.COMPONENT_ROLE, new OperatorNodeComponentEditPolicy());
 	}
 
+	@Override
 	public void refreshVisuals() {
 		OperatorNodeFigure figure = (OperatorNodeFigure) getFigure();
 		OperatorNode node = (OperatorNode) getModel();
@@ -88,28 +91,33 @@ public class OperatorNodeEditPart extends AbstractGraphicalEditPart implements O
 		return v;
 	}
 
+	@Override
 	public void activate() {
 		if (!isActive())
 			((OperatorNode) getModel()).addObserver(this);
 		super.activate();
 	}
 
+	@Override
 	public void deactivate() {
 		if (isActive())
 			((OperatorNode) getModel()).deleteObserver(this);
 		super.deactivate();
 	}
 
+	@Override
 	public void update(Observable arg0, Object arg1) {
 		refreshVisuals();
 		refreshSourceConnections();
 		refreshTargetConnections();
 	}
 
+	@Override
 	protected List<Connection> getModelSourceConnections() {
 		return ((OperatorNode) getModel()).getSourceConnections();
 	}
 
+	@Override
 	protected List<Connection> getModelTargetConnections() {
 		return ((OperatorNode) getModel()).getTargetConnections();
 	}

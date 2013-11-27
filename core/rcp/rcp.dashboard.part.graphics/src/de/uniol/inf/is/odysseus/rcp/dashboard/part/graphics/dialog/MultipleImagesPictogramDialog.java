@@ -112,6 +112,7 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 		}
 		
 		btnBrowseToAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {				
 				final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(parent.getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 				dialog.setInput(getProject());

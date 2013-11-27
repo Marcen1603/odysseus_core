@@ -46,6 +46,7 @@ public class DashboardGraphicsPartConfigurer extends AbstractDashboardPartConfig
 		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog dlg = new FileDialog(parent.getShell());
 				dlg.setFilterPath(backgroundImageText.getText());

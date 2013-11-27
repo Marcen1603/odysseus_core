@@ -40,12 +40,14 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements Observer
 		setModel(graph);
 	}
 
+	@Override
 	protected List<OperatorNode> getModelChildren() {
 		ArrayList<OperatorNode> result = new ArrayList<OperatorNode>();
 		result.addAll(((Graph)getModel()).getNodes());
 		return result;
 	}
 
+	@Override
 	protected IFigure createFigure() {
 		FreeformLayer layer = new FreeformLayer();
 		layer.setLayoutManager(new FreeformLayout());
@@ -53,22 +55,26 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements Observer
 		return layer;
 	}
 
+	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, new GraphXYLayoutEditPolicy());
 	}
 	
+	@Override
 	public void activate() {
 		if (!isActive())
 			((Graph) getModel()).addObserver(this);
 		super.activate();
 	}
 
+	@Override
 	public void deactivate() {
 		if (isActive())
 			((Graph) getModel()).deleteObserver(this);
 		super.deactivate();
 	}
 
+	@Override
 	public void update(Observable observable, Object message) {
 		refreshChildren();
 	}

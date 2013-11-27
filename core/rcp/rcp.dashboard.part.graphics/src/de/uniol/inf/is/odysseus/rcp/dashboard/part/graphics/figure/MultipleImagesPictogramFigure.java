@@ -46,6 +46,7 @@ public class MultipleImagesPictogramFigure extends AbstractPictogramFigure<Multi
 	private int width = 10;
 	private int height = 10;
 
+	@Override
 	public void paintGraphic(Graphics g) {		
 		Rectangle r = getContentBounds().getCopy();
 		if (this.visibile) {

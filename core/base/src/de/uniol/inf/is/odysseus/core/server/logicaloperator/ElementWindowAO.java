@@ -13,6 +13,7 @@ public class ElementWindowAO extends AbstractWindowWithWidthAO {
 
 	private static final long serialVersionUID = -1206019698493473257L;
 
+	@Override
 	@Parameter(name = "PARTITION", type = ResolvedSDFAttributeParameter.class, optional = true, isList = true)
 	public void setPartitionBy(List<SDFAttribute> partitionedBy) {
 		super.setPartitionBy(partitionedBy);

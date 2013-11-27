@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.Connection;
 public class ConnectionEditPolicy extends org.eclipse.gef.editpolicies.ConnectionEditPolicy {
 	
 		
+	@Override
 	protected Command getDeleteCommand(GroupRequest request) {
 		ConnectionDeleteCommand result = new ConnectionDeleteCommand();
 		result.setConnection((Connection) getHost().getModel());

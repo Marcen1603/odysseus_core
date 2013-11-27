@@ -120,6 +120,7 @@ public class ConnectionDialog extends AbstractPartDialog<Connection> {
 		}
 
 		btnBrowseToAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 
 				ColorSelector colorSelector = new ColorSelector(parent);

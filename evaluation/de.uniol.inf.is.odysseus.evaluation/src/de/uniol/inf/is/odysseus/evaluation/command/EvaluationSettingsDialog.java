@@ -315,6 +315,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 		Button button = new Button(othersettingsComp, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				DirectoryDialog dlg = new DirectoryDialog(othersettingsComp.getShell());
 
@@ -442,6 +443,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 		return ok;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);

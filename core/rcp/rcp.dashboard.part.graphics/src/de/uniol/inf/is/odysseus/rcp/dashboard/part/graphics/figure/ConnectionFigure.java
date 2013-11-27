@@ -69,6 +69,7 @@ public class ConnectionFigure extends PolylineConnection {
 	// sourceTextLabel.invalidate();
 	// }
 
+	@Override
 	public void paintFigure(Graphics g) {
 		super.paintFigure(g);
 		setConstraint(topTextlabel, new ConnectionRelativeToMidpointLocator(this, 0, ((getLineWidth()/2)+TEXT_PADDING)*-1));

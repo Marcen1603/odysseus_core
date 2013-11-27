@@ -14,6 +14,7 @@ public class PictogramCreateCommand extends Command {
 	private Point location;
 	private GraphicsLayer parent;	
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void execute() {
 
@@ -32,6 +33,7 @@ public class PictogramCreateCommand extends Command {
 	}
 	
 
+	@Override
 	public void undo() {
 		parent.removePictogram(pictogram);
 	}

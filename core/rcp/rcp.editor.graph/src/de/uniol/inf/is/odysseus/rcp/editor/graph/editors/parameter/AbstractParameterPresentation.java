@@ -37,6 +37,7 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 	private LogicalParameterInformation logicalParameterInformation;
 	private OperatorNode operator;
 
+	@Override
 	public synchronized void setValue(V value) {
 		Object oldValue = this.value;
 		this.value = value;

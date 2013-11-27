@@ -15,30 +15,37 @@ public abstract class AbstractClassifier implements IClassifier {
 	protected boolean debugModus = false;
 	
 
+	@Override
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
 
+	@Override
 	public void setNgram(int ngram) {
 		this.ngram = ngram;
 	}
 
+	@Override
 	public void setNgramUpTo(int ngramUpTo) {
 		this.ngramUpTo = ngramUpTo;
 	}
 
+	@Override
 	public void setRemoveStopWords(boolean removeStopWords) {
 		this.removeStopWords = removeStopWords;
 	}
 
+	@Override
 	public void setStemmWords(boolean stemmWords) {
 		this.stemmWords = stemmWords;
 	}
 	
+	@Override
 	public void setDebugModus(boolean debugModus){
 		this.debugModus = debugModus;
 	}
 
+	@Override
 	public String getDomain() {
 		return domain;
 	}
@@ -47,14 +54,17 @@ public abstract class AbstractClassifier implements IClassifier {
 		return ngramUpTo;
 	}
 
+	@Override
 	public boolean getRemoveStopWords() {
 		return removeStopWords;
 	}
 
+	@Override
 	public boolean getStemmWords() {
 		return stemmWords;
 	}
 	
+	@Override
 	public boolean getDebugModus(){
 		return debugModus;	
 	}

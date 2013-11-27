@@ -42,7 +42,7 @@ public class Cache implements ICache {
 	private int cacheremove;
 	/**
 	 * Constructor for the ReadOnlyCache. This means, Caching Records are not modified, only read
-	 * If a record can not be found by the specified key or the record isn´t valid, null we be returned.
+	 * If a record can not be found by the specified key or the record isnï¿½t valid, null we be returned.
 	 * @param cacheStore the cache store
 	 * @param removalStrategy the removal strategy
 	 * @param time the expiration time
@@ -125,6 +125,7 @@ public class Cache implements ICache {
 	/**
 	 * @return number of cache hits
 	 */
+	@Override
 	public int getCacheHits() {
 		return this.cachehit;
 	}
@@ -132,6 +133,7 @@ public class Cache implements ICache {
 	/**
 	 * @return number of cache misses
 	 */
+	@Override
 	public int getCacheMiss() {
 		return this.cachemiss;
 	}
@@ -139,6 +141,7 @@ public class Cache implements ICache {
 	/**
 	 * @return number of cache inserts
 	 */
+	@Override
 	public int getCacheInsert() {
 		return this.cacheinsert;
 	}
@@ -146,6 +149,7 @@ public class Cache implements ICache {
 	/**
 	 * @return number of cache removes
 	 */
+	@Override
 	public int getCacheRemoves() {
 		return this.cacheremove;
 	}

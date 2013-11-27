@@ -10,6 +10,7 @@ public class PictogramChangeConstraintCommand extends Command {
 	private Rectangle oldConstraint;
 	private AbstractPictogram node;
 
+	@Override
 	public void execute() {
 		if (oldConstraint == null){
 			oldConstraint = new Rectangle(node.getConstraint());
@@ -17,6 +18,7 @@ public class PictogramChangeConstraintCommand extends Command {
 		node.setConstraint(newConstraint);		
 	}
 
+	@Override
 	public void undo() {
 		node.setConstraint(oldConstraint);
 	}

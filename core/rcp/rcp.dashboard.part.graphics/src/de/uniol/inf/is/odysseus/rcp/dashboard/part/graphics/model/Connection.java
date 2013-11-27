@@ -216,6 +216,7 @@ public class Connection extends AbstractPart {
 		parent.appendChild(colorsElement);
 	}
 
+	@Override
 	public void loadFromXML(Node parent, GraphicsLayer layer) {
 		super.loadFromXML(parent, layer);
 		NodeList list = parent.getChildNodes();

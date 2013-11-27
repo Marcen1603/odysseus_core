@@ -55,11 +55,15 @@ public class ISD_TRACKER_INFO_TYPE extends Structure<ISD_TRACKER_INFO_TYPE, ISD_
 	public ISD_TRACKER_INFO_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("LibVersion", "TrackerType", "TrackerModel", "Port", "RecordsPerSec", "KBitsPerSec", "SyncState", "SyncRate", "SyncPhase", "Interface", "UltTimeout", "UltVolume", "dwReserved4", "FirmwareRev", "fReserved2", "fReserved3", "fReserved4", "LedEnable", "bReserved2", "bReserved3", "bReserved4");
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_TRACKER_INFO_TYPE newInstance() { return new ISD_TRACKER_INFO_TYPE(); }
 	public static ISD_TRACKER_INFO_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_TRACKER_INFO_TYPE.class, arrayLength);

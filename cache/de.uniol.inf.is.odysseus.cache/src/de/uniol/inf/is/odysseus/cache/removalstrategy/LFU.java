@@ -78,6 +78,7 @@ public class LFU implements IRemovalStrategy {
 			this.cacheEntry = cacheEntry;
 		}
 		
+		@Override
 		public boolean equals(Object obj) {
 			return key.equals(((ListEntry)obj).key);
 		}

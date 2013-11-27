@@ -41,6 +41,7 @@ public class ConnectionCreateCommand extends Command {
 		this.connection = connection;
 	}
 
+	@Override
 	public boolean canExecute() {
 		if (source == null || target == null) {
 			return false;
@@ -51,12 +52,14 @@ public class ConnectionCreateCommand extends Command {
 		return true;
 	}
 
+	@Override
 	public void execute() {
 		connection.setSource(source);
 		connection.setTarget(target);
 		source.getGraphicsLayer().addPart(connection);	
 	}
 
+	@Override
 	public void undo() {
 		connection.setSource(null);
 		connection.setTarget(null);

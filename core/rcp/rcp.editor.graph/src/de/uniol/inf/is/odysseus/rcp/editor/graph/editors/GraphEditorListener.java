@@ -33,6 +33,7 @@ public class GraphEditorListener implements CommandStackListener {
 		this.actionRegistry = registry;
 	}
 
+	@Override
 	public void commandStackChanged(EventObject event) {
 		Iterator<?> iterator = actionRegistry.getActions();
 		while (iterator.hasNext()) {

@@ -345,6 +345,7 @@ public class LineProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		return optionsMap;
 	}
 
+	@Override
 	public void setOptionsMap(Map<String, String> optionsMap) {
 		this.optionsMap = optionsMap;
 	}

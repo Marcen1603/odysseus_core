@@ -49,11 +49,15 @@ public class ISD_CAMERA_ENCODER_DATA_TYPE extends Structure<ISD_CAMERA_ENCODER_D
 	public ISD_CAMERA_ENCODER_DATA_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("TrackingStatus", "bReserved1", "bReserved2", "bReserved3", "Timecode", "ApertureEncoder", "FocusEncoder", "ZoomEncoder", "TimecodeUserBits", "Aperture", "Focus", "FOV", "NodalPoint", "CovarianceOrientation", "CovariancePosition", "dwReserved1", "dwReserved2", "fReserved1", "fReserved2", "fReserved3", "fReserved4");
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_CAMERA_ENCODER_DATA_TYPE newInstance() { return new ISD_CAMERA_ENCODER_DATA_TYPE(); }
 	public static ISD_CAMERA_ENCODER_DATA_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_CAMERA_ENCODER_DATA_TYPE.class, arrayLength);

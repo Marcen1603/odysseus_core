@@ -45,6 +45,7 @@ public class ConnectionFigure extends PolylineConnection {
 		add(sourcePortLabel, new ConnectionEndpointLocator(this, false));
 	}
 
+	@Override
 	public void paintFigure(Graphics g) {
 		super.paintFigure(g);
 		targetPortLabel.invalidate();

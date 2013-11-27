@@ -40,6 +40,7 @@ public class QSSimulator implements IQuerySharingSimulator {
 		
 	}
 	
+	@Override
 	public SimulationResult simulateQuerySharing(Graph graph, OptimizationConfiguration conf) {
 		shareableIdenticalNodes.clear();
 		shareableSimilarNodes.clear();

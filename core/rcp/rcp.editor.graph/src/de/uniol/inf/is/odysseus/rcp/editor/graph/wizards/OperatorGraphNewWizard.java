@@ -52,6 +52,7 @@ public class OperatorGraphNewWizard extends Wizard implements INewWizard {
 	 * Adding the page to the wizard.
 	 */
 
+	@Override
 	public void addPages() {
 		page = new OperatorGraphNewWizardPage(selection);
 		addPage(page);
@@ -60,10 +61,12 @@ public class OperatorGraphNewWizard extends Wizard implements INewWizard {
 	/**
 	 * This method is called when 'Finish' button is pressed in the wizard. We will create an operation and run it using wizard as execution context.
 	 */
+	@Override
 	public boolean performFinish() {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					doFinish(containerName, fileName, monitor);
@@ -113,6 +116,7 @@ public class OperatorGraphNewWizard extends Wizard implements INewWizard {
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
@@ -150,6 +154,7 @@ public class OperatorGraphNewWizard extends Wizard implements INewWizard {
 	 * 
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 	}

@@ -102,6 +102,7 @@ public class SLAUpdateRateSinkViolationDashboardPart extends
 		public CustomRenderer() {
 		}
 
+		@Override
 		public Paint getItemPaint(final int row, final int column) {
 			// return (row > 200) ? Color.blue : Color.yellow ;
 			return new Color(245, 34, 52);

@@ -79,6 +79,7 @@ public class OperatorNodeFigure extends Figure {
 		}
 	}
 
+	@Override
 	public void paintFigure(Graphics g) {
 		Rectangle r = getBounds().getCopy();
 		Point center = new Point(r.width / 2, r.height / 2);

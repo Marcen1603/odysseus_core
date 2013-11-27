@@ -22,7 +22,8 @@ package TelemetriePublishSubscribe;
 
 public final class _TelemetriePublisherDelD extends Ice._ObjectDelD implements _TelemetriePublisherDel
 {
-    public void
+    @Override
+	public void
     subscribe(final TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx)
         throws IceInternal.LocalExceptionWrapper
     {
@@ -33,7 +34,8 @@ public final class _TelemetriePublisherDelD extends Ice._ObjectDelD implements _
         {
             __direct = new IceInternal.Direct(__current)
             {
-                public Ice.DispatchStatus run(Ice.Object __obj)
+                @Override
+				public Ice.DispatchStatus run(Ice.Object __obj)
                 {
                     TelemetriePublisher __servant = null;
                     try

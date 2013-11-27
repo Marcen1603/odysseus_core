@@ -25,13 +25,15 @@ public final class TelemetriePublisherPrxHelper extends Ice.ObjectPrxHelperBase 
 
 	private static final long serialVersionUID = 6922611053230945461L;
 
+	@Override
 	public void
     subscribe(TelemetrieSubscriberPrx sub)
     {
         subscribe(sub, null, false);
     }
 
-    public void
+    @Override
+	public void
     subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx)
     {
         subscribe(sub, __ctx, true);
@@ -68,32 +70,38 @@ public final class TelemetriePublisherPrxHelper extends Ice.ObjectPrxHelperBase 
 
     private static final String __subscribe_name = "subscribe";
 
-    public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub)
+    @Override
+	public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub)
     {
         return begin_subscribe(sub, null, false, null);
     }
 
-    public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx)
+    @Override
+	public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx)
     {
         return begin_subscribe(sub, __ctx, true, null);
     }
 
-    public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, Ice.Callback __cb)
+    @Override
+	public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, Ice.Callback __cb)
     {
         return begin_subscribe(sub, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    @Override
+	public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_subscribe(sub, __ctx, true, __cb);
     }
 
-    public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, Callback_TelemetriePublisher_subscribe __cb)
+    @Override
+	public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, Callback_TelemetriePublisher_subscribe __cb)
     {
         return begin_subscribe(sub, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx, Callback_TelemetriePublisher_subscribe __cb)
+    @Override
+	public Ice.AsyncResult begin_subscribe(TelemetrieSubscriberPrx sub, java.util.Map<String, String> __ctx, Callback_TelemetriePublisher_subscribe __cb)
     {
         return begin_subscribe(sub, __ctx, true, __cb);
     }
@@ -116,7 +124,8 @@ public final class TelemetriePublisherPrxHelper extends Ice.ObjectPrxHelperBase 
         return __result;
     }
 
-    public void end_subscribe(Ice.AsyncResult __result)
+    @Override
+	public void end_subscribe(Ice.AsyncResult __result)
     {
         __end(__result, __subscribe_name);
     }
@@ -259,13 +268,15 @@ public final class TelemetriePublisherPrxHelper extends Ice.ObjectPrxHelperBase 
         return __ids[1];
     }
 
-    protected Ice._ObjectDelM
+    @Override
+	protected Ice._ObjectDelM
     __createDelegateM()
     {
         return new _TelemetriePublisherDelM();
     }
 
-    protected Ice._ObjectDelD
+    @Override
+	protected Ice._ObjectDelD
     __createDelegateD()
     {
         return new _TelemetriePublisherDelD();

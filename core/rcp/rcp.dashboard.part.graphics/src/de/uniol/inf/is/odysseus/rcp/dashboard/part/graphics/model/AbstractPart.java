@@ -225,6 +225,7 @@ public abstract class AbstractPart extends Observable implements Observer {
 
 	protected abstract void process(Tuple<?> tuple);
 
+	@Override
 	public abstract AbstractPart clone();
 
 	public abstract Class<? extends AbstractPartDialog<? extends AbstractPart>> getConfigurationDialog();

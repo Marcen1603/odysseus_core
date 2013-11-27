@@ -33,6 +33,7 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 		this.stretch = group.isBackgroundFileStretch();
 	}
 
+	@Override
 	protected IFigure createFigure() {
 		FreeformLayer layer = new FreeformLayer();		
 		if(imagepath!=null){
@@ -47,16 +48,19 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 		return layer;
 	}
 
+	@Override
 	protected List<AbstractPictogram> getModelChildren() {
 		ArrayList<AbstractPictogram> result = new ArrayList<AbstractPictogram>();
 		result.addAll(((GraphicsLayer)getModel()).getPictograms());
 		return result;
 	}
 
+	@Override
 	protected void createEditPolicies() {
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, new GraphXYLayoutEditPolicy());
 	}
 	
+	@Override
 	public void activate() {
 		if (!isActive()) {
 			((GraphicsLayer)getModel()).addObserver(this);
@@ -64,6 +68,7 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 		}
 	}
 	
+	@Override
 	public void deactivate() {
 		if (isActive()) {
 			((GraphicsLayer)getModel()).deleteObserver(this);
@@ -71,6 +76,7 @@ public class GraphicalLayerEditPart extends AbstractGraphicalEditPart implements
 		}
 	}
 				
+	@Override
 	public void update(Observable observable, Object message) {
 		refreshChildren();
 	}

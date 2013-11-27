@@ -13,6 +13,7 @@ public class ISD_CAMERA_DATA_TYPE extends Structure<ISD_CAMERA_DATA_TYPE, ISD_CA
 	public ISD_CAMERA_DATA_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("Camera");
 	}
@@ -23,8 +24,11 @@ public class ISD_CAMERA_DATA_TYPE extends Structure<ISD_CAMERA_DATA_TYPE, ISD_CA
 			throw new IllegalArgumentException("Wrong array size !");
 		this.Camera = Camera;
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_CAMERA_DATA_TYPE newInstance() { return new ISD_CAMERA_DATA_TYPE(); }
 	public static ISD_CAMERA_DATA_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_CAMERA_DATA_TYPE.class, arrayLength);

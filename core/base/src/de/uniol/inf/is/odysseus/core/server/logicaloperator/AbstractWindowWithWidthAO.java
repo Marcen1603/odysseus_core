@@ -8,16 +8,19 @@ abstract public class AbstractWindowWithWidthAO extends AbstractWindowAO {
 	private static final long serialVersionUID = -6061804236220025106L;
 	
 	
+	@Override
 	@Parameter(type = LongParameter.class, name = "SIZE", optional = false)
 	public void setWindowSize(long windowSize) {
 		super.setWindowSize(windowSize);
 	}
 
+	@Override
 	@Parameter(type = LongParameter.class, name = "SLIDE", optional = true)
 	public void setWindowSlide(long slide) {
 		super.setWindowSlide(slide);
 	}
 
+	@Override
 	@Parameter(type = LongParameter.class, name = "ADVANCE", optional = true)
 	public void setWindowAdvance(long windowAdvance) {
 		super.setWindowAdvance(windowAdvance);

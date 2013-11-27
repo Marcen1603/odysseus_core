@@ -48,6 +48,7 @@ public class FilenameParameterPresentation extends StringParameterPresentation {
 		Button button = new Button(container, SWT.PUSH);
 		button.setText("... from filesystem");
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog dlg = new FileDialog(parent.getShell(), SWT.OPEN | SWT.SAVE);
 
@@ -69,6 +70,7 @@ public class FilenameParameterPresentation extends StringParameterPresentation {
 		Button buttonProject = new Button(container, SWT.PUSH);
 		buttonProject.setText("... from project");
 		buttonProject.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(parent.getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 				dialog.setInput(getProject());

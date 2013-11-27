@@ -134,6 +134,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	/**
 	 * Creates the pages of the multi-page editor.
 	 */
+	@Override
 	protected void createPages() {
 		createPage0();
 		createPage1();
@@ -146,6 +147,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		setDirty(true);
 	}
 
+	@Override
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		informGraphOperatorPropertyView();
@@ -167,11 +169,13 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		}
 	}
 
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		getGraphEditor().doSave(monitor);
 		setDirty(false);
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -181,6 +185,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		firePropertyChange(ISaveablePart2.PROP_DIRTY);
 	}
 
+	@Override
 	public void doSaveAs() {
 
 		if (isDirty()) {
@@ -225,6 +230,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		setPageText(3, name);
 	}
 
+	@Override
 	public int promptToSaveOnClose() {
 		String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
 		MessageDialog dialog = new MessageDialog(getEditorSite().getShell(), "Save changes", null, "Save the changes?", MessageDialog.QUESTION, buttons, 0);
@@ -265,6 +271,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		IDE.gotoMarker(getEditor(0), marker);
 	}
 
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		// if (adapter == CommandStack.class) {
 		// return graphEditor.getCurrentEditDomain().getCommandStack();
@@ -276,6 +283,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -283,6 +291,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	/**
 	 * Closes all project files on project close.
 	 */
+	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.PRE_DELETE || event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 			closeEditor(event.getResource());
@@ -291,6 +300,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 			IResourceDelta delta = event.getDelta();
 			try {
 				IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+					@Override
 					public boolean visit(IResourceDelta delta) {
 						if (delta.getFlags() != IResourceDelta.MARKERS && delta.getResource().getType() == IResource.FILE) {
 							if (delta.getKind() == IResourceDelta.REMOVED) {
@@ -341,6 +351,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	 */
 	private void closeEditor(final IResource resource) {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 				for (int i = 0; i < pages.length; i++) {

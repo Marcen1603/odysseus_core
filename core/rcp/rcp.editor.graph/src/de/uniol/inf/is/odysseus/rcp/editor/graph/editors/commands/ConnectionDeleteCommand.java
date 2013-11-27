@@ -33,6 +33,7 @@ public class ConnectionDeleteCommand extends Command {
 		this.connection = connection;
 	}
 
+	@Override
 	public void execute() {
 		if (source == null) {
 			source = connection.getSource();
@@ -44,6 +45,7 @@ public class ConnectionDeleteCommand extends Command {
 		connection.setTarget(null);
 	}
 
+	@Override
 	public void undo() {
 		connection.setSource(source);
 		connection.setTarget(target);

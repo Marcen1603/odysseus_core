@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 public class OperatorNodeGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
 		
 	
+	@Override
 	protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
 		ConnectionCreateCommand result = new ConnectionCreateCommand();
 		result.setSource((OperatorNode) getHost().getModel());

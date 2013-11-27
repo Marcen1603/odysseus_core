@@ -11,6 +11,7 @@ public abstract class AbstractStopWords implements IStopWords {
 
 	protected Set<String> stopWordSet = new HashSet<String>();
 
+	@Override
 	public String removeStopWords(String string) {
 		String result = "";
 		String[] words = string.split("\\s+");
@@ -32,6 +33,7 @@ public abstract class AbstractStopWords implements IStopWords {
 		}
 	}
 
+	@Override
 	public String stemmSentence(String sentence) {
 		String result = "";
 

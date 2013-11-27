@@ -182,10 +182,12 @@ public class TextProtocolHandler<T> extends AbstractProtocolHandler<T> {
 		scanner.close();
     }
 	
+	@Override
 	public void setOptionsMap(Map<String, String> optionsMap) {
 		this.optionsMap = optionsMap;
 	}
 	
+	@Override
 	public Map<String, String> getOptionsMap() {
 		return this.optionsMap;
 	}

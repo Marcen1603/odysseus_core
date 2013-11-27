@@ -83,11 +83,15 @@ public class ISD_STATION_INFO_TYPE extends Structure<ISD_STATION_INFO_TYPE, ISD_
 	public ISD_STATION_INFO_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("ID", "State", "Compass", "InertiaCube", "Enhancement", "Sensitivity", "Prediction", "AngleFormat", "TimeStamped", "GetInputs", "GetEncoderData", "CompassCompensation", "ImuShockSuppression", "UrmRejectionFactor", "bReserved2", "CoordFrame", "AccelSensitivity", "fReserved1", "fReserved2", "TipOffset", "fReserved3", "GetCameraData", "GetAuxInputs", "GetCovarianceData", "GetExtendedData");
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_STATION_INFO_TYPE newInstance() { return new ISD_STATION_INFO_TYPE(); }
 	public static ISD_STATION_INFO_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_STATION_INFO_TYPE.class, arrayLength);

@@ -107,11 +107,15 @@ public class ISD_STATION_DATA_TYPE extends Structure<ISD_STATION_DATA_TYPE, ISD_
 	public ISD_STATION_DATA_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("TrackingStatus", "NewData", "CommIntegrity", "BatteryState", "Euler", "Quaternion", "Position", "TimeStamp", "StillTime", "BatteryLevel", "CompassYaw", "ButtonState", "AnalogData", "AuxInputs", "AngularVelBodyFrame", "AngularVelNavFrame", "AccelBodyFrame", "AccelNavFrame", "VelocityNavFrame", "AngularVelRaw", "MeasQuality", "bReserved2", "bReserved3", "bReserved4", "TimeStampSeconds", "TimeStampMicroSec", "OSTimeStampSeconds", "OSTimeStampMicroSec", "Reserved", "Temperature", "MagBodyFrame");
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_STATION_DATA_TYPE newInstance() { return new ISD_STATION_DATA_TYPE(); }
 	public static ISD_STATION_DATA_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_STATION_DATA_TYPE.class, arrayLength);

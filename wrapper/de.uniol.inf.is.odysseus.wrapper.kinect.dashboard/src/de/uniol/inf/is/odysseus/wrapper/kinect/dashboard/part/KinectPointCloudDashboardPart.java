@@ -217,7 +217,8 @@ public class KinectPointCloudDashboardPart extends AbstractDashboardPart
                 .createExternalGLContext();
 
         glcanvas.addListener(SWT.Resize, new Listener() {
-            public void handleEvent(Event event) {
+            @Override
+			public void handleEvent(Event event) {
                 Rectangle bounds = glcanvas.getBounds();
                 float fAspect = (float) bounds.width / (float) bounds.height;
                 glcanvas.setCurrent();
@@ -252,7 +253,8 @@ public class KinectPointCloudDashboardPart extends AbstractDashboardPart
         glcontext.release();
 
         (new Thread() {
-            public void run() {
+            @Override
+			public void run() {
                 while ((glcanvas != null) && !glcanvas.isDisposed()) {
                     render();
                     try {
@@ -330,7 +332,8 @@ public class KinectPointCloudDashboardPart extends AbstractDashboardPart
             PlatformUI.getWorkbench().getDisplay().syncExec(fpsUpdate);
         }
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 if ((glcanvas != null) && !glcanvas.isDisposed()) {
                     glcanvas.setCurrent();
                     glcontext.makeCurrent();

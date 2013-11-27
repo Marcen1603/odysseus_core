@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.AbstractPictog
 
 public class GraphicalEditPartFactory implements EditPartFactory {
 
+	@Override
 	public EditPart createEditPart(EditPart context, Object model) {
 		if (model instanceof GraphicsLayer) {
 			return new GraphicalLayerEditPart((GraphicsLayer) model);

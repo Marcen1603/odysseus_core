@@ -41,6 +41,7 @@ public class ImagePictogramFigure extends AbstractPictogramFigure<ImagePictogram
 		super();
 	}
 
+	@Override
 	public void paintGraphic(Graphics g) {
 		Rectangle r = getContentBounds().getCopy();
 		if (this.visibile) {

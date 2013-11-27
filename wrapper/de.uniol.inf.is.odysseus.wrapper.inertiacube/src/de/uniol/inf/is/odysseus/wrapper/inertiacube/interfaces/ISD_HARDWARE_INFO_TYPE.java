@@ -176,11 +176,15 @@ public class ISD_HARDWARE_INFO_TYPE extends Structure<ISD_HARDWARE_INFO_TYPE, IS
 		public Capability_struct() {
 			super();
 		}
+		@Override
 		protected List<? > getFieldOrder() {
 			return Arrays.asList("Position", "Orientation", "Encoders", "Prediction", "Enhancement", "Compass", "SelfTest", "ErrorLog", "UltVolume", "UltGain", "UltTimeout", "PhotoDiode", "MaxStations", "MaxImus", "MaxFPses", "MaxChannels", "MaxButtons", "MeasData", "DiagData", "PseConfig", "ConfigLock", "UltMaxRange", "fReserved2", "fReserved3", "fReserved4", "CompassCal", "bReserved2", "bReserved3", "bReserved4", "dwReserved1", "dwReserved2", "dwReserved3", "dwReserved4");
 		}
+		@Override
 		protected ByReference newByReference() { return new ByReference(); }
+		@Override
 		protected ByValue newByValue() { return new ByValue(); }
+		@Override
 		protected Capability_struct newInstance() { return new Capability_struct(); }
 		public static Capability_struct[] newArray(int arrayLength) {
 			return Structure.newArray(Capability_struct.class, arrayLength);
@@ -195,11 +199,15 @@ public class ISD_HARDWARE_INFO_TYPE extends Structure<ISD_HARDWARE_INFO_TYPE, IS
 	public ISD_HARDWARE_INFO_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("Valid", "TrackerType", "TrackerModel", "Port", "Interface", "OnHost", "AuxSystem", "FirmwareRev", "ModelName", "Capability", "bReserved1", "bReserved2", "bReserved3", "bReserved4", "BaudRate", "NumTestLevels", "dwReserved3", "dwReserved4", "fReserved1", "fReserved2", "fReserved3", "fReserved4", "cReserved1", "cReserved2", "cReserved3", "cReserved4");
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_HARDWARE_INFO_TYPE newInstance() { return new ISD_HARDWARE_INFO_TYPE(); }
 	public static ISD_HARDWARE_INFO_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_HARDWARE_INFO_TYPE.class, arrayLength);

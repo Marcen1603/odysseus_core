@@ -12,6 +12,7 @@ public class PictogramFactory implements CreationFactory {
 		this.type = type;
 	}
 	
+	@Override
 	public Object getNewObject() {
 		try {
 			return type.newInstance();
@@ -23,6 +24,7 @@ public class PictogramFactory implements CreationFactory {
 		return null;
 	}
 
+	@Override
 	public Object getObjectType() {
 		return AbstractPictogram.class;
 	}

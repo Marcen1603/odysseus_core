@@ -191,6 +191,7 @@ public class MultipleImagePictogram extends AbstractPictogram {
 		return Collections.unmodifiableList(images);
 	}
 
+	@Override
 	public void setGraphicsLayer(GraphicsLayer parentGroup) {
 		super.setGraphicsLayer(parentGroup);
 		for (ImagePictogram ip : this.images) {

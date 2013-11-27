@@ -42,20 +42,24 @@ public class CRC16 implements Checksum {
 
     private int sum = 0xFFFF;
 
-    public long getValue() {
+    @Override
+	public long getValue() {
         return sum;
     }
 
-    public void reset() {
+    @Override
+	public void reset() {
         sum = 0xFFFF;
     }
 
-    public void update(byte[] b, int off, int len) {
+    @Override
+	public void update(byte[] b, int off, int len) {
         for (int i = off; i < off+len; i++)
             update((int)b[i]);
     }
 
-    public void update(int b) {
+    @Override
+	public void update(int b) {
         sum = (sum >> 8) ^ TABLE[( (sum)^(b&0xff) ) & 0xff];
     }
 

@@ -55,6 +55,7 @@ public class CopyAction extends SelectionAction {
 		return cmd.canExecute();
 	}
 
+	@Override
 	public void run() {
 		execute(createCopyCommand(getSelectedObjects()));
 	}
@@ -84,6 +85,7 @@ public class CopyAction extends SelectionAction {
 		return compoundCmd;
 	}
 
+	@Override
 	protected void init() {
 		super.init();
 		setText("&Copy");

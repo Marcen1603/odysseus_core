@@ -106,6 +106,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		boolean autoAck = false;
 		channel.basicConsume(queueName, autoAck, consumerTag,
 				new DefaultConsumer(channel) {
+					@Override
 					public void handleDelivery(
 							String consumerTag,
 							com.rabbitmq.client.Envelope envelope,

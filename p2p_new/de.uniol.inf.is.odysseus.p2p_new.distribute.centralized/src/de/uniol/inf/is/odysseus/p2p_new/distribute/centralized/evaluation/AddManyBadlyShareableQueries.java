@@ -19,6 +19,7 @@ public class AddManyBadlyShareableQueries extends Thread {
 	private static final int iterations = 100;
 	private static int windowSize = 5;
 	
+	@Override
 	public void run() {
 		IServerExecutor executor = ServerExecutorService.getServerExecutor();
 		List<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>();

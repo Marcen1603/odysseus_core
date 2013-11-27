@@ -20,16 +20,19 @@ public class PredicateWindowAO extends AbstractWindowAO {
 		super(WindowType.PREDICATE);
 	}
 	
+	@Override
 	@Parameter(type = PredicateParameter.class, name = "START", optional = true)
 	public void setStartCondition(IPredicate<?> startCondition) {
 		super.setStartCondition(startCondition);
 	}
 
+	@Override
 	@Parameter(type = PredicateParameter.class, name = "END", optional = true)
 	public void setEndCondition(IPredicate<?> endCondition) {
 		super.setEndCondition(endCondition);
 	}
 	
+	@Override
 	@Parameter(type = BooleanParameter.class, name = "SameStartTime", optional = true)
 	public void setSameStarttime(boolean sameStarttime) {
 		super.setSameStarttime(sameStarttime);

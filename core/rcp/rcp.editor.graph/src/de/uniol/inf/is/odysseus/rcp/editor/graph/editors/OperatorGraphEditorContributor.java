@@ -92,12 +92,14 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 		return registry;
 	}
 
+	@Override
 	public void init(IActionBars bars) {
 		buildActions();
 		declareGlobalActionKeys();
 		super.init(bars);
 	}
 
+	@Override
 	public void setActivePage(IEditorPart editor) {
 		if (editor != null) {
 			activePageRegistry = (ActionRegistry) editor.getAdapter(ActionRegistry.class);
@@ -116,6 +118,7 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 		connectActions();
 	}
 
+	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		toolBarManager.add(getAction(ActionFactory.UNDO.getId()));
 		toolBarManager.add(getAction(ActionFactory.REDO.getId()));
@@ -127,6 +130,7 @@ public class OperatorGraphEditorContributor extends MultiPageEditorActionBarCont
 
 	}
 
+	@Override
 	public void contributeToMenu(IMenuManager menubar) {
 		super.contributeToMenu(menubar);
 		MenuManager viewMenu = new MenuManager("View");

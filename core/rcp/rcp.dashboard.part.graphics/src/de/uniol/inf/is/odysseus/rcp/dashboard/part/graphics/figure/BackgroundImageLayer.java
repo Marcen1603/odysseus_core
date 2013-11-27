@@ -42,6 +42,7 @@ public class BackgroundImageLayer extends FreeformLayer {
 		}
 	}
 
+	@Override
 	protected void paintFigure(Graphics graphics) {
 		if (getImage() != null) {
 			org.eclipse.draw2d.geometry.Rectangle targetRect = getBounds().getCopy();

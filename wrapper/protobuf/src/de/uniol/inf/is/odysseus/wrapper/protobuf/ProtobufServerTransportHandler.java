@@ -258,6 +258,7 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 
 	}
 	
+	@Override
 	public synchronized void close() throws IOException {
 		delegate.close();
 	}

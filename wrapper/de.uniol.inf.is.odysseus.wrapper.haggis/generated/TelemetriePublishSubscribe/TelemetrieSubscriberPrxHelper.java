@@ -25,13 +25,15 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
 
 	private static final long serialVersionUID = 8160446058670624206L;
 
+	@Override
 	public void
     _notify(Pose p)
     {
         _notify(p, null, false);
     }
 
-    public void
+    @Override
+	public void
     _notify(Pose p, java.util.Map<String, String> __ctx)
     {
         _notify(p, __ctx, true);
@@ -68,32 +70,38 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
 
     private static final String __notify_name = "notify";
 
-    public Ice.AsyncResult begin_notify(Pose p)
+    @Override
+	public Ice.AsyncResult begin_notify(Pose p)
     {
         return begin_notify(p, null, false, null);
     }
 
-    public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx)
+    @Override
+	public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx)
     {
         return begin_notify(p, __ctx, true, null);
     }
 
-    public Ice.AsyncResult begin_notify(Pose p, Ice.Callback __cb)
+    @Override
+	public Ice.AsyncResult begin_notify(Pose p, Ice.Callback __cb)
     {
         return begin_notify(p, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx, Ice.Callback __cb)
+    @Override
+	public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx, Ice.Callback __cb)
     {
         return begin_notify(p, __ctx, true, __cb);
     }
 
-    public Ice.AsyncResult begin_notify(Pose p, Callback_TelemetrieSubscriber_notify __cb)
+    @Override
+	public Ice.AsyncResult begin_notify(Pose p, Callback_TelemetrieSubscriber_notify __cb)
     {
         return begin_notify(p, null, false, __cb);
     }
 
-    public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx, Callback_TelemetrieSubscriber_notify __cb)
+    @Override
+	public Ice.AsyncResult begin_notify(Pose p, java.util.Map<String, String> __ctx, Callback_TelemetrieSubscriber_notify __cb)
     {
         return begin_notify(p, __ctx, true, __cb);
     }
@@ -116,7 +124,8 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
         return __result;
     }
 
-    public void end_notify(Ice.AsyncResult __result)
+    @Override
+	public void end_notify(Ice.AsyncResult __result)
     {
         __end(__result, __notify_name);
     }
@@ -259,13 +268,15 @@ public final class TelemetrieSubscriberPrxHelper extends Ice.ObjectPrxHelperBase
         return __ids[1];
     }
 
-    protected Ice._ObjectDelM
+    @Override
+	protected Ice._ObjectDelM
     __createDelegateM()
     {
         return new _TelemetrieSubscriberDelM();
     }
 
-    protected Ice._ObjectDelD
+    @Override
+	protected Ice._ObjectDelD
     __createDelegateD()
     {
         return new _TelemetrieSubscriberDelD();

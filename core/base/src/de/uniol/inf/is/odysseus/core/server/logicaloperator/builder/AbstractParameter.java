@@ -282,6 +282,7 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 		this.possibleValueMethod = possibleValueMethod;	
 	}
 	
+	@Override
 	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic){
 		this.possibleValuesAreDynamic =possibleValuesAreDynamic;
 	}

@@ -86,6 +86,7 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 		button.setText("Browse...");
 
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {				
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(parent.getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 				dialog.setInput(getProject());

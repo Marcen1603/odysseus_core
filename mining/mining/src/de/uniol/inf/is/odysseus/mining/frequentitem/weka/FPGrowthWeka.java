@@ -21,12 +21,14 @@ public class FPGrowthWeka<M extends ITimeInterval> extends FPGrowth implements I
 		super.m_findAllRulesForSupportLevel = true;
 	}
 	
+	@Override
 	public Capabilities getCapabilities() {
 	    Capabilities result = super.getCapabilities();
 	    result.enable(Capability.STRING_ATTRIBUTES);
 	    return result;
 	  }
 	
+	@Override
 	public List<Pattern<M>> getItemSets(M metadata){
 		List<Pattern<M>> list = new ArrayList<>();
 		Iterator<FrequentBinaryItemSet> iter = m_largeItemSets.iterator();

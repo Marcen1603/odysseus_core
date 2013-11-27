@@ -33,7 +33,8 @@ public final class TelemetrieSubscriberHolder extends Ice.ObjectHolderBase<Telem
         this.value = value;
     }
 
-    public void
+    @Override
+	public void
     patch(Ice.Object v)
     {
         try
@@ -46,7 +47,8 @@ public final class TelemetrieSubscriberHolder extends Ice.ObjectHolderBase<Telem
         }
     }
 
-    public String
+    @Override
+	public String
     type()
     {
         return _TelemetrieSubscriberDisp.ice_staticId();

@@ -24,6 +24,7 @@ public class StringStyle {
             this.setContentEnd(SystemUtils.LINE_SEPARATOR + "]");			
 		}
 
+		@Override
 		protected void appendDetail(StringBuffer buffer, String fieldName,
 				Object value) {
 

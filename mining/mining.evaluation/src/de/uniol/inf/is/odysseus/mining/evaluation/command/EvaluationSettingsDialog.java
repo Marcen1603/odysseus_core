@@ -263,6 +263,7 @@ public class EvaluationSettingsDialog extends TitleAreaDialog implements ICellMo
 		return ok;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);

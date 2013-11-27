@@ -35,6 +35,7 @@ public class AccessAO extends AbstractAccessAO {
 		return new AccessAO(this);
 	}
 
+	@Override
 	@Parameter(type = StringParameter.class, name = "Wrapper", optional = false, possibleValues="getWrapperValues", doc = "The name of the wrapper to use, e.g. GenericPush or GenericPull.")
 	public void setWrapper(String wrapper) {
 		super.setWrapper(wrapper);
@@ -44,6 +45,7 @@ public class AccessAO extends AbstractAccessAO {
 		return WrapperRegistry.getWrapperNames();
 	}
 	
+	@Override
 	@Parameter(type = StringParameter.class, name = "transport", optional = false, possibleValues="getTransportValues", doc = "The name of the transport handler to use, e.g. File or TcpServer.")
 	public void setTransportHandler(String transportHandler) {
 		super.setTransportHandler(transportHandler);
@@ -53,6 +55,7 @@ public class AccessAO extends AbstractAccessAO {
 		return TransportHandlerRegistry.getHandlerNames();
 	}
 	
+	@Override
 	@Parameter(type = StringParameter.class, name = "protocol", optional = false, possibleValues="getProtocolValues", doc = "The name of the protocol handler to use, e.g. Csv or SizeByteBuffer.")
 	public void setProtocolHandler(String protocolHandler) {
 		super.setProtocolHandler(protocolHandler);
@@ -62,6 +65,7 @@ public class AccessAO extends AbstractAccessAO {
 		return ProtocolHandlerRegistry.getHandlerNames();
 	}
 	
+	@Override
 	@Parameter(type = StringParameter.class, name = "DataHandler", optional = false, possibleValues="getDataHandlerValues", doc = "The name of the datahandler to use, e.g. Tuple or Document.")
 	public void setDataHandler(String dataHandler) {
 		super.setDataHandler(dataHandler);

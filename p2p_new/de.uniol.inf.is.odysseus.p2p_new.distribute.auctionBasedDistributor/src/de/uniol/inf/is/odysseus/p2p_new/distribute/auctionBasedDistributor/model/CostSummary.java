@@ -34,6 +34,7 @@ public class CostSummary {
 		return plan;
 	}
 
+	@Override
 	public String toString() {
 	      return Objects.toStringHelper(this)
 	                .addValue(this.operatorId)

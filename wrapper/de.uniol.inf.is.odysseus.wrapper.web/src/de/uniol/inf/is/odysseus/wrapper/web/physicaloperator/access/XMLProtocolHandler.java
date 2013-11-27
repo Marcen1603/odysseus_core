@@ -238,6 +238,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends
 		return instance;
 	}
 
+	@Override
 	public void setOptionsMap(Map<String, String> options) {
 		super.setOptionsMap(options);
 		if (options.get(DELAY) != null) {

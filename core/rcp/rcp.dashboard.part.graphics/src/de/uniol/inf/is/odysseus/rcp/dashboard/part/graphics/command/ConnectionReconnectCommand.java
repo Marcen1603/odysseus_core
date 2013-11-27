@@ -41,6 +41,7 @@ public class ConnectionReconnectCommand extends Command {
 		this.oldTargetNode = conn.getTarget();
 	}
 
+	@Override
 	public boolean canExecute() {
 		if (newSourceNode != null) {
 			return checkSourceReconnection();
@@ -82,6 +83,7 @@ public class ConnectionReconnectCommand extends Command {
 		this.newTargetNode = targetNode;
 	}
 
+	@Override
 	public void execute() {
 		if (newSourceNode != null) {
 			conn.reconnect(newSourceNode, oldTargetNode);
@@ -92,6 +94,7 @@ public class ConnectionReconnectCommand extends Command {
 		}
 	}
 
+	@Override
 	public void undo() {
 		conn.reconnect(oldSourceNode, oldTargetNode);
 	}

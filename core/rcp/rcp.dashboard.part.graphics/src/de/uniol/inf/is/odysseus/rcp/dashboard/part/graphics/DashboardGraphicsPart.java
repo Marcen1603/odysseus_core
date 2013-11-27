@@ -393,6 +393,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements Comm
 
 	}
 
+	@Override
 	public Object getAdapter(Class<?> adapter) {
 		if (adapter == CommandStack.class) {
 			return editDomain.getCommandStack();

@@ -315,6 +315,7 @@ public abstract class AbstractBroker<T extends IStreamObject<?>> extends
 		filters.get(Filtertype.content).setReinitializationMode(true);
 	}
 	
+	@Override
 	public int getNumberOfSubscribers(){
 		return subscriptions.values().size();
 	}

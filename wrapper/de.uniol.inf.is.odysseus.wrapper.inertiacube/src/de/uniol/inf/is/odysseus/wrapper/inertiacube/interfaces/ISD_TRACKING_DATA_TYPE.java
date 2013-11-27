@@ -13,6 +13,7 @@ public class ISD_TRACKING_DATA_TYPE extends Structure<ISD_TRACKING_DATA_TYPE, IS
 	public ISD_TRACKING_DATA_TYPE() {
 		super();
 	}
+	@Override
 	protected List<? > getFieldOrder() {
 		return Arrays.asList("Station");
 	}
@@ -23,8 +24,11 @@ public class ISD_TRACKING_DATA_TYPE extends Structure<ISD_TRACKING_DATA_TYPE, IS
 			throw new IllegalArgumentException("Wrong array size !");
 		this.Station = Station;
 	}
+	@Override
 	protected ByReference newByReference() { return new ByReference(); }
+	@Override
 	protected ByValue newByValue() { return new ByValue(); }
+	@Override
 	protected ISD_TRACKING_DATA_TYPE newInstance() { return new ISD_TRACKING_DATA_TYPE(); }
 	public static ISD_TRACKING_DATA_TYPE[] newArray(int arrayLength) {
 		return Structure.newArray(ISD_TRACKING_DATA_TYPE.class, arrayLength);

@@ -37,37 +37,43 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         "::TelemetriePublishSubscribe::TelemetriePublisher"
     };
 
-    public boolean
+    @Override
+	public boolean
     ice_isA(String s)
     {
         return java.util.Arrays.binarySearch(__ids, s) >= 0;
     }
 
-    public boolean
+    @Override
+	public boolean
     ice_isA(String s, Ice.Current __current)
     {
         return java.util.Arrays.binarySearch(__ids, s) >= 0;
     }
 
-    public String[]
+    @Override
+	public String[]
     ice_ids()
     {
         return __ids;
     }
 
-    public String[]
+    @Override
+	public String[]
     ice_ids(Ice.Current __current)
     {
         return __ids;
     }
 
-    public String
+    @Override
+	public String
     ice_id()
     {
         return __ids[1];
     }
 
-    public String
+    @Override
+	public String
     ice_id(Ice.Current __current)
     {
         return __ids[1];
@@ -79,7 +85,8 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         return __ids[1];
     }
 
-    public final void
+    @Override
+	public final void
     subscribe(TelemetrieSubscriberPrx sub)
     {
         subscribe(sub, null);
@@ -107,7 +114,8 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         "subscribe"
     };
 
-    public Ice.DispatchStatus
+    @Override
+	public Ice.DispatchStatus
     __dispatch(IceInternal.Incoming in, Ice.Current __current)
     {
         int pos = java.util.Arrays.binarySearch(__all, __current.operation);
@@ -144,7 +152,8 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         throw new Ice.OperationNotExistException(__current.id, __current.facet, __current.operation);
     }
 
-    public void
+    @Override
+	public void
     __write(IceInternal.BasicStream __os)
     {
         __os.writeTypeId(ice_staticId());
@@ -153,7 +162,8 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         super.__write(__os);
     }
 
-    public void
+    @Override
+	public void
     __read(IceInternal.BasicStream __is, boolean __rid)
     {
         if(__rid)
@@ -165,7 +175,8 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         super.__read(__is, true);
     }
 
-    public void
+    @Override
+	public void
     __write(Ice.OutputStream __outS)
     {
         Ice.MarshalException ex = new Ice.MarshalException();
@@ -173,7 +184,8 @@ public abstract class _TelemetriePublisherDisp extends Ice.ObjectImpl implements
         throw ex;
     }
 
-    public void
+    @Override
+	public void
     __read(Ice.InputStream __inS, boolean __rid)
     {
         Ice.MarshalException ex = new Ice.MarshalException();

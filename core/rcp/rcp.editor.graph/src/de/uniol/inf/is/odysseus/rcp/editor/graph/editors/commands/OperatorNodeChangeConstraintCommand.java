@@ -29,12 +29,14 @@ public class OperatorNodeChangeConstraintCommand extends Command {
 	private Rectangle oldConstraint;
 	private OperatorNode node;
 
+	@Override
 	public void execute() {
 		if (oldConstraint == null)
 			oldConstraint = new Rectangle(node.getConstraint());
 		node.setConstraint(newConstraint);
 	}
 
+	@Override
 	public void undo() {
 		node.setConstraint(oldConstraint);
 	}

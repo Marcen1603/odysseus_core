@@ -50,6 +50,7 @@ public class PictogramComponentEditPolicy extends ComponentEditPolicy {
 		return copyCommand;
 	}
 
+	@Override
 	protected Command createDeleteCommand(GroupRequest request) {
 		PictogramDeleteCommand deleteCommand = new PictogramDeleteCommand();
 		deleteCommand.setPictogramGroup((GraphicsLayer) getHost().getParent().getModel());
