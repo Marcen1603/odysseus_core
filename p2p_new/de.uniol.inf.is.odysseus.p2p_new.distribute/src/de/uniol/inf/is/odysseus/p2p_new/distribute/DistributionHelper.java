@@ -672,21 +672,21 @@ public class DistributionHelper {
 
 	public static Collection<ILogicalOperator> collectOperators(ILogicalOperator currentOperator) {
 		List<ILogicalOperator> result = Lists.newArrayList();
-		_collectOperators(currentOperator, result);
+		collectOperatorsImpl(currentOperator, result);
 		return result;
 	}
-
-	private static void _collectOperators(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
+	
+	private static void collectOperatorsImpl(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
 		if (!list.contains(currentOperator)) {
 
 			list.add(currentOperator);
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				_collectOperators(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getTarget(), list);
 			}
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				_collectOperators(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getTarget(), list);
 			}
 		}
 	}
