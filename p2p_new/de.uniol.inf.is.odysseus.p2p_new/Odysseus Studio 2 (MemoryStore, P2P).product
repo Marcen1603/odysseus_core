@@ -73,10 +73,10 @@ limitations under the License.
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.product.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.cep.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.product.filestore.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.rcp.dashboard.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.p2p_new.rcp.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
