@@ -211,7 +211,6 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 			sharedQueryIDMap.put(id, sharedQueryID);
 		}
 
-
 		try {
 			if (!inputPipeMap.containsKey(sharedQueryID)) {
 				final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
