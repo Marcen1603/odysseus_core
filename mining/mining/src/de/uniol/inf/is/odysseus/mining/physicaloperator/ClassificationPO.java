@@ -47,10 +47,11 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 	private DefaultTISweepArea<Tuple<M>> treeSA = new DefaultTISweepArea<>();
 	private DefaultTISweepArea<Tuple<M>> elementSA = new DefaultTISweepArea<Tuple<M>>();
 	@SuppressWarnings("unchecked")
-	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];	
+	private DefaultTISweepArea<Tuple<M>> areas[] = new DefaultTISweepArea[2];
 	protected IMetadataMergeFunction<M> metadataMerge;
 	protected ITransferArea<Tuple<M>, Tuple<M>> transferFunction;
 	private int classifierAttribute;
+	private boolean oneClassifier = false;
 
 	public ClassificationPO(SDFSchema inputTreeschema, SDFAttribute classifier, IMetadataMergeFunction<M> metadataMerge, ITransferArea<Tuple<M>, Tuple<M>> transferFunction) {
 		this.inputTreeschema = inputTreeschema;
@@ -90,6 +91,9 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 		// transferFunction.newElement(tuple, port);
 
 		synchronized (areas) {
+			if (oneClassifier && port == TREE_PORT) {
+				areas[TREE_PORT].clear();
+			}
 			areas[port].insert(tuple);
 			int other = (port + 1) % 2;
 			areas[other].purgeElements(tuple, Order.LeftRight);
@@ -134,12 +138,12 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-//		if (punctuation.isHeartbeat()) {
-//			synchronized (areas) {
-//				int other = (port + 1) % 2;
-//				areas[other].purgeElementsBefore(punctuation.getTime());
-//			}
-//		}
+		// if (punctuation.isHeartbeat()) {
+		// synchronized (areas) {
+		// int other = (port + 1) % 2;
+		// areas[other].purgeElementsBefore(punctuation.getTime());
+		// }
+		// }
 	}
 
 	@Override
@@ -149,6 +153,14 @@ public class ClassificationPO<M extends ITimeInterval> extends AbstractPipe<Tupl
 
 	public IMetadataMergeFunction<M> getMetadataMerge() {
 		return this.metadataMerge;
+	}
+
+	public boolean isOneClassifier() {
+		return oneClassifier;
+	}
+
+	public void setOneClassifier(boolean oneClassifier) {
+		this.oneClassifier = oneClassifier;
 	}
 
 }

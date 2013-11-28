@@ -5,6 +5,7 @@ import java.util.Map;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.bayes.NaiveBayesMultinomialText;
 import weka.classifiers.functions.GaussianProcesses;
 import weka.classifiers.functions.LinearRegression;
 import weka.classifiers.functions.Logistic;
@@ -71,6 +72,9 @@ public class WekaClassificationLearner<M extends ITimeInterval> implements IClas
 					break;
 				case "SMO-REGRESSION":
 					wekaLearner = new SMOreg();
+					break;
+				case "NAIVE-BAYES-TEXT":
+					wekaLearner = new NaiveBayesMultinomialText();
 					break;
 				default:
 					throw new IllegalArgumentException("There is no classifier model called " + modelSmall + "!");

@@ -44,6 +44,7 @@ public class TClassificationAORule extends AbstractTransformationRule<Classifica
 		metaDataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
 		TITransferArea<Tuple<ITimeInterval>, Tuple<ITimeInterval>> transferFunction = new TITransferArea<>();
 		ClassificationPO<ITimeInterval> po = new ClassificationPO<ITimeInterval>(operator.getInputSchema(1), operator.getClassifier(), metaDataMerge, transferFunction);
+		po.setOneClassifier(operator.isOneClassifier());
 		defaultExecute(operator, po, config, true, true);
 	}
 

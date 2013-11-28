@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
 /**
@@ -36,13 +37,15 @@ public class ClassificationAO extends AbstractLogicalOperator {
 
 	private static final long serialVersionUID = 1231999597473176237L;
 	private SDFAttribute classifierAttribute;
-
+	private boolean oneClassifier = false;
+	
 	public ClassificationAO() {
 		
 	}
 
 	public ClassificationAO(ClassificationAO classificationAO) {
 		this.classifierAttribute = classificationAO.classifierAttribute;
+		this.oneClassifier = classificationAO.oneClassifier;
 	}
 
 	@Override
@@ -70,8 +73,17 @@ public class ClassificationAO extends AbstractLogicalOperator {
 		return classifierAttribute;
 	}
 
-	@Parameter(name="classifier", type=ResolvedSDFAttributeParameter.class, doc="The attribute with the classifier")
+	@Parameter(name="classifier", type=ResolvedSDFAttributeParameter.class, doc="The attribute with the classifier", optional = false)
 	public void setClassifier(SDFAttribute classifierAttribute) {
 		this.classifierAttribute = classifierAttribute;
+	}
+
+	public boolean isOneClassifier() {
+		return oneClassifier;
+	}
+
+	@Parameter(name="oneClassifier", type=BooleanParameter.class, doc="Use only one classifier at once", optional = true)
+	public void setOneClassifier(boolean oneClassifier) {
+		this.oneClassifier = oneClassifier;
 	}
 }
