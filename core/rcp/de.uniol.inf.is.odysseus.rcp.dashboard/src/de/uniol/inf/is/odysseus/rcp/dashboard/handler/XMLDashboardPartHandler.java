@@ -34,6 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -82,7 +83,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 
 	@Override
 	public IDashboardPart load(IFile fileToLoad, IWorkbenchPart partToShow) throws DashboardHandlerException {
-		Preconditions.checkNotNull(fileToLoad, "Array of lines from must not be null!");
+		Preconditions.checkNotNull(fileToLoad, "File to load must not be null!");
 		
 		try {
 			List<String> lines = FileUtil.read(fileToLoad);
@@ -91,7 +92,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			Node rootNode = getRootNode(doc);
 
 			String partName = getDashboardPartName(rootNode);
-			IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(rootNode);
+			IDashboardPartQueryTextProvider queryTextProvider = getQueryTextProvider(fileToLoad.getProject(), rootNode);
 			Map<String, String> customSettings = getCustoms(doc);
 
 			try {
@@ -179,7 +180,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			final Element fileElement = doc.createElement(QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT);
 			queryElement.appendChild(fileElement);
 
-			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getFullPath().toString());
+			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getName());
 
 		} else if (queryTextProvider instanceof SimpleQueryTextProvider) {
 
@@ -249,16 +250,24 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 		return doc;
 	}
 
-	private static IFile getQueryFile(String fileName) throws FileNotFoundException {
-		final IPath queryFilePath = new Path(fileName);
-		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
+	private static IFile getQueryFile(IProject relativeProject, String fileName) throws FileNotFoundException {
+		IPath queryFilePath = new Path(relativeProject.getFullPath().toString() + fileName);
+		
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 		if (!file.exists()) {
-			throw new FileNotFoundException("File " + file.getName() + " not found in workspace.");
+			
+			// try old way
+			queryFilePath =  new Path(fileName);
+			file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
+			
+			if( !file.exists()) {
+				throw new FileNotFoundException("File " + file.getName() + " not found in workspace.");
+			}
 		}
 		return file;
 	}
 
-	private static IDashboardPartQueryTextProvider getQueryTextProvider(Node rootNode) throws DashboardHandlerException, FileNotFoundException {
+	private static IDashboardPartQueryTextProvider getQueryTextProvider(IProject relativeProject, Node rootNode) throws DashboardHandlerException, FileNotFoundException {
 		final NodeList nodes = rootNode.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			final Node node = nodes.item(i);
@@ -276,7 +285,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 								throw new DashboardHandlerException("FileName for query must not be null or empty.");
 							}
 
-							final IFile file = getQueryFile(fileName);
+							final IFile file = getQueryFile(relativeProject, fileName);
 							return new ResourceFileQueryTextProvider(file);
 
 						} else if (QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT.equals(child.getNodeName())) {
