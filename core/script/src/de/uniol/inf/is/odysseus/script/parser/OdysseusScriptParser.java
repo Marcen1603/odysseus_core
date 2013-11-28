@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.GetQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.activator.Activator;
 import de.uniol.inf.is.odysseus.script.parser.keyword.ResumeOnErrorPreParserKeyword;
@@ -129,28 +130,35 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	}
 
 	@Override
-	public List<?> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> parseAndExecute(String completeText, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
 		return execute(parseScript(completeText, caller, context), caller, defaultSink, context);
 	}
 
 	@Override
-	public List<?> parseAndExecute(String[] textLines, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> parseAndExecute(String[] textLines, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
 		return execute(parseScript(textLines, caller, context), caller, defaultSink, context);
 	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	
 	@Override
-	public List<?> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
+	public List<IExecutorCommand> execute(List<PreParserStatement> statements, ISession caller, ISink<?> defaultSink, Context context) throws OdysseusScriptException {
 
 		validate(statements, caller, defaultSink, context);
 
 		Map<String, Object> variables = prepareVariables(defaultSink);
-		List results = Lists.newArrayList();
+		List<IExecutorCommand> results = Lists.newArrayList();
 		for (PreParserStatement stmt : statements) {
 			try {
 				Optional<?> optionalResult = stmt.execute(variables, caller, this, context);
 				if (optionalResult.isPresent()) {
-					results.add(optionalResult.get());
+					List<?> list = (List<?>) optionalResult.get();
+					for(Object o : list){
+						if(o instanceof Integer){
+							int id = (Integer)o;							
+							GetQueryCommand queryCommand = new GetQueryCommand(id, caller);
+							results.add(queryCommand);
+						}
+					}
+					//results.add(optionalResult.get());
 				}
 			} catch (OdysseusScriptException ex) {
 				if (isResumeOnError(variables)) {
@@ -676,13 +684,18 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	@Override
 	public List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
+		List<IExecutorCommand> executorCommands = new ArrayList<>();
 		try {
-			parseAndExecute(query, user, null, context);
+			List<?> results = parseAndExecute(query, user, null, context);
+			for (Object result : results) {
+				if (result instanceof IExecutorCommand) {
+					executorCommands.add((IExecutorCommand) result);
+				}
+			}
 		} catch (OdysseusScriptException e) {
 			processScriptException(e);
 		}
-
-		return new ArrayList<IExecutorCommand>();
+		return executorCommands;
 	}
 
 	private static void processScriptException(OdysseusScriptException e) {
@@ -705,7 +718,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 
 	@Override
 	public List<IExecutorCommand> parse(Reader reader, ISession user, IDataDictionary dd, Context context) throws QueryParseException {
-		return new ArrayList<>();
+		throw new QueryParseException("This method is not implemented yet");
 	}
 
 	@Override

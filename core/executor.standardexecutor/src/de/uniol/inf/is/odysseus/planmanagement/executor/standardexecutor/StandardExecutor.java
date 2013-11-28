@@ -62,6 +62,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractExec
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.GetQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.ExecutionConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.configuration.IExecutionSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEvent;
@@ -382,6 +383,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			// extract query and go the standard way
 			if (cmd instanceof CreateQueryCommand) {
 				newQueries.add(((CreateQueryCommand) cmd).getQuery());
+			}else if (cmd instanceof GetQueryCommand){
+				optimizedQueries.add(executionPlan.getQueryById(((GetQueryCommand)cmd).getQueryID()));
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
