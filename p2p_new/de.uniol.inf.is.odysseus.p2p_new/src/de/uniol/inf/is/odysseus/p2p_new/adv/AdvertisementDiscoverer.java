@@ -26,7 +26,7 @@ abstract class AdvertisementDiscoverer extends RepeatingJobThread {
 	
 	@Override
 	public void doJob() {
-		if (JxtaServicesProvider.isActivated()) {
+		if (JxtaServicesProvider.isActivated() && JxtaServicesProvider.getInstance().getDiscoveryService() != null) {
 			
 			if( remoteCounter == 0 ) {
 				JxtaServicesProvider.getInstance().getDiscoveryService().getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 99);
