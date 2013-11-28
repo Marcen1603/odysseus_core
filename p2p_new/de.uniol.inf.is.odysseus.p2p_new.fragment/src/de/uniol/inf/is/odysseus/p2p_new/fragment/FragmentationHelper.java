@@ -112,7 +112,7 @@ public class FragmentationHelper {
 			} catch(NumberFormatException e) {
 				
 				e.printStackTrace();
-				LOG.error("Could not parse {} to an integer. Number of fragments settet to {}", 
+				LOG.error("Could not parse {} to an integer. Number of fragments set to {}", 
 						strParameters[1], MIN_NUM_FRAGMENTS_VALUE);
 				
 			}
