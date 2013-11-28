@@ -180,7 +180,10 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			final Element fileElement = doc.createElement(QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT);
 			queryElement.appendChild(fileElement);
 
-			fileElement.setAttribute(FILE_XML_ATTRIBUTE, ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getName());
+			String qryfileName = ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getFullPath().toString();
+			String projectName = ((ResourceFileQueryTextProvider) queryTextProvider).getFile().getProject().toString();
+			String nameToSave = qryfileName.substring(projectName.length());
+			fileElement.setAttribute(FILE_XML_ATTRIBUTE, nameToSave);
 
 		} else if (queryTextProvider instanceof SimpleQueryTextProvider) {
 
