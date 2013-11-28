@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.intervalapproach.window.SystemTimeIntervalFactory;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -34,7 +35,11 @@ public class TSystemTimestampRule extends AbstractTransformationRule<TimestampAO
 
 	@Override
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) {
+		if(timestampAO.hasEndTimestamp() || timestampAO.hasStartTimestamp()){
+			throw new TransformationException("You cannot use start and end parameters for system time processing");
+		}
 		SystemTimeIntervalFactory<ITimeInterval, IStreamObject<ITimeInterval>> mUpdater = new SystemTimeIntervalFactory<ITimeInterval, IStreamObject<ITimeInterval>>();		
+		mUpdater.clearEnd(timestampAO.isClearEnd());
 		MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>> po = new MetadataUpdatePO<ITimeInterval, IStreamObject<ITimeInterval>>(mUpdater);
 		defaultExecute(timestampAO, po, transformConfig, true, true);
 	}
