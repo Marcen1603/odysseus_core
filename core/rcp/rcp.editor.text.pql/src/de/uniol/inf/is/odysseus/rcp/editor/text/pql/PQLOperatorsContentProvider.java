@@ -51,7 +51,7 @@ public class PQLOperatorsContentProvider implements ITreeContentProvider {
 			List<LogicalOperatorInformation> nonHiddenSet = selectNonHidden(set);
 			return nonHiddenSet.toArray();
 		}
-		if (parentElement instanceof LogicalParameterInformation) {
+		if (parentElement instanceof LogicalOperatorInformation) {
 			LogicalOperatorInformation builder = (LogicalOperatorInformation) parentElement;
 			List<LogicalParameterInformation> manParams = Lists.newArrayList();
 			List<LogicalParameterInformation> optParams = Lists.newArrayList();
