@@ -43,8 +43,8 @@ public class ProbabilisticMinusNumberLHSOperator extends ProbabilisticMinusOpera
     public final ProbabilisticDouble getValue() {
         final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
         final AbstractProbabilisticValue<?> b = this.getInputValue(1);
-		Objects.requireNonNull(b);
-		return this.getValueInternal(a, b);
+        Objects.requireNonNull(b);
+        return this.getValueInternal(a, b);
     }
 
     /**

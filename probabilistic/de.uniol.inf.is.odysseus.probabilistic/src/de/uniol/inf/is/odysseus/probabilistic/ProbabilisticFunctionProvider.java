@@ -63,6 +63,12 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.compare.Probabi
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticDivisionOperator;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxFunction;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxNumberLHSFunction;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMaxNumberRHSFunction;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinFunction;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinNumberLHSFunction;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinNumberRHSFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusNumberLHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusNumberRHSOperator;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.ProbabilisticMinusOperator;
@@ -133,7 +139,14 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 			functions.add(new ProbabilisticDivisionNumberLHSOperator());
 			functions.add(new ProbabilisticPowerOperator());
 			functions.add(new ProbabilisticSQRTFunction());
-
+			functions.add(new ProbabilisticMinFunction());
+			functions.add(new ProbabilisticMinNumberRHSFunction());
+			functions.add(new ProbabilisticMinNumberLHSFunction());
+			functions.add(new ProbabilisticMaxFunction());
+			functions.add(new ProbabilisticMaxNumberRHSFunction());
+			functions.add(new ProbabilisticMaxNumberLHSFunction());
+			
+			
 			/** Convert functions */
 			functions.add(new ProbabilisticDoubleToByteFunction());
 			functions.add(new ProbabilisticDoubleToShortFunction());
