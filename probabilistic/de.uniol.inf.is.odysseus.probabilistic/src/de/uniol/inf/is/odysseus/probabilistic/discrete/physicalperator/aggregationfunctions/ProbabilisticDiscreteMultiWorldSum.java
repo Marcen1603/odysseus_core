@@ -15,54 +15,54 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
 
-import java.util.Map.Entry;
-
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 
 /**
+ * 
  * @author Christian Kuka <christian@kuka.cc>
+ * 
  */
-public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
+public class ProbabilisticDiscreteMultiWorldSum extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
     /**
 	 * 
 	 */
-    private static final long serialVersionUID = 8734164350164631514L;
+    private static final long serialVersionUID = -8795838136903520490L;
     /** The attribute position. */
     private final int pos;
     /** The result data type. */
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticDiscreteCount}.
+     * Gets an instance of {@link ProbabilisticDiscreteMultiWorldSum}.
      * 
      * @param pos
      *            The attribute position
      * @param partialAggregateInput
      *            The partial aggregate input
      * @param datatype
-     *            The result data type
-     * @return An instance of {@link ProbabilisticDiscreteCount}
+     *            The result datatype
+     * @return An instance of {@link ProbabilisticDiscreteMultiWorldSum}
      */
-    public static ProbabilisticDiscreteCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteCount(pos, partialAggregateInput, datatype);
+    public static ProbabilisticDiscreteMultiWorldSum getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticDiscreteMultiWorldSum(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticDiscreteCount}.
+     * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldSum}.
      * 
      * @param pos
      *            The attribute position
      * @param partialAggregateInput
      *            The partial aggregate input
      * @param datatype
-     *            The result data type
+     *            The result datatype
      */
-    protected ProbabilisticDiscreteCount(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("COUNT", partialAggregateInput);
+    protected ProbabilisticDiscreteMultiWorldSum(final int pos, final boolean partialAggregateInput, final String datatype) {
+        super("SUM", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
     }
@@ -75,10 +75,10 @@ public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<Probab
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.add(value.getValue());
-        }
+        final MultiWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
+
+        pa.add((AbstractProbabilisticValue<?>) in.getAttribute(this.pos));
+
         return pa;
     }
 
@@ -92,17 +92,15 @@ public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<Probab
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
+        MultiWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
-            pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
+            pa = new MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>) p).getAggregate(), this.datatype);
         }
         else {
-            pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>) p;
         }
 
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.add(value.getValue());
-        }
+        pa.add((AbstractProbabilisticValue<?>) toMerge.getAttribute(this.pos));
 
         return pa;
     }
@@ -118,9 +116,9 @@ public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<Probab
     @SuppressWarnings("rawtypes")
     @Override
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, false);
-        r.setAttribute(0, new Double(pa.getCount()));
+        final MultiWorldSumPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldSumPartialAggregate<ProbabilisticTuple<?>>) p;
+        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
+        r.setAttribute(0, pa.getAggregate());
         return r;
     }
 

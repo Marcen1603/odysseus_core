@@ -16,7 +16,10 @@
 package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
 
 /**
- * @author Christian Kuka <christian.kuka@offis.de>
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ * @param <T>
  */
 public class ElementPartialAggregate {
 
