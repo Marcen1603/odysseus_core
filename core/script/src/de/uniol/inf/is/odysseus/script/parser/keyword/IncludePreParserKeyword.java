@@ -36,7 +36,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 			includingFiles.add(parameter);
 			
 			String[] lines = readTextLinesFromFile(includingFile);
-			getParser().validate(lines, caller, context);
+			getParser().validate(lines, caller, Context.empty());
 			
 		} catch( Exception ex ) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for validating", ex );
@@ -69,7 +69,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 			String[] lines = readTextLinesFromFile(new File(parameter));
 			
 			ISink<?> defaultSink = variables.containsKey("_defaultSink") ? (ISink<?>) variables.get("_defaultSink") : null;
-			getParser().parseAndExecute(lines, caller, defaultSink, context);
+			getParser().parseAndExecute(lines, caller, defaultSink, Context.empty());
 			
 		} catch (IOException ex) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for execution", ex );
