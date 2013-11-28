@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
@@ -111,7 +111,7 @@ public class ProbabilisticDivisionOperator extends AbstractProbabilisticBinaryOp
 	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getAssociativity()
 	 */
 	@Override
-	public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+	public final IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
 
