@@ -117,7 +117,7 @@ public class OperatorCost<T> implements ICost<T> {
 
 	@Override
 	public String toString() {
-		return String.format("%-10.3f; %-10.6f", memCost / 1024 / 1024, cpuCost);
+		return String.format("m = %-10.3f MB; c = %-10.6f", memCost / 1024 / 1024, cpuCost);
 	}
 
 	@Override
