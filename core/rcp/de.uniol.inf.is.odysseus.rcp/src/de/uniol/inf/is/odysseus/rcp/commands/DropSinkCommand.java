@@ -77,7 +77,7 @@ public class DropSinkCommand extends AbstractHandler implements IHandler {
 							executor.removeSink(param, OdysseusRCPPlugIn.getActiveSession());
 							StatusBarManager.getInstance().setMessage("Sink removed");
 						} catch (PermissionException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove sink:\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove sink:\n See error log for details", e);
 						}
 						return Status.OK_STATUS;
 					}

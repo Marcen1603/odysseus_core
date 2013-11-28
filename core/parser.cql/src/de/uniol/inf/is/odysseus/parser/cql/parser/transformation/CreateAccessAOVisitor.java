@@ -190,7 +190,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		// Keep the original Type not the alias
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		for (SDFAttribute attribute : access.getOutputSchema()) {
-			SDFAttribute newAttribute = (SDFAttribute) attribute.clone(alias, attribute.getAttributeName());
+			SDFAttribute newAttribute = attribute.clone(alias, attribute.getAttributeName());
 			// newAttribute.setSourceName(alias);
 			attributes.add(newAttribute);
 		}

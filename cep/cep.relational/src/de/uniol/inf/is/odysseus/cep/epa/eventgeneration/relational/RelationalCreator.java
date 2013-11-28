@@ -20,7 +20,6 @@ import de.uniol.inf.is.odysseus.cep.epa.eventgeneration.AbstractComplexEventFact
 import de.uniol.inf.is.odysseus.cep.metamodel.OutputScheme;
 import de.uniol.inf.is.odysseus.cep.metamodel.symboltable.SymbolTable;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 
@@ -71,7 +70,7 @@ public class RelationalCreator<R extends IStreamObject<?>> extends
 
 		Tuple ret = new Tuple(attributes, false);
 		if (event != null) {
-			ret.setMetadata((IMetaAttribute) event.getMetadata().clone());
+			ret.setMetadata(event.getMetadata().clone());
 		}
 		// System.out.println("EVENT "+ret);
 		return ret;

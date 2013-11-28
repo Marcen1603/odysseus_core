@@ -41,7 +41,7 @@ abstract public class MinMax<R extends Comparable<R>, W> extends AbstractAggrega
 
 	@Override
 	public IPartialAggregate<R> init(IPartialAggregate<R> in) {
-		return new ElementPartialAggregate<R>((ElementPartialAggregate<R>)in);
+		return new ElementPartialAggregate<R>(in);
 	}
 	
 	@Override

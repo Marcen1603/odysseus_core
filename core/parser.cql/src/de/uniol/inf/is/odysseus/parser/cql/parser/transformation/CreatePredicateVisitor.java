@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
@@ -92,7 +91,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 		}
 
 		IVisitor v = VisitorFactory.getInstance().getVisitor("ProbabilityPredicate");
-		return (ILogicalOperator) v.visit(probPred, null, null);
+		return v.visit(probPred, null, null);
 	}
 
 	public static IPredicate<Tuple<?>> toPredicate(ASTPredicate predicate, IAttributeResolver resolver) throws QueryParseException {

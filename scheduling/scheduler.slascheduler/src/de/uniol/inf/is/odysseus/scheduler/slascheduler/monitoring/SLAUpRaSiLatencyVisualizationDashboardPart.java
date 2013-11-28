@@ -50,7 +50,7 @@ public class SLAUpRaSiLatencyVisualizationDashboardPart extends
 				datasetCollection.addSeries(xySeriesSource);
 			}
 			try {
-				final Tuple<?> tuple = (Tuple<?>) element;
+				final Tuple<?> tuple = element;
 				final long latency = tuple.getAttribute(2);
 
 				if (latency >= 0) {

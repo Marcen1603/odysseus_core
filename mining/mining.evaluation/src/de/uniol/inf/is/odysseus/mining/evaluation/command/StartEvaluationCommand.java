@@ -64,7 +64,7 @@ public class StartEvaluationCommand extends AbstractHandler {
 			if (part instanceof OdysseusScriptEditor) {
 				if (part.getEditorInput() instanceof FileEditorInput) {
 					FileEditorInput input = (FileEditorInput) part.getEditorInput();
-					IFile f = (IFile) input.getFile();
+					IFile f = input.getFile();
 					if (f.getFileExtension().endsWith("qry")) {
 						foundFiles.add(f);
 					}

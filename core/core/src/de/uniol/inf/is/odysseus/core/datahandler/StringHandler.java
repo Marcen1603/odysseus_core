@@ -116,7 +116,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 					.limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
-			LOG.error("Could not encode '{}' for calculation mem-size", (String)attribute, e);
+			LOG.error("Could not encode '{}' for calculation mem-size", attribute, e);
 		}
 		return Integer.SIZE / 8;
 	}

@@ -34,7 +34,7 @@ public class FixedSetAccessAO<T extends IStreamObject<? extends IClone>> extends
 	
 	public FixedSetAccessAO(FixedSetAccessAO<T> other) {
 		super(other);
-		this.tuples = (T[]) other.tuples;
+		this.tuples = other.tuples;
 	}
 	
 	public T[] getTuples() {

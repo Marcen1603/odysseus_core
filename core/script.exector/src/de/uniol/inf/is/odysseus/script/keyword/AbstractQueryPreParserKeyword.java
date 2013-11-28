@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.executor.ExecutorHandler;
+import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
 
@@ -73,7 +74,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserExe
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		String parserID = (String) variables.get(ParserPreParserKeyword.PARSER);
 		String transCfgName = (String) variables.get(TransCfgPreParserKeyword.TRANSCFG);
-		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(TransCfgPreParserKeyword.ADD_TRANS_PARAMS);
+		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
 
 		ISession queryCaller = (ISession) variables.get("USER");
 		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);

@@ -109,7 +109,7 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 					@Override
 					public IStatus validate(Object[] selection) {
 						if (selection.length != 1) {
-							return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You have to choose a single image");	
+							return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "You have to choose a single image");	
 						} 
 						Object sel = selection[0];
 						if (sel instanceof IFile) {
@@ -118,7 +118,7 @@ public class ImagePictogramDialog extends AbstractPictogramDialog<ImagePictogram
 								return Status.OK_STATUS;
 							}
 						}
-						return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You can only choose an image");
+						return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "You can only choose an image");
 					}
 				});
 				dialog.setTitle("Choose an image");

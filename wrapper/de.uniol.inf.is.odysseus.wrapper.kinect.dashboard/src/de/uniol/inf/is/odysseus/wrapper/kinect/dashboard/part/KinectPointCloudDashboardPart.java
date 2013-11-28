@@ -373,7 +373,7 @@ public class KinectPointCloudDashboardPart extends AbstractDashboardPart
         
         byte[] colorBytes = pointCloud.getColorMap().getData();
         short[] depthShorts = pointCloud.getDepthMap().getData();
-        gl.glBegin(GL2.GL_POINTS);
+        gl.glBegin(GL.GL_POINTS);
         for (int y = 0; y < pointCloud.getHeight(); y++) {
             for (int x = 0; x < pointCloud.getWidth(); x++) {
                 int index = y * pointCloud.getWidth() + x;
@@ -405,7 +405,7 @@ public class KinectPointCloudDashboardPart extends AbstractDashboardPart
 
         gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
         gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-        gl.glBegin(GL2.GL_LINES);
+        gl.glBegin(GL.GL_LINES);
         
         for (KinectSkeleton skeleton : skeletonMap.getSkeletons()) {
             renderSkeleton(skeleton, gl);

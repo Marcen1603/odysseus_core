@@ -81,11 +81,11 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 //									transformConfig.getTransformationHelper().insertNewFatherPhysical(oldFather, testds, securityShieldPO);
 //								}
 //							} else {
-								oldFather = (ISource<?>) source.getTarget();
+								oldFather = source.getTarget();
 								IPipe securityShieldPO = new SecurityShieldPO();
 								securityShieldPO.setOutputSchema(e.getOutputSchema());
 								Collection<ISubscription<ISink>> testds = new ArrayList<ISubscription<ISink>>();
-								PhysicalSubscription phsy = new PhysicalSubscription((FileSinkPO) e, 0, 0, e.getOutputSchema());
+								PhysicalSubscription phsy = new PhysicalSubscription(e, 0, 0, e.getOutputSchema());
 								testds.add(phsy);
 								transformConfig.getTransformationHelper().insertNewFatherPhysical(oldFather, testds, securityShieldPO);
 //							}

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  * @author Juergen Boger <juergen.boger@offis.de>
@@ -33,7 +34,7 @@ public class Frame extends JFrame {
         super(name);
         this.colorImage = null;
         this.depthImage = null;
-        this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         this.lastHeight = getHeight();
         this.lastWidth = getWidth();
         this.setVisible(true);

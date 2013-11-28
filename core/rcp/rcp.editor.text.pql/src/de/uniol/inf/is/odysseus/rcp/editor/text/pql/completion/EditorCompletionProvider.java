@@ -100,7 +100,7 @@ public class EditorCompletionProvider implements
 				LogicalParameterInformation param = getParamAtPosition(document, offset,
 						builder);
 				if (param != null) {
-					LogicalParameterInformation listP = (LogicalParameterInformation) param;
+					LogicalParameterInformation listP = param;
 					String s = getParamValue(listP, -1, "", false);
 					if (s.length() > 0) {
 						if (!prefix.endsWith(s.substring(0, 1))) {

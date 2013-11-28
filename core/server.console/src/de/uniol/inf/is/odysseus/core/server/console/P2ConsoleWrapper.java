@@ -4,9 +4,9 @@ import java.net.URI;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -62,7 +62,7 @@ public class P2ConsoleWrapper {
 					throw new OperationCanceledException();
 			} else {
 				monitor.done();
-				return MultiStatus.CANCEL_STATUS;
+				return Status.CANCEL_STATUS;
 			}
 		}
 		monitor.done();

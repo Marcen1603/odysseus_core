@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.CSVProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.LineProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -56,7 +57,7 @@ public class CSVFileSource extends AbstractAccessAO {
 
 	@Parameter(type = BooleanParameter.class, name = "readFirstLine", optional = true, doc = "If fist line contains header information, set to false. Default true.")
 	public void setReadFirstLine(boolean readFirstLine) {
-		addOption(AbstractCSVHandler.READFIRSTLINE, Boolean.toString(readFirstLine));
+		addOption(LineProtocolHandler.READFIRSTLINE, Boolean.toString(readFirstLine));
 	}
 
 	@Override

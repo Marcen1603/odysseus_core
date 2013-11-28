@@ -50,9 +50,9 @@ public abstract class AbstractStartQueryCommand extends AbstractHandler implemen
 							}
 							
 						} catch (PlanManagementException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
 						} catch (PermissionException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant start query " + qID + ":\n See error log for details", e);
 						}
 					}
 					

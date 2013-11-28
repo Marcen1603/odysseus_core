@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvalu
  */
 public class SecurityShieldPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-	private StandardSecurityEvaluator<T> evaluator = new StandardSecurityEvaluator<T>((AbstractPipe<T, T>) this);
+	private StandardSecurityEvaluator<T> evaluator = new StandardSecurityEvaluator<T>(this);
 	
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<T>();
 

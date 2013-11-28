@@ -85,7 +85,7 @@ public class UpdateJob extends Job {
 						});
 					} catch (Exception e) {
 						e.printStackTrace();
-						result = new Status(Status.ERROR, Activator.PLUGIN_ID, "Update failed!", e);
+						result = new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Update failed!", e);
 						StatusManager.getManager().handle(result);
 					}
 				}

@@ -34,8 +34,8 @@ public class ShotOnGoalDetection extends AbstractFunction<Integer>{
 		if((ts - tsShot) != 0) {
 //			double speedX = ((double) (endX - startX) / (ts - tsShot)) * 1500000000000.0;
 //			double speedY = ((double) (endY - startY) / (ts - tsShot)) * 1500000000000.0;
-			double speedX = (double) (endX - startX);
-			double speedY = (double) (endY - startY);
+			double speedX = endX - startX;
+			double speedY = endY - startY;
 			if(speedX != 0) {
 				double m = speedY / speedX;
 				double b = startY - (m * startX);

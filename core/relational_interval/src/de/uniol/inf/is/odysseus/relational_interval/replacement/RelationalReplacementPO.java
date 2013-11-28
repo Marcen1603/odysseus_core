@@ -64,7 +64,7 @@ public class RelationalReplacementPO
 					// Test with simple resend
 					@SuppressWarnings("rawtypes")
 					Tuple newTuple = lastObject.clone();
-					ITimeInterval metadata = (ITimeInterval) lastObject
+					ITimeInterval metadata = lastObject
 							.getMetadata().clone();
 					long newStart = lastTransfer.getMainPoint()
 							+ (i * timeIntervalSize);

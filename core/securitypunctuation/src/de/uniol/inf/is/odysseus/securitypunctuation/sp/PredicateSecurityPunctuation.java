@@ -41,11 +41,11 @@ public class PredicateSecurityPunctuation extends AbstractSecurityPunctuation {
 	
 	public PredicateSecurityPunctuation(Object[] objects, SDFSchema schema) {
 		super((long)objects[3]);
-		this.setAttribute("ts", (Long) objects[3]);
+		this.setAttribute("ts", objects[3]);
 		setSchema(schema);
 		setAttribute("predicate", createPredicate((String) objects[0]));
-		this.setAttribute("sign", (Integer) objects[1]);
-		this.setAttribute("mutable", (Integer) objects[2]);
+		this.setAttribute("sign", objects[1]);
+		this.setAttribute("mutable", objects[2]);
 	}
 	
 	public PredicateSecurityPunctuation(PredicateSecurityPunctuation sp) {

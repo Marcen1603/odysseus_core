@@ -99,7 +99,7 @@ public class PlanAdaptionResourceMonitor implements
 		if(!this.costModels.containsKey(name)) {
 			throw new RuntimeException("CostModel " + name + " not found.");
 		}
-		this.selectedCostModel = (IPlanMigrationCostModel) this.costModels.get(name);
+		this.selectedCostModel = this.costModels.get(name);
 		LOG.debug("CostModel: " + name + " selected");
 	}
 }

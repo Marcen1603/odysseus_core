@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -180,7 +181,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 						dlg.setTitle("Select Map Stream Connections");
 						dlg.open();
 						
-						if(dlg.getReturnCode() == MessageDialog.OK){
+						if(dlg.getReturnCode() == Window.OK){
 							Object[] sel = dlg.getResult();
 							for (Object object : sel) {
 								IPhysicalQuery op = (IPhysicalQuery) object;

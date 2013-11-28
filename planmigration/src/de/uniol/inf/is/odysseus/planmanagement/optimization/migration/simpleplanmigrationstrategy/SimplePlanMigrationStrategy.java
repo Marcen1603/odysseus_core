@@ -196,7 +196,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 			// set the source for this buffer in case it is empty
 			buffer.setSource((ISource<?>) metadataUpdatePO);
-			context.addBufferPO((BufferPO<?>) buffer);
+			context.addBufferPO(buffer);
 
 			insertBuffer(buffer, metadataUpdatePO, newPlanOperatorsBeforeSources, oldPlanOperatorsBeforeSources);
 

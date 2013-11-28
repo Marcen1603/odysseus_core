@@ -36,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -137,7 +136,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 		ListIterator<SDFAttribute> li = otherAttributes.listIterator();
 		for (SDFAttribute attr : this.attributes) {
-			if (!((SDFAttribute) li.next()).getAttributeName().equals(((SDFAttribute) attr).getAttributeName())) {
+			if (!li.next().getAttributeName().equals(attr.getAttributeName())) {
 				throw new QueryParseException("Query output does not match specified schema for: " + name);
 			}
 		}
@@ -343,7 +342,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		ILogicalOperator ao = (ILogicalOperator) invokeDatabaseVisitor(ASTCreateFromDatabase.class, node, name);
 		ao.setOutputSchema(new SDFSchema(name, Tuple.class, attributes));
 		//return addTimestampAO((ILogicalOperator) ao);
-		return (ILogicalOperator)ao;
+		return ao;
 	}
 
 	private Object invokeDatabaseVisitor(Class<?> nodeclass, Object node, Object data) throws QueryParseException {
@@ -355,7 +354,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(v, dd);
 			m = visitor.getDeclaredMethod("visit", nodeclass, Object.class);
-			return (AbstractLogicalOperator) m.invoke(v, node, data);
+			return m.invoke(v, node, data);
 		} catch (ClassNotFoundException e) {
 			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
 		} catch (NoSuchMethodException e) {

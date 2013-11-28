@@ -190,7 +190,7 @@ public class FacebookProtocolHandler extends
 		try {
 			DateFormat formatterS;
 			formatterS = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss+SSS");
-			Date datet = (Date) formatterS.parse(createdTime);
+			Date datet = formatterS.parse(createdTime);
 			java.sql.Timestamp timeStampDate = new Timestamp(datet.getTime());
 
 			return timeStampDate;

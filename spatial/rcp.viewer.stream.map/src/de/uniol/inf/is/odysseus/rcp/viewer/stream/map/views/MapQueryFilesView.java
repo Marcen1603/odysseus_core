@@ -10,6 +10,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -72,7 +73,7 @@ public class MapQueryFilesView extends AbstractStreamMapEditorViewPart {
 					dialog.setMessage("Select the files from the List:");
 					dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 					dialog.open();
-					if (dialog.getReturnCode() == MessageDialog.OK) {
+					if (dialog.getReturnCode() == Window.OK) {
 						Object[] sel = dialog.getResult();
 						for (Object object : sel) {
 							if (object instanceof IFile) {

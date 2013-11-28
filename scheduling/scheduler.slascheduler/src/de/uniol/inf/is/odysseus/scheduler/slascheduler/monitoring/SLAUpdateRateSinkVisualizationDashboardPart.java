@@ -54,7 +54,7 @@ public class SLAUpdateRateSinkVisualizationDashboardPart extends
 				datasetCollection.addSeries(xySeriesSource);
 			}
 			try {
-				final Tuple<?> tuple = (Tuple<?>) element;
+				final Tuple<?> tuple = element;
 				// final int queryID = tuple.getAttribute(0);
 				final long updaterate = tuple.getAttribute(1);
 

@@ -120,7 +120,7 @@ public class PredicateHelper {
 			while (iterator.hasNext()) {
 				IRelationalPredicate next = iterator.next();
 				if (!(next instanceof TruePredicate)) {
-					result = (IPredicate<?>) ComplexPredicateHelper
+					result = ComplexPredicateHelper
 							.createAndPredicate(result, next);
 				}
 			}

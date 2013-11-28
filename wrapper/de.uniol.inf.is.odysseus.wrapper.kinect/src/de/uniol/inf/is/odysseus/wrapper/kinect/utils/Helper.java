@@ -15,7 +15,7 @@ public class Helper {
      */
     public static float byteToFloat(byte b) {
         float res = (BLUE_PATTERN & b);
-        res /= (float) BLUE_PATTERN;
+        res /= BLUE_PATTERN;
         return res;
     }
     

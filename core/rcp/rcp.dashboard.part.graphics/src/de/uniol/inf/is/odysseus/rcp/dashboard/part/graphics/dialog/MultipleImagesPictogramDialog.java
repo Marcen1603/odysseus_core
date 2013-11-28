@@ -136,7 +136,7 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 					public IStatus validate(Object[] selection) {
 						dialog.getOkButton().setEnabled(false);
 						if (selection.length <= 0) {
-							return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You have to choose at least one image");
+							return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "You have to choose at least one image");
 						} 
 						Object sel = selection[0];
 						if (sel instanceof IFile) {
@@ -146,7 +146,7 @@ public class MultipleImagesPictogramDialog extends AbstractPictogramDialog<Multi
 								return Status.OK_STATUS;
 							}
 						}
-						return new Status(Status.ERROR, PlatformUI.PLUGIN_ID, "You can only choose images");
+						return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, "You can only choose images");
 					}
 				});
 

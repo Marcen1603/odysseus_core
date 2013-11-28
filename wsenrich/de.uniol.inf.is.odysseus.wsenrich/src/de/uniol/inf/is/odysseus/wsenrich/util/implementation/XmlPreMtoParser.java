@@ -68,7 +68,7 @@ public class XmlPreMtoParser {
 					Node root = xmlDocument.getDocumentElement();
 					Node copyOfRoot = doc.importNode(root, false);
 					doc.appendChild(copyOfRoot);
-					Node element = (Node) list.item(i);
+					Node element = list.item(i);
 					Node copyOfChildren = doc.importNode(element, true);
 					doc.getDocumentElement().appendChild(copyOfChildren);
 					this.splittetXmlDocuments.add(doc);

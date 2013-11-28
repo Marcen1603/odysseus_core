@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -94,7 +94,7 @@ public class ListParameterPresentation<V> extends AbstractParameterPresentation<
 				}
 				List<IParameterPresentation<V>> copiedChilds = new ArrayList<>(childs);
 				ListParameterDialog<V> dialog = new ListParameterDialog<V>(parent.getShell(), getLogicalParameterInformation(), getOperator(), copiedChilds);
-				if (dialog.open() == TitleAreaDialog.OK) {
+				if (dialog.open() == Window.OK) {
 					List<IParameterPresentation<V>> result = dialog.getParameters();
 					resetValues(result);
 				}

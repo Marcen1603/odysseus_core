@@ -55,9 +55,9 @@ public class VectorquantizationPO<M extends ITimeInterval> extends AbstractPipe<
 	protected void process_next(Tuple<M> object, int port) {
 		
 		@SuppressWarnings("unchecked")
-		String inputDatatype = (String) ((ArrayList<String>) object.getAttribute(0)).get(0);
+		String inputDatatype = ((ArrayList<String>) object.getAttribute(0)).get(0);
 		@SuppressWarnings("unchecked")
-		double inputValue = (double) ((ArrayList<Double>) object.getAttribute(1)).get(0);
+		double inputValue = ((ArrayList<Double>) object.getAttribute(1)).get(0);
 		
 		System.out.println("getMetadata():" + object.getMetadata());
 		System.out.println("getStart(): " + object.getMetadata().getStart());

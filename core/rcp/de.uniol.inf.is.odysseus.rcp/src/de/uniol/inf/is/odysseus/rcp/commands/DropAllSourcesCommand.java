@@ -83,10 +83,10 @@ public class DropAllSourcesCommand extends AbstractHandler {
 					
 				} catch (PlanManagementException e) {
 					LOG.error("Could not drop all sources", e);
-					return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
+					return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
 				} catch (PermissionException e) {
 					LOG.error("Could not drop all sources", e);
-					return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
+					return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
 				}
 				
 				return Status.OK_STATUS;

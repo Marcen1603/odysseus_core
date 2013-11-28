@@ -150,7 +150,7 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 					IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
 					executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard", Context.empty());
 				} catch (Throwable ex) {
-					return new Status(Status.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
+					return new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}
 				return Status.OK_STATUS;
 			}

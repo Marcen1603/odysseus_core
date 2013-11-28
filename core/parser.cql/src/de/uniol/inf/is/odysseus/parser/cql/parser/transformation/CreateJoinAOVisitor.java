@@ -279,7 +279,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 			if (i > 0) {
 				buffer.append(',');
 			}
-			SDFAttribute attribute = (SDFAttribute) outputSchema.getAttribute(i);
+			SDFAttribute attribute = outputSchema.getAttribute(i);
 			buffer.append(attribute.getURI());
 			tmpResolver.addAttribute(attribute);
 		}
@@ -312,7 +312,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		String expression = node.getTuple().toString() + node.getCompareOperator().toString() + toExpression(subquery);
 		AttributeResolver tmpResolver = new AttributeResolver(this.attributeResolver);
 		for (SDFAttribute attr : subquery.getOutputSchema()) {
-			tmpResolver.addAttribute((SDFAttribute) attr);
+			tmpResolver.addAttribute(attr);
 		}
 		SDFExpression expr = new SDFExpression("", expression, tmpResolver, MEP.getInstance());
 		expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());

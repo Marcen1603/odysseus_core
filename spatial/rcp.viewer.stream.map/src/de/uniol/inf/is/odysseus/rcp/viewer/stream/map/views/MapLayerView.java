@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -145,7 +146,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 					PropertyTitleDialog dialog = new PropertyTitleDialog(shell, model.getLayers(), model.getConnectionCollection());
 					dialog.create();
 					dialog.open();
-					if (dialog.getReturnCode() == MessageDialog.OK) {
+					if (dialog.getReturnCode() == Window.OK) {
 						editor.addLayer(dialog.getLayerConfiguration());
 					} else {
 						// I guess user knows that this happend if he clicked "cancel"
@@ -312,7 +313,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 								"Please enter a name:", element.getName(),
 								validator);
 						groupname.open();
-						if (groupname.getReturnCode() == MessageDialog.OK) {
+						if (groupname.getReturnCode() == Window.OK) {
 							String name = groupname.getValue();
 							getMapEditor().renameLayer(element, name);
 						}
@@ -370,7 +371,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 											model.getConnectionCollection());
 									dialog.create();
 									dialog.open();
-									if (dialog.getReturnCode() == MessageDialog.OK) {
+									if (dialog.getReturnCode() == Window.OK) {
 										editor.setLayerChanged();
 										MessageDialog.openInformation(shell,
 												"Information",
@@ -403,7 +404,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 							dialog.selectLayer((ILayer) i.getFirstElement());
 							dialog.open();
 							
-							if (dialog.getReturnCode() == MessageDialog.OK) {
+							if (dialog.getReturnCode() == Window.OK) {
 								editor.setLayerChanged();
 								// It's confusing if this is shown always ...
 //								MessageDialog.openInformation(shell,
@@ -520,7 +521,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 		dlg.setFilter("*");
 		dlg.open();
 
-		if (dlg.getReturnCode() == MessageDialog.OK) {
+		if (dlg.getReturnCode() == Window.OK) {
 			Object[] sel = dlg.getResult();
 			for (Object object : sel) {
 				if (object == empty) {
@@ -539,7 +540,7 @@ public class MapLayerView extends AbstractStreamMapEditorViewPart {
 					InputDialog groupname = new InputDialog(Display.getCurrent().getActiveShell(), "Set Groupname", "Please enter a name:", "Group "
 							+ groups.size(), validator);
 					groupname.open();
-					if (groupname.getReturnCode() == MessageDialog.OK) {
+					if (groupname.getReturnCode() == Window.OK) {
 						String name = groupname.getValue();
 						element.getConfiguration().setGroup(name);
 					}

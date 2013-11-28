@@ -179,7 +179,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 					// op1 und op2 haben identische Quellen und op1 ist in op2 enthalten
 					if (op1 instanceof AbstractPipe
 							&& op2 instanceof IPipe
-							&& ((AbstractPipe<?, ?>)op1).hasSameSources((IPipe) op2)
+							&& ((AbstractPipe<?, ?>)op1).hasSameSources(op2)
 							&& ((AbstractPipe<?, ?>) op1)
 									.isContainedIn((IPipe) op2)
 							&& (newOps.contains(op1) || restructuringAllowed)) {
@@ -191,7 +191,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 						// op1 und op2 haben identische Quellen und op2 ist in op1 enthalten
 					} else if (op1 instanceof AbstractPipe
 							&& op2 instanceof IPipe
-							&& ((AbstractPipe<?, ?>)op2).hasSameSources((IPipe) op1)
+							&& ((AbstractPipe<?, ?>)op2).hasSameSources(op1)
 							&& ((AbstractPipe<?, ?>) op2)
 									.isContainedIn((IPipe) op1)
 							&& (newOps.contains(op2) || restructuringAllowed)) {

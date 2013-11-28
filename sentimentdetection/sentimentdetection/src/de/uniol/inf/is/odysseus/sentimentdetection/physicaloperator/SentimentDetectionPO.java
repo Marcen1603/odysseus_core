@@ -160,7 +160,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		}
 		this.attributeTextToBeClassifiedPos = dataSchema.indexOf(attributeTextToBeClassified);
 
-		algo = (IClassifier) ClassifierRegistry.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);
+		algo = ClassifierRegistry.getClassifierByTypeAndDomain(classifier.toLowerCase(), domain);
 		algo.setNgram(ngram);
 		algo.setRemoveStopWords(removeStopWords);
 		algo.setStemmWords(stemmWords);
@@ -169,7 +169,7 @@ public class SentimentDetectionPO<T extends IMetaAttribute> extends AbstractPipe
 		if (ngramUpTo) {
 			algo.setNgramUpTo(ngram);
 		}
-		stopwordsSet = (IStopWords) StopWordsRegistry.getStopWordsByLanguage(language);
+		stopwordsSet = StopWordsRegistry.getStopWordsByLanguage(language);
 	}
 
 	@Override

@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.editors.impl;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -124,7 +125,7 @@ public class GraphViewEditorOutlinePage extends ContentOutlinePage implements IS
 			
 			@Override
 			public int getStyle() {
-				return Action.AS_CHECK_BOX;
+				return IAction.AS_CHECK_BOX;
 			}
 			
 			@Override

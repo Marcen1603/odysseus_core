@@ -173,19 +173,19 @@ public class ISenseLib implements Library {
 		/** <i>native declaration : line 467</i> */
 		public static final int ISD_AUX_SYSTEM_GPS = 5;
 	};
-	public static final int ISD_MAX_CHANNELS = (int)10;
-	public static final int ISD_MAX_BUTTONS = (int)8;
-	public static final int ISD_DEFAULT_FRAME = (int)1;
-	public static final int ISD_MAX_AUX_OUTPUTS = (int)4;
-	public static final int TRUE = (int)1;
-	public static final int ISD_VSET_FRAME = (int)2;
-	public static final int ISD_MAX_STATIONS = (int)8;
-	public static final int ISD_MAX_TRACKERS = (int)32;
-	public static final int ISD_QUATERNION = (int)2;
-	public static final String ISLIB_VERSION = (String)"4.2381";
-	public static final int ISD_MAX_AUX_INPUTS = (int)4;
-	public static final int FALSE = (int)0;
-	public static final int ISD_EULER = (int)1;
+	public static final int ISD_MAX_CHANNELS = 10;
+	public static final int ISD_MAX_BUTTONS = 8;
+	public static final int ISD_DEFAULT_FRAME = 1;
+	public static final int ISD_MAX_AUX_OUTPUTS = 4;
+	public static final int TRUE = 1;
+	public static final int ISD_VSET_FRAME = 2;
+	public static final int ISD_MAX_STATIONS = 8;
+	public static final int ISD_MAX_TRACKERS = 32;
+	public static final int ISD_QUATERNION = 2;
+	public static final String ISLIB_VERSION = "4.2381";
+	public static final int ISD_MAX_AUX_INPUTS = 4;
+	public static final int FALSE = 0;
+	public static final int ISD_EULER = 1;
 	public interface DLL_EP extends Callback {
 		void apply();
 	};

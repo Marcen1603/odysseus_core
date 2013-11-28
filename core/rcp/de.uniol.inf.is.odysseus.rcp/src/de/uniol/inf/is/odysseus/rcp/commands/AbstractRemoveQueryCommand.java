@@ -50,9 +50,9 @@ public abstract class AbstractRemoveQueryCommand extends AbstractHandler impleme
 							}
 
 						} catch (PlanManagementException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
 						} catch (PermissionException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant remove query:\n See error log for details", e);
 						}
 					}
 					StatusBarManager.getInstance().setMessage(removed + " queries removed successfully");

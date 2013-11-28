@@ -7,11 +7,11 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -51,7 +51,7 @@ public class RenameOperatorCommand extends AbstractHandler implements IHandler {
 						}
 					});
 		
-			if( inputDlg.open() == Dialog.OK ) {
+			if( inputDlg.open() == Window.OK ) {
 				final String newName = inputDlg.getValue();
 				selectedOperator.setName(newName);
 				

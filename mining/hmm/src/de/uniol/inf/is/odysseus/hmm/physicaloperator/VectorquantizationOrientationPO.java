@@ -49,7 +49,7 @@ public class VectorquantizationOrientationPO<M extends ITimeInterval> extends
 		
 		
 		@SuppressWarnings("unchecked")
-		double orientationAngle = (double) ((ArrayList<Double>) object.getAttribute(1)).get(0);
+		double orientationAngle = ((ArrayList<Double>) object.getAttribute(1)).get(0);
 		
 		
 

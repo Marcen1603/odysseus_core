@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -182,7 +183,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 
 	protected void setDirty(boolean value) {
 		dirty = value;
-		firePropertyChange(ISaveablePart2.PROP_DIRTY);
+		firePropertyChange(ISaveablePart.PROP_DIRTY);
 	}
 
 	@Override

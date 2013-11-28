@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
@@ -95,7 +94,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		
 		if(this.useFirst) {
 			LOG.debug("Only one migration allowed");
-			for(int i : ((IServerExecutor) getExecutor()).getLogicalQueryIds()) {
+			for(int i : getExecutor().getLogicalQueryIds()) {
 				getExecutor().stopQuery(i, user);
 			}
 			return;
@@ -274,7 +273,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 
 	@Override
 	public void adaptionEventFired(IPlanAdaptionPolicyRuleEngine sender) {
-		Collection<IPhysicalQuery> physicalQueries = ((IServerExecutor) this.executor)
+		Collection<IPhysicalQuery> physicalQueries = this.executor
 				.getExecutionPlan().getQueries();
 		this.policyRuleEngine.stop();
 		for (IPhysicalQuery query : physicalQueries) {

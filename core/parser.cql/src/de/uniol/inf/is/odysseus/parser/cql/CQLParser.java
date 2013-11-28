@@ -1137,7 +1137,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			m = visitor.getDeclaredMethod("setDataDictionary", IDataDictionary.class);
 			m.invoke(v, dataDictionary);
 			m = visitor.getDeclaredMethod("visit", nodeclass, Object.class);
-			return (AbstractLogicalOperator) m.invoke(v, node, data);
+			return m.invoke(v, node, data);
 		} catch (ClassNotFoundException e) {
 			throw new QueryParseException("Database plugin is missing in CQL parser.", e.getCause());
 		} catch (NoSuchMethodException e) {

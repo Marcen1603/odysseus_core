@@ -61,7 +61,7 @@ public class Gesture {
 		this.b = new double[numStates][sizeObservationAlphabet];
 		for (int i = 0; i < b.length; i++) {
 			for (int j = 0; j < b[0].length; j++) {
-				b[i][j] = (double) (1.0 / (double) sizeObservationAlphabet);
+				b[i][j] = 1.0 / sizeObservationAlphabet;
 			}
 		}
 	}

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.NoProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractFileHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -40,7 +41,7 @@ public class HDFSource extends AbstractAccessAO {
 
 	@Parameter(type = FileNameParameter.class, name = "filename", optional = false)
 	public void setFilename(String filename) {
-		addOption(NcsaHDFTransportHandler.FILENAME,filename);
+		addOption(AbstractFileHandler.FILENAME,filename);
 	}
 	
 	@Parameter(type=StringParameter.class, name="paths", optional=false, isList = true)

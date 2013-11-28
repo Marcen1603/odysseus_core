@@ -46,8 +46,8 @@ public class PhysicalRestructHelper {
 	 * @param child2
 	 */
 	public static void appendBinaryOperator(IPhysicalOperator binaryOp, ISource child1, ISource child2) {
-		((ISink<?>)binaryOp).subscribeToSource((ISource)child1, 0, 0, child1.getOutputSchema());
-		((ISink<?>)binaryOp).subscribeToSource((ISource)child2, 1, 0, child2.getOutputSchema());
+		((ISink<?>)binaryOp).subscribeToSource(child1, 0, 0, child1.getOutputSchema());
+		((ISink<?>)binaryOp).subscribeToSource(child2, 1, 0, child2.getOutputSchema());
 	}
 	
 	/**
@@ -57,7 +57,7 @@ public class PhysicalRestructHelper {
 	 * @param child
 	 */
 	public static void appendOperator(IPhysicalOperator parent, ISource child) {
-		((ISink<?>)parent).subscribeToSource((ISource)child, 0, 0, child.getOutputSchema());		
+		((ISink<?>)parent).subscribeToSource(child, 0, 0, child.getOutputSchema());		
 	}
 	
 	/**

@@ -50,8 +50,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		}
 		setAttribute("streamname", streamnameArrayList);
 
-		setAttribute("tupleStartTS", (Long) objects[1]);
-		setAttribute("tupleEndTS", (Long) objects[2]);
+		setAttribute("tupleStartTS", objects[1]);
+		setAttribute("tupleEndTS", objects[2]);
 		
 		ArrayList<String> attributeNamesArrayList = new ArrayList<String>();
 		String[] attributeNames = ((String) objects[3]).split(",");
@@ -67,9 +67,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		}
 		setAttribute("role", roleArrayList);
 		
-		this.setAttribute("sign", (Integer) objects[5]);
-		this.setAttribute("mutable", (Integer) objects[6]);
-		this.setAttribute("ts", (Long) objects[7]);
+		this.setAttribute("sign", objects[5]);
+		this.setAttribute("mutable", objects[6]);
+		this.setAttribute("ts", objects[7]);
 	}
 
 	public SecurityPunctuation(SecurityPunctuation sp) {

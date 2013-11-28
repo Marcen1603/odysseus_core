@@ -48,9 +48,9 @@ public abstract class AbstractStopQueryCommand extends AbstractHandler implement
 							}
 							
 						} catch (PlanManagementException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);
 						} catch (PermissionException e) {
-							return new Status(Status.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);
+							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cant stop query:\n See error log for details", e);
 						}
 					}
 					StatusBarManager.getInstance().setMessage(stopped + " queries stopped");
