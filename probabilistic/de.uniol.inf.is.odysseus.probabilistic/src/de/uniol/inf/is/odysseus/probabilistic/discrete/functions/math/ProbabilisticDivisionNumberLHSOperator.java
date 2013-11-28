@@ -44,17 +44,14 @@ public class ProbabilisticDivisionNumberLHSOperator extends ProbabilisticDivisio
     public final ProbabilisticDouble getValue() {
         final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
         final AbstractProbabilisticValue<?> b = this.getInputValue(1);
-		Objects.requireNonNull(b);
+        Objects.requireNonNull(b);
         return this.getValueInternal(a, b);
     }
 
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
-            SDFDatatype.NUMBERS,
-            { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-                    SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
     /*
      * 

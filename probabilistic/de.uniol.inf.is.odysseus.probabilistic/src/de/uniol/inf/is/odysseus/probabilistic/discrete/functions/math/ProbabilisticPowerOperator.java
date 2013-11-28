@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -67,7 +67,7 @@ public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOpera
     public final ProbabilisticDouble getValue() {
         final AbstractProbabilisticValue<?> a = this.getInputValue(0);
         final double b = this.getNumericalInputValue(1);
-		Objects.requireNonNull(a);
+        Objects.requireNonNull(a);
         return this.getValueInternal(a, b);
     }
 
@@ -160,9 +160,7 @@ public class ProbabilisticPowerOperator extends AbstractProbabilisticBinaryOpera
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] {
-            { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-                    SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE, SDFProbabilisticDatatype.PROBABILISTIC_LONG }, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFDatatype.NUMBERS };
 
     /*
      * 

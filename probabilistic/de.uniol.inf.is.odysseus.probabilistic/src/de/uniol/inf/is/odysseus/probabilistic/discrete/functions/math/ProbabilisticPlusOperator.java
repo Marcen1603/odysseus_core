@@ -42,7 +42,7 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IOperator#getPrecedence()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getPrecedence()
 	 */
 	@Override
 	public final int getPrecedence() {
@@ -106,16 +106,16 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IOperator#getAssociativity()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IOperator#getAssociativity()
 	 */
 	@Override
-	public final de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+	public final de.uniol.inf.is.odysseus.core.server.mep.IOperator.ASSOCIATIVITY getAssociativity() {
 		return ASSOCIATIVITY.LEFT_TO_RIGHT;
 	}
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#isCommutative()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isCommutative()
 	 */
 	@Override
 	public boolean isCommutative() {
@@ -124,7 +124,7 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#isAssociative()
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isAssociative()
 	 */
 	@Override
 	public final boolean isAssociative() {
@@ -133,7 +133,7 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#isLeftDistributiveWith(de.uniol.inf.is.odysseus.mep.IOperator)
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isLeftDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
 	 */
 	@Override
 	public final boolean isLeftDistributiveWith(final IOperator<ProbabilisticDouble> operator) {
@@ -142,7 +142,7 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#isRightDistributiveWith(de.uniol.inf.is.odysseus.mep.IOperator)
+	 * @see de.uniol.inf.is.odysseus.core.server.mep.IBinaryOperator#isRightDistributiveWith(de.uniol.inf.is.odysseus.core.server.mep.IOperator)
 	 */
 	@Override
 	public final boolean isRightDistributiveWith(final IOperator<ProbabilisticDouble> operator) {
