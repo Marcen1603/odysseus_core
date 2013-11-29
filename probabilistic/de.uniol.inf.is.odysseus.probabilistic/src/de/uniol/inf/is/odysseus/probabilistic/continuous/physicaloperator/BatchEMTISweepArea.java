@@ -87,7 +87,9 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	 * @param batchEMTISweepArea
 	 *            The clone
 	 * @throws IllegalAccessException
+	 *             Sweep area has done an illegal access
 	 * @throws InstantiationException
+	 *             Sweep area was unable to instantiate an element
 	 */
 	public BatchEMTISweepArea(final BatchEMTISweepArea batchEMTISweepArea) throws InstantiationException, IllegalAccessException {
 		super(batchEMTISweepArea);

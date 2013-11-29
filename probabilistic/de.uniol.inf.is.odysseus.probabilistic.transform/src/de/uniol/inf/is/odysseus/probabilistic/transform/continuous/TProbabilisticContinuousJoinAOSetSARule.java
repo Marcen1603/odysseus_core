@@ -39,47 +39,47 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
-    @Override
-    public int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	@Override
+	public int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    @Override
-    public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
-        ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+	@Override
+	public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 
-        areas[0] = new JoinTISweepArea();
-        areas[1] = new JoinTISweepArea();
+		areas[0] = new JoinTISweepArea();
+		areas[1] = new JoinTISweepArea();
 
-        joinPO.setAreas(areas);
-    }
+		joinPO.setAreas(areas);
+	}
 
-    @Override
-    public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
-        if (operator.getOutputSchema().getType() == ProbabilisticTuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
-            if (operator.getAreas() == null) {
-                IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+		if (operator.getOutputSchema().getType() == ProbabilisticTuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+			if (operator.getAreas() == null) {
+				IPredicate<?> predicate = operator.getPredicate();
+				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+				if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public String getName() {
-        return "JoinTIPO set SweepArea";
-    }
+	@Override
+	public String getName() {
+		return "JoinTIPO set SweepArea";
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.METAOBJECTS;
-    }
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
 
-    @Override
-    public Class<? super JoinTIPO> getConditionClass() {
-        return JoinTIPO.class;
-    }
+	@Override
+	public Class<? super JoinTIPO> getConditionClass() {
+		return JoinTIPO.class;
+	}
 }

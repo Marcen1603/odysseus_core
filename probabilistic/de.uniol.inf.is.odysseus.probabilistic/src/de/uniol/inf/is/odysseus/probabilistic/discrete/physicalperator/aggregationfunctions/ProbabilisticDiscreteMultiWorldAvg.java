@@ -27,100 +27,88 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabil
  */
 public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 5755032915277288119L;
-    /** The attribute position. */
-    private final int pos;
-    /** The result data type. */
-    private final String datatype;
+	private static final long serialVersionUID = 5755032915277288119L;
+	/** The attribute position. */
+	private final int pos;
+	/** The result data type. */
+	private final String datatype;
 
-    /**
-     * Gets an instance of {@link ProbabilisticDiscreteMultiWorldAvg}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result datatype
-     * @return An instance of {@link ProbabilisticDiscreteMultiWorldAvg}
-     */
-    public static ProbabilisticDiscreteMultiWorldAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteMultiWorldAvg(pos, partialAggregateInput, datatype);
-    }
+	/**
+	 * Gets an instance of {@link ProbabilisticDiscreteMultiWorldAvg}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 * @return An instance of {@link ProbabilisticDiscreteMultiWorldAvg}
+	 */
+	public static ProbabilisticDiscreteMultiWorldAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticDiscreteMultiWorldAvg(pos, partialAggregateInput, datatype);
+	}
 
-    /**
-     * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldAvg}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result datatype
-     */
-    protected ProbabilisticDiscreteMultiWorldAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("AVG", partialAggregateInput);
-        this.pos = pos;
-        this.datatype = datatype;
-    }
+	/**
+	 * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldAvg}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 */
+	protected ProbabilisticDiscreteMultiWorldAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("AVG", partialAggregateInput);
+		this.pos = pos;
+		this.datatype = datatype;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .IInitializer#init(java.lang.Object)
-     */
-    @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions .IInitializer#init(java.lang.Object)
+	 */
+	@Override
+	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		final MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
 
-        pa.add((AbstractProbabilisticValue<?>) in.getAttribute(this.pos));
+		pa.add((AbstractProbabilisticValue<?>) in.getAttribute(this.pos));
 
-        return pa;
-    }
+		return pa;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .
-     * IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-     * .basefunctions.IPartialAggregate, java.lang.Object, boolean)
-     */
-    @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
-        if (createNew) {
-            pa = new MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p).getSum(),
-                    ((MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
-        }
-        else {
-            pa = (MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions . IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate .basefunctions.IPartialAggregate, java.lang.Object, boolean)
+	 */
+	@Override
+	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
+		if (createNew) {
+			pa = new MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p).getSum(), ((MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
+		} else {
+			pa = (MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+		}
 
-        pa.add((AbstractProbabilisticValue<?>) toMerge.getAttribute(this.pos));
+		pa.add((AbstractProbabilisticValue<?>) toMerge.getAttribute(this.pos));
 
-        return pa;
-    }
+		return pa;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .
-     * IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator
-     * .aggregate.basefunctions.IPartialAggregate)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
-        r.setAttribute(0, pa.getAggregate());
-        return r;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions . IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator .aggregate.basefunctions.IPartialAggregate)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		final MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+		final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
+		r.setAttribute(0, pa.getAggregate());
+		return r;
+	}
 
 }

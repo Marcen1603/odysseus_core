@@ -49,80 +49,78 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({ "rawtypes" })
 public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransformationRule<LeftJoinTIPO> {
 
-    @Override
-    public int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	@Override
+	public int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void execute(LeftJoinTIPO joinPO, TransformationConfiguration transformConfig) {
-        final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
+	@SuppressWarnings("unchecked")
+	@Override
+	public void execute(final LeftJoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+		final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
-        final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
-                joinPO.getOutputSchema().size());
-        IMetadataMergeFunction<?> metadataMerge;
-        if (transformConfig.getMetaTypes().size() > 1) {
-            final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
-            combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-            metadataMerge = combinedMetadataMerge;
-        }
-        else {
-            metadataMerge = TIMergeFunction.getInstance();
-        }
-        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        if (joinPO.getPredicate() != null) {
-            attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes()));
-        }
+		final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
+		IMetadataMergeFunction<?> metadataMerge;
+		if (transformConfig.getMetaTypes().size() > 1) {
+			final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
+			combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+			metadataMerge = combinedMetadataMerge;
+		} else {
+			metadataMerge = TIMergeFunction.getInstance();
+		}
+		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		if (joinPO.getPredicate() != null) {
+			attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes()));
+		}
 
-        final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
-        final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
+		final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
+		final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 
-        final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
-        leftAttributes.retainAll(attributes);
+		final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
+		leftAttributes.retainAll(attributes);
 
-        final List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
-        rightAttributes.retainAll(attributes);
-        rightAttributes.removeAll(leftAttributes);
+		final List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
+		rightAttributes.retainAll(attributes);
+		rightAttributes.removeAll(leftAttributes);
 
-        final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
-        final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
+		final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
+		final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
-        for (int port = 0; port < 2; port++) {
-            areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);
-        }
+		for (int port = 0; port < 2; port++) {
+			areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);
+		}
 
-        joinPO.setAreas(areas);
-    }
+		joinPO.setAreas(areas);
+	}
 
-    @Override
-    public boolean isExecutable(LeftJoinTIPO operator, TransformationConfiguration transformConfig) {
-        if (operator.getOutputSchema().getType() == ProbabilisticTuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
-            if (operator.getAreas() == null) {
-                IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
-                    throw new IllegalArgumentException("Not implemented");
-                }
-                // return true;
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean isExecutable(final LeftJoinTIPO operator, final TransformationConfiguration transformConfig) {
+		if (operator.getOutputSchema().getType() == ProbabilisticTuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+			if (operator.getAreas() == null) {
+				IPredicate<?> predicate = operator.getPredicate();
+				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+				if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
+					throw new IllegalArgumentException("Not implemented");
+				}
+				// return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public String getName() {
-        return "LeftJoinTIPO set SweepArea";
-    }
+	@Override
+	public String getName() {
+		return "LeftJoinTIPO set SweepArea";
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.METAOBJECTS;
-    }
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
 
-    @Override
-    public Class<? super LeftJoinTIPO> getConditionClass() {
-        return LeftJoinTIPO.class;
-    }
+	@Override
+	public Class<? super LeftJoinTIPO> getConditionClass() {
+		return LeftJoinTIPO.class;
+	}
 
 }

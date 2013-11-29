@@ -37,107 +37,100 @@ import de.uniol.inf.is.odysseus.relational.transform.TAggregatePORule;
  */
 @SuppressWarnings({ "all" })
 public class TProbabilisticAggregateAORule extends TAggregatePORule {
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-     */
-    @Override
-    public final int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
+	@Override
+	public final int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
-     * java.lang.Object)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public final void execute(final AggregatePO operator, final TransformationConfiguration config) {
-        @SuppressWarnings({ "rawtypes" })
-        final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations());
-        operator.setGroupProcessor(r);
-        final SDFSchema inputSchema = operator.getInputSchema();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public final void execute(final AggregatePO operator, final TransformationConfiguration config) {
+		@SuppressWarnings({ "rawtypes" })
+		final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations());
+		operator.setGroupProcessor(r);
+		final SDFSchema inputSchema = operator.getInputSchema();
 
-        final Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = operator.getAggregations();
+		final Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations = operator.getAggregations();
 
-        for (final SDFSchema attrList : aggregations.keySet()) {
-            if (SDFSchema.subset(attrList, inputSchema)) {
-                final Map<AggregateFunction, SDFAttribute> funcs = aggregations.get(attrList);
-                for (final Entry<AggregateFunction, SDFAttribute> e : funcs.entrySet()) {
-                    final FESortedClonablePair<SDFSchema, AggregateFunction> p = new FESortedClonablePair<SDFSchema, AggregateFunction>(attrList, e.getKey());
-                    final int[] posArray = new int[p.getE1().size()];
-                    boolean partialAggregateInput = false;
-                    String inDatatype = null;
-                    for (int i = 0; i < p.getE1().size(); ++i) {
-                        final SDFAttribute attr = p.getE1().get(i);
-                        posArray[i] = inputSchema.indexOf(attr);
-                        // For most cases its the only datatype ... so keep one
-                        // of them
-                        inDatatype = attr.getDatatype().getURI();
-                        if (attr.getDatatype().isPartialAggregate()) {
-                            partialAggregateInput = true;
-                        }
-                    }
-                    final IAggregateFunctionBuilder builder;
+		for (final SDFSchema attrList : aggregations.keySet()) {
+			if (SDFSchema.subset(attrList, inputSchema)) {
+				final Map<AggregateFunction, SDFAttribute> funcs = aggregations.get(attrList);
+				for (final Entry<AggregateFunction, SDFAttribute> e : funcs.entrySet()) {
+					final FESortedClonablePair<SDFSchema, AggregateFunction> p = new FESortedClonablePair<SDFSchema, AggregateFunction>(attrList, e.getKey());
+					final int[] posArray = new int[p.getE1().size()];
+					boolean partialAggregateInput = false;
+					String inDatatype = null;
+					for (int i = 0; i < p.getE1().size(); ++i) {
+						final SDFAttribute attr = p.getE1().get(i);
+						posArray[i] = inputSchema.indexOf(attr);
+						// For most cases its the only datatype ... so keep one
+						// of them
+						inDatatype = attr.getDatatype().getURI();
+						if (attr.getDatatype().isPartialAggregate()) {
+							partialAggregateInput = true;
+						}
+					}
+					final IAggregateFunctionBuilder builder;
 
-                    if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
-                        final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
-                        if (datatype.isDiscrete()) {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "DISCRETE_" + p.getE2().getName());
-                        }
-                        else if (datatype.isContinuous()) {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "CONTINUOUS_" + p.getE2().getName());
-                        }
-                        else {
-                            builder = null;
-                        }
-                    }
-                    else {
-                        builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
-                    }
-                    if (builder == null) {
-                        throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
-                    }
-                    @SuppressWarnings("rawtypes")
-                    final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, inDatatype);
-                    operator.setInitFunction(p, aggFunction);
-                    operator.setMergeFunction(p, aggFunction);
-                    operator.setEvalFunction(p, aggFunction);
-                }
-            }
-        }
-        this.update(operator);
-    }
+					if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
+						final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
+						if (datatype.isDiscrete()) {
+							builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "DISCRETE_" + p.getE2().getName());
+						} else if (datatype.isContinuous()) {
+							builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "CONTINUOUS_" + p.getE2().getName());
+						} else {
+							builder = null;
+						}
+					} else {
+						builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
+					}
+					if (builder == null) {
+						throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
+					}
+					@SuppressWarnings("rawtypes")
+					final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, inDatatype);
+					operator.setInitFunction(p, aggFunction);
+					operator.setMergeFunction(p, aggFunction);
+					operator.setEvalFunction(p, aggFunction);
+				}
+			}
+		}
+		this.update(operator);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
-     * .Object, java.lang.Object)
-     */
-    @Override
-    public final boolean isExecutable(final AggregatePO operator, final TransformationConfiguration config) {
-        if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-            if (operator.getGroupProcessor() == null) {
-                return true;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang .Object, java.lang.Object)
+	 */
+	@Override
+	public final boolean isExecutable(final AggregatePO operator, final TransformationConfiguration config) {
+		if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+			if (operator.getGroupProcessor() == null) {
+				return true;
 
-            }
-        }
-        return false;
-    }
+			}
+		}
+		return false;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-     */
-    @Override
-    public final String getName() {
-        return "AggregateTIPO use probabilistic aggregations (IProbabilistic)";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
+	@Override
+	public final String getName() {
+		return "AggregateTIPO use probabilistic aggregations (IProbabilistic)";
+	}
 
 }

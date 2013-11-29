@@ -40,7 +40,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	 *            The index of the associated distribution
 	 */
 	public ProbabilisticContinuousDouble(final int distribution) {
-		Preconditions.checkArgument(distribution>=0);
+		Preconditions.checkArgument(distribution >= 0);
 		this.distribution = distribution;
 	}
 
@@ -71,7 +71,7 @@ public class ProbabilisticContinuousDouble implements Serializable, IClone {
 	 *            the distribution to set
 	 */
 	public final void setDistribution(final int distribution) {
-		Preconditions.checkArgument(distribution>=0);
+		Preconditions.checkArgument(distribution >= 0);
 		this.distribution = distribution;
 	}
 

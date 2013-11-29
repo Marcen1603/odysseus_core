@@ -23,16 +23,15 @@ import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class DetectionLimit extends MeasurementProperty implements
-		IMeasurementProperty {
+public class DetectionLimit extends MeasurementProperty implements IMeasurementProperty {
 
-	/**
-	 * Class constructor.
-	 * 
-	 * @param uri
-	 */
-	public DetectionLimit(URI uri, String expression) {
-		super(uri, SSN.DetectionLimit, expression);
-	}
+    /**
+     * Class constructor.
+     * 
+     * @param uri
+     */
+    public DetectionLimit(final URI uri, final String expression) {
+        super(uri, SSN.DetectionLimit, expression);
+    }
 
 }

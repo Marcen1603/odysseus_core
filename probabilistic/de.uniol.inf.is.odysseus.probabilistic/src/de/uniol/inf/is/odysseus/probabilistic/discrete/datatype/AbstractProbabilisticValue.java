@@ -81,7 +81,7 @@ public abstract class AbstractProbabilisticValue<V> implements Serializable, ICl
 	public AbstractProbabilisticValue(final V[] values, final Double[] probabilities) {
 		Objects.requireNonNull(values);
 		Objects.requireNonNull(probabilities);
-		Preconditions.checkArgument(values.length==probabilities.length);
+		Preconditions.checkArgument(values.length == probabilities.length);
 		final int length = values.length;
 		for (int i = 0; i < length; i++) {
 			this.values.put(values[i], probabilities[i]);

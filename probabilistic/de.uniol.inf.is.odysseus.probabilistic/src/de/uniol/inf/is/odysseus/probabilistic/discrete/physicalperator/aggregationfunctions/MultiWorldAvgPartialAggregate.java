@@ -30,138 +30,144 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
  * @param <T>
  */
 public class MultiWorldAvgPartialAggregate<T> implements IPartialAggregate<T> {
-    /** The sum of the aggregate. */
-    private AbstractProbabilisticValue<?> sum;
-    /** The count of the aggregate. */
-    private double count;
-    /** The result data type. */
-    private final String datatype;
+	/** The sum of the aggregate. */
+	private AbstractProbabilisticValue<?> sum;
+	/** The count of the aggregate. */
+	private double count;
+	/** The result data type. */
+	private final String datatype;
 
-    /**
-     * Default constructor.
-     * 
-     * @param datatype
-     *            The result datatype
-     */
-    public MultiWorldAvgPartialAggregate(final String datatype) {
-        this.sum = new ProbabilisticDouble(0.0, 1.0);
-        this.count = 0.0;
-        this.datatype = datatype;
-    }
+	/**
+	 * Default constructor.
+	 * 
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public MultiWorldAvgPartialAggregate(final String datatype) {
+		this.sum = new ProbabilisticDouble(0.0, 1.0);
+		this.count = 0.0;
+		this.datatype = datatype;
+	}
 
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param sum
-     *            The sum
-     * @param count
-     *            The count
-     * @param datatype
-     *            The result datatype
-     */
-    public MultiWorldAvgPartialAggregate(final AbstractProbabilisticValue<?> sum, final double count, final String datatype) {
-        this.datatype = datatype;
-        this.count = count;
-        this.sum = sum;
-    }
+	/**
+	 * Creates a new partial aggregate with the given value.
+	 * 
+	 * @param sum
+	 *            The sum
+	 * @param count
+	 *            The count
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public MultiWorldAvgPartialAggregate(final AbstractProbabilisticValue<?> sum, final double count, final String datatype) {
+		this.datatype = datatype;
+		this.count = count;
+		this.sum = sum;
+	}
 
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param aggregate
-     *            The aggregate
-     * @param datatype
-     *            The result datatype
-     */
-    public MultiWorldAvgPartialAggregate(final AbstractProbabilisticValue<?> aggregate, final String datatype) {
-        this.datatype = datatype;
-        this.add(aggregate);
-    }
+	/**
+	 * Creates a new partial aggregate with the given value.
+	 * 
+	 * @param aggregate
+	 *            The aggregate
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public MultiWorldAvgPartialAggregate(final AbstractProbabilisticValue<?> aggregate, final String datatype) {
+		this.datatype = datatype;
+		this.add(aggregate);
+	}
 
-    /**
-     * Copy constructor.
-     * 
-     * @param avgPartialAggregate
-     *            The object to copy from
-     */
-    public MultiWorldAvgPartialAggregate(final MultiWorldAvgPartialAggregate<T> avgPartialAggregate) {
-        this.sum = avgPartialAggregate.sum;
-        this.count = avgPartialAggregate.count;
-        this.datatype = avgPartialAggregate.datatype;
-    }
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param avgPartialAggregate
+	 *            The object to copy from
+	 */
+	public MultiWorldAvgPartialAggregate(final MultiWorldAvgPartialAggregate<T> avgPartialAggregate) {
+		this.sum = avgPartialAggregate.sum;
+		this.count = avgPartialAggregate.count;
+		this.datatype = avgPartialAggregate.datatype;
+	}
 
-    /**
-     * Gets the value of the average property.
-     * 
-     * @return the average
-     */
-    public final AbstractProbabilisticValue<?> getAggregate() {
-        final Map<Double, Double> values = new HashMap<Double, Double>(this.sum.getValues().size());
-        for (final Entry<?, Double> entry : this.sum.getValues().entrySet()) {
-            final double value = ((Number) entry.getKey()).doubleValue() / this.count;
-            if (values.containsKey(value)) {
-                values.put(value, values.get(value) + entry.getValue());
-            }
-            else {
-                values.put(value, entry.getValue());
-            }
-        }
-        return new ProbabilisticDouble(values);
-    }
+	/**
+	 * Gets the value of the average property.
+	 * 
+	 * @return the average
+	 */
+	public final AbstractProbabilisticValue<?> getAggregate() {
+		final Map<Double, Double> values = new HashMap<Double, Double>(this.sum.getValues().size());
+		for (final Entry<?, Double> entry : this.sum.getValues().entrySet()) {
+			final double value = ((Number) entry.getKey()).doubleValue() / this.count;
+			if (values.containsKey(value)) {
+				values.put(value, values.get(value) + entry.getValue());
+			} else {
+				values.put(value, entry.getValue());
+			}
+		}
+		return new ProbabilisticDouble(values);
+	}
 
-    public AbstractProbabilisticValue<?> getSum() {
-        return this.sum;
-    }
+	/**
+	 * Gets the current sum of the aggregate.
+	 * 
+	 * @return Th sum
+	 */
+	public AbstractProbabilisticValue<?> getSum() {
+		return this.sum;
+	}
 
-    public double getCount() {
-        return this.count;
-    }
+	/**
+	 * Gets the current count of the aggregate.
+	 * 
+	 * @return The count
+	 */
+	public double getCount() {
+		return this.count;
+	}
 
-    /**
-     * Add the given value to the aggregate.
-     * 
-     * @param value
-     *            The value
-     * @param probability
-     *            The value to add
-     */
-    public final void add(final AbstractProbabilisticValue<?> value) {
-        final Map<Double, Double> newValues = new HashMap<Double, Double>(this.sum.getValues().size() * value.getValues().size());
-        double probability = 0.0;
-        for (final Entry<?, Double> sumEntry : this.sum.getValues().entrySet()) {
-            for (final Entry<?, Double> valueEntry : value.getValues().entrySet()) {
-                final double newValue = ((Number) sumEntry.getKey()).doubleValue() + ((Number) valueEntry.getKey()).doubleValue();
+	/**
+	 * Add the given value to the aggregate.
+	 * 
+	 * @param value
+	 *            The value
+	 */
+	public final void add(final AbstractProbabilisticValue<?> value) {
+		final Map<Double, Double> newValues = new HashMap<Double, Double>(this.sum.getValues().size() * value.getValues().size());
+		double probability = 0.0;
+		for (final Entry<?, Double> sumEntry : this.sum.getValues().entrySet()) {
+			for (final Entry<?, Double> valueEntry : value.getValues().entrySet()) {
+				final double newValue = ((Number) sumEntry.getKey()).doubleValue() + ((Number) valueEntry.getKey()).doubleValue();
 
-                if (newValues.containsKey(newValue)) {
-                    newValues.put(newValue, newValues.get(newValue) + (sumEntry.getValue() * valueEntry.getValue()));
-                }
-                else {
-                    newValues.put(newValue, sumEntry.getValue() * valueEntry.getValue());
-                }
-                probability += sumEntry.getValue() * valueEntry.getValue();
-            }
-        }
-        this.sum = new ProbabilisticDouble(newValues);
-        this.count += probability;
-    }
+				if (newValues.containsKey(newValue)) {
+					newValues.put(newValue, newValues.get(newValue) + (sumEntry.getValue() * valueEntry.getValue()));
+				} else {
+					newValues.put(newValue, sumEntry.getValue() * valueEntry.getValue());
+				}
+				probability += sumEntry.getValue() * valueEntry.getValue();
+			}
+		}
+		this.sum = new ProbabilisticDouble(newValues);
+		this.count += probability;
+	}
 
-    /*
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public final String toString() {
-        final StringBuffer ret = new StringBuffer("MultiWorldAvgPartialAggregate (").append(this.hashCode()).append(")").append(this.sum);
-        return ret.toString();
-    }
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		final StringBuffer ret = new StringBuffer("MultiWorldAvgPartialAggregate (").append(this.hashCode()).append(")").append(this.sum);
+		return ret.toString();
+	}
 
-    /*
-     * 
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public final MultiWorldAvgPartialAggregate<T> clone() {
-        return new MultiWorldAvgPartialAggregate<T>(this);
-    }
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public final MultiWorldAvgPartialAggregate<T> clone() {
+		return new MultiWorldAvgPartialAggregate<T>(this);
+	}
 
 }

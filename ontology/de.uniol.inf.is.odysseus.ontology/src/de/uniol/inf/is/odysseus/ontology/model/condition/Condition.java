@@ -32,7 +32,7 @@ public class Condition extends Property implements ICondition {
      * 
      * @param uri
      */
-    public Condition(URI uri, Property onProperty) {
+    public Condition(final URI uri, final Property onProperty) {
         super(uri);
         this.onProperty = onProperty;
     }

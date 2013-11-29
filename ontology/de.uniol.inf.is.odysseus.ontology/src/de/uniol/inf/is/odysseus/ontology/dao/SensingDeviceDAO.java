@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.ontology.dao;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public class SensingDeviceDAO {
 

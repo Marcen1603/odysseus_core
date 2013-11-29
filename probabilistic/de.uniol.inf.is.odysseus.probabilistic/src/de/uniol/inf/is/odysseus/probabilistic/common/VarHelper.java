@@ -36,9 +36,10 @@ public class VarHelper {
 	 *            The position.
 	 * @param objectPosToUse
 	 *            The object to use.
+	 * @param probabilisticValue
+	 *            Flag to indicate a probabilistic value.
 	 */
-	public VarHelper(final int pos, final int objectPosToUse,
-			boolean probabilisticValue) {
+	public VarHelper(final int pos, final int objectPosToUse, final boolean probabilisticValue) {
 		super();
 		this.pos = pos;
 		this.objectPosToUse = objectPosToUse;
@@ -63,7 +64,12 @@ public class VarHelper {
 		return this.objectPosToUse;
 	}
 
-	public final boolean isProbabilisticValue() {
+	/**
+	 * Gets the value of the probabilisticValue property.
+	 * 
+	 * @return the probabilisticValue
+	 */
+	public boolean isProbabilisticValue() {
 		return this.probabilisticValue;
 	}
 }

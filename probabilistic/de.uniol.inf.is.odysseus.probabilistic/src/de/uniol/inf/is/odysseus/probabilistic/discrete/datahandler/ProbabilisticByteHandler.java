@@ -69,7 +69,7 @@ public class ProbabilisticByteHandler extends AbstractDataHandler<ProbabilisticB
 	@Override
 	public final ProbabilisticByte readData(final ObjectInputStream inputStream) throws IOException {
 		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available()>=4);
+		Preconditions.checkArgument(inputStream.available() >= 4);
 		final int length = inputStream.readInt();
 		final Map<Byte, Double> values = new HashMap<Byte, Double>();
 		for (int i = 0; i < length; i++) {
@@ -104,7 +104,7 @@ public class ProbabilisticByteHandler extends AbstractDataHandler<ProbabilisticB
 	@Override
 	public final ProbabilisticByte readData(final ByteBuffer buffer) {
 		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining()>=4);
+		Preconditions.checkArgument(buffer.remaining() >= 4);
 		final int length = buffer.getInt();
 		final Map<Byte, Double> values = new HashMap<Byte, Double>();
 		for (int i = 0; i < length; i++) {

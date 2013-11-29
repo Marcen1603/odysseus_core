@@ -25,17 +25,16 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * 
  * @param <T>
  */
-public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
+public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
 	/** Logger. */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ProbabilisticDiscreteMapPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteMapPO.class);
 
 	/** Attribute positions list required for variable bindings. */
 	private VarHelper[][] variables; // Expression.Index
 	/** The expressions. */
 	private SDFExpression[] expressions;
+	/** The existence probabilities of each expression result.*/
 	private double[] expressionJoinProbabilities;
 	/** The input schema used for semantic equal operations during runtime. */
 	private final SDFSchema inputSchema;
@@ -62,9 +61,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 	 * @param allowNullInOutput
 	 *            Flag indicating if this Map allows Null values
 	 */
-	public ProbabilisticDiscreteMapPO(final SDFSchema inputSchema,
-			final SDFExpression[] expressions, final boolean statebased,
-			final boolean allowNullInOutput) {
+	public ProbabilisticDiscreteMapPO(final SDFSchema inputSchema, final SDFExpression[] expressions, final boolean statebased, final boolean allowNullInOutput) {
 		this.inputSchema = inputSchema;
 		this.statebased = statebased;
 		this.allowNull = allowNullInOutput;
@@ -77,13 +74,11 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 	 * @param probabilisticDiscreteMapPO
 	 *            The copy
 	 */
-	public ProbabilisticDiscreteMapPO(
-			final ProbabilisticDiscreteMapPO<T> probabilisticDiscreteMapPO) {
+	public ProbabilisticDiscreteMapPO(final ProbabilisticDiscreteMapPO<T> probabilisticDiscreteMapPO) {
 		this.inputSchema = probabilisticDiscreteMapPO.inputSchema.clone();
 		this.statebased = probabilisticDiscreteMapPO.statebased;
 		this.allowNull = probabilisticDiscreteMapPO.allowNull;
-		this.init(probabilisticDiscreteMapPO.inputSchema,
-				probabilisticDiscreteMapPO.expressions);
+		this.init(probabilisticDiscreteMapPO.inputSchema, probabilisticDiscreteMapPO.expressions);
 	}
 
 	/**
@@ -93,15 +88,13 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 	 *            The expression
 	 * @return The positions of probabilistic attributes
 	 */
-	private int[] determineProbabilisticAttributePos(
-			final SDFExpression[] expressionsList) {
+	private int[] determineProbabilisticAttributePos(final SDFExpression[] expressionsList) {
 		final int[] attributePos = new int[expressionsList.length];
 		int j = 0;
 		for (int i = 0; i < expressionsList.length; i++) {
 			final SDFExpression expr = expressionsList[i];
 			if (expr.getType().getClass() == SDFProbabilisticDatatype.class) {
-				final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) expr
-						.getType();
+				final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) expr.getType();
 				if (datatype.isDiscrete()) {
 					attributePos[j] = i;
 					j++;
@@ -121,10 +114,8 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 	 * @param expressionsList
 	 *            The expressions
 	 */
-	private void init(final SDFSchema schema,
-			final SDFExpression[] expressionsList) {
-		this.probabilisticAttributePos = this
-				.determineProbabilisticAttributePos(expressionsList);
+	private void init(final SDFSchema schema, final SDFExpression[] expressionsList) {
+		this.probabilisticAttributePos = this.determineProbabilisticAttributePos(expressionsList);
 		this.expressions = new SDFExpression[expressionsList.length];
 		for (int i = 0; i < expressionsList.length; ++i) {
 			this.expressions[i] = expressionsList[i].clone();
@@ -134,46 +125,31 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 		this.variables = new VarHelper[expressionsList.length][];
 		int i = 0;
 		for (final SDFExpression expression : expressionsList) {
-			final List<SDFAttribute> neededAttributes = expression
-					.getAllAttributes();
+			final List<SDFAttribute> neededAttributes = expression.getAllAttributes();
 			final VarHelper[] newArray = new VarHelper[neededAttributes.size()];
 
 			this.variables[i++] = newArray;
 			int j = 0;
 			for (final SDFAttribute curAttribute : neededAttributes) {
-				if ((curAttribute.getSourceName() != null)
-						&& curAttribute.getSourceName().startsWith("__last_")) {
+				if ((curAttribute.getSourceName() != null) && curAttribute.getSourceName().startsWith("__last_")) {
 					if (!this.statebased) {
-						throw new RuntimeException(
-								"Map cannot be used with __last_! Used StateMap instead!");
+						throw new RuntimeException("Map cannot be used with __last_! Used StateMap instead!");
 					}
-					final int pos = Integer.parseInt(curAttribute
-							.getSourceName().substring("__last_".length(),
-									curAttribute.getSourceName().indexOf('.')));
+					final int pos = Integer.parseInt(curAttribute.getSourceName().substring("__last_".length(), curAttribute.getSourceName().indexOf('.')));
 					if (pos > this.maxHistoryElements) {
 						this.maxHistoryElements = pos + 1;
 					}
-					final String realAttrStr = curAttribute.getURI().substring(
-							curAttribute.getURI().indexOf('.') + 1);
-					String newSource = realAttrStr.substring(0,
-							realAttrStr.indexOf('.'));
-					final String newName = realAttrStr.substring(realAttrStr
-							.indexOf('.') + 1);
+					final String realAttrStr = curAttribute.getURI().substring(curAttribute.getURI().indexOf('.') + 1);
+					String newSource = realAttrStr.substring(0, realAttrStr.indexOf('.'));
+					final String newName = realAttrStr.substring(realAttrStr.indexOf('.') + 1);
 					if ("null".equals(newSource)) {
 						newSource = null;
 					}
-					final SDFAttribute newAttribute = new SDFAttribute(
-							newSource, newName, curAttribute);
+					final SDFAttribute newAttribute = new SDFAttribute(newSource, newName, curAttribute);
 					final int index = schema.indexOf(newAttribute);
-					newArray[j++] = new VarHelper(
-							index,
-							pos,
-							newAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+					newArray[j++] = new VarHelper(index, pos, newAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
 				} else {
-					newArray[j++] = new VarHelper(
-							schema.indexOf(curAttribute),
-							0,
-							curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+					newArray[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
 				}
 			}
 		}
@@ -181,8 +157,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * getOutputMode()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# getOutputMode()
 	 */
 	@Override
 	public final OutputMode getOutputMode() {
@@ -191,15 +166,13 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
-	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe# process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected final void process_next(final Tuple<T> object, final int port) {
 		boolean nullValueOccured = false;
-		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(
-				this.expressions.length, false);
+		final ProbabilisticTuple<T> outputVal = new ProbabilisticTuple<T>(this.expressions.length, false);
 		outputVal.setMetadata((T) object.getMetadata().clone());
 		int lastObjectSize = this.lastObjects.size();
 		if (lastObjectSize > this.maxHistoryElements) {
@@ -214,19 +187,15 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 				expressionJoinProbabilities[i] = 1.0;
 				for (int j = 0; j < this.variables[i].length; ++j) {
 					Tuple<T> obj = null;
-					if (lastObjectSize > this.variables[i][j]
-							.getObjectPosToUse()) {
-						obj = this.lastObjects.get(this.variables[i][j]
-								.getObjectPosToUse());
+					if (lastObjectSize > this.variables[i][j].getObjectPosToUse()) {
+						obj = this.lastObjects.get(this.variables[i][j].getObjectPosToUse());
 					}
 					if (obj != null) {
-						values[j] = obj.getAttribute(this.variables[i][j]
-								.getPos());
+						values[j] = obj.getAttribute(this.variables[i][j].getPos());
 						if (this.variables[i][j].isProbabilisticValue()) {
 							final AbstractProbabilisticValue<?> value = (AbstractProbabilisticValue<?>) values[j];
 							double sum = 0.0;
-							for (final Double probability : value.getValues()
-									.values()) {
+							for (final Double probability : value.getValues().values()) {
 								sum += probability;
 							}
 							expressionJoinProbabilities[i] *= sum;
@@ -236,8 +205,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 
 				try {
 					this.expressions[i].bindMetaAttribute(object.getMetadata());
-					this.expressions[i].bindAdditionalContent(object
-							.getAdditionalContent());
+					this.expressions[i].bindAdditionalContent(object.getAdditionalContent());
 					this.expressions[i].bindVariables(values);
 					final Object expr = this.expressions[i].getValue();
 					outputVal.setAttribute(i, expr);
@@ -247,8 +215,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 				} catch (final Exception e) {
 					nullValueOccured = true;
 					if (!(e instanceof NullPointerException)) {
-						ProbabilisticDiscreteMapPO.LOG.error(
-								"Cannot calc result ", e);
+						ProbabilisticDiscreteMapPO.LOG.error("Cannot calc result ", e);
 						// Not needed. Value is null, if not set!
 						// outputVal.setAttribute(i, null);
 					}
@@ -261,11 +228,9 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 		if (!nullValueOccured || (nullValueOccured && this.allowNull)) {
 			// FIXME store old prob. first and then multiply with the
 			// difference.
-			double jointProbability = ((IProbabilistic) outputVal.getMetadata())
-					.getExistence();
+			double jointProbability = ((IProbabilistic) outputVal.getMetadata()).getExistence();
 			for (final int pos : this.probabilisticAttributePos) {
-				final AbstractProbabilisticValue<?> value = outputVal
-						.getAttribute(pos);
+				final AbstractProbabilisticValue<?> value = outputVal.getAttribute(pos);
 				double sum = 0.0;
 				for (final Double probability : value.getValues().values()) {
 					sum += probability;
@@ -274,22 +239,18 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 				jointProbability *= sum;
 			}
 			if (jointProbability > 0.0) {
-				((IProbabilistic) outputVal.getMetadata())
-						.setExistence(jointProbability);
+				((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
 				// KTHXBYE
 				this.transfer(outputVal);
 			} else if (ProbabilisticDiscreteMapPO.LOG.isTraceEnabled()) {
-				ProbabilisticDiscreteMapPO.LOG.trace("Drop tuple: "
-						+ outputVal.toString());
+				ProbabilisticDiscreteMapPO.LOG.trace("Drop tuple: " + outputVal.toString());
 			}
 		}
 	}
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
-	 * ()
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone ()
 	 */
 	@Override
 	public final ProbabilisticDiscreteMapPO<T> clone() {
@@ -298,10 +259,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource#
-	 * process_isSemanticallyEqual
-	 * (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource# process_isSemanticallyEqual (de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)
 	 */
 	@Override
 	@SuppressWarnings({ "rawtypes" })
@@ -315,8 +273,7 @@ public class ProbabilisticDiscreteMapPO<T extends IMetaAttribute> extends
 			return false;
 		}
 
-		if (this.hasSameSources(rmpo)
-				&& (this.inputSchema.compareTo(rmpo.inputSchema) == 0)) {
+		if (this.hasSameSources(rmpo) && (this.inputSchema.compareTo(rmpo.inputSchema) == 0)) {
 			if (this.expressions.length == rmpo.expressions.length) {
 				for (int i = 0; i < this.expressions.length; i++) {
 					if (!this.expressions[i].equals(rmpo.expressions[i])) {

@@ -6,8 +6,7 @@
 -->
 <!--
     Checkstyle-Configuration: Odysseus Checkstyle
-    Description: 
-Slightly modified version of Sun Checks that better matches the default code formatter setting of Eclipse.
+    Description: none
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -76,7 +75,6 @@ Slightly modified version of Sun Checks that better matches the default code for
     </module>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
-    <module name="DesignForExtension"/>
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>

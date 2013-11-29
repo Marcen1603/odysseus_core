@@ -31,17 +31,26 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
 	 * 
 	 */
 	private static final long serialVersionUID = 4833031661270663461L;
-
+	/** Included classes. */
 	@SuppressWarnings("unchecked")
-	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { ITimeInterval.class, ILatency.class, IProbabilistic.class };
-
+	public static final Class<? extends IMetaAttribute>[] CLASSES = new Class[] { ITimeInterval.class, ILatency.class, IProbabilistic.class };
+	/** The {@link ILatency} instance. */
 	private final ILatency latency;
 
+	/**
+	 * Creates a new {@link TimeIntervalProbabilisticLatency} instance.
+	 */
 	public TimeIntervalProbabilisticLatency() {
 		super();
 		this.latency = new Latency();
 	}
 
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param clone
+	 *            The object to clone from
+	 */
 	public TimeIntervalProbabilisticLatency(final TimeIntervalProbabilisticLatency clone) {
 		super(clone);
 		this.latency = clone.latency.clone();
@@ -53,7 +62,7 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
 	}
 
 	@Override
-	public long getMaxLatency() {
+	public final long getMaxLatency() {
 		return this.latency.getMaxLatency();
 	}
 
@@ -68,7 +77,7 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
 	}
 
 	@Override
-	public long getMaxLatencyStart() {
+	public final long getMaxLatencyStart() {
 		return this.latency.getMaxLatencyStart();
 	}
 
@@ -83,32 +92,32 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
 	}
 
 	@Override
-	public void setMaxLatencyStart(final long timestamp) {
+	public final void setMaxLatencyStart(final long timestamp) {
 		this.latency.setMaxLatencyStart(timestamp);
 	}
 
 	@Override
-	public TimeIntervalProbabilisticLatency clone() {
+	public final TimeIntervalProbabilisticLatency clone() {
 		return new TimeIntervalProbabilisticLatency(this);
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "( i= " + super.toString() + " | " + " l=" + this.latency + ")";
 	}
 
 	@Override
-	public String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
+	public final String csvToString(final char delimiter, final Character textSeperator, final NumberFormat floatingFormatter, final NumberFormat numberFormatter, final boolean withMetadata) {
 		return super.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata) + delimiter + this.latency.csvToString(delimiter, textSeperator, floatingFormatter, numberFormatter, withMetadata);
 	}
 
 	@Override
-	public String getCSVHeader(final char delimiter) {
+	public final String getCSVHeader(final char delimiter) {
 		return super.getCSVHeader(delimiter) + "+delimiter+" + this.latency.getCSVHeader(delimiter);
 	}
 
 	@Override
-	public Class<? extends IMetaAttribute>[] getClasses() {
-		return TimeIntervalProbabilisticLatency.classes;
+	public final Class<? extends IMetaAttribute>[] getClasses() {
+		return TimeIntervalProbabilisticLatency.CLASSES;
 	}
 }

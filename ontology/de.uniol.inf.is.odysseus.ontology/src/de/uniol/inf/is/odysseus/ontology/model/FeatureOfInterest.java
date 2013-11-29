@@ -33,7 +33,7 @@ public class FeatureOfInterest {
      * Class constructor.
      * 
      */
-    public FeatureOfInterest(URI uri) {
+    public FeatureOfInterest(final URI uri) {
         this(uri, new ArrayList<Property>());
     }
 
@@ -41,7 +41,7 @@ public class FeatureOfInterest {
      * Class constructor.
      * 
      */
-    public FeatureOfInterest(URI uri, String name) {
+    public FeatureOfInterest(final URI uri, final String name) {
         this(uri, name, new ArrayList<Property>());
     }
 
@@ -49,7 +49,7 @@ public class FeatureOfInterest {
      * Class constructor.
      * 
      */
-    public FeatureOfInterest(URI uri, List<Property> hasProperties) {
+    public FeatureOfInterest(final URI uri, final List<Property> hasProperties) {
         this(uri, uri.getFragment(), hasProperties);
     }
 
@@ -57,7 +57,7 @@ public class FeatureOfInterest {
      * Class constructor.
      * 
      */
-    public FeatureOfInterest(URI uri, String name, List<Property> hasProperties) {
+    public FeatureOfInterest(final URI uri, final String name, final List<Property> hasProperties) {
         this.uri = uri;
         this.name = name;
         this.hasProperties.addAll(hasProperties);

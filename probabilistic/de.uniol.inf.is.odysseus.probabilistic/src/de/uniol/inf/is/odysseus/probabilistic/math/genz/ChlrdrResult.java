@@ -15,12 +15,21 @@
  */
 
 package de.uniol.inf.is.odysseus.probabilistic.math.genz;
-
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
 public class ChlrdrResult {
 	public Matrix ch;
 	public Matrix as;
 	public Matrix bs;
-
+/**
+ * 
+ * @param ch
+ * @param as
+ * @param bs
+ */
 	public ChlrdrResult(final Matrix ch, final Matrix as, final Matrix bs) {
 		super();
 		this.ch = ch;

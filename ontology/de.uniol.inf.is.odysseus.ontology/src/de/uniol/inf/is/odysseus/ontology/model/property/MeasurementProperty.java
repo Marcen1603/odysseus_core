@@ -25,55 +25,54 @@ import de.uniol.inf.is.odysseus.ontology.model.Property;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class MeasurementProperty extends Property implements
-		IMeasurementProperty {
-	private String unit;
-	private String expression;
-	private final Resource resource;
+public class MeasurementProperty extends Property implements IMeasurementProperty {
+    private String unit;
+    private final String expression;
+    private final Resource resource;
 
-	/**
-	 * Class constructor.
-	 * 
-	 */
-	public MeasurementProperty(URI uri, Resource resource, String expression) {
-		super(uri);
-		this.resource = resource;
-		this.expression = expression;
-	}
+    /**
+     * Class constructor.
+     * 
+     */
+    public MeasurementProperty(final URI uri, final Resource resource, final String expression) {
+        super(uri);
+        this.resource = resource;
+        this.expression = expression;
+    }
 
-	/**
-	 * @param unit
-	 *            the unit to set
-	 */
-	@Override
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
+    /**
+     * @param unit
+     *            the unit to set
+     */
+    @Override
+    public void setUnit(final String unit) {
+        this.unit = unit;
+    }
 
-	/**
-	 * @return the unit
-	 */
-	@Override
-	public String getUnit() {
-		return this.unit;
-	}
+    /**
+     * @return the unit
+     */
+    @Override
+    public String getUnit() {
+        return this.unit;
+    }
 
-	/**
-	 * @return the resource
-	 */
-	public Resource getResource() {
-		return this.resource;
-	}
+    /**
+     * @return the resource
+     */
+    public Resource getResource() {
+        return this.resource;
+    }
 
-	/**
-	 * @return the expression
-	 */
-	public String getExpression() {
-		return this.expression;
-	}
+    /**
+     * @return the expression
+     */
+    public String getExpression() {
+        return this.expression;
+    }
 
-	@Override
-	public String toString() {
-		return getExpression() != null ? getExpression() : "";
-	}
+    @Override
+    public String toString() {
+        return this.getExpression() != null ? this.getExpression() : "";
+    }
 }

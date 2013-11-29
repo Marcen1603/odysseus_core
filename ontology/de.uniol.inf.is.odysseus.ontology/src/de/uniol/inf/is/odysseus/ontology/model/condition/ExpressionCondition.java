@@ -31,7 +31,7 @@ public class ExpressionCondition extends Condition implements ICondition {
      * 
      * @param uri
      */
-    public ExpressionCondition(URI uri, Property onProperty, String expression) {
+    public ExpressionCondition(final URI uri, final Property onProperty, final String expression) {
         super(uri, onProperty);
         this.expression = expression;
     }
@@ -48,6 +48,6 @@ public class ExpressionCondition extends Condition implements ICondition {
      */
     @Override
     public String toString() {
-        return getExpression();
+        return this.getExpression();
     }
 }

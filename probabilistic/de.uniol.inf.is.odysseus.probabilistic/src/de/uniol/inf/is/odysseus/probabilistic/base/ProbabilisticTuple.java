@@ -127,7 +127,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 		super(copy, newAttrs, requiresDeepClone);
 		Preconditions.checkNotNull(copy);
 		if (copy.distributions != null) {
-			this.distributions=new NormalDistributionMixture[copy.distributions.length];
+			this.distributions = new NormalDistributionMixture[copy.distributions.length];
 			for (int i = 0; i < copy.distributions.length; i++) {
 				this.distributions[i] = copy.distributions[i].clone();
 			}
@@ -159,7 +159,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 			}
 		} else {
 			if (copy.distributions != null) {
-				this.distributions=new NormalDistributionMixture[copy.distributions.length];
+				this.distributions = new NormalDistributionMixture[copy.distributions.length];
 				for (int i = 0; i < copy.distributions.length; i++) {
 					this.distributions[i] = copy.distributions[i].clone();
 				}
@@ -197,8 +197,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 * @return The distribution at the given position or <code>null</code> if no distribution exists at the given position
 	 */
 	public final NormalDistributionMixture getDistribution(final int index) {
-		Preconditions.checkArgument(index >= 0
-				&& index < this.distributions.length);
+		Preconditions.checkArgument(index >= 0 && index < this.distributions.length);
 		return this.distributions[index];
 	}
 
@@ -211,8 +210,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 	 *            The distribution
 	 */
 	public final void setDistribution(final int index, final NormalDistributionMixture distribution) {
-		Preconditions.checkArgument(index >= 0
-				&& index < this.distributions.length);
+		Preconditions.checkArgument(index >= 0 && index < this.distributions.length);
 		Preconditions.checkNotNull(distribution);
 		this.distributions[index] = distribution;
 	}

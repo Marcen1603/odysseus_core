@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.ontology.model.property;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *
+ * 
  */
 public interface IMeasurementProperty {
 

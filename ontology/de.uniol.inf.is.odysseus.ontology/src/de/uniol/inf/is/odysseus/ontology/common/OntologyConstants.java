@@ -25,5 +25,6 @@ public final class OntologyConstants {
     public static final String PROPERTY_NS = "";
 
     private OntologyConstants() {
+        throw new UnsupportedOperationException();
     }
 }

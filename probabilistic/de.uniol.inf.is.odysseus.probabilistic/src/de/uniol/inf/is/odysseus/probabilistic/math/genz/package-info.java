@@ -13,5 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/**
+ * @author Christian Kuka <christian@kuka.cc>
+ *
+ */
 package de.uniol.inf.is.odysseus.probabilistic.math.genz;

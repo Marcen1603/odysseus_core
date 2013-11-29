@@ -30,7 +30,7 @@ public class Property {
      * Class constructor.
      * 
      */
-    public Property(URI uri) {
+    public Property(final URI uri) {
         this(uri, uri.getFragment());
     }
 
@@ -38,7 +38,7 @@ public class Property {
      * Class constructor.
      * 
      */
-    public Property(URI uri, String name) {
+    public Property(final URI uri, final String name) {
         this.uri = uri;
         this.name = name;
     }
@@ -68,7 +68,7 @@ public class Property {
      * @param unit
      *            the unit to set
      */
-    public void setUnit(String unit) {
+    public void setUnit(final String unit) {
         this.unit = unit;
     }
 

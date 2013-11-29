@@ -49,7 +49,7 @@ public class ProbabilisticAO extends UnaryLogicalOp {
 	/**
 	 * Clone constructor.
 	 * 
-	 * @param updateProbabilisticMetadataAO
+	 * @param probabilisticAO
 	 *            The copy
 	 */
     public ProbabilisticAO(final ProbabilisticAO probabilisticAO) {

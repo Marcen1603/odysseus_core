@@ -32,8 +32,6 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.ModelMaker;
-import com.hp.hpl.jena.reasoner.rulesys.OWLMiniReasoner;
-import com.hp.hpl.jena.reasoner.transitiveReasoner.TransitiveReasoner;
 import com.hp.hpl.jena.util.FileUtils;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -59,247 +57,228 @@ import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
  */
 @SuppressWarnings({ "all" })
 public class SensorOntology {
-	private static final Logger LOG = LoggerFactory
-			.getLogger(SensorOntology.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SensorOntology.class);
 
-	private final String STORE = "sensorstore";
-	private final String MODEL = "sensors";
-	private OntModel model;
-	private static final String SSN_PREFIX = "PREFIX ssn: <" + SSN.getURI()
-			+ "> ";
-	private static final String XSD_PREFIX = "PREFIX xsd: <" + XSD.getURI()
-			+ "> ";
-	private static final String RDF_PREFIX = "PREFIX rdf: <" + RDF.getURI()
-			+ "> ";
-	private static final String RDFS_PREFIX = "PREFIX rdfs: <" + RDFS.getURI()
-			+ "> ";
-	private static final String OWL_PREFIX = "PREFIX owl: <" + OWL.getURI()
-			+ "> ";
-	private static final String DUL_PREFIX = "PREFIX dul: <" + DUL.getURI()
-			+ "> ";
-	private static final String QU_PREFIX = "PREFIX qu: <" + QU.getURI() + "> ";
-	private static final String ODY_PREFIX = "PREFIX ody: <"
-			+ ODYSSEUS.getURI() + "> ";
+    private final String STORE = "sensorstore";
+    private final String MODEL = "sensors";
+    private OntModel model;
+    private static final String SSN_PREFIX = "PREFIX ssn: <" + SSN.getURI() + "> ";
+    private static final String XSD_PREFIX = "PREFIX xsd: <" + XSD.getURI() + "> ";
+    private static final String RDF_PREFIX = "PREFIX rdf: <" + RDF.getURI() + "> ";
+    private static final String RDFS_PREFIX = "PREFIX rdfs: <" + RDFS.getURI() + "> ";
+    private static final String OWL_PREFIX = "PREFIX owl: <" + OWL.getURI() + "> ";
+    private static final String DUL_PREFIX = "PREFIX dul: <" + DUL.getURI() + "> ";
+    private static final String QU_PREFIX = "PREFIX qu: <" + QU.getURI() + "> ";
+    private static final String ODY_PREFIX = "PREFIX ody: <" + ODYSSEUS.getURI() + "> ";
 
-	private SourceManagerImpl sourceManager;
-	private PredicateManagerImpl predicateManager;
-	private QueryManagerImpl queryManager;
+    private SourceManagerImpl sourceManager;
+    private PredicateManagerImpl predicateManager;
+    private QueryManagerImpl queryManager;
 
-	/**
-	 * Class constructor.
-	 * 
-	 */
-	public SensorOntology() {
-		try {
-			this.sourceManager = new SourceManagerImpl(this.getModel());
-			this.predicateManager = new PredicateManagerImpl(this.getModel());
-			this.queryManager = new QueryManagerImpl(this.getModel());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    /**
+     * Class constructor.
+     * 
+     */
+    public SensorOntology() {
+        try {
+            this.sourceManager = new SourceManagerImpl(this.getModel());
+            this.predicateManager = new PredicateManagerImpl(this.getModel());
+            this.queryManager = new QueryManagerImpl(this.getModel());
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * @param sensingDevice
-	 *            The sensing device
-	 */
-	public void createSensingDevice(final SensingDevice sensingDevice) {
-		this.sourceManager.createSensingDevice(sensingDevice);
+    /**
+     * @param sensingDevice
+     *            The sensing device
+     */
+    public void createSensingDevice(final SensingDevice sensingDevice) {
+        this.sourceManager.createSensingDevice(sensingDevice);
 
-	}
+    }
 
-	/**
-	 * @param featureOfInterest
-	 *            The feature of interest
-	 */
-	public void createFeatureOfInterest(FeatureOfInterest featureOfInterest) {
-		this.sourceManager.createFeatureOfInterest(featureOfInterest);
-	}
+    /**
+     * @param featureOfInterest
+     *            The feature of interest
+     */
+    public void createFeatureOfInterest(final FeatureOfInterest featureOfInterest) {
+        this.sourceManager.createFeatureOfInterest(featureOfInterest);
+    }
 
-	public List<SensingDevice> getSensingdeviceByProperty(
-			final SDFAttribute attribute) {
-		// return
-		// this.queryManager.getSensingDevicesByObservedProperty(attribute);
-		throw new IllegalArgumentException("Not implemented yet");
-	}
+    public List<SensingDevice> getSensingdeviceByProperty(final SDFAttribute attribute) {
+        // return
+        // this.queryManager.getSensingDevicesByObservedProperty(attribute);
+        throw new IllegalArgumentException("Not implemented yet");
+    }
 
-	public List<SensingDevice> getAllSensingDevices() {
-		List<SensingDevice> sensingDevices = this.queryManager
-				.getAllSensingDevices();
-		return sensingDevices;
-	}
+    public List<SensingDevice> getAllSensingDevices() {
+        final List<SensingDevice> sensingDevices = this.queryManager.getAllSensingDevices();
+        return sensingDevices;
+    }
 
-	public SensingDevice getSensingDevice(final String name) {
-		return this.queryManager.getSensingDevice(URI
-				.create(ODYSSEUS.NS + name));
-	}
+    public SensingDevice getSensingDevice(final String name) {
+        return this.queryManager.getSensingDevice(URI.create(ODYSSEUS.NS + name));
+    }
 
-	/**
-	 * @return
-	 */
-	public List<FeatureOfInterest> getAllFeaturesOfInterest() {
-		List<FeatureOfInterest> featuresOfInterest = this.queryManager
-				.getAllFeaturesOfInterest();
-		return featuresOfInterest;
-	}
+    /**
+     * @return
+     */
+    public List<FeatureOfInterest> getAllFeaturesOfInterest() {
+        final List<FeatureOfInterest> featuresOfInterest = this.queryManager.getAllFeaturesOfInterest();
+        return featuresOfInterest;
+    }
 
-	/**
-	 * @return
-	 */
-	public List<Property> getAllProperties() {
-		List<Property> properties = this.queryManager.getAllProperties();
-		return properties;
-	}
+    /**
+     * @return
+     */
+    public List<Property> getAllProperties() {
+        final List<Property> properties = this.queryManager.getAllProperties();
+        return properties;
+    }
 
-	public List<SensingDevice> getSensingDevices(SDFAttribute attribute) {
-		List<SensingDevice> sensingDevices = this.queryManager
-				.getSensingDevices(attribute);
-		return sensingDevices;
-	}
+    public List<SensingDevice> getSensingDevices(final SDFAttribute attribute) {
+        final List<SensingDevice> sensingDevices = this.queryManager.getSensingDevices(attribute);
+        return sensingDevices;
+    }
 
-	public List<SDFAttribute> getAttributes(Property property) {
-		List<SDFAttribute> attributes = this.queryManager
-				.getAttributes(property);
-		return attributes;
-	}
+    public List<SDFAttribute> getAttributes(final Property property) {
+        final List<SDFAttribute> attributes = this.queryManager.getAttributes(property);
+        return attributes;
+    }
 
-	// public Map<SDFAttribute, Map<Property, String>>
-	// getConditionPredicates(final SensingDevice sensingDevice) {
-	// Map<SDFAttribute, Map<Property, String>> attributePropertyMapping = new
-	// HashMap<SDFAttribute, Map<Property, String>>();
-	// List<SensingDevice> requiredSources = new ArrayList<SensingDevice>();
-	// for (SDFAttribute attribute : sensingDevice.getSchema()) {
-	// List<MeasurementCapability> measurementCapabilities =
-	// sensingDevice.getHasMeasurementCapabilities(attribute);
-	// attributePropertyMapping.put(attribute, new HashMap<Property, String>());
-	// for (MeasurementCapability measurementCapability :
-	// measurementCapabilities) {
-	//
-	// List<AbstractCondition> conditions =
-	// measurementCapability.getConditions();
-	// for (AbstractCondition condition : conditions) {
-	// SDFAttribute conditionAttribute = condition.getAttribute();
-	// if (!sensingDevice.getSchema().contains(conditionAttribute)) {
-	// List<SensingDevice> otherSensingDevice =
-	// queryManager.getSensingDevicesByObservedProperty(conditionAttribute);
-	// if (otherSensingDevice.size() > 0) {
-	// requiredSources.add(otherSensingDevice.get(0));
-	// }
-	// }
-	//
-	// Interval conditionInterval = condition.getInterval();
-	//
-	// List<MeasurementProperty> measurementProperties =
-	// measurementCapability.getMeasurementProperties();
-	// for (MeasurementProperty measurementProperty : measurementProperties) {
-	// Property property = measurementProperty.getProperty();
-	// Interval measurementPropertyInterval = measurementProperty.getInterval();
-	//
-	// // Create an expression like:
-	// // eif(attr > inf AND attr < sup, toInterval(min,max),
-	// // toInterval(1.0,1.0))
-	// StringBuilder valueString = new StringBuilder();
-	// valueString.append("eif(");
-	// valueString.append(conditionAttribute.getQualName());
-	// valueString.append(" > ");
-	// valueString.append(conditionInterval.inf());
-	// valueString.append(" AND ");
-	// valueString.append(conditionAttribute.getQualName());
-	// valueString.append(" < ");
-	// valueString.append(conditionInterval.sup());
-	// valueString.append(",");
-	// valueString.append("toInterval(");
-	// valueString.append(measurementPropertyInterval.inf());
-	// valueString.append(",");
-	// valueString.append(measurementPropertyInterval.sup());
-	// valueString.append("),toInterval(1.0,1.0)");
-	// valueString.append(")");
-	//
-	// System.out.println(valueString.toString());
-	// attributePropertyMapping.get(attribute).put(property,
-	// valueString.toString());
-	// }
-	//
-	// }
-	//
-	// }
-	// }
-	// return attributePropertyMapping;
-	// }
+    // public Map<SDFAttribute, Map<Property, String>>
+    // getConditionPredicates(final SensingDevice sensingDevice) {
+    // Map<SDFAttribute, Map<Property, String>> attributePropertyMapping = new
+    // HashMap<SDFAttribute, Map<Property, String>>();
+    // List<SensingDevice> requiredSources = new ArrayList<SensingDevice>();
+    // for (SDFAttribute attribute : sensingDevice.getSchema()) {
+    // List<MeasurementCapability> measurementCapabilities =
+    // sensingDevice.getHasMeasurementCapabilities(attribute);
+    // attributePropertyMapping.put(attribute, new HashMap<Property, String>());
+    // for (MeasurementCapability measurementCapability :
+    // measurementCapabilities) {
+    //
+    // List<AbstractCondition> conditions =
+    // measurementCapability.getConditions();
+    // for (AbstractCondition condition : conditions) {
+    // SDFAttribute conditionAttribute = condition.getAttribute();
+    // if (!sensingDevice.getSchema().contains(conditionAttribute)) {
+    // List<SensingDevice> otherSensingDevice =
+    // queryManager.getSensingDevicesByObservedProperty(conditionAttribute);
+    // if (otherSensingDevice.size() > 0) {
+    // requiredSources.add(otherSensingDevice.get(0));
+    // }
+    // }
+    //
+    // Interval conditionInterval = condition.getInterval();
+    //
+    // List<MeasurementProperty> measurementProperties =
+    // measurementCapability.getMeasurementProperties();
+    // for (MeasurementProperty measurementProperty : measurementProperties) {
+    // Property property = measurementProperty.getProperty();
+    // Interval measurementPropertyInterval = measurementProperty.getInterval();
+    //
+    // // Create an expression like:
+    // // eif(attr > inf AND attr < sup, toInterval(min,max),
+    // // toInterval(1.0,1.0))
+    // StringBuilder valueString = new StringBuilder();
+    // valueString.append("eif(");
+    // valueString.append(conditionAttribute.getQualName());
+    // valueString.append(" > ");
+    // valueString.append(conditionInterval.inf());
+    // valueString.append(" AND ");
+    // valueString.append(conditionAttribute.getQualName());
+    // valueString.append(" < ");
+    // valueString.append(conditionInterval.sup());
+    // valueString.append(",");
+    // valueString.append("toInterval(");
+    // valueString.append(measurementPropertyInterval.inf());
+    // valueString.append(",");
+    // valueString.append(measurementPropertyInterval.sup());
+    // valueString.append("),toInterval(1.0,1.0)");
+    // valueString.append(")");
+    //
+    // System.out.println(valueString.toString());
+    // attributePropertyMapping.get(attribute).put(property,
+    // valueString.toString());
+    // }
+    //
+    // }
+    //
+    // }
+    // }
+    // return attributePropertyMapping;
+    // }
 
-	private void createModel(File root) throws IOException {
-		root.mkdir();
-		final ModelMaker maker = ModelFactory.createFileModelMaker(root
-				.getAbsolutePath());
-		OntModel model = ModelFactory.createOntologyModel(
-				OntModelSpec.OWL_DL_MEM, null);
-		model.setNsPrefix("ssn", SSN.getURI());
-		model.setNsPrefix("xsd", XSD.getURI());
-		model.setNsPrefix("rdf", RDF.getURI());
-		model.setNsPrefix("rdfs", RDFS.getURI());
-		model.setNsPrefix("owl", OWL.getURI());
-		model.setNsPrefix("dul", DUL.getURI());
-		model.setNsPrefix("qu", QU.getURI());
-		model.setNsPrefix("ody", ODYSSEUS.getURI());
-		URL file;
-		if (Activator.getContext() != null) {
-			file = Activator.getContext().getBundle().getEntry("owl/SSN.owl");
-		} else {
-			file = SensorOntology.class.getResource("owl/SSN.owl");
-		}
-		if (file != null) {
-			final BufferedReader reader = new BufferedReader(
-					new InputStreamReader(file.openConnection()
-							.getInputStream()));
-			model.read(reader, null);
-		} else {
-			model.read("http://purl.oclc.org/NET/ssnx/ssn");
-		}
-		model.close();
-	}
+    private void createModel(final File root) throws IOException {
+        root.mkdir();
+        final ModelMaker maker = ModelFactory.createFileModelMaker(root.getAbsolutePath());
+        final OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM, null);
+        model.setNsPrefix("ssn", SSN.getURI());
+        model.setNsPrefix("xsd", XSD.getURI());
+        model.setNsPrefix("rdf", RDF.getURI());
+        model.setNsPrefix("rdfs", RDFS.getURI());
+        model.setNsPrefix("owl", OWL.getURI());
+        model.setNsPrefix("dul", DUL.getURI());
+        model.setNsPrefix("qu", QU.getURI());
+        model.setNsPrefix("ody", ODYSSEUS.getURI());
+        URL file;
+        if (Activator.getContext() != null) {
+            file = Activator.getContext().getBundle().getEntry("owl/SSN.owl");
+        } else {
+            file = SensorOntology.class.getResource("owl/SSN.owl");
+        }
+        if (file != null) {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(file.openConnection().getInputStream()));
+            model.read(reader, null);
+        } else {
+            model.read("http://purl.oclc.org/NET/ssnx/ssn");
+        }
+        model.close();
+    }
 
-	private OntModel getModel() throws IOException {
-		if (this.model == null) {
-			final File root = new File(this.STORE);
-			if (!root.exists()) {
-				createModel(root);
-			}
-			final ModelMaker maker = ModelFactory.createFileModelMaker(root
-					.getAbsolutePath());
+    private OntModel getModel() throws IOException {
+        if (this.model == null) {
+            final File root = new File(this.STORE);
+            if (!root.exists()) {
+                this.createModel(root);
+            }
+            final ModelMaker maker = ModelFactory.createFileModelMaker(root.getAbsolutePath());
 
-			OntModelSpec ontModelSpec = new OntModelSpec(OntModelSpec.OWL_MEM);
-			ontModelSpec.setBaseModelMaker(maker);
-			ontModelSpec.setDocumentManager(new OntDocumentManager());
-			ontModelSpec.setReasoner(OntModelSpec.OWL_MEM_MICRO_RULE_INF.getReasoner());
+            final OntModelSpec ontModelSpec = new OntModelSpec(OntModelSpec.OWL_MEM);
+            ontModelSpec.setBaseModelMaker(maker);
+            ontModelSpec.setDocumentManager(new OntDocumentManager());
+            ontModelSpec.setReasoner(OntModelSpec.OWL_MEM_MICRO_RULE_INF.getReasoner());
 
-			Model base = maker.openModel(this.MODEL, false);
-			this.model = ModelFactory.createOntologyModel(ontModelSpec, base);
-			//
-			// final ModelMaker maker = ModelFactory.createFileModelMaker(root
-			// .getAbsolutePath());
-			//
-			// this.dataModel = maker.openModel(this.MODEL, false);
+            final Model base = maker.openModel(this.MODEL, false);
+            this.model = ModelFactory.createOntologyModel(ontModelSpec, base);
+            //
+            // final ModelMaker maker = ModelFactory.createFileModelMaker(root
+            // .getAbsolutePath());
+            //
+            // this.dataModel = maker.openModel(this.MODEL, false);
 
-			this.model.setNsPrefix("ssn", SSN.getURI());
-			this.model.setNsPrefix("xsd", XSD.getURI());
-			this.model.setNsPrefix("rdf", RDF.getURI());
-			this.model.setNsPrefix("rdfs", RDFS.getURI());
-			this.model.setNsPrefix("owl", OWL.getURI());
-			this.model.setNsPrefix("dul", DUL.getURI());
-			this.model.setNsPrefix("qu", QU.getURI());
-			this.model.setNsPrefix("ody", ODYSSEUS.getURI());
-		}
-		return this.model;
-	}
+            this.model.setNsPrefix("ssn", SSN.getURI());
+            this.model.setNsPrefix("xsd", XSD.getURI());
+            this.model.setNsPrefix("rdf", RDF.getURI());
+            this.model.setNsPrefix("rdfs", RDFS.getURI());
+            this.model.setNsPrefix("owl", OWL.getURI());
+            this.model.setNsPrefix("dul", DUL.getURI());
+            this.model.setNsPrefix("qu", QU.getURI());
+            this.model.setNsPrefix("ody", ODYSSEUS.getURI());
+        }
+        return this.model;
+    }
 
-	public void out() {
-		try {
-			this.getModel().write(System.out, FileUtils.langXMLAbbrev);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+    public void out() {
+        try {
+            this.getModel().write(System.out, FileUtils.langXMLAbbrev);
+        } catch (final IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }

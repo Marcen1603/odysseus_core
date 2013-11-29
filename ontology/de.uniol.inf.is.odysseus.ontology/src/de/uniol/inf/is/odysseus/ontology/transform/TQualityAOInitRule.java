@@ -45,197 +45,171 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
-	/** The Logger. */
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory
-			.getLogger(TQualityAOTransformRule.class);
+    /** The Logger. */
+    @SuppressWarnings("unused")
+    private static final Logger LOG = LoggerFactory.getLogger(TQualityAOTransformRule.class);
 
-	@Override
-	public final int getPriority() {
-		return 0;
-	}
+    @Override
+    public final int getPriority() {
+        return 0;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unused")
-	@Override
-	public final void execute(final QualityAO operator,
-			final TransformationConfiguration transformConfig) {
-		final SDFSchema schema = operator.getInputSchema();
-		List<SDFAttribute> attributes = operator.getAttributes();
-		List<String> measurementPropertyNames = operator.getProperties();
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unused")
+    @Override
+    public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        final SDFSchema schema = operator.getInputSchema();
+        final List<SDFAttribute> attributes = operator.getAttributes();
+        final List<String> measurementPropertyNames = operator.getProperties();
 
-		Map<String, List<SDFAttribute>> toJoinStreams = new HashMap<String, List<SDFAttribute>>();
+        final Map<String, List<SDFAttribute>> toJoinStreams = new HashMap<String, List<SDFAttribute>>();
 
-		for (SDFAttribute attribute : attributes) {
+        for (final SDFAttribute attribute : attributes) {
 
-			Map<String, Map<String, String>> conditionPropertyMapping = new HashMap<String, Map<String, String>>();
+            final Map<String, Map<String, String>> conditionPropertyMapping = new HashMap<String, Map<String, String>>();
 
-			List<SensingDevice> sensingDevices = SensorOntologyServiceImpl
-					.getOntology().getSensingDevices(attribute);
-			if (!sensingDevices.isEmpty()) {
-				// FIXME What happens if there are more than one sensing device?
-				SensingDevice sensingDevice = sensingDevices.get(0);
-				List<MeasurementCapability> measurementCapabilities = sensingDevice
-						.getHasMeasurementCapabilities(attribute
-								.getAttributeName());
-				for (MeasurementCapability measurementCapability : measurementCapabilities) {
+            final List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.getOntology().getSensingDevices(attribute);
+            if (!sensingDevices.isEmpty()) {
+                // FIXME What happens if there are more than one sensing device?
+                final SensingDevice sensingDevice = sensingDevices.get(0);
+                final List<MeasurementCapability> measurementCapabilities = sensingDevice.getHasMeasurementCapabilities(attribute.getAttributeName());
+                for (final MeasurementCapability measurementCapability : measurementCapabilities) {
 
-					List<Condition> conditions = measurementCapability
-							.getInConditions();
+                    final List<Condition> conditions = measurementCapability.getInConditions();
 
-					for (Condition condition : conditions) {
-						List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl
-								.getOntology().getAttributes(condition);
+                    for (final Condition condition : conditions) {
+                        final List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl.getOntology().getAttributes(condition);
 
-						boolean inSchema = false;
-						if (!observerAttributes.isEmpty()) {
-							for (SDFAttribute observerAttribute : observerAttributes) {
-								if (schema.contains(observerAttribute)) {
-									inSchema = true;
-								}
-							}
-							if (!inSchema) {
-								if (!toJoinStreams
-										.containsKey(observerAttributes.get(0)
-												.getSourceName())) {
-									toJoinStreams.put(observerAttributes.get(0)
-											.getSourceName(),
-											new ArrayList<SDFAttribute>());
-								}
-								toJoinStreams.get(
-										observerAttributes.get(0)
-												.getSourceName()).add(
-										observerAttributes.get(0));
-							}
-						}
-					}
+                        boolean inSchema = false;
+                        if (!observerAttributes.isEmpty()) {
+                            for (final SDFAttribute observerAttribute : observerAttributes) {
+                                if (schema.contains(observerAttribute)) {
+                                    inSchema = true;
+                                }
+                            }
+                            if (!inSchema) {
+                                if (!toJoinStreams.containsKey(observerAttributes.get(0).getSourceName())) {
+                                    toJoinStreams.put(observerAttributes.get(0).getSourceName(), new ArrayList<SDFAttribute>());
+                                }
+                                toJoinStreams.get(observerAttributes.get(0).getSourceName()).add(observerAttributes.get(0));
+                            }
+                        }
+                    }
 
-				}
-				concatConditionObserverStreams(operator, toJoinStreams);
-			}
-		}
+                }
+                this.concatConditionObserverStreams(operator, toJoinStreams);
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean isExecutable(final QualityAO operator,
-			final TransformationConfiguration transformConfig) {
-		// if (operator.getInputSchema().getType() == ProbabilisticTuple.class)
-		// {
-		if (!hasJoinAOAsChild(operator)) {
-			return true;
-		}
-		// }
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean isExecutable(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        // if (operator.getInputSchema().getType() == ProbabilisticTuple.class)
+        // {
+        if (!this.hasJoinAOAsChild(operator)) {
+            return true;
+        }
+        // }
+        return false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return "QualityAO -> QualityAO|JoinAO|ProjectAO|StreamAO";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return "QualityAO -> QualityAO|JoinAO|ProjectAO|StreamAO";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.INIT;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.INIT;
+    }
 
-	/**
-	 * Concatenates the condition observing sensing devices to this stream.
-	 * 
-	 * @param observers
-	 *            The map of sensing devices and the necessary properties.
-	 */
+    /**
+     * Concatenates the condition observing sensing devices to this stream.
+     * 
+     * @param observers
+     *            The map of sensing devices and the necessary properties.
+     */
 
-	private void concatConditionObserverStreams(ILogicalOperator operator,
-			Map<String, List<SDFAttribute>> observers) {
-		SDFSchema schema = operator.getInputSchema(0);
+    private void concatConditionObserverStreams(final ILogicalOperator operator, final Map<String, List<SDFAttribute>> observers) {
+        final SDFSchema schema = operator.getInputSchema(0);
 
-		for (String sourceName : observers.keySet()) {
-			JoinAO joinAO = insertJoinAO(operator);
-			joinAO.setName("Join "+sourceName);
-			ILogicalOperator viewOrStream = insertViewOrStream(joinAO,
-					sourceName);
-			ProjectAO projectAO = insertProjectAO(joinAO,
-					observers.get(sourceName));
+        for (final String sourceName : observers.keySet()) {
+            final JoinAO joinAO = this.insertJoinAO(operator);
+            joinAO.setName("Join " + sourceName);
+            final ILogicalOperator viewOrStream = this.insertViewOrStream(joinAO, sourceName);
+            final ProjectAO projectAO = this.insertProjectAO(joinAO, observers.get(sourceName));
 
-			viewOrStream.initialize();
-			insert(viewOrStream);
-			projectAO.initialize();
-			insert(projectAO);
-			joinAO.initialize();
-			insert(joinAO);
+            viewOrStream.initialize();
+            this.insert(viewOrStream);
+            projectAO.initialize();
+            this.insert(projectAO);
+            joinAO.initialize();
+            this.insert(joinAO);
 
-			joinAO.setOutputSchema(SDFSchema.union(schema,
-					viewOrStream.getOutputSchema()));
+            joinAO.setOutputSchema(SDFSchema.union(schema, viewOrStream.getOutputSchema()));
 
-			// FIXME Insert Window?
-		}
-	}
+            // FIXME Insert Window?
+        }
+    }
 
-	private ILogicalOperator insertViewOrStream(ILogicalOperator parent,
-			String sourceName) {
-		ILogicalOperator viewOrStream = getDataDictionary().getViewOrStream(
-				sourceName, getCaller());
+    private ILogicalOperator insertViewOrStream(final ILogicalOperator parent, final String sourceName) {
+        final ILogicalOperator viewOrStream = this.getDataDictionary().getViewOrStream(sourceName, this.getCaller());
 
-		parent.subscribeToSource(viewOrStream, 1, 0,
-				viewOrStream.getOutputSchema());
+        parent.subscribeToSource(viewOrStream, 1, 0, viewOrStream.getOutputSchema());
 
-		return viewOrStream;
-	}
+        return viewOrStream;
+    }
 
-	private JoinAO insertJoinAO(ILogicalOperator parent) {
-		ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+    private JoinAO insertJoinAO(final ILogicalOperator parent) {
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
 
-		System.out.println(child);
-		JoinAO joinAO = new JoinAO();
+        System.out.println(child);
+        final JoinAO joinAO = new JoinAO();
 
-		Collection<LogicalSubscription> subs = child.getSubscriptions();
-		for (LogicalSubscription sub : subs) {
-			child.unsubscribeSink(sub);
-			// What about the source out port
-			joinAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
-					sub.getSourceOutPort(), sub.getSchema());
-		}
-		joinAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+        final Collection<LogicalSubscription> subs = child.getSubscriptions();
+        for (final LogicalSubscription sub : subs) {
+            child.unsubscribeSink(sub);
+            // What about the source out port
+            joinAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+        }
+        joinAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
 
-		return joinAO;
-	}
+        return joinAO;
+    }
 
-	private ProjectAO insertProjectAO(ILogicalOperator parent,
-			List<SDFAttribute> attributes) {
-		ProjectAO projectAO = new ProjectAO();
-		ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
-		List<SDFAttribute> userAwareAttributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attr : attributes) {
-			userAwareAttributes.add(child.getOutputSchema().findAttribute(
-					attr.getAttributeName()));
-		}
+    private ProjectAO insertProjectAO(final ILogicalOperator parent, final List<SDFAttribute> attributes) {
+        final ProjectAO projectAO = new ProjectAO();
+        final ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
+        final List<SDFAttribute> userAwareAttributes = new ArrayList<SDFAttribute>();
+        for (final SDFAttribute attr : attributes) {
+            userAwareAttributes.add(child.getOutputSchema().findAttribute(attr.getAttributeName()));
+        }
 
-		Collection<LogicalSubscription> subs = child.getSubscriptions();
-		for (LogicalSubscription sub : subs) {
-			child.unsubscribeSink(sub);
-			projectAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
-					sub.getSourceOutPort(), sub.getSchema());
-		}
-		projectAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
-		projectAO.setOutputSchemaWithList(userAwareAttributes);
+        final Collection<LogicalSubscription> subs = child.getSubscriptions();
+        for (final LogicalSubscription sub : subs) {
+            child.unsubscribeSink(sub);
+            projectAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+        }
+        projectAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+        projectAO.setOutputSchemaWithList(userAwareAttributes);
 
-		return projectAO;
-	}
+        return projectAO;
+    }
 
-	private boolean hasJoinAOAsChild(ILogicalOperator operator) {
-		LogicalSubscription child = operator.getSubscribedToSource(0);
-		return ((child != null) && (child.getTarget() instanceof JoinAO));
-	}
+    private boolean hasJoinAOAsChild(final ILogicalOperator operator) {
+        final LogicalSubscription child = operator.getSubscribedToSource(0);
+        return ((child != null) && (child.getTarget() instanceof JoinAO));
+    }
 }

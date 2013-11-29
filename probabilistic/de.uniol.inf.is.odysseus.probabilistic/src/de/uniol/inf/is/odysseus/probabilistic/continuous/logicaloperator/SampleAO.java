@@ -39,7 +39,7 @@ public class SampleAO extends UnaryLogicalOp {
 	 * Creates a new Sample logical operator.
 	 */
 	public SampleAO() {
-super();
+		super();
 	}
 
 	/**
@@ -62,8 +62,8 @@ super();
 	 */
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", isList = true, optional = false, doc = "The distribution to sample from.")
 	public final void setAttributes(final List<SDFAttribute> attributes) {
-	    Objects.requireNonNull(attributes);
-	    Preconditions.checkArgument(!attributes.isEmpty());
+		Objects.requireNonNull(attributes);
+		Preconditions.checkArgument(!attributes.isEmpty());
 		this.attributes = attributes;
 	}
 
@@ -88,7 +88,7 @@ super();
 	 */
 	@Parameter(type = IntegerParameter.class, name = "SAMPLES", isList = false, optional = false, doc = "The number of samples to create.")
 	public final void setSamples(final int samples) {
-		Preconditions.checkArgument(samples>0);
+		Preconditions.checkArgument(samples > 0);
 		this.samples = samples;
 	}
 
@@ -129,9 +129,9 @@ super();
 	@Override
 	public final void initialize() {
 		super.initialize();
-	    Objects.requireNonNull(attributes);
-	    Preconditions.checkArgument(!attributes.isEmpty());
-	    Preconditions.checkArgument(samples>0);
+		Objects.requireNonNull(attributes);
+		Preconditions.checkArgument(!attributes.isEmpty());
+		Preconditions.checkArgument(samples > 0);
 		final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
 			if (this.getAttributes().contains(inAttr)) {

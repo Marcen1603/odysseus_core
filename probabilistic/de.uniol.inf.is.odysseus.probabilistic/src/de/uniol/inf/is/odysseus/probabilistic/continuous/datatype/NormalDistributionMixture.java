@@ -91,7 +91,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 *            The dimension
 	 */
 	public NormalDistributionMixture(final int dimension) {
-		Preconditions.checkArgument(dimension>0);
+		Preconditions.checkArgument(dimension > 0);
 		this.attributes = new int[dimension];
 		this.scale = 1.0;
 		this.support = new Interval[dimension];
@@ -110,9 +110,9 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	public NormalDistributionMixture(final double[] means, final double[][] covariance) {
 		Objects.requireNonNull(means);
 		Objects.requireNonNull(covariance);
-		Preconditions.checkArgument(means.length>0);
-		Preconditions.checkArgument(covariance.length>0);
-		Preconditions.checkArgument(covariance[0].length>0);
+		Preconditions.checkArgument(means.length > 0);
+		Preconditions.checkArgument(covariance.length > 0);
+		Preconditions.checkArgument(covariance[0].length > 0);
 		final int dimension = means.length;
 		this.attributes = new int[dimension];
 		// this.mixtures.put(new MultivariateNormalDistribution(means, covariance), 1.0);
@@ -131,7 +131,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 */
 	public NormalDistributionMixture(final List<Pair<Double, MultivariateNormalDistribution>> mixtures) {
 		Objects.requireNonNull(mixtures);
-		Preconditions.checkArgument(mixtures.size()>0);
+		Preconditions.checkArgument(mixtures.size() > 0);
 		int dimension = 0;
 		for (final Pair<Double, MultivariateNormalDistribution> entry : mixtures) {
 			dimension = entry.getValue().getMeans().length;
@@ -194,7 +194,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 *            the scale to set
 	 */
 	public final void setScale(final double scale) {
-		Preconditions.checkArgument(scale>=0.0);
+		Preconditions.checkArgument(scale >= 0.0);
 		Preconditions.checkArgument(!Double.isNaN(scale));
 		this.scale = scale;
 	}
@@ -242,8 +242,8 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 */
 	public final void setSupport(final Interval[] support) {
 		Objects.requireNonNull(support);
-		Preconditions.checkArgument(support.length>0);
-		Preconditions.checkArgument(support.length==this.attributes.length);
+		Preconditions.checkArgument(support.length > 0);
+		Preconditions.checkArgument(support.length == this.attributes.length);
 		this.support = support;
 	}
 
@@ -296,8 +296,8 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 */
 	public final void setAttributes(final int[] attributes) {
 		Objects.requireNonNull(attributes);
-		Preconditions.checkArgument(attributes.length>0);
-		Preconditions.checkArgument(attributes.length==this.support.length);
+		Preconditions.checkArgument(attributes.length > 0);
+		Preconditions.checkArgument(attributes.length == this.support.length);
 		this.attributes = attributes;
 	}
 
@@ -311,7 +311,7 @@ public class NormalDistributionMixture implements Serializable, Cloneable, IClon
 	 */
 	public final void setAttribute(final int dimension, final int attribute) {
 		Preconditions.checkPositionIndex(dimension, this.attributes.length);
-		Preconditions.checkArgument(attribute>=0);
+		Preconditions.checkArgument(attribute >= 0);
 		this.attributes[dimension] = attribute;
 	}
 

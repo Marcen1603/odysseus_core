@@ -70,7 +70,7 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 	@Override
 	public final ProbabilisticShort readData(final ObjectInputStream inputStream) throws IOException {
 		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available()>=4);
+		Preconditions.checkArgument(inputStream.available() >= 4);
 		final int length = inputStream.readInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {
@@ -105,7 +105,7 @@ public class ProbabilisticShortHandler extends AbstractDataHandler<Probabilistic
 	@Override
 	public final ProbabilisticShort readData(final ByteBuffer buffer) {
 		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining()>=4);
+		Preconditions.checkArgument(buffer.remaining() >= 4);
 		final int length = buffer.getInt();
 		final Map<Short, Double> values = new HashMap<Short, Double>();
 		for (int i = 0; i < length; i++) {

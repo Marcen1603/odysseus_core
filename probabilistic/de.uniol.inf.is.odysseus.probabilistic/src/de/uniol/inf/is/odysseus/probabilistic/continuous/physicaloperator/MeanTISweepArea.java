@@ -79,7 +79,9 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 	 * @param batchEMTISweepArea
 	 *            The clone
 	 * @throws IllegalAccessException
+	 *             Sweep area has done an illegal access
 	 * @throws InstantiationException
+	 *             Sweep area was unable to instantiate an element
 	 */
 	public MeanTISweepArea(final MeanTISweepArea batchEMTISweepArea) throws InstantiationException, IllegalAccessException {
 		super(batchEMTISweepArea);
@@ -324,6 +326,12 @@ public class MeanTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extend
 		return avg;
 	}
 
+	/**
+	 * 
+	 * @param initialMixture
+	 *            The initial model
+	 * @return The estimated model
+	 */
 	private MixtureMultivariateNormalDistribution estimateModel(final MixtureMultivariateNormalDistribution initialMixture) {
 		final double[][] data = this.getData();
 		final int n = data.length;

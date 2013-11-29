@@ -27,25 +27,25 @@ import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
  * 
  */
 public interface SensorOntologyService {
-	List<SensingDevice> getAllSensingDevices();
+    List<SensingDevice> getAllSensingDevices();
 
-	List<SensingDevice> getAllSensingDevices(String featureOfInterest);
+    List<SensingDevice> getAllSensingDevices(String featureOfInterest);
 
-	List<FeatureOfInterest> getAllFeaturesOfInterest();
+    List<FeatureOfInterest> getAllFeaturesOfInterest();
 
-	List<Property> getAllProperties();
+    List<Property> getAllProperties();
 
-	List<Property> getAllProperties(String featureOfInterest);
+    List<Property> getAllProperties(String featureOfInterest);
 
-	/**
-	 * @param sensingDevice
-	 */
-	void createSensingDevice(SensingDevice sensingDevice);
+    /**
+     * @param sensingDevice
+     */
+    void createSensingDevice(SensingDevice sensingDevice);
 
-	void createFeatureOfInterest(FeatureOfInterest featureOfInterest);
+    void createFeatureOfInterest(FeatureOfInterest featureOfInterest);
 
-	List<SensingDevice> getSensingDevices(SDFAttribute attribute);
+    List<SensingDevice> getSensingDevices(SDFAttribute attribute);
 
-	List<SDFAttribute> getAttributes(Property property);
+    List<SDFAttribute> getAttributes(Property property);
 
 }

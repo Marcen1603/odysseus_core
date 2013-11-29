@@ -40,47 +40,46 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TProbabilisticContinuousJoinAOSetDMRule extends AbstractTransformationRule<JoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
 
-    @Override
-    public int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	@Override
+	public int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
-        final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
-                joinPO.getOutputSchema().size());
-        joinPO.setDataMerge(dataMerge);
-        update(joinPO);
-    }
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+		final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
+		joinPO.setDataMerge(dataMerge);
+		update(joinPO);
+	}
 
-    @Override
-    public boolean isExecutable(JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-        if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
-            if (operator.getDataMerge() == null) {
-                IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean isExecutable(final JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+		if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
+			if (operator.getDataMerge() == null) {
+				IPredicate<?> predicate = operator.getPredicate();
+				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+				if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public String getName() {
-        return "Insert DataMergeFunction JoinTIPO (Probabilistic)";
-    }
+	@Override
+	public String getName() {
+		return "Insert DataMergeFunction JoinTIPO (Probabilistic)";
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.METAOBJECTS;
-    }
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
 
-    @Override
-    public Class<? super JoinTIPO<?, ?>> getConditionClass() {
-        return JoinTIPO.class;
-    }
+	@Override
+	public Class<? super JoinTIPO<?, ?>> getConditionClass() {
+		return JoinTIPO.class;
+	}
 
 }

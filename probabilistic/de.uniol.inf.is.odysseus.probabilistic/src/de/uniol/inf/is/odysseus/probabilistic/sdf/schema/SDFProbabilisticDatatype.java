@@ -27,284 +27,274 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class SDFProbabilisticDatatype extends SDFDatatype {
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 2867228296513432602L;
+	private static final long serialVersionUID = 2867228296513432602L;
 
-    /**
-     * Constructs a new probabilistic data type from the given URI.
-     * 
-     * @param uri
-     *            The URI
-     */
-    public SDFProbabilisticDatatype(final String uri) {
-        super(uri, true);
-    }
+	/**
+	 * Constructs a new probabilistic data type from the given URI.
+	 * 
+	 * @param uri
+	 *            The URI
+	 */
+	public SDFProbabilisticDatatype(final String uri) {
+		super(uri, true);
+	}
 
-    /**
-     * Constructs a new probabilistic data type from the given data type.
-     * 
-     * @param sdfDatatype
-     *            The data type
-     */
-    public SDFProbabilisticDatatype(final SDFDatatype sdfDatatype) {
-        super(sdfDatatype);
-    }
+	/**
+	 * Constructs a new probabilistic data type from the given data type.
+	 * 
+	 * @param sdfDatatype
+	 *            The data type
+	 */
+	public SDFProbabilisticDatatype(final SDFDatatype sdfDatatype) {
+		super(sdfDatatype);
+	}
 
-    /**
-     * Constructs a new probabilistic data type with the given name, type, and
-     * schema.
-     * 
-     * @param name
-     *            The data type name
-     * @param type
-     *            The type
-     * @param schema
-     *            The schema
-     */
-    public SDFProbabilisticDatatype(final String name, final KindOfDatatype type, final SDFSchema schema) {
-        super(name, type, schema, true);
-    }
+	/**
+	 * Constructs a new probabilistic data type with the given name, type, and schema.
+	 * 
+	 * @param name
+	 *            The data type name
+	 * @param type
+	 *            The type
+	 * @param schema
+	 *            The schema
+	 */
+	public SDFProbabilisticDatatype(final String name, final KindOfDatatype type, final SDFSchema schema) {
+		super(name, type, schema, true);
+	}
 
-    /**
-     * Constructs a new probabilistic data type with the given name, type, and
-     * sub type.
-     * 
-     * @param name
-     *            The data type name
-     * @param type
-     *            The type
-     * @param subType
-     *            The sub type
-     */
-    public SDFProbabilisticDatatype(final String name, final KindOfDatatype type, final SDFDatatype subType) {
-        super(name, type, subType, true);
-    }
+	/**
+	 * Constructs a new probabilistic data type with the given name, type, and sub type.
+	 * 
+	 * @param name
+	 *            The data type name
+	 * @param type
+	 *            The type
+	 * @param subType
+	 *            The sub type
+	 */
+	public SDFProbabilisticDatatype(final String name, final KindOfDatatype type, final SDFDatatype subType) {
+		super(name, type, subType, true);
+	}
 
-    /** Probabilistic tuple. */
-    public static final SDFDatatype PROBABILISTIC_TUPLE = new SDFProbabilisticDatatype("ProbabilisticTuple");
-    /** Probabilistic result used in probabilistic continuous predicates. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
+	/** Probabilistic tuple. */
+	public static final SDFDatatype PROBABILISTIC_TUPLE = new SDFProbabilisticDatatype("ProbabilisticTuple");
+	/** Probabilistic result used in probabilistic continuous predicates. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_PREDICATE_RESULT = new SDFProbabilisticDatatype("ProbabilisticContinuousPredicateResult");
 
-    /** Probabilistic discrete double datatype. */
-    public static final SDFDatatype PROBABILISTIC_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticDouble");
-    /** Probabilistic discrete float datatype. */
-    public static final SDFDatatype PROBABILISTIC_FLOAT = new SDFProbabilisticDatatype("ProbabilisticFloat");
-    /** Probabilistic discrete long datatype. */
-    public static final SDFDatatype PROBABILISTIC_LONG = new SDFProbabilisticDatatype("ProbabilisticLong");
-    /** Probabilistic discrete integer datatype. */
-    public static final SDFDatatype PROBABILISTIC_INTEGER = new SDFProbabilisticDatatype("ProbabilisticInteger");
-    /** Probabilistic discrete short datatype. */
-    public static final SDFDatatype PROBABILISTIC_SHORT = new SDFProbabilisticDatatype("ProbabilisticShort");
-    /** Probabilistic discrete byte datatype. */
-    public static final SDFDatatype PROBABILISTIC_BYTE = new SDFProbabilisticDatatype("ProbabilisticByte");
-    /** Probabilistic discrete boolean datatype. */
-    public static final SDFDatatype PROBABILISTIC_BOOLEAN = new SDFProbabilisticDatatype("ProbabilisticBoolean");
-    /** Probabilistic discrete string datatype. */
-    public static final SDFDatatype PROBABILISTIC_STRING = new SDFProbabilisticDatatype("ProbabilisticString");
-    /** Probabilistic continuous double datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticContinuousDouble");
-    /** Probabilistic continuous float datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_FLOAT = new SDFProbabilisticDatatype("ProbabilisticContinuousFloat");
-    /** Probabilistic continuous long datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_LONG = new SDFProbabilisticDatatype("ProbabilisticContinuousLong");
-    /** Probabilistic continuous integer datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_INTEGER = new SDFProbabilisticDatatype("ProbabilisticContinuousInteger");
-    /** Probabilistic continuous short datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_SHORT = new SDFProbabilisticDatatype("ProbabilisticContinuousShort");
-    /** Probabilistic continuous byte datatype. */
-    public static final SDFDatatype PROBABILISTIC_CONTINUOUS_BYTE = new SDFProbabilisticDatatype("ProbabilisticContinuousByte");
+	/** Probabilistic discrete double datatype. */
+	public static final SDFDatatype PROBABILISTIC_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticDouble");
+	/** Probabilistic discrete float datatype. */
+	public static final SDFDatatype PROBABILISTIC_FLOAT = new SDFProbabilisticDatatype("ProbabilisticFloat");
+	/** Probabilistic discrete long datatype. */
+	public static final SDFDatatype PROBABILISTIC_LONG = new SDFProbabilisticDatatype("ProbabilisticLong");
+	/** Probabilistic discrete integer datatype. */
+	public static final SDFDatatype PROBABILISTIC_INTEGER = new SDFProbabilisticDatatype("ProbabilisticInteger");
+	/** Probabilistic discrete short datatype. */
+	public static final SDFDatatype PROBABILISTIC_SHORT = new SDFProbabilisticDatatype("ProbabilisticShort");
+	/** Probabilistic discrete byte datatype. */
+	public static final SDFDatatype PROBABILISTIC_BYTE = new SDFProbabilisticDatatype("ProbabilisticByte");
+	/** Probabilistic discrete boolean datatype. */
+	public static final SDFDatatype PROBABILISTIC_BOOLEAN = new SDFProbabilisticDatatype("ProbabilisticBoolean");
+	/** Probabilistic discrete string datatype. */
+	public static final SDFDatatype PROBABILISTIC_STRING = new SDFProbabilisticDatatype("ProbabilisticString");
+	/** Probabilistic continuous double datatype. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("ProbabilisticContinuousDouble");
+	/** Probabilistic continuous float datatype. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_FLOAT = new SDFProbabilisticDatatype("ProbabilisticContinuousFloat");
+	/** Probabilistic continuous long datatype. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_LONG = new SDFProbabilisticDatatype("ProbabilisticContinuousLong");
+	/** Probabilistic continuous integer datatype. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_INTEGER = new SDFProbabilisticDatatype("ProbabilisticContinuousInteger");
+	/** Probabilistic continuous short datatype. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_SHORT = new SDFProbabilisticDatatype("ProbabilisticContinuousShort");
+	/** Probabilistic continuous byte datatype. */
+	public static final SDFDatatype PROBABILISTIC_CONTINUOUS_BYTE = new SDFProbabilisticDatatype("ProbabilisticContinuousByte");
 
-    /** Probabilistic continuous double vector datatype. */
-    public static final SDFDatatype VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticContinuousDouble");
+	/** Probabilistic continuous double vector datatype. */
+	public static final SDFDatatype VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticContinuousDouble");
+	/** Probabilistic discrete numbers. */
+	public static final SDFDatatype[] PROBABILISTIC_NUMBERS = new SDFDatatype[] { PROBABILISTIC_BYTE, PROBABILISTIC_BOOLEAN, PROBABILISTIC_SHORT, PROBABILISTIC_INTEGER, PROBABILISTIC_LONG, PROBABILISTIC_FLOAT, PROBABILISTIC_DOUBLE };
 
-    public static final SDFDatatype[] PROBABILISTIC_NUMBERS = new SDFDatatype[] { PROBABILISTIC_BYTE, PROBABILISTIC_BOOLEAN, PROBABILISTIC_SHORT, PROBABILISTIC_INTEGER, PROBABILISTIC_LONG, PROBABILISTIC_FLOAT, PROBABILISTIC_DOUBLE};
+	/**
+	 * Checks whether the data type is a probabilistic data type.
+	 * 
+	 * @return <code>true</code> iff the data type is either discrete probabilistic or continuous probabilistic
+	 */
+	public final boolean isProbabilistic() {
+		return this.isContinuous() || this.isDiscrete();
+	}
 
-    
-    /**
-     * Checks whether the data type is a probabilistic data type.
-     * 
-     * @return <code>true</code> iff the data type is either discrete
-     *         probabilistic or continuous probabilistic
-     */
-    public final boolean isProbabilistic() {
-        return this.isContinuous() || this.isDiscrete();
-    }
+	/**
+	 * Checks whether the data type is a continuous probabilistic data type.
+	 * 
+	 * @return <code>true</code> if the data type is continuous probabilistic
+	 */
+	public final boolean isContinuous() {
+		return (this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()) || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI())
+				|| this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI()) || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI())
+				|| this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI()) || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI()) || this.getURI().equalsIgnoreCase(
+				SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()));
+	}
 
-    /**
-     * Checks whether the data type is a continuous probabilistic data type.
-     * 
-     * @return <code>true</code> if the data type is continuous probabilistic
-     */
-    public final boolean isContinuous() {
-        return (this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI())
-                || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI())
-                || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI())
-                || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI())
-                || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI())
-                || this.getURI().equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI()) || this.getURI().equalsIgnoreCase(
-                SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()));
-    }
+	/**
+	 * Checks whether the data type is a discrete probabilistic data type.
+	 * 
+	 * @return <code>true</code> if the data type is discrete probabilistic
+	 */
+	public final boolean isDiscrete() {
+		return (this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_LONG.getURI())
+				|| this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BYTE.getURI())
+				|| this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI()));
+	}
 
-    /**
-     * Checks whether the data type is a discrete probabilistic data type.
-     * 
-     * @return <code>true</code> if the data type is discrete probabilistic
-     */
-    public final boolean isDiscrete() {
-        return (this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_LONG.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BYTE.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI()));
-    }
+	/**
+	 * Checks whether the data type is a numeric data type.
+	 * 
+	 * @return <code>true</code> if the data type is numeric
+	 */
+	@Override
+	public final boolean isNumeric() {
+		return false;
+		// return (super.isNumeric() ||
+		// this.getURI().equals(PROBABILISTIC_LONG.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_INTEGER.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_DOUBLE.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_FLOAT.getURI())
+		// || this.getURI().equals(PROBABILISTIC_SHORT.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_BYTE.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_CONTINUOUS_LONG.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_CONTINUOUS_INTEGER.getURI())
+		// || this.getURI().equals(PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_CONTINUOUS_FLOAT.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_CONTINUOUS_SHORT.getURI()) ||
+		// this.getURI().equals(PROBABILISTIC_CONTINUOUS_BYTE.getURI()));
+	}
 
-    /**
-     * Checks whether the data type is a numeric data type.
-     * 
-     * @return <code>true</code> if the data type is numeric
-     */
-    @Override
-    public final boolean isNumeric() {
-        return false;
-        // return (super.isNumeric() ||
-        // this.getURI().equals(PROBABILISTIC_LONG.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_INTEGER.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_DOUBLE.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_FLOAT.getURI())
-        // || this.getURI().equals(PROBABILISTIC_SHORT.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_BYTE.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_CONTINUOUS_LONG.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_CONTINUOUS_INTEGER.getURI())
-        // || this.getURI().equals(PROBABILISTIC_CONTINUOUS_DOUBLE.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_CONTINUOUS_FLOAT.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_CONTINUOUS_SHORT.getURI()) ||
-        // this.getURI().equals(PROBABILISTIC_CONTINUOUS_BYTE.getURI()));
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isDouble()
+	 */
+	@Override
+	public final boolean isDouble() {
+		return super.isDouble() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isDouble()
-     */
-    @Override
-    public final boolean isDouble() {
-        return super.isDouble() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE.getURI());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isInteger()
+	 */
+	@Override
+	public final boolean isInteger() {
+		return super.isInteger() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isInteger()
-     */
-    @Override
-    public final boolean isInteger() {
-        return super.isInteger() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER.getURI())
-                || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER.getURI());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isLong()
+	 */
+	@Override
+	public final boolean isLong() {
+		return super.isLong() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_LONG.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isLong()
-     */
-    @Override
-    public final boolean isLong() {
-        return super.isLong() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_LONG.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG.getURI());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isFloat()
+	 */
+	@Override
+	public final boolean isFloat() {
+		return super.isFloat() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isFloat()
-     */
-    @Override
-    public final boolean isFloat() {
-        return super.isFloat() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT.getURI());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isShort()
+	 */
+	@Override
+	public final boolean isShort() {
+		return super.isShort() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isShort()
-     */
-    @Override
-    public final boolean isShort() {
-        return super.isShort() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_SHORT.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT.getURI());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isByte()
+	 */
+	@Override
+	public final boolean isByte() {
+		return super.isByte() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BYTE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isByte()
-     */
-    @Override
-    public final boolean isByte() {
-        return super.isByte() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BYTE.getURI()) || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE.getURI());
-    }
+	/**
+	 * 
+	 * @return true if this datatype is a probabilistic boolean datatype
+	 */
+	public final boolean isBoolean() {
+		return (this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN.getURI()));
+	}
 
-    /**
-     * 
-     * @return
-     */
-    public final boolean isBoolean() {
-        // return super.isBoolean() ||
-        // this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN.getURI())
-        // );
-        return (this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN.getURI()));
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isString()
+	 */
+	@Override
+	public final boolean isString() {
+		return super.isString() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI());
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#isString()
-     */
-    @Override
-    public final boolean isString() {
-        return super.isString() || this.getURI().equals(SDFProbabilisticDatatype.PROBABILISTIC_STRING.getURI());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#compatibleTo(de. uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype)
+	 */
+	@Override
+	public final boolean compatibleTo(final SDFDatatype other) {
+		if (super.compatibleTo(other)) {
+			return true;
+		}
+		if (other instanceof SDFProbabilisticDatatype) {
+			final SDFProbabilisticDatatype otherProbabilistic = (SDFProbabilisticDatatype) other;
+			if ((this.isDiscrete() && (otherProbabilistic.isDiscrete())) || (this.isContinuous() && (otherProbabilistic.isContinuous()))) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype#compatibleTo(de.
-     * uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype)
-     */
-    @Override
-    public final boolean compatibleTo(final SDFDatatype other) {
-        if (super.compatibleTo(other)) {
-            return true;
-        }
-        if (other instanceof SDFProbabilisticDatatype) {
-            final SDFProbabilisticDatatype otherProbabilistic = (SDFProbabilisticDatatype) other;
-            if ((this.isDiscrete() && (otherProbabilistic.isDiscrete())) || (this.isContinuous() && (otherProbabilistic.isContinuous()))) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * Gets the list of available data types.
+	 * 
+	 * @return List of datatypes
+	 */
+	public static List<SDFDatatype> getTypes() {
+		List<SDFDatatype> types = new ArrayList<>();
+		types.addAll(SDFDatatype.getTypes());
+		types.add(PROBABILISTIC_DOUBLE);
+		types.add(PROBABILISTIC_FLOAT);
+		types.add(PROBABILISTIC_LONG);
+		types.add(PROBABILISTIC_INTEGER);
+		types.add(PROBABILISTIC_SHORT);
+		types.add(PROBABILISTIC_BYTE);
+		types.add(PROBABILISTIC_BOOLEAN);
+		types.add(PROBABILISTIC_STRING);
+		types.add(PROBABILISTIC_CONTINUOUS_DOUBLE);
+		types.add(PROBABILISTIC_CONTINUOUS_FLOAT);
+		types.add(PROBABILISTIC_CONTINUOUS_LONG);
+		types.add(PROBABILISTIC_CONTINUOUS_INTEGER);
+		types.add(PROBABILISTIC_CONTINUOUS_SHORT);
+		types.add(PROBABILISTIC_CONTINUOUS_BYTE);
+		types.add(VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE);
 
-    public static List<SDFDatatype> getTypes() {
-        List<SDFDatatype> types = new ArrayList<>();
-        types.addAll(SDFDatatype.getTypes());
-        types.add(PROBABILISTIC_DOUBLE);
-        types.add(PROBABILISTIC_FLOAT);
-        types.add(PROBABILISTIC_LONG);
-        types.add(PROBABILISTIC_INTEGER);
-        types.add(PROBABILISTIC_SHORT);
-        types.add(PROBABILISTIC_BYTE);
-        types.add(PROBABILISTIC_BOOLEAN);
-        types.add(PROBABILISTIC_STRING);
-        types.add(PROBABILISTIC_CONTINUOUS_DOUBLE);
-        types.add(PROBABILISTIC_CONTINUOUS_FLOAT);
-        types.add(PROBABILISTIC_CONTINUOUS_LONG);
-        types.add(PROBABILISTIC_CONTINUOUS_INTEGER);
-        types.add(PROBABILISTIC_CONTINUOUS_SHORT);
-        types.add(PROBABILISTIC_CONTINUOUS_BYTE);
-        types.add(VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE);
-
-        return types;
-    }
+		return types;
+	}
 }

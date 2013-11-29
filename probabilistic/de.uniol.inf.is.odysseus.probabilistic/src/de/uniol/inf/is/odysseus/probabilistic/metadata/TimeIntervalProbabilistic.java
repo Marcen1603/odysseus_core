@@ -100,7 +100,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#getExistence()
 	 */
 	@Override
-	public final double getExistence() {
+	public double getExistence() {
 		return this.probabilistic.getExistence();
 	}
 
@@ -109,7 +109,7 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
 	 * @see de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic#setExistence(double)
 	 */
 	@Override
-	public final void setExistence(final double existence) {
+	public void setExistence(final double existence) {
 		Preconditions.checkArgument(existence >= 0.0 && existence <= 1.0);
 		this.probabilistic.setExistence(existence);
 	}

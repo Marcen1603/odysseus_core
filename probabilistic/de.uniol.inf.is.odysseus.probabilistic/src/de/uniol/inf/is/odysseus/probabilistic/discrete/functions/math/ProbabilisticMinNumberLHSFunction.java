@@ -7,29 +7,33 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabil
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
+/**
+ * Min function for a discrete and a deterministic value.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class ProbabilisticMinNumberLHSFunction extends ProbabilisticMinFunction {
-    /**
+	/**
 	 * 
 	 */
+	private static final long serialVersionUID = -6012592181479843565L;
 
-    private static final long serialVersionUID = -6012592181479843565L;
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math. ProbabilisticMultiplicationOperator#getValue()
+	 */
+	@Override
+	public final ProbabilisticDouble getValue() {
+		final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
+		final AbstractProbabilisticValue<?> b = this.getInputValue(1);
+		Objects.requireNonNull(b);
+		return this.getValueInternal(a, b);
+	}
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.probabilistic.discrete.functions.math.
-     * ProbabilisticMultiplicationOperator#getValue()
-     */
-    @Override
-    public final ProbabilisticDouble getValue() {
-        final ProbabilisticDouble a = new ProbabilisticDouble(this.getNumericalInputValue(0), 1.0);
-        final AbstractProbabilisticValue<?> b = this.getInputValue(1);
-        Objects.requireNonNull(b);
-        return this.getValueInternal(a, b);
-    }
-
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
+	/**
+	 * Accepted data types.
+	 */
+	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
 }

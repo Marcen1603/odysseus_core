@@ -81,7 +81,7 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 	@Override
 	public final ProbabilisticString readData(final ObjectInputStream inputStream) throws IOException {
 		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available()>=4);
+		Preconditions.checkArgument(inputStream.available() >= 4);
 		final int length = inputStream.readInt();
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (int i = 0; i < length; i++) {
@@ -120,7 +120,7 @@ public class ProbabilisticStringHandler extends AbstractDataHandler<Probabilisti
 	@Override
 	public final ProbabilisticString readData(final ByteBuffer buffer) {
 		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining()>=4);
+		Preconditions.checkArgument(buffer.remaining() >= 4);
 		final int length = buffer.getInt();
 		final Map<String, Double> values = new HashMap<String, Double>();
 		for (int i = 0; i < length; i++) {

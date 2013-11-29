@@ -21,14 +21,24 @@ import java.text.DecimalFormat;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * Based on the Matlab function for the numerical computation of multivariate normal distribution values by Alan Genz: http://www.sci.wsu.edu/math/faculty/genz/homepage
+ * Based on the Matlab function for the numerical computation of multivariate normal distribution values by Alan Genz.
+ * 
+ * http://www.sci.wsu.edu/math/faculty/genz/homepage
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * @author Alexander Funk
  * 
  */
-public class QSIMVN {
-
+public final class QSIMVN {
+	/**
+	 * Compute the cumulative probability of the given distribution.
+	 * 
+	 * @param m
+	 * @param r
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static QSIMVNResult cumulativeProbability(final int m, final Matrix r, final Matrix a, final Matrix b) {
 		// [n, n] = size(r);
 		// size of r must be quadratic i guess ...
@@ -45,12 +55,12 @@ public class QSIMVN {
 		if (FastMath.abs(ai) < (cn * ct)) {
 			c = Util.phi(ai / ct);
 		} else {
-            c = (1.0 + FastMath.signum(ai)) / 2.0;
+			c = (1.0 + FastMath.signum(ai)) / 2.0;
 		}
 		if (FastMath.abs(bi) < (cn * ct)) {
 			d = Util.phi(bi / ct);
 		} else {
-            d = (1.0 + FastMath.signum(bi)) / 2.0;
+			d = (1.0 + FastMath.signum(bi)) / 2.0;
 		}
 		final double ci = c;
 		final double dci = d - ci;
@@ -61,7 +71,7 @@ public class QSIMVN {
 		final double nv = Util.max(new double[] { m / ns, 1.0 }); // double nv = max( [
 		// m/ns 1 ] );
 		// %q = 2.^( [1:n-1]'/n) ; % Niederreiter point set generators
-        final Matrix ps = Matrix.primes((int) ((5.0 * n * FastMath.log(n + 1.0)) / 4.0)).sqrt();
+		final Matrix ps = Matrix.primes((int) ((5.0 * n * FastMath.log(n + 1.0)) / 4.0)).sqrt();
 		final Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //% Richtmyer
 															// generators
 
@@ -147,12 +157,12 @@ public class QSIMVN {
 			if (FastMath.abs(ai) < (cn * ct)) {
 				c = Util.phi(ai / ct);
 			} else {
-                c = (1.0 + FastMath.signum(ai)) / 2.0;
+				c = (1.0 + FastMath.signum(ai)) / 2.0;
 			}
 			if (FastMath.abs(bi) < (cn * ct)) {
 				d = Util.phi(bi / ct);
 			} else {
-                d = (1.0 + FastMath.signum(bi)) / 2.0;
+				d = (1.0 + FastMath.signum(bi)) / 2.0;
 			}
 			dc = d - c;
 			p = p * dc;
@@ -161,6 +171,13 @@ public class QSIMVN {
 		return p;
 	}
 
+	/**
+	 * 
+	 * @param r
+	 * @param a
+	 * @param b
+	 * @return
+	 */
 	public static ChlrdrResult chlrdr(final Matrix r, final Matrix a, final Matrix b) {
 		// function [ c, ap, bp ] = chlrdr( R, a, b )
 		// %
@@ -295,7 +312,14 @@ public class QSIMVN {
 		final Matrix b = new Matrix(new double[][] { { 1.0 }, { 2.0 }, { 3.0 }, { 4.0 } });
 
 		final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, r, a, b);
-        System.out.println("p = " + ret.getProbability() + "   e = " + new DecimalFormat("#.###############").format(ret.getError()));
+		System.out.println("p = " + ret.getProbability() + "   e = " + new DecimalFormat("#.###############").format(ret.getError()));
+	}
+
+	/**
+	 * Hidden utility constructor.
+	 */
+	private QSIMVN() {
+		throw new UnsupportedOperationException();
 	}
 }
 

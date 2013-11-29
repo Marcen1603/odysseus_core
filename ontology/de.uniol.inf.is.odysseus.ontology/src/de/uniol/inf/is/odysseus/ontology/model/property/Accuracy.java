@@ -30,8 +30,8 @@ public class Accuracy extends MeasurementProperty implements IMeasurementPropert
      * 
      * @param uri
      */
-    public Accuracy(URI uri, String expression) {
-        super(uri, SSN.Accuracy,expression);
+    public Accuracy(final URI uri, final String expression) {
+        super(uri, SSN.Accuracy, expression);
     }
 
 }

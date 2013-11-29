@@ -22,34 +22,34 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  * 
  */
 public final class SDFUtils {
-	public static String getFeatureOfInterestLabel(SDFAttribute attribute) {
-		String sourceName = attribute.getSourceName();
-		if (sourceName != null) {
-			String[] sourceArray = sourceName.split(":");
-			if (sourceArray.length >= 2) {
-				int pos = sourceArray[0].indexOf(".");
-				if (pos > 0) {
-					return sourceArray[0].substring(pos + 1,
-							sourceArray[0].length());
-				} else {
-					return sourceArray[0];
-				}
-			}
-		}
-		return null;
-	}
+    public static String getFeatureOfInterestLabel(final SDFAttribute attribute) {
+        final String sourceName = attribute.getSourceName();
+        if (sourceName != null) {
+            final String[] sourceArray = sourceName.split(":");
+            if (sourceArray.length >= 2) {
+                final int pos = sourceArray[0].indexOf(".");
+                if (pos > 0) {
+                    return sourceArray[0].substring(pos + 1, sourceArray[0].length());
+                } else {
+                    return sourceArray[0];
+                }
+            }
+        }
+        return null;
+    }
 
-	public static String getSensingDeviceLabel(SDFAttribute attribute) {
-		String sourceName = attribute.getSourceName();
-		if (sourceName != null) {
-			String[] sourceArray = sourceName.split(":");
-			if (sourceArray.length >= 2) {
-				return sourceArray[1];
-			}
-		}
-		return null;
-	}
+    public static String getSensingDeviceLabel(final SDFAttribute attribute) {
+        final String sourceName = attribute.getSourceName();
+        if (sourceName != null) {
+            final String[] sourceArray = sourceName.split(":");
+            if (sourceArray.length >= 2) {
+                return sourceArray[1];
+            }
+        }
+        return null;
+    }
 
-	private SDFUtils() {
-	}
+    private SDFUtils() {
+        throw new UnsupportedOperationException();
+    }
 }

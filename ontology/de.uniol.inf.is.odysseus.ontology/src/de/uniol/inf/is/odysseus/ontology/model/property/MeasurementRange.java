@@ -30,7 +30,7 @@ public class MeasurementRange extends MeasurementProperty implements IMeasuremen
      * 
      * @param uri
      */
-    public MeasurementRange(URI uri, String expression) {
+    public MeasurementRange(final URI uri, final String expression) {
         super(uri, SSN.MeasurementRange, expression);
     }
 

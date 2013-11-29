@@ -39,7 +39,6 @@ public class PredicateManagerImpl {
 
     }
 
-
     public void getConditionPredicates(final SensingDevice sensingDevice) {
 
     }

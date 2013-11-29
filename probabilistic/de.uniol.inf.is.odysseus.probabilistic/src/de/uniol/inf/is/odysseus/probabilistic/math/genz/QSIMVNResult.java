@@ -16,26 +16,41 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.math.genz;
 
+/**
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class QSIMVNResult {
-    private final double probability;
-    private final double error;
+	/** The probability. */
+	private final double probability;
+	/** The error. */
+	private final double error;
 
-    public QSIMVNResult(final double probability, final double error) {
-        this.probability = probability;
-        this.error = error;
-    }
+	/**
+	 * Creates a new instance.
+	 * 
+	 * @param probability
+	 *            The probability
+	 * @param error
+	 *            The error
+	 */
+	public QSIMVNResult(final double probability, final double error) {
+		this.probability = probability;
+		this.error = error;
+	}
 
-    /**
-     * @return the error
-     */
-    public double getError() {
-        return this.error;
-    }
+	/**
+	 * @return the error
+	 */
+	public double getError() {
+		return this.error;
+	}
 
-    /**
-     * @return the probability
-     */
-    public double getProbability() {
-        return this.probability;
-    }
+	/**
+	 * @return the probability
+	 */
+	public double getProbability() {
+		return this.probability;
+	}
 }

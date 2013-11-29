@@ -32,7 +32,7 @@ public class IntervalCondition extends Condition implements ICondition {
      * 
      * @param uri
      */
-    public IntervalCondition(URI uri, Property onProperty, Interval interval) {
+    public IntervalCondition(final URI uri, final Property onProperty, final Interval interval) {
         super(uri, onProperty);
         this.interval = interval;
     }
@@ -49,15 +49,15 @@ public class IntervalCondition extends Condition implements ICondition {
      */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("(");
-        sb.append(getOnProperty().getUri().getFragment());
+        sb.append(this.getOnProperty().getUri().getFragment());
         sb.append(" >= ");
-        sb.append(getInterval().inf());
+        sb.append(this.getInterval().inf());
         sb.append(" AND ");
-        sb.append(getOnProperty().getUri().getFragment());
+        sb.append(this.getOnProperty().getUri().getFragment());
         sb.append(" <= ");
-        sb.append(getInterval().sup());
+        sb.append(this.getInterval().sup());
         sb.append(")");
         return sb.toString();
     }

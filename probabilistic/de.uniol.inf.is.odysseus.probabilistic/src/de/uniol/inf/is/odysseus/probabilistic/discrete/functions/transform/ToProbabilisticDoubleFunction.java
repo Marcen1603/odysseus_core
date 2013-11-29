@@ -64,8 +64,8 @@ public class ToProbabilisticDoubleFunction extends AbstractFunction<Probabilisti
 	public final ProbabilisticDouble getValue() {
 		final double[][] values = (double[][]) this.getInputValue(0);
 		Objects.requireNonNull(values);
-		Preconditions.checkArgument(values.length>0);
-		Preconditions.checkArgument(values[0].length==2);
+		Preconditions.checkArgument(values.length > 0);
+		Preconditions.checkArgument(values[0].length == 2);
 		final Map<Double, Double> valueMap = new HashMap<Double, Double>();
 		for (final double[] value : values) {
 			valueMap.put(value[0], value[1]);

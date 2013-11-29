@@ -16,14 +16,26 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.math.genz;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+/**
+ * Matrix implementation to simulate the behavior of mathlab.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
 public class Matrix {
 	private double[][] data;
 	private int rows;
 	private int columns;
 
+	/**
+	 * Creates a new matrix instance with thre given values.
+	 * 
+	 * @param values
+	 *            The values of the matrix
+	 */
 	public Matrix(final double[][] values) {
 		this.data = new double[values.length][values[0].length];
 
@@ -37,16 +49,32 @@ public class Matrix {
 		this.columns = values[0].length;
 	}
 
+	/**
+	 * Clone constructor.
+	 * 
+	 * @param copy
+	 *            The instance to copy from
+	 */
 	public Matrix(final Matrix copy) {
 		this(copy.data);
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @param n
+	 */
 	public Matrix(final int m, final int n) {
 		this.data = new double[m][n];
 		this.rows = m;
 		this.columns = n;
 	}
 
+	/**
+	 * 
+	 * @param values
+	 * @param rowVector
+	 */
 	public Matrix(final double[] values, final boolean rowVector) {
 		this.data = new double[1][values.length];
 
@@ -64,22 +92,45 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final int getRowDimension() {
 		return this.rows;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final int getColumnDimension() {
 		return this.columns;
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param column
+	 * @return
+	 */
 	public final double get(final int row, final int column) {
 		return this.data[row - 1][column - 1];
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @return
+	 */
 	public final Matrix getRowVector(final int row) {
 		return new Matrix(this.data[row], true);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final int getDimension() {
 		this.methodNeedsVector();
 
@@ -90,10 +141,18 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final boolean isRowVector() {
 		return !(this.getRowDimension() > this.getColumnDimension());
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final boolean isVector() {
 		if ((this.getColumnDimension() == 1) || (this.getRowDimension() == 1)) {
 			return true;
@@ -102,6 +161,11 @@ public class Matrix {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
 	public final double get(final int i) {
 		this.methodNeedsVector();
 
@@ -112,6 +176,11 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @param value
+	 */
 	public final void set(final int index, final double value) {
 		this.methodNeedsVector();
 
@@ -122,10 +191,22 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param col
+	 * @param value
+	 */
 	public final void setElement(final int row, final int col, final double value) {
 		this.data[row - 1][col - 1] = value;
 	}
 
+	/**
+	 * 
+	 * @param col
+	 * @param values
+	 * @return
+	 */
 	public final Matrix setColumn(final int col, final double[] values) {
 		if (values.length != this.getRowDimension()) {
 			throw new RuntimeException("setColumn params length differs from intern length!");
@@ -146,6 +227,12 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param values
+	 * @return
+	 */
 	public final Matrix setRow(final int row, final double[] values) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -162,6 +249,12 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param from
+	 * @param values
+	 */
 	public final void setSubRow(final int row, final int from, final Matrix values) {
 		if (values.isEmpty()) {
 			// ignore to copy matlab functionality
@@ -173,6 +266,12 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param col
+	 * @param from
+	 * @param values
+	 */
 	public final void setSubCol(final int col, final int from, final Matrix values) {
 		if (values.isEmpty()) {
 			// ignore to copy matlab functionality
@@ -184,6 +283,13 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param col
+	 * @param from
+	 * @param to
+	 * @param value
+	 */
 	public final void setSubCol(final int col, final int from, final int to, final double value) {
 		if ((to - from) <= 0) {
 			// ignore to copy matlab functionality
@@ -195,6 +301,13 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param from
+	 * @param to
+	 * @param value
+	 */
 	public final void setSubRow(final int row, final int from, final int to, final double value) {
 		if ((to - from) <= 0) {
 			// ignore to copy matlab functionality
@@ -206,6 +319,13 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param from
+	 * @param to
+	 * @return
+	 */
 	public final Matrix getSubRow(final int row, final int from, final int to) {
 		final int len = to - from;
 		if (len == 0) {
@@ -224,6 +344,13 @@ public class Matrix {
 		return new Matrix(res, true);
 	}
 
+	/**
+	 * 
+	 * @param col
+	 * @param from
+	 * @param to
+	 * @return
+	 */
 	public final Matrix getSubColumn(final int col, final int from, final int to) {
 		final int len = to - from;
 		if (len == 0) {
@@ -243,6 +370,12 @@ public class Matrix {
 		return new Matrix(res, false);
 	}
 
+	/**
+	 * 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
 	public final Matrix getSubVector(final int from, final int to) {
 		this.methodNeedsVector();
 
@@ -253,6 +386,11 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	public final double matlabMultiply(final Matrix m) {
 		if (!this.isVector() || !m.isVector()) {
 			throw new RuntimeException("Both Matrixes need to be Vector!");
@@ -272,18 +410,32 @@ public class Matrix {
 		}
 	}
 
+	/**
+	 * 
+	 * @param column
+	 * @param divisor
+	 */
 	public final void divideColumn(final int column, final double divisor) {
 		for (int i = 1; i <= this.getRowDimension(); i++) {
 			this.setElement(i, column, this.get(i, column) / divisor);
 		}
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param divisor
+	 */
 	public final void divideRow(final int row, final double divisor) {
 		for (int i = 1; i <= this.getColumnDimension(); i++) {
 			this.setElement(row, i, this.get(row, i) / divisor);
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final Matrix trans() {
 		if (this.getRowDimension() == 0) {
 			return Matrix.empty(0, this.getColumnDimension());
@@ -296,6 +448,11 @@ public class Matrix {
 		return new Matrix(this.transArray(this.data));
 	}
 
+	/**
+	 * 
+	 * @param input
+	 * @return
+	 */
 	private double[][] transArray(final double[][] input) {
 		// transponieren
 		final double[][] res = new double[input[0].length][input.length];
@@ -309,6 +466,11 @@ public class Matrix {
 		return res;
 	}
 
+	/**
+	 * 
+	 * @param d
+	 * @return
+	 */
 	public final Matrix matlabMultiply(final double d) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -321,6 +483,11 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	public final Matrix substract(final Matrix m) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -333,6 +500,11 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
 	public final Matrix add(final Matrix m) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -345,6 +517,11 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @param mod
+	 * @return
+	 */
 	public final Matrix mod(final int mod) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -357,6 +534,10 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final Matrix abs() {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -369,6 +550,10 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final Matrix sqrt() {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -382,6 +567,10 @@ public class Matrix {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final Matrix diag() {
 		// v = diag(X,k) for matrix X, returns a column vector v formed from the elements of the kth diagonal of X.
 		// v = diag(X) returns the main diagonal of X, same as above with k = 0 .
@@ -395,12 +584,20 @@ public class Matrix {
 		return res;
 	}
 
+	/**
+ * 
+ */
 	private void methodNeedsVector() {
 		if ((this.getRowDimension() > 1) && (this.getColumnDimension() > 1)) {
 			throw new RuntimeException("Method needs Vector, not Matrix!");
 		}
 	}
 
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
 	public final Matrix max(final double value) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 
@@ -417,10 +614,20 @@ public class Matrix {
 		return new Matrix(res);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public final boolean isEmpty() {
 		return (this.getRowDimension() == 0) || (this.getColumnDimension() == 0);
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @param n
+	 * @return
+	 */
 	private static Matrix empty(final int m, final int n) {
 		if ((m != 0) && (n != 0)) {
 			throw new RuntimeException("Tried to create empty Matrix with both Dimesnons != 0");
@@ -429,6 +636,11 @@ public class Matrix {
 		return new Matrix(m, n);
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public static Matrix zeros(final int n) {
 		final double[] temp = new double[n];
 
@@ -439,6 +651,12 @@ public class Matrix {
 		return new Matrix(temp, false);
 	}
 
+	/**
+	 * 
+	 * @param m
+	 * @param n
+	 * @return
+	 */
 	public static Matrix zeros(final int m, final int n) {
 		final double[][] d = new double[m][n];
 		for (int i = 0; i < m; i++) {
@@ -451,6 +669,11 @@ public class Matrix {
 		return new Matrix(d);
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public static Matrix rand(final int n) {
 		// r = rand(n) returns an n-by-n matrix containing pseudorandom
 		// values drawn from the standard uniform distribution on the
@@ -467,11 +690,16 @@ public class Matrix {
 		return new Matrix(temp, false);
 	}
 
+	/**
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public static Matrix primes(final int n) {
 		// p = primes(n) returns a row vector of the prime numbers
 		// less than or equal to n. A prime number is one that
 		// has no factors other than 1 and itself.
-		final ArrayList<Integer> prim = Util.generatePrimes(n);
+		final List<Integer> prim = Util.generatePrimes(n);
 		final double[] primes = new double[prim.size()];
 		for (int i = 0; i < prim.size(); i++) {
 			primes[i] = prim.get(i);
@@ -480,6 +708,10 @@ public class Matrix {
 		return new Matrix(primes, true);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final String toString() {
 		final StringBuffer str = new StringBuffer();
@@ -496,6 +728,11 @@ public class Matrix {
 		return str.toString();
 	}
 
+	/**
+	 * 
+	 * @param number
+	 * @return
+	 */
 	public final Matrix substract(final double number) {
 		final double[][] res = new double[this.getRowDimension()][this.getColumnDimension()];
 

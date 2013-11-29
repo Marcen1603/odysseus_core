@@ -33,63 +33,57 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TQualityAOTransformRule extends
-		AbstractTransformationRule<QualityAO> {
-	/** The Logger. */
-	private static final Logger LOG = LoggerFactory
-			.getLogger(TQualityAOTransformRule.class);
+public class TQualityAOTransformRule extends AbstractTransformationRule<QualityAO> {
+    /** The Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(TQualityAOTransformRule.class);
 
-	@Override
-	public final int getPriority() {
-		return 0;
-	}
+    @Override
+    public final int getPriority() {
+        return 0;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void execute(final QualityAO operator,
-			final TransformationConfiguration transformConfig) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
 
-		IPhysicalOperator mapPO;
-		LOG.debug("Transform QualityAO to Map operator with expressions: "
-				+ Arrays.toString(operator.getExpressions()));
-		mapPO = new RelationalMapPO<IMetaAttribute>(operator.getInputSchema(),
-				operator.getExpressions(), false, false);
+        IPhysicalOperator mapPO;
+        TQualityAOTransformRule.LOG.debug("Transform QualityAO to Map operator with expressions: " + Arrays.toString(operator.getExpressions()));
+        mapPO = new RelationalMapPO<IMetaAttribute>(operator.getInputSchema(), operator.getExpressions(), false, false);
 
-		this.defaultExecute(operator, mapPO, transformConfig, true, true);
+        this.defaultExecute(operator, mapPO, transformConfig, true, true);
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean isExecutable(final QualityAO operator,
-			final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			// if (operator.getInputSchema().getType() ==
-			// ProbabilisticTuple.class) {
-			return true;
-			// }
-		}
-		return false;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean isExecutable(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            // if (operator.getInputSchema().getType() ==
+            // ProbabilisticTuple.class) {
+            return true;
+            // }
+        }
+        return false;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return "QualityAO -> QualityPO(probabilistic)";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return "QualityAO -> QualityPO(probabilistic)";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.TRANSFORMATION;
+    }
 
 }

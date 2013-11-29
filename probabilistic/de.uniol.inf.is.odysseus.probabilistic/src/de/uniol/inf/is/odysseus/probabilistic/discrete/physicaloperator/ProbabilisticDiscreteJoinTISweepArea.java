@@ -92,7 +92,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea#queryCopy(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
-	public final Iterator<T> queryCopy(final T element, final Order order, boolean extract) {
+	public final Iterator<T> queryCopy(final T element, final Order order, final boolean extract) {
 		final LinkedList<T> result = new LinkedList<T>();
 		Iterator<T> iter;
 		synchronized (this.getElements()) {
@@ -105,7 +105,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 					world = this.evaluateWorld(this.getQueryPredicate(), element, next, this.leftProbabilisticAttributePos, this.rightProbabilisticAttributePos, order);
 					if (world.getMetadata().getExistence() > 0.0) {
 						result.add(world);
-						if (extract){
+						if (extract) {
 							iter.remove();
 						}
 					}
@@ -118,7 +118,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 					world = this.evaluateWorld(this.getQueryPredicate(), next, element, this.rightProbabilisticAttributePos, this.leftProbabilisticAttributePos, order);
 					if (world.getMetadata().getExistence() > 0.0) {
 						result.add(world);
-						if (extract){
+						if (extract) {
 							iter.remove();
 						}
 					}

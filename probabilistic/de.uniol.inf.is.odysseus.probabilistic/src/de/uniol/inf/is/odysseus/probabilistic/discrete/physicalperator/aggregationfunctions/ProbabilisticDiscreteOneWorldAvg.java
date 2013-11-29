@@ -27,106 +27,94 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
  */
 public class ProbabilisticDiscreteOneWorldAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = -2188835286391575126L;
-    // TODO Move to a global configuration
-    /** The maximum error. */
-    private static final double ERROR = 0.004;
-    /** The probability bound. */
-    private static final double BOUND = 1.0 / Math.E;
-    /** The attribute position. */
-    private final int pos;
-    /** The result data type. */
-    private final String datatype;
+	private static final long serialVersionUID = -2188835286391575126L;
+	// TODO Move to a global configuration
+	/** The maximum error. */
+	private static final double ERROR = 0.004;
+	/** The probability bound. */
+	private static final double BOUND = 1.0 / Math.E;
+	/** The attribute position. */
+	private final int pos;
+	/** The result data type. */
+	private final String datatype;
 
-    /**
-     * Gets an instance of {@link ProbabilisticDiscreteOneWorldAvg}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result datatype
-     * @return An instance of {@link ProbabilisticDiscreteOneWorldAvg}
-     */
-    public static ProbabilisticDiscreteOneWorldAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteOneWorldAvg(pos, partialAggregateInput, datatype);
-    }
+	/**
+	 * Gets an instance of {@link ProbabilisticDiscreteOneWorldAvg}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 * @return An instance of {@link ProbabilisticDiscreteOneWorldAvg}
+	 */
+	public static ProbabilisticDiscreteOneWorldAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticDiscreteOneWorldAvg(pos, partialAggregateInput, datatype);
+	}
 
-    /**
-     * Creates a new instance of {@link ProbabilisticDiscreteOneWorldAvg}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result datatype
-     */
-    protected ProbabilisticDiscreteOneWorldAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("AVG", partialAggregateInput);
-        this.pos = pos;
-        this.datatype = datatype;
-    }
+	/**
+	 * Creates a new instance of {@link ProbabilisticDiscreteOneWorldAvg}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 */
+	protected ProbabilisticDiscreteOneWorldAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("AVG", partialAggregateInput);
+		this.pos = pos;
+		this.datatype = datatype;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .IInitializer#init(java.lang.Object)
-     */
-    @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticDiscreteOneWorldAvg.ERROR,
-                ProbabilisticDiscreteOneWorldAvg.BOUND, this.datatype);
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.update(value.getKey(), value.getValue());
-        }
-        return pa;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions .IInitializer#init(java.lang.Object)
+	 */
+	@Override
+	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticDiscreteOneWorldAvg.ERROR, ProbabilisticDiscreteOneWorldAvg.BOUND, this.datatype);
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
+			pa.update(value.getKey(), value.getValue());
+		}
+		return pa;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .
-     * IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-     * .basefunctions.IPartialAggregate, java.lang.Object, boolean)
-     */
-    @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
-        if (createNew) {
-            pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticDiscreteOneWorldAvg.ERROR, ProbabilisticDiscreteOneWorldAvg.BOUND, this.datatype);
-        }
-        else {
-            pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions . IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate .basefunctions.IPartialAggregate, java.lang.Object, boolean)
+	 */
+	@Override
+	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
+		if (createNew) {
+			pa = new OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>(ProbabilisticDiscreteOneWorldAvg.ERROR, ProbabilisticDiscreteOneWorldAvg.BOUND, this.datatype);
+		} else {
+			pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+		}
 
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.update(value.getKey(), value.getValue());
-        }
-        return pa;
-    }
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
+			pa.update(value.getKey(), value.getValue());
+		}
+		return pa;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .
-     * IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator
-     * .aggregate.basefunctions.IPartialAggregate)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
-        r.setAttribute(0, new Double(pa.getAggregate()));
-        return r;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions . IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator .aggregate.basefunctions.IPartialAggregate)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		final OneWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (OneWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+		final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
+		r.setAttribute(0, new Double(pa.getAggregate()));
+		return r;
+	}
 
 }

@@ -67,7 +67,7 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 	@Override
 	public final ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
 		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available()>=4);
+		Preconditions.checkArgument(inputStream.available() >= 4);
 		final int length = inputStream.readInt();
 		final Map<Double, Double> values = new HashMap<Double, Double>();
 		for (int i = 0; i < length; i++) {
@@ -102,7 +102,7 @@ public class ProbabilisticDoubleHandler extends AbstractDataHandler<Probabilisti
 	@Override
 	public final ProbabilisticDouble readData(final ByteBuffer buffer) {
 		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining()>=4);
+		Preconditions.checkArgument(buffer.remaining() >= 4);
 		final int length = buffer.getInt();
 		final Map<Double, Double> values = new HashMap<Double, Double>();
 		for (int i = 0; i < length; i++) {

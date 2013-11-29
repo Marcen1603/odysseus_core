@@ -69,9 +69,9 @@ public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFuncti
 		final double[][] variances = (double[][]) this.getInputValue(1);
 		Objects.requireNonNull(means);
 		Objects.requireNonNull(variances);
-		Preconditions.checkArgument(means.length>0);
-		Preconditions.checkArgument(means.length==variances.length);
-		Preconditions.checkArgument(variances.length==variances[0].length);
+		Preconditions.checkArgument(means.length > 0);
+		Preconditions.checkArgument(means.length == variances.length);
+		Preconditions.checkArgument(variances.length == variances[0].length);
 		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
 		mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));

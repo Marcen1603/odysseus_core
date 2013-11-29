@@ -24,18 +24,18 @@ import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
  * 
  */
 public enum SSNMeasurementProperty {
-	Accuracy(SSN.Accuracy), DetectionLimit(SSN.DetectionLimit), Drift(SSN.Drift), Frequency(SSN.Frequency), Latency(SSN.Latency), MeasurementRange(SSN.MeasurementRange), Precision(SSN.Precision), ResponseTime(
-            SSN.ResponseTime), Resolution(SSN.Resolution), Sensitivity(SSN.Sensitivity), Selectivity(SSN.Selectivity);
+    Accuracy(SSN.Accuracy), DetectionLimit(SSN.DetectionLimit), Drift(SSN.Drift), Frequency(SSN.Frequency), Latency(SSN.Latency), MeasurementRange(SSN.MeasurementRange), Precision(SSN.Precision), ResponseTime(SSN.ResponseTime), Resolution(SSN.Resolution), Sensitivity(SSN.Sensitivity), Selectivity(
+            SSN.Selectivity);
 
     private Resource resource;
 
     // Constructor
 
-    SSNMeasurementProperty(Resource resource) {
+    SSNMeasurementProperty(final Resource resource) {
         this.resource = resource;
     }
 
     public Resource getResource() {
-        return resource;
+        return this.resource;
     }
 }

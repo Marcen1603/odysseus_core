@@ -43,116 +43,108 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
- * Transformation rule for relational Join operator for discrete probabilistic
- * values.
+ * Transformation rule for relational Join operator for discrete probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
 public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>> {
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-     */
-    @Override
-    public final int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+	 */
+	@Override
+	public final int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
-     * java.lang.Object)
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public final void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
-        final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public final void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+		final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
-        final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
-                joinPO.getOutputSchema().size());
-        IMetadataMergeFunction<?> metadataMerge;
-        if (transformConfig.getMetaTypes().size() > 1) {
-            final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
-            combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
-            metadataMerge = combinedMetadataMerge;
-        }
-        else {
-            metadataMerge = TIMergeFunction.getInstance();
-        }
-        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        if (joinPO.getPredicate() != null) {
-            attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes()));
-        }
+		final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(joinPO.getOutputSchema().size());
+		IMetadataMergeFunction<?> metadataMerge;
+		if (transformConfig.getMetaTypes().size() > 1) {
+			final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
+			combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+			metadataMerge = combinedMetadataMerge;
+		} else {
+			metadataMerge = TIMergeFunction.getInstance();
+		}
+		final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		if (joinPO.getPredicate() != null) {
+			attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes()));
+		}
 
-        final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
-        final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
+		final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
+		final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
 
-        final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
-        leftAttributes.retainAll(attributes);
+		final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
+		leftAttributes.retainAll(attributes);
 
-        final List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
-        rightAttributes.retainAll(attributes);
-        rightAttributes.removeAll(leftAttributes);
+		final List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
+		rightAttributes.retainAll(attributes);
+		rightAttributes.removeAll(leftAttributes);
 
-        final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
-        final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
+		final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
+		final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
-        for (int port = 0; port < 2; port++) {
-            areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);
-        }
+		for (int port = 0; port < 2; port++) {
+			areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);
+		}
 
-        joinPO.setAreas(areas);
+		joinPO.setAreas(areas);
 
-    }
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
-     * .Object, java.lang.Object)
-     */
-    @Override
-    public final boolean isExecutable(@SuppressWarnings("rawtypes") final JoinTIPO operator, final TransformationConfiguration transformConfig) {
-        if (operator.getAreas() == null) {
-            if (operator instanceof ProbabilisticDiscreteJoinTIPO) {
-                IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang .Object, java.lang.Object)
+	 */
+	@Override
+	public final boolean isExecutable(@SuppressWarnings("rawtypes") final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+		if (operator.getAreas() == null) {
+			if (operator instanceof ProbabilisticDiscreteJoinTIPO) {
+				IPredicate<?> predicate = operator.getPredicate();
+				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+				if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-     */
-    @Override
-    public final String getName() {
-        return "ProbabilisticDiscreteJoinPO set SweepArea";
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+	 */
+	@Override
+	public final String getName() {
+		return "ProbabilisticDiscreteJoinPO set SweepArea";
+	}
 
-    /*
-     * 
-     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-     */
-    @Override
-    public final IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.METAOBJECTS;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+	 */
+	@Override
+	public final IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-     */
-    @Override
-    public final Class<? super JoinTIPO<?, ?>> getConditionClass() {
-        return JoinTIPO.class;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+	 */
+	@Override
+	public final Class<? super JoinTIPO<?, ?>> getConditionClass() {
+		return JoinTIPO.class;
+	}
 
 }

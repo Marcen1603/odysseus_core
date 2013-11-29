@@ -38,45 +38,45 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransformationRule<LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
 
-    @Override
-    public int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	@Override
+	public int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    @Override
-    public void execute(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, TransformationConfiguration transformConfig) {
-        joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
-        update(joinPO);
-    }
+	@Override
+	public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, final TransformationConfiguration transformConfig) {
+		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
+		update(joinPO);
+	}
 
-    @Override
-    public boolean isExecutable(LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, TransformationConfiguration transformConfig) {
-        if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
-            if (operator.getDataMerge() == null) {
-                IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    throw new IllegalArgumentException("Not implemented");
+	@Override
+	public boolean isExecutable(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+		if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
+			if (operator.getDataMerge() == null) {
+				IPredicate<?> predicate = operator.getPredicate();
+				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+				if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+					throw new IllegalArgumentException("Not implemented");
 
-                }
-            }
-        }
-        return false;
-    }
+				}
+			}
+		}
+		return false;
+	}
 
-    @Override
-    public String getName() {
-        return "Insert DataMergeFunction (Probabilistic)";
-    }
+	@Override
+	public String getName() {
+		return "Insert DataMergeFunction (Probabilistic)";
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.METAOBJECTS;
-    }
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
 
-    @Override
-    public Class<? super LeftJoinTIPO<?, ?>> getConditionClass() {
-        return LeftJoinTIPO.class;
-    }
+	@Override
+	public Class<? super LeftJoinTIPO<?, ?>> getConditionClass() {
+		return LeftJoinTIPO.class;
+	}
 
 }

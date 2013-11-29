@@ -56,7 +56,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	@Override
 	public final ProbabilisticContinuousDouble readData(final ObjectInputStream inputStream) throws IOException {
 		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available()>=4);
+		Preconditions.checkArgument(inputStream.available() >= 4);
 		final int distributionIndex = inputStream.readInt();
 		return new ProbabilisticContinuousDouble(distributionIndex);
 	}
@@ -80,7 +80,7 @@ public class ProbabilisticContinuousHandler extends AbstractDataHandler<Probabil
 	@Override
 	public final ProbabilisticContinuousDouble readData(final ByteBuffer buffer) {
 		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining()>=4);
+		Preconditions.checkArgument(buffer.remaining() >= 4);
 		final int distributionIndex = buffer.getInt();
 		return new ProbabilisticContinuousDouble(distributionIndex);
 	}

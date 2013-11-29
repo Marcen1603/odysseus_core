@@ -31,48 +31,70 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TProbabilisticJoinAOSetMMRule extends AbstractTransformationRule<JoinTIPO<?, ?>> {
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getPriority() {
+		return TransformationConstants.PRIORITY;
+	}
 
-    @Override
-    public int getPriority() {
-        return TransformationConstants.PRIORITY;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+		if (transformConfig.getMetaTypes().size() > 1) {
+			((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
+		} else {
+			joinPO.setMetadataMerge(TIMergeFunction.getInstance());
+		}
+	}
 
-    @Override
-    public void execute(JoinTIPO joinPO, TransformationConfiguration transformConfig) {
-        if (transformConfig.getMetaTypes().size() > 1) {
-            ((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
-        }
-        else {
-            joinPO.setMetadataMerge(TIMergeFunction.getInstance());
-        }
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isExecutable(final JoinTIPO<?, ?> operator, final TransformationConfiguration transformConfig) {
+		if (transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+			if (operator.getMetadataMerge() != null) {
+				if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
+					return true;
+				}
+			}
 
-    @Override
-    public boolean isExecutable(JoinTIPO<?, ?> operator, TransformationConfiguration transformConfig) {
-        if (transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
-            if (operator.getMetadataMerge() != null) {
-                if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
-                    return true;
-                }
-            }
+		}
+		return false;
+	}
 
-        }
-        return false;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return "JoinTIPO add MetadataMerge (IProbabilistic)";
+	}
 
-    @Override
-    public String getName() {
-        return "JoinTIPO add MetadataMerge (IProbabilistic)";
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.METAOBJECTS;
+	}
 
-    @Override
-    public IRuleFlowGroup getRuleFlowGroup() {
-        return TransformRuleFlowGroup.METAOBJECTS;
-    }
-
-    @Override
-    public Class<? super JoinTIPO<?, ?>> getConditionClass() {
-        return JoinTIPO.class;
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Class<? super JoinTIPO<?, ?>> getConditionClass() {
+		return JoinTIPO.class;
+	}
 
 }

@@ -25,6 +25,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -33,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
 import de.uniol.inf.is.odysseus.ontology.model.SensingDevice;
@@ -48,260 +48,229 @@ import de.uniol.inf.is.odysseus.ontology.ontology.SensorOntologyServiceImpl;
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "Append quality information to the incoming stream object.", name = "Quality", category = { LogicalOperatorCategory.ONTOLOGY })
 public class QualityAO extends UnaryLogicalOp {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 7153504084002972374L;
-	private List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-	private List<String> properties = new ArrayList<String>();
-	private SDFExpression[] expressions;
+    private static final long serialVersionUID = 7153504084002972374L;
+    private List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+    private List<String> properties = new ArrayList<String>();
+    private SDFExpression[] expressions;
 
-	/**
-	 * Class constructor.
-	 * 
-	 */
-	public QualityAO() {
-		super();
-	}
+    /**
+     * Class constructor.
+     * 
+     */
+    public QualityAO() {
+        super();
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param qualityAO
-	 *            The instance to clone from
-	 */
-	public QualityAO(final QualityAO qualityAO) {
-		super(qualityAO);
-		Objects.requireNonNull(qualityAO);
-		this.attributes = new ArrayList<SDFAttribute>(qualityAO.attributes);
-		this.properties = new ArrayList<String>(qualityAO.properties);
-		if (qualityAO.expressions != null) {
-			this.expressions = qualityAO.expressions.clone();
-		}
-	}
+    /**
+     * Clone constructor.
+     * 
+     * @param qualityAO
+     *            The instance to clone from
+     */
+    public QualityAO(final QualityAO qualityAO) {
+        super(qualityAO);
+        Objects.requireNonNull(qualityAO);
+        this.attributes = new ArrayList<SDFAttribute>(qualityAO.attributes);
+        this.properties = new ArrayList<String>(qualityAO.properties);
+        if (qualityAO.expressions != null) {
+            this.expressions = qualityAO.expressions.clone();
+        }
+    }
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = false, isList = true)
-	public void setAttributes(List<SDFAttribute> attributes) {
-		Objects.requireNonNull(attributes);
-		Preconditions.checkArgument(!attributes.isEmpty());
-		this.attributes = attributes;
-	}
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", optional = false, isList = true)
+    public void setAttributes(final List<SDFAttribute> attributes) {
+        Objects.requireNonNull(attributes);
+        Preconditions.checkArgument(!attributes.isEmpty());
+        this.attributes = attributes;
+    }
 
-	@GetParameter(name = "ATTRIBUTES")
-	public List<SDFAttribute> getAttributes() {
-		if (this.attributes == null) {
-			this.attributes = new ArrayList<SDFAttribute>();
-		}
-		return this.attributes;
-	}
+    @GetParameter(name = "ATTRIBUTES")
+    public List<SDFAttribute> getAttributes() {
+        if (this.attributes == null) {
+            this.attributes = new ArrayList<SDFAttribute>();
+        }
+        return this.attributes;
+    }
 
-	@Parameter(type = StringParameter.class, name = "PROPERTIES", optional = false, isList = true)
-	public void setProperties(List<String> properties) {
-		Objects.requireNonNull(properties);
-		Preconditions.checkArgument(!properties.isEmpty());
-		this.properties = properties;
-	}
+    @Parameter(type = StringParameter.class, name = "PROPERTIES", optional = false, isList = true)
+    public void setProperties(final List<String> properties) {
+        Objects.requireNonNull(properties);
+        Preconditions.checkArgument(!properties.isEmpty());
+        this.properties = properties;
+    }
 
-	@GetParameter(name = "PROPERTIES")
-	public List<String> getProperties() {
-		if (this.properties == null) {
-			this.properties = new ArrayList<String>();
-		}
-		return this.properties;
-	}
+    @GetParameter(name = "PROPERTIES")
+    public List<String> getProperties() {
+        if (this.properties == null) {
+            this.properties = new ArrayList<String>();
+        }
+        return this.properties;
+    }
 
-	@Override
-	public SDFSchema getOutputSchemaIntern(int pos) {
-		calcOutputSchema();
-		return getOutputSchema();
-	}
+    @Override
+    public SDFSchema getOutputSchemaIntern(final int pos) {
+        this.calcOutputSchema();
+        return this.getOutputSchema();
+    }
 
-	public SDFExpression[] getExpressions() {
-		return this.expressions;
-	}
+    public SDFExpression[] getExpressions() {
+        return this.expressions;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public AbstractLogicalOperator clone() {
-		return new QualityAO(this);
-	}
-	
-	@Override
-	public void initialize() {
-		super.initialize();
-		Objects.requireNonNull(attributes);
-		Objects.requireNonNull(properties);
-		Preconditions.checkArgument(!attributes.isEmpty());
-		Preconditions.checkArgument(!properties.isEmpty());
-		Preconditions.checkState(SensorOntologyServiceImpl.getOntology()!=null);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractLogicalOperator clone() {
+        return new QualityAO(this);
+    }
 
-	private void calcOutputSchema() {
-		List<SDFAttribute> outputSchemaAttributes = new ArrayList<SDFAttribute>();
-		for (SDFAttribute attribute : getAttributes()) {
-			outputSchemaAttributes.add(attribute);
-		}
-		for (SDFAttribute attribute : getAttributes()) {
-			for (String property : properties) {
-				SDFAttribute propertyAttribute = new SDFAttribute(
-						attribute.getSourceName(), attribute.getAttributeName()
-								+ "_" + property, SDFDatatype.DOUBLE);
-				outputSchemaAttributes.add(propertyAttribute);
-			}
-		}
-		setOutputSchema(new SDFSchema(getInputSchema().getURI(),
-				getInputSchema().getType(), outputSchemaAttributes));
-		this.expressions = estimateExpressions();
-	}
+    @Override
+    public void initialize() {
+        super.initialize();
+        Objects.requireNonNull(this.attributes);
+        Objects.requireNonNull(this.properties);
+        Preconditions.checkArgument(!this.attributes.isEmpty());
+        Preconditions.checkArgument(!this.properties.isEmpty());
+        Preconditions.checkState(SensorOntologyServiceImpl.getOntology() != null);
+    }
 
-	private SDFExpression[] estimateExpressions() {
-		List<SDFAttribute> attributes = getAttributes();
-		List<String> measurementPropertyNames = getProperties();
+    private void calcOutputSchema() {
+        final List<SDFAttribute> outputSchemaAttributes = new ArrayList<SDFAttribute>();
+        for (final SDFAttribute attribute : this.getAttributes()) {
+            outputSchemaAttributes.add(attribute);
+        }
+        for (final SDFAttribute attribute : this.getAttributes()) {
+            for (final String property : this.properties) {
+                final SDFAttribute propertyAttribute = new SDFAttribute(attribute.getSourceName(), attribute.getAttributeName() + "_" + property, SDFDatatype.DOUBLE);
+                outputSchemaAttributes.add(propertyAttribute);
+            }
+        }
+        this.setOutputSchema(new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), outputSchemaAttributes));
+        this.expressions = this.estimateExpressions();
+    }
 
-		SDFExpression[] expressions = new SDFExpression[attributes.size()
-				* measurementPropertyNames.size() + attributes.size()];
+    private SDFExpression[] estimateExpressions() {
+        final List<SDFAttribute> attributes = this.getAttributes();
+        final List<String> measurementPropertyNames = this.getProperties();
 
-		int i = 0;
-		for (SDFAttribute attribute : attributes) {
-			expressions[i] = new SDFExpression(attribute.getAttributeName(),
-					MEP.getInstance());
-			i++;
-		}
+        final SDFExpression[] expressions = new SDFExpression[(attributes.size() * measurementPropertyNames.size()) + attributes.size()];
 
-		for (SDFAttribute attribute : attributes) {
-			List<SensingDevice> sensingDevices = getSensingDevices(attribute);
-			// if (!sensingDevices.isEmpty()) {
-			// FIXME What happens if there are more than one sensing device?
-			SensingDevice sensingDevice = sensingDevices.get(0);
+        int i = 0;
+        for (final SDFAttribute attribute : attributes) {
+            expressions[i] = new SDFExpression(attribute.getAttributeName(), MEP.getInstance());
+            i++;
+        }
 
-			List<MeasurementCapability> measurementCapabilities = sensingDevice
-					.getHasMeasurementCapabilities(attribute.getAttributeName());
-			Map<String, Map<StringBuilder, StringBuilder>> attributeMeasurementPropertyExpression = new HashMap<String, Map<StringBuilder, StringBuilder>>();
+        for (final SDFAttribute attribute : attributes) {
+            final List<SensingDevice> sensingDevices = this.getSensingDevices(attribute);
+            // if (!sensingDevices.isEmpty()) {
+            // FIXME What happens if there are more than one sensing device?
+            final SensingDevice sensingDevice = sensingDevices.get(0);
 
-			for (MeasurementCapability measurementCapability : measurementCapabilities) {
+            final List<MeasurementCapability> measurementCapabilities = sensingDevice.getHasMeasurementCapabilities(attribute.getAttributeName());
+            final Map<String, Map<StringBuilder, StringBuilder>> attributeMeasurementPropertyExpression = new HashMap<String, Map<StringBuilder, StringBuilder>>();
 
-				Map<String, StringBuilder> measurementPropertyExpression = getMeasurementPropertyExpressions(measurementCapability);
-				StringBuilder conditionExpression = getConditionExpression(measurementCapability);
+            for (final MeasurementCapability measurementCapability : measurementCapabilities) {
 
-				for (String measurementPropertyName : measurementPropertyExpression
-						.keySet()) {
-					if (!attributeMeasurementPropertyExpression
-							.containsKey(measurementPropertyName)) {
-						attributeMeasurementPropertyExpression.put(
-								measurementPropertyName,
-								new HashMap<StringBuilder, StringBuilder>());
-					}
-					Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression
-							.get(measurementPropertyName);
+                final Map<String, StringBuilder> measurementPropertyExpression = this.getMeasurementPropertyExpressions(measurementCapability);
+                final StringBuilder conditionExpression = this.getConditionExpression(measurementCapability);
 
-					conditionMeasurementPropertyMapping.put(
-							conditionExpression, measurementPropertyExpression
-									.get(measurementPropertyName));
-				}
+                for (final String measurementPropertyName : measurementPropertyExpression.keySet()) {
+                    if (!attributeMeasurementPropertyExpression.containsKey(measurementPropertyName)) {
+                        attributeMeasurementPropertyExpression.put(measurementPropertyName, new HashMap<StringBuilder, StringBuilder>());
+                    }
+                    final Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression.get(measurementPropertyName);
 
-			}
-			// }
-			for (String measurementPropertyName : measurementPropertyNames) {
-				Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression
-						.get(measurementPropertyName);
-				StringBuilder expression = new StringBuilder();
+                    conditionMeasurementPropertyMapping.put(conditionExpression, measurementPropertyExpression.get(measurementPropertyName));
+                }
 
-				for (StringBuilder conditionExpression : conditionMeasurementPropertyMapping
-						.keySet()) {
-					if (expression.length() != 0) {
-						expression.append(", ");
-					}
-					expression.append("eif(");
-					expression.append(conditionExpression);
-					expression.append(",");
-					expression.append("sMin(");
-					expression.append(conditionMeasurementPropertyMapping
-							.get(conditionExpression));
-					expression.append(")");
-					expression.append(",");
-					// expression.append(Double.MAX_VALUE);
-					expression.append(1.0);
-					expression.append(")");
-				}
-				expression.insert(0, "sMin([");
-				expression.append("])");
-				expressions[i] = new SDFExpression(expression.toString(),
-						MEP.getInstance());
-				i++;
-			}
+            }
+            // }
+            for (final String measurementPropertyName : measurementPropertyNames) {
+                final Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression.get(measurementPropertyName);
+                final StringBuilder expression = new StringBuilder();
 
-		}
-		return expressions;
-	}
+                for (final StringBuilder conditionExpression : conditionMeasurementPropertyMapping.keySet()) {
+                    if (expression.length() != 0) {
+                        expression.append(", ");
+                    }
+                    expression.append("eif(");
+                    expression.append(conditionExpression);
+                    expression.append(",");
+                    expression.append("sMin(");
+                    expression.append(conditionMeasurementPropertyMapping.get(conditionExpression));
+                    expression.append(")");
+                    expression.append(",");
+                    // expression.append(Double.MAX_VALUE);
+                    expression.append(1.0);
+                    expression.append(")");
+                }
+                expression.insert(0, "sMin([");
+                expression.append("])");
+                expressions[i] = new SDFExpression(expression.toString(), MEP.getInstance());
+                i++;
+            }
 
-	private List<SensingDevice> getSensingDevices(SDFAttribute attribute) {
-		return SensorOntologyServiceImpl.getOntology().getSensingDevices(
-				attribute);
-	}
+        }
+        return expressions;
+    }
 
-	private StringBuilder getConditionExpression(
-			MeasurementCapability measurementCapability) {
-		List<Condition> conditions = measurementCapability.getInConditions();
+    private List<SensingDevice> getSensingDevices(final SDFAttribute attribute) {
+        return SensorOntologyServiceImpl.getOntology().getSensingDevices(attribute);
+    }
 
-		StringBuilder conditionExpression = new StringBuilder();
+    private StringBuilder getConditionExpression(final MeasurementCapability measurementCapability) {
+        final List<Condition> conditions = measurementCapability.getInConditions();
 
-		for (Condition condition : conditions) {
-			if (conditionExpression.length() != 0) {
-				conditionExpression.append(" AND ");
-			}
+        final StringBuilder conditionExpression = new StringBuilder();
 
-			List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl
-					.getOntology().getAttributes(condition);
+        for (final Condition condition : conditions) {
+            if (conditionExpression.length() != 0) {
+                conditionExpression.append(" AND ");
+            }
 
-			conditionExpression.append("(");
-			conditionExpression.append(String.format(condition.toString(),
-					observerAttributes.get(0).getAttributeName()));
-			conditionExpression.append(")");
-		}
+            final List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl.getOntology().getAttributes(condition);
 
-		return conditionExpression;
-	}
+            conditionExpression.append("(");
+            conditionExpression.append(String.format(condition.toString(), observerAttributes.get(0).getAttributeName()));
+            conditionExpression.append(")");
+        }
 
-	private Map<String, StringBuilder> getMeasurementPropertyExpressions(
-			MeasurementCapability measurementCapability) {
-		Map<String, StringBuilder> measurementPropertyExpressions = new HashMap<String, StringBuilder>();
-		List<MeasurementProperty> measurementProperties = measurementCapability
-				.getHasMeasurementProperties();
+        return conditionExpression;
+    }
 
-		for (MeasurementProperty measurementProperty : measurementProperties) {
-			if (measurementProperty != null) {
-				StringBuilder expressionBuilder;
-				if (!measurementPropertyExpressions
-						.containsKey(measurementProperty.getResource()
-								.getLocalName())) {
-					expressionBuilder = new StringBuilder();
-					measurementPropertyExpressions.put(measurementProperty
-							.getResource().getLocalName(), expressionBuilder);
-				} else {
-					expressionBuilder = measurementPropertyExpressions
-							.get(measurementProperty.getResource()
-									.getLocalName());
-				}
-				if (expressionBuilder.length() != 0) {
-					expressionBuilder.append(", ");
-				}
-				if (measurementProperty.getExpression() != null) {
-					expressionBuilder.append(measurementProperty
-							.getExpression());
-				} else {
-					expressionBuilder.append(0.0);
-				}
-			}
-		}
-		for (String measurementPropertyName : measurementPropertyExpressions
-				.keySet()) {
-			StringBuilder expressionBuilder = measurementPropertyExpressions
-					.get(measurementPropertyName);
-			expressionBuilder.insert(0, "[");
-			expressionBuilder.append("]");
-		}
-		return measurementPropertyExpressions;
-	}
+    private Map<String, StringBuilder> getMeasurementPropertyExpressions(final MeasurementCapability measurementCapability) {
+        final Map<String, StringBuilder> measurementPropertyExpressions = new HashMap<String, StringBuilder>();
+        final List<MeasurementProperty> measurementProperties = measurementCapability.getHasMeasurementProperties();
+
+        for (final MeasurementProperty measurementProperty : measurementProperties) {
+            if (measurementProperty != null) {
+                StringBuilder expressionBuilder;
+                if (!measurementPropertyExpressions.containsKey(measurementProperty.getResource().getLocalName())) {
+                    expressionBuilder = new StringBuilder();
+                    measurementPropertyExpressions.put(measurementProperty.getResource().getLocalName(), expressionBuilder);
+                } else {
+                    expressionBuilder = measurementPropertyExpressions.get(measurementProperty.getResource().getLocalName());
+                }
+                if (expressionBuilder.length() != 0) {
+                    expressionBuilder.append(", ");
+                }
+                if (measurementProperty.getExpression() != null) {
+                    expressionBuilder.append(measurementProperty.getExpression());
+                } else {
+                    expressionBuilder.append(0.0);
+                }
+            }
+        }
+        for (final String measurementPropertyName : measurementPropertyExpressions.keySet()) {
+            final StringBuilder expressionBuilder = measurementPropertyExpressions.get(measurementPropertyName);
+            expressionBuilder.insert(0, "[");
+            expressionBuilder.append("]");
+        }
+        return measurementPropertyExpressions;
+    }
 }

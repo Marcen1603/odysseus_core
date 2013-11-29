@@ -57,7 +57,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	@Override
 	public final NormalDistributionMixture readData(final ByteBuffer buffer) {
 		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining()>=4);
+		Preconditions.checkArgument(buffer.remaining() >= 4);
 		NormalDistributionMixture distributionMixture = null;
 		final int size = buffer.getInt();
 		if (size > 0) {
@@ -102,7 +102,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Normal
 	@Override
 	public final NormalDistributionMixture readData(final ObjectInputStream inputStream) throws IOException {
 		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available()>=4);
+		Preconditions.checkArgument(inputStream.available() >= 4);
 		final int size = inputStream.readInt();
 		final List<Pair<Double, MultivariateNormalDistribution>> mixtures = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
 		final int dimension = inputStream.readInt();

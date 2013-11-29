@@ -63,7 +63,7 @@ public class EMAO extends UnaryLogicalOp {
 	private double threshold = 1E-5;
 	/** The maximum number of iterations allowed per fitting process. */
 	private int iterations = 1000;
-
+	/** Incremental fitting. */
 	private boolean incremental = false;
 
 	/**
@@ -122,7 +122,7 @@ public class EMAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = IntegerParameter.class, name = "MIXTURES", optional = false, doc = "The number of mixture components.")
 	public final void setMixtures(final int mixtures) {
-		Preconditions.checkArgument(mixtures>2);
+		Preconditions.checkArgument(mixtures > 2);
 		this.mixtures = mixtures;
 	}
 
@@ -144,7 +144,7 @@ public class EMAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = IntegerParameter.class, name = "ITERATIONS", optional = true, doc = "The number of iterations (default: 1000).")
 	public final void setIterations(final int iterations) {
-		Preconditions.checkArgument(iterations>0);
+		Preconditions.checkArgument(iterations > 0);
 		this.iterations = iterations;
 	}
 
@@ -166,7 +166,7 @@ public class EMAO extends UnaryLogicalOp {
 	 */
 	@Parameter(type = DoubleParameter.class, name = "THRESHOLD", optional = true, doc = "The threshold for the loglikelyhood to terminate the fitting process (default: 10E-5).")
 	public final void setThreshold(final double threshold) {
-		Preconditions.checkArgument(threshold>0);
+		Preconditions.checkArgument(threshold > 0);
 		this.threshold = threshold;
 	}
 
@@ -240,12 +240,12 @@ public class EMAO extends UnaryLogicalOp {
 	 */
 	@Override
 	public final void initialize() {
-		super.initialize();		
+		super.initialize();
 		Objects.requireNonNull(attributes);
 		Preconditions.checkArgument(!attributes.isEmpty());
-		Preconditions.checkArgument(mixtures>2);
-		Preconditions.checkArgument(threshold>0);
-		Preconditions.checkArgument(iterations>0);
+		Preconditions.checkArgument(mixtures > 2);
+		Preconditions.checkArgument(threshold > 0);
+		Preconditions.checkArgument(iterations > 0);
 		final Collection<SDFAttribute> outputAttributes = new ArrayList<SDFAttribute>();
 		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
 			if (this.getAttributes().contains(inAttr)) {

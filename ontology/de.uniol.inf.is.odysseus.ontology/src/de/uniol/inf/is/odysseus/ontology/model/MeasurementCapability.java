@@ -38,7 +38,7 @@ public class MeasurementCapability extends Property {
      * 
      * @param uri
      */
-    public MeasurementCapability(URI uri, Property forProperty) {
+    public MeasurementCapability(final URI uri, final Property forProperty) {
         this(uri, uri.getFragment(), forProperty);
     }
 
@@ -47,7 +47,7 @@ public class MeasurementCapability extends Property {
      * 
      * @param uri
      */
-    public MeasurementCapability(URI uri, String name, Property forProperty) {
+    public MeasurementCapability(final URI uri, final String name, final Property forProperty) {
         super(uri);
         this.name = name;
         this.forProperty = forProperty;
@@ -57,7 +57,7 @@ public class MeasurementCapability extends Property {
      * @return the name
      */
     @Override
-	public String getName() {
+    public String getName() {
         return this.name;
     }
 
@@ -98,10 +98,10 @@ public class MeasurementCapability extends Property {
         return Collections.unmodifiableList(this.hasMeasurementProperties);
     }
 
-    public List<MeasurementProperty> getHasMeasurementProperty(String property) {
-        SSNMeasurementProperty ssnMeasurementProperty = SSNMeasurementProperty.valueOf(property);
-        List<MeasurementProperty> measurementProperties = new ArrayList<MeasurementProperty>();
-        for (MeasurementProperty measurementProperty : this.hasMeasurementProperties) {
+    public List<MeasurementProperty> getHasMeasurementProperty(final String property) {
+        final SSNMeasurementProperty ssnMeasurementProperty = SSNMeasurementProperty.valueOf(property);
+        final List<MeasurementProperty> measurementProperties = new ArrayList<MeasurementProperty>();
+        for (final MeasurementProperty measurementProperty : this.hasMeasurementProperties) {
             if (measurementProperty.getResource().equals(ssnMeasurementProperty.getResource())) {
                 measurementProperties.add(measurementProperty);
             }
