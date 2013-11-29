@@ -323,14 +323,16 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	private List<ILogicalQuery> distributeQueries(
 			QueryBuildConfiguration parameters, List<ILogicalQuery> queries) {
-		String[] strParameters = parameters
-				.get(ParameterDistributionType.class).getValue().split(" ");
+		String[] strParameters = parameters.get(ParameterDistributionType.class).getValue().split(" ");
 		String distributorName = strParameters[0];
+		
 		List<ILogicalQuery> resultQueries = Lists.newArrayList();
 
 		if (!ParameterDistributionType.UNDEFINED.equals(distributorName)) {
+			LOG.debug("Beginning distribution of queries");
 			Optional<ILogicalQueryDistributor> optDistributor = getLogicalQueryDistributor(distributorName);
 			if (optDistributor.isPresent()) {
+				LOG.debug("Using old way to distribute (p2p_new)");
 				List<ILogicalQuery> distributionResult = optDistributor.get()
 						.distributeLogicalQueries(this, queries, parameters);
 				if (distributionResult != null && !distributionResult.isEmpty()) {
@@ -338,6 +340,11 @@ public class StandardExecutor extends AbstractExecutor implements
 				} else {
 					LOG.error("Queries are fully distributed. Nothing to do locally.");
 				}
+			} else if( hasQueryDistributor() ) {
+				LOG.debug("Using new way to distribute (peer)");
+				
+				resultQueries.addAll(getQueryDistributor().distribute(this, queries, parameters));
+				
 			} else {
 				throw new QueryParseException(
 						"Could not distribute query. Logical distributor '"

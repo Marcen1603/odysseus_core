@@ -55,6 +55,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvide
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.distribution.IDataFragmentation;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
@@ -141,6 +142,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	private IAdmissionQuerySelector admissionQuerySelector = null;
 
 	private Map<String, ILogicalQueryDistributor> logicalQueryDistributors = Maps.newHashMap();
+	private IQueryDistributor queryDistributor; 
 
 	/**
 	 * Mapping (name -> implementation) of all integrated data fragmentation
@@ -367,15 +369,33 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			LOG.debug("Logical query distributor unbound '{}'", distributorName);
 		}
 	}
-
+	
 	@Override
 	public final ImmutableCollection<String> getLogicalQueryDistributorNames() {
 		return ImmutableSet.copyOf(logicalQueryDistributors.keySet());
 	}
-
+	
 	@Override
 	public final Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name) {
 		return Optional.fromNullable(logicalQueryDistributors.get(name));
+	}
+	
+	public final void bindQueryDistributor( IQueryDistributor distributor ) {
+		queryDistributor = distributor;
+	}
+	
+	public final void unbindQueryDistributor( IQueryDistributor distributor ) {
+		if( queryDistributor == distributor ) {
+			distributor = null;
+		}
+	}
+	
+	public final boolean hasQueryDistributor() {
+		return queryDistributor != null;
+	}
+	
+	public final IQueryDistributor getQueryDistributor() {
+		return queryDistributor;
 	}
 
 	/**
