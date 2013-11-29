@@ -27,101 +27,90 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
  */
 public class ProbabilisticDiscreteCount extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final long serialVersionUID = 8734164350164631514L;
-    /** The attribute position. */
-    private final int pos;
-    /** The result data type. */
-    private final String datatype;
+	private static final long serialVersionUID = 8734164350164631514L;
+	/** The attribute position. */
+	private final int pos;
+	/** The result data type. */
+	private final String datatype;
 
-    /**
-     * Gets an instance of {@link ProbabilisticDiscreteCount}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result data type
-     * @return An instance of {@link ProbabilisticDiscreteCount}
-     */
-    public static ProbabilisticDiscreteCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteCount(pos, partialAggregateInput, datatype);
-    }
+	/**
+	 * Gets an instance of {@link ProbabilisticDiscreteCount}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result data type
+	 * @return An instance of {@link ProbabilisticDiscreteCount}
+	 */
+	public static ProbabilisticDiscreteCount getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticDiscreteCount(pos, partialAggregateInput, datatype);
+	}
 
-    /**
-     * Creates a new instance of {@link ProbabilisticDiscreteCount}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result data type
-     */
-    protected ProbabilisticDiscreteCount(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("COUNT", partialAggregateInput);
-        this.pos = pos;
-        this.datatype = datatype;
-    }
+	/**
+	 * Creates a new instance of {@link ProbabilisticDiscreteCount}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result data type
+	 */
+	protected ProbabilisticDiscreteCount(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("COUNT", partialAggregateInput);
+		this.pos = pos;
+		this.datatype = datatype;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .IInitializer#init(java.lang.Object)
-     */
-    @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.add(value.getValue());
-        }
-        return pa;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions .IInitializer#init(java.lang.Object)
+	 */
+	@Override
+	public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = new CountPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) in.getAttribute(this.pos)).getValues().entrySet()) {
+			pa.add(value.getValue());
+		}
+		return pa;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .
-     * IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-     * .basefunctions.IPartialAggregate, java.lang.Object, boolean)
-     */
-    @Override
-    public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
-        if (createNew) {
-            pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
-        }
-        else {
-            pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
-        }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions . IMerger#merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate .basefunctions.IPartialAggregate, java.lang.Object, boolean)
+	 */
+	@Override
+	public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		CountPartialAggregate<ProbabilisticTuple<?>> pa = null;
+		if (createNew) {
+			pa = new CountPartialAggregate<ProbabilisticTuple<?>>(((CountPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
+		} else {
+			pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
+		}
 
-        for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
-            pa.add(value.getValue());
-        }
+		for (final Entry<Double, Double> value : ((ProbabilisticDouble) toMerge.getAttribute(this.pos)).getValues().entrySet()) {
+			pa.add(value.getValue());
+		}
 
-        return pa;
-    }
+		return pa;
+	}
 
-    /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-     * .
-     * IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator
-     * .aggregate.basefunctions.IPartialAggregate)
-     */
-    @SuppressWarnings("rawtypes")
-    @Override
-    public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
-        final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, false);
-        r.setAttribute(0, new Double(pa.getCount()));
-        return r;
-    }
+	/*
+	 * 
+	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions . IEvaluator#evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator .aggregate.basefunctions.IPartialAggregate)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		final CountPartialAggregate<ProbabilisticTuple<?>> pa = (CountPartialAggregate<ProbabilisticTuple<?>>) p;
+		final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, false);
+		r.setAttribute(0, new Double(pa.getCount()));
+		return r;
+	}
 
 }

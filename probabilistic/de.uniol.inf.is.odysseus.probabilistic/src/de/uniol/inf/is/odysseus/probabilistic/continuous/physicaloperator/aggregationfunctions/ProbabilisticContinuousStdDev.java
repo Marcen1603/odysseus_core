@@ -25,69 +25,73 @@ import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
  */
 public class ProbabilisticContinuousStdDev extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = -1163695821240885784L;
-    /** The attribute position. */
-    @SuppressWarnings("unused")
-    private final int pos;
-    /** The result data type. */
-    @SuppressWarnings("unused")
-    private final String datatype;
+	private static final long serialVersionUID = -1163695821240885784L;
+	/** The attribute position. */
+	@SuppressWarnings("unused")
+	private final int pos;
+	/** The result data type. */
+	@SuppressWarnings("unused")
+	private final String datatype;
 
-    /**
-     * Gets an instance of {@link ProbabilisticContinuousStdDev}.
-     * 
-     * @param pos
-     *            The attribute position
-     * @param partialAggregateInput
-     *            The partial aggregate input
-     * @param datatype
-     *            The result datatype
-     * @return An instance of {@link ProbabilisticContinuousStdDev}
-     */
-    public static ProbabilisticContinuousStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticContinuousStdDev(pos, partialAggregateInput, datatype);
-    }
+	/**
+	 * Gets an instance of {@link ProbabilisticContinuousStdDev}.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 * @return An instance of {@link ProbabilisticContinuousStdDev}
+	 */
+	public static ProbabilisticContinuousStdDev getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+		return new ProbabilisticContinuousStdDev(pos, partialAggregateInput, datatype);
+	}
 
-    /**
-     * Class constructor.
-     * 
-     * @param name
-     * @param partialAggregateInput
-     */
-    protected ProbabilisticContinuousStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("STDDEV", partialAggregateInput);
-        this.pos = pos;
-        this.datatype = datatype;
-    }
+	/**
+	 * Class constructor.
+	 * 
+	 * @param pos
+	 *            The attribute position
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 * @param datatype
+	 *            The result datatype
+	 */
+	protected ProbabilisticContinuousStdDev(final int pos, final boolean partialAggregateInput, final String datatype) {
+		super("STDDEV", partialAggregateInput);
+		this.pos = pos;
+		this.datatype = datatype;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPartialAggregate<ProbabilisticTuple<?>> init(ProbabilisticTuple<?> in) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IPartialAggregate<ProbabilisticTuple<?>> merge(IPartialAggregate<ProbabilisticTuple<?>> p, ProbabilisticTuple<?> toMerge, boolean createNew) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ProbabilisticTuple<?> evaluate(IPartialAggregate<ProbabilisticTuple<?>> p) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -21,98 +21,99 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribu
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ * @param <T>
  */
 public class CountPartialAggregate<T> implements IPartialAggregate<T> {
-    /** The value of the aggregate. */
-    private double count = 0.0;
-    /** The result data type. */
-    private final String datatype;
+	/** The value of the aggregate. */
+	private double count = 0.0;
+	/** The result data type. */
+	private final String datatype;
 
-    /**
-     * Default constructor.
-     * 
-     * @param datatype
-     *            The result datatype
-     */
-    public CountPartialAggregate(final String datatype) {
-        this.count = 0.0;
-        this.datatype = datatype;
-    }
+	/**
+	 * Default constructor.
+	 * 
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public CountPartialAggregate(final String datatype) {
+		this.count = 0.0;
+		this.datatype = datatype;
+	}
 
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param count
-     *            The value of count
-     * @param datatype
-     *            The result datatype
-     */
-    public CountPartialAggregate(final double count, final String datatype) {
-        this.count = count;
-        this.datatype = datatype;
-    }
+	/**
+	 * Creates a new partial aggregate with the given value.
+	 * 
+	 * @param count
+	 *            The value of count
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public CountPartialAggregate(final double count, final String datatype) {
+		this.count = count;
+		this.datatype = datatype;
+	}
 
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param value
-     *            The normal distribution mixture
-     * @param datatype
-     *            The result datatype
-     */
-    public CountPartialAggregate(final NormalDistributionMixture value, final String datatype) {
-        this.count = value.getScale();
-        this.datatype = datatype;
-    }
+	/**
+	 * Creates a new partial aggregate with the given value.
+	 * 
+	 * @param value
+	 *            The normal distribution mixture
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public CountPartialAggregate(final NormalDistributionMixture value, final String datatype) {
+		this.count = value.getScale();
+		this.datatype = datatype;
+	}
 
-    /**
-     * Copy constructor.
-     * 
-     * @param countPartialAggregate
-     *            The object to copy from
-     */
-    public CountPartialAggregate(final CountPartialAggregate<T> countPartialAggregate) {
-        this.count = countPartialAggregate.count;
-        this.datatype = countPartialAggregate.datatype;
-    }
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param countPartialAggregate
+	 *            The object to copy from
+	 */
+	public CountPartialAggregate(final CountPartialAggregate<T> countPartialAggregate) {
+		this.count = countPartialAggregate.count;
+		this.datatype = countPartialAggregate.datatype;
+	}
 
-    /**
-     * Add the given value to the aggregate.
-     * 
-     * @param probability
-     *            The value to add
-     */
-    public final void add(final NormalDistributionMixture value) {
-        // TODO Check if inverse scale is the current probability!
-        this.count += value.getScale();
-    }
+	/**
+	 * Add the given value to the aggregate.
+	 * 
+	 * @param value
+	 *            The value to add
+	 */
+	public final void add(final NormalDistributionMixture value) {
+		// TODO Check if inverse scale is the current probability!
+		this.count += value.getScale();
+	}
 
-    /**
-     * Gets the value of the count property.
-     * 
-     * @return The count value
-     */
-    public final double getCount() {
-        return this.count;
-    }
+	/**
+	 * Gets the value of the count property.
+	 * 
+	 * @return The count value
+	 */
+	public final double getCount() {
+		return this.count;
+	}
 
-    /*
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public final String toString() {
-        final StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(this.hashCode()).append(")").append(this.count);
-        return ret.toString();
-    }
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		final StringBuffer ret = new StringBuffer("CountPartialAggregate (").append(this.hashCode()).append(")").append(this.count);
+		return ret.toString();
+	}
 
-    /*
-     * 
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public final CountPartialAggregate<T> clone() {
-        return new CountPartialAggregate<T>(this);
-    }
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public final CountPartialAggregate<T> clone() {
+		return new CountPartialAggregate<T>(this);
+	}
 
 }

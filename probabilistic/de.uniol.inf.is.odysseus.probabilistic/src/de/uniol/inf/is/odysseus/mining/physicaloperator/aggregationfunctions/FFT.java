@@ -36,47 +36,65 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class FFT extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
-    /**
+	/**
      * 
      */
-    private static final long serialVersionUID = -6591001515663029772L;
-    private final FastFourierTransformer fft;
-    private final int[] restrictList;
+	private static final long serialVersionUID = -6591001515663029772L;
+	/** The FFT transformer. */
+	private final FastFourierTransformer fft;
+	/** The list of positions to restrict to. */
+	private final int[] restrictList;
 
-    public FFT(int[] restrictList, boolean partialAggregateInput) {
-        super("FFT", partialAggregateInput);
-        this.restrictList = restrictList;
-        this.fft = new FastFourierTransformer(DftNormalization.STANDARD);
-    }
+	/**
+	 * Creates a new instance of the FFT aggregation.
+	 * 
+	 * @param restrictList
+	 *            The list of positions to restrict to
+	 * @param partialAggregateInput
+	 *            The partial aggregate input
+	 */
+	public FFT(final int[] restrictList, final boolean partialAggregateInput) {
+		super("FFT", partialAggregateInput);
+		this.restrictList = restrictList;
+		this.fft = new FastFourierTransformer(DftNormalization.STANDARD);
+	}
 
-    @Override
-    public Tuple evaluate(IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
-        List<Tuple<?>> elems = ((ListPartialAggregate<Tuple<? extends IMetaAttribute>>) p).getElems();
-        double[] values = new double[elems.size()];
-        for (int i = 0; i < values.length; i++) {
-            Tuple<?> elem = elems.get(i);
-            values[i] = elem.getAttribute(restrictList[0]);
-        }
-        Complex[] result = fft.transform(values, TransformType.FORWARD);
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Tuple evaluate(final IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
+		List<Tuple<?>> elems = ((ListPartialAggregate<Tuple<? extends IMetaAttribute>>) p).getElems();
+		double[] values = new double[elems.size()];
+		for (int i = 0; i < values.length; i++) {
+			Tuple<?> elem = elems.get(i);
+			values[i] = elem.getAttribute(restrictList[0]);
+		}
+		Complex[] result = fft.transform(values, TransformType.FORWARD);
 
-        Tuple ret = new Tuple<IMetaAttribute>(2, false);
-        List<Double> realNumbers = new ArrayList<Double>();
-        List<Double> imaginaryNumbers = new ArrayList<Double>();
+		Tuple ret = new Tuple<IMetaAttribute>(2, false);
+		List<Double> realNumbers = new ArrayList<Double>();
+		List<Double> imaginaryNumbers = new ArrayList<Double>();
 
-        for (Complex complex : result) {
-            realNumbers.add(complex.getReal());
-            imaginaryNumbers.add(complex.getImaginary());
-        }
-        // FIXME Is the schema extended to two attributes?
-        // Maybe use Complex as an additional datatype
-        ret.setAttribute(0, realNumbers);
-        ret.setAttribute(1, imaginaryNumbers);
-        return ret;
-    }
+		for (Complex complex : result) {
+			realNumbers.add(complex.getReal());
+			imaginaryNumbers.add(complex.getImaginary());
+		}
+		// FIXME Is the schema extended to two attributes?
+		// Maybe use Complex as an additional datatype
+		ret.setAttribute(0, realNumbers);
+		ret.setAttribute(1, imaginaryNumbers);
+		return ret;
+	}
 
-    @Override
-    public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(IPartialAggregate<Tuple<? extends IMetaAttribute>> p, Tuple<? extends IMetaAttribute> toMerge, boolean createNew) {
-        return ((ListPartialAggregate) p).addElem(toMerge.restrict(restrictList, true));
-    }
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(final IPartialAggregate<Tuple<? extends IMetaAttribute>> p, final Tuple<? extends IMetaAttribute> toMerge, final boolean createNew) {
+		return ((ListPartialAggregate) p).addElem(toMerge.restrict(restrictList, true));
+	}
 
 }

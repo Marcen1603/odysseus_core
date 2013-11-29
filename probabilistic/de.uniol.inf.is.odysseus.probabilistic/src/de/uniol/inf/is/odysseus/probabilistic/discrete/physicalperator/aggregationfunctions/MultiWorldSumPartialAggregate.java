@@ -30,95 +30,92 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDou
  * @param <T>
  */
 public class MultiWorldSumPartialAggregate<T> implements IPartialAggregate<T> {
-    /** The value of the aggregate. */
-    private AbstractProbabilisticValue<?> aggregate;
-    /** The result data type. */
-    private final String datatype;
+	/** The value of the aggregate. */
+	private AbstractProbabilisticValue<?> aggregate;
+	/** The result data type. */
+	private final String datatype;
 
-    /**
-     * Default constructor.
-     * 
-     * @param datatype
-     *            The result datatype
-     */
-    public MultiWorldSumPartialAggregate(final String datatype) {
-        this.aggregate = new ProbabilisticDouble(0.0, 1.0);
-        this.datatype = datatype;
-    }
+	/**
+	 * Default constructor.
+	 * 
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public MultiWorldSumPartialAggregate(final String datatype) {
+		this.aggregate = new ProbabilisticDouble(0.0, 1.0);
+		this.datatype = datatype;
+	}
 
-    /**
-     * Creates a new partial aggregate with the given value.
-     * 
-     * @param aggregate
-     *            The aggregate
-     * @param datatype
-     *            The result datatype
-     */
-    public MultiWorldSumPartialAggregate(final AbstractProbabilisticValue<?> aggregate, final String datatype) {
-        this.datatype = datatype;
-        this.add(aggregate);
-    }
+	/**
+	 * Creates a new partial aggregate with the given value.
+	 * 
+	 * @param aggregate
+	 *            The aggregate
+	 * @param datatype
+	 *            The result datatype
+	 */
+	public MultiWorldSumPartialAggregate(final AbstractProbabilisticValue<?> aggregate, final String datatype) {
+		this.datatype = datatype;
+		this.add(aggregate);
+	}
 
-    /**
-     * Copy constructor.
-     * 
-     * @param sumPartialAggregate
-     *            The object to copy from
-     */
-    public MultiWorldSumPartialAggregate(final MultiWorldSumPartialAggregate<T> sumPartialAggregate) {
-        this.aggregate = sumPartialAggregate.aggregate;
-        this.datatype = sumPartialAggregate.datatype;
-    }
+	/**
+	 * Copy constructor.
+	 * 
+	 * @param sumPartialAggregate
+	 *            The object to copy from
+	 */
+	public MultiWorldSumPartialAggregate(final MultiWorldSumPartialAggregate<T> sumPartialAggregate) {
+		this.aggregate = sumPartialAggregate.aggregate;
+		this.datatype = sumPartialAggregate.datatype;
+	}
 
-    /**
-     * Gets the value of the sum property.
-     * 
-     * @return the sum
-     */
-    public final AbstractProbabilisticValue<?> getAggregate() {
-        return this.aggregate;
-    }
+	/**
+	 * Gets the value of the aggregate.
+	 * 
+	 * @return the aggregate
+	 */
+	public final AbstractProbabilisticValue<?> getAggregate() {
+		return this.aggregate;
+	}
 
-    /**
-     * Add the given value to the aggregate.
-     * 
-     * @param value
-     *            The value
-     * @param probability
-     *            The value to add
-     */
-    public final void add(final AbstractProbabilisticValue<?> value) {
-        final Map<Double, Double> newValues = new HashMap<Double, Double>(this.aggregate.getValues().size() * value.getValues().size());
-        for (final Entry<?, Double> sumEntry : this.aggregate.getValues().entrySet()) {
-            for (final Entry<?, Double> valueEntry : value.getValues().entrySet()) {
-                final double newValue = ((Number) sumEntry.getKey()).doubleValue() + ((Number) valueEntry.getKey()).doubleValue();
-                if (newValues.containsKey(newValue)) {
-                    newValues.put(newValue, newValues.get(newValue) + (sumEntry.getValue() * valueEntry.getValue()));
-                }
-                else {
-                    newValues.put(newValue, sumEntry.getValue() * valueEntry.getValue());
-                }
-            }
-        }
-        this.aggregate = new ProbabilisticDouble(newValues);
-    }
+	/**
+	 * Add the given value to the aggregate.
+	 * 
+	 * @param value
+	 *            The value
+	 */
+	public final void add(final AbstractProbabilisticValue<?> value) {
+		final Map<Double, Double> newValues = new HashMap<Double, Double>(this.aggregate.getValues().size() * value.getValues().size());
+		for (final Entry<?, Double> sumEntry : this.aggregate.getValues().entrySet()) {
+			for (final Entry<?, Double> valueEntry : value.getValues().entrySet()) {
+				final double newValue = ((Number) sumEntry.getKey()).doubleValue() + ((Number) valueEntry.getKey()).doubleValue();
+				if (newValues.containsKey(newValue)) {
+					newValues.put(newValue, newValues.get(newValue) + (sumEntry.getValue() * valueEntry.getValue()));
+				} else {
+					newValues.put(newValue, sumEntry.getValue() * valueEntry.getValue());
+				}
+			}
+		}
+		this.aggregate = new ProbabilisticDouble(newValues);
+	}
 
-    /*
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public final String toString() {
-        final StringBuffer ret = new StringBuffer("MultiWorldSumPartialAggregate (").append(this.hashCode()).append(")").append(this.aggregate);
-        return ret.toString();
-    }
+	/*
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public final String toString() {
+		final StringBuffer ret = new StringBuffer("MultiWorldSumPartialAggregate (").append(this.hashCode()).append(")").append(this.aggregate);
+		return ret.toString();
+	}
 
-    /*
-     * 
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public final MultiWorldSumPartialAggregate<T> clone() {
-        return new MultiWorldSumPartialAggregate<T>(this);
-    }
+	/*
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public final MultiWorldSumPartialAggregate<T> clone() {
+		return new MultiWorldSumPartialAggregate<T>(this);
+	}
 }
