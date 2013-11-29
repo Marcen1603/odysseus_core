@@ -54,7 +54,7 @@ public class ProbabilisticMaxFunction extends AbstractProbabilisticFunction<Prob
      */
     @Override
     public final String getSymbol() {
-        return "max";
+        return "sMax";
     }
 
     /*

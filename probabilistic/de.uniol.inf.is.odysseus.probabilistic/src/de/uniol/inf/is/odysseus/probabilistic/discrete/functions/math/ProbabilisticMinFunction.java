@@ -54,7 +54,7 @@ public class ProbabilisticMinFunction extends AbstractProbabilisticFunction<Prob
      */
     @Override
     public final String getSymbol() {
-        return "min";
+        return "sMin";
     }
 
     /*
