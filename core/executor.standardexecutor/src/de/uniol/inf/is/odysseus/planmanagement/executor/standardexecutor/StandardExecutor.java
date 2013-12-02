@@ -52,6 +52,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.server.ac.IAdmissionListener;
 import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributor;
+import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.monitoring.ISystemMonitor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy;
@@ -343,7 +344,11 @@ public class StandardExecutor extends AbstractExecutor implements
 			} else if( hasQueryDistributor() ) {
 				LOG.debug("Using new way to distribute (peer)");
 				
-				resultQueries.addAll(getQueryDistributor().distribute(this, queries, parameters));
+				try {
+					resultQueries.addAll(getQueryDistributor().distribute(this, queries, parameters));
+				} catch (QueryDistributionException ex) {
+					throw new QueryParseException("Could not distribute the queries", ex);
+				}
 				
 			} else {
 				throw new QueryParseException(
