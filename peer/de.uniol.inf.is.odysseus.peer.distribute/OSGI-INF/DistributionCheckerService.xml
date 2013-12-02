@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckerService">
+   <implementation class="de.uniol.inf.is.odysseus.peer.distribute.service.DistributionCheckerService"/>
+   <reference bind="bindDistributionChecker" cardinality="0..n" interface="de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker" name="IDistributionChecker" policy="dynamic" unbind="unbindDistributionChecker"/>
+</scr:component>
