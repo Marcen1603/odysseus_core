@@ -8,5 +8,5 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 
 public interface IQueryDistributor {
 
-	public Collection<ILogicalQuery> distribute( IExecutor executor, Collection<ILogicalQuery> queries, QueryBuildConfiguration config); 
+	public Collection<ILogicalQuery> distribute( IExecutor executor, Collection<ILogicalQuery> queries, QueryBuildConfiguration config) throws QueryDistributionException; 
 }
