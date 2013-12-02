@@ -7,6 +7,8 @@ public class P2PNoGUIActivator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
+		P2PActivatorThread thread = new P2PActivatorThread(bundleContext);
+		thread.start();
 	}
 
 	@Override

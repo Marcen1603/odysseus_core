@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.p2p_new.provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.jxta.content.ContentService;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.endpoint.EndpointService;
@@ -10,6 +13,8 @@ import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
 
 public class JxtaServicesProvider implements IJxtaServicesProvider {
 
+	private static final Logger LOG = LoggerFactory.getLogger(JxtaServicesProvider.class);
+	
 	private static JxtaServicesProvider instance;
 	
 	private ContentService contentService;
@@ -19,10 +24,16 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	
 	// called by OSGi
 	public void activate() {
+		LOG.debug("Activating jxta services provider");
+		
 		Thread thread = new Thread( new Runnable() {
 			@Override
 			public void run() {
+				LOG.debug("Waiting for started p2p network");
+				
 				waitForStartedP2PNetwork();
+				
+				LOG.debug("P2P network has started");
 				
 				PeerGroup ownPeerGroup = P2PNetworkManager.getInstance().getLocalPeerGroup();
 				
@@ -33,7 +44,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 			}
 
 			private void waitForStartedP2PNetwork() {
-				while( !P2PNetworkManager.getInstance().isStarted() ) {
+				while( P2PNetworkManager.getInstance() == null || !P2PNetworkManager.getInstance().isStarted() ) {
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException ex) {
@@ -57,6 +68,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		pipeService = null;
 		
 		instance = null;
+		
+		LOG.debug("Jxta services provider deactivated");
 	}
 	
 	@Override
@@ -84,6 +97,6 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	}
 
 	public static boolean isActivated() {
-		return instance != null && P2PNetworkManager.getInstance().isStarted();
+		return instance != null && P2PNetworkManager.getInstance() != null && P2PNetworkManager.getInstance().isStarted();
 	}
 }

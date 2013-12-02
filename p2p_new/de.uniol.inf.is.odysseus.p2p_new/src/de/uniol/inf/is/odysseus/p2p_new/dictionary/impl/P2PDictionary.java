@@ -449,6 +449,7 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 		Preconditions.checkArgument(!existsRemotePeer(peerID), "Peerid is already added");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(peerName), "Peername to add must not be null or empty!");
 		
+		LOG.debug("Added new peer, name = {}, id = {}", peerName, peerID);
 		knownPeersMap.put(peerID, peerName);
 		Optional<String> optAddress = determineRemotePeerAddress(peerID);
 		if( optAddress.isPresent() ) {
@@ -461,6 +462,8 @@ public class P2PDictionary implements IP2PDictionary, IDataDictionaryListener, I
 	public void removePeer( PeerID peerID ) {
 		if( existsRemotePeer(peerID)) {
 			String peerName = knownPeersMap.remove(peerID);
+			LOG.debug("Remove peer, name = {}, id = {}", peerName, peerID);
+			
 			peersAddressMap.remove(peerID);
 			firePeerRemoveEvent(peerID, peerName);
 		}

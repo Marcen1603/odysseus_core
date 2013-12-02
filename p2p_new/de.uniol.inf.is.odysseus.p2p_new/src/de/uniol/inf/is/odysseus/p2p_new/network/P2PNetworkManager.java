@@ -86,6 +86,8 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 	public void start() throws P2PNetworkException {
 		Preconditions.checkState(!started, "P2P network already started");
 		
+		LOG.debug("Starting p2p network. peerName = {}, groupName = {}", peerName, groupName);
+		
 		final File conf = new File(System.getProperty("user.home") + System.getProperty("file.separator") + peerName);
 		NetworkManager.RecursiveDelete(conf);
 		
@@ -101,6 +103,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 			
 			peerGroup = createSubGroup(netPeerGroup, peerGroupID, groupName);
 			started = true;
+			LOG.debug("P2P network started");
 			
 			fireStartEvent();
 	
@@ -145,12 +148,14 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 	public void stop() {
 		Preconditions.checkState(started, "P2P network already stopped!");
 		
+		LOG.debug("Stopping p2p network");
 		if( manager != null ) {
 			manager.stopNetwork();
 			manager = null;
 		}
 		
 		started = false;
+		LOG.debug("P2P network stopped");
 		
 		fireStopEvent();
 	}
