@@ -44,7 +44,7 @@ public final class OdysseusScriptTemplateRegistry {
 	public void unregister(IOdysseusScriptTemplate template) {
 		Preconditions.checkNotNull(template, "OdysseusScriptTemplate to remove must not be null!");
 		Preconditions.checkArgument(!template.getClass().equals(EmptyScriptTemplate.class), "Unregistering empty template not allowed");
-		Preconditions.checkArgument(isRegistered(template), "OdysseusScriptTemplate '%s' already registered", template.getName());
+		Preconditions.checkArgument(isRegistered(template), "OdysseusScriptTemplate '%s' already unregistered", template.getName());
 
 		templateMap.remove(template.getName());
 	}
