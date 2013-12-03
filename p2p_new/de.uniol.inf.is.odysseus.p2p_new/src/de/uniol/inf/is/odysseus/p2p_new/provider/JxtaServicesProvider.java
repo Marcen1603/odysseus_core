@@ -40,7 +40,9 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 				contentService = ownPeerGroup.getContentService();
 				discoveryService = ownPeerGroup.getDiscoveryService();
 				endpointService = ownPeerGroup.getEndpointService();
-				pipeService = ownPeerGroup.getPipeService();				
+				pipeService = ownPeerGroup.getPipeService();		
+				
+				instance = JxtaServicesProvider.this;
 			}
 
 			private void waitForStartedP2PNetwork() {
@@ -56,8 +58,6 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 		thread.setName("Jxta Services providing thread");
 		thread.setDaemon(true);
 		thread.start();
-		
-		instance = this;
 	}
 	
 	// called by OSGi
