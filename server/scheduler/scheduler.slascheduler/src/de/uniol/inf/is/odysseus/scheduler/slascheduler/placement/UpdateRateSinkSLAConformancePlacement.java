@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.scheduler.slascheduler.placement;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.benchmark.physical.BenchmarkResultPO;
 import de.uniol.inf.is.odysseus.billingmodel.BillingHelper;
 import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe;
 import de.uniol.inf.is.odysseus.billingmodel.physicaloperator.TupleCostCalculationPipe.TupleCostCalculationType;
@@ -65,7 +64,8 @@ public class UpdateRateSinkSLAConformancePlacement implements
 		} else
 			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
 		
-		if (op instanceof BenchmarkResultPO) {
+		// TODO: Find another solution
+		if (op.getClass().getName().endsWith("BenchmarkResultPO")) {
 			PhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) op).getSubscribedToSource().iterator().next();
 			op = s.getTarget();
 		}
