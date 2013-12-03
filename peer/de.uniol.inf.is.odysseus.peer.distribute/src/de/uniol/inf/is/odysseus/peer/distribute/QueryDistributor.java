@@ -22,12 +22,12 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
@@ -48,14 +48,31 @@ public class QueryDistributor implements IQueryDistributor {
 	private static int jxtaConnectionCounter = 0;
 
 	@Override
-	public Collection<ILogicalQuery> distribute(IExecutor executor, ISession caller, Collection<ILogicalQuery> queriesToDistribute, QueryBuildConfiguration config) throws QueryDistributionException {
-		Preconditions.checkNotNull(executor, "Executor for distributing queries must not be null!");
+	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
+		Thread t = new Thread( new Runnable() {
+			@Override
+			public void run() {
+				try {
+					distributeAsync(serverExecutor, caller, queriesToDistribute, config);
+				} catch (QueryDistributionException ex) {
+					LOG.error("Could not distribute queries", ex);
+				}
+			}
+		});
+		t.setName("Query distribution thread");
+		t.setDaemon(true);
+		
+		t.start();
+	}
+
+	private static void distributeAsync(IServerExecutor serverExecutor, ISession caller, Collection<ILogicalQuery> queriesToDistribute, QueryBuildConfiguration config) throws QueryDistributionException {
+		Preconditions.checkNotNull(serverExecutor, "Server executor for distributing queries must not be null!");
 		Preconditions.checkNotNull(queriesToDistribute, "Collection of queries to distribute must not be null!");
 		Preconditions.checkNotNull(config, "QueryBuildConfiguration for distribution must not be null!");
 
 		if (queriesToDistribute.isEmpty()) {
 			LOG.warn("Collection of queries to distribute is empty!");
-			return queriesToDistribute;
+			return;
 		}
 		
 		LOG.debug("Begin with distributing queries");
@@ -141,8 +158,23 @@ public class QueryDistributor implements IQueryDistributor {
 				LOG.debug("No local query part of query {} remains.", query);
 			}
 		}
+		
+		if( !localQueriesToExecutor.isEmpty() ) {
+			LOG.debug("Calling executor for {} local queries", localQueriesToExecutor.size());
+			callExecutorToAddLocalQueries(localQueriesToExecutor, serverExecutor, caller, config);
+		} else {
+			LOG.debug("There are no local queries in all {} given queries.", queriesToDistribute.size());
+		}
+	}
 
-		return localQueriesToExecutor;
+	private static void callExecutorToAddLocalQueries(Collection<ILogicalQuery> localQueriesToExecutor, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
+		try {
+			for( ILogicalQuery query : localQueriesToExecutor ) {
+				serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
+			}
+		} catch( Throwable ex ) {
+			throw new QueryDistributionException("Could not add local query to server executor", ex);
+		}
 	}
 
 	private static Collection<ILogicalQuery> copyAllQueries(Collection<ILogicalQuery> queriesToDistribute) {
@@ -185,7 +217,7 @@ public class QueryDistributor implements IQueryDistributor {
 		}
 	}
 
-	private void checkPartitions(Collection<ILogicalQueryPart> queryParts, Collection<ILogicalOperator> operators) throws QueryDistributionException {
+	private static void checkPartitions(Collection<ILogicalQueryPart> queryParts, Collection<ILogicalOperator> operators) throws QueryDistributionException {
 		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(queryParts);
 		
 		for( ILogicalOperator operator : operators ) {
