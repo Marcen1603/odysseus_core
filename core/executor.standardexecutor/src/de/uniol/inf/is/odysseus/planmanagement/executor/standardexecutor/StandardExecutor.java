@@ -355,10 +355,17 @@ public class StandardExecutor extends AbstractExecutor implements
 						"Could not distribute query. Logical distributor '"
 								+ distributorName + "' was not found.");
 			}
-		} else {
-			throw new QueryParseException(
-					"Could not distribute query. No distributor specified.");
 		}
+
+		// } else {
+		// throw new QueryParseException(
+		// "Could not distribute query. Logical distributor '"
+		// + distributorName + "' was not found.");
+		// }
+		// } else {
+		// throw new QueryParseException(
+		// "Could not distribute query. No distributor specified.");
+		// }
 
 		return resultQueries;
 	}
