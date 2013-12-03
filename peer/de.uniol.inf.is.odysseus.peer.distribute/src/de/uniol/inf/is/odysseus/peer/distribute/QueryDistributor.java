@@ -34,21 +34,15 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.registry.DistributionCheckerRegistry;
-import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartAllocatorRegistry;
-import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartModificatorRegistry;
-import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartitionerRegistry;
 import de.uniol.inf.is.odysseus.peer.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
 
 public class QueryDistributor implements IQueryDistributor {
 
-	private static final String QUERY_PARTITIONER_NAME = "user";
-	private static final String QUERY_PART_MODIFICATOR_NAME = "none";
-	private static final String QUERY_PART_ALLOCATOR_NAME = "user";
-	
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
 	
 	private static int jxtaConnectionCounter = 0;
@@ -70,19 +64,9 @@ public class QueryDistributor implements IQueryDistributor {
 
 		LOG.debug("{} queries will be distributed if possible.", queries.size());
 		
-		IQueryPartitioner partitioner = QueryPartitionerRegistry.getInstance().get(QUERY_PARTITIONER_NAME);
-		IQueryPartModificator modificator = QueryPartModificatorRegistry.getInstance().get(QUERY_PART_MODIFICATOR_NAME);
-		IQueryPartAllocator allocator = QueryPartAllocatorRegistry.getInstance().get(QUERY_PART_ALLOCATOR_NAME);
-		
-		if( partitioner == null ) {
-			throw new QueryDistributionException("Query partitioner '" + QUERY_PARTITIONER_NAME + "' not available!");
-		}
-		if( modificator == null ) {
-			throw new QueryDistributionException("Query part modificator '" + QUERY_PART_MODIFICATOR_NAME + "' not available!");
-		}
-		if( allocator == null ) {
-			throw new QueryDistributionException("Query part allocator '" + QUERY_PART_ALLOCATOR_NAME + "' not available!");
-		}
+		IQueryPartitioner partitioner = ParameterHelper.determineQueryPartitioner(config);
+		IQueryPartModificator modificator = ParameterHelper.determineQueryPartModificator(config);
+		IQueryPartAllocator allocator = ParameterHelper.determineQueryPartAllocator(config);
 		
 		LOG.debug("Using query partitioner: {}", partitioner.getName());
 		LOG.debug("Using query part modificator: {}", modificator.getName());
