@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.keyword;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartAllocatorParameter;
-import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartModificatorRegistry;
+import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartAllocatorRegistry;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
@@ -25,7 +26,7 @@ public class PeerQueryPartAllocatorPreParserKeyword extends AbstractPreParserKey
 		}
 		
 		String allocatorName = parameter.trim();
-		if( QueryPartModificatorRegistry.getInstance().contains(allocatorName)) {
+		if( !QueryPartAllocatorRegistry.getInstance().contains(allocatorName)) {
 			throw new OdysseusScriptException("Query Part Allocator name '" + allocatorName + "' is not registered!");
 		}
 	}
@@ -37,6 +38,11 @@ public class PeerQueryPartAllocatorPreParserKeyword extends AbstractPreParserKey
 		settings.add(new QueryPartAllocatorParameter(parameter.trim()));
 		
 		return null;
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		return QueryPartAllocatorRegistry.getInstance().getNames();
 	}
 
 }

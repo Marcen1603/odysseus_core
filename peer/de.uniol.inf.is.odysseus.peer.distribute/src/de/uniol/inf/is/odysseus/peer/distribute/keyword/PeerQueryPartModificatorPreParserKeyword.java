@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.keyword;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class PeerQueryPartModificatorPreParserKeyword extends AbstractPreParserK
 		}
 		
 		String modificatorName = parameter.trim();
-		if( QueryPartModificatorRegistry.getInstance().contains(modificatorName)) {
+		if( !QueryPartModificatorRegistry.getInstance().contains(modificatorName)) {
 			throw new OdysseusScriptException("Query Part Modificator name '" + modificatorName + "' is not registered!");
 		}
 	}
@@ -37,6 +38,11 @@ public class PeerQueryPartModificatorPreParserKeyword extends AbstractPreParserK
 		settings.add(new QueryPartModificatorParameter(parameter.trim()));
 		
 		return null;
+	}
+	
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		return QueryPartModificatorRegistry.getInstance().getNames();
 	}
 
 }

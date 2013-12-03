@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.keyword;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class PeerQueryPartitionerPreParserKeyword extends AbstractPreParserKeywo
 		}
 		
 		String partitionerName = parameter.trim();
-		if( QueryPartitionerRegistry.getInstance().contains(partitionerName)) {
+		if( !QueryPartitionerRegistry.getInstance().contains(partitionerName)) {
 			throw new OdysseusScriptException("Query Partitioner name '" + partitionerName + "' is not registered!");
 		}
 	}
@@ -40,4 +41,8 @@ public class PeerQueryPartitionerPreParserKeyword extends AbstractPreParserKeywo
 		return null;
 	}
 
+	@Override
+	public Collection<String> getAllowedParameters(ISession caller) {
+		return QueryPartitionerRegistry.getInstance().getNames();
+	}
 }
