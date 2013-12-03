@@ -35,7 +35,6 @@ limitations under the License.
       <import plugin="de.uniol.inf.is.odysseus.intervalapproach"/>
       <import plugin="de.uniol.inf.is.odysseus.relational.base"/>
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
-      <import plugin="de.uniol.inf.is.odysseus.benchmark"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.util" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
@@ -48,13 +47,6 @@ limitations under the License.
 
    <plugin
          id="de.uniol.inf.is.odysseus.costmodel.operator"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.operator.benchmark"
          download-size="0"
          install-size="0"
          version="0.0.0"

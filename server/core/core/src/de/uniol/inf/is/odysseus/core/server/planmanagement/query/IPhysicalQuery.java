@@ -22,6 +22,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringDataProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.IHasRoots;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IPhysicalQuery extends IMonitoringDataProvider, IReoptimizeHandler<IQueryReoptimizeListener>,
-IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner {
+IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots {
 
 	String getName();
 	

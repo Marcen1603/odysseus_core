@@ -47,7 +47,6 @@ limitations under the License.
       <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.planmigration" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.benchmark" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.datasrc" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.util" version="1.0.0" match="greaterOrEqual"/>

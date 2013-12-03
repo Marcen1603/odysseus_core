@@ -30,10 +30,6 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.benchmark.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.ac.standard"
          download-size="0"
