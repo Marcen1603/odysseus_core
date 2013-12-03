@@ -128,11 +128,18 @@ public class QueryDistributor implements IQueryDistributor {
 			
 			insertJxtaOperators(correctedAllocationMap);
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(correctedAllocationMap, config);
-			ILogicalQuery localQuery = buildLocalQuery(localQueryParts);
-			localQuery.setName(query.getName());
-			localQuery.setUser(caller);
 			
-			localQueriesToExecutor.add(localQuery);
+			if( !localQueryParts.isEmpty() ) {
+				LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
+				
+				ILogicalQuery localQuery = buildLocalQuery(localQueryParts);
+				localQuery.setName(query.getName());
+				localQuery.setUser(caller);
+				
+				localQueriesToExecutor.add(localQuery);
+			} else {
+				LOG.debug("No local query part of query {} remains.", query);
+			}
 		}
 
 		return localQueriesToExecutor;
@@ -323,22 +330,26 @@ public class QueryDistributor implements IQueryDistributor {
 			
 			for( ILogicalOperator operator : allOperators ) {
 				if( operator.getSubscriptions().isEmpty() ) {
+					LOG.debug("Operator {} is one local logical sink", operator);
 					sinks.add(operator);
 				}
 			}
 		}
+		LOG.debug("Determined {} logical sinks", sinks.size());
 		
 		TopAO topAO = new TopAO();
 		int inputPort = 0;
 		for (ILogicalOperator sink : sinks) {
 			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
 		}
+		LOG.debug("Created TopAO-Operator with {} sinks", sinks.size());
 
 		ILogicalQuery logicalQuery = new LogicalQuery();
 		logicalQuery.setLogicalPlan(topAO, true);
 		logicalQuery.setParserId("PQL");
 		logicalQuery.setPriority(0);
 		logicalQuery.setQueryText(PQLGeneratorService.get().generatePQLStatement(topAO));
+		LOG.debug("Created logical query with queryText = {}", logicalQuery.getQueryText());
 
 		return logicalQuery;
 	}

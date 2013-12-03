@@ -20,6 +20,12 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 		operators.addAll(partOperators);
 	}
 
+	public LogicalQueryPart(ILogicalOperator operator) {
+		Preconditions.checkNotNull(operator, "Operator for forming a logical query part must not be null!");
+		
+		operators.add(operator);
+	}
+
 	@Override
 	public ImmutableCollection<ILogicalOperator> getOperators() {
 		return ImmutableList.copyOf(operators);
