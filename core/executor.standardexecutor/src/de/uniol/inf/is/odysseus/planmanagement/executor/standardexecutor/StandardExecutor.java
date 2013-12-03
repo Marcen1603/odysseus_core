@@ -329,8 +329,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		
 		List<ILogicalQuery> resultQueries = Lists.newArrayList();
 
+		LOG.debug("Beginning distribution of queries");
 		if (!ParameterDistributionType.UNDEFINED.equals(distributorName)) {
-			LOG.debug("Beginning distribution of queries");
 			Optional<ILogicalQueryDistributor> optDistributor = getLogicalQueryDistributor(distributorName);
 			if (optDistributor.isPresent()) {
 				LOG.debug("Using old way to distribute (p2p_new)");
@@ -341,21 +341,20 @@ public class StandardExecutor extends AbstractExecutor implements
 				} else {
 					LOG.error("Queries are fully distributed. Nothing to do locally.");
 				}
-			} else if( hasQueryDistributor() ) {
-				LOG.debug("Using new way to distribute (peer)");
-				
-				try {
-					resultQueries.addAll(getQueryDistributor().distribute(this, caller, queries, parameters));
-				} catch (QueryDistributionException ex) {
-					throw new QueryParseException("Could not distribute the queries", ex);
-				}
-				
 			} else {
 				throw new QueryParseException(
 						"Could not distribute query. Logical distributor '"
 								+ distributorName + "' was not found.");
 			}
-		}
+		} else if( hasQueryDistributor() ) {
+			LOG.debug("Using new way to distribute (peer)");
+			
+			try {
+				resultQueries.addAll(getQueryDistributor().distribute(this, caller, queries, parameters));
+			} catch (QueryDistributionException ex) {
+				throw new QueryParseException("Could not distribute the queries", ex);
+			}
+		} 
 
 		// } else {
 		// throw new QueryParseException(
