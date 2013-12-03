@@ -270,7 +270,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		// Distribution handler only for queries
 		if (parameters.get(ParameterDoDistribute.class).getValue()) {
-			queries = distributeQueries(parameters, queries);
+			queries = distributeQueries(parameters, user, queries);
 		}
 
 		// Wrap queries again
@@ -323,7 +323,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	private List<ILogicalQuery> distributeQueries(
-			QueryBuildConfiguration parameters, List<ILogicalQuery> queries) {
+			QueryBuildConfiguration parameters, ISession caller, List<ILogicalQuery> queries) {
 		String[] strParameters = parameters.get(ParameterDistributionType.class).getValue().split(" ");
 		String distributorName = strParameters[0];
 		
@@ -345,7 +345,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				LOG.debug("Using new way to distribute (peer)");
 				
 				try {
-					resultQueries.addAll(getQueryDistributor().distribute(this, queries, parameters));
+					resultQueries.addAll(getQueryDistributor().distribute(this, caller, queries, parameters));
 				} catch (QueryDistributionException ex) {
 					throw new QueryParseException("Could not distribute the queries", ex);
 				}
