@@ -273,8 +273,8 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 	 * @return
 	 */
 	private double[][] convertStringTo2DArray(String data){
-		@SuppressWarnings("resource")
-		Scanner sc = new Scanner(data).useDelimiter("[,|]");
+		Scanner sc = new Scanner(data);
+		sc.useDelimiter("[,|]");
 		String[] ctr = data.split(","); 
 		double[][] matrix = new double[ctr.length/2][2];
 		    for (int r = 0; r < ctr.length/2; r++) {
@@ -282,7 +282,7 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler
 		            matrix[r][c] = Double.parseDouble(sc.next());
 		        }
 		 }
-		   
+		sc.close(); 
 		return matrix;    
 	}
 	
