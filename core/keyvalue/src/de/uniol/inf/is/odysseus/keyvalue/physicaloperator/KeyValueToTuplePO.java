@@ -47,8 +47,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends
 		SDFSchema outputSchema = getOutputSchema();
 		Tuple<M> output = new Tuple<M>(outputSchema.size(), false);
 		if (keepInputObject) {
-		    //FIXME additionalContent is a Map! (CKu)
-		//	output.setAdditionalContent(input.clone());
+			output.setAdditionalContent("base",input.clone());
 		}
 		int pos = 0;
 		for (SDFAttribute attr : outputSchema.getAttributes()) {
