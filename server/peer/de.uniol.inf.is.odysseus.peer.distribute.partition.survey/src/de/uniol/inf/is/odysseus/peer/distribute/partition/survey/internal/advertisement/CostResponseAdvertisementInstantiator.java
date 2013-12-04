@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.adv;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.document.Element;
