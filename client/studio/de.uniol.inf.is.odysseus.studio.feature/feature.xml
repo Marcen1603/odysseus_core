@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.studio.client.feature"
+      id="de.uniol.inf.is.odysseus.studio.feature"
       label="Studio Client Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
@@ -31,23 +31,7 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <includes
-         id="org.eclipse.platform"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.rcp"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.core.client.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.core.feature"
          version="0.0.0"/>
 
    <plugin
