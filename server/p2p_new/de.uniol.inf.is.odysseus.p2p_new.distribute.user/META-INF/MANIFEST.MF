@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/userDefinedDistributor.xml
-Import-Package: de.uniol.inf.is.odysseus.logicaloperator.intervalapproach,
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach.logicaloperator,
  de.uniol.inf.is.odysseus.parser.pql.generator,
  org.osgi.framework;version="1.6.0"
 Require-Bundle: com.google.guava;bundle-version="12.0.0",

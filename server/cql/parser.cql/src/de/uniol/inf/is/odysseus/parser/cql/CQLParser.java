@@ -87,7 +87,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistExcep
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.logicaloperator.intervalapproach.TimestampToPayloadAO;
+import de.uniol.inf.is.odysseus.intervalapproach.logicaloperator.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;

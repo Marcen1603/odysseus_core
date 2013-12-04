@@ -4,9 +4,9 @@ Bundle-Name: Securitypunctuation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.securitypunctuation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.securitypunctuation.Activator
-Import-Package: de.uniol.inf.is.odysseus.interval.transform.join,
- de.uniol.inf.is.odysseus.intervalapproach,
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
+ de.uniol.inf.is.odysseus.intervalapproach.transform.join,
  de.uniol.inf.is.odysseus.latency.physicaloperator,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.parser.pql.relational,

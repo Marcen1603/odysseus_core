@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.relational_interval.transform;
+package de.uniol.inf.is.odysseus.intervalapproach.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.logicaloperator.TimestampToPayloadAO;
-import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampToPayloadPO;
+import de.uniol.inf.is.odysseus.intervalapproach.TimeStampOrderValidatorTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.logicaloperator.TimeStampOrderValidatorAO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 
-public class TRelationalTimestampToPayloadRule extends AbstractTransformationRule<TimestampToPayloadAO>{
+public class TTimeStampOrderValdiatorRule extends
+		AbstractTransformationRule<TimeStampOrderValidatorAO> {
 
 	@Override
 	public int getPriority() {
@@ -33,26 +34,21 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 	}
 
 	@Override
-	public void execute(TimestampToPayloadAO operator,
-			TransformationConfiguration config) {
-		defaultExecute(operator, new RelationalTimestampToPayloadPO(), config, true, true);		
+	public void execute(TimeStampOrderValidatorAO operator,
+			TransformationConfiguration config) {		
+		TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new TimeStampOrderValidatorTIPO<ITimeInterval, IStreamObject<ITimeInterval>>();
+		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(TimestampToPayloadAO operator,
+	public boolean isExecutable(TimeStampOrderValidatorAO operator,
 			TransformationConfiguration config) {
-		if(operator.getInputSchema(0).getType() == Tuple.class && config.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
-			if(operator.isAllPhysicalInputSet()){
-					return true;				
-			}
-		}
-		return false;
+		return operator.isAllPhysicalInputSet();
 	}
-	
 
 	@Override
 	public String getName() {
-		return "TimestampToPayloadAO --> RelationalTimestampToPayloadPO";
+		return "TimeStampOrderValidatorAO --> TimeStampOrderValidatorTIPO";
 	}
 
 	@Override
@@ -61,7 +57,8 @@ public class TRelationalTimestampToPayloadRule extends AbstractTransformationRul
 	}
 	
 	@Override
-	public Class<? super TimestampToPayloadAO> getConditionClass() {	
-		return TimestampToPayloadAO.class;
+	public Class<? super TimeStampOrderValidatorAO>  getConditionClass() {	
+		return TimeStampOrderValidatorAO.class;
 	}
+
 }

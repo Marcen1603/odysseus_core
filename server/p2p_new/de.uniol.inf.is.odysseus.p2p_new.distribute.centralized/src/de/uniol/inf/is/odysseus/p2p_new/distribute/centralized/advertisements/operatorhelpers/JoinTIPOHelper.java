@@ -74,7 +74,7 @@ public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
 				}
 			}
 		}
-		//Merge- and creation-functions seem to be fixed according to {@link de.uniol.inf.is.odysseus.interval.transform.join.TJoinAORule}
+		//Merge- and creation-functions seem to be fixed according to {@link de.uniol.inf.is.odysseus.intervalapproach.transform.join.TJoinAORule}
 		result.setMetadataMerge(new CombinedMergeFunction());
 		result.setCreationFunction(new DefaultTIDummyDataCreation());
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
