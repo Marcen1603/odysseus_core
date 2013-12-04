@@ -321,7 +321,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 
 		for (int i = 0; i < connections.toArray().length; i++) {
 			streamSelect.add(((LayerUpdater) connections.toArray()[i])
-					.getQuery().getLogicalQuery().getQueryText(), i);
+					.getQuery().getQueryText(), i);
 		}
 		streamSelect.select(0);
 		Label attributesLabel = new Label(vectorLayer, SWT.NONE);
@@ -411,7 +411,7 @@ public class PropertyTitleDialog extends TitleAreaDialog {
 		// Add all available streams
 		for (int i = 0; i < connections.toArray().length; i++) {
 			streamSelect.add(((LayerUpdater) connections.toArray()[i])
-					.getQuery().getLogicalQuery().getQueryText(), i);
+					.getQuery().getQueryText(), i);
 		}
 		streamSelect.select(0);
 

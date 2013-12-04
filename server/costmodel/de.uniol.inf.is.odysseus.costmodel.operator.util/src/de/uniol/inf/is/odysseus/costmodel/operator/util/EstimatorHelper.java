@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ISweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 
 /**
  * Diese Klasse bietet statische Methoden an, um zu einem gegebenen physischen

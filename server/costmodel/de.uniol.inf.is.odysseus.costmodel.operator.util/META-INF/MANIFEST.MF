@@ -6,28 +6,18 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: de.uniol.inf.is.odysseus.costmodel.operator.util
-Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.logicaloperator,
- de.uniol.inf.is.odysseus.core.mep,
- de.uniol.inf.is.odysseus.core.monitoring,
- de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.core.predicate,
- de.uniol.inf.is.odysseus.core.sdf,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator,
- de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.sa,
- de.uniol.inf.is.odysseus.core.server.predicate,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
+Import-Package: de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.mep.functions,
  de.uniol.inf.is.odysseus.mep.functions.compare,
  de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.sweeparea,
  org.osgi.framework,
  org.slf4j
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.operator.util.OperatorCostModelUtilPlugIn
-Require-Bundle: com.google.guava;bundle-version="12.0.0"
+Require-Bundle: com.google.guava;bundle-version="12.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0"

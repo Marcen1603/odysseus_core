@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
+import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
+
 public class DataDictionaryProvider {
 
 	static private List<IDatatypeProvider> datatypeProvider = new ArrayList<>();

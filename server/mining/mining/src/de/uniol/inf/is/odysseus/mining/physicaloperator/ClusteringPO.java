@@ -42,8 +42,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatencyTimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastLinkedList;
+import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
+import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.clustering.IClusterer;
 

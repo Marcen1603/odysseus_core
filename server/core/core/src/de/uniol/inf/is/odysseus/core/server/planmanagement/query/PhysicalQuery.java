@@ -718,6 +718,22 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public ILogicalQuery getLogicalQuery() {
 		return query;
 	}
+	
+	@Override
+	public String getQueryText() {
+		if (query != null){
+			return query.getQueryText();
+		}
+		return null;
+	}
+	
+	@Override
+	public String getParserId() {
+		if (query != null){
+			return query.getParserId();
+		}
+		return null;
+	}
 
 	@Override
 	public void setParameter(String key, Object value) {

@@ -5,14 +5,7 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.operator.relational
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.mep,
- de.uniol.inf.is.odysseus.core.monitoring,
- de.uniol.inf.is.odysseus.core.physicaloperator,
- de.uniol.inf.is.odysseus.core.predicate,
- de.uniol.inf.is.odysseus.core.sdf,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.costmodel.operator,
+Import-Package: de.uniol.inf.is.odysseus.costmodel.operator,
  de.uniol.inf.is.odysseus.costmodel.operator.datasrc,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.window,
@@ -26,4 +19,6 @@ Service-Component: OSGI-INF/JoinACEstimator.xml, OSGI-INF/SelectACEstimator.xml,
 Bundle-Activator: de.uniol.inf.is.odysseus.costmodel.operator.relational.Activator
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.costmodel.operator.util;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0"

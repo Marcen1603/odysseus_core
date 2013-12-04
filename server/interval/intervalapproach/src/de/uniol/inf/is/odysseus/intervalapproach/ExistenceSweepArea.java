@@ -19,7 +19,7 @@ import java.util.Collections;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 
 public class ExistenceSweepArea<T extends IStreamObject<? extends ITimeInterval>> extends JoinTISweepArea<T>{
 

@@ -276,10 +276,8 @@ public class MapEditorModel extends ModelObject {
 			}
 
 			for (LayerUpdater connection : connections.values()) {
-				String queryText = connection.getQuery().getLogicalQuery()
-						.getQueryText();
-				String queryParser = connection.getQuery().getLogicalQuery()
-						.getParserId();
+				String queryText = connection.getQuery().getQueryText();
+				String queryParser = connection.getQuery().getParserId();
 				QueryString pquery = new QueryString();
 
 				pquery.transformation = "Standard";
@@ -385,7 +383,7 @@ public class MapEditorModel extends ModelObject {
 		for (LayerUpdater connection : connections.values()) {
 			// LOG.debug(connection.getQuery().getLogicalQuery().getQueryText());
 			// LOG.debug(layerConfiguration.getQuery());
-			if (connection.getQuery().getLogicalQuery().getQueryText()
+			if (connection.getQuery().getQueryText()
 					.equals(layerConfiguration.getQuery())) {
 
 				// Connect the Stream to the iStreamListner
@@ -435,7 +433,7 @@ public class MapEditorModel extends ModelObject {
 
 		// Add to the selected connection (LayerUpdater)
 		for (LayerUpdater connection : connections.values()) {
-			if (connection.getQuery().getLogicalQuery().getQueryText()
+			if (connection.getQuery().getQueryText()
 					.equals(layerConfiguration.getQuery())) {
 				connection.add(layer);
 			}
@@ -461,7 +459,7 @@ public class MapEditorModel extends ModelObject {
 
 		// Add to the selected connection (LayerUpdater)
 		for (LayerUpdater connection : connections.values()) {
-			if (connection.getQuery().getLogicalQuery().getQueryText()
+			if (connection.getQuery().getQueryText()
 					.equals(layerConfiguration.getQuery())) {
 				connection.add(layer);
 			}

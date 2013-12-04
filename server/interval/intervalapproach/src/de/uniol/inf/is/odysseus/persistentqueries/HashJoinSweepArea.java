@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * This sweep area is used for equi joins over non-windowed streams.
@@ -283,7 +283,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea#getMaxEndTs()
+	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMaxEndTs()
 	 */
 	@Override
 	public PointInTime getMaxEndTs() {

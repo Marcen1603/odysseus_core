@@ -30,9 +30,6 @@ limitations under the License.
    <url>
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update/"/>
    </url>
-   <includes
-         id="de.uniol.inf.is.odysseus.core.feature"
-         version="0.0.0"/>
 
    <includes
          id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
@@ -52,6 +49,10 @@ limitations under the License.
 
    <includes
          id="de.uniol.inf.is.odysseus.studio.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.server.feature"
          version="0.0.0"/>
 
 </feature>

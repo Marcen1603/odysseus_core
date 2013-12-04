@@ -174,7 +174,7 @@ public class EMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? extends 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea #insertAll(java.util.List)
+	 * @see de.uniol.inf.is.odysseus.sweeparea.AbstractSweepArea #insertAll(java.util.List)
 	 */
 	@Override
 	public final void insertAll(final List<ProbabilisticTuple<? extends ITimeInterval>> toBeInserted) {

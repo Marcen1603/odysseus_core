@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends Tuple<K>>
 		implements ITimeIntervalSweepArea<T> {
@@ -219,7 +219,7 @@ public class PriorityIdHashSweepArea<K extends ITimeIntervalPriority, T extends 
 	}
 
 	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea#getMaxEndTs()
+	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMaxEndTs()
 	 */
 	@Override
 	public PointInTime getMaxEndTs() {

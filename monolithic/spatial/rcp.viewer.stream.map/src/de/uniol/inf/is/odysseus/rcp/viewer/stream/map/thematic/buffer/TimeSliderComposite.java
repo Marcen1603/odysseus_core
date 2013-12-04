@@ -269,8 +269,7 @@ public class TimeSliderComposite extends Composite implements
 				if (connections != null) {
 					for (LayerUpdater conn : connections) {
 						Label query = new Label(s, SWT.NONE);
-						query.setText(conn.getQuery().getLogicalQuery()
-								.getQueryText());
+						query.setText(conn.getQuery().getQueryText());
 
 						Label number = new Label(s, SWT.NONE);
 						number.setText(Long.toString(conn.getPufferSize()));

@@ -8,6 +8,7 @@ Import-Package: de.uniol.inf.is.odysseus.benchmark,
  de.uniol.inf.is.odysseus.benchmark.result,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.latency.physicaloperator,
+ de.uniol.inf.is.odysseus.sweeparea,
  org.osgi.service.component;version="1.1.0",
  org.simpleframework.xml,
  org.simpleframework.xml.core

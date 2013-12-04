@@ -4,27 +4,7 @@ Bundle-Name: Securitypunctuation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.securitypunctuation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.securitypunctuation.Activator
-Import-Package: de.uniol.inf.is.odysseus.core.collection,
- de.uniol.inf.is.odysseus.core.physicaloperator.event,
- de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.securitypunctuation,
- de.uniol.inf.is.odysseus.core.server.collection,
- de.uniol.inf.is.odysseus.core.server.logicaloperator,
- de.uniol.inf.is.odysseus.core.server.metadata,
- de.uniol.inf.is.odysseus.core.server.physicaloperator,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.sa,
- de.uniol.inf.is.odysseus.core.server.physicaloperator.sink,
- de.uniol.inf.is.odysseus.core.server.planmanagement,
- de.uniol.inf.is.odysseus.core.server.planmanagement.configuration,
- de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration,
- de.uniol.inf.is.odysseus.core.server.planmanagement.query,
- de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter,
- de.uniol.inf.is.odysseus.core.server.predicate,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.usermanagement,
- de.uniol.inf.is.odysseus.interval.transform.join,
+Import-Package: de.uniol.inf.is.odysseus.interval.transform.join,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.intervalapproach.predicate,
  de.uniol.inf.is.odysseus.latency.physicaloperator,
@@ -42,6 +22,8 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*
 

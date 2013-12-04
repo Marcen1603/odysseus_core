@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.IHasRoots;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicalplan.IPlanMonitor;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeHandler;
@@ -32,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public interface IPhysicalQuery extends IMonitoringDataProvider, IReoptimizeHandler<IQueryReoptimizeListener>,
-IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots {
+IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQuery {
 
 	String getName();
 	

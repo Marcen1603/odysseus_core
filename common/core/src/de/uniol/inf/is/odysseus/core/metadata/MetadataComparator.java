@@ -13,15 +13,25 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.metadata;
+package de.uniol.inf.is.odysseus.core.metadata;
+
+import java.io.Serializable;
+import java.util.Comparator;
 
 import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * @author Jonas Jacobi
  */
-@Deprecated
-public class MetadataComparator<T extends IClone> extends de.uniol.inf.is.odysseus.core.metadata.MetadataComparator<T>{
+public class MetadataComparator<T extends IClone> implements Comparator<IStreamObject<? extends T>>, Serializable {
 
+	private static final long serialVersionUID = -1674438499933717924L;
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public int compare(IStreamObject<? extends T> o1, IStreamObject<? extends T> o2) {
+		return ((Comparable<T>)o1.getMetadata()).compareTo(o2.getMetadata());
+	}
       
 }

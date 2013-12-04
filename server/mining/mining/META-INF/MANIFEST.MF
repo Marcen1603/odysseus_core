@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.mining.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.transform.engine,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,

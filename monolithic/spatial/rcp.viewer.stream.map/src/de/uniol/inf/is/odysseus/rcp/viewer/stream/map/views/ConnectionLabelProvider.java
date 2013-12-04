@@ -81,7 +81,7 @@ public class ConnectionLabelProvider implements ILabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof LayerUpdater) {
-			return ((LayerUpdater) element).getQuery().getLogicalQuery().getQueryText();
+			return ((LayerUpdater) element).getQuery().getQueryText();
 		} else if (element instanceof SDFAttribute) {
 			return ((SDFAttribute) element).getAttributeName();
 		} else if (element instanceof IFile) {

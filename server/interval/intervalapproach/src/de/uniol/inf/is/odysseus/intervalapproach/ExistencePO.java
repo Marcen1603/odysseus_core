@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.ITemporalSweepArea;
 
 /**
  * Works the same way as JoinTIPO, but only the left elements are passed to the

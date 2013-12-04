@@ -59,7 +59,7 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" match="greaterOrEqual"/>
+      <import feature="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin

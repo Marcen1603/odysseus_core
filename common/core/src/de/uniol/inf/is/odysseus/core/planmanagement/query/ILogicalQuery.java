@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<IOperatorOwner>{
+public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializable, Comparable<IOperatorOwner>, IQuery{
 
 	/**
 	 * ID of this query. Should be unique.
@@ -69,10 +69,12 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable, ISerializab
 	 */
 	public void setPriority(int priority);
 
+	@Override
 	public String getParserId();
 
 	public void setParserId(String parserId);
 
+	@Override
 	public String getQueryText();
 
 	public void setQueryText(String queryText);

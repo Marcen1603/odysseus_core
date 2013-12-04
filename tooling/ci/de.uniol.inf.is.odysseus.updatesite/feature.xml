@@ -92,7 +92,7 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.studio.client.feature"
+         id="de.uniol.inf.is.odysseus.studio.feature"
          version="0.0.0"/>
 
    <includes
@@ -140,10 +140,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.studio.platform.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.product.filestore.feature"
          version="0.0.0"/>
 
@@ -153,6 +149,10 @@ Unless required by applicable law or agreed to in writing, software
 
    <includes
          id="de.uniol.inf.is.odysseus.core.common.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.product.client.platform.feature"
          version="0.0.0"/>
 
 </feature>

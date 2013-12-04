@@ -76,7 +76,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 						Shell shell = editor.getScreenManager().getDisplay().getActiveShell();
 						LayerUpdater connection = (LayerUpdater) selection.getFirstElement();
 
-						boolean feedback = MessageDialog.openQuestion(shell, "Disconnect Connection", "Would you really disconnect " + connection.getQuery().getLogicalQuery().getQueryText());
+						boolean feedback = MessageDialog.openQuestion(shell, "Disconnect Connection", "Would you really disconnect " + connection.getQuery().getQueryText());
 						if (feedback) {
 							editor.removeConnection(connection);
 							LOG.debug("Remove Connection");

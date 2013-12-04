@@ -22,8 +22,8 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.IFastList;
+import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
+import de.uniol.inf.is.odysseus.sweeparea.IFastList;
 
 public class JoinTISweepArea<T extends IStreamObject<? extends ITimeInterval>>
 		extends DefaultTISweepArea<T> {

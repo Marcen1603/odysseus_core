@@ -29,10 +29,6 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
-   <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.odysseus.debs2013"
          download-size="0"

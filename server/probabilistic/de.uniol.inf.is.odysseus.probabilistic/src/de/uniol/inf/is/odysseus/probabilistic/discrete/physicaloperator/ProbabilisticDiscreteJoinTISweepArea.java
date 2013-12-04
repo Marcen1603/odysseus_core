@@ -80,7 +80,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractSweepArea#query(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
+	 * @see de.uniol.inf.is.odysseus.sweeparea.AbstractSweepArea#query(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
 	public final Iterator<T> query(final T element, final Order order) {

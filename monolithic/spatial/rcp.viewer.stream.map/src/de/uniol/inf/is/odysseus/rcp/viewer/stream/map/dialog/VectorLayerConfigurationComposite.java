@@ -165,7 +165,7 @@ public class VectorLayerConfigurationComposite extends Composite {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof LayerUpdater)
-					return ((LayerUpdater)element).getQuery().getLogicalQuery().getQueryText();
+					return ((LayerUpdater)element).getQuery().getQueryText();
 				return null;
 			}
 		});
@@ -175,7 +175,7 @@ public class VectorLayerConfigurationComposite extends Composite {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				LayerUpdater layerUpdater = (LayerUpdater) selection.getFirstElement();
-				configuration.setQuery(layerUpdater.getQuery().getLogicalQuery().getQueryText());
+				configuration.setQuery(layerUpdater.getQuery().getQueryText());
 				attributeViewer.setInput(layerUpdater);
 				Object attribute = attributeViewer.getElementAt(0);
 				if (attribute != null)

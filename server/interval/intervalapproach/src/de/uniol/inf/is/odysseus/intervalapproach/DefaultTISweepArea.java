@@ -27,11 +27,11 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataComparator;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.AbstractTimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.FastArrayList;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.IFastList;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
+import de.uniol.inf.is.odysseus.sweeparea.AbstractTimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
+import de.uniol.inf.is.odysseus.sweeparea.IFastList;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 
 /**
@@ -215,7 +215,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea#extractElementsBefore(PointInTime)
+	 * @see de.uniol.inf.is.odysseus.sweeparea.ITemporalSweepArea#extractElementsBefore(PointInTime)
 	 */
 	@Override
 	public Iterator<T> extractElementsBefore(PointInTime validity) {
@@ -400,7 +400,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.sa.ITemporalSweepArea#purgeElementsBefore(PointInTime)
+	 * @see de.uniol.inf.is.odysseus.sweeparea.ITemporalSweepArea#purgeElementsBefore(PointInTime)
 	 */
 	@Override
 	public void purgeElementsBefore(PointInTime time) {

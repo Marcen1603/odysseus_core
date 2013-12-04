@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
@@ -38,7 +38,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	private final IStreamMapEditor streamMapEditor;
 	private final IStreamConnection<Object> connection;
-	private final IPhysicalQuery query;
+	private final IQuery query;
 	private int maxNumerOfElements;
 	private int userDefinedTimeRange;
 
@@ -49,7 +49,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	private List<Tuple<? extends ITimeInterval>> elementList;
 
-	public LayerUpdater(IStreamMapEditor streamMapEditor, IPhysicalQuery query,
+	public LayerUpdater(IStreamMapEditor streamMapEditor, IQuery query,
 			IStreamConnection<Object> connection) {
 		super();
 		this.streamMapEditor = streamMapEditor;
@@ -68,7 +68,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		return connection;
 	}
 
-	public IPhysicalQuery getQuery() {
+	public IQuery getQuery() {
 		return query;
 	}
 
