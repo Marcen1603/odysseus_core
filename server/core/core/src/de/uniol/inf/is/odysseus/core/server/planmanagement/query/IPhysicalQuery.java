@@ -73,6 +73,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots {
 	 * 
 	 * @return The physical plan of this query.
 	 */
+	@Override
 	public List<IPhysicalOperator> getRoots();
 
 	/**
