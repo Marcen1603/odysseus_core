@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.product.platform.feature"
-      label="Odysseus Platform"
+      id="de.uniol.inf.is.odysseus.core.common.feature"
+      label="Odysseus Common Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles all features that are at least needed for the Odysseus Product Application. It may not have any dependencies to Odysseus.
+      This feature bundles common components of Odysseus that can be used on client as well as on server side.
    </description>
 
    <copyright>
@@ -31,22 +31,36 @@ limitations under the License.
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update/"/>
    </url>
 
-   <includes
-         id="org.eclipse.platform"
-         version="0.0.0"/>
+   <plugin
+         id="de.uniol.inf.is.odysseus.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
-   <includes
-         id="org.eclipse.rcp"
-         version="0.0.0"/>
+   <plugin
+         id="de.uniol.inf.is.odysseus.datatype.interval"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.mep"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.mep.matrix"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="com.google.guava"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
