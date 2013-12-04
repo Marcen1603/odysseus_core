@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Interval
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.interval
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.datatype.interval
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.datatype.interval.Activator
 Bundle-ActivationPolicy: lazy
