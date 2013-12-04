@@ -7,13 +7,9 @@ Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.datadictionary,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.usermanagement,
  de.uniol.inf.is.odysseus.core.server.util,
- de.uniol.inf.is.odysseus.logicaloperator.intervalapproach,
  org.slf4j
 Require-Bundle: com.google.guava;bundle-version="12.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"

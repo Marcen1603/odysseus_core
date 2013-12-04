@@ -4,9 +4,6 @@ Bundle-Name: PQL Relational
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.pql.relational
 Bundle-Version: 1.0.0.qualifier
 Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator.builder,
- de.uniol.inf.is.odysseus.core.server.predicate,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema,
- de.uniol.inf.is.odysseus.parser.pql,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  org.osgi.framework;version="1.5.0"
