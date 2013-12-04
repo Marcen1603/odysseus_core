@@ -7,9 +7,6 @@ import java.util.Map;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -26,23 +23,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetw
 
 public class SurveyBasedPartitioner implements IQueryPartitioner {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedPartitioner.class);
-	private static Partitioner partitioner;
-	
-	public void bindPartitioner( Partitioner part) {
-		partitioner = part;
+	private static Partitioner partitioner = new de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.internal.SurveyBasedPartitioner();
 		
-		LOG.debug("Bound partitioner {}", part);
-	}
-	
-	public void unbindPartitioner( Partitioner part ) {
-		if( partitioner == part ) {
-			partitioner = null;
-			
-			LOG.debug("Unbound partitioner {}", part);
-		}
-	}
-	
 	@Override
 	public String getName() {
 		return "survey";
