@@ -100,7 +100,6 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_open() throws OpenFailedException {
 		getGroupProcessor().init();
