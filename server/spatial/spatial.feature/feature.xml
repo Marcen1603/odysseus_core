@@ -31,12 +31,7 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <requires>
-      <import plugin="org.osgeo.proj4j" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.vividsolutions.jts" version="1.0.0" match="greaterOrEqual"/>
-      <import feature="de.uniol.inf.is.odysseus.core.feature" version="1.0.0.qualifier"/>
-      <import feature="de.uniol.inf.is.odysseus.context.feature" version="1.0.0.qualifier"/>
-      <import plugin="de.uniol.inf.is.odysseus.core.server"/>
-      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import feature="de.uniol.inf.is.odysseus.core.common.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin

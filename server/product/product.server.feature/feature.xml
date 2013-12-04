@@ -32,10 +32,6 @@ limitations under the License.
    </url>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.planmgmt.standard.feature"
          version="0.0.0"/>
 
@@ -49,6 +45,14 @@ limitations under the License.
 
    <includes
          id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.common.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.core.server.feature"
          version="0.0.0"/>
 
 </feature>
