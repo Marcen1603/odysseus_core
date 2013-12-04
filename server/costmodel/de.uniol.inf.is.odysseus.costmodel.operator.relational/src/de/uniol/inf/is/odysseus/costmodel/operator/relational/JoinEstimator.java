@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.PredicateHistogramHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.PredicateSelectivityHelper;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 @SuppressWarnings("rawtypes")
 public class JoinEstimator implements IOperatorEstimator<JoinTIPO> {

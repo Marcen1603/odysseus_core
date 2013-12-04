@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
 import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.ILayer;
 

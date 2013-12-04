@@ -29,12 +29,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.IPlanExecutionListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.AbstractPlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planexecution.event.PlanExecutionEventType;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 
 /**
  * Called after initializing the plan and stopping the execution.

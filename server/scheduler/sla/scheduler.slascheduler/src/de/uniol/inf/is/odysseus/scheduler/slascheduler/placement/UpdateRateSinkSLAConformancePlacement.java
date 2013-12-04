@@ -28,12 +28,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.intervalapproach.AssureHeartbeatPO;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
+import de.uniol.inf.is.odysseus.server.intervalapproach.AssureHeartbeatPO;
 /**
  * Placement strategy for UpdateRateSink based sla conformance  operators
  * 

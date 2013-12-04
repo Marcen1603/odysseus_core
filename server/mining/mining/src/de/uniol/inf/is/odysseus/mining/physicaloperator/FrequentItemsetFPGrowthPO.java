@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Pattern;
 import de.uniol.inf.is.odysseus.mining.frequentitem.Transaction;
 import de.uniol.inf.is.odysseus.mining.frequentitem.fpgrowth.FList;

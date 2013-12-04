@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 
 @SuppressWarnings("rawtypes")
 public class SlidingElementWindowTIPOEstimator implements IOperatorEstimator<SlidingElementWindowTIPO> {

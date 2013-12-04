@@ -18,13 +18,13 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.rules.TSelectAORule;
 
 /**

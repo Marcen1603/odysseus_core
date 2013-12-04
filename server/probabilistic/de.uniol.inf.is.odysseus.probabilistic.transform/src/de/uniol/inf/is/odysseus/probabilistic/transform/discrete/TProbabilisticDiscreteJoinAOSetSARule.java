@@ -27,9 +27,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -39,6 +36,9 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilisti
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TIMergeFunction;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

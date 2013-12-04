@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.securitypunctuation.helper.StandardSecurityEvaluator;
+import de.uniol.inf.is.odysseus.server.intervalapproach.StreamGroupingWithAggregationPO;
 
 public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, W extends IStreamObject<Q>>
 		extends StreamGroupingWithAggregationPO<Q, R, W> {

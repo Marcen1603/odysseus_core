@@ -32,8 +32,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingElementWindowTIPO;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingElementWindowTIPO;
 
 public class RelationalSlidingElementWindowTIPO extends
 		SlidingElementWindowTIPO<Tuple<ITimeInterval>> {

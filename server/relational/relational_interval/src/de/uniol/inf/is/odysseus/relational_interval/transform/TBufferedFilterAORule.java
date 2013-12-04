@@ -21,10 +21,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferedFilterAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.BufferedFilterPO;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.BufferedFilterPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.relational_interval;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.intervalapproach.TimestampToPayloadPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TimestampToPayloadPO;
 
 public class RelationalTimestampToPayloadPO extends
 		TimestampToPayloadPO<ITimeInterval, Tuple<ITimeInterval>> {

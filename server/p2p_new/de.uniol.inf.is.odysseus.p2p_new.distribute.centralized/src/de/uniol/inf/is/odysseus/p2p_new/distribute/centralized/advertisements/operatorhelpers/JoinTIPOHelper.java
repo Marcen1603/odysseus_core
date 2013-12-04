@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.persistentqueries.PersistentTransferArea;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMergeFunction;
@@ -74,7 +74,7 @@ public class JoinTIPOHelper extends AbstractPhysicalOperatorHelper<JoinTIPO> {
 				}
 			}
 		}
-		//Merge- and creation-functions seem to be fixed according to {@link de.uniol.inf.is.odysseus.intervalapproach.transform.join.TJoinAORule}
+		//Merge- and creation-functions seem to be fixed according to {@link de.uniol.inf.is.odysseus.server.intervalapproach.transform.join.TJoinAORule}
 		result.setMetadataMerge(new CombinedMergeFunction());
 		result.setCreationFunction(new DefaultTIDummyDataCreation());
 		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];

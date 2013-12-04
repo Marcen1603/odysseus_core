@@ -15,7 +15,7 @@
 //import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 //import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 //import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-//import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+//import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTISweepArea;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.IStreamMapEditor;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.LayerUpdater;
 //import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;

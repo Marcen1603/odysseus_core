@@ -17,11 +17,11 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.TIMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TIMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.pattern.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.pattern.logicaloperator.PatternMatchingAO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.AbsencePatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.AllPatternMatchingPO;
@@ -12,6 +11,7 @@ import de.uniol.inf.is.odysseus.pattern.physicaloperator.PatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.SubsetSelectionPatternMatchingPO;
 import de.uniol.inf.is.odysseus.pattern.physicaloperator.TrendPatternMatchingPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TIInputStreamSyncArea;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

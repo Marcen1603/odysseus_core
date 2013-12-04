@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
-import de.uniol.inf.is.odysseus.intervalapproach.AntiJoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.AntiJoinTIPO;
 
 @SuppressWarnings("rawtypes")
 public class DifferencePOEstimator implements IOperatorEstimator<AntiJoinTIPO> {

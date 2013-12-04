@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorEstimation;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
-import de.uniol.inf.is.odysseus.intervalapproach.StreamGroupingWithAggregationPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.StreamGroupingWithAggregationPO;
 
 @SuppressWarnings("rawtypes")
 public class AggregateEstimator implements IOperatorEstimator<StreamGroupingWithAggregationPO> {

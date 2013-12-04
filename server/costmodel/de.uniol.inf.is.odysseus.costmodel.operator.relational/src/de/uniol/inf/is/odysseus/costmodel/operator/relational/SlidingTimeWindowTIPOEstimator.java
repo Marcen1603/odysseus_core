@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingTimeWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindowTIPO;
 
 
 @SuppressWarnings("rawtypes")

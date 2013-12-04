@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.common.ProbabilisticDiscreteUtils;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
 /**
  * 
@@ -89,7 +89,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea#queryCopy(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea#queryCopy(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, de.uniol.inf.is.odysseus.core.Order)
 	 */
 	@Override
 	public final Iterator<T> queryCopy(final T element, final Order order, final boolean extract) {

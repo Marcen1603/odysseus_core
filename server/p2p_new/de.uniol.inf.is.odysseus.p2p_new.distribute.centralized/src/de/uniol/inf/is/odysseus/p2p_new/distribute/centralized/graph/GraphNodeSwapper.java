@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
 public class GraphNodeSwapper {
 	private static final Logger LOG = LoggerFactory.getLogger(GraphNodeSwapper.class);

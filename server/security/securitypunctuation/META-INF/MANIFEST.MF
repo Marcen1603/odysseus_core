@@ -4,9 +4,8 @@ Bundle-Name: Securitypunctuation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.securitypunctuation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.securitypunctuation.Activator
-Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
- de.uniol.inf.is.odysseus.intervalapproach.predicate,
- de.uniol.inf.is.odysseus.intervalapproach.transform.join,
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach.predicate,
+ de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
  de.uniol.inf.is.odysseus.latency.physicaloperator,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.parser.pql.relational,
@@ -15,6 +14,8 @@ Import-Package: de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.relational.base.predicate,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
+ de.uniol.inf.is.odysseus.server.intervalapproach.transform.join,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
  org.osgi.framework;version="1.3.0",

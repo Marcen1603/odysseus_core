@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.CPURateSaver;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.EstimatorHelper;
 import de.uniol.inf.is.odysseus.costmodel.operator.util.MemoryUsageSaver;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
 @SuppressWarnings("rawtypes")
 public class SlidingAdvanceTimeWindowTIPOEstimator implements IOperatorEstimator<SlidingAdvanceTimeWindowTIPO> {

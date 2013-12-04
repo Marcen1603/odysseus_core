@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
 /**
  * Sweep area to perform the Expectation Maximization (EM) classifier.
@@ -107,7 +107,7 @@ public class BatchEMTISweepArea extends JoinTISweepArea<ProbabilisticTuple<? ext
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea#insert(de.uniol .inf.is.odysseus.core.metadata.IStreamObject)
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea#insert(de.uniol .inf.is.odysseus.core.metadata.IStreamObject)
 	 */
 	@Override
 	public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {

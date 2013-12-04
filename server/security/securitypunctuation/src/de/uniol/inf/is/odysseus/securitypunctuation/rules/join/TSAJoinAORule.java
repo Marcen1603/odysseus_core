@@ -24,10 +24,10 @@ import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAJoinPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

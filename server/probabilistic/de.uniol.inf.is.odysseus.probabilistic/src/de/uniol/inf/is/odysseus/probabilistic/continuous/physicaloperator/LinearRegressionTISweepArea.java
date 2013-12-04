@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 
 /**
  * Probabilistic view as described in Tran, T. T. L., Peng, L., Diao, Y., McGregor, A., & Liu, A. (2011). CLARO: modeling and processing uncertain data streams. The VLDB Journal. doi:10.1007/s00778-011-0261-7
@@ -81,7 +81,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea#insert(de.uniol .inf.is.odysseus.core.metadata.IStreamObject)
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea#insert(de.uniol .inf.is.odysseus.core.metadata.IStreamObject)
 	 */
 	@Override
 	public final void insert(final ProbabilisticTuple<? extends ITimeInterval> s) {
@@ -221,7 +221,7 @@ public class LinearRegressionTISweepArea extends JoinTISweepArea<ProbabilisticTu
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea#clone()
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTISweepArea#clone()
 	 */
 	@Override
 	public final LinearRegressionTISweepArea clone() {

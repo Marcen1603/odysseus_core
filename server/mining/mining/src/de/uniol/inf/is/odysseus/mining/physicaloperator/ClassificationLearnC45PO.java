@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mining.classification.TreeNode;
 import de.uniol.inf.is.odysseus.mining.util.CounterList;

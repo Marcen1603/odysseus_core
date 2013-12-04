@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.sweeparea.FastArrayList;
 import de.uniol.inf.is.odysseus.sweeparea.FastLinkedList;
-import de.uniol.inf.is.odysseus.intervalapproach.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.mining.classification.IClassificationLearner;
 import de.uniol.inf.is.odysseus.mining.classification.IClassifier;
 

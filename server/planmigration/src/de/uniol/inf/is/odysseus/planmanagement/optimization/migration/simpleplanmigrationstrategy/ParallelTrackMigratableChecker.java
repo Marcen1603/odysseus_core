@@ -21,9 +21,9 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.intervalapproach.window.AbstractWindowTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingTimeWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.AbstractWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingTimeWindowTIPO;
 
 /**
  * Checks if a given plan is migratable with the SimplePlanMigrationStrategy

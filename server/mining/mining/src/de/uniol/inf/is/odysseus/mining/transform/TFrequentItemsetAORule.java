@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.mining.frequentitem.IFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.frequentitem.WekaFrequentPatternMiner;
 import de.uniol.inf.is.odysseus.mining.logicaloperator.FrequentItemsetAO;
@@ -43,6 +42,7 @@ import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetAprioriPO
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentItemsetFPGrowthPO;
 import de.uniol.inf.is.odysseus.mining.physicaloperator.FrequentPatternMiningPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

@@ -49,9 +49,9 @@ import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.PhysicalGraphWalker;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.DataSourceManager;
 import de.uniol.inf.is.odysseus.costmodel.operator.datasrc.IHistogram;
-import de.uniol.inf.is.odysseus.intervalapproach.AntiJoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
+import de.uniol.inf.is.odysseus.server.intervalapproach.AntiJoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 /**
  * Repräsentiert das Kostenmodell nach Operatoreigenschaften.

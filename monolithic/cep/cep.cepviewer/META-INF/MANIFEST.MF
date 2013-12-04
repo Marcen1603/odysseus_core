@@ -15,9 +15,9 @@ Import-Package: de.uniol.inf.is.odysseus.cep.epa,
  de.uniol.inf.is.odysseus.cep.metamodel,
  de.uniol.inf.is.odysseus.cep.metamodel.symboltable,
  de.uniol.inf.is.odysseus.core.server.metadata,
- de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.rcp.viewer.model.graph,
  de.uniol.inf.is.odysseus.rcp.viewer.view.impl,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
  org.eclipse.draw2d,
  org.eclipse.draw2d.geometry
 Export-Package: de.uniol.inf.is.odysseus.cep.cepviewer

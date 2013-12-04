@@ -18,12 +18,12 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalAbsoluteNumericChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalChangeDetectPO;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalRelativeNumericChangeDetectPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

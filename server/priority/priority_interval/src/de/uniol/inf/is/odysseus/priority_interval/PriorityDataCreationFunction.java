@@ -17,8 +17,8 @@ package de.uniol.inf.is.odysseus.priority_interval;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.intervalapproach.IDummyDataCreationFunction;
 import de.uniol.inf.is.odysseus.priority.IPriority;
+import de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction;
 
 public class PriorityDataCreationFunction<K extends IMetaAttribute,T extends IStreamObject<K>> implements IDummyDataCreationFunction<K,T>{
 

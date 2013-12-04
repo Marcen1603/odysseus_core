@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.securitypunctuation.rules;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SASelectPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.NElementHeartbeatGeneration;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

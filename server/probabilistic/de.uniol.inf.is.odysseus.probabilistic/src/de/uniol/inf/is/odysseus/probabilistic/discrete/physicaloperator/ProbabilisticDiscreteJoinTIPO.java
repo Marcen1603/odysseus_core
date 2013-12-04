@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 /**
  * Join operator for discrete probabilistic values.
@@ -40,7 +40,7 @@ public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic,
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
 	@Override
 	protected final void process_next(final T object, final int port) {

@@ -34,7 +34,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
-import de.uniol.inf.is.odysseus.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.ProbabilisticFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
@@ -48,6 +47,7 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunctio
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 
 /**
  * 
@@ -85,7 +85,7 @@ public class TestJoinPO extends ProbabilisticDiscreteJoinTIPO<ITimeIntervalProba
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO#isDone()
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO#isDone()
 	 */
 	@Override
 	protected final boolean isDone() {

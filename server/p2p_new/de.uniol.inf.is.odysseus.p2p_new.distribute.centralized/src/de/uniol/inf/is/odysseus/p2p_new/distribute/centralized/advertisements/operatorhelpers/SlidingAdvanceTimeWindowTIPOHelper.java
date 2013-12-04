@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
 @SuppressWarnings("rawtypes")
 public class SlidingAdvanceTimeWindowTIPOHelper extends AbstractPhysicalOperatorHelper<SlidingAdvanceTimeWindowTIPO> {

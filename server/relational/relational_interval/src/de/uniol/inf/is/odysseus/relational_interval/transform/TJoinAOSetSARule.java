@@ -17,10 +17,10 @@ package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

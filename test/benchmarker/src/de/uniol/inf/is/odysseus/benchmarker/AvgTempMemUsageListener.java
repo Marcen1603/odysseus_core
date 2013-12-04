@@ -21,8 +21,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.server.monitoring.DescriptiveStatistics;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 
 /**
  * Collects memory usage for a given operator using SweepAreas.

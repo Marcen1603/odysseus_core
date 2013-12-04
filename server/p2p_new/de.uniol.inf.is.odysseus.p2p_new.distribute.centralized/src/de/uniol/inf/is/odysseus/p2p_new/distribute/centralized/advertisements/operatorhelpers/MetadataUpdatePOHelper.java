@@ -12,9 +12,9 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SameTimeFactory;
-import de.uniol.inf.is.odysseus.intervalapproach.window.SystemTimeIntervalFactory;
 import de.uniol.inf.is.odysseus.relational_interval.RelationalTimestampAttributeTimeIntervalMFactory;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SameTimeFactory;
+import de.uniol.inf.is.odysseus.server.intervalapproach.window.SystemTimeIntervalFactory;
 
 @SuppressWarnings("rawtypes")
 public class MetadataUpdatePOHelper extends AbstractPhysicalOperatorHelper<MetadataUpdatePO> {

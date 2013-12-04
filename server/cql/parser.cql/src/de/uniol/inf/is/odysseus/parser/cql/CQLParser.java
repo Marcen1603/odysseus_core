@@ -87,7 +87,6 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UsernameNotExistExcep
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
-import de.uniol.inf.is.odysseus.intervalapproach.logicaloperator.TimestampToPayloadAO;
 import de.uniol.inf.is.odysseus.parser.cql.parser.*;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckAttributes;
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.CheckGroupBy;
@@ -104,6 +103,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttribute
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
+import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 

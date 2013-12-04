@@ -5,7 +5,8 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: de.uniol.inf.is.odysseus.ruleengine.rule,
+Import-Package: de.uniol.inf.is.odysseus.intervalapproach.sweeparea,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.transform.engine,
@@ -23,7 +24,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.logicaloperator.builder;bundle-version=
  de.uniol.inf.is.odysseus.latency;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.relational.base;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
- de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Service-Component: OSGI-INF/DataDictionaryService.xml,
  OSGI-INF/OperatorBuilderFactory.xml

@@ -12,14 +12,14 @@ Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.predicate,
  de.uniol.inf.is.odysseus.core.sdf,
  de.uniol.inf.is.odysseus.core.sdf.schema,
- de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function,
  de.uniol.inf.is.odysseus.core.server.sla,
  de.uniol.inf.is.odysseus.core.server.sla.unit,
+ de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function,
  de.uniol.inf.is.odysseus.core.usermanagement,
- de.uniol.inf.is.odysseus.intervalapproach;resolution:=optional,
  de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
+ de.uniol.inf.is.odysseus.server.intervalapproach;resolution:=optional,
  org.osgi.framework;version="1.3.0",
  org.slf4j
 Export-Package: de.uniol.inf.is.odysseus.parser.cql,
@@ -28,7 +28,7 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql,
 Service-Component: OSGI-INF/component.xml, OSGI-INF/VisitorService.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.intervalapproach,
+ de.uniol.inf.is.odysseus.server.intervalapproach,
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

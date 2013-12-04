@@ -21,9 +21,9 @@ import de.uniol.inf.is.odysseus.benchmark.prio.logicaloperator.PrioIdJoinAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityIdHashSweepArea;
 import de.uniol.inf.is.odysseus.priority_interval.PriorityTITransferArea;
@@ -70,7 +70,7 @@ public class TBenchmarkPrioIdJoinAORule extends AbstractTransformationRule<PrioI
 		return false;
 		
 		// DRL-Code
-//		trafo : TransformationConfiguration( metaTypes contains "de.uniol.inf.is.odysseus.intervalapproach.ITimeInterval" && metaTypes contains "de.uniol.inf.is.odysseus.priority.IPriority" )
+//		trafo : TransformationConfiguration( metaTypes contains "de.uniol.inf.is.odysseus.server.intervalapproach.ITimeInterval" && metaTypes contains "de.uniol.inf.is.odysseus.priority.IPriority" )
 //		algebraOp : PrioIdJoinAO(allPhysicalInputSet == true)
 	}
 

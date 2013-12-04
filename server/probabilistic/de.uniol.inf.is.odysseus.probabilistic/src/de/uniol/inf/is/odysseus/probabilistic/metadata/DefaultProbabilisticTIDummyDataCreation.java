@@ -15,8 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import de.uniol.inf.is.odysseus.intervalapproach.IDummyDataCreationFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreati
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.IDummyDataCreationFunction#createMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction#createMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
 	 */
 	@Override
 	public final ProbabilisticTuple<ITimeIntervalProbabilistic> createMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
@@ -50,7 +50,7 @@ public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreati
 
 	/*
 	 * 
-	 * @see de.uniol.inf.is.odysseus.intervalapproach.IDummyDataCreationFunction#hasMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction#hasMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
 	 */
 	@Override
 	public final boolean hasMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {

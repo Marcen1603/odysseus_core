@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.MigrationMarkerPunctuation
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.intervalapproach.JoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 
 /**
  * Timeinterval-dependant buffer which can be used to insert MigrationMarkerPunctuations into the buffer.
