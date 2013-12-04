@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.core.common.feature"
-      label="Odysseus Common Feature"
+      id="de.uniol.inf.is.odysseus.product.client.platform.feature"
+      label="Studio Platform Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles common components of Odysseus that can be used on client as well as on server side.
+      This feature bundles only the platform where Odysseus is built on. Therefore, it is just a container and does
+not provide any functionality by itself.
    </description>
 
    <copyright>
@@ -31,33 +32,13 @@ limitations under the License.
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update/"/>
    </url>
 
-   <plugin
-         id="de.uniol.inf.is.odysseus.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <includes
+         id="org.eclipse.platform"
+         version="0.0.0"/>
 
-   <plugin
-         id="de.uniol.inf.is.odysseus.datatype.interval"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.mep"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.mep.matrix"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <includes
+         id="org.eclipse.rcp"
+         version="0.0.0"/>
 
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
@@ -66,20 +47,13 @@ limitations under the License.
          version="0.0.0"/>
 
    <plugin
-         id="io.netty"
+         id="com.google.guava"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="Commons.Math"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.math3"
+         id="de.uniol.inf.is.odysseus.product.studio.starter"
          download-size="0"
          install-size="0"
          version="0.0.0"

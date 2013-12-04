@@ -30,12 +30,9 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
-   <plugin
-         id="de.uniol.inf.is.odysseus.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <requires>
+      <import feature="de.uniol.inf.is.odysseus.core.common.feature" version="1.0.0.qualifier"/>
+   </requires>
 
    <plugin
          id="com.google.guava"
@@ -66,13 +63,6 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.webservice.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.mep"
          download-size="0"
          install-size="0"
          version="0.0.0"
