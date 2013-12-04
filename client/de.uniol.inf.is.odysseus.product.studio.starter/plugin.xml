@@ -233,10 +233,10 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="de.uniol.inf.is.odysseus.product.studio.starter.OdysseusStudioApplication"
-            name="Odysseus Server and Studio">
+            name="Odysseus Studio 2">
          <property
                name="appName"
-               value="Odysseus Server and Studio">
+               value="Odysseus Studio 2">
          </property>
          <property
                name="preferenceCustomization"
@@ -244,7 +244,7 @@
          </property>
          <property
                name="aboutImage"
-               value="icons/128_128.gif">
+               value="platform:/plugin/de.uniol.inf.is.odysseus.rcp.starter/icons/128_128.gif">
          </property>
          <property
                name="aboutText"
@@ -252,7 +252,7 @@
          </property>
          <property
                name="windowImages"
-               value="icons/16_16.gif,icons/32_32.gif,icons/48_48.gif,icons/64_64.gif,icons/128_128.gif">
+               value="platform:/plugin/de.uniol.inf.is.odysseus.rcp.starter/icons/16_16.gif,platform:/plugin/de.uniol.inf.is.odysseus.rcp.starter/icons/32_32.gif,platform:/plugin/de.uniol.inf.is.odysseus.rcp.starter/icons/48_48.gif,platform:/plugin/de.uniol.inf.is.odysseus.rcp.starter/icons/64_64.gif,platform:/plugin/de.uniol.inf.is.odysseus.rcp.starter/icons/128_128.gif">
          </property>
       </product>
    </extension>   

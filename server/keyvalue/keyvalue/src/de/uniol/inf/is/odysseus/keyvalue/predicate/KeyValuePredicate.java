@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
+import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class KeyValuePredicate extends AbstractPredicate<KeyValueObject<?>> {
 

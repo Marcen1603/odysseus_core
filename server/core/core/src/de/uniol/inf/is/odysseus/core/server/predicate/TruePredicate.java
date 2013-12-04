@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.predicate;
 
+import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
 public class TruePredicate<T> extends AbstractPredicate<T> {

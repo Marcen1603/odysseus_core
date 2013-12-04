@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.core.server.predicate;
+package de.uniol.inf.is.odysseus.core.predicate;
 
 import java.io.Serializable;
 import java.util.List;

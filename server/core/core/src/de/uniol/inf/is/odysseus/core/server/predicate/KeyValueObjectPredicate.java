@@ -7,6 +7,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;

@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
 public class TypeSafeRelationalPredicate extends RelationalPredicate{
 	

@@ -18,11 +18,11 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.predicate.AbstractPredicate;
+import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
