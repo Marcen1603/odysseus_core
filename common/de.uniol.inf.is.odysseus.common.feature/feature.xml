@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.core.common.feature"
+      id="de.uniol.inf.is.odysseus.common.feature"
       label="Odysseus Common Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
