@@ -44,10 +44,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.client.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.database.feature"
          version="0.0.0"/>
 
@@ -96,10 +92,6 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.studio.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
          version="0.0.0"/>
 
@@ -132,27 +124,27 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.server.feature"
+         id="de.uniol.inf.is.odysseus.common.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.server.platform.feature"
+         id="de.uniol.inf.is.odysseus.client.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.filestore.feature"
+         id="de.uniol.inf.is.odysseus.client.platform.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.serverandstudio.feature"
+         id="de.uniol.inf.is.odysseus.core.server.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.common.feature"
+         id="de.uniol.inf.is.odysseus.server.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.client.platform.feature"
+         id="de.uniol.inf.is.odysseus.server.platform.feature"
          version="0.0.0"/>
 
 </feature>

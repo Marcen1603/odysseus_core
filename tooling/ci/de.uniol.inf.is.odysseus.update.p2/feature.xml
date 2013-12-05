@@ -56,10 +56,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.core.client.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.core.server.feature"
          version="0.0.0"/>
 
@@ -136,27 +132,15 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.filestore.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.product.platform.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.server.feature"
+         id="de.uniol.inf.is.odysseus.client.feature"
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.product.server.platform.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.product.client.platform.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="de.uniol.inf.is.odysseus.product.serverandstudio.feature"
+         id="de.uniol.inf.is.odysseus.common.feature"
          version="0.0.0"/>
 
 </feature>
