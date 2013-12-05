@@ -124,13 +124,22 @@ public class CreateRMap {
 				if (f.isFile() && f.getName().equals("feature.xml")) {
 					// feature.xml found:
 					String name = parseFeatureDefinition(f);
-					if(!name.contains("p2p_new")){
+					if(!containsOnOf(name, "p2p_new", "peer")){
 						names.add(name);
 					}
 				}
 			}
 		}
 
+	}
+
+	private static boolean containsOnOf(String name, String... strings) {
+		for(String s : strings){
+			if(name.contains(s)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isOneOfIgnoreCase(String needle, String... haystack) {
