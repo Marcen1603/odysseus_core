@@ -51,10 +51,10 @@ public class CreateRMap {
 				List<String> names = new ArrayList<>();
 				searchFeatures(rootPath, names);
 				System.out.println("Found following features: ");
-				StringBuilder sbUF = new StringBuilder();
+				String featureList = new String();
 				for (String id : names) {
-					sbUF.append("<includes id=\"" + id + "\" version=\"0.0.0\"/>");
-					sbUF.append(System.lineSeparator());					
+					String feature = "<includes id=\"" + id + "\" version=\"0.0.0\"/>";
+					featureList = featureList + System.lineSeparator()+feature;					
 				}
 				StringBuilder outputfile = new StringBuilder();
 				File template = new File(updatesiteFeature + File.separatorChar + "feature.xml.template");
@@ -62,12 +62,13 @@ public class CreateRMap {
 				String line = br.readLine();
 				while (line != null) {
 					if (line.trim().equalsIgnoreCase("===FEATURE-LIST-HERE===")) {
-						outputfile.append(sbUF.toString());
+						outputfile.append(featureList);
 						
 					} else {
 						outputfile.append(line);						
 					}
 					outputfile.append(System.lineSeparator());
+					line = br.readLine();
 				}
 				br.close();
 				saveFile(outputfile, updatesiteFeature+File.separatorChar+"feature.xml");
