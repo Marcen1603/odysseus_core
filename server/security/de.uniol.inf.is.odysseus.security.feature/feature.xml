@@ -18,7 +18,7 @@
    </license>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.common.feature" version="1.0.0.qualifier"/>
+      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
