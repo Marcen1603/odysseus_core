@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Jenkins CI Products
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.ci.products
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

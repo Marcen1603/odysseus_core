@@ -30,8 +30,12 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"
+         version="0.0.0"/>
+
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.client.feature" version="1.0.0.qualifier"/>
+      <import feature="de.uniol.inf.is.odysseus.client.feature" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
@@ -115,6 +119,20 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="de.uniol.inf.is.odysseus.rcp.config"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.viewer.stream.chart"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.viewer.stream.table"
          download-size="0"
          install-size="0"
          version="0.0.0"

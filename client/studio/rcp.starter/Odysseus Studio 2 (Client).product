@@ -72,10 +72,8 @@ limitations under the License.
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.product.client.platform.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.common.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.core.client.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.client.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.client.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

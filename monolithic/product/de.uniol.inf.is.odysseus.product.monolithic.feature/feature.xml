@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.product.client.platform.feature"
-      label="Studio Platform Feature"
+      id="de.uniol.inf.is.odysseus.monolithic.feature"
+      label="Monolithic Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles only the platform where Odysseus is built on. Therefore, it is just a container and does
-not provide any functionality by itself.
+      This feature bundles all features that are needed by the server and studio product. Therefore, it is just a container and does not provide any functionality by itself.
    </description>
 
    <copyright>
@@ -33,30 +32,15 @@ limitations under the License.
    </url>
 
    <includes
-         id="org.eclipse.platform"
+         id="de.uniol.inf.is.odysseus.server.feature"
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.rcp"
+         id="de.uniol.inf.is.odysseus.monolithic.studio.feature"
          version="0.0.0"/>
 
-   <plugin
-         id="de.uniol.inf.is.odysseus.slf4j"
-         download-size="0"
-         install-size="0"
+   <includes
+         id="de.uniol.inf.is.odysseus.studio.feature"
          version="0.0.0"/>
-
-   <plugin
-         id="com.google.guava"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.product.studio.starter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>
