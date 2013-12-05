@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.creatermap;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +45,15 @@ public class CreateRMap {
 			String destinationA = args[1];
 			String destinationB = args[2];
 
+			System.out.println("Creating feature.xml for update site on root path: " + rootPath);
+			List<String> names = new ArrayList<>();
+			searchFeatures(rootPath, names);
+			System.out.println("Found following features: ");
+			for(String id : names){
+				System.out.println(id);
+			}
+			System.out.println("------------------------------------------------");
+			
 			System.out.println("Creating RMAP for update site on root path: " + rootPath);
 			StringBuilder sbUS = new StringBuilder();
 			buildHeader(sbUS);
@@ -67,6 +78,50 @@ public class CreateRMap {
 
 	}
 
+	private static void searchFeatures(String rootPath, List<String> names) {
+		File rootDir = new File(rootPath);
+		searchRecursiveFeature(rootDir, rootDir, names);
+		
+	}
+
+	private static void searchRecursiveFeature(File rootDir, File mainRoot, List<String> names) {
+		if (rootDir == null) {
+			System.out.println("Error: " + rootDir + " not found (null)");
+			return;
+		}
+		for (File f : rootDir.listFiles()) {
+			if (f.isDirectory()) {
+				if (!f.getName().equalsIgnoreCase(".metadata")) {
+					searchRecursiveFeature(f, mainRoot, names);
+				}
+			} else {
+				if (f.isFile() && f.getName().equals("feature.xml")) {
+					// feature.xml found:					
+					String name = parseFeatureDefinition(f);
+					names.add(name);
+				}
+			}
+		}
+		
+	}
+
+	private static String parseFeatureDefinition(File f) {
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc;
+
+			doc = dBuilder.parse(f);
+			doc.getDocumentElement().normalize();
+			Element nameNode = (Element) doc.getElementsByTagName("feature").item(0);
+			String id = nameNode.getAttribute("id");			
+			return id;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 	private static void searchRecursiveProd(String rootPath, StringBuilder sbProd) {
 		File rootDir = new File(rootPath);
 		searchRecursiveProd(rootDir, rootDir, sbProd);
@@ -86,7 +141,7 @@ public class CreateRMap {
 			} else {
 				if (f.isFile() && f.getName().equals(".project")) {
 					// .project found:
-					parseProjectForProduct(f, mainRoot, sb);
+					parseProjectForProduct(f, mainRoot, sb);					
 				}
 			}
 		}
@@ -175,7 +230,8 @@ public class CreateRMap {
 			sb.append("</rm:searchPath>").append("\n");
 		}
 	}
-
+	
+	
 	private static String getComponentName(File projectFile) {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
