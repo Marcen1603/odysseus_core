@@ -114,7 +114,7 @@ public class CreateRMap {
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "p2p_new")) {
+				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted")) {
 					if(f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite")){
 						continue;
 					}
@@ -124,7 +124,9 @@ public class CreateRMap {
 				if (f.isFile() && f.getName().equals("feature.xml")) {
 					// feature.xml found:
 					String name = parseFeatureDefinition(f);
-					names.add(name);
+					if(!name.contains("p2p_new")){
+						names.add(name);
+					}
 				}
 			}
 		}
