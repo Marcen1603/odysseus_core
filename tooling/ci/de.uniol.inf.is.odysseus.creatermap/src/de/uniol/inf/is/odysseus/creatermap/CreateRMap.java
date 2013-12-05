@@ -113,7 +113,10 @@ public class CreateRMap {
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "tooling", "restricted")) {
+				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted")) {
+					if(f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite")){
+						continue;
+					}
 					searchRecursiveFeature(f, mainRoot, names);
 				}
 			} else {
