@@ -138,4 +138,25 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.editor.graph"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.console"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.wizard"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
