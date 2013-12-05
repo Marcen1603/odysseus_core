@@ -108,10 +108,6 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.studio.feature"
-         version="0.0.0"/>
-
-   <includes
          id="de.uniol.inf.is.odysseus.usermanagement.filestore.feature"
          version="0.0.0"/>
 
