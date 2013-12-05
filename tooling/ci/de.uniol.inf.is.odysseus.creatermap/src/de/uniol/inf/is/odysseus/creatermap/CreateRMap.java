@@ -107,7 +107,8 @@ public class CreateRMap {
 		for (Entry<String, File> e : names.entrySet()) {
 			String dir = e.getValue().getAbsolutePath();
 			if (dir.startsWith(rootPath)) {
-				dir = dir.substring(rootPath.length());
+				dir = dir.substring(rootPath.length()+1);
+				dir = dir.substring(0, dir.indexOf("/"));			
 				if (!categories.contains(dir)) {
 					System.out.println("added a category: " + dir);
 					categories.add(dir);
@@ -168,7 +169,9 @@ public class CreateRMap {
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
 				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "application", "test")) {
-					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite")) {
+					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite") 
+							||f.getName().endsWith("de.uniol.inf.is.odysseus.update.p2")
+							) {
 						continue;
 					}
 					searchRecursiveFeature(f, mainRoot, names);
