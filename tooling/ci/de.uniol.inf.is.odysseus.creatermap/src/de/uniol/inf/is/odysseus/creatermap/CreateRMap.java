@@ -53,6 +53,7 @@ public class CreateRMap {
 				System.out.println("Found following features: ");
 				String featureList = new String();
 				for (String id : names) {
+					System.out.println(id);
 					String feature = "<includes id=\"" + id + "\" version=\"0.0.0\"/>";
 					featureList = featureList + System.lineSeparator()+feature;					
 				}
