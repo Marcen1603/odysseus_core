@@ -54,8 +54,7 @@ public class CreateRMap {
 				StringBuilder sbUF = new StringBuilder();
 				for (String id : names) {
 					sbUF.append("<includes id=\"" + id + "\" version=\"0.0.0\"/>");
-					sbUF.append(System.lineSeparator());
-					System.out.println(sbUF.toString());
+					sbUF.append(System.lineSeparator());					
 				}
 				StringBuilder outputfile = new StringBuilder();
 				File template = new File(updatesiteFeature + File.separatorChar + "feature.xml.template");
@@ -63,7 +62,7 @@ public class CreateRMap {
 				String line = br.readLine();
 				while (line != null) {
 					if (line.trim().equalsIgnoreCase("===FEATURE-LIST-HERE===")) {
-						outputfile.append(sbUF);
+						outputfile.append(sbUF.toString());
 						
 					} else {
 						outputfile.append(line);						
