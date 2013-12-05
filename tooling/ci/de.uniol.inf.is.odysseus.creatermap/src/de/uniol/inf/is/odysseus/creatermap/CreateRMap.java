@@ -15,7 +15,9 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.creatermap;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,49 +41,69 @@ public class CreateRMap {
 	}
 
 	public static void main(String[] args) {
-		if (args.length > 0) {
-			String rootPath = args[0];
-			// String rootPath = "E:\\Odysseus\\trunk";
-			String destinationA = args[1];
-			String destinationB = args[2];
+		try {
+			if (args.length > 0) {
+				String rootPath = args[0];
+				// String rootPath = "E:\\Odysseus\\trunk";
+				String updatesiteFeature = args[1]; // normally this should be de.uniol.inf.is.odysseus.updatesite
 
-			System.out.println("Creating feature.xml for update site on root path: " + rootPath);
-			List<String> names = new ArrayList<>();
-			searchFeatures(rootPath, names);
-			System.out.println("Found following features: ");
-			for(String id : names){
-				System.out.println(id);
+				System.out.println("Creating feature.xml for update site on root path: " + rootPath);
+				List<String> names = new ArrayList<>();
+				searchFeatures(rootPath, names);
+				System.out.println("Found following features: ");
+				StringBuilder sbUF = new StringBuilder();
+				for (String id : names) {
+					sbUF.append("<includes id=\"" + id + "\" version=\"0.0.0\"/>");
+					sbUF.append(System.lineSeparator());
+					System.out.println(sbUF.toString());
+				}
+				StringBuilder outputfile = new StringBuilder();
+				File template = new File(updatesiteFeature + File.separatorChar + "feature.xml.template");
+				BufferedReader br = new BufferedReader(new FileReader(template));
+				String line = br.readLine();
+				while (line != null) {
+					if (line.trim().equalsIgnoreCase("===FEATURE-LIST-HERE===")) {
+						outputfile.append(sbUF);
+						
+					} else {
+						outputfile.append(line);						
+					}
+					outputfile.append(System.lineSeparator());
+				}
+				br.close();
+				saveFile(outputfile, updatesiteFeature+File.separatorChar+"feature.xml");
+				System.out.println("------------------------------------------------");
+
+				System.out.println("Creating RMAP for update site on root path: " + rootPath);
+				StringBuilder sbUS = new StringBuilder();
+				buildHeader(sbUS);
+				searchRecursive(rootPath, sbUS);
+				buildFooter(sbUS);
+				saveFile(sbUS, updatesiteFeature + File.separatorChar + "site.rmap");
+
+				System.out.println("Creating RMAP for product building on root path: " + rootPath);
+				StringBuilder sbProd = new StringBuilder();
+				buildHeader(sbProd);
+				searchRecursiveProd(rootPath, sbProd);
+				buildFooter(sbProd);
+
+				saveFile(sbProd, updatesiteFeature + File.separatorChar + "product.rmap");
+				// System.out.println("----------------- RMAP FILE --------------------");
+				// System.out.println(sb.toString());
+				// System.out.println("------------------------------------------------");
+
+			} else {
+				System.out.println("Error: no root path given!");
 			}
-			System.out.println("------------------------------------------------");
-			
-			System.out.println("Creating RMAP for update site on root path: " + rootPath);
-			StringBuilder sbUS = new StringBuilder();
-			buildHeader(sbUS);
-			searchRecursive(rootPath, sbUS);
-			buildFooter(sbUS);
-			saveFile(sbUS, destinationA);
-
-			System.out.println("Creating RMAP for product building on root path: " + rootPath);
-			StringBuilder sbProd = new StringBuilder();
-			buildHeader(sbProd);
-			searchRecursiveProd(rootPath, sbProd);
-			buildFooter(sbProd);
-
-			saveFile(sbProd, destinationB);
-			// System.out.println("----------------- RMAP FILE --------------------");
-			// System.out.println(sb.toString());
-			// System.out.println("------------------------------------------------");
-
-		} else {
-			System.out.println("Error: no root path given!");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
 	}
 
 	private static void searchFeatures(String rootPath, List<String> names) {
 		File rootDir = new File(rootPath);
 		searchRecursiveFeature(rootDir, rootDir, names);
-		
+
 	}
 
 	private static void searchRecursiveFeature(File rootDir, File mainRoot, List<String> names) {
@@ -91,18 +113,27 @@ public class CreateRMap {
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!f.getName().equalsIgnoreCase(".metadata")) {
+				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "tooling", "restricted")) {
 					searchRecursiveFeature(f, mainRoot, names);
 				}
 			} else {
 				if (f.isFile() && f.getName().equals("feature.xml")) {
-					// feature.xml found:					
+					// feature.xml found:
 					String name = parseFeatureDefinition(f);
 					names.add(name);
 				}
 			}
 		}
-		
+
+	}
+
+	private static boolean isOneOfIgnoreCase(String needle, String... haystack) {
+		for (String h : haystack) {
+			if (h.equalsIgnoreCase(needle)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static String parseFeatureDefinition(File f) {
@@ -114,7 +145,7 @@ public class CreateRMap {
 			doc = dBuilder.parse(f);
 			doc.getDocumentElement().normalize();
 			Element nameNode = (Element) doc.getElementsByTagName("feature").item(0);
-			String id = nameNode.getAttribute("id");			
+			String id = nameNode.getAttribute("id");
 			return id;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,7 +172,7 @@ public class CreateRMap {
 			} else {
 				if (f.isFile() && f.getName().equals(".project")) {
 					// .project found:
-					parseProjectForProduct(f, mainRoot, sb);					
+					parseProjectForProduct(f, mainRoot, sb);
 				}
 			}
 		}
@@ -149,7 +180,7 @@ public class CreateRMap {
 	}
 
 	private static void saveFile(StringBuilder sb, String destination) {
-		System.out.println("Writing RMAP to: " + destination);
+		System.out.println("Writing a file to: " + destination);
 		try {
 			File file = new File(destination);
 			FileWriter writer = new FileWriter(file);
@@ -207,8 +238,7 @@ public class CreateRMap {
 	private static void parseProjectForProduct(File projectFile, File mainRoot, StringBuilder sb) {
 		// System.out.println("   Found: " +
 		// projectFile.getParentFile().getAbsolutePath());
-		 String relativPath =
-		 projectFile.getParentFile().getAbsolutePath().substring(mainRoot.getAbsolutePath().length()+ 1);
+		String relativPath = projectFile.getParentFile().getAbsolutePath().substring(mainRoot.getAbsolutePath().length() + 1);
 		String componentName = getComponentName(projectFile);
 		String componentNamePattern = componentName.replace(".", "\\.");
 		if (componentName.contains("odysseus.updatesite")) {
@@ -221,7 +251,9 @@ public class CreateRMap {
 			sb.append("</rm:provider>").append("\n");
 			sb.append("</rm:searchPath>").append("\n");
 		} else {
-			//sb.append("<rm:locator failOnError=\"false\" pattern=\"^" + componentNamePattern + "(?!\\.)\" searchPathRef=\"" + componentName + "\"/>").append("\n");
+			// sb.append("<rm:locator failOnError=\"false\" pattern=\"^" +
+			// componentNamePattern + "(?!\\.)\" searchPathRef=\"" +
+			// componentName + "\"/>").append("\n");
 			sb.append("<rm:locator failOnError=\"false\" searchPathRef=\"" + componentName + "\"/>").append("\n");
 			sb.append("<rm:searchPath name=\"" + componentName + "\">").append("\n");
 			sb.append("<rm:provider componentTypes=\"osgi.bundle,eclipse.feature\" readerType=\"p2\" mutable=\"false\" source=\"false\">").append("\n");
@@ -230,8 +262,7 @@ public class CreateRMap {
 			sb.append("</rm:searchPath>").append("\n");
 		}
 	}
-	
-	
+
 	private static String getComponentName(File projectFile) {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
