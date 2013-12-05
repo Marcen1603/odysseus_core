@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Standard Plan Migration Cost Model
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.standardplanmigrationcostmodel
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.costmodel.standardmigrationcostmodel
 Bundle-Version: 1.0.0
 Service-Component: OSGI-INF/component.xml, OSGI-INF/PlanMigrationEstimator.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",

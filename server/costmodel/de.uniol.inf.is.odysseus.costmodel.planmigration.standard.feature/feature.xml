@@ -81,7 +81,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.costmodel.standardplanmigrationcostmodel"
+         id="de.uniol.inf.is.odysseus.costmodel.standardmigrationcostmodel"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.planadaption.standard.feature"
+      id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standard.feature"
       label="Feature"
       version="1.0.0.qualifier"
       provider-name="Merlin Wasmann">
@@ -50,8 +50,8 @@ limitations under the License.
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.datasrc" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.util" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.costmodel.standardplanmigrationcostmodel" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.costmodel.operator.relational.logical" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.costmodel.standardmigrationcostmodel"/>
    </requires>
 
    <plugin
