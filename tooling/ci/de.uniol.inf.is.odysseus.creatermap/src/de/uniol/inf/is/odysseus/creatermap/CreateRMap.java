@@ -17,10 +17,15 @@ package de.uniol.inf.is.odysseus.creatermap;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,35 +50,28 @@ public class CreateRMap {
 			if (args.length > 0) {
 				String rootPath = args[0];
 				// String rootPath = "E:\\Odysseus\\trunk";
-				String updatesiteFeature = args[1]; // normally this should be de.uniol.inf.is.odysseus.updatesite
+				String updatesiteFeature = args[1]; // normally this should be
+													// de.uniol.inf.is.odysseus.updatesite
+				String p2SiteFeature = args[2];
 
 				System.out.println("Creating feature.xml for update site on root path: " + rootPath);
-				List<String> names = new ArrayList<>();
+				Map<String, File> names = new HashMap<>();
 				searchFeatures(rootPath, names);
 				System.out.println("Found following features: ");
 				String featureList = new String();
-				for (String id : names) {
+				for (String id : names.keySet()) {
 					System.out.println(id);
 					String feature = "<includes id=\"" + id + "\" version=\"0.0.0\"/>";
-					featureList = featureList + System.lineSeparator()+feature;					
+					featureList = featureList + System.lineSeparator() + feature;
 				}
-				StringBuilder outputfile = new StringBuilder();
-				File template = new File(updatesiteFeature + File.separatorChar + "feature.xml.template");
-				BufferedReader br = new BufferedReader(new FileReader(template));
-				String line = br.readLine();
-				while (line != null) {
-					if (line.trim().equalsIgnoreCase("===FEATURE-LIST-HERE===")) {
-						outputfile.append(featureList);
-						
-					} else {
-						outputfile.append(line);						
-					}
-					outputfile.append(System.lineSeparator());
-					line = br.readLine();
-				}
-				br.close();
-				saveFile(outputfile, updatesiteFeature+File.separatorChar+"feature.xml");
+
+				writeFeatureXML(updatesiteFeature, featureList);
+				writeFeatureXML(p2SiteFeature, featureList);
 				System.out.println("------------------------------------------------");
+
+				System.out.println("Creating a category.xml file: " + rootPath);
+
+				createCategoryFile(rootPath, p2SiteFeature, names);
 
 				System.out.println("Creating RMAP for update site on root path: " + rootPath);
 				StringBuilder sbUS = new StringBuilder();
@@ -101,21 +99,76 @@ public class CreateRMap {
 		}
 	}
 
-	private static void searchFeatures(String rootPath, List<String> names) {
+	private static void createCategoryFile(String rootPath, String projectDir, Map<String, File> names) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append(System.lineSeparator());
+		sb.append("<site>");
+		List<String> categories = new ArrayList<>();
+		for (Entry<String, File> e : names.entrySet()) {
+			String dir = e.getValue().getAbsolutePath();
+			if (dir.startsWith(rootPath)) {
+				dir = dir.substring(rootPath.length());
+				if (!categories.contains(dir)) {
+					System.out.println("added a category: " + dir);
+					categories.add(dir);
+				}
+
+				sb.append("<feature url=\"features/" + e.getKey() + "_1.0.0.qualifier.jar\" id=\"" + e.getKey() + "\" version=\"1.0.0.qualifier\">").append(System.lineSeparator());
+				sb.append("<category name=\"de.uniol.inf.is.odysseus.update.category." + dir + "\"/>").append(System.lineSeparator());
+				sb.append("</feature>").append(System.lineSeparator());
+			}
+		}
+
+		for (String dir : categories) {
+			if (!dir.equalsIgnoreCase("tooling")) {
+				sb.append("<category-def name=\"de.uniol.inf.is.odysseus.update.category." + dir + "\" label=\"Odysseus " + capitalize(dir) + " Plugins\" />");
+			} else {
+				sb.append("<category-def name=\"de.uniol.inf.is.odysseus.update.category." + dir + "\" label=\"Odysseus " + capitalize(dir) + " (Do not use)\" />");
+			}
+		}
+
+		sb.append("</site>");
+		saveFile(sb, projectDir + File.separatorChar + "category.xml");
+	}
+
+	private static String capitalize(String str) {
+		return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+	}
+
+	private static void writeFeatureXML(String projectDir, String featureList) throws FileNotFoundException, IOException {
+		StringBuilder outputfile = new StringBuilder();
+		File template = new File(projectDir + File.separatorChar + "feature.xml.template");
+		BufferedReader br = new BufferedReader(new FileReader(template));
+		String line = br.readLine();
+		while (line != null) {
+			if (line.trim().equalsIgnoreCase("===FEATURE-LIST-HERE===")) {
+				outputfile.append(featureList);
+
+			} else {
+				outputfile.append(line);
+			}
+			outputfile.append(System.lineSeparator());
+			line = br.readLine();
+		}
+		br.close();
+		saveFile(outputfile, projectDir + File.separatorChar + "feature.xml");
+	}
+
+	private static void searchFeatures(String rootPath, Map<String, File> names) {
 		File rootDir = new File(rootPath);
 		searchRecursiveFeature(rootDir, rootDir, names);
 
 	}
 
-	private static void searchRecursiveFeature(File rootDir, File mainRoot, List<String> names) {
+	private static void searchRecursiveFeature(File rootDir, File mainRoot, Map<String, File> names) {
 		if (rootDir == null) {
 			System.out.println("Error: " + rootDir + " not found (null)");
 			return;
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "applications")) {
-					if(f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite")){
+				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "application", "test")) {
+					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite")) {
 						continue;
 					}
 					searchRecursiveFeature(f, mainRoot, names);
@@ -124,8 +177,8 @@ public class CreateRMap {
 				if (f.isFile() && f.getName().equals("feature.xml")) {
 					// feature.xml found:
 					String name = parseFeatureDefinition(f);
-					if(!containsOnOf(name, "p2p_new", "peer")){
-						names.add(name);
+					if (!containsOnOf(name, "p2p_new", "peer")) {
+						names.put(name, f);
 					}
 				}
 			}
@@ -134,8 +187,8 @@ public class CreateRMap {
 	}
 
 	private static boolean containsOnOf(String name, String... strings) {
-		for(String s : strings){
-			if(name.contains(s)){
+		for (String s : strings) {
+			if (name.contains(s)) {
 				return true;
 			}
 		}
