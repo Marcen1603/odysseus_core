@@ -114,7 +114,7 @@ public class CreateRMap {
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted")) {
+				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "p2p_new")) {
 					if(f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite")){
 						continue;
 					}
