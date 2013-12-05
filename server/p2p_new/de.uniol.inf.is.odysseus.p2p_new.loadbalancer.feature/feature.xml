@@ -17,12 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <requires>
-      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
-      <import feature="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
-      <import feature="de.uniol.inf.is.odysseus.p2p_new.feature" version="1.0.0.qualifier"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.odysseus.p2p_new"
          download-size="0"
