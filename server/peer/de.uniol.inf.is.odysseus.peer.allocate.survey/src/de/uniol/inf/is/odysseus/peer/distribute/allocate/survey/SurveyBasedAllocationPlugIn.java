@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.allocate.survey;
+package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
