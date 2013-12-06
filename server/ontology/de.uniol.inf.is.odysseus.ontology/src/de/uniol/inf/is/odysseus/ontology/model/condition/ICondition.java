@@ -24,5 +24,5 @@ public interface ICondition {
      * {@inheritDoc}
      */
     @Override
-    public String toString();
+    String toString();
 }

@@ -25,13 +25,18 @@ import java.util.List;
  * 
  */
 public class FeatureOfInterest {
+    /** The URI. */
     private final URI uri;
+    /** The name. */
     private final String name;
+    /** The list of properties. */
     private final List<Property> hasProperties = new ArrayList<Property>();
 
     /**
-     * Class constructor.
+     * Class constructor..
      * 
+     * @param uri
+     *            The URI
      */
     public FeatureOfInterest(final URI uri) {
         this(uri, new ArrayList<Property>());
@@ -40,6 +45,10 @@ public class FeatureOfInterest {
     /**
      * Class constructor.
      * 
+     * @param uri
+     *            The URI
+     * @param name
+     *            The name
      */
     public FeatureOfInterest(final URI uri, final String name) {
         this(uri, name, new ArrayList<Property>());
@@ -48,6 +57,10 @@ public class FeatureOfInterest {
     /**
      * Class constructor.
      * 
+     * @param uri
+     *            The URI
+     * @param hasProperties
+     *            The list of properties
      */
     public FeatureOfInterest(final URI uri, final List<Property> hasProperties) {
         this(uri, uri.getFragment(), hasProperties);
@@ -56,6 +69,12 @@ public class FeatureOfInterest {
     /**
      * Class constructor.
      * 
+     * @param uri
+     *            The URI
+     * @param name
+     *            The name
+     * @param hasProperties
+     *            The list of properties
      */
     public FeatureOfInterest(final URI uri, final String name, final List<Property> hasProperties) {
         this.uri = uri;
@@ -85,19 +104,21 @@ public class FeatureOfInterest {
     }
 
     /**
+     * Adds a new property.
      * 
      * @param hasProperty
+     *            The property
      */
-
     public void addProperty(final Property hasProperty) {
         this.hasProperties.add(hasProperty);
     }
 
     /**
+     * Removes a property.
      * 
      * @param hasProperty
+     *            The property
      */
-
     public void removeProperty(final Property hasProperty) {
         this.hasProperties.remove(hasProperty);
     }

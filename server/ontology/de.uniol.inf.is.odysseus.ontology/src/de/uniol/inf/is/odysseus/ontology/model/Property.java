@@ -22,13 +22,18 @@ import java.net.URI;
  * 
  */
 public class Property {
+    /** The URI. */
     private final URI uri;
+    /** The name. */
     private final String name;
+    /** The unit. */
     private String unit;
 
     /**
      * Class constructor.
      * 
+     * @param uri
+     *            The URI
      */
     public Property(final URI uri) {
         this(uri, uri.getFragment());
@@ -37,6 +42,10 @@ public class Property {
     /**
      * Class constructor.
      * 
+     * @param uri
+     *            The URI
+     * @param name
+     *            The name
      */
     public Property(final URI uri, final String name) {
         this.uri = uri;

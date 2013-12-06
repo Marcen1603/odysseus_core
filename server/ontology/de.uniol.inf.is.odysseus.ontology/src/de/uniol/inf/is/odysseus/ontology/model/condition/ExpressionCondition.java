@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.ontology.model.condition;
 
 import java.net.URI;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.ontology.model.Property;
 
@@ -24,15 +25,22 @@ import de.uniol.inf.is.odysseus.ontology.model.Property;
  * 
  */
 public class ExpressionCondition extends Condition implements ICondition {
+    /** The expression. */
     private final String expression;
 
     /**
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param onProperty
+     *            The property
+     * @param expression
+     *            The exression
      */
     public ExpressionCondition(final URI uri, final Property onProperty, final String expression) {
         super(uri, onProperty);
+        Objects.requireNonNull(expression);
         this.expression = expression;
     }
 

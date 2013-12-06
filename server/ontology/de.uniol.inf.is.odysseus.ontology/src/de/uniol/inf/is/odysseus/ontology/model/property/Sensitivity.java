@@ -29,6 +29,9 @@ public class Sensitivity extends MeasurementProperty implements IMeasurementProp
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public Sensitivity(final URI uri, final String expression) {
         super(uri, SSN.Sensitivity, expression);

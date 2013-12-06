@@ -29,6 +29,9 @@ public class Drift extends MeasurementProperty implements IMeasurementProperty {
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public Drift(final URI uri, final String expression) {
         super(uri, SSN.Drift, expression);

@@ -29,6 +29,9 @@ public class Frequency extends MeasurementProperty implements IMeasurementProper
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public Frequency(final URI uri, final String expression) {
         super(uri, SSN.Frequency, expression);

@@ -29,6 +29,9 @@ public class Precision extends MeasurementProperty implements IMeasurementProper
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public Precision(final URI uri, final String expression) {
         super(uri, SSN.Precision, expression);

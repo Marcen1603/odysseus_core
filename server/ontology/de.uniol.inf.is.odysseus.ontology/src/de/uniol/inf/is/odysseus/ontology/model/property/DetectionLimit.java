@@ -29,6 +29,9 @@ public class DetectionLimit extends MeasurementProperty implements IMeasurementP
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public DetectionLimit(final URI uri, final String expression) {
         super(uri, SSN.DetectionLimit, expression);

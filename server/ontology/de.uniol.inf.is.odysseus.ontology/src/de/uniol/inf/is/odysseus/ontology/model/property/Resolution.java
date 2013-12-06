@@ -29,6 +29,9 @@ public class Resolution extends MeasurementProperty implements IMeasurementPrope
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public Resolution(final URI uri, final String expression) {
         super(uri, SSN.Resolution, expression);

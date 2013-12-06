@@ -29,6 +29,9 @@ public class Selectivity extends MeasurementProperty implements IMeasurementProp
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public Selectivity(final URI uri, final String expression) {
         super(uri, SSN.Selectivity, expression);

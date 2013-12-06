@@ -25,12 +25,18 @@ import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
  * 
  */
 public class IntervalCondition extends Condition implements ICondition {
+    /** The interval. */
     private final Interval interval;
 
     /**
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param onProperty
+     *            The property
+     * @param interval
+     *            The interval
      */
     public IntervalCondition(final URI uri, final Property onProperty, final Interval interval) {
         super(uri, onProperty);
@@ -51,11 +57,11 @@ public class IntervalCondition extends Condition implements ICondition {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("(");
-        sb.append(this.getOnProperty().getUri().getFragment());
+        sb.append("%s");
         sb.append(" >= ");
         sb.append(this.getInterval().inf());
-        sb.append(" AND ");
-        sb.append(this.getOnProperty().getUri().getFragment());
+        sb.append(") AND (");
+        sb.append("%s");
         sb.append(" <= ");
         sb.append(this.getInterval().sup());
         sb.append(")");

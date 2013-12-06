@@ -29,6 +29,9 @@ public class ResponseTime extends MeasurementProperty implements IMeasurementPro
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public ResponseTime(final URI uri, final String expression) {
         super(uri, SSN.ResponseTime, expression);

@@ -29,6 +29,9 @@ public class MeasurementRange extends MeasurementProperty implements IMeasuremen
      * Class constructor.
      * 
      * @param uri
+     *            The URI
+     * @param expression
+     *            The expression
      */
     public MeasurementRange(final URI uri, final String expression) {
         super(uri, SSN.MeasurementRange, expression);

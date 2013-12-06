@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.ontology.model.property;
 
 import java.net.URI;
+import java.util.Objects;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 
@@ -26,16 +27,28 @@ import de.uniol.inf.is.odysseus.ontology.model.Property;
  * 
  */
 public class MeasurementProperty extends Property implements IMeasurementProperty {
+    /** The unit. */
     private String unit;
+    /** The expression of the proeprty. */
     private final String expression;
+    /** The SSN resource. */
     private final Resource resource;
 
     /**
      * Class constructor.
      * 
+     * @param uri
+     *            The URI
+     * @param resource
+     *            the SSN resource
+     * @param expression
+     *            The expression
+     * 
      */
     public MeasurementProperty(final URI uri, final Resource resource, final String expression) {
         super(uri);
+        Objects.requireNonNull(resource);
+        Objects.requireNonNull(expression);
         this.resource = resource;
         this.expression = expression;
     }
@@ -73,6 +86,6 @@ public class MeasurementProperty extends Property implements IMeasurementPropert
 
     @Override
     public String toString() {
-        return this.getExpression() != null ? this.getExpression() : "";
+        return this.getExpression();
     }
 }
