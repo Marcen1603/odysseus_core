@@ -113,16 +113,16 @@ public final class LogicalQueryHelper {
 	}
 
 	public static void removeTopAOs(Collection<ILogicalOperator> operators) {
-		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
+		List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
 
-		for (final ILogicalOperator operator : operators) {
+		for (ILogicalOperator operator : operators) {
 			if (operator instanceof TopAO) {
 				operator.unsubscribeFromAllSources();
 				operatorsToRemove.add(operator);
 			}
 		}
 
-		for (final ILogicalOperator operatorToRemove : operatorsToRemove) {
+		for (ILogicalOperator operatorToRemove : operatorsToRemove) {
 			operators.remove(operatorToRemove);
 		}
 	}
