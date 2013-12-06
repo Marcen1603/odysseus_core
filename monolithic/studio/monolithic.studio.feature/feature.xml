@@ -31,7 +31,6 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <requires>
-      <import feature="de.uniol.inf.is.odysseus.core.server.feature" version="1.0.0.qualifier"/>
       <import feature="de.uniol.inf.is.odysseus.studio.feature" version="1.0.0.qualifier"/>
    </requires>
 
