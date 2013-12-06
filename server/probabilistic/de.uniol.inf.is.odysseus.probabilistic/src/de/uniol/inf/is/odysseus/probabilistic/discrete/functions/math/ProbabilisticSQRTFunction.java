@@ -62,7 +62,7 @@ public class ProbabilisticSQRTFunction extends AbstractProbabilisticFunction<Pro
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > 0) {
+        if (argPos >= getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
         return ProbabilisticSQRTFunction.ACC_TYPES;

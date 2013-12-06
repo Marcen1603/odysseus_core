@@ -175,7 +175,7 @@ public class ProbabilisticDivisionOperator extends AbstractProbabilisticBinaryOp
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > (this.getArity() - 1)) {
+        if (argPos >= getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
         return ProbabilisticDivisionOperator.ACC_TYPES;

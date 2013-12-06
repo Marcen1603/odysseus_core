@@ -177,7 +177,7 @@ public class ProbabilisticMultiplicationOperator extends AbstractProbabilisticBi
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > (this.getArity() - 1)) {
+        if (argPos >= getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
         return ProbabilisticMultiplicationOperator.ACC_TYPES;

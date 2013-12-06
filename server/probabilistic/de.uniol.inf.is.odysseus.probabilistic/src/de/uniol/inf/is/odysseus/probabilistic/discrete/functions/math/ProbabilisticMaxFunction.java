@@ -48,7 +48,7 @@ public class ProbabilisticMaxFunction extends AbstractProbabilisticFunction<Prob
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > 0) {
+        if (argPos >= getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
         return ProbabilisticMaxFunction.ACC_TYPES[argPos];

@@ -172,7 +172,7 @@ public class ProbabilisticPlusOperator extends AbstractProbabilisticBinaryOperat
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos > (this.getArity() - 1)) {
+        if (argPos >= getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
         return ProbabilisticPlusOperator.ACC_TYPES;
