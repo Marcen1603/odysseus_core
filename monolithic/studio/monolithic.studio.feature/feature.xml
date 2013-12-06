@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.monolithic.studio.feature"
-      label="Odysseus Monolithic Studio Feature"
+      label="Odysseus Studio - Monolithic Extensions"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This is the main feature for monolithic part of the graphical user interface (called
-Studio) based on RCP.
+      This is the main feature for the monolithic part of Odysseus Studio. It bundles components for Odysseus Studio that can be only run in a monolithic based product.
    </description>
 
    <copyright>

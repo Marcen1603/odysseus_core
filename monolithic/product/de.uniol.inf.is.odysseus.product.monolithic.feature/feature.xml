@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.monolithic.feature"
-      label="Monolithic Feature"
+      label="Monolithic"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles all features that are needed by the server and studio product. Therefore, it is just a container and does not provide any functionality by itself.
+      This feature bundles all features that need the server and the client directly as one monolithic system. It just combines these features and does not provide any functionality to Odysseus.
    </description>
 
    <copyright>

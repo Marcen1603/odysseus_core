@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.client.platform.feature"
-      label="Studio Platform Feature"
+      label="Client Platform"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles only the platform where Odysseus is built on. Therefore, it is just a container and does
-not provide any functionality by itself.
+      This feature bundles the platform for the client product. So,
+it defines the container where Odysseus is running in.
+This includes for example Equinox and RCP.
+Therefore, it does not provide any functionality by itself and
+has no dependency to the core or other features.
    </description>
 
    <copyright>

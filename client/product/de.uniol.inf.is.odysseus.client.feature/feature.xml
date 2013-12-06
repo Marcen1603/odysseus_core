@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.client.feature"
-      label="Core Client Feature"
+      label="Client"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature is a part of the Odysseus core that can be used for client-side applications
+      This feature bundles all features for the client product.
    </description>
 
    <copyright>
@@ -15,19 +15,20 @@
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
       Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
- you may not use this file except in compliance with the License.  You may obtain a copy of the License at
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0 
- 
-Unless required by applicable law or agreed to in writing, software 
-  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,  
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- See the License for the specific language governing permissions and 
- limitations under the License.
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
    </license>
 
    <url>
-      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
+      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update/"/>
    </url>
 
    <includes

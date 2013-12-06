@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.studio.feature"
-      label="Odysseus Studio Feature"
+      label="Odysseus Studio"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      Encapsulates a client side configuration of Odysseus that does not have any processing capabilities
+      Provides the Studio features for Odysseus. This includes basic RCP based views, windows and editors.
    </description>
 
    <copyright>
