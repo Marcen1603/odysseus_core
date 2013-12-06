@@ -6,9 +6,6 @@ import java.util.Map;
 
 import net.jxta.id.ID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -18,17 +15,10 @@ import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advert
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.SubPlanManipulator;
 
 public class SurveyBasedPartitioner extends AbstractPartitioner {
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(SurveyBasedPartitioner.class);
 	
-	public void activate() {
-	}
-
-	public void deactivate() {
-	}		
-
 	public SurveyBasedPartitioner() {
 		super();
 	}
@@ -43,7 +33,7 @@ public class SurveyBasedPartitioner extends AbstractPartitioner {
 		final List<Vote> votes = summariseVotes(advertisements);
 		
 		List<SubPlan> subPlans = this.seperateLocalSubPlansLogical(queryPlan);
-		manipulator.insertDummyAOs(subPlans);
+		SubPlanManipulator.insertDummyAOs(subPlans);
 		SubPlan planToDistribute = subPlans.get(0); // 1+ -> localPlans
 				
 		List<SubPlan> result = _partition(planToDistribute, costsProOperator, new TargetSize() {
@@ -62,7 +52,7 @@ public class SurveyBasedPartitioner extends AbstractPartitioner {
 		return result;
 	}
 	
-	private List<Vote> summariseVotes(List<CostResponseAdvertisement> votes) throws CouldNotPartitionException {
+	private static List<Vote> summariseVotes(List<CostResponseAdvertisement> votes) throws CouldNotPartitionException {
 		double totalCosts = 0;
 		if(votes == null || votes.isEmpty())
 			throw new CouldNotPartitionException("Survey was not successfull: Got no votes");

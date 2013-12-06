@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.jxta.id.IDFactory;
-import net.jxta.peergroup.PeerGroupID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +17,13 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
-import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
 
 public class SubPlanManipulator {
-	private static int connectionNo=0;
+	
 	private static final Logger log = LoggerFactory.getLogger(SubPlanManipulator.class);
 	
-	
-	public void insertDummyAOs(List<SubPlan> queryParts) {
+	public static void insertDummyAOs(List<SubPlan> queryParts) {
 		
 		for(SubPlan part : queryParts) {
 			Collection<ILogicalOperator> relativeSinks = part.getSinks();
@@ -81,25 +75,16 @@ public class SubPlanManipulator {
 		}
 	}
 	
-	// sfl4j / log4j funktioniert nicht korrekt im unit test (zu viele bindings)
-	@SuppressWarnings("unused")
-	private void log(String str, Object ...arg) {
-		System.out.println(String.format(str, arg));
-		// slf4j
-//		str = str.replace("%s", "{}");
-//		log.debug(str, arg);
-	}
-	
-	public List<SubPlan> mergeSubPlans(List<SubPlan> queryParts) {
+	public static List<SubPlan> mergeSubPlans(List<SubPlan> queryParts) {
 		Map<String, List<SubPlan>> partsOnPeer = getPartsOnPeers(queryParts);
 		return _mergeSubPlans(partsOnPeer);
 	}
 	
-	public List<SubPlan> mergeSubPlans(Map<String, List<SubPlan>> partsOnPeer) {
+	public static List<SubPlan> mergeSubPlans(Map<String, List<SubPlan>> partsOnPeer) {
 		return _mergeSubPlans(partsOnPeer);
 	}	
 
-	private List<SubPlan> _mergeSubPlans(Map<String, List<SubPlan>> partsOnPeer) {
+	private static List<SubPlan> _mergeSubPlans(Map<String, List<SubPlan>> partsOnPeer) {
 		for(String peer : partsOnPeer.keySet()) {
 			List<SubPlan> otherParts = Lists.newArrayList(partsOnPeer.get(peer));
 			Iterator<SubPlan> i =  Lists.newArrayList(partsOnPeer.get(peer)).iterator();
@@ -135,7 +120,7 @@ public class SubPlanManipulator {
 		return result;
 	}
 	
-	private SubPlan mergeIfPossible(SubPlan a, SubPlan b) {
+	private static SubPlan mergeIfPossible(SubPlan a, SubPlan b) {
 		SubPlan subPlan = null;
 		Set<ILogicalOperator> sumOperators = Sets.newHashSet();
 		for(ILogicalOperator sinkOfSender : a.getDummySinks()) {
@@ -144,9 +129,7 @@ public class SubPlanManipulator {
 			DummyAO dummyReceiver = dummySender.getDummySink();
 			
 			if(b.getDummySources().contains(dummyReceiver)) {
-				// remove dummy operators
 				ILogicalOperator realSender = dummySender.getSubscribedToSource().iterator().next().getTarget();
-//				realSender.unsubscribeSink(RestructHelper.determineSubscription(realSender, dummySender));
 				dummySender.unsubscribeFromAllSources();
 				
 				ILogicalOperator realReceiver = dummyReceiver.getSubscriptions().iterator().next().getTarget();
@@ -170,7 +153,7 @@ public class SubPlanManipulator {
 		return subPlan;
 	}
 
-	private Map<String,  List<SubPlan>> getPartsOnPeers(List<SubPlan> queryParts) {
+	private static Map<String,  List<SubPlan>> getPartsOnPeers(List<SubPlan> queryParts) {
 		Map<String, List<SubPlan>> partsOnPeer = Maps.newHashMap();
 		for(SubPlan part : queryParts) {
 			for( String destinationName : part.getDestinationNames() ) {
@@ -187,64 +170,7 @@ public class SubPlanManipulator {
 		return partsOnPeer;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void insertJxtaOperators(List<SubPlan> queryParts, String sharedQueryId, PeerGroupID peerGroupId) {
-		// int connectionNo = 0;
-		for (SubPlan senderPart : queryParts) {
-			// alle relativen senken im teilplan
-			List<DummyAO> sinksOfSenders = (List<DummyAO>) (List<?>) senderPart.getDummySinks();
-
-			// alle relativen senken im teilplan sind
-			// theoretisch quellen für andere operatoren in anderen plänen
-			for (DummyAO sinkOfSender : sinksOfSenders) {
-				DummyAO srcOfAcceptor = sinkOfSender.getDummySink();
-				ILogicalOperator realSinkOfSender = sinkOfSender.getSubscribedToSource().iterator().next().getTarget();
-				ILogicalOperator realSrcOfAcceptor = srcOfAcceptor.getSubscriptions().iterator().next().getTarget();
-
-				// dummy subscriptions löschen
-				LogicalSubscription removingSubscription1 = RestructHelper.determineSubscription(realSinkOfSender, sinkOfSender);
-				LogicalSubscription removingSubscription2 = RestructHelper.determineSubscription(srcOfAcceptor, realSrcOfAcceptor);
-				realSinkOfSender.unsubscribeSink(removingSubscription1);
-				realSrcOfAcceptor.unsubscribeFromSource(removingSubscription2);
-				realSrcOfAcceptor.unsubscribeFromSource(RestructHelper.determineSubscription(srcOfAcceptor, realSrcOfAcceptor));
-
-				String pipeId = "default";
-				if (peerGroupId != null) // nur fuer vereinfachte unit-tests
-					pipeId = IDFactory.newPipeID(peerGroupId).toString();
-
-				final JxtaReceiverAO access = new JxtaReceiverAO();
-				access.setPipeID(pipeId);
-				access.setOutputSchema(realSinkOfSender.getOutputSchema());
-				if (realSinkOfSender.getOutputSchema() != null) // bloß für
-																// unit-test,
-																// normalerweise
-																// immer gesetzt
-					access.setSchema(realSinkOfSender.getOutputSchema().getAttributes());
-				// access.setName("RCV_"+sharedQueryId+"_"+connectionNo);
-				access.setName("RCV_" + connectionNo);
-
-				final JxtaSenderAO sender = new JxtaSenderAO();
-				sender.setPipeID(pipeId);
-				sender.setOutputSchema(realSinkOfSender.getOutputSchema());
-				// sender.setName("SND_"+sharedQueryId+"_"+connectionNo);
-				sender.setName("SND_" + connectionNo);
-
-				realSinkOfSender.subscribeSink(sender, 0, removingSubscription1.getSourceOutPort(), sinkOfSender.getOutputSchema());
-				realSrcOfAcceptor.subscribeToSource(access, removingSubscription2.getSinkInPort(), 0, access.getOutputSchema());
-
-				SubPlan receiverPart = getQueryPartToOperator(queryParts, srcOfAcceptor);
-				senderPart.removeOperators(sinkOfSender);
-				senderPart.addOperators(sender);
-
-				receiverPart.removeOperators(srcOfAcceptor);
-				receiverPart.addOperators(access);
-
-				connectionNo++;
-			}
-		}
-	}
-
-	private SubPlan getQueryPartToOperator(List<SubPlan> queryParts, ILogicalOperator operator) {
+	private static SubPlan getQueryPartToOperator(List<SubPlan> queryParts, ILogicalOperator operator) {
 		for(SubPlan part : queryParts) {
 			if(part.getAllOperators().contains(operator)) {
 				return part;

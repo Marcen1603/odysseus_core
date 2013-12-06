@@ -9,9 +9,6 @@ import java.util.concurrent.Future;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -19,69 +16,35 @@ import com.google.common.collect.Maps.EntryTransformer;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.Partitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Communicator;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.CostCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.DistributionHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Helper;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.SubPlanManipulator;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.calculator.CostCalculator;
 
 public abstract class AbstractPartitioner implements Partitioner {
-	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(AbstractPartitioner.class);
-	protected Communicator communicator = new Communicator();
-	protected IPQLGenerator generator;
+	
 	protected CostCalculator costCalculator = new CostCalculator();
-	protected SubPlanManipulator manipulator = new SubPlanManipulator();
-	protected IServerExecutor executor;
 
 	public static interface TargetSize {
 		public double getNextSize(double totalAbsoluteCosts);
 	}
 
-	public AbstractPartitioner() {
-		manipulator = new SubPlanManipulator();
-	}
-
-	public void bindPQLGenerator(IPQLGenerator generator) {
-		this.generator = generator;
-	}
-
-	public void unbindPQLGenerator(IPQLGenerator generator) {
-		if (this.generator == generator) {
-			generator = null;
-		}
-	}
-
-	public void bindExecutor(IExecutor executor) {
-		if (!(executor instanceof IServerExecutor))
-			throw new RuntimeException("An ServerExecutor is needed");
-		this.executor = (IServerExecutor) executor;
-	}
-
-	public void unbindExecutor(IExecutor executor) {
-		if (this.executor == executor) {
-			executor = null;
-		}
-	}
-
 	public List<CostResponseAdvertisement> requestCostsForPlan(ILogicalOperator plan, ID sharedQueryId, String transCfgName) {
 		final CostQueryAdvertisement adv = (CostQueryAdvertisement) AdvertisementFactory.newAdvertisement(CostQueryAdvertisement.getAdvertisementType());
-		adv.setPqlStatement(generator.generatePQLStatement(plan));
+		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(plan));
 		adv.setSharedQueryID(sharedQueryId);
 		adv.setTransCfgName(transCfgName);
-		Future<List<CostResponseAdvertisement>> futureResult = communicator.askPeersForPlanCosts(adv);
+		Future<List<CostResponseAdvertisement>> futureResult = Communicator.getInstance().askPeersForPlanCosts(adv);
 
 		try {
 			return futureResult.get();
@@ -245,11 +208,11 @@ public abstract class AbstractPartitioner implements Partitioner {
 
 	private CostResponseAdvertisement calcCostsProOperator(ILogicalOperator plan, String transCfgName) {
 
-		Map<String, CostSummary> costsProOperator = this.costCalculator.calcCostsProOperator(Helper.wrapInLogicalQuery(plan, null, null), transCfgName, false);
+		Map<String, CostSummary> costsProOperator = costCalculator.calcCostsProOperator(Helper.wrapInLogicalQuery(plan, null, null), transCfgName, false);
 
 		CostSummary sum = CostSummary.calcSum(costsProOperator.values());
-		CostSummary relativeCosts = this.costCalculator.calcBearableCostsInPercentage(sum);
-		double bid = this.costCalculator.calcBid(plan, sum);
+		CostSummary relativeCosts = costCalculator.calcBearableCostsInPercentage(sum);
+		double bid = costCalculator.calcBid(plan, sum);
 
 		CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 		costAdv.setCostSummary(costsProOperator);

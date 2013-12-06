@@ -26,7 +26,8 @@ public class CostModelService {
 		}
 	}
 
-	public static OperatorCostModel<?> get() {
+	@SuppressWarnings("rawtypes")
+	public static OperatorCostModel get() {
 		return costModel;
 	}
 }

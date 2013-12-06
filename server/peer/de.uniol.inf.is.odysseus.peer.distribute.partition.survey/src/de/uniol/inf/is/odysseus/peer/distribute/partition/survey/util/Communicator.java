@@ -28,17 +28,35 @@ import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.Mailbox;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.calculator.CostCalculator;
 
-public class Communicator implements IAdvertisementListener {
+public final class Communicator implements IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Communicator.class);
 	private static final long WAIT_TIME = 4000;
+	
+	private static Communicator instance;
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private Map<ID, Mailbox<CostResponseAdvertisement>> mailboxForPlanCosts = Maps.newHashMap();
 	private CostCalculator calculator = new CostCalculator();
+	
+	public void activate() {
+		instance = this;
+	}
+	
+	public void deactivate() {
+		instance = null;
+	}
+	
+	public static boolean isActivated() {
+		return getInstance() != null;
+	}
 
+	public static Communicator getInstance() {
+		return instance;
+	}
+	
 	public Future<List<CostResponseAdvertisement>> askPeersForPlanCosts(final CostQueryAdvertisement adv) {
 		synchronized (mailboxForPlanCosts) {
 			Mailbox<CostResponseAdvertisement> mailbox = mailboxForPlanCosts.get(adv.getSharedQueryID());
@@ -75,9 +93,9 @@ public class Communicator implements IAdvertisementListener {
 				LOG.debug("Received response to query to calculate costs for plan {}", adv.getSharedQueryID().toString());
 				synchronized (mailboxForPlanCosts) {
 					Mailbox<CostResponseAdvertisement> mailbox = mailboxForPlanCosts.get(adv.getSharedQueryID());
-					if (mailbox != null) // es werden noch antworten mehr
-											// entgegegen genommen
+					if (mailbox != null) {
 						mailbox.getMails().add(adv);
+					}
 				}
 			}
 		} else if (advertisement instanceof CostQueryAdvertisement) {
@@ -86,7 +104,7 @@ public class Communicator implements IAdvertisementListener {
 				if (!adv.getOwnerPeerId().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 					try {
 						LOG.debug("Received query to calculate costs for plan {}", adv.getSharedQueryID().toString());
-						ILogicalQuery plan = Helper.getLogicalQuery(ServerExecutorService.getServerExecutor(), adv.getPqlStatement()).get(0);
+						ILogicalQuery plan = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
 
 						Map<String, CostSummary> costsProOperator = calculator.calcCostsProOperator(plan, adv.getTransCfgName(), false);
 
