@@ -6,7 +6,8 @@
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles common components of Odysseus that can be used on client as well as on server side.
+      This feature bundles common components of Odysseus that can be
+used on client as well as on server side. It does not have any dependencies to other features.
    </description>
 
    <copyright>
