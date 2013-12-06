@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.internal;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.survey;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -19,27 +20,57 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.Partitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Communicator;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.CostCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.DistributionHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Helper;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.calculator.CostCalculator;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.SubPlanManipulator;
 
-public abstract class AbstractPartitioner implements Partitioner {
+public final class SurveyBasedPartitionerImpl {
+
+	private SurveyBasedPartitionerImpl() {
+		
+	}
 	
-	protected CostCalculator costCalculator = new CostCalculator();
-
 	public static interface TargetSize {
 		public double getNextSize(double totalAbsoluteCosts);
 	}
 
-	public List<CostResponseAdvertisement> requestCostsForPlan(ILogicalOperator plan, ID sharedQueryId, String transCfgName) {
+	public static List<SubPlan> partition(ILogicalOperator queryPlan, ID sharedQueryId, QueryBuildConfiguration transCfg) throws CouldNotPartitionException {
+		List<CostResponseAdvertisement> advertisements = requestCostsForPlan(queryPlan, sharedQueryId, transCfg.getName());
+		Map<String, CostSummary> costsProOperator = calcAvgCostsProOperator(queryPlan, advertisements, transCfg.getName());
+
+		final List<Vote> votes = summariseVotes(advertisements);
+
+		List<SubPlan> subPlans = seperateLocalSubPlansLogical(queryPlan);
+		SubPlanManipulator.insertDummyAOs(subPlans);
+		SubPlan planToDistribute = subPlans.get(0); // 1+ -> localPlans
+
+		List<SubPlan> result = partition(planToDistribute, costsProOperator, new TargetSize() {
+			@Override
+			public double getNextSize(double totalAbsoluteCosts) {
+				if (votes.iterator().hasNext()) {
+					return totalAbsoluteCosts * votes.iterator().next().getPercentageOfBearableCosts();
+				}
+
+				return 0;
+			}
+		});
+
+		if (subPlans.size() > 1)
+			result.addAll(subPlans.subList(1, subPlans.size()));
+		return result;
+	}
+
+	private static List<CostResponseAdvertisement> requestCostsForPlan(ILogicalOperator plan, ID sharedQueryId, String transCfgName) {
 		final CostQueryAdvertisement adv = (CostQueryAdvertisement) AdvertisementFactory.newAdvertisement(CostQueryAdvertisement.getAdvertisementType());
 		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(plan));
 		adv.setSharedQueryID(sharedQueryId);
@@ -54,7 +85,7 @@ public abstract class AbstractPartitioner implements Partitioner {
 		return null;
 	}
 
-	public List<SubPlan> _partition(SubPlan planToDistribute, final Map<String, CostSummary> planCost, final TargetSize targetSize) {
+	private static List<SubPlan> partition(SubPlan planToDistribute, final Map<String, CostSummary> planCost, final TargetSize targetSize) {
 		final ILogicalOperator startOperator = getSomeLeafOperator(planToDistribute);
 		final List<SubPlan> subPlans = Lists.newArrayList();
 		final List<ILogicalOperator> visitedOperators = Lists.newArrayList();
@@ -112,7 +143,7 @@ public abstract class AbstractPartitioner implements Partitioner {
 		return subPlans;
 	}
 
-	protected List<SubPlan> seperateLocalSubPlansLogical(ILogicalOperator plan) {
+	private static List<SubPlan> seperateLocalSubPlansLogical(ILogicalOperator plan) {
 		List<SubPlan> newSubPlans = Lists.newArrayList();
 
 		SubPlan totalPlan = new SubPlan(DistributionHelper.collectOperators(plan).toArray(new ILogicalOperator[0]));
@@ -158,7 +189,7 @@ public abstract class AbstractPartitioner implements Partitioner {
 		return Lists.reverse(newSubPlans);
 	}
 
-	private List<SubPlan> defineLocalPlans(List<ILogicalOperator> localOperators) {
+	private static List<SubPlan> defineLocalPlans(List<ILogicalOperator> localOperators) {
 		List<SubPlan> subPlans = Lists.newArrayList();
 		for (ILogicalOperator operator : Lists.newArrayList(localOperators)) {
 			subPlans.add(new SubPlan("local", operator));
@@ -167,7 +198,7 @@ public abstract class AbstractPartitioner implements Partitioner {
 		return subPlans;
 	}
 
-	protected Map<String, CostSummary> calcAvgCostsProOperator(final ILogicalOperator query, final List<CostResponseAdvertisement> advertisements, String transCfgName) {
+	private static Map<String, CostSummary> calcAvgCostsProOperator(final ILogicalOperator query, final List<CostResponseAdvertisement> advertisements, String transCfgName) {
 		advertisements.add(calcCostsProOperator(query, transCfgName));
 		Map<String, CostSummary> costs = Maps.newHashMap();
 		for (CostResponseAdvertisement adv : advertisements) {
@@ -195,7 +226,7 @@ public abstract class AbstractPartitioner implements Partitioner {
 		return costs;
 	}
 
-	private ILogicalOperator getSomeLeafOperator(SubPlan planToDistribute) {
+	private static ILogicalOperator getSomeLeafOperator(SubPlan planToDistribute) {
 		try {
 			if (!planToDistribute.getSources().isEmpty()) {
 				return planToDistribute.getSources().get(0);
@@ -206,13 +237,12 @@ public abstract class AbstractPartitioner implements Partitioner {
 		}
 	}
 
-	private CostResponseAdvertisement calcCostsProOperator(ILogicalOperator plan, String transCfgName) {
-
-		Map<String, CostSummary> costsProOperator = costCalculator.calcCostsProOperator(Helper.wrapInLogicalQuery(plan, null, null), transCfgName, false);
+	private static CostResponseAdvertisement calcCostsProOperator(ILogicalOperator plan, String transCfgName) {
+		Map<String, CostSummary> costsProOperator = CostCalculator.calcCostsProOperator(Helper.wrapInLogicalQuery(plan, null, null), transCfgName, false);
 
 		CostSummary sum = CostSummary.calcSum(costsProOperator.values());
-		CostSummary relativeCosts = costCalculator.calcBearableCostsInPercentage(sum);
-		double bid = costCalculator.calcBid(plan, sum);
+		CostSummary relativeCosts = CostCalculator.calcBearableCostsInPercentage(sum);
+		double bid = CostCalculator.calcBid(plan, sum);
 
 		CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 		costAdv.setCostSummary(costsProOperator);
@@ -228,7 +258,7 @@ public abstract class AbstractPartitioner implements Partitioner {
 		return costAdv;
 	}
 
-	private Map<String, CostSummary> addCostsForIgnoredOperators(ILogicalOperator query, Map<String, CostSummary> costs) {
+	private static Map<String, CostSummary> addCostsForIgnoredOperators(ILogicalOperator query, Map<String, CostSummary> costs) {
 		costs = Maps.newHashMap(costs);
 		for (ILogicalOperator op : DistributionHelper.collectOperators(query)) {
 			String opId = Helper.getId(op);
@@ -238,5 +268,38 @@ public abstract class AbstractPartitioner implements Partitioner {
 			}
 		}
 		return costs;
+	}
+
+	private static List<Vote> summariseVotes(List<CostResponseAdvertisement> votes) throws CouldNotPartitionException {
+		double totalCosts = 0;
+		if (votes == null || votes.isEmpty())
+			throw new CouldNotPartitionException("Survey was not successfull: Got no votes");
+
+		Map<Double, Vote> mappedVotes = Maps.newHashMap();
+		for (CostResponseAdvertisement vote : votes) {
+			// aufrunden in 10er SChritten
+			// z.b.: 83,4 => round(8,34)=8 => 8*10=80
+			double bearableCosts = vote.getPercentageOfBearableCpuCosts();
+			bearableCosts *= 100; // die werde liegen zwischen [0,1]
+			bearableCosts = Math.round(bearableCosts / 10) * 10;
+			bearableCosts /= 100; // wieder auf [0,1] abbilden
+
+			Vote total = mappedVotes.get(bearableCosts);
+			if (total == null) {
+				total = new Vote(0, bearableCosts, 0);
+			}
+			Vote newVote = new Vote(total.getBid() + vote.getBid(), bearableCosts, total.getCount() + 1);
+			mappedVotes.put(bearableCosts, newVote);
+			totalCosts += bearableCosts;
+		}
+
+		if (totalCosts < 1) {
+			throw new CouldNotPartitionException("Can't partition the plan completely");
+		}
+
+		List<Vote> summarisedVotes = Lists.newArrayList(mappedVotes.values());
+		Collections.sort(summarisedVotes);
+		Collections.reverse(summarisedVotes);
+		return summarisedVotes;
 	}
 }

@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.Mailbox;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.calculator.CostCalculator;
 
 public final class Communicator implements IAdvertisementListener {
 
@@ -39,8 +38,7 @@ public final class Communicator implements IAdvertisementListener {
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private Map<ID, Mailbox<CostResponseAdvertisement>> mailboxForPlanCosts = Maps.newHashMap();
-	private CostCalculator calculator = new CostCalculator();
-	
+
 	public void activate() {
 		instance = this;
 	}
@@ -106,13 +104,11 @@ public final class Communicator implements IAdvertisementListener {
 						LOG.debug("Received query to calculate costs for plan {}", adv.getSharedQueryID().toString());
 						ILogicalQuery plan = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
 
-						Map<String, CostSummary> costsProOperator = calculator.calcCostsProOperator(plan, adv.getTransCfgName(), false);
+						Map<String, CostSummary> costsProOperator = CostCalculator.calcCostsProOperator(plan, adv.getTransCfgName(), false);
 
 						CostSummary sum = CostSummary.calcSum(costsProOperator.values());
-
-						CostSummary relativeCosts = this.calculator.calcBearableCostsInPercentage(sum);
-
-						double bid = calculator.calcBid(plan.getLogicalPlan(), sum, false);
+						CostSummary relativeCosts = CostCalculator.calcBearableCostsInPercentage(sum);
+						double bid = CostCalculator.calcBid(plan.getLogicalPlan(), sum, false);
 
 						CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 						costAdv.setCostSummary(costsProOperator);

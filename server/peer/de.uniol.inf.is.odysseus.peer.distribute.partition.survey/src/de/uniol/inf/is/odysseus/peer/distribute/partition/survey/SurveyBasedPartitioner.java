@@ -18,13 +18,10 @@ import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.Partitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
 
 public class SurveyBasedPartitioner implements IQueryPartitioner {
 	
-	private static Partitioner partitioner = new de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.internal.SurveyBasedPartitioner();
-		
 	@Override
 	public String getName() {
 		return "survey";
@@ -37,7 +34,7 @@ public class SurveyBasedPartitioner implements IQueryPartitioner {
 		// copy --> original
 		Map<ILogicalOperator, ILogicalOperator> operatorCopyMap = createOperatorCopyMap(operators);
 		try {
-			List<SubPlan> subPlans = partitioner.partitionWithDummyOperators(operatorCopyMap.keySet().iterator().next(), sharedQueryID, config);
+			List<SubPlan> subPlans = SurveyBasedPartitionerImpl.partition(operatorCopyMap.keySet().iterator().next(), sharedQueryID, config);
 			List<ILogicalQueryPart> logicalQueries = transformToLogicalPlan(subPlans, operatorCopyMap );
 			
 			return logicalQueries;

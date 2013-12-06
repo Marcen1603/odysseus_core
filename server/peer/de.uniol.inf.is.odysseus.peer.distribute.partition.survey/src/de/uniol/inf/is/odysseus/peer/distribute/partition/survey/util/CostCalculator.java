@@ -1,45 +1,45 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.calculator;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.CostModelService;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Helper;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.PlanProOperatorPartitioner;
 
-public class CostCalculator {
+public final class CostCalculator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CostCalculator.class);
 
-	private final OperatorCostsCalculator operatorCostsCalculator;
-
-	public CostCalculator() {
-		operatorCostsCalculator = new OperatorCostsCalculator(new PlanProOperatorPartitioner());
+	private CostCalculator() {
+		
 	}
-
-	public Map<String, CostSummary> calcCostsProOperator(ILogicalQuery plan, String transCfgName, boolean discardPlan) {
+	
+	public static Map<String, CostSummary> calcCostsProOperator(ILogicalQuery plan, String transCfgName, boolean discardPlan) {
 		if (!discardPlan) {
 			plan = Helper.copyQuery(plan);
 		}
 
-		return operatorCostsCalculator.calcCostsProOperator(plan.getLogicalPlan(), transCfgName);
+		return calcCostsProOperator(plan.getLogicalPlan(), transCfgName);
 	}
 
-	public CostSummary calcBearableCostsInPercentage(CostSummary absoluteCosts) {
+	public static CostSummary calcBearableCostsInPercentage(CostSummary absoluteCosts) {
 		return calcBearableCostsInPercentage(absoluteCosts.getOperatorId(), absoluteCosts.getCpuCost(), absoluteCosts.getMemCost(), absoluteCosts.getPlan());
 	}
 
-	public double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts) {
+	public static double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts) {
 		return calcBid(plan, absolutePlanCosts, true);
 	}
 
-	public double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts, boolean respectSourceAvailibility) {
+	public static double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts, boolean respectSourceAvailibility) {
 		return calcBid(plan, absolutePlanCosts.getCpuCost(), absolutePlanCosts.getMemCost(), respectSourceAvailibility);
 	}
 
@@ -100,5 +100,29 @@ public class CostCalculator {
 		}
 
 		return 1d;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static Map<String, CostSummary> calcCostsProOperator(ILogicalOperator query, String transCfgName) {
+		Map<String, CostSummary> operatorCost = new HashMap<>();
+
+		int i = 0;
+		for (ILogicalOperator operator : DistributionHelper.collectOperators(query)) {
+			ILogicalOperator operatorClone = operator.clone();
+
+			ILogicalQuery q = Helper.transformToQuery(operatorClone, "subplan_" + i);
+			IPhysicalQuery p = Helper.getPhysicalQuery(q, transCfgName);
+			String id = Helper.getId(operator);
+
+			ICost<IPhysicalOperator> cost = CostModelService.get().estimateCost(p.getPhysicalChilds(), false);
+			OperatorCost<IPhysicalOperator> c = ((OperatorCost<IPhysicalOperator>) cost);
+
+			double cpuCost = c.getCpuCost();
+			double memCost = c.getMemCost();
+			operatorCost.put(id, new CostSummary(id, cpuCost, memCost, query));
+			i++;
+
+		}
+		return operatorCost;
 	}
 }

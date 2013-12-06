@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.partitioner.internal;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.survey;
 
 public class Vote implements Comparable<Vote> {
 	private final double bid;
