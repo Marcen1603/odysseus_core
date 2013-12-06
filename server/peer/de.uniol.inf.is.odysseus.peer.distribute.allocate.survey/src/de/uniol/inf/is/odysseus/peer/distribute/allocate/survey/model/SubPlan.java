@@ -19,9 +19,9 @@ import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 
 public class SubPlan {
-	
+
 	private final List<String> destinationNames = Lists.newArrayList();
-	
+
 	private List<ILogicalOperator> operators = Lists.newArrayList();
 	private List<ILogicalOperator> jxtaSinks = Lists.newArrayList();
 	private List<ILogicalOperator> jxtaSources = Lists.newArrayList();
@@ -29,22 +29,22 @@ public class SubPlan {
 	private List<ILogicalOperator> dummySources = Lists.newArrayList();
 	private List<ILogicalOperator> sinks = Lists.newArrayList();
 	private List<ILogicalOperator> sources = Lists.newArrayList();
-	
-	public SubPlan(String destinationName, ILogicalOperator ...operators) {
+
+	public SubPlan(String destinationName, ILogicalOperator... operators) {
 		addDestinationName(destinationName);
 		addOperators(operators);
 	}
-	
-	public SubPlan(ILogicalOperator...operators) {
+
+	public SubPlan(ILogicalOperator... operators) {
 		addOperators(operators);
 	}
-	
+
 	public SubPlan(Collection<String> destinationNames, ILogicalOperator[] array) {
 		destinationNames.addAll(destinationNames);
 		addOperators(array);
 	}
 
-	public void addOperators(ILogicalOperator ...operators) {
+	public void addOperators(ILogicalOperator... operators) {
 		List<ILogicalOperator> all = getAllOperators();
 		all.addAll(Lists.newArrayList(operators));
 		this.operators.clear();
@@ -58,50 +58,30 @@ public class SubPlan {
 	}
 
 	private void _addOperators(List<ILogicalOperator> operators) {
-		for(ILogicalOperator operator : operators) {
-			if(operator instanceof JxtaSenderAO && !jxtaSinks.contains(operator)) {
+		for (ILogicalOperator operator : operators) {
+			if (operator instanceof JxtaSenderAO && !jxtaSinks.contains(operator)) {
 				jxtaSinks.add(operator);
-			}
-			else if(operator instanceof JxtaReceiverAO && !jxtaSources.contains(operator)) {
+			} else if (operator instanceof JxtaReceiverAO && !jxtaSources.contains(operator)) {
 				jxtaSources.add(operator);
-			}
-			else if(operator instanceof DummyAO) {
-				if(operator.getSubscriptions().isEmpty() && !dummySinks.contains(operator)) {
+			} else if (operator instanceof DummyAO) {
+				if (operator.getSubscriptions().isEmpty() && !dummySinks.contains(operator)) {
 					dummySinks.add(operator);
 				}
-				if(operator.getSubscribedToSource().isEmpty() && !dummySources.contains(operator)) {
+				if (operator.getSubscribedToSource().isEmpty() && !dummySources.contains(operator)) {
 					dummySources.add(operator);
 				}
-			}		
-			else {				
+			} else {
 				this.operators.add(operator);
-				if((operator.getSubscriptions().isEmpty() || 
-						Helper.oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscriptions()))
-						 && !sinks.contains(operator)) {
+				if ((operator.getSubscriptions().isEmpty() || Helper.oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscriptions())) && !sinks.contains(operator)) {
 					sinks.add(operator);
 				}
-				if((operator.getSubscribedToSource().isEmpty() || 
-						Helper.oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscribedToSource()))
-						 && !sources.contains(operator)){
+				if ((operator.getSubscribedToSource().isEmpty() || Helper.oneTargetNotInList(Lists.newArrayList(operators), operator.getSubscribedToSource())) && !sources.contains(operator)) {
 					sources.add(operator);
 				}
 			}
 		}
 	}
 
-	public void removeOperators(ILogicalOperator ...operators) {
-		List<ILogicalOperator> all = getAllOperators();
-		all.removeAll(Lists.newArrayList(operators));
-		this.operators.clear();
-		jxtaSinks.clear();
-		jxtaSources.clear();
-		dummySinks.clear();
-		dummySources.clear();
-		sinks.clear();
-		sources.clear();
-		_addOperators(all);		
-	}
-	
 	public List<ILogicalOperator> getOperators() {
 		return Lists.newArrayList(operators);
 	}
@@ -132,32 +112,32 @@ public class SubPlan {
 
 	public ImmutableCollection<String> getDestinationNames() {
 		return ImmutableList.copyOf(destinationNames);
-	}	
-	
-	public void addDestinationName( String name ) {
+	}
+
+	public void addDestinationName(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Destination name to add must not be null or empty!");
-		
-		if( !destinationNames.contains(name)) {
+
+		if (!destinationNames.contains(name)) {
 			destinationNames.add(name);
 		}
 	}
-	
-	public void removeDestinationName( String name ) {
+
+	public void removeDestinationName(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Destination name to remove must not be null or empty!");
 
 		destinationNames.remove(name);
 	}
-	
-	public boolean hasDestinationName( String name ) {
+
+	public boolean hasDestinationName(String name) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "Destination name must not be null or empty!");
-		
+
 		return destinationNames.contains(name);
 	}
-	
+
 	public boolean hasLocalDestination() {
 		return hasDestinationName("local");
 	}
-	
+
 	public List<ILogicalOperator> getAllOperators() {
 		Set<ILogicalOperator> all = Sets.newHashSet();
 		all.addAll(jxtaSources);
@@ -169,49 +149,48 @@ public class SubPlan {
 		all.addAll(operators);
 		return Lists.newArrayList(all.toArray(new ILogicalOperator[0]));
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		
+
 		Iterator<ILogicalOperator> iter = this.operators.iterator();
-		
+
 		sb.append("{ operators: [");
-				
-		while(iter.hasNext()) {
+
+		while (iter.hasNext()) {
 			sb.append(iter.next().getName() + "  ");
 		}
-		
-		if(!this.destinationNames.isEmpty()) {
+
+		if (!this.destinationNames.isEmpty()) {
 			sb.append(", destination= " + this.destinationNames);
 		}
-		
+
 		sb.append(" }");
-		
+
 		return sb.toString();
-		
-	}	
-	
-	public ILogicalOperator getLogicalPlan() {	
-		if(!jxtaSinks.isEmpty())
+
+	}
+
+	public ILogicalOperator getLogicalPlan() {
+		if (!jxtaSinks.isEmpty())
 			return jxtaSinks.get(0);
-		else if(!dummySinks.isEmpty()) {
+		else if (!dummySinks.isEmpty()) {
 			return dummySinks.get(0);
-		}
-		else {
+		} else {
 			return sinks.get(0);
-		}		
-	}	
-	
+		}
+	}
+
 	public boolean contains(ILogicalOperator operator) {
 		return getAllOperators().contains(operator);
 	}
-	
-	public List<ILogicalOperator> findOperatorsByType(Class<?> ...types) {
+
+	public List<ILogicalOperator> findOperatorsByType(Class<?>... types) {
 		List<ILogicalOperator> operators = Lists.newArrayList();
-		for(ILogicalOperator op : getAllOperators()) {
-			for(Class<?> type : types) {
-				if(type.isInstance(op)) {
+		for (ILogicalOperator op : getAllOperators()) {
+			for (Class<?> type : types) {
+				if (type.isInstance(op)) {
 					operators.add(op);
 				}
 			}
@@ -221,5 +200,5 @@ public class SubPlan {
 
 	public int getDestinationCount() {
 		return destinationNames.size();
-	}	
+	}
 }

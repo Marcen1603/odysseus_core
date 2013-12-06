@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.PQLGener
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.CostCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.SubPlanManipulator;
 
 public final class SurveyBasedAllocatorImpl {
 
@@ -39,20 +39,15 @@ public final class SurveyBasedAllocatorImpl {
 		
 	}	
 	
-	public static ILogicalQuery allocate(ILogicalQuery query, ID sharedQueryID, List<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
+	public static Map<String, List<SubPlan>> allocate(ID sharedQueryID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(sharedQueryID, subPlans, transCfg);
-		subPlans = evaluateBids(auctions, subPlans);
-
-		// TODO: Return subPlans
-		return null;
+		return evaluateBids(auctions, subPlans);
 	}
 
-	private static List<SubPlan> evaluateBids(List<AuctionSummary> auctions, List<SubPlan> subPlans) {
+	private static Map<String, List<SubPlan>> evaluateBids(List<AuctionSummary> auctions, Collection<SubPlan> subPlans) {
 		Map<String, List<SubPlan>> destinationMap = determineWinners(auctions);
-
 		addLocalPlans(destinationMap, subPlans);
-
-		return SubPlanManipulator.mergeSubPlans(destinationMap);
+		return destinationMap;
 	}
 
 	private static Map<String, List<SubPlan>> determineWinners(List<AuctionSummary> auctions) {
@@ -99,7 +94,7 @@ public final class SurveyBasedAllocatorImpl {
 		return adv;
 	}
 	
-	private static void addLocalPlans(Map<String, List<SubPlan>> destinationMap, List<SubPlan> subPlans) {
+	private static void addLocalPlans(Map<String, List<SubPlan>> destinationMap, Collection<SubPlan> subPlans) {
 		if (!destinationMap.containsKey("local")) {
 			destinationMap.put("local", getLocalPlans(subPlans));
 		} else {
@@ -121,7 +116,7 @@ public final class SurveyBasedAllocatorImpl {
 		}
 	}
 
-	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(ID sharedQueryID, List<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
+	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(ID sharedQueryID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
 		Preconditions.checkNotNull(subPlans, "SubPlans must not be null!");
 
 		List<AuctionSummary> auctions = Lists.newArrayList();
@@ -147,7 +142,7 @@ public final class SurveyBasedAllocatorImpl {
 		return auctions;
 	}
 
-	private static List<SubPlan> getLocalPlans(List<SubPlan> subPlans) {
+	private static List<SubPlan> getLocalPlans(Collection<SubPlan> subPlans) {
 		List<SubPlan> localParts = Lists.newArrayList();
 		for (SubPlan subPlan : subPlans) {
 			if (subPlan.hasLocalDestination()) {
