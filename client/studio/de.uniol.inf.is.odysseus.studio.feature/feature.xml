@@ -34,10 +34,6 @@ Unless required by applicable law or agreed to in writing, software
          id="de.uniol.inf.is.odysseus.rcp.dashboard.feature"
          version="0.0.0"/>
 
-   <requires>
-      <import feature="de.uniol.inf.is.odysseus.client.feature" version="1.0.0.qualifier"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.jfreechart"
          download-size="0"
