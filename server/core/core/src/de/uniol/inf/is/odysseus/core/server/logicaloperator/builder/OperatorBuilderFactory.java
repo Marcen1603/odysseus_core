@@ -120,7 +120,9 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	}
 
 	public static void removeOperatorBuilderByName(String name) {
-		removePredicateBuilder(name);
+	    removeOperatorBuilderType(name);
+		/** FIXME what is remove here?*/
+	    removePredicateBuilder(name);
 	}
 
 	@Override
