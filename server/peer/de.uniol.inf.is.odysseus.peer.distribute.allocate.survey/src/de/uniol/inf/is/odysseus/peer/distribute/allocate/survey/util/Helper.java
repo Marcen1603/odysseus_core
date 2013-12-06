@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -37,11 +36,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
-import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
-import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.CostModelService;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class Helper {
@@ -57,19 +57,6 @@ public class Helper {
 		return null;
 	}
 
-	/**
-	 * Determines if the target {@link ILogicalOperator} of any
-	 * {@link LogicalSubscription} is not in a given collection of
-	 * {@link IlogicalOperator}s.
-	 * 
-	 * @see LogicalSubscription#getTarget()
-	 * @param operators
-	 *            The given collection of {@link IlogicalOperator}s.
-	 * @param subscriptions
-	 *            A collection of {@link LogicalSubscription}s to be checked.
-	 * @return true, if any target {@link ILogicalOperator} of
-	 *         <code>subscriptions</code> is not in <code>operators</code>.
-	 */
 	public static boolean oneTargetNotInList(List<ILogicalOperator> operators, Collection<LogicalSubscription> subscriptions) {
 
 		for (final LogicalSubscription subscription : subscriptions) {
@@ -108,9 +95,9 @@ public class Helper {
 		return logicalQuery;
 	}
 
-	public static ILogicalQuery copyQuery(IPQLGenerator generator, IServerExecutor executor, ILogicalQuery query) {
-		String pqlStatement = generator.generatePQLStatement(query.getLogicalPlan());
-		return Helper.getLogicalQuery(executor, pqlStatement).get(0);
+	public static ILogicalQuery copyQuery(ILogicalQuery query) {
+		String pqlStatement = PQLGeneratorService.get().generatePQLStatement(query.getLogicalPlan());
+		return Helper.getLogicalQuery(pqlStatement).get(0);
 	}
 
 	public static boolean isSourceOperator(ILogicalOperator op) {
@@ -153,27 +140,27 @@ public class Helper {
 		}
 	}
 
-	public static IPhysicalQuery getPhysicalQuery(IServerExecutor executor, ILogicalQuery query, String transCfgName) {
-		IQueryBuildConfigurationTemplate settings = executor.getQueryBuildConfiguration(transCfgName);
+	public static IPhysicalQuery getPhysicalQuery(ILogicalQuery query, String transCfgName) {
+		IQueryBuildConfigurationTemplate settings = ServerExecutorService.getServerExecutor().getQueryBuildConfiguration(transCfgName);
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(settings.getConfiguration());
 		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]), transCfgName);
 		config.getTransformationConfiguration().setVirtualTransformation(true);
 
-		return executor.getCompiler().transform(query, config.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
+		return ServerExecutorService.getServerExecutor().getCompiler().transform(query, config.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
 	}
 
-	public static List<IPhysicalQuery> getPhysicalQuery(IServerExecutor executor, String pqlStatement, String transCfgName) {
-		IQueryBuildConfigurationTemplate settings = executor.getQueryBuildConfiguration(transCfgName);
+	public static List<IPhysicalQuery> getPhysicalQuery(String pqlStatement, String transCfgName) {
+		IQueryBuildConfigurationTemplate settings = ServerExecutorService.getServerExecutor().getQueryBuildConfiguration(transCfgName);
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(settings.getConfiguration());
 		QueryBuildConfiguration config = new QueryBuildConfiguration(newSettings.toArray(new IQueryBuildSetting<?>[0]), transCfgName);
 		config.getTransformationConfiguration().setVirtualTransformation(true);
 
-		List<IPhysicalQuery> query = executor.getCompiler().translateAndTransformQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), config.getTransformationConfiguration(), null);
+		List<IPhysicalQuery> query = ServerExecutorService.getServerExecutor().getCompiler().translateAndTransformQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), config.getTransformationConfiguration(), null);
 		return query;
 	}
 
-	public static List<ILogicalQuery> getLogicalQuery(IServerExecutor executor, String pqlStatement) {
-		List<IExecutorCommand> commands = executor.getCompiler().translateQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), null);
+	public static List<ILogicalQuery> getLogicalQuery(String pqlStatement) {
+		List<IExecutorCommand> commands = ServerExecutorService.getServerExecutor().getCompiler().translateQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), null);
 		List<ILogicalQuery> list = Lists.newArrayList();
 		for (IExecutorCommand q : commands) {
 
@@ -207,14 +194,14 @@ public class Helper {
 		return new Long(Runtime.getRuntime().maxMemory()).doubleValue();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static double getCpuCostTotal(IServerExecutor executor, OperatorCostModel costModel) {
+	@SuppressWarnings({ "unchecked" })
+	public static double getCpuCostTotal() {
 		ICost<IPhysicalOperator> cost = null;
-		for (IPhysicalQuery q : executor.getExecutionPlan().getQueries()) {
+		for (IPhysicalQuery q : ServerExecutorService.getServerExecutor().getExecutionPlan().getQueries()) {
 			if (cost == null)
-				cost = costModel.estimateCost(q.getPhysicalChilds(), false);
+				cost = CostModelService.get().estimateCost(q.getPhysicalChilds(), false);
 			else {
-				cost.merge(costModel.estimateCost(q.getPhysicalChilds(), false));
+				cost.merge(CostModelService.get().estimateCost(q.getPhysicalChilds(), false));
 			}
 		}
 
@@ -229,7 +216,7 @@ public class Helper {
 		throw new RuntimeException("Did not expect this implementation of ICost: " + cost.getClass().getName());
 	}
 
-	public static ILogicalQuery transformToQueryWithTopAO(List<SubPlan> queryParts, IPQLGenerator generator, String name) {
+	public static ILogicalQuery transformToQueryWithTopAO(List<SubPlan> queryParts, String name) {
 		final Collection<ILogicalOperator> sinks = collectSinks(queryParts);
 		final TopAO topAO = generateTopAO(sinks);
 
@@ -239,17 +226,17 @@ public class Helper {
 		logicalQuery.setParserId("PQL");
 		logicalQuery.setPriority(0);
 		logicalQuery.setUser(getActiveSession());
-		logicalQuery.setQueryText(generator.generatePQLStatement(topAO));
+		logicalQuery.setQueryText(PQLGeneratorService.get().generatePQLStatement(topAO));
 
 		return logicalQuery;
 	}
 
-	public static ILogicalQuery transformToQueryWithTopAO(ILogicalOperator operator, IPQLGenerator generator, String name) {
-		return transformToQueryWithTopAO(Lists.newArrayList(new SubPlan(operator)), generator, name);
+	public static ILogicalQuery transformToQueryWithTopAO(ILogicalOperator operator, String name) {
+		return transformToQueryWithTopAO(Lists.newArrayList(new SubPlan(operator)), name);
 	}
 
-	public static ILogicalQuery transformToQuery(ILogicalOperator operator, IPQLGenerator generator, String name) {
-		return wrapInLogicalQuery(operator, name, generator.generatePQLStatement(operator));
+	public static ILogicalQuery transformToQuery(ILogicalOperator operator, String name) {
+		return wrapInLogicalQuery(operator, name, PQLGeneratorService.get().generatePQLStatement(operator));
 	}
 
 	private static Collection<ILogicalOperator> collectSinks(List<SubPlan> queryParts) {
