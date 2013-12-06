@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.CostModelService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.ServerExecutorService;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class Helper {
 	private static final Logger log = LoggerFactory.getLogger(Helper.class);
@@ -97,13 +98,27 @@ public class Helper {
 
 	public static ILogicalQuery wrapInLogicalQuery(ILogicalOperator plan, String name, String pqlText) {
 		final ILogicalQuery logicalQuery = new LogicalQuery();
-		logicalQuery.setLogicalPlan(plan, true);
+		logicalQuery.setLogicalPlan( getTopmostOperator(plan), true);
 		logicalQuery.setName(name);
 		logicalQuery.setParserId("PQL");
 		logicalQuery.setPriority(0);
 		logicalQuery.setUser(getActiveSession());
 		logicalQuery.setQueryText(pqlText);
 		return logicalQuery;
+	}
+
+	private static ILogicalOperator getTopmostOperator(ILogicalOperator plan) {
+		
+		Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(plan);
+		Collection<ILogicalOperator> sinks = LogicalQueryHelper.getSinks(operators);
+		
+		TopAO topAO = new TopAO();
+		int inputPort = 0;
+		for (ILogicalOperator sink : sinks) {
+			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
+		}
+		
+		return topAO;
 	}
 
 	public static ILogicalQuery copyQuery(ILogicalQuery query) {
@@ -115,8 +130,7 @@ public class Helper {
 		return op instanceof AccessAO || op instanceof StreamAO;
 	}
 
-	public static void addOperatorIds(ILogicalOperator query) {
-		Collection<ILogicalOperator> operators = DistributionHelper.collectOperators(query);
+	public static void addOperatorIds(Collection<ILogicalOperator> operators) {
 		int id = 0;
 		for (ILogicalOperator op : operators) {
 			Map<String, String> params = op.getParameterInfos();

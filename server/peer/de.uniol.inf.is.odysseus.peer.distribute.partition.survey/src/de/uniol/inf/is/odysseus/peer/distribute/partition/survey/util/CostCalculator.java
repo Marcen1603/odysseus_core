@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,9 +11,11 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.CostModelService;
 
 public final class CostCalculator {
@@ -20,9 +23,9 @@ public final class CostCalculator {
 	private static final Logger LOG = LoggerFactory.getLogger(CostCalculator.class);
 
 	private CostCalculator() {
-		
+
 	}
-	
+
 	public static Map<String, CostSummary> calcCostsProOperator(ILogicalQuery plan, String transCfgName, boolean discardPlan) {
 		if (!discardPlan) {
 			plan = Helper.copyQuery(plan);
@@ -101,18 +104,22 @@ public final class CostCalculator {
 
 		return 1d;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private static Map<String, CostSummary> calcCostsProOperator(ILogicalOperator query, String transCfgName) {
 		Map<String, CostSummary> operatorCost = new HashMap<>();
 
 		int i = 0;
-		for (ILogicalOperator operator : DistributionHelper.collectOperators(query)) {
-			ILogicalOperator operatorClone = operator.clone();
+		List<SubPlan> parts = PlanProOperatorPartitioner.partitionWithDummyOperators(query, null, null);
 
-			ILogicalQuery q = Helper.transformToQuery(operatorClone, "subplan_" + i);
+		for (SubPlan part : parts) {
+			if (part.getOperators().isEmpty() || skipOperator(part)) {
+				continue;
+			}
+
+			ILogicalQuery q = Helper.transformToQuery(part.getOperators().get(0), "subplan_" + i);
 			IPhysicalQuery p = Helper.getPhysicalQuery(q, transCfgName);
-			String id = Helper.getId(operator);
+			String id = getOperatorId(part);
 
 			ICost<IPhysicalOperator> cost = CostModelService.get().estimateCost(p.getPhysicalChilds(), false);
 			OperatorCost<IPhysicalOperator> c = ((OperatorCost<IPhysicalOperator>) cost);
@@ -121,8 +128,16 @@ public final class CostCalculator {
 			double memCost = c.getMemCost();
 			operatorCost.put(id, new CostSummary(id, cpuCost, memCost, query));
 			i++;
-
 		}
+
 		return operatorCost;
+	}
+
+	private static boolean skipOperator(SubPlan part) {
+		return (part.getOperators().get(0) instanceof AccessAO);
+	}
+
+	private static String getOperatorId(SubPlan part) {
+		return Helper.getId(part.getOperators().get(0));
 	}
 }
