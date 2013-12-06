@@ -38,6 +38,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		register( ActionFactory.SAVE_ALL.create(window));
 		register( ActionFactory.SAVE_AS.create(window));
 		register( ActionFactory.REVERT.create(window));
+		register(ActionFactory.DELETE.create(window));
+		register(ActionFactory.COPY.create(window));
+		register(ActionFactory.PASTE.create(window));
 	}
 
 	@Override
