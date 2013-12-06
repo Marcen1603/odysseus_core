@@ -3,8 +3,8 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.internal.advertisement.AuctionQueryAdvertisement;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.internal.advertisement.AuctionResponseAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 
 public class AuctionSummary {
 	private final AuctionQueryAdvertisement query;
