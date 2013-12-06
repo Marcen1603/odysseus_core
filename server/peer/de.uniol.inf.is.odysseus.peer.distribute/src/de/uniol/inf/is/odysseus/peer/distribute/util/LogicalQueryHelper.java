@@ -25,7 +25,7 @@ public final class LogicalQueryHelper {
 	private LogicalQueryHelper() {
 		// do not instantiate this
 	}
-	
+
 	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
 		Preconditions.checkNotNull(originQuery, "Logical query to copy must not be null!");
 
@@ -37,7 +37,7 @@ public final class LogicalQueryHelper {
 
 		return copy;
 	}
-	
+
 	public static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
 		Preconditions.checkNotNull(originPlan, "Logical plan to copy must not be null!");
 
@@ -48,17 +48,17 @@ public final class LogicalQueryHelper {
 		walker.prefixWalk(originPlan, copyVisitor);
 		return copyVisitor.getResult();
 	}
-	
-	public static Collection<ILogicalOperator> getAllOperators( ILogicalQuery plan ) {
+
+	public static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
 		return getAllOperators(plan.getLogicalPlan());
 	}
-	
-	public static Collection<ILogicalOperator> getAllOperators( ILogicalOperator operator ) {
+
+	public static Collection<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperatorsImpl(operator, operators);
 		return operators;
 	}
-	
+
 	private static void collectOperatorsImpl(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
@@ -71,7 +71,7 @@ public final class LogicalQueryHelper {
 			}
 		}
 	}
-	
+
 	public static Collection<ILogicalOperator> replaceStreamAOs(Collection<ILogicalOperator> operators) {
 		Preconditions.checkNotNull(operators);
 
@@ -81,8 +81,7 @@ public final class LogicalQueryHelper {
 		for (ILogicalOperator operator : operators) {
 
 			if (operator instanceof StreamAO) {
-				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamForTransformation(
-						((StreamAO) operator).getStreamname(), SessionManagementService.getActiveSession());
+				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), SessionManagementService.getActiveSession());
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 
@@ -98,7 +97,7 @@ public final class LogicalQueryHelper {
 		return operators;
 
 	}
-	
+
 	public static void replaceWithSubplan(ILogicalOperator leafOp, ILogicalOperator newOp) {
 		if (leafOp.getSubscribedToSource().size() > 0) {
 			throw new IllegalArgumentException("Method can only be called for a leaf");
@@ -125,5 +124,15 @@ public final class LogicalQueryHelper {
 		for (ILogicalOperator operatorToRemove : operatorsToRemove) {
 			operators.remove(operatorToRemove);
 		}
+	}
+
+	public static Collection<ILogicalOperator> getSinks(Collection<ILogicalOperator> allOperators) {
+		Collection<ILogicalOperator> sinks = Lists.newArrayList();
+		for (ILogicalOperator operator : allOperators) {
+			if (operator.getSubscriptions().isEmpty()) {
+				sinks.add(operator);
+			}
+		}
+		return sinks;
 	}
 }

@@ -44,12 +44,12 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
 public class QueryDistributor implements IQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
-	
+
 	private static int jxtaConnectionCounter = 0;
 
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
-		Thread t = new Thread( new Runnable() {
+		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -61,7 +61,7 @@ public class QueryDistributor implements IQueryDistributor {
 		});
 		t.setName("Query distribution thread");
 		t.setDaemon(true);
-		
+
 		t.start();
 	}
 
@@ -74,92 +74,92 @@ public class QueryDistributor implements IQueryDistributor {
 			LOG.warn("Collection of queries to distribute is empty!");
 			return;
 		}
-		
+
 		LOG.debug("Begin with distributing queries");
 		LOG.debug("Copying queries");
 		Collection<ILogicalQuery> queries = copyAllQueries(queriesToDistribute);
 
 		LOG.debug("{} queries will be distributed if possible.", queries.size());
-		
+
 		IQueryPartitioner partitioner = ParameterHelper.determineQueryPartitioner(config);
 		IQueryPartModificator modificator = ParameterHelper.determineQueryPartModificator(config);
 		IQueryPartAllocator allocator = ParameterHelper.determineQueryPartAllocator(config);
-		
+
 		LOG.debug("Using query partitioner: {}", partitioner.getName());
 		LOG.debug("Using query part modificator: {}", modificator.getName());
 		LOG.debug("Using query part allocator: {}", allocator.getName());
-		
+
 		Collection<ILogicalQuery> localQueriesToExecutor = Lists.newArrayList();
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
-			
+
 			Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(query);
 			LogicalQueryHelper.removeTopAOs(operators);
 			operators = LogicalQueryHelper.replaceStreamAOs(operators);
 			tryCheckDistribution(config, operators);
-			
+
 			LOG.debug("Begin partitioning of query {}", query);
 			Collection<ILogicalQueryPart> queryParts = tryPartitionQuery(config, partitioner, operators);
-			if( queryParts == null || queryParts.isEmpty() ) {
+			if (queryParts == null || queryParts.isEmpty()) {
 				throw new QueryDistributionException("Query partitioner '" + partitioner.getName() + "' retured null or empty query part list!");
 			}
 			checkPartitions(queryParts, operators);
-			if( LOG.isDebugEnabled()) {
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("Got {} query parts: ", queryParts.size());
-				for( ILogicalQueryPart part : queryParts ) {
+				for (ILogicalQueryPart part : queryParts) {
 					LOG.debug("QueryPart: {}", part);
 				}
 			}
-			
+
 			LOG.debug("Begin modifying query parts of query {}", query);
 			Collection<ILogicalQueryPart> modifiedQueryParts = tryModifyQueryParts(config, modificator, queryParts);
-			if( modifiedQueryParts == null || modifiedQueryParts.isEmpty() ) {
+			if (modifiedQueryParts == null || modifiedQueryParts.isEmpty()) {
 				throw new QueryDistributionException("Query part modificator '" + modificator.getName() + "' retured null or empty query part list!");
 			}
-			if( LOG.isDebugEnabled()) {
+			if (LOG.isDebugEnabled()) {
 				LOG.debug("Got {} modified query parts: ", modifiedQueryParts.size());
-				for( ILogicalQueryPart part : modifiedQueryParts ) {
+				for (ILogicalQueryPart part : modifiedQueryParts) {
 					LOG.debug("QueryPart: {}", part);
 				}
 			}
-			
+
 			LOG.debug("Begin allocation of query parts");
 			Map<ILogicalQueryPart, PeerID> allocationMap = tryAllocate(config, allocator, modifiedQueryParts);
-			if( allocationMap == null || allocationMap.isEmpty() ) {
+			if (allocationMap == null || allocationMap.isEmpty()) {
 				throw new QueryDistributionException("Query part allocation map from allocator '" + allocator.getName() + "' is null or empty!");
 			}
-			
+
 			LOG.debug("Check allocation map returned by allocator {}", allocator.getName());
 			Map<ILogicalQueryPart, PeerID> correctedAllocationMap = checkAllocationMap(allocationMap, modifiedQueryParts);
-			if( LOG.isDebugEnabled() ) {
-				for( ILogicalQueryPart part : correctedAllocationMap.keySet() ) {
+			if (LOG.isDebugEnabled()) {
+				for (ILogicalQueryPart part : correctedAllocationMap.keySet()) {
 					PeerID allocatedPeerID = correctedAllocationMap.get(part);
 					Optional<String> remotePeerName = P2PDictionaryService.get().getRemotePeerName(allocatedPeerID);
-					if( !allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+					if (!allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 						LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
 					} else {
 						LOG.debug("Allocated query part {} --> local", part);
 					}
 				}
 			}
-			
+
 			insertJxtaOperators(correctedAllocationMap);
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(correctedAllocationMap, config);
-			
-			if( !localQueryParts.isEmpty() ) {
+
+			if (!localQueryParts.isEmpty()) {
 				LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
-				
+
 				ILogicalQuery localQuery = buildLocalQuery(localQueryParts);
 				localQuery.setName(query.getName());
 				localQuery.setUser(caller);
-				
+
 				localQueriesToExecutor.add(localQuery);
 			} else {
 				LOG.debug("No local query part of query {} remains.", query);
 			}
 		}
-		
-		if( !localQueriesToExecutor.isEmpty() ) {
+
+		if (!localQueriesToExecutor.isEmpty()) {
 			LOG.debug("Calling executor for {} local queries", localQueriesToExecutor.size());
 			callExecutorToAddLocalQueries(localQueriesToExecutor, serverExecutor, caller, config);
 		} else {
@@ -169,20 +169,20 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static void callExecutorToAddLocalQueries(Collection<ILogicalQuery> localQueriesToExecutor, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
 		try {
-			for( ILogicalQuery query : localQueriesToExecutor ) {
+			for (ILogicalQuery query : localQueriesToExecutor) {
 				serverExecutor.addQuery(query.getLogicalPlan(), caller, config.getName());
 			}
-		} catch( Throwable ex ) {
+		} catch (Throwable ex) {
 			throw new QueryDistributionException("Could not add local query to server executor", ex);
 		}
 	}
 
 	private static Collection<ILogicalQuery> copyAllQueries(Collection<ILogicalQuery> queriesToDistribute) {
 		Collection<ILogicalQuery> copiedQueries = Lists.newArrayList();
-		for( ILogicalQuery queryToDistribute : queriesToDistribute ) {
+		for (ILogicalQuery queryToDistribute : queriesToDistribute) {
 			copiedQueries.add(LogicalQueryHelper.copyLogicalQuery(queryToDistribute));
 		}
-		
+
 		return copiedQueries;
 	}
 
@@ -196,13 +196,13 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static void checkDistribution(Collection<ILogicalOperator> operators, QueryBuildConfiguration config) throws DistributionCheckException {
 		ImmutableCollection<IDistributionChecker> checkers = DistributionCheckerRegistry.getInstance().getAll();
-		if( checkers.isEmpty() ) {
+		if (checkers.isEmpty()) {
 			LOG.debug("No distribution checkers registered. No checks taken.");
 			return;
 		}
-		
+
 		LOG.debug("Begin distribution checks with {} checkers.", checkers.size());
-		for( IDistributionChecker checker : checkers ) {
+		for (IDistributionChecker checker : checkers) {
 			LOG.debug("Checking with {}", checker.getClass());
 			checker.check(operators, config);
 		}
@@ -219,9 +219,9 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static void checkPartitions(Collection<ILogicalQueryPart> queryParts, Collection<ILogicalOperator> operators) throws QueryDistributionException {
 		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(queryParts);
-		
-		for( ILogicalOperator operator : operators ) {
-			if( !queryPartAssignment.containsKey(operator)) {
+
+		for (ILogicalOperator operator : operators) {
+			if (!queryPartAssignment.containsKey(operator)) {
 				throw new QueryDistributionException("Operator " + operator + " was not partitioned to a logical query part");
 			}
 		}
@@ -245,14 +245,14 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static Map<ILogicalQueryPart, PeerID> checkAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
 		Map<ILogicalQueryPart, PeerID> correctMap = Maps.newHashMap();
-		
+
 		ImmutableList<PeerID> knownRemotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
 		PeerID localPeerID = P2PNetworkManagerService.get().getLocalPeerID();
-		
-		for( ILogicalQueryPart queryPart : queryParts ) {
-			if( allocationMap.containsKey(queryPart)) {
+
+		for (ILogicalQueryPart queryPart : queryParts) {
+			if (allocationMap.containsKey(queryPart)) {
 				PeerID allocatedPeer = allocationMap.get(queryPart);
-				if( !knownRemotePeerIDs.contains(allocatedPeer) && !allocatedPeer.equals(localPeerID)) {
+				if (!knownRemotePeerIDs.contains(allocatedPeer) && !allocatedPeer.equals(localPeerID)) {
 					throw new QueryDistributionException("Allocated query part " + queryPart + " to an unknown remote peer " + allocatedPeer);
 				}
 				correctMap.put(queryPart, allocatedPeer);
@@ -261,10 +261,10 @@ public class QueryDistributor implements IQueryDistributor {
 				correctMap.put(queryPart, localPeerID);
 			}
 		}
-		
+
 		return correctMap;
 	}
-	
+
 	private static void insertJxtaOperators(Map<ILogicalQueryPart, PeerID> allocationMap) {
 		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(allocationMap.keySet());
 		Map<LogicalSubscription, ILogicalOperator> subsToReplace = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
@@ -306,10 +306,10 @@ public class QueryDistributor implements IQueryDistributor {
 			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
 			for (LogicalSubscription sinkSub : sinkSubs) {
 				ILogicalOperator targetOperator = sinkSub.getTarget();
-				
+
 				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
 				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
-				if( !currentQueryPart.equals(targetQueryPart)) {
+				if (!currentQueryPart.equals(targetQueryPart)) {
 					subsToReplace.put(sinkSub, currentOperator);
 				}
 			}
@@ -319,8 +319,8 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(Collection<ILogicalQueryPart> queryParts) {
 		Map<ILogicalOperator, ILogicalQueryPart> map = Maps.newHashMap();
-		for( ILogicalQueryPart part : queryParts ) {
-			for( ILogicalOperator operator : part.getOperators() ) {
+		for (ILogicalQueryPart part : queryParts) {
+			for (ILogicalOperator operator : part.getOperators()) {
 				map.put(operator, part);
 			}
 		}
@@ -337,7 +337,7 @@ public class QueryDistributor implements IQueryDistributor {
 			if (peerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 				localParts.add(part);
 				LOG.debug("Query part {} stays local", part);
-				
+
 			} else {
 				final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 				adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
@@ -360,15 +360,10 @@ public class QueryDistributor implements IQueryDistributor {
 			ILogicalOperator firstOp = localPart.getOperators().iterator().next();
 			Collection<ILogicalOperator> allOperators = LogicalQueryHelper.getAllOperators(firstOp);
 			
-			for( ILogicalOperator operator : allOperators ) {
-				if( operator.getSubscriptions().isEmpty() ) {
-					LOG.debug("Operator {} is one local logical sink", operator);
-					sinks.add(operator);
-				}
-			}
+			sinks.addAll(LogicalQueryHelper.getSinks(allOperators));
 		}
 		LOG.debug("Determined {} logical sinks", sinks.size());
-		
+
 		TopAO topAO = new TopAO();
 		int inputPort = 0;
 		for (ILogicalOperator sink : sinks) {
