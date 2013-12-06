@@ -93,11 +93,11 @@ public class AggregateFunctionBuilderRegistry {
 		Collection<String> functionNames = builder.getFunctionNames();
 		for (String functionName : functionNames) {
 			Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(datamodel,
-					functionName);
+					functionName.toUpperCase());
 			if (builders.containsKey(key)) {
 				builders.remove(key);
-				aggregateFunctionNames.remove(functionName);
-				aggFuncNames.get(datamodel).remove(functionName);
+				aggregateFunctionNames.remove(functionName.toUpperCase());
+				aggFuncNames.get(datamodel).remove(functionName.toUpperCase());
 				buildAggregatePattern();
 			} else {
 				throw new RuntimeException(datamodel + " and " + functionName
