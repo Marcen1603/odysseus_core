@@ -442,7 +442,7 @@
             splashId="de.uniol.inf.is.odysseus.rcp.base.splashHandler">
       </splashHandlerProductBinding>
       <splashHandlerProductBinding
-            productId="de.uniol.inf.is.odysseus.product.studio.starter.OdysseusStudioProduct"
+            productId="de.uniol.inf.is.odysseus.client.starter.OdysseusStudioProduct"
             splashId="de.uniol.inf.is.odysseus.rcp.base.splashHandler">
       </splashHandlerProductBinding>
    </extension>
