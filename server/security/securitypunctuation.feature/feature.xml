@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.securitypunctuation.feature"
-      label="Securitypunctuation Feature"
-      version="1.0.0.qualifier">
+      label="Security Punctuation"
+      version="1.0.0.qualifier"
+      provider-name="University of Oldenburg">
 
    <description>
       Adds security punctuations to express grants or denial of access rights to different parts of a stream or a tuple.

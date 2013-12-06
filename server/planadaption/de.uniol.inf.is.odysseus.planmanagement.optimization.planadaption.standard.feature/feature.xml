@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.planmanagement.optimization.planadaption.standard.feature"
-      label="Feature"
+      label="Plan Adaption"
       version="1.0.0.qualifier"
-      provider-name="Merlin Wasmann">
+      provider-name="University of Oldenburg">
 
    <description>
       This feature bundles all plug-ins and features to provide standard plan adaption functionality.
@@ -26,6 +26,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
    </license>
+   
+    <url>
+      <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
+   </url>
 
    <includes
          id="de.uniol.inf.is.odysseus.costmodel.planmigration.standard.feature"

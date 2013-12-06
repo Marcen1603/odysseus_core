@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.server.platform.feature"
-      label="Server Product Platform"
+      label="Server Platform"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature bundles the platform for the server product. Therefore, it is just a container and does
-not provide any functionality by itself and has no dependency to the core or other features.
+      This feature bundles the platform for the server product. So, it defines the container where Odysseus is running in.
+Therefore, it does not provide any functionality by itself and has no dependency to the core or other features.
    </description>
 
    <copyright>

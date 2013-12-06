@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.cep.feature"
-      label="CEP Feature"
+      label="CEP and Pattern"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      This feature adds complex event processing to odysseus by providing a SASE+ pattern matcher
+      This feature adds complex event processing by providing a SASE+ pattern matcher
    </description>
 
    <copyright>

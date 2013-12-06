@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.action.feature"
-      label="Action Feature"
+      label="Action Framework"
       version="1.0.0.qualifier"
       provider-name="Universtity of Oldenburg">
 
    <description>
-      This feature provides a framework to invoke actions over webservices
+      This feature provides a framework to invoke actions over webservices, e.g. to invoke commands on actuators
    </description>
 
    <copyright>

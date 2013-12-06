@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.keyvalue.feature"
-      label="KeyValue Feature"
+      label="Key Value Processing"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
@@ -44,6 +44,5 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
 </feature>

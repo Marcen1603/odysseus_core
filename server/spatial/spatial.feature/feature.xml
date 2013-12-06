@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.spatial.client.feature"
-      label="Spatial Client Feature"
+      id="de.uniol.inf.is.odysseus.spatial.feature"
+      label="Spatial Feature"
       version="1.0.0.qualifier"
       provider-name="University of Oldenburg">
 
    <description>
-      Provides spatial features for clients, e.g. a map viewer
+      Provides the possibility to process spatial data by adding spatial datatypes like point or line and correspoding functions like &quot;crosses&quot; or &quot;contains&quot;
    </description>
 
    <copyright>
@@ -30,20 +30,25 @@ Unless required by applicable law or agreed to in writing, software
       <update label="Odysseus Update Site" url="http://odysseus.informatik.uni-oldenburg.de/update"/>
    </url>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.spatial.feature"
+   <requires>
+      <import feature="de.uniol.inf.is.odysseus.common.feature" version="1.0.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.spatial"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.osgeo.proj4j"
+         download-size="0"
+         install-size="0"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="de.uniol.inf.is.odysseus.rcp.viewer" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views"/>
-   </requires>
-   
    <plugin
-         id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"
+         id="com.vividsolutions.jts"
          download-size="0"
          install-size="0"
          version="0.0.0"
