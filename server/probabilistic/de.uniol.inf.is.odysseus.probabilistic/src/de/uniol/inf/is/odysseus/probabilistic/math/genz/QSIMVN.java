@@ -21,7 +21,8 @@ import java.text.DecimalFormat;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * Based on the Matlab function for the numerical computation of multivariate normal distribution values by Alan Genz.
+ * Based on the Matlab function for the numerical computation of multivariate
+ * normal distribution values by Alan Genz.
  * 
  * http://www.sci.wsu.edu/math/faculty/genz/homepage
  * 
@@ -30,297 +31,312 @@ import org.apache.commons.math3.util.FastMath;
  * 
  */
 public final class QSIMVN {
-	/**
-	 * Compute the cumulative probability of the given distribution.
-	 * 
-	 * @param m
-	 * @param r
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	public static QSIMVNResult cumulativeProbability(final int m, final Matrix r, final Matrix a, final Matrix b) {
-		// [n, n] = size(r);
-		// size of r must be quadratic i guess ...
-		final int n = r.getRowDimension();
+    /**
+     * Compute the cumulative probability of the given distribution.
+     * 
+     * @param m
+     * @param r
+     * @param a
+     * @param b
+     * @return
+     */
+    public static QSIMVNResult cumulativeProbability(final int m, final Matrix r, final Matrix a, final Matrix b) {
+        // [n, n] = size(r);
+        // size of r must be quadratic i guess ...
+        final int n = r.getRowDimension();
 
-		// [ ch as bs ] = chlrdr( r, a, b );
-		final ChlrdrResult r2 = QSIMVN.chlrdr(r, a, b);
-		final double ct = r2.ch.get(1, 1);
-		final double ai = r2.as.get(1);
-		final double bi = r2.bs.get(1);
-		final double cn = 37.5;
-		double c = 0.0;
-		double d = 0.0;
-		if (FastMath.abs(ai) < (cn * ct)) {
-			c = Util.phi(ai / ct);
-		} else {
-			c = (1.0 + FastMath.signum(ai)) / 2.0;
-		}
-		if (FastMath.abs(bi) < (cn * ct)) {
-			d = Util.phi(bi / ct);
-		} else {
-			d = (1.0 + FastMath.signum(bi)) / 2.0;
-		}
-		final double ci = c;
-		final double dci = d - ci;
-		double p = 0.0;
-		double e = 0.0;
-		final double ns = 12.0;
+        // [ ch as bs ] = chlrdr( r, a, b );
+        final ChlrdrResult r2 = QSIMVN.chlrdr(r, a, b);
+        final double ct = r2.ch.get(1, 1);
+        final double ai = r2.as.get(1);
+        final double bi = r2.bs.get(1);
+        final double cn = 37.5;
+        double c = 0.0;
+        double d = 0.0;
+        if (FastMath.abs(ai) < (cn * ct)) {
+            c = Util.phi(ai / ct);
+        }
+        else {
+            c = (1.0 + FastMath.signum(ai)) / 2.0;
+        }
+        if (FastMath.abs(bi) < (cn * ct)) {
+            d = Util.phi(bi / ct);
+        }
+        else {
+            d = (1.0 + FastMath.signum(bi)) / 2.0;
+        }
+        final double ci = c;
+        final double dci = d - ci;
+        double p = 0.0;
+        double e = 0.0;
+        final double ns = 12.0;
 
-		final double nv = Util.max(new double[] { m / ns, 1.0 }); // double nv = max( [
-		// m/ns 1 ] );
-		// %q = 2.^( [1:n-1]'/n) ; % Niederreiter point set generators
-		final Matrix ps = Matrix.primes((int) ((5.0 * n * FastMath.log(n + 1.0)) / 4.0)).sqrt();
-		final Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //% Richtmyer
-															// generators
+        final double nv = Util.max(new double[] { m / ns, 1.0 }); // double nv =
+                                                                  // max( [
+        // m/ns 1 ] );
+        // %q = 2.^( [1:n-1]'/n) ; % Niederreiter point set generators
+        final Matrix ps = Matrix.primes((int) ((5.0 * n * FastMath.log(n + 1.0)) / 4.0)).sqrt();
+        final Matrix q = ps.getSubVector(1, n - 1).trans();// (1:n-1)'; //%
+                                                           // Richtmyer
+                                                           // generators
 
-		// %
-		// % Randomization loop for ns samples
-		// %
-		for (int i = 1; i <= ns; i++) { // for i = 1 : ns
-			double vi = 0.0;
-			final Matrix xr = Matrix.rand(n - 1);
-			for (int j = 1; j <= nv; j++) {
-				// Loop for nv quasirandom points
-				final Matrix x = q.matlabMultiply(j).add(xr).mod(1).matlabMultiply(2.0).substract(1.0).abs(); // % periodizing transformation
-				final double vp = QSIMVN.mvndns(n, r2.ch, ci, dci, x, r2.as, r2.bs);
-				vi = vi + ((vp - vi) / j);
-			}
-			d = (vi - p) / i;
-			p = p + d;
+        // %
+        // % Randomization loop for ns samples
+        // %
+        for (int i = 1; i <= ns; i++) { // for i = 1 : ns
+            double vi = 0.0;
+            final Matrix xr = Matrix.rand(n - 1);
+            for (int j = 1; j <= nv; j++) {
+                // Loop for nv quasirandom points
+                final Matrix x = q.matlabMultiply(j).add(xr).mod(1).matlabMultiply(2.0).substract(1.0).abs(); // %
+                                                                                                              // periodizing
+                                                                                                              // transformation
+                final double vp = QSIMVN.mvndns(n, r2.ch, ci, dci, x, r2.as, r2.bs);
+                vi = vi + ((vp - vi) / j);
+            }
+            d = (vi - p) / i;
+            p = p + d;
 
-			if (FastMath.abs(d) > 0.0) {
-				e = FastMath.abs(d) * FastMath.sqrt(1.0 + ((FastMath.pow(e / d, 2.0) * (i - 2.0)) / i));
+            if (FastMath.abs(d) > 0.0) {
+                e = FastMath.abs(d) * FastMath.sqrt(1.0 + ((FastMath.pow(e / d, 2.0) * (i - 2.0)) / i));
 
-				// final double a1 = (e / d);
-				// final double b2 = 2.0 * (i - 2.0) / i;
-				// double v1 = FastMath.pow(a1, b2);
-				// if (Double.isNaN(v1)) {
-				// v1=0.0;
-				// }
-				// double v2 = FastMath.pow(1.0 + v1, 0.5);
-				//
-				// if (Double.isNaN(v2)) {
-				// // sometimes wants to compute sqrt of negative number
-				// v2 = 0.0;
-				// }
-				// final double val = FastMath.abs(d) * v2;
-				// e = val;
-			} else {
-				if (i > 1.0) {
-					final double val = FastMath.sqrt((i - 2.0) / i);
-					if (val == 0.0) {
-						e = 0.0;
-					} else {
-						e = e * val;
-					}
-				}
-			}
-		}
+                // final double a1 = (e / d);
+                // final double b2 = 2.0 * (i - 2.0) / i;
+                // double v1 = FastMath.pow(a1, b2);
+                // if (Double.isNaN(v1)) {
+                // v1=0.0;
+                // }
+                // double v2 = FastMath.pow(1.0 + v1, 0.5);
+                //
+                // if (Double.isNaN(v2)) {
+                // // sometimes wants to compute sqrt of negative number
+                // v2 = 0.0;
+                // }
+                // final double val = FastMath.abs(d) * v2;
+                // e = val;
+            }
+            else {
+                if (i > 1.0) {
+                    final double val = FastMath.sqrt((i - 2.0) / i);
+                    if (val == 0.0) {
+                        e = 0.0;
+                    }
+                    else {
+                        e = e * val;
+                    }
+                }
+            }
+        }
 
-		e = e * 3.0; // % error estimate is 3 x standard error with ns samples.
+        e = e * 3.0; // % error estimate is 3 x standard error with ns samples.
 
-		return new QSIMVNResult(p, e);
-	}
+        return new QSIMVNResult(p, e);
+    }
 
-	/**
-	 * Transformed integrand for computation of MVN probabilities.
-	 * 
-	 * @param n
-	 * @param ch
-	 * @param ci
-	 * @param dci
-	 * @param x
-	 * @param a
-	 * @param b
-	 */
-	public static double mvndns(final int n, final Matrix ch, final double ci, final double dci, final Matrix x, final Matrix a, final Matrix b) {
-		// function p = mvndns( n, ch, ci, dci, x, a, b )
-		final Matrix y = Matrix.zeros(n - 1);
-		final double cn = 37.5;
-		double s = 0;
-		double c = ci;
-		double dc = dci;
-		double p = dc;
-		double d = 0;
+    /**
+     * Transformed integrand for computation of MVN probabilities.
+     * 
+     * @param n
+     * @param ch
+     * @param ci
+     * @param dci
+     * @param x
+     * @param a
+     * @param b
+     */
+    public static double mvndns(final int n, final Matrix ch, final double ci, final double dci, final Matrix x, final Matrix a, final Matrix b) {
+        // function p = mvndns( n, ch, ci, dci, x, a, b )
+        final Matrix y = Matrix.zeros(n - 1);
+        final double cn = 37.5;
+        double s = 0;
+        double c = ci;
+        double dc = dci;
+        double p = dc;
+        double d = 0;
 
-		for (int i = 2; i <= n; i++) {
+        for (int i = 2; i <= n; i++) {
 
-			final double xxx = c + (x.get(i - 1) * dc);
-			y.set(i - 1, Util.phinv(xxx));
-			s = ch.getSubRow(i, 1, i - 1).matlabMultiply(y.getSubVector(1, i - 1));
+            final double xxx = c + (x.get(i - 1) * dc);
+            y.set(i - 1, Util.phinv(xxx));
+            s = ch.getSubRow(i, 1, i - 1).matlabMultiply(y.getSubVector(1, i - 1));
 
-			final double ct = ch.get(i, i);
-			final double ai = a.get(i) - s;
-			final double bi = b.get(i) - s;
-			if (FastMath.abs(ai) < (cn * ct)) {
-				c = Util.phi(ai / ct);
-			} else {
-				c = (1.0 + FastMath.signum(ai)) / 2.0;
-			}
-			if (FastMath.abs(bi) < (cn * ct)) {
-				d = Util.phi(bi / ct);
-			} else {
-				d = (1.0 + FastMath.signum(bi)) / 2.0;
-			}
-			dc = d - c;
-			p = p * dc;
-		}
+            final double ct = ch.get(i, i);
+            final double ai = a.get(i) - s;
+            final double bi = b.get(i) - s;
+            if (FastMath.abs(ai) < (cn * ct)) {
+                c = Util.phi(ai / ct);
+            }
+            else {
+                c = (1.0 + FastMath.signum(ai)) / 2.0;
+            }
+            if (FastMath.abs(bi) < (cn * ct)) {
+                d = Util.phi(bi / ct);
+            }
+            else {
+                d = (1.0 + FastMath.signum(bi)) / 2.0;
+            }
+            dc = d - c;
+            p = p * dc;
+        }
 
-		return p;
-	}
+        return p;
+    }
 
-	/**
-	 * 
-	 * @param r
-	 * @param a
-	 * @param b
-	 * @return
-	 */
-	public static ChlrdrResult chlrdr(final Matrix r, final Matrix a, final Matrix b) {
-		// function [ c, ap, bp ] = chlrdr( R, a, b )
-		// %
-		// % Computes permuted lower Cholesky factor c for R which may be
-		// singular,
-		// % also permuting integration limit vectors a and b.
-		// %
-		final double ep = 1e-10; // % singularity tolerance;
-		final double eps = FastMath.pow(2, -52.0);
-		// %
-		// [n, n] = size(R);
-		// size of R must be quadratic i guess ...
-		final int n = r.getRowDimension();
-		final Matrix c = r;
-		final Matrix ap = a;
-		final Matrix bp = b;
-		final Matrix d = c.diag().max(0).sqrt();
-		for (int i = 1; i <= n; i++) {
-			if (d.get(i) > 0.0) {
+    /**
+     * 
+     * @param r
+     * @param a
+     * @param b
+     * @return
+     */
+    public static ChlrdrResult chlrdr(final Matrix r, final Matrix a, final Matrix b) {
+        // function [ c, ap, bp ] = chlrdr( R, a, b )
+        // %
+        // % Computes permuted lower Cholesky factor c for R which may be
+        // singular,
+        // % also permuting integration limit vectors a and b.
+        // %
+        final double ep = 1e-10; // % singularity tolerance;
+        final double eps = FastMath.pow(2, -52.0);
+        // %
+        // [n, n] = size(R);
+        // size of R must be quadratic i guess ...
+        final int n = r.getRowDimension();
+        final Matrix c = r;
+        final Matrix ap = a;
+        final Matrix bp = b;
+        final Matrix d = c.diag().max(0).sqrt();
+        for (int i = 1; i <= n; i++) {
+            if (d.get(i) > 0.0) {
 
-				c.divideColumn(i, d.get(i));
-				c.divideRow(i, d.get(i));
+                c.divideColumn(i, d.get(i));
+                c.divideRow(i, d.get(i));
 
-				ap.set(i, ap.get(i) / d.get(i));
-				bp.set(i, bp.get(i) / d.get(i));
-			}
-		}
-		final Matrix y = Matrix.zeros(n, 1);
-		final double sqtp = FastMath.sqrt(2.0 * FastMath.PI);
-		for (int k = 1; k <= n; k++) {
-			int im = k;
-			double ckk = 0.0;
-			double dem = 1.0;
-			double s = 0.0;
+                ap.set(i, ap.get(i) / d.get(i));
+                bp.set(i, bp.get(i) / d.get(i));
+            }
+        }
+        final Matrix y = Matrix.zeros(n, 1);
+        final double sqtp = FastMath.sqrt(2.0 * FastMath.PI);
+        for (int k = 1; k <= n; k++) {
+            int im = k;
+            double ckk = 0.0;
+            double dem = 1.0;
+            double s = 0.0;
 
-			double cii;
-			double ai;
-			double bi;
-			double de;
-			double am = 0.0;
-			double bm = 0.0;
-			double tv;
-			Matrix t;
-			for (int i = k; i <= n; i++) {
-				if (c.get(i, i) > eps) {
-					cii = FastMath.sqrt(Util.max(new double[] { c.get(i, i), 0.0 }));
-					if (i > 1) {
-						if (k <= 1) {
-							// added at java convcersion
-							s = 0.0;
-						} else {
-							s = c.getSubRow(i, 1, k - 1).matlabMultiply(y.getSubVector(1, k - 1));
+            double cii;
+            double ai;
+            double bi;
+            double de;
+            double am = 0.0;
+            double bm = 0.0;
+            double tv;
+            Matrix t;
+            for (int i = k; i <= n; i++) {
+                if (c.get(i, i) > eps) {
+                    cii = FastMath.sqrt(Util.max(new double[] { c.get(i, i), 0.0 }));
+                    if (i > 1) {
+                        if (k <= 1) {
+                            // added at java convcersion
+                            s = 0.0;
+                        }
+                        else {
+                            s = c.getSubRow(i, 1, k - 1).matlabMultiply(y.getSubVector(1, k - 1));
 
-						}
-					}
+                        }
+                    }
 
-					ai = (ap.get(i) - s) / cii;
-					bi = (bp.get(i) - s) / cii;
-					de = Util.phi(bi) - Util.phi(ai);
-					if (de <= dem) {
-						ckk = cii;
-						dem = de;
-						am = ai;
-						bm = bi;
-						im = i;
-					}
-				}
-			}
-			if (im > k) {
-				tv = ap.get(im);
-				ap.set(im, ap.get(k));
-				ap.set(k, tv);
-				tv = bp.get(im);
-				bp.set(im, bp.get(k));
-				bp.set(k, tv);
-				c.setElement(im, im, c.get(k, k));
+                    ai = (ap.get(i) - s) / cii;
+                    bi = (bp.get(i) - s) / cii;
+                    de = Util.phi(bi) - Util.phi(ai);
+                    if (de <= dem) {
+                        ckk = cii;
+                        dem = de;
+                        am = ai;
+                        bm = bi;
+                        im = i;
+                    }
+                }
+            }
+            if (im > k) {
+                tv = ap.get(im);
+                ap.set(im, ap.get(k));
+                ap.set(k, tv);
+                tv = bp.get(im);
+                bp.set(im, bp.get(k));
+                bp.set(k, tv);
+                c.setElement(im, im, c.get(k, k));
 
-				t = c.getSubRow(im, 1, k - 1);
-				c.setSubRow(im, 1, c.getSubRow(k, 1, k - 1));
-				c.setSubRow(k, 1, t);
+                t = c.getSubRow(im, 1, k - 1);
+                c.setSubRow(im, 1, c.getSubRow(k, 1, k - 1));
+                c.setSubRow(k, 1, t);
 
-				t = c.getSubColumn(im, im + 1, n);
-				c.setSubCol(im, im + 1, c.getSubColumn(k, im + 1, n));
-				c.setSubCol(k, im + 1, t);
+                t = c.getSubColumn(im, im + 1, n);
+                c.setSubCol(im, im + 1, c.getSubColumn(k, im + 1, n));
+                c.setSubCol(k, im + 1, t);
 
-				t = c.getSubColumn(k, k + 1, im - 1);
-				c.setSubCol(k, k + 1, c.getSubRow(im, k + 1, im - 1).trans());
-				c.setSubRow(im, k + 1, t.trans());
-			}
-			if (ckk > (ep * k)) {
-				c.setElement(k, k, ckk);
-				c.setSubRow(k, k + 1, n, 0.0);
-				for (int i = k + 1; i <= n; i++) {
-					c.setElement(i, k, c.get(i, k) / ckk);
-					c.setSubRow(i, k + 1, c.getSubRow(i, k + 1, i).substract(c.getSubColumn(k, k + 1, i).trans().matlabMultiply(c.get(i, k))));
-				}
-				if (FastMath.abs(dem) > ep) {
-					y.set(k, (FastMath.exp(FastMath.pow(-am, 2.0) / 2.0) - FastMath.exp(FastMath.pow(-bm, 2.0) / 2.0)) / (sqtp * dem));
-				} else {
-					if (am < -10.0) {
-						y.set(k, bm);
-					} else if (bm > 10.0) {
-						y.set(k, am);
-					} else {
-						y.set(k, (am + bm) / 2.0);
-					}
-				}
-			} else {
-				c.setSubCol(k, k, n, 0.0);
-				y.set(k, 0.0);
-			}
-		}
-		return new ChlrdrResult(c, ap, bp);
-	}
+                t = c.getSubColumn(k, k + 1, im - 1);
+                c.setSubCol(k, k + 1, c.getSubRow(im, k + 1, im - 1).trans());
+                c.setSubRow(im, k + 1, t.trans());
+            }
+            if (ckk > (ep * k)) {
+                c.setElement(k, k, ckk);
+                c.setSubRow(k, k + 1, n, 0.0);
+                for (int i = k + 1; i <= n; i++) {
+                    c.setElement(i, k, c.get(i, k) / ckk);
+                    c.setSubRow(i, k + 1, c.getSubRow(i, k + 1, i).substract(c.getSubColumn(k, k + 1, i).trans().matlabMultiply(c.get(i, k))));
+                }
+                if (FastMath.abs(dem) > ep) {
+                    y.set(k, (FastMath.exp(FastMath.pow(-am, 2.0) / 2.0) - FastMath.exp(FastMath.pow(-bm, 2.0) / 2.0)) / (sqtp * dem));
+                }
+                else {
+                    if (am < -10.0) {
+                        y.set(k, bm);
+                    }
+                    else if (bm > 10.0) {
+                        y.set(k, am);
+                    }
+                    else {
+                        y.set(k, (am + bm) / 2.0);
+                    }
+                }
+            }
+            else {
+                c.setSubCol(k, k, n, 0.0);
+                y.set(k, 0.0);
+            }
+        }
+        return new ChlrdrResult(c, ap, bp);
+    }
 
-	/**
-	 * Test code.
-	 * 
-	 * @param args
-	 *            Default args
-	 */
-	public static void main(final String[] args) {
-		// System.out.println(Util.generatePrimes(8));
-		// >> r = [4 3 2 1;3 5 -1 1;2 -1 4 2;1 1 2 5];
-		// % >> a = -inf*[1 1 1 1 ]'; b = [ 1 2 3 4 ]';
-		// % >> [ p e ] = qsimvn( 5000, r, a, b ); disp([ p e ])
+    /**
+     * Test code.
+     * 
+     * @param args
+     *            Default args
+     */
+    public static void main(final String[] args) {
+        // System.out.println(Util.generatePrimes(8));
+        // >> r = [4 3 2 1;3 5 -1 1;2 -1 4 2;1 1 2 5];
+        // % >> a = -inf*[1 1 1 1 ]'; b = [ 1 2 3 4 ]';
+        // % >> [ p e ] = qsimvn( 5000, r, a, b ); disp([ p e ])
 
-		final Matrix r = new Matrix(new double[][] { { 4.0, 3.0, 2.0, 1.0 }, { 3.0, 5.0, -1.0, 1.0 }, { 2.0, -1.0, 4.0, 2.0 }, { 1.0, 1.0, 2.0, 5.0 } });
+        final Matrix r = new Matrix(new double[][] { { 4.0, 3.0, 2.0, 1.0 }, { 3.0, 5.0, -1.0, 1.0 }, { 2.0, -1.0, 4.0, 2.0 }, { 1.0, 1.0, 2.0, 5.0 } });
 
-		final Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY } });
+        final Matrix a = new Matrix(new double[][] { { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY }, { Double.NEGATIVE_INFINITY } });
 
-		final Matrix b = new Matrix(new double[][] { { 1.0 }, { 2.0 }, { 3.0 }, { 4.0 } });
+        final Matrix b = new Matrix(new double[][] { { 1.0 }, { 2.0 }, { 3.0 }, { 4.0 } });
 
-		final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, r, a, b);
-		System.out.println("p = " + ret.getProbability() + "   e = " + new DecimalFormat("#.###############").format(ret.getError()));
-	}
+        final QSIMVNResult ret = QSIMVN.cumulativeProbability(500, r, a, b);
+        System.out.println("p = " + ret.getProbability() + "   e = " + new DecimalFormat("#.###############").format(ret.getError()));
+    }
 
-	/**
-	 * Hidden utility constructor.
-	 */
-	private QSIMVN() {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Hidden utility constructor.
+     */
+    private QSIMVN() {
+        throw new UnsupportedOperationException();
+    }
 }
 
 // function [ p, e ] = qsimvn( m, r, a, b )

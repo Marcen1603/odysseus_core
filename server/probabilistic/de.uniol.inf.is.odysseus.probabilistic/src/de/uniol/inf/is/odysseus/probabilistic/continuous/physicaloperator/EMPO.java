@@ -28,9 +28,9 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 
 /**
  * Physical operator for Expectation Maximization (EM) classifier.
@@ -40,109 +40,115 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticC
  * @param <T>
  */
 public class EMPO<T extends ITimeInterval> extends AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> {
-	/** The logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(EMPO.class);
-	/** The sweep area to hold the data. */
-	private final DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
-	/** The attribute positions. */
-	private final int[] attributes;
+    /** The logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(EMPO.class);
+    /** The sweep area to hold the data. */
+    private final DefaultTISweepArea<ProbabilisticTuple<? extends ITimeInterval>> area;
+    /** The attribute positions. */
+    private final int[] attributes;
 
-	/**
-	 * Creates a new EM operator.
-	 * 
-	 * @param attributes
-	 *            The attribute positions
-	 * @param mixtures
-	 *            The number of mixtures
-	 * @param iterations
-	 *            The maximum number of iterations allowed per fitting process
-	 * @param threshold
-	 *            The convergence threshold for fitting
-	 * @param incremental
-	 *            Flag indicating incremental fitting
-	 * @param predicate
-	 *            The predicate for model fitting
-	 */
-	@SuppressWarnings("unchecked")
-	public EMPO(final int[] attributes, final int mixtures, final int iterations, final double threshold, final boolean incremental, @SuppressWarnings("rawtypes") final IPredicate predicate) {
-		this.attributes = attributes;
-		this.area = new BatchEMTISweepArea(attributes, mixtures, iterations, threshold, incremental, predicate);
-	}
+    /**
+     * Creates a new EM operator.
+     * 
+     * @param attributes
+     *            The attribute positions
+     * @param mixtures
+     *            The number of mixtures
+     * @param iterations
+     *            The maximum number of iterations allowed per fitting process
+     * @param threshold
+     *            The convergence threshold for fitting
+     * @param incremental
+     *            Flag indicating incremental fitting
+     * @param predicate
+     *            The predicate for model fitting
+     */
+    @SuppressWarnings("unchecked")
+    public EMPO(final int[] attributes, final int mixtures, final int iterations, final double threshold, final boolean incremental, @SuppressWarnings("rawtypes") final IPredicate predicate) {
+        this.attributes = attributes;
+        this.area = new BatchEMTISweepArea(attributes, mixtures, iterations, threshold, incremental, predicate);
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param emPO
-	 *            The copy
-	 */
-	public EMPO(final EMPO<T> emPO) {
-		super(emPO);
-		this.attributes = emPO.attributes.clone();
-		this.area = emPO.area.clone();
-	}
+    /**
+     * Clone constructor.
+     * 
+     * @param emPO
+     *            The copy
+     */
+    public EMPO(final EMPO<T> emPO) {
+        super(emPO);
+        this.attributes = emPO.attributes.clone();
+        this.area = emPO.area.clone();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#getOutputMode()
-	 */
-	@Override
-	public final OutputMode getOutputMode() {
-		return OutputMode.NEW_ELEMENT;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * getOutputMode()
+     */
+    @Override
+    public final OutputMode getOutputMode() {
+        return OutputMode.NEW_ELEMENT;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
-	 */
-	@Override
-	protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
-		final NormalDistributionMixture[] distributions = object.getDistributions();
-		final ProbabilisticTuple<T> outputVal = object.clone();
-		// Purge old elements out of the sweep area.
-		synchronized (this.area) {
-			this.area.purgeElements(object, Order.LeftRight);
-		}
-		try {
-			// Insert the new element into the sweep area.
-			// Expectation-step and Maximization-step will be done during insert.
-			synchronized (this.area) {
-				this.area.insert(object);
-			}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+     */
+    @Override
+    protected final void process_next(final ProbabilisticTuple<T> object, final int port) {
+        final NormalDistributionMixture[] distributions = object.getDistributions();
+        final ProbabilisticTuple<T> outputVal = object.clone();
+        // Purge old elements out of the sweep area.
+        synchronized (this.area) {
+            this.area.purgeElements(object, Order.LeftRight);
+        }
+        try {
+            // Insert the new element into the sweep area.
+            // Expectation-step and Maximization-step will be done during
+            // insert.
+            synchronized (this.area) {
+                this.area.insert(object);
+            }
 
-			// Construct the multivariate distribution
-			final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
-			final MixtureMultivariateNormalDistribution model = emArea.getModel();
-			if (model != null) {
-				final NormalDistributionMixture mixture = new NormalDistributionMixture(model.getComponents());
-				mixture.setAttributes(this.attributes);
-				final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
+            // Construct the multivariate distribution
+            final BatchEMTISweepArea emArea = (BatchEMTISweepArea) this.area;
+            final MixtureMultivariateNormalDistribution model = emArea.getModel();
+            if (model != null) {
+                final NormalDistributionMixture mixture = new NormalDistributionMixture(model.getComponents());
+                mixture.setAttributes(this.attributes);
+                final NormalDistributionMixture[] outputValDistributions = new NormalDistributionMixture[distributions.length + 1];
 
-				for (final int attribute : this.attributes) {
-					outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
-				}
-				// Copy the old distribution to the new tuple
-				System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
-				// And append the new distribution to tThe end of the array
-				outputValDistributions[distributions.length] = mixture;
-				outputVal.setDistributions(outputValDistributions);
-				// KTHXBYE
-				this.transfer(outputVal);
-			}
-		} catch (MathIllegalArgumentException | MaxCountExceededException | ConvergenceException e) {
-			EMPO.LOG.debug(e.getMessage(), e);
-		}
-	}
+                for (final int attribute : this.attributes) {
+                    outputVal.setAttribute(attribute, new ProbabilisticContinuousDouble(distributions.length));
+                }
+                // Copy the old distribution to the new tuple
+                System.arraycopy(distributions, 0, outputValDistributions, 0, distributions.length);
+                // And append the new distribution to tThe end of the array
+                outputValDistributions[distributions.length] = mixture;
+                outputVal.setDistributions(outputValDistributions);
+                // KTHXBYE
+                this.transfer(outputVal);
+            }
+        }
+        catch (MathIllegalArgumentException | MaxCountExceededException | ConvergenceException e) {
+            EMPO.LOG.debug(e.getMessage(), e);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
-	 */
-	@Override
-	public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
-		return new EMPO<T>(this);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
+     * ()
+     */
+    @Override
+    public final AbstractPipe<ProbabilisticTuple<T>, ProbabilisticTuple<T>> clone() {
+        return new EMPO<T>(this);
+    }
 
 }

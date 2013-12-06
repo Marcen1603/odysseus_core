@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.relational.transform.TProjectAORule;
 
 /**
@@ -25,33 +25,33 @@ import de.uniol.inf.is.odysseus.relational.transform.TProjectAORule;
  * 
  */
 public class TProbabilisticProjectAORule extends TProjectAORule {
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
-		super.execute(projectAO, transformConfig);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute(final ProjectAO projectAO, final TransformationConfiguration transformConfig) {
+        super.execute(projectAO, transformConfig);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final boolean isExecutable(final ProjectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				return true;
-			}
-		}
-		return super.isExecutable(operator, transformConfig);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean isExecutable(final ProjectAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                return true;
+            }
+        }
+        return super.isExecutable(operator, transformConfig);
+    }
 }

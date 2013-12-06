@@ -32,8 +32,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * 
@@ -43,135 +43,140 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "LinearRegression", doc = "This operator performs a linear regression on the given set of explanatory attributes to explain the given set of dependent attributes", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class LinearRegressionAO extends UnaryLogicalOp {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 6621664432018792263L;
-	/** The dependent attributes. */
+    private static final long serialVersionUID = 6621664432018792263L;
+    /** The dependent attributes. */
     private List<SDFAttribute> dependentAttributes;
-	/** The explanatory attributes. */
+    /** The explanatory attributes. */
     private List<SDFAttribute> explanatoryAttributes;
 
-	/**
-	 * Default constructor.
-	 */
-	public LinearRegressionAO() {
-		super();
-	}
+    /**
+     * Default constructor.
+     */
+    public LinearRegressionAO() {
+        super();
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param linearRegressionAO
-	 *            The object to copy from
-	 */
-	public LinearRegressionAO(final LinearRegressionAO linearRegressionAO) {
-		super(linearRegressionAO);
-		this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
-		this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.explanatoryAttributes);
+    /**
+     * Clone constructor.
+     * 
+     * @param linearRegressionAO
+     *            The object to copy from
+     */
+    public LinearRegressionAO(final LinearRegressionAO linearRegressionAO) {
+        super(linearRegressionAO);
+        this.dependentAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.dependentAttributes);
+        this.explanatoryAttributes = new ArrayList<SDFAttribute>(linearRegressionAO.explanatoryAttributes);
 
-	}
+    }
 
-	/**
-	 * Sets the value of the dependentAttributes property.
-	 * 
-	 * @param dependentAttributes
-	 *            The dependent attributes
-	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
+    /**
+     * Sets the value of the dependentAttributes property.
+     * 
+     * @param dependentAttributes
+     *            The dependent attributes
+     */
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "DEPENDENT", isList = true, optional = false)
     public final void setDependentAttributes(final List<SDFAttribute> dependentAttributes) {
-	    Objects.requireNonNull(dependentAttributes);
-	    Preconditions.checkArgument(!dependentAttributes.isEmpty());
-		this.dependentAttributes = dependentAttributes;
-	}
+        Objects.requireNonNull(dependentAttributes);
+        Preconditions.checkArgument(!dependentAttributes.isEmpty());
+        this.dependentAttributes = dependentAttributes;
+    }
 
-	/**
-	 * Gets the value of the dependentAttributes property.
-	 * 
-	 * @return the dependent attributes
-	 */
-	@GetParameter(name = "DEPENDENT")
+    /**
+     * Gets the value of the dependentAttributes property.
+     * 
+     * @return the dependent attributes
+     */
+    @GetParameter(name = "DEPENDENT")
     public final List<SDFAttribute> getDependentAttributes() {
-		if (this.dependentAttributes == null) {
-			this.dependentAttributes = new ArrayList<SDFAttribute>();
-		}
-		return this.dependentAttributes;
-	}
+        if (this.dependentAttributes == null) {
+            this.dependentAttributes = new ArrayList<SDFAttribute>();
+        }
+        return this.dependentAttributes;
+    }
 
-	/**
-	 * Sets the value of the explanatoryAttributes property.
-	 * 
-	 * @param explanatoryAttributes
-	 *            The explanatory attributes
-	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
+    /**
+     * Sets the value of the explanatoryAttributes property.
+     * 
+     * @param explanatoryAttributes
+     *            The explanatory attributes
+     */
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "EXPLANATORY", isList = true, optional = false)
     public final void setExplanatoryAttributes(final List<SDFAttribute> explanatoryAttributes) {
-	    Objects.requireNonNull(explanatoryAttributes);
-	    Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
-		this.explanatoryAttributes = explanatoryAttributes;
-	}
+        Objects.requireNonNull(explanatoryAttributes);
+        Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
+        this.explanatoryAttributes = explanatoryAttributes;
+    }
 
-	/**
-	 * Gets the value of the explanatoryAttributes property.
-	 * 
-	 * @return the explanatory attributes
-	 */
-	@GetParameter(name = "EXPLANATORY")
+    /**
+     * Gets the value of the explanatoryAttributes property.
+     * 
+     * @return the explanatory attributes
+     */
+    @GetParameter(name = "EXPLANATORY")
     public final List<SDFAttribute> getExplanatoryAttributes() {
-		if (this.explanatoryAttributes == null) {
-			this.explanatoryAttributes = new ArrayList<SDFAttribute>();
-		}
-		return this.explanatoryAttributes;
-	}
+        if (this.explanatoryAttributes == null) {
+            this.explanatoryAttributes = new ArrayList<SDFAttribute>();
+        }
+        return this.explanatoryAttributes;
+    }
 
-	/**
-	 * 
-	 * @return The attribute positions of all dependent attributes
-	 */
-	public final int[] determineDependentList() {
-		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getDependentAttributes());
-	}
+    /**
+     * 
+     * @return The attribute positions of all dependent attributes
+     */
+    public final int[] determineDependentList() {
+        return SchemaUtils.getAttributePos(this.getInputSchema(), this.getDependentAttributes());
+    }
 
-	/**
-	 * 
-	 * @return The attribute positions of all explanatory attributes
-	 */
-	public final int[] determineExplanatoryList() {
-		return SchemaUtils.getAttributePos(this.getInputSchema(), this.getExplanatoryAttributes());
-	}
+    /**
+     * 
+     * @return The attribute positions of all explanatory attributes
+     */
+    public final int[] determineExplanatoryList() {
+        return SchemaUtils.getAttributePos(this.getInputSchema(), this.getExplanatoryAttributes());
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
-	 */
-	@Override
-	public final AbstractLogicalOperator clone() {
-		return new LinearRegressionAO(this);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+     * #clone()
+     */
+    @Override
+    public final AbstractLogicalOperator clone() {
+        return new LinearRegressionAO(this);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#initialize()
-	 */
-	@Override
-	public final void initialize() {
-		super.initialize();
-		Objects.requireNonNull(explanatoryAttributes);
-		Objects.requireNonNull(dependentAttributes);
-		Preconditions.checkArgument(!explanatoryAttributes.isEmpty());
-		Preconditions.checkArgument(!dependentAttributes.isEmpty());
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+     * #initialize()
+     */
+    @Override
+    public final void initialize() {
+        super.initialize();
+        Objects.requireNonNull(this.explanatoryAttributes);
+        Objects.requireNonNull(this.dependentAttributes);
+        Preconditions.checkArgument(!this.explanatoryAttributes.isEmpty());
+        Preconditions.checkArgument(!this.dependentAttributes.isEmpty());
 
-		final Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
-			if (this.getExplanatoryAttributes().contains(inAttr)) {
-				attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
-			} else {
-				attributes.add(inAttr);
-			}
-		}
-		attributes.add(new SDFAttribute("", "$coefficients", SDFDatatype.MATRIX_DOUBLE));
-		attributes.add(new SDFAttribute("", "$residual", SDFDatatype.MATRIX_DOUBLE));
-		final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), attributes);
-		this.setOutputSchema(outputSchema);
-	}
+        final Collection<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+        for (final SDFAttribute inAttr : this.getInputSchema().getAttributes()) {
+            if (this.getExplanatoryAttributes().contains(inAttr)) {
+                attributes.add(new SDFAttribute(inAttr.getSourceName(), inAttr.getAttributeName(), SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE));
+            }
+            else {
+                attributes.add(inAttr);
+            }
+        }
+        attributes.add(new SDFAttribute("", "$coefficients", SDFDatatype.MATRIX_DOUBLE));
+        attributes.add(new SDFAttribute("", "$residual", SDFDatatype.MATRIX_DOUBLE));
+        final SDFSchema outputSchema = new SDFSchema(this.getInputSchema().getURI(), this.getInputSchema().getType(), attributes);
+        this.setOutputSchema(outputSchema);
+    }
 }

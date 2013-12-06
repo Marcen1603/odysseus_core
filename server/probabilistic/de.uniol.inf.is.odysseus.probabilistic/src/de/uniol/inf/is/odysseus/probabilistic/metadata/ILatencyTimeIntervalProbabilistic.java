@@ -23,10 +23,10 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
  * 
  */
 public interface ILatencyTimeIntervalProbabilistic extends ILatency, ITimeInterval, IProbabilistic {
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	ILatencyTimeIntervalProbabilistic clone();
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    ILatencyTimeIntervalProbabilistic clone();
 }

@@ -16,7 +16,7 @@
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ExistenceToPayloadAO;
 import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.RelationalExistenceToPayloadPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -29,62 +29,67 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TRelationalExistenceToPayloadRule extends AbstractTransformationRule<ExistenceToPayloadAO> {
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
         return TransformationConstants.PRIORITY;
-	}
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final void execute(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
-		this.defaultExecute(operator, new RelationalExistenceToPayloadPO(), config, true, true);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public final void execute(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
+        this.defaultExecute(operator, new RelationalExistenceToPayloadPO(), config, true, true);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
     public final boolean isExecutable(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
         if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
-			if (operator.isAllPhysicalInputSet()) {
-				return true;
-			}
-		}
-		return false;
-	}
+            if (operator.isAllPhysicalInputSet()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "ExistenceToPayloadAO --> RelationalExistenceToPayloadPO";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "ExistenceToPayloadAO --> RelationalExistenceToPayloadPO";
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+     */
+    @Override
+    public final IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.TRANSFORMATION;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super ExistenceToPayloadAO> getConditionClass() {
-		return ExistenceToPayloadAO.class;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+     */
+    @Override
+    public final Class<? super ExistenceToPayloadAO> getConditionClass() {
+        return ExistenceToPayloadAO.class;
+    }
 }

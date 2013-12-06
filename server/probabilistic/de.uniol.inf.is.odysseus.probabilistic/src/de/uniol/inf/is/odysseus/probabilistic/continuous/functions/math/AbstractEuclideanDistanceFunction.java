@@ -27,52 +27,52 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public abstract class AbstractEuclideanDistanceFunction extends AbstractFunction<Double> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -5772371632099974669L;
+    private static final long serialVersionUID = -5772371632099974669L;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getArity() {
-		return 2;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getArity() {
+        return 2;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getSymbol() {
-		return "distance";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getSymbol() {
+        return "distance";
+    }
 
-	/**
-	 * 
-	 * @param a
-	 *            The point
-	 * @param b
-	 *            The other point
-	 * @throws DimensionMismatchException
-	 * @return The distance measure
-	 */
-	protected final double getValueInternal(final RealMatrix a, final RealMatrix b) {
-		if (a.getColumnDimension() > 1) {
-			throw new DimensionMismatchException(b.getColumnDimension(), 1);
-		}
-		if (b.getColumnDimension() > 1) {
-			throw new DimensionMismatchException(b.getColumnDimension(), 1);
-		}
-		return a.subtract(b).getFrobeniusNorm();
-	}
+    /**
+     * 
+     * @param a
+     *            The point
+     * @param b
+     *            The other point
+     * @throws DimensionMismatchException
+     * @return The distance measure
+     */
+    protected final double getValueInternal(final RealMatrix a, final RealMatrix b) {
+        if (a.getColumnDimension() > 1) {
+            throw new DimensionMismatchException(b.getColumnDimension(), 1);
+        }
+        if (b.getColumnDimension() > 1) {
+            throw new DimensionMismatchException(b.getColumnDimension(), 1);
+        }
+        return a.subtract(b).getFrobeniusNorm();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFDatatype.DOUBLE;
+    }
 
 }

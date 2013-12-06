@@ -24,131 +24,144 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class ProbabilisticDoubleHandler extends AbstractDataHandler<ProbabilisticDouble> {
-	/** Supported data types. */
-	private static final List<String> TYPES = new ArrayList<String>();
-	static {
-		ProbabilisticDoubleHandler.TYPES.add("ProbabilisticDouble");
-	}
+    /** Supported data types. */
+    private static final List<String> TYPES = new ArrayList<String>();
+    static {
+        ProbabilisticDoubleHandler.TYPES.add("ProbabilisticDouble");
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance(de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
-	 */
-	@Override
-	public final IDataHandler<ProbabilisticDouble> getInstance(final SDFSchema schema) {
-		return new ProbabilisticDoubleHandler();
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance
+     * (de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
+     */
+    @Override
+    public final IDataHandler<ProbabilisticDouble> getInstance(final SDFSchema schema) {
+        return new ProbabilisticDoubleHandler();
+    }
 
-	/**
-	 * Default constructor.
-	 */
-	public ProbabilisticDoubleHandler() {
-		super();
-	}
+    /**
+     * Default constructor.
+     */
+    public ProbabilisticDoubleHandler() {
+        super();
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.io.ObjectInputStream)
-	 */
-	@Override
-	public final ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
-		Objects.requireNonNull(inputStream);
-		Preconditions.checkArgument(inputStream.available() >= 4);
-		final int length = inputStream.readInt();
-		final Map<Double, Double> values = new HashMap<Double, Double>();
-		for (int i = 0; i < length; i++) {
-			final Double value = inputStream.readDouble();
-			final Double probability = inputStream.readDouble();
-			values.put(value, probability);
-		}
-		return new ProbabilisticDouble(values);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+     * io.ObjectInputStream)
+     */
+    @Override
+    public final ProbabilisticDouble readData(final ObjectInputStream inputStream) throws IOException {
+        Objects.requireNonNull(inputStream);
+        Preconditions.checkArgument(inputStream.available() >= 4);
+        final int length = inputStream.readInt();
+        final Map<Double, Double> values = new HashMap<Double, Double>();
+        for (int i = 0; i < length; i++) {
+            final Double value = inputStream.readDouble();
+            final Double probability = inputStream.readDouble();
+            values.put(value, probability);
+        }
+        return new ProbabilisticDouble(values);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.lang.String)
-	 */
-	@Override
-	public final ProbabilisticDouble readData(final String string) {
-		Objects.requireNonNull(string);
-		Preconditions.checkArgument(!string.isEmpty());
-		final String[] discreteValues = string.split(";");
-		final Map<Double, Double> values = new HashMap<Double, Double>();
-		for (final String discreteValue2 : discreteValues) {
-			final String[] discreteValue = discreteValue2.split(":");
-			values.put(Double.parseDouble(discreteValue[0]), Double.parseDouble(discreteValue[1]));
-		}
-		return new ProbabilisticDouble(values);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+     * lang.String)
+     */
+    @Override
+    public final ProbabilisticDouble readData(final String string) {
+        Objects.requireNonNull(string);
+        Preconditions.checkArgument(!string.isEmpty());
+        final String[] discreteValues = string.split(";");
+        final Map<Double, Double> values = new HashMap<Double, Double>();
+        for (final String discreteValue2 : discreteValues) {
+            final String[] discreteValue = discreteValue2.split(":");
+            values.put(Double.parseDouble(discreteValue[0]), Double.parseDouble(discreteValue[1]));
+        }
+        return new ProbabilisticDouble(values);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.nio.ByteBuffer)
-	 */
-	@Override
-	public final ProbabilisticDouble readData(final ByteBuffer buffer) {
-		Objects.requireNonNull(buffer);
-		Preconditions.checkArgument(buffer.remaining() >= 4);
-		final int length = buffer.getInt();
-		final Map<Double, Double> values = new HashMap<Double, Double>();
-		for (int i = 0; i < length; i++) {
-			final Double value = buffer.getDouble();
-			final Double probability = buffer.getDouble();
-			values.put(value, probability);
-		}
-		return new ProbabilisticDouble(values);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+     * nio.ByteBuffer)
+     */
+    @Override
+    public final ProbabilisticDouble readData(final ByteBuffer buffer) {
+        Objects.requireNonNull(buffer);
+        Preconditions.checkArgument(buffer.remaining() >= 4);
+        final int length = buffer.getInt();
+        final Map<Double, Double> values = new HashMap<Double, Double>();
+        for (int i = 0; i < length; i++) {
+            final Double value = buffer.getDouble();
+            final Double probability = buffer.getDouble();
+            values.put(value, probability);
+        }
+        return new ProbabilisticDouble(values);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java.nio.ByteBuffer, java.lang.Object)
-	 */
-	@Override
-	public final void writeData(final ByteBuffer buffer, final Object data) {
-		Objects.requireNonNull(buffer);
-		Objects.requireNonNull(data);
-		final ProbabilisticDouble values = (ProbabilisticDouble) data;
-		buffer.putInt(values.getValues().size());
-		for (final Entry<Double, Double> value : values.getValues().entrySet()) {
-			buffer.putDouble(value.getKey());
-			buffer.putDouble(value.getValue());
-		}
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java
+     * .nio.ByteBuffer, java.lang.Object)
+     */
+    @Override
+    public final void writeData(final ByteBuffer buffer, final Object data) {
+        Objects.requireNonNull(buffer);
+        Objects.requireNonNull(data);
+        final ProbabilisticDouble values = (ProbabilisticDouble) data;
+        buffer.putInt(values.getValues().size());
+        for (final Entry<Double, Double> value : values.getValues().entrySet()) {
+            buffer.putDouble(value.getKey());
+            buffer.putDouble(value.getValue());
+        }
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getSupportedDataTypes()
-	 */
-	@Override
-	public final List<String> getSupportedDataTypes() {
-		return Collections.unmodifiableList(ProbabilisticDoubleHandler.TYPES);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#
+     * getSupportedDataTypes()
+     */
+    @Override
+    public final List<String> getSupportedDataTypes() {
+        return Collections.unmodifiableList(ProbabilisticDoubleHandler.TYPES);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang.Object)
-	 */
-	@Override
-	public final int memSize(final Object attribute) {
-		return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang
+     * .Object)
+     */
+    @Override
+    public final int memSize(final Object attribute) {
+        return (((ProbabilisticDouble) attribute).getValues().size() * Double.SIZE * 2) / 8;
+    }
 
-	@Override
-	public Class<?> createsType() {
-		return ProbabilisticDouble.class;
-	}
+    @Override
+    public Class<?> createsType() {
+        return ProbabilisticDouble.class;
+    }
 }

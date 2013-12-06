@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteSelectPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
@@ -41,46 +41,51 @@ public class TProbabilisiticContinuousSelectAORule extends TSelectAORule {
     public final int getPriority() {
         return TransformationConstants.PRIORITY;
     }
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
-		final IPhysicalOperator selectPO = new ProbabilisticContinuousSelectPO(selectAO.getInputSchema(), selectAO.getPredicate());
-		if (selectAO.getHeartbeatRate() > 0) {
-			((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
-		}
-		this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
+        final IPhysicalOperator selectPO = new ProbabilisticContinuousSelectPO(selectAO.getInputSchema(), selectAO.getPredicate());
+        if (selectAO.getHeartbeatRate() > 0) {
+            ((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration(selectAO.getHeartbeatRate()));
+        }
+        this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "SelectAO -> ProbabilisticDiscreteSelectPO";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                if (SchemaUtils.containsContinuousProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "SelectAO -> ProbabilisticDiscreteSelectPO";
+    }
 
 }

@@ -19,8 +19,8 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.ProbabilisticContinuousDouble;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * 
@@ -29,42 +29,41 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ProbabilisticIntegrateMultivariateFunction extends AbstractIntegrateMultivariateFunction {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = 144107943090837242L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
-		{ SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, 
-		{ SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
+    private static final long serialVersionUID = 144107943090837242L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE },
+            { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE }, { SDFDatatype.VECTOR_BYTE, SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE } };
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
-	 */
-	@Override
-	public final Double getValue() {
-		final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
-		final RealVector lowerBound = MatrixUtils.createRealVector(((double[][]) this.getInputValue(1))[0]);
-		final RealVector upperBound = MatrixUtils.createRealVector(((double[][]) this.getInputValue(2))[0]);
-		return this.getValueInternal(continuousDouble, lowerBound, upperBound);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+     */
+    @Override
+    public final Double getValue() {
+        final ProbabilisticContinuousDouble continuousDouble = (ProbabilisticContinuousDouble) this.getInputValue(0);
+        final RealVector lowerBound = MatrixUtils.createRealVector(((double[][]) this.getInputValue(1))[0]);
+        final RealVector upperBound = MatrixUtils.createRealVector(((double[][]) this.getInputValue(2))[0]);
+        return this.getValueInternal(continuousDouble, lowerBound, upperBound);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution and the lower and upper support.");
-		}
-		return ProbabilisticIntegrateMultivariateFunction.ACC_TYPES[argPos];
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity()) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: A distribution and the lower and upper support.");
+        }
+        return ProbabilisticIntegrateMultivariateFunction.ACC_TYPES[argPos];
+    }
 
 }

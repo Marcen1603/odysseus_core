@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -37,63 +37,64 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
  */
 public abstract class AbstractMahalanobisDistanceFunction extends AbstractProbabilisticFunction<Double> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -4636005230557634127L;
+    private static final long serialVersionUID = -4636005230557634127L;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getArity() {
-		return 2;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getArity() {
+        return 2;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getSymbol() {
-		return "distance";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getSymbol() {
+        return "distance";
+    }
 
-	/**
-	 * 
-	 * @param a
-	 *            The normal distribution mixture
-	 * @param b
-	 *            The point
-	 * @throws DimensionMismatchException
-	 * @return The distance measure
-	 */
-	protected final double getValueInternal(final NormalDistributionMixture a, final RealMatrix b) {
-		if (b.getColumnDimension() > 1) {
-			throw new DimensionMismatchException(b.getColumnDimension(), 1);
-		}
-		double weightedMahalanobisDistance = 0.0;
-		for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
-			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
-			final RealMatrix aCovariance = aEntry.getValue().getCovariances();
-			DecompositionSolver solver;
-			try {
-				solver = new CholeskyDecomposition(aCovariance).getSolver();
-			} catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
-				solver = new LUDecomposition(aCovariance).getSolver();
-			}
-			final RealMatrix aCovarianceInverse = solver.getInverse();
-			final double mahalanobisDistance = FastMath.sqrt((b.subtract(aMean).transpose().multiply(aCovarianceInverse).multiply(b.subtract(aMean))).getEntry(0, 0));
-			weightedMahalanobisDistance += mahalanobisDistance * aEntry.getKey();
-		}
-		return weightedMahalanobisDistance;
-	}
+    /**
+     * 
+     * @param a
+     *            The normal distribution mixture
+     * @param b
+     *            The point
+     * @throws DimensionMismatchException
+     * @return The distance measure
+     */
+    protected final double getValueInternal(final NormalDistributionMixture a, final RealMatrix b) {
+        if (b.getColumnDimension() > 1) {
+            throw new DimensionMismatchException(b.getColumnDimension(), 1);
+        }
+        double weightedMahalanobisDistance = 0.0;
+        for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
+            final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
+            final RealMatrix aCovariance = aEntry.getValue().getCovariances();
+            DecompositionSolver solver;
+            try {
+                solver = new CholeskyDecomposition(aCovariance).getSolver();
+            }
+            catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
+                solver = new LUDecomposition(aCovariance).getSolver();
+            }
+            final RealMatrix aCovarianceInverse = solver.getInverse();
+            final double mahalanobisDistance = FastMath.sqrt((b.subtract(aMean).transpose().multiply(aCovarianceInverse).multiply(b.subtract(aMean))).getEntry(0, 0));
+            weightedMahalanobisDistance += mahalanobisDistance * aEntry.getKey();
+        }
+        return weightedMahalanobisDistance;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFDatatype.DOUBLE;
+    }
 
 }

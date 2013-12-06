@@ -30,48 +30,53 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
 
 /**
- * Standard query build configuration for probabilistic data streams supporting Rewrite, Query Sharing and Reconstruction.
+ * Standard query build configuration for probabilistic data streams supporting
+ * Rewrite, Query Sharing and Reconstruction.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  */
 public class StandardProbabilisticLatencyQueryBuildConfigurationTemplate extends AbstractQueryBuildConfigurationTemplate {
-	/**
-	 * Default constructor.
-	 */
-	public StandardProbabilisticLatencyQueryBuildConfigurationTemplate() {
-		this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration(ITimeInterval.class, IProbabilistic.class, ILatency.class)));
-		this.settings.add(ParameterDoRewrite.TRUE);
-		this.settings.add(ParameterPerformQuerySharing.TRUE);
-		this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
-		this.settings.add(ParameterShareSimilarOperators.FALSE);
-	}
+    /**
+     * Default constructor.
+     */
+    public StandardProbabilisticLatencyQueryBuildConfigurationTemplate() {
+        this.settings.add(new ParameterTransformationConfiguration(new TransformationConfiguration(ITimeInterval.class, IProbabilistic.class, ILatency.class)));
+        this.settings.add(ParameterDoRewrite.TRUE);
+        this.settings.add(ParameterPerformQuerySharing.TRUE);
+        this.settings.add(ParameterAllowRestructuringOfCurrentPlan.TRUE);
+        this.settings.add(ParameterShareSimilarOperators.FALSE);
+    }
 
-	/**
-	 * Creates a new {@link StandardProbabilisticLatencyQueryBuildConfigurationTemplate} with the given settings.
-	 * 
-	 * @param settings
-	 *            The query build settings
-	 */
-	public StandardProbabilisticLatencyQueryBuildConfigurationTemplate(final List<IQueryBuildSetting<?>> settings) {
-		this.settings.addAll(settings);
-	}
+    /**
+     * Creates a new
+     * {@link StandardProbabilisticLatencyQueryBuildConfigurationTemplate} with
+     * the given settings.
+     * 
+     * @param settings
+     *            The query build settings
+     */
+    public StandardProbabilisticLatencyQueryBuildConfigurationTemplate(final List<IQueryBuildSetting<?>> settings) {
+        this.settings.addAll(settings);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "StandardProbabilisticLatency";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.
+     * IQueryBuildConfigurationTemplate#getName()
+     */
+    @Override
+    public final String getName() {
+        return "StandardProbabilisticLatency";
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AbstractQueryBuildConfiguration#clone()
-	 */
-	@Override
-	public final IQueryBuildConfigurationTemplate clone() {
-		return new StandardProbabilisticLatencyQueryBuildConfigurationTemplate(this.settings);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.
+     * AbstractQueryBuildConfiguration#clone()
+     */
+    @Override
+    public final IQueryBuildConfigurationTemplate clone() {
+        return new StandardProbabilisticLatencyQueryBuildConfigurationTemplate(this.settings);
+    }
 
 }

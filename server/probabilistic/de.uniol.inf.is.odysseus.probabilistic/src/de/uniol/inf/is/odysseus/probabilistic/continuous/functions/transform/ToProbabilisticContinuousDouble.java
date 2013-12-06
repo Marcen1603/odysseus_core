@@ -25,10 +25,10 @@ import org.apache.commons.math3.util.Pair;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -36,82 +36,83 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ToProbabilisticContinuousDouble extends AbstractProbabilisticFunction<NormalDistributionMixture> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 5909577387865841893L;
+    private static final long serialVersionUID = 5909577387865841893L;
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-	 */
-	@Override
-	public final int getArity() {
-		return 2;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+     */
+    @Override
+    public final int getArity() {
+        return 2;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public final String getSymbol() {
-		return "toProbabilisticContinuousDouble";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+     */
+    @Override
+    public final String getSymbol() {
+        return "toProbabilisticContinuousDouble";
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
-	 */
-	@Override
-	public final NormalDistributionMixture getValue() {
-		final double[] means = ((double[][]) this.getInputValue(0))[0];
-		final double[][] variances = (double[][]) this.getInputValue(1);
-		Objects.requireNonNull(means);
-		Objects.requireNonNull(variances);
-		Preconditions.checkArgument(means.length > 0);
-		Preconditions.checkArgument(means.length == variances.length);
-		Preconditions.checkArgument(variances.length == variances[0].length);
-		final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
-		final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
-		mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+     */
+    @Override
+    public final NormalDistributionMixture getValue() {
+        final double[] means = ((double[][]) this.getInputValue(0))[0];
+        final double[][] variances = (double[][]) this.getInputValue(1);
+        Objects.requireNonNull(means);
+        Objects.requireNonNull(variances);
+        Preconditions.checkArgument(means.length > 0);
+        Preconditions.checkArgument(means.length == variances.length);
+        Preconditions.checkArgument(variances.length == variances[0].length);
+        final List<Pair<Double, MultivariateNormalDistribution>> mvns = new ArrayList<Pair<Double, MultivariateNormalDistribution>>();
+        final MultivariateNormalDistribution component = new MultivariateNormalDistribution(means, variances);
+        mvns.add(new Pair<Double, MultivariateNormalDistribution>(1.0, component));
 
-		final NormalDistributionMixture result = new NormalDistributionMixture(mvns);
-		final Interval[] support = new Interval[result.getSupport().length];
-		for (int i = 0; i < result.getSupport().length; i++) {
-			support[i] = Interval.MAX;
-		}
-		result.setSupport(support);
-		return result;
-	}
+        final NormalDistributionMixture result = new NormalDistributionMixture(mvns);
+        final Interval[] support = new Interval[result.getSupport().length];
+        for (int i = 0; i < result.getSupport().length; i++) {
+            support[i] = Interval.MAX;
+        }
+        result.setSupport(support);
+        return result;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public final SDFDatatype getReturnType() {
-		return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE;
+    }
 
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE },
+            { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > (this.getArity() - 1)) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
-		}
-		return ToProbabilisticContinuousDouble.ACC_TYPES[argPos];
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > (this.getArity() - 1)) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
+        }
+        return ToProbabilisticContinuousDouble.ACC_TYPES[argPos];
+    }
 
 }

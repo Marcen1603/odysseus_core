@@ -20,15 +20,15 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
-import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -39,47 +39,47 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 
-	@Override
-	public int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+    @Override
+    public int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	@Override
-	public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
-		ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+    @Override
+    public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+        final ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 
-		areas[0] = new JoinTISweepArea();
-		areas[1] = new JoinTISweepArea();
+        areas[0] = new JoinTISweepArea();
+        areas[1] = new JoinTISweepArea();
 
-		joinPO.setAreas(areas);
-	}
+        joinPO.setAreas(areas);
+    }
 
-	@Override
-	public boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
-		if (operator.getOutputSchema().getType() == ProbabilisticTuple.class && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
-			if (operator.getAreas() == null) {
-				IPredicate<?> predicate = operator.getPredicate();
-				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-				if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+            if (operator.getAreas() == null) {
+                final IPredicate<?> predicate = operator.getPredicate();
+                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "JoinTIPO set SweepArea";
-	}
+    @Override
+    public String getName() {
+        return "JoinTIPO set SweepArea";
+    }
 
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.METAOBJECTS;
-	}
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.METAOBJECTS;
+    }
 
-	@Override
-	public Class<? super JoinTIPO> getConditionClass() {
-		return JoinTIPO.class;
-	}
+    @Override
+    public Class<? super JoinTIPO> getConditionClass() {
+        return JoinTIPO.class;
+    }
 }

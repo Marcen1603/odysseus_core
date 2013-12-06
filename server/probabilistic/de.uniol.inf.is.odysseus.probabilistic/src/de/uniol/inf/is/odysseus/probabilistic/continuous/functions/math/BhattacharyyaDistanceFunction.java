@@ -16,8 +16,8 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -25,37 +25,37 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class BhattacharyyaDistanceFunction extends AbstractBhattacharyyaDistanceFunction {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -3498463869497505997L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
+    private static final long serialVersionUID = -3498463869497505997L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE }, { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE } };
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-		}
-		return BhattacharyyaDistanceFunction.ACC_TYPES[argPos];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity()) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
+        }
+        return BhattacharyyaDistanceFunction.ACC_TYPES[argPos];
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final Double getValue() {
-		final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
-		final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
-		return this.getValueInternal(a, b);
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final Double getValue() {
+        final NormalDistributionMixture a = (NormalDistributionMixture) this.getInputValue(0);
+        final NormalDistributionMixture b = (NormalDistributionMixture) this.getInputValue(1);
+        return this.getValueInternal(a, b);
+    }
 }

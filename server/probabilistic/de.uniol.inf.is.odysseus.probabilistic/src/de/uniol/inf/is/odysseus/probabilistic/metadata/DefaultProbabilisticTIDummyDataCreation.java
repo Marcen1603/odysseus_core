@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.metadata;
 
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction;
 
 /**
@@ -24,46 +24,50 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFuncti
  * 
  */
 public class DefaultProbabilisticTIDummyDataCreation implements IDummyDataCreationFunction<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>, Cloneable {
-	/**
-	 * Default constructor.
-	 */
-	public DefaultProbabilisticTIDummyDataCreation() {
-	}
+    /**
+     * Default constructor.
+     */
+    public DefaultProbabilisticTIDummyDataCreation() {
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param defaultTIDummyDataCreation
-	 *            The object to copy from
-	 */
-	public DefaultProbabilisticTIDummyDataCreation(final DefaultProbabilisticTIDummyDataCreation defaultTIDummyDataCreation) {
-	}
+    /**
+     * Clone constructor.
+     * 
+     * @param defaultTIDummyDataCreation
+     *            The object to copy from
+     */
+    public DefaultProbabilisticTIDummyDataCreation(final DefaultProbabilisticTIDummyDataCreation defaultTIDummyDataCreation) {
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction#createMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
-	 */
-	@Override
-	public final ProbabilisticTuple<ITimeIntervalProbabilistic> createMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
-		return source.clone();
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction
+     * #createMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+     */
+    @Override
+    public final ProbabilisticTuple<ITimeIntervalProbabilistic> createMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
+        return source.clone();
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction#hasMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
-	 */
-	@Override
-	public final boolean hasMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
-		return true;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.server.intervalapproach.IDummyDataCreationFunction
+     * #hasMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+     */
+    @Override
+    public final boolean hasMetadata(final ProbabilisticTuple<ITimeIntervalProbabilistic> source) {
+        return true;
+    }
 
-	/*
-	 * 
-	 * @see java.lang.Object#clone()
-	 */
-	@Override
-	public final DefaultProbabilisticTIDummyDataCreation clone() {
-		return new DefaultProbabilisticTIDummyDataCreation(this);
-	}
+    /*
+     * 
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public final DefaultProbabilisticTIDummyDataCreation clone() {
+        return new DefaultProbabilisticTIDummyDataCreation(this);
+    }
 
 }

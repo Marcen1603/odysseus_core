@@ -32,60 +32,62 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, doc = "This Operator can be used to update the existence uncertainty information in the meta data part.", name = "Probabilistic", category = { LogicalOperatorCategory.PROBABILISTIC })
 public class ProbabilisticAO extends UnaryLogicalOp {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 5230887041196691992L;
-	/** The attribute holding the existence probability. */
-	private SDFAttribute attribute;
+    private static final long serialVersionUID = 5230887041196691992L;
+    /** The attribute holding the existence probability. */
+    private SDFAttribute attribute;
 
-	/**
-	 * Constructs a new Probabilistic logical operator.
-	 */
-	public ProbabilisticAO() {
-		super();
-	}
+    /**
+     * Constructs a new Probabilistic logical operator.
+     */
+    public ProbabilisticAO() {
+        super();
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param probabilisticAO
-	 *            The copy
-	 */
+    /**
+     * Clone constructor.
+     * 
+     * @param probabilisticAO
+     *            The copy
+     */
     public ProbabilisticAO(final ProbabilisticAO probabilisticAO) {
         super(probabilisticAO);
         this.attribute = probabilisticAO.attribute;
-	}
+    }
 
-	/**
-	 * Sets the attribute.
-	 * 
-	 * @param attribute
-	 *            The attribute
-	 */
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true, doc = "The name of the attribute for the existence uncertainty.")
-	public final void setAttribute(final SDFAttribute attribute) {
-		Objects.requireNonNull(attribute);
-		this.attribute = attribute;
-	}
+    /**
+     * Sets the attribute.
+     * 
+     * @param attribute
+     *            The attribute
+     */
+    @Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTE", isList = false, optional = true, doc = "The name of the attribute for the existence uncertainty.")
+    public final void setAttribute(final SDFAttribute attribute) {
+        Objects.requireNonNull(attribute);
+        this.attribute = attribute;
+    }
 
-	/**
-	 * Gets the attribute.
-	 * 
-	 * @return The attribute
-	 */
-	public final SDFAttribute getAttribute() {
-		return this.attribute;
-	}
+    /**
+     * Gets the attribute.
+     * 
+     * @return The attribute
+     */
+    public final SDFAttribute getAttribute() {
+        return this.attribute;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#clone()
-	 */
-	@Override
-	public final AbstractLogicalOperator clone() {
-		return new ProbabilisticAO(this);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+     * #clone()
+     */
+    @Override
+    public final AbstractLogicalOperator clone() {
+        return new ProbabilisticAO(this);
+    }
 
 }

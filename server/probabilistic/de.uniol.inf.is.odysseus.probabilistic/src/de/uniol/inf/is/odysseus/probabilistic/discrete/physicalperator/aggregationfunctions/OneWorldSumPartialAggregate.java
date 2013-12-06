@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregat
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 
 /**
  * Sum Aggregation on probabilistic data stream according to T.S.Jayram et al.

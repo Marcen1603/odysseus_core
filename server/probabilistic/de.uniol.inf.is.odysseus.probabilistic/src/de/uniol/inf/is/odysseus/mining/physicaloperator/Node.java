@@ -23,92 +23,92 @@ import org.apache.commons.math3.ml.distance.EuclideanDistance;
  * 
  */
 public class Node {
-	private double x;
-	private double y;
-	private double z;
-	private final double[] weights;
-	private final DistanceMeasure distance = new EuclideanDistance();
+    private double x;
+    private double y;
+    private double z;
+    private final double[] weights;
+    private final DistanceMeasure distance = new EuclideanDistance();
 
-	/**
-	 * Class constructor.
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param weights
-	 */
-	public Node(final double x, final double y, final double z, final double[] weights) {
-		super();
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.weights = weights;
-	}
+    /**
+     * Class constructor.
+     * 
+     * @param x
+     * @param y
+     * @param z
+     * @param weights
+     */
+    public Node(final double x, final double y, final double z, final double[] weights) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.weights = weights;
+    }
 
-	/**
-	 * @return the x
-	 */
-	public double getX() {
-		return this.x;
-	}
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return this.x;
+    }
 
-	/**
-	 * @param x
-	 *            the x to set
-	 */
-	public void setX(final double x) {
-		this.x = x;
-	}
+    /**
+     * @param x
+     *            the x to set
+     */
+    public void setX(final double x) {
+        this.x = x;
+    }
 
-	/**
-	 * @return the y
-	 */
-	public double getY() {
-		return this.y;
-	}
+    /**
+     * @return the y
+     */
+    public double getY() {
+        return this.y;
+    }
 
-	/**
-	 * @param y
-	 *            the y to set
-	 */
-	public void setY(final double y) {
-		this.y = y;
-	}
+    /**
+     * @param y
+     *            the y to set
+     */
+    public void setY(final double y) {
+        this.y = y;
+    }
 
-	/**
-	 * @return the z
-	 */
-	public double getZ() {
-		return this.z;
-	}
+    /**
+     * @return the z
+     */
+    public double getZ() {
+        return this.z;
+    }
 
-	/**
-	 * @param z
-	 *            the z to set
-	 */
-	public void setZ(final double z) {
-		this.z = z;
-	}
+    /**
+     * @param z
+     *            the z to set
+     */
+    public void setZ(final double z) {
+        this.z = z;
+    }
 
-	public double getWeightDistance(final double[] input) {
-		return this.distance.compute(this.weights, input);
-	}
+    public double getWeightDistance(final double[] input) {
+        return this.distance.compute(this.weights, input);
+    }
 
-	/**
-	 * @param input
-	 * @param learningRate
-	 * @param distance
-	 */
-	public void adjustWeights(final double[] input, final double learningRate, final double distance) {
-		// TODO Auto-generated method stub
+    /**
+     * @param input
+     * @param learningRate
+     * @param distance
+     */
+    public void adjustWeights(final double[] input, final double learningRate, final double distance) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	/**
-	 * @param temp
-	 * @return
-	 */
-	public double distanceTo(final Node temp) {
-		return this.distance.compute(new double[] { this.x, this.y }, new double[] { temp.x, temp.y });
-	}
+    /**
+     * @param temp
+     * @return
+     */
+    public double distanceTo(final Node temp) {
+        return this.distance.compute(new double[] { this.x, this.y }, new double[] { temp.x, temp.y });
+    }
 }

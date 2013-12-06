@@ -35,50 +35,53 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
  * @param <T>
  */
 public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
-	/** The logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteJoinTIPO.class);
+    /** The logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteJoinTIPO.class);
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
-	 */
-	@Override
-	protected final void process_next(final T object, final int port) {
-		this.transferFunction.newElement(object, port);
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO#process_next
+     * (de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+     */
+    @Override
+    protected final void process_next(final T object, final int port) {
+        this.transferFunction.newElement(object, port);
 
-		if (this.isDone()) {
-			return;
-		}
-		if (ProbabilisticDiscreteJoinTIPO.LOG.isDebugEnabled()) {
-			if (!this.isOpen()) {
-				ProbabilisticDiscreteJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
-				return;
-			}
-		}
-		final int otherport = port ^ 1;
-		final Order order = Order.fromOrdinal(port);
-		Iterator<T> qualifies;
+        if (this.isDone()) {
+            return;
+        }
+        if (ProbabilisticDiscreteJoinTIPO.LOG.isDebugEnabled()) {
+            if (!this.isOpen()) {
+                ProbabilisticDiscreteJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
+                return;
+            }
+        }
+        final int otherport = port ^ 1;
+        final Order order = Order.fromOrdinal(port);
+        Iterator<T> qualifies;
 
-		synchronized (this) {
+        synchronized (this) {
 
-			if (this.inOrder) {
-				this.areas[otherport].purgeElements(object, order);
-			}
+            if (this.inOrder) {
+                this.areas[otherport].purgeElements(object, order);
+            }
 
-			if (this.isDone()) {
-				this.propagateDone();
-				return;
-			}
+            if (this.isDone()) {
+                this.propagateDone();
+                return;
+            }
 
-			qualifies = this.areas[otherport].queryCopy(object, order, false);
+            qualifies = this.areas[otherport].queryCopy(object, order, false);
 
-			this.areas[port].insert(object);
-		}
-		while (qualifies.hasNext()) {
-			final T next = qualifies.next();
-			// We already merge the two tuples in the sweep area to not expand the worlds again
-			// KTHXBYE
-			this.transferFunction.transfer(next);
-		}
-	}
+            this.areas[port].insert(object);
+        }
+        while (qualifies.hasNext()) {
+            final T next = qualifies.next();
+            // We already merge the two tuples in the sweep area to not expand
+            // the worlds again
+            // KTHXBYE
+            this.transferFunction.transfer(next);
+        }
+    }
 }

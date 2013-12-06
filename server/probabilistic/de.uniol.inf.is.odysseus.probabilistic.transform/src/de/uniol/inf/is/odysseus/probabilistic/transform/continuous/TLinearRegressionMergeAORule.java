@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionMergeAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionMergePO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -41,59 +41,65 @@ public class TLinearRegressionMergeAORule extends AbstractTransformationRule<Lin
         return 0;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(), operator.getRegressionCoefficientsPos(), operator.getResidualPos());
-		this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
+        final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(),
+                operator.getRegressionCoefficientsPos(), operator.getResidualPos());
+        this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "LinearRegressionMergeAO -> LinearRegressionMergePO";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "LinearRegressionMergeAO -> LinearRegressionMergePO";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+     */
+    @Override
+    public final IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.TRANSFORMATION;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super LinearRegressionMergeAO> getConditionClass() {
-		return LinearRegressionMergeAO.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+     */
+    @Override
+    public final Class<? super LinearRegressionMergeAO> getConditionClass() {
+        return LinearRegressionMergeAO.class;
+    }
 }

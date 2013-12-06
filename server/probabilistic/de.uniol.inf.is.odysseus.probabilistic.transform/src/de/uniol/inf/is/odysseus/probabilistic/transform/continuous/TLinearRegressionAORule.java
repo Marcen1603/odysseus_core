@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.logicaloperator.LinearRegressionAO;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.LinearRegressionPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -41,59 +41,64 @@ public class TLinearRegressionAORule extends AbstractTransformationRule<LinearRe
         return 0;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) {
-		final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
-		this.defaultExecute(operator, linearRegressionPO, config, true, true);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public final void execute(final LinearRegressionAO operator, final TransformationConfiguration config) {
+        final IPhysicalOperator linearRegressionPO = new LinearRegressionPO<ITimeInterval>(operator.determineDependentList(), operator.determineExplanatoryList());
+        this.defaultExecute(operator, linearRegressionPO, config, true, true);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
-		if (operator.isAllPhysicalInputSet()) {
-			if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final LinearRegressionAO operator, final TransformationConfiguration config) {
+        if (operator.isAllPhysicalInputSet()) {
+            if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "LinearRegressionAO -> LinearRegressionPO";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "LinearRegressionAO -> LinearRegressionPO";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.TRANSFORMATION;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+     */
+    @Override
+    public final IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.TRANSFORMATION;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
-	 */
-	@Override
-	public final Class<? super LinearRegressionAO> getConditionClass() {
-		return LinearRegressionAO.class;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule#getConditionClass()
+     */
+    @Override
+    public final Class<? super LinearRegressionAO> getConditionClass() {
+        return LinearRegressionAO.class;
+    }
 }

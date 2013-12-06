@@ -25,27 +25,29 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
  * 
  */
 public interface IProbabilistic extends IMetaAttribute, IClone {
-	/**
-	 * Gets the value of the tuple existence. The tuple existence describes the probability that the given tuple exists in the real world.
-	 * 
-	 * @return The tuple existence
-	 */
-	double getExistence();
+    /**
+     * Gets the value of the tuple existence. The tuple existence describes the
+     * probability that the given tuple exists in the real world.
+     * 
+     * @return The tuple existence
+     */
+    double getExistence();
 
-	/**
-	 * Sets the value of the tuple existence property. The tuple existence describes the probability that the given tuple exists in the real world.
-	 * 
-	 * @param existence
-	 *            The tuple existence
-	 */
-	void setExistence(double existence);
+    /**
+     * Sets the value of the tuple existence property. The tuple existence
+     * describes the probability that the given tuple exists in the real world.
+     * 
+     * @param existence
+     *            The tuple existence
+     */
+    void setExistence(double existence);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#clone()
-	 */
-	@Override
-	IProbabilistic clone();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute#clone()
+     */
+    @Override
+    IProbabilistic clone();
 
 }

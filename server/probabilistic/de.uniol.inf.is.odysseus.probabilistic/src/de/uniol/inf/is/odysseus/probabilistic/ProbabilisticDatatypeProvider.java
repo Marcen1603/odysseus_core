@@ -18,9 +18,9 @@ package de.uniol.inf.is.odysseus.probabilistic;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * Datatype provider for probabilistic datatypes.
@@ -28,22 +28,22 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  * @author Christian Kuka <christian@kuka.cc>, Marco Grawunder
  */
 public class ProbabilisticDatatypeProvider implements IDatatypeProvider {
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final List<SDFDatatype> getDatatypes() {
-		final List<SDFDatatype> ret = new ArrayList<>();
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_LONG);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_SHORT);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_BYTE);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_STRING);
-		ret.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
-		return ret;
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final List<SDFDatatype> getDatatypes() {
+        final List<SDFDatatype> ret = new ArrayList<>();
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_FLOAT);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_LONG);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_INTEGER);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_SHORT);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_BYTE);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_STRING);
+        ret.add(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE);
+        return ret;
+    }
 
 }

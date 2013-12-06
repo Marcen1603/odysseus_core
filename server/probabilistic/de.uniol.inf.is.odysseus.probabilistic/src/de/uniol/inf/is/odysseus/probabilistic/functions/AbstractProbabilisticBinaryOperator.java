@@ -27,56 +27,58 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
  */
 public abstract class AbstractProbabilisticBinaryOperator<T> extends AbstractProbabilisticFunction<T> implements IBinaryOperator<T> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -2604513567977149416L;
+    private static final long serialVersionUID = -2604513567977149416L;
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-	 */
-	@Override
-	public final int getArity() {
-		return 2;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+     */
+    @Override
+    public final int getArity() {
+        return 2;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()
-	 */
-	@Override
-	public final boolean isBinary() {
-		return true;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.mep.IOperator#isBinary()
+     */
+    @Override
+    public final boolean isBinary() {
+        return true;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IOperator#isUnary()
-	 */
-	@Override
-	public final boolean isUnary() {
-		return false;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.mep.IOperator#isUnary()
+     */
+    @Override
+    public final boolean isUnary() {
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IBinaryOperator#isDistributiveWith(de.uniol.inf.is.odysseus.mep.IOperator)
-	 */
-	@Override
-	public final boolean isDistributiveWith(final IOperator<T> operator) {
-		return this.isLeftDistributiveWith(operator) && this.isRightDistributiveWith(operator);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.mep.IBinaryOperator#isDistributiveWith(de.uniol
+     * .inf.is.odysseus.mep.IOperator)
+     */
+    @Override
+    public final boolean isDistributiveWith(final IOperator<T> operator) {
+        return this.isLeftDistributiveWith(operator) && this.isRightDistributiveWith(operator);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#_internalToString(()
-	 */
-	@Override
-	protected String _internalToString() {
-		final StringBuffer buffer = new StringBuffer("" + this.getArgument(0));
-		buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
-		return buffer.toString();
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#_internalToString(()
+     */
+    @Override
+    protected String _internalToString() {
+        final StringBuffer buffer = new StringBuffer("" + this.getArgument(0));
+        buffer.append(" ").append(this.getSymbol()).append(" " + this.getArgument(1));
+        return buffer.toString();
+    }
 
 }

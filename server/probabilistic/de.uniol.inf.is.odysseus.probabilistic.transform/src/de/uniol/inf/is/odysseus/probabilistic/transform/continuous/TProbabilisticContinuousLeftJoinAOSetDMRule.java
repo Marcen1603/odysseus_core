@@ -23,9 +23,9 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.PredicateUtils;
+import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.LeftJoinTIPO;
@@ -38,45 +38,45 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransformationRule<LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
 
-	@Override
-	public int getPriority() {
-		return TransformationConstants.PRIORITY;
-	}
+    @Override
+    public int getPriority() {
+        return TransformationConstants.PRIORITY;
+    }
 
-	@Override
-	public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, final TransformationConfiguration transformConfig) {
-		joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
-		update(joinPO);
-	}
+    @Override
+    public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, final TransformationConfiguration transformConfig) {
+        joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
+        this.update(joinPO);
+    }
 
-	@Override
-	public boolean isExecutable(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
-		if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
-			if (operator.getDataMerge() == null) {
-				IPredicate<?> predicate = operator.getPredicate();
-				final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-				if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-					throw new IllegalArgumentException("Not implemented");
+    @Override
+    public boolean isExecutable(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+        if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
+            if (operator.getDataMerge() == null) {
+                final IPredicate<?> predicate = operator.getPredicate();
+                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
+                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
+                    throw new IllegalArgumentException("Not implemented");
 
-				}
-			}
-		}
-		return false;
-	}
+                }
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "Insert DataMergeFunction (Probabilistic)";
-	}
+    @Override
+    public String getName() {
+        return "Insert DataMergeFunction (Probabilistic)";
+    }
 
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.METAOBJECTS;
-	}
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.METAOBJECTS;
+    }
 
-	@Override
-	public Class<? super LeftJoinTIPO<?, ?>> getConditionClass() {
-		return LeftJoinTIPO.class;
-	}
+    @Override
+    public Class<? super LeftJoinTIPO<?, ?>> getConditionClass() {
+        return LeftJoinTIPO.class;
+    }
 
 }

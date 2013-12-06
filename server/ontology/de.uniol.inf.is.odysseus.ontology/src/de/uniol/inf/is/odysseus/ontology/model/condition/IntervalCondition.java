@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.ontology.model.condition;
 import java.net.URI;
 
 import de.uniol.inf.is.odysseus.ontology.model.Property;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

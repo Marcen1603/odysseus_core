@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.ontology.model.property.MeasurementProperty;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.DUL;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.ODYSSEUS;
 import de.uniol.inf.is.odysseus.ontology.ontology.vocabulary.SSN;
-import de.uniol.inf.is.odysseus.probabilistic.math.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

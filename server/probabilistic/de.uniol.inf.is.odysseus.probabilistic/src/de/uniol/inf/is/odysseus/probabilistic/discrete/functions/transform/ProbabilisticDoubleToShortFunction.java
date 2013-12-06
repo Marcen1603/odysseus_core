@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.AbstractProbabilisticValue;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.datatype.ProbabilisticShort;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticShort;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
-import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * 
@@ -32,69 +32,69 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticDatatyp
  */
 public class ProbabilisticDoubleToShortFunction extends AbstractProbabilisticFunction<ProbabilisticShort> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -5900041898110184687L;
+    private static final long serialVersionUID = -5900041898110184687L;
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
-	 */
-	@Override
-	public final int getArity() {
-		return 1;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getArity()
+     */
+    @Override
+    public final int getArity() {
+        return 1;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
-	 */
-	@Override
-	public final String getSymbol() {
-		return "doubleToShort";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getSymbol()
+     */
+    @Override
+    public final String getSymbol() {
+        return "doubleToShort";
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
-	 */
-	@Override
-	public final ProbabilisticShort getValue() {
-		final Map<Short, Double> values = new HashMap<Short, Double>();
-		for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
-			values.put(((Number) value.getKey()).shortValue(), value.getValue());
-		}
-		return new ProbabilisticShort(values);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
+     */
+    @Override
+    public final ProbabilisticShort getValue() {
+        final Map<Short, Double> values = new HashMap<Short, Double>();
+        for (final Entry<?, Double> value : ((AbstractProbabilisticValue<?>) this.getInputValue(0)).getValues().entrySet()) {
+            values.put(((Number) value.getKey()).shortValue(), value.getValue());
+        }
+        return new ProbabilisticShort(values);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
-	 */
-	@Override
-	public final SDFDatatype getReturnType() {
-		return SDFProbabilisticDatatype.PROBABILISTIC_SHORT;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getReturnType()
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFProbabilisticDatatype.PROBABILISTIC_SHORT;
+    }
 
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[] ACC_TYPES = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > 0) {
-			throw new IllegalArgumentException("doubleToShort has only 1 argument.");
-		}
-		return ProbabilisticDoubleToShortFunction.ACC_TYPES;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.mep.IFunction#getAcceptedTypes(int)
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > 0) {
+            throw new IllegalArgumentException("doubleToShort has only 1 argument.");
+        }
+        return ProbabilisticDoubleToShortFunction.ACC_TYPES;
+    }
 
 }

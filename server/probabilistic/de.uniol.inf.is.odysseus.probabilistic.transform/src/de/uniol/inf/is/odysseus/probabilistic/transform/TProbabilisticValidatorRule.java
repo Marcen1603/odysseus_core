@@ -32,59 +32,63 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * 
  */
 public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHasMetadataMergeFunction<?>> {
-	/** The Logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
+    /** The Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(TProbabilisticValidatorRule.class);
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
-	 */
-	@Override
-	public final int getPriority() {
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
+     */
+    @Override
+    public final int getPriority() {
         return TransformationConstants.PRIORITY;
-	}
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
-		if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
-			TProbabilisticValidatorRule.LOG.error(this + " WARN: No Probabilistic merge function set for " + operator);
-		}
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+        if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
+            TProbabilisticValidatorRule.LOG.error(this + " WARN: No Probabilistic merge function set for " + operator);
+        }
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
-		if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
-			if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang
+     * .Object, java.lang.Object)
+     */
+    @Override
+    public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+        if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
+            if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
-	 */
-	@Override
-	public final String getName() {
-		return "Probabilistic Validation";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getName()
+     */
+    @Override
+    public final String getName() {
+        return "Probabilistic Validation";
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
-	 */
-	@Override
-	public final IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.VALIDATE;
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getRuleFlowGroup()
+     */
+    @Override
+    public final IRuleFlowGroup getRuleFlowGroup() {
+        return TransformRuleFlowGroup.VALIDATE;
+    }
 
 }

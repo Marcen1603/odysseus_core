@@ -23,7 +23,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 
 /**
  * 
@@ -33,31 +33,31 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistribu
  */
 public abstract class AbstractProbabilisticFunction<T> extends AbstractFunction<T> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1726038091049996390L;
-	/** The distributions. */
-	private final List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
+    private static final long serialVersionUID = 1726038091049996390L;
+    /** The distributions. */
+    private final List<NormalDistributionMixture> distributions = new ArrayList<NormalDistributionMixture>();
 
-	/**
-	 * Gets the normal distribution mixtures at the given position.
-	 * 
-	 * @param pos
-	 *            The position of the mixtures
-	 * @return The normal distribution mixtures at the given position
-	 */
-	public final NormalDistributionMixture getDistributions(final int pos) {
-		Preconditions.checkPositionIndex(pos, distributions.size());
-		return this.distributions.get(pos);
-	}
+    /**
+     * Gets the normal distribution mixtures at the given position.
+     * 
+     * @param pos
+     *            The position of the mixtures
+     * @return The normal distribution mixtures at the given position
+     */
+    public final NormalDistributionMixture getDistributions(final int pos) {
+        Preconditions.checkPositionIndex(pos, this.distributions.size());
+        return this.distributions.get(pos);
+    }
 
-	/**
-	 * Gets all normal distribution mixtures.
-	 * 
-	 * @return All normal distribution mixtures
-	 */
-	public final List<NormalDistributionMixture> getDistributions() {
-		return Collections.unmodifiableList(this.distributions);
-	}
+    /**
+     * Gets all normal distribution mixtures.
+     * 
+     * @return All normal distribution mixtures
+     */
+    public final List<NormalDistributionMixture> getDistributions() {
+        return Collections.unmodifiableList(this.distributions);
+    }
 }

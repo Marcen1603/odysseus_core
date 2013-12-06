@@ -25,38 +25,41 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class Activator implements BundleActivator {
-	/** The bundle context. */
-	private static BundleContext context;
+    /** The bundle context. */
+    private static BundleContext context;
 
-	/** The aggregate function builder registry. */
+    /** The aggregate function builder registry. */
 
-	/**
-	 * Gets the bundle context.
-	 * 
-	 * @return The bundle context
-	 */
-	static BundleContext getContext() {
-		return Activator.context;
-	}
+    /**
+     * Gets the bundle context.
+     * 
+     * @return The bundle context
+     */
+    static BundleContext getContext() {
+        return Activator.context;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
-	 */
-	@Override
-	public final void start(final BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+     * )
+     */
+    @Override
+    public final void start(final BundleContext bundleContext) throws Exception {
+        Activator.context = bundleContext;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public final void stop(final BundleContext bundleContext) throws Exception {
-		Activator.context = null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public final void stop(final BundleContext bundleContext) throws Exception {
+        Activator.context = null;
+    }
 
 }

@@ -24,27 +24,29 @@ import de.uniol.inf.is.odysseus.core.server.metadata.AbstractMetadataUpdater;
  * 
  */
 public class ProbabilisticFactory extends AbstractMetadataUpdater<IProbabilistic, Tuple<? extends IProbabilistic>> {
-	/** The position of the attribute holding the existence probability. */
-	private final int existenceProbabilityPos;
+    /** The position of the attribute holding the existence probability. */
+    private final int existenceProbabilityPos;
 
-	/**
-	 * Creates a new {@link ProbabilisticFactory}.
-	 * 
-	 * @param existenceProbabilityPos
-	 *            The position of the attribute
-	 */
-	public ProbabilisticFactory(final int existenceProbabilityPos) {
-		this.existenceProbabilityPos = existenceProbabilityPos;
-	}
+    /**
+     * Creates a new {@link ProbabilisticFactory}.
+     * 
+     * @param existenceProbabilityPos
+     *            The position of the attribute
+     */
+    public ProbabilisticFactory(final int existenceProbabilityPos) {
+        this.existenceProbabilityPos = existenceProbabilityPos;
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater#updateMetadata(de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
-	 */
-	@Override
-	public final void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
-		final IProbabilistic metadata = inElem.getMetadata();
-		metadata.setExistence(((Number) inElem.getAttribute(this.existenceProbabilityPos)).doubleValue());
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater#updateMetadata
+     * (de.uniol.inf.is.odysseus.core.metadata.IStreamObject)
+     */
+    @Override
+    public final void updateMetadata(final Tuple<? extends IProbabilistic> inElem) {
+        final IProbabilistic metadata = inElem.getMetadata();
+        metadata.setExistence(((Number) inElem.getAttribute(this.existenceProbabilityPos)).doubleValue());
+    }
 
 }

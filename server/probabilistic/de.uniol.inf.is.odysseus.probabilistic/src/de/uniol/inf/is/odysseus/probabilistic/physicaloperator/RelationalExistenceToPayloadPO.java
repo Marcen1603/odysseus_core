@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.probabilistic.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 
 /**
@@ -27,47 +27,50 @@ import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
  */
 public class RelationalExistenceToPayloadPO extends ExistenceToPayloadPO<IProbabilistic, Tuple<IProbabilistic>> {
 
-	/**
-	 * Default constructor.
-	 */
-	public RelationalExistenceToPayloadPO() {
-	}
+    /**
+     * Default constructor.
+     */
+    public RelationalExistenceToPayloadPO() {
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param relationalExistenceToPayloadPO
-	 *            The object to copy from
-	 */
-	public RelationalExistenceToPayloadPO(final RelationalExistenceToPayloadPO relationalExistenceToPayloadPO) {
-		super(relationalExistenceToPayloadPO);
-	}
+    /**
+     * Clone constructor.
+     * 
+     * @param relationalExistenceToPayloadPO
+     *            The object to copy from
+     */
+    public RelationalExistenceToPayloadPO(final RelationalExistenceToPayloadPO relationalExistenceToPayloadPO) {
+        super(relationalExistenceToPayloadPO);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
-	 */
-	@Override
-	protected final void process_next(final Tuple<IProbabilistic> object, final int port) {
-		final int inputSize = object.size();
-		final ProbabilisticTuple<IProbabilistic> out = new ProbabilisticTuple<IProbabilistic>(object.size() + 2, false);
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
+     */
+    @Override
+    protected final void process_next(final Tuple<IProbabilistic> object, final int port) {
+        final int inputSize = object.size();
+        final ProbabilisticTuple<IProbabilistic> out = new ProbabilisticTuple<IProbabilistic>(object.size() + 2, false);
 
-		System.arraycopy(object.getAttributes(), 0, out.getAttributes(), 0, inputSize);
+        System.arraycopy(object.getAttributes(), 0, out.getAttributes(), 0, inputSize);
 
-		out.setAttribute(inputSize, object.getMetadata().getExistence());
+        out.setAttribute(inputSize, object.getMetadata().getExistence());
 
-		out.setMetadata(object.getMetadata());
-		out.setRequiresDeepClone(object.requiresDeepClone());
-		this.transfer(out);
-	}
+        out.setMetadata(object.getMetadata());
+        out.setRequiresDeepClone(object.requiresDeepClone());
+        this.transfer(out);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone()
-	 */
-	@Override
-	public final AbstractPipe<Tuple<IProbabilistic>, Tuple<IProbabilistic>> clone() {
-		return new RelationalExistenceToPayloadPO(this);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#clone
+     * ()
+     */
+    @Override
+    public final AbstractPipe<Tuple<IProbabilistic>, Tuple<IProbabilistic>> clone() {
+        return new RelationalExistenceToPayloadPO(this);
+    }
 
 }

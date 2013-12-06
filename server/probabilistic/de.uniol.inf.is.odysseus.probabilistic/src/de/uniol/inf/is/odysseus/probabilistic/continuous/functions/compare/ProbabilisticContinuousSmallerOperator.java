@@ -23,18 +23,19 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
  */
 public class ProbabilisticContinuousSmallerOperator extends ProbabilisticContinuousSmallerEqualsOperator {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = -1978828532807864673L;
+    private static final long serialVersionUID = -1978828532807864673L;
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperator#getSymbol()
-	 */
-	@Override
-	public final String getSymbol() {
-		return "<";
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.
+     * ProbabilisticContinuousSmallerEqualsOperator#getSymbol()
+     */
+    @Override
+    public final String getSymbol() {
+        return "<";
+    }
 
 }

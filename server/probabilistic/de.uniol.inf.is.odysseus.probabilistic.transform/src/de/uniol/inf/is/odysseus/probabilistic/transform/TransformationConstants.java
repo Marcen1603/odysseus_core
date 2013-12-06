@@ -20,12 +20,12 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
  * 
  */
 public final class TransformationConstants {
-	/** Priority for probabilistic transformation rules. */
-	public static final int PRIORITY = 11;
+    /** Priority for probabilistic transformation rules. */
+    public static final int PRIORITY = 11;
 
-	/**
-	 * Private constructor.
-	 */
-	private TransformationConstants() {
-	}
+    /**
+     * Private constructor.
+     */
+    private TransformationConstants() {
+    }
 }

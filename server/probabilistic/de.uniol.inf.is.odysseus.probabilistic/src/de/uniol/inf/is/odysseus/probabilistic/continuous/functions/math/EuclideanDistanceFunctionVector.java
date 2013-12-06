@@ -25,37 +25,37 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  * 
  */
 public class EuclideanDistanceFunctionVector extends AbstractEuclideanDistanceFunction {
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 109458049612648398L;
-	/**
-	 * Accepted data types.
-	 */
-	public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
+    private static final long serialVersionUID = 109458049612648398L;
+    /**
+     * Accepted data types.
+     */
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_DOUBLE }, { SDFDatatype.MATRIX_DOUBLE } };
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype[] getAcceptedTypes(final int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException("negative argument index not allowed");
-		}
-		if (argPos > this.getArity()) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
-		}
-		return EuclideanDistanceFunctionVector.ACC_TYPES[argPos];
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype[] getAcceptedTypes(final int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity()) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument: Two distribution.");
+        }
+        return EuclideanDistanceFunctionVector.ACC_TYPES[argPos];
+    }
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final Double getValue() {
-		final RealMatrix a = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(0))[0]);
-		final RealMatrix b = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(1))[0]);
-		return this.getValueInternal(a, b);
-	}
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final Double getValue() {
+        final RealMatrix a = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(0))[0]);
+        final RealMatrix b = MatrixUtils.createColumnRealMatrix(((double[][]) this.getInputValue(1))[0]);
+        return this.getValueInternal(a, b);
+    }
 }

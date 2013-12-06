@@ -94,113 +94,113 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ToPro
  * 
  */
 public class ProbabilisticFunctionProvider implements IFunctionProvider {
-	/** Logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticFunctionProvider.class);
+    /** Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticFunctionProvider.class);
 
-	/**
-	 * Default constructor.
-	 */
-	public ProbabilisticFunctionProvider() {
+    /**
+     * Default constructor.
+     */
+    public ProbabilisticFunctionProvider() {
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uniol.inf.is.odysseus.mep.IFunctionProvider#getFunctions()
-	 */
-	@Override
-	public final List<IFunction<?>> getFunctions() {
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
-		try {
-			/** Boolean functions for discrete probabilistic values */
-			// functions.add(new ProbabilisticAndOperator());
-			// functions.add(new ProbabilisticOrOperator());
-			// functions.add(new ProbabilisticNotOperator());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.mep.IFunctionProvider#getFunctions()
+     */
+    @Override
+    public final List<IFunction<?>> getFunctions() {
+        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        try {
+            /** Boolean functions for discrete probabilistic values */
+            // functions.add(new ProbabilisticAndOperator());
+            // functions.add(new ProbabilisticOrOperator());
+            // functions.add(new ProbabilisticNotOperator());
 
-			functions.add(new ProbabilisticEqualsOperator());
-			functions.add(new ProbabilisticSmallerEqualsOperator());
-			functions.add(new ProbabilisticSmallerThanOperator());
-			functions.add(new ProbabilisticGreaterEqualsOperator());
-			functions.add(new ProbabilisticGreaterThanOperator());
+            functions.add(new ProbabilisticEqualsOperator());
+            functions.add(new ProbabilisticSmallerEqualsOperator());
+            functions.add(new ProbabilisticSmallerThanOperator());
+            functions.add(new ProbabilisticGreaterEqualsOperator());
+            functions.add(new ProbabilisticGreaterThanOperator());
 
-			/** Arithmetic functions for discrete probabilistic values */
-			functions.add(new ProbabilisticMinusOperator());
-			functions.add(new ProbabilisticMinusNumberRHSOperator());
-			functions.add(new ProbabilisticMinusNumberLHSOperator());
-			functions.add(new ProbabilisticPlusOperator());
-			functions.add(new ProbabilisticPlusNumberRHSOperator());
-			functions.add(new ProbabilisticPlusNumberLHSOperator());
-			functions.add(new ProbabilisticMultiplicationOperator());
-			functions.add(new ProbabilisticMultiplicationNumberRHSOperator());
-			functions.add(new ProbabilisticMultiplicationNumberLHSOperator());
-			functions.add(new ProbabilisticDivisionOperator());
-			functions.add(new ProbabilisticDivisionNumberRHSOperator());
-			functions.add(new ProbabilisticDivisionNumberLHSOperator());
-			functions.add(new ProbabilisticPowerOperator());
-			functions.add(new ProbabilisticSQRTFunction());
-			functions.add(new ProbabilisticMinFunction());
-			functions.add(new ProbabilisticMinNumberRHSFunction());
-			functions.add(new ProbabilisticMinNumberLHSFunction());
-			functions.add(new ProbabilisticMaxFunction());
-			functions.add(new ProbabilisticMaxNumberRHSFunction());
-			functions.add(new ProbabilisticMaxNumberLHSFunction());
-			
-			
-			/** Convert functions */
-			functions.add(new ProbabilisticDoubleToByteFunction());
-			functions.add(new ProbabilisticDoubleToShortFunction());
-			functions.add(new ProbabilisticDoubleToIntegerFunction());
-			functions.add(new ProbabilisticDoubleToLongFunction());
-			functions.add(new ProbabilisticDoubleToFloatFunction());
-			functions.add(new ToProbabilisticDoubleFunction());
+            /** Arithmetic functions for discrete probabilistic values */
+            functions.add(new ProbabilisticMinusOperator());
+            functions.add(new ProbabilisticMinusNumberRHSOperator());
+            functions.add(new ProbabilisticMinusNumberLHSOperator());
+            functions.add(new ProbabilisticPlusOperator());
+            functions.add(new ProbabilisticPlusNumberRHSOperator());
+            functions.add(new ProbabilisticPlusNumberLHSOperator());
+            functions.add(new ProbabilisticMultiplicationOperator());
+            functions.add(new ProbabilisticMultiplicationNumberRHSOperator());
+            functions.add(new ProbabilisticMultiplicationNumberLHSOperator());
+            functions.add(new ProbabilisticDivisionOperator());
+            functions.add(new ProbabilisticDivisionNumberRHSOperator());
+            functions.add(new ProbabilisticDivisionNumberLHSOperator());
+            functions.add(new ProbabilisticPowerOperator());
+            functions.add(new ProbabilisticSQRTFunction());
+            functions.add(new ProbabilisticMinFunction());
+            functions.add(new ProbabilisticMinNumberRHSFunction());
+            functions.add(new ProbabilisticMinNumberLHSFunction());
+            functions.add(new ProbabilisticMaxFunction());
+            functions.add(new ProbabilisticMaxNumberRHSFunction());
+            functions.add(new ProbabilisticMaxNumberLHSFunction());
 
-			/** Boolean functions for continuous probabilistic values */
-			functions.add(new ProbabilisticIntegrateMultivariateFunction());
-			functions.add(new ProbabilisticIntegrateFunction());
+            /** Convert functions */
+            functions.add(new ProbabilisticDoubleToByteFunction());
+            functions.add(new ProbabilisticDoubleToShortFunction());
+            functions.add(new ProbabilisticDoubleToIntegerFunction());
+            functions.add(new ProbabilisticDoubleToLongFunction());
+            functions.add(new ProbabilisticDoubleToFloatFunction());
+            functions.add(new ToProbabilisticDoubleFunction());
 
-			functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
-			functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
-			functions.add(new ProbabilisticContinuousSmallerOperator());
-			functions.add(new ProbabilisticContinuousSmallerOperatorVector());
-			functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
-			functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
-			functions.add(new ProbabilisticContinuousGreaterOperator());
-			functions.add(new ProbabilisticContinuousGreaterOperatorVector());
-			functions.add(new ProbabilisticContinuousEqualsOperator());
-			functions.add(new ProbabilisticContinuousEqualsOperatorVector());
+            /** Boolean functions for continuous probabilistic values */
+            functions.add(new ProbabilisticIntegrateMultivariateFunction());
+            functions.add(new ProbabilisticIntegrateFunction());
 
-			/** Arithmetic functions for discrete probabilistic values */
-			functions.add(new ProbabilisticContinuousMinusOperator());
-			functions.add(new ProbabilisticContinuousMinusNumberRHSOperator());
-			functions.add(new ProbabilisticContinuousPlusOperator());
-			functions.add(new ProbabilisticContinuousPlusNumberRHSOperator());
-			functions.add(new ProbabilisticContinuousPlusNumberLHSOperator());
-			functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
-			functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
-			functions.add(new ProbabilisticContinuousMultiplicationOperator());
-			functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
-			functions.add(new ProbabilisticContinuousDivisionOperator());
+            functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
+            functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
+            functions.add(new ProbabilisticContinuousSmallerOperator());
+            functions.add(new ProbabilisticContinuousSmallerOperatorVector());
+            functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
+            functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
+            functions.add(new ProbabilisticContinuousGreaterOperator());
+            functions.add(new ProbabilisticContinuousGreaterOperatorVector());
+            functions.add(new ProbabilisticContinuousEqualsOperator());
+            functions.add(new ProbabilisticContinuousEqualsOperatorVector());
 
-			/** Convert functions */
-			functions.add(new ToProbabilisticContinuousDouble());
+            /** Arithmetic functions for discrete probabilistic values */
+            functions.add(new ProbabilisticContinuousMinusOperator());
+            functions.add(new ProbabilisticContinuousMinusNumberRHSOperator());
+            functions.add(new ProbabilisticContinuousPlusOperator());
+            functions.add(new ProbabilisticContinuousPlusNumberRHSOperator());
+            functions.add(new ProbabilisticContinuousPlusNumberLHSOperator());
+            functions.add(new ProbabilisticContinuousMultiplicationNumberRHSOperator());
+            functions.add(new ProbabilisticContinuousMultiplicationNumberLHSOperator());
+            functions.add(new ProbabilisticContinuousMultiplicationOperator());
+            functions.add(new ProbabilisticContinuousDivisionNumberRHSOperator());
+            functions.add(new ProbabilisticContinuousDivisionOperator());
 
-			/** Additional functions for continuous probabilistic value */
-			functions.add(new BhattacharyyaDistanceFunctionVector());
-			functions.add(new BhattacharyyaDistanceFunction());
-			functions.add(new MahalanobisDistanceFunctionVector());
-			functions.add(new MahalanobisDistanceFunction());
+            /** Convert functions */
+            functions.add(new ToProbabilisticContinuousDouble());
 
-			functions.add(new As2DVectorFunction());
-			functions.add(new As3DVectorFunction());
+            /** Additional functions for continuous probabilistic value */
+            functions.add(new BhattacharyyaDistanceFunctionVector());
+            functions.add(new BhattacharyyaDistanceFunction());
+            functions.add(new MahalanobisDistanceFunctionVector());
+            functions.add(new MahalanobisDistanceFunction());
 
-			functions.add(new EuclideanDistanceFunction());
-			functions.add(new EuclideanDistanceFunctionVector());
-			// ProbabilisticFunctionProvider.LOG.info(String.format(
-			// "Register functions: %s", functions));
-		} catch (final Exception e) {
-			ProbabilisticFunctionProvider.LOG.error(e.getMessage(), e);
-		}
-		return functions;
-	}
+            functions.add(new As2DVectorFunction());
+            functions.add(new As3DVectorFunction());
+
+            functions.add(new EuclideanDistanceFunction());
+            functions.add(new EuclideanDistanceFunctionVector());
+            // ProbabilisticFunctionProvider.LOG.info(String.format(
+            // "Register functions: %s", functions));
+        }
+        catch (final Exception e) {
+            ProbabilisticFunctionProvider.LOG.error(e.getMessage(), e);
+        }
+        return functions;
+    }
 }

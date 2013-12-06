@@ -27,7 +27,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
 /**
@@ -36,90 +36,93 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFun
  */
 public abstract class AbstractBhattacharyyaDistanceFunction extends AbstractProbabilisticFunction<Double> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -4978963210815853709L;
+    private static final long serialVersionUID = -4978963210815853709L;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final int getArity() {
-		return 2;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final int getArity() {
+        return 2;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final String getSymbol() {
-		return "similarity";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getSymbol() {
+        return "similarity";
+    }
 
-	/**
-	 * 
-	 * @param a
-	 *            The normal distribution mixture
-	 * @param b
-	 *            The other distribution
-	 * @return The distance measure
-	 */
-	protected final double getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
-		double weightedBhattacharyyaDistance = 0.0;
-		for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
-			final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
-			final RealMatrix aCovariance = aEntry.getValue().getCovariances();
-			final double aDeterminant = this.getDeterminant(aCovariance);
-			for (final Pair<Double, MultivariateNormalDistribution> bEntry : b.getMixtures().getComponents()) {
-				final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMeans());
-				final RealMatrix bCovariance = bEntry.getValue().getCovariances();
-				final double bDeterminant = this.getDeterminant(aCovariance);
+    /**
+     * 
+     * @param a
+     *            The normal distribution mixture
+     * @param b
+     *            The other distribution
+     * @return The distance measure
+     */
+    protected final double getValueInternal(final NormalDistributionMixture a, final NormalDistributionMixture b) {
+        double weightedBhattacharyyaDistance = 0.0;
+        for (final Pair<Double, MultivariateNormalDistribution> aEntry : a.getMixtures().getComponents()) {
+            final RealMatrix aMean = MatrixUtils.createColumnRealMatrix(aEntry.getValue().getMeans());
+            final RealMatrix aCovariance = aEntry.getValue().getCovariances();
+            final double aDeterminant = this.getDeterminant(aCovariance);
+            for (final Pair<Double, MultivariateNormalDistribution> bEntry : b.getMixtures().getComponents()) {
+                final RealMatrix bMean = MatrixUtils.createColumnRealMatrix(bEntry.getValue().getMeans());
+                final RealMatrix bCovariance = bEntry.getValue().getCovariances();
+                final double bDeterminant = this.getDeterminant(aCovariance);
 
-				final RealMatrix avgCovariance = aCovariance.add(bCovariance).scalarMultiply(0.5);
-				final double avgDeterminant = this.getDeterminant(avgCovariance);
-				DecompositionSolver solver;
-				try {
-					solver = new CholeskyDecomposition(avgCovariance).getSolver();
-				} catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
-					solver = new LUDecomposition(avgCovariance).getSolver();
-				}
-				final RealMatrix avgCovarianceInverse = solver.getInverse();
+                final RealMatrix avgCovariance = aCovariance.add(bCovariance).scalarMultiply(0.5);
+                final double avgDeterminant = this.getDeterminant(avgCovariance);
+                DecompositionSolver solver;
+                try {
+                    solver = new CholeskyDecomposition(avgCovariance).getSolver();
+                }
+                catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
+                    solver = new LUDecomposition(avgCovariance).getSolver();
+                }
+                final RealMatrix avgCovarianceInverse = solver.getInverse();
 
-				final RealMatrix bhattacharyyaDistanceTerm1 = aMean.subtract(bMean).transpose().multiply(avgCovarianceInverse).multiply(aMean.subtract(bMean)).scalarMultiply(1.0 / 8.0);
-				final double bhattacharyyaDistanceTerm2 = 0.5 * FastMath.log(avgDeterminant / FastMath.sqrt(aDeterminant * bDeterminant));
-				final RealMatrix bhattacharyyaDistance = bhattacharyyaDistanceTerm1.scalarAdd(bhattacharyyaDistanceTerm2);
-				// FIXME IS this correct?
-				final double weight = aEntry.getKey() * bEntry.getKey();
-				weightedBhattacharyyaDistance += bhattacharyyaDistance.getEntry(0, 0) * weight;
+                final RealMatrix bhattacharyyaDistanceTerm1 = aMean.subtract(bMean).transpose().multiply(avgCovarianceInverse).multiply(aMean.subtract(bMean)).scalarMultiply(1.0 / 8.0);
+                final double bhattacharyyaDistanceTerm2 = 0.5 * FastMath.log(avgDeterminant / FastMath.sqrt(aDeterminant * bDeterminant));
+                final RealMatrix bhattacharyyaDistance = bhattacharyyaDistanceTerm1.scalarAdd(bhattacharyyaDistanceTerm2);
+                // FIXME IS this correct?
+                final double weight = aEntry.getKey() * bEntry.getKey();
+                weightedBhattacharyyaDistance += bhattacharyyaDistance.getEntry(0, 0) * weight;
 
-			}
-		}
-		return weightedBhattacharyyaDistance;
-	}
+            }
+        }
+        return weightedBhattacharyyaDistance;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final SDFDatatype getReturnType() {
-		return SDFDatatype.DOUBLE;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final SDFDatatype getReturnType() {
+        return SDFDatatype.DOUBLE;
+    }
 
-	/**
-	 * Calculates the determinat of the given matrix using Cholesky decomposition first and fall back on LU decomposition on error.
-	 * 
-	 * @param matrix
-	 *            The matrix
-	 * @return The determinant
-	 */
-	private double getDeterminant(final RealMatrix matrix) {
-		double determinant;
-		try {
-			determinant = new CholeskyDecomposition(matrix).getDeterminant();
-		} catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
-			determinant = new LUDecomposition(matrix).getDeterminant();
-		}
-		return determinant;
-	}
+    /**
+     * Calculates the determinat of the given matrix using Cholesky
+     * decomposition first and fall back on LU decomposition on error.
+     * 
+     * @param matrix
+     *            The matrix
+     * @return The determinant
+     */
+    private double getDeterminant(final RealMatrix matrix) {
+        double determinant;
+        try {
+            determinant = new CholeskyDecomposition(matrix).getDeterminant();
+        }
+        catch (NonSymmetricMatrixException | NonPositiveDefiniteMatrixException e) {
+            determinant = new LUDecomposition(matrix).getDeterminant();
+        }
+        return determinant;
+    }
 }

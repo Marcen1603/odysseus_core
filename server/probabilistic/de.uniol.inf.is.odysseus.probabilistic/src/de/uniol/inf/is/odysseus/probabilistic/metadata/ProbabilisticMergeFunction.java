@@ -29,51 +29,58 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMe
  * @param <T>
  */
 public class ProbabilisticMergeFunction<T extends Tuple<K>, K extends ITimeIntervalProbabilistic> extends AbstractRelationalMergeFunction<T, K> implements IDataMergeFunction<T, K>, Cloneable {
-	/**
-	 * Default constructor.
-	 * 
-	 * @param resultSchemaSize
-	 *            The size of the result schema
-	 */
-	public ProbabilisticMergeFunction(final int resultSchemaSize) {
-		super(resultSchemaSize);
-	}
+    /**
+     * Default constructor.
+     * 
+     * @param resultSchemaSize
+     *            The size of the result schema
+     */
+    public ProbabilisticMergeFunction(final int resultSchemaSize) {
+        super(resultSchemaSize);
+    }
 
-	/**
-	 * Clone constructor.
-	 * 
-	 * @param original
-	 *            The object to copy from
-	 */
-	protected ProbabilisticMergeFunction(final ProbabilisticMergeFunction<T, K> original) {
-		super(original.schemaSize);
-	}
+    /**
+     * Clone constructor.
+     * 
+     * @param original
+     *            The object to copy from
+     */
+    protected ProbabilisticMergeFunction(final ProbabilisticMergeFunction<T, K> original) {
+        super(original.schemaSize);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction#merge(java.lang.Object, java.lang.Object, de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction, de.uniol.inf.is.odysseus.core.Order)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public final T merge(final T left, final T right, final IMetadataMergeFunction<K> metamerge, final Order order) {
-		return (T) left.merge(left, right, metamerge, order);
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction
+     * #merge(java.lang.Object, java.lang.Object,
+     * de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction,
+     * de.uniol.inf.is.odysseus.core.Order)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public final T merge(final T left, final T right, final IMetadataMergeFunction<K> metamerge, final Order order) {
+        return (T) left.merge(left, right, metamerge, order);
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction#init()
-	 */
-	@Override
-	public void init() {
-	}
+    /*
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction
+     * #init()
+     */
+    @Override
+    public void init() {
+    }
 
-	/*
-	 * 
-	 * @see de.uniol.inf.is.odysseus.physicaloperator.relational.AbstractRelationalMergeFunction#clone()
-	 */
-	@Override
-	public final ProbabilisticMergeFunction<T, K> clone() {
-		return new ProbabilisticMergeFunction<T, K>(this);
-	}
+    /*
+     * 
+     * @see de.uniol.inf.is.odysseus.physicaloperator.relational.
+     * AbstractRelationalMergeFunction#clone()
+     */
+    @Override
+    public final ProbabilisticMergeFunction<T, K> clone() {
+        return new ProbabilisticMergeFunction<T, K>(this);
+    }
 
 }

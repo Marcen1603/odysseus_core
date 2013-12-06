@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.probabilistic.feature"
-      label="Feature"
-      version="1.0.0.qualifier">
+      label="Probabilistic Server Feature"
+      version="1.0.0.qualifier"
+      provider-name="Christian Kuka">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -39,6 +40,13 @@
 
    <plugin
          id="org.apache.commons.math3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.probabilistic.common"
          download-size="0"
          install-size="0"
          version="0.0.0"
