@@ -17,7 +17,18 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config) throws QueryPartAllocationException {	
+	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config) throws QueryPartAllocationException {
+		
+		// ILogicalQueryParts --> Subplans
+		// Zuordnung merken
+		
+		// Allokation
+		
+		// Subplans: Destinationname auslesen und peerID zuordnen
+		// Subplans über obige Zuordnung in ILogicalQueryParts transformieren
+		// PeerIDs zuordnen
+		
+		// Ergebnis zurückgeben
 		return null;
 	}
 
