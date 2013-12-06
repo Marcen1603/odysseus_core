@@ -1,11 +1,14 @@
-package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement;
+package de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
@@ -23,44 +26,58 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 
 
-public class CostQueryAdvertisement extends Advertisement implements Serializable {
+public class CostResponseAdvertisement extends Advertisement implements Serializable {
 	private static final long serialVersionUID = -1835515099213291456L;
-	private static final String ADVERTISEMENT_TYPE = "jxta:CostQueryAdvertisement";
+	private static final String ADVERTISEMENT_TYPE = "jxta:CostResponseAdvertisement";
 	private static final String ID_TAG = "id";
 	private static final String PQL_TAG = "pql";
 	private static final String PEER_ID_TAG = "peerId";
 	private static final String SHARED_QUERY_ID_TAG = "sharedQueryId";
 	private static final String TRANSCFG_NAME_TAG = "transcfg";
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
-	private static final Logger log = LoggerFactory.getLogger(CostQueryAdvertisement.class);
+	private static final String COST_SUMMARY_TAG = "costSummary";
+	private static final String BID_TAG = "bid";
+	private static final String CPU_COST_TAG = "cpuCost";
+	private static final String MEM_COST_TAG = "memCost";	
+	private static final Logger log = LoggerFactory.getLogger(CostResponseAdvertisement.class);
+	private static final Gson gson = new Gson();
+	private static final Type jsonType = new TypeToken<HashMap<String, CostSummary>>(){}.getType();
 	
 	private ID id;
 	private ID sharedQueryID;
 	private String pqlStatement;
 	private String transCfgName;
 	private PeerID ownerPeerId;
+	private double bid;
+	private double bearableCpuCostsInPercentage;
+	private double bearableMemCostsInPercentage;	
+	private Map<String, CostSummary> costSummary;
 
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
 	}	
 	
-	public CostQueryAdvertisement() {
+	public CostResponseAdvertisement() {
 		
 	}
 	
-	public CostQueryAdvertisement(Element<?> root) {
+	public CostResponseAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
 		determineFields(doc);
 	}
 
-	public CostQueryAdvertisement(InputStream stream) throws IOException {
+	public CostResponseAdvertisement(InputStream stream) throws IOException {
 		this(StructuredDocumentFactory.newStructuredDocument(MimeMediaType.XMLUTF8, Preconditions.checkNotNull(stream, "Stream must not be null!")));
 	}
 
-	public CostQueryAdvertisement(CostQueryAdvertisement adv) {
+	public CostResponseAdvertisement(CostResponseAdvertisement adv) {
 		Preconditions.checkNotNull(adv, "Advertisement to copy must not be null!");
 
 		this.id = adv.id;
@@ -68,11 +85,15 @@ public class CostQueryAdvertisement extends Advertisement implements Serializabl
 		this.pqlStatement = adv.pqlStatement;
 		this.transCfgName = adv.transCfgName;
 		this.ownerPeerId = adv.ownerPeerId;
+		this.costSummary = adv.costSummary;
+		this.bid = adv.bid;
+		this.bearableCpuCostsInPercentage = adv.bearableCpuCostsInPercentage;
+		this.bearableMemCostsInPercentage = adv.bearableMemCostsInPercentage;		
 	}
 	
 	@Override
-	public CostQueryAdvertisement clone() {
-		return new CostQueryAdvertisement(this);
+	public CostResponseAdvertisement clone() {
+		return new CostResponseAdvertisement(this);
 	}
 
 	@Override
@@ -80,11 +101,11 @@ public class CostQueryAdvertisement extends Advertisement implements Serializabl
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof CostQueryAdvertisement)) {
+		if (!(obj instanceof CostResponseAdvertisement)) {
 			return false;
 		}
 
-		final CostQueryAdvertisement other = (CostQueryAdvertisement) obj;
+		final CostResponseAdvertisement other = (CostResponseAdvertisement) obj;
 		return id.equals(other.id);
 	}
 
@@ -98,12 +119,17 @@ public class CostQueryAdvertisement extends Advertisement implements Serializabl
 		if (doc instanceof Attributable) {
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
+		String json = gson.toJson(costSummary, jsonType);
 		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, PQL_TAG, pqlStatement);
 		appendElement(doc, PEER_ID_TAG, ownerPeerId.toString());			
 		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
 		appendElement(doc, TRANSCFG_NAME_TAG, transCfgName);
-
+		appendElement(doc, BID_TAG, this.bid+"");
+		appendElement(doc, CPU_COST_TAG, this.bearableCpuCostsInPercentage+"");
+		appendElement(doc, MEM_COST_TAG, this.bearableMemCostsInPercentage+"");		
+		appendElement(doc, COST_SUMMARY_TAG, ""+json);
+		
 		return doc;
 	}
 
@@ -169,6 +195,17 @@ public class CostQueryAdvertisement extends Advertisement implements Serializabl
 			} else if (elem.getName().equals(TRANSCFG_NAME_TAG)) {
 				setTransCfgName(elem.getTextValue());
 			}
+			 else if (elem.getName().equals(BID_TAG)) {
+				this.setBid(Double.valueOf(elem.getTextValue()));
+			} else if (elem.getName().equals(CPU_COST_TAG)) {
+				this.setPercentageOfBearableCpuCosts(Double.valueOf(elem.getTextValue()));
+			} else if (elem.getName().equals(MEM_COST_TAG)) {
+				this.setPercentageOfBearableMemCosts(Double.valueOf(elem.getTextValue()));				
+			} else if (elem.getName().equals(COST_SUMMARY_TAG)) {
+				String json = elem.getTextValue();
+				Map<String, CostSummary> costSummary = gson.fromJson(json, jsonType);
+				this.setCostSummary(costSummary);	
+			}			
 		}
 	}
 
@@ -205,5 +242,34 @@ public class CostQueryAdvertisement extends Advertisement implements Serializabl
 
 	public void setOwnerPeerId(PeerID ownerPeerId) {
 		this.ownerPeerId = ownerPeerId;
+	}
+
+	public Map<String, CostSummary> getCostSummary() {
+		return costSummary;
+	}
+
+	public void setCostSummary(Map<String, CostSummary> costSummary) {
+		this.costSummary = costSummary;
+	}
+
+	
+	public double getBid() {
+		return bid;
+	}
+	public void setBid(double bid) {
+		this.bid = bid;
+	}
+	public double getPercentageOfBearableCpuCosts() {
+		return bearableCpuCostsInPercentage;
+	}
+	public void setPercentageOfBearableCpuCosts(double bearableCostsInPercentage) {
+		this.bearableCpuCostsInPercentage = bearableCostsInPercentage;
+	}
+	
+	public double getPercentageOfBearableMemCosts() {
+		return bearableMemCostsInPercentage;
+	}
+	public void setPercentageOfBearableMemCosts(double bearableCostsInPercentage) {
+		this.bearableMemCostsInPercentage = bearableCostsInPercentage;
 	}
 }

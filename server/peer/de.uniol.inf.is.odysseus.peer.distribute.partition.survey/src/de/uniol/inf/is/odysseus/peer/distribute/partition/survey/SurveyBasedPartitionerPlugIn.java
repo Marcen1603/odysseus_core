@@ -5,10 +5,10 @@ import net.jxta.document.AdvertisementFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostQueryAdvertisement;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostQueryAdvertisementInstantiator;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostResponseAdvertisement;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.internal.advertisement.CostResponseAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostQueryAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostQueryAdvertisementInstantiator;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostResponseAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostResponseAdvertisementInstantiator;
 
 public class SurveyBasedPartitionerPlugIn implements BundleActivator {
 
