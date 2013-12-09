@@ -40,7 +40,9 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Endpoint;
 
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebserviceServer;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 
@@ -54,11 +56,15 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 @XmlSeeAlso({ SensorSchema.class, SensorAttribute.class, StringResponse.class })
 public class SensorRegistryService extends WebserviceServer {
 
+	public SensorRegistryService(IExecutor executor) {
+		super(executor);	
+	}
+
 	private static Logger LOG = LoggerFactory.getLogger(SensorRegistryService.class); 
 	private static final String TRANSFORMATION_CONFIGURATION = "Standard";
 
 	public static void startServer() {
-		SensorRegistryService server = new SensorRegistryService();
+		SensorRegistryService server = new SensorRegistryService(ExecutorServiceBinding.getExecutor());
 		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9999/odysseus", server);
 		if (endpoint.isPublished()) {
 			LOG.debug("Webservice published!");
@@ -67,8 +73,7 @@ public class SensorRegistryService extends WebserviceServer {
 	}
 	
 	public boolean isSensorRegistered(@WebParam(name ="securityToken") String securityToken, @WebParam(name = "name") String name ){
-		try{
-			loginWithSecurityToken(securityToken);
+		try{			
 			return SensorRegistry.getInstance().isSensorRegistered(name);
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -76,18 +81,16 @@ public class SensorRegistryService extends WebserviceServer {
 		}
 	}
 
-	public boolean registerSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "name") String name, @WebParam(name = "host") String host,
+	public boolean registerSensor(@WebParam(name = "session") ISession session, @WebParam(name = "name") String name, @WebParam(name = "host") String host,
 			@WebParam(name = "port") int port, @WebParam(name = "schema") SensorSchema schema) {
-		try {
-			ISession user = loginWithSecurityToken(securityToken);			
-			
+		try {			
 			Sensor sensor = new Sensor(host, port);
 			boolean result = SensorRegistry.getInstance().registerSensor(name, sensor);
 			if (result) {
 				LOG.debug("Sensor " + name + " registered");
 				String query = "CREATE STREAM " + name + "(" + buildParamList(schema) + ") CHANNEL " + host + " : " + port;
 				LOG.debug("Creating Stream in Odysseus: " + query);
-				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION, null);				
+				ExecutorServiceBinding.getExecutor().addQuery(query, "CQL", session, TRANSFORMATION_CONFIGURATION, null);				
 			}else{
 				LOG.debug("Sensor "+name+" was already registered");
 			}
@@ -109,16 +112,15 @@ public class SensorRegistryService extends WebserviceServer {
 
 	}
 
-	public boolean unregisterSensor(@WebParam(name = "securityToken") String securityToken, @WebParam(name = "name") String name) {
+	public boolean unregisterSensor(@WebParam(name = "session") ISession session, @WebParam(name = "name") String name) {
 		try {
-			ISession user = loginWithSecurityToken(securityToken);
 			
 			boolean result = SensorRegistry.getInstance().unregisterSensor(name);
 			if (result) {				
 				LOG.debug("Sensor " + name + " unregistered");
 				String query = "DROP STREAM " + name;
 				LOG.debug("Creating Stream in Odysseus: " + query);
-				getExecutor().addQuery(query, "CQL", user, TRANSFORMATION_CONFIGURATION, null);				
+				ExecutorServiceBinding.getExecutor().addQuery(query, "CQL", session, TRANSFORMATION_CONFIGURATION, null);				
 			}else{
 				LOG.debug("Sensor "+name+" was never registered");
 			}
