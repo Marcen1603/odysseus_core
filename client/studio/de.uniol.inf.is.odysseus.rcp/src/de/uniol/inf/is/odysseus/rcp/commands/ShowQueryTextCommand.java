@@ -48,7 +48,7 @@ public class ShowQueryTextCommand extends AbstractHandler implements IHandler {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
 				int id = (Integer)selection;
-				ILogicalQuery query = executor.getLogicalQueryById(id);
+				ILogicalQuery query = executor.getLogicalQueryById(id, OdysseusRCPPlugIn.getActiveSession());
 				String queryText = query.getQueryText();
 				Shell shell = HandlerUtil.getActiveWorkbenchWindow(event).getShell();
 				MessageBox box = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);

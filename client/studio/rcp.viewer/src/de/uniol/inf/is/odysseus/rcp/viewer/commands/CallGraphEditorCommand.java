@@ -33,6 +33,7 @@ import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
@@ -56,7 +57,7 @@ public class CallGraphEditorCommand extends AbstractHandler implements IHandler 
 					if (selection instanceof Integer) {
 						Integer queryID = (Integer) selection;
 						IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
-						openGraphEditor(page, executor.getPhysicalRoots(queryID), queryID);
+						openGraphEditor(page, executor.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()), queryID);
 					} else {
 						LOG.error("Selection of type " + selection.getClass() + " is not supported for graph presentation.");
 					}

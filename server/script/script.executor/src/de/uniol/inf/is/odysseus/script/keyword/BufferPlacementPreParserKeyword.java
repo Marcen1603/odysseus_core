@@ -47,7 +47,7 @@ public class BufferPlacementPreParserKeyword extends AbstractPreParserExecutorKe
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {	
 		try {
-			return getServerExecutor().getRegisteredBufferPlacementStrategiesIDs();
+			return getServerExecutor().getRegisteredBufferPlacementStrategiesIDs(caller);
 		} catch (OdysseusScriptException e) {
 			return new ArrayList<>();			
 		}

@@ -49,7 +49,7 @@ public interface IExecutor extends IClientPlanManager{
 	/**
 	 * List of predefined registered build configurations
 	 */
-	public Collection<String> getQueryBuildConfigurationNames();
+	public Collection<String> getQueryBuildConfigurationNames(ISession session);
 
 	/**
 	 * getSupportedQueryParser liefert alle IDs der zur Verfuegung stehenden
@@ -59,7 +59,7 @@ public interface IExecutor extends IClientPlanManager{
 	 *         uebersetzung von Anfragen, die als Zeichenkette vorliegen
 	 * @throws PlanManagementException
 	 */
-	public Set<String> getSupportedQueryParsers()
+	public Set<String> getSupportedQueryParsers(ISession session)
 			throws PlanManagementException;
 	
 	/**
@@ -112,21 +112,21 @@ public interface IExecutor extends IClientPlanManager{
 	 * @param id
 	 * @return
 	 */
-	public ILogicalQuery getLogicalQueryById(int id);
+	public ILogicalQuery getLogicalQueryById(int id, ISession session);
 	
 	/**
 	 * Return the named logical query 
 	 * @param name
 	 * @return
 	 */
-	public ILogicalQuery getLogicalQueryByName(String name);
+	public ILogicalQuery getLogicalQueryByName(String name, ISession session);
 	
 	/**
 	 * getLogicalQueryIds gibt die Query-IDs aller Anfragen zurück
 	 * 
 	 * @return IDs aller Anfragen
 	 */
-	public Collection<Integer> getLogicalQueryIds();
+	public Collection<Integer> getLogicalQueryIds(ISession session);
 	
 	/**
 	 * Returns for a query the physical root operators
@@ -134,7 +134,7 @@ public interface IExecutor extends IClientPlanManager{
 	 * @param queryID
 	 * @return
 	 */
-	public List<IPhysicalOperator> getPhysicalRoots(int queryID);
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session);
 	
 	/**
 	 * Start all queries that are currently not running
@@ -151,7 +151,7 @@ public interface IExecutor extends IClientPlanManager{
 	 * @return Set of registered buffer placement strategies represented by an
 	 *         id
 	 */
-	public Set<String> getRegisteredBufferPlacementStrategiesIDs();
+	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession session);
 
 	/**
 	 * Provides a Set of registered scheduling strategy strategies represented
@@ -160,14 +160,14 @@ public interface IExecutor extends IClientPlanManager{
 	 * @return Set of registered scheduling strategy strategies represented by
 	 *         an id
 	 */
-	public Set<String> getRegisteredSchedulingStrategies();
+	public Set<String> getRegisteredSchedulingStrategies(ISession session);
 
 	/**
 	 * Provides a Set of registered schedulers represented by an id.
 	 * 
 	 * @return Set of registered schedulers represented by an id
 	 */
-	public Set<String> getRegisteredSchedulers();
+	public Set<String> getRegisteredSchedulers(ISession session);
 
 	/**
 	 * Sets the the scheduler with a scheduling strategy which should be used
@@ -180,21 +180,21 @@ public interface IExecutor extends IClientPlanManager{
 	 *            scheduling strategy factory which should be used by scheduler
 	 *            for creating concrete scheduler.
 	 */
-	public void setScheduler(String scheduler, String schedulerStrategy);
+	public void setScheduler(String scheduler, String schedulerStrategy, ISession session);
 
 	/**
 	 * Get the current active scheduler represented by an id.
 	 * 
 	 * @return current active scheduler represented by an id.
 	 */
-	public String getCurrentSchedulerID();
+	public String getCurrentSchedulerID(ISession session);
 
 	/**
 	 * Get the current active scheduling strategy factory represented by an id.
 	 * 
 	 * @return current active scheduling strategy factory represented by an id.
 	 */
-	public String getCurrentSchedulingStrategyID();
+	public String getCurrentSchedulingStrategyID(ISession session);
 
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller);
 	
@@ -222,7 +222,7 @@ public interface IExecutor extends IClientPlanManager{
 
 	void reloadStoredQueries(ISession caller);
 	
-	public SDFSchema getOutputSchema(int queryId);
+	public SDFSchema getOutputSchema(int queryId, ISession session);
 	
 	// stored procedure stuff
 	public void addStoredProcedure(String name, StoredProcedure proc, ISession caller);

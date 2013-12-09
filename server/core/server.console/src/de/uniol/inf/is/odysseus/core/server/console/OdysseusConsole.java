@@ -270,7 +270,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			return parser;
 		}
 
-		Iterator<String> parsers = this.executor.getSupportedQueryParsers().iterator();
+		Iterator<String> parsers = this.executor.getSupportedQueryParsers(currentUser).iterator();
 		if (parsers != null && parsers.hasNext()) {
 			this.parser = parsers.next();
 			return this.parser;
@@ -291,7 +291,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _lsparser(CommandInterpreter ci) {
 		Set<String> parserList = null;
 		try {
-			parserList = this.executor.getSupportedQueryParsers();
+			parserList = this.executor.getSupportedQueryParsers(currentUser);
 			// "Set" Default-Parser
 			if (parser == null && parserList.size() > 0) {
 				parser = parserList.iterator().next();
@@ -318,7 +318,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		addCommand(args);
 		if (args != null && args.length > 0) {
 			try {
-				if (this.executor.getSupportedQueryParsers().contains(args[0])) {
+				if (this.executor.getSupportedQueryParsers(currentUser).contains(args[0])) {
 					this.parser = args[0];
 					ci.println("New parser: " + args[0]);
 				} else {
@@ -334,7 +334,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(description = "show available buffer placement strategies")
 	public void _lsbuffer(CommandInterpreter ci) {
-		Set<String> bufferList = this.executor.getRegisteredBufferPlacementStrategiesIDs();
+		Set<String> bufferList = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 		if (bufferList != null) {
 			String current = this.executor.getConfiguration().get(ParameterBufferPlacementStrategy.class).getValue().getName();
 			ci.println("Available bufferplacement strategies:");
@@ -357,9 +357,9 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(description = "show available scheduling strategies")
 	public void _lsschedulingstrategies(CommandInterpreter ci) {
-		Set<String> list = this.executor.getRegisteredSchedulingStrategies();
+		Set<String> list = this.executor.getRegisteredSchedulingStrategies(currentUser);
 		if (list != null) {
-			String current = executor.getCurrentSchedulingStrategyID();
+			String current = executor.getCurrentSchedulingStrategyID(currentUser);
 			ci.println("Available Scheduling strategies:");
 
 			ci.println("");
@@ -376,9 +376,9 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	@Help(description = "show available schedulers")
 	public void _lsscheduler(CommandInterpreter ci) {
-		Set<String> list = this.executor.getRegisteredSchedulers();
+		Set<String> list = this.executor.getRegisteredSchedulers(currentUser);
 		if (list != null) {
-			String current = executor.getCurrentSchedulerID();
+			String current = executor.getCurrentSchedulerID(currentUser);
 			ci.println("Available Schedulers:");
 
 			// if (current == null) {
@@ -400,7 +400,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		String[] args = support.getArgs(ci);
 		addCommand(args);
 		if (args != null && args.length > 0) {
-			executor.setScheduler(args[0], args[1]);
+			executor.setScheduler(args[0], args[1], currentUser);
 		} else {
 			ci.println("No query argument.");
 		}
@@ -413,7 +413,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		if (args != null && args.length > 0) {
 			try {
 				String bufferName = args[0];
-				Set<String> list = this.executor.getRegisteredBufferPlacementStrategiesIDs();
+				Set<String> list = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 				if (list.contains(bufferName)) {
 					this.executor.getConfiguration().set(new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName)));
 					ci.println("Strategy " + bufferName + " set.");
@@ -1747,9 +1747,9 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			} catch (PlanManagementException e1) {
 				e1.printStackTrace();
 			}
-			this.executor.setScheduler("Single Thread Scheduler RR", SCHED2);
-			this.executor.setScheduler(SCHED1, SCHED2);
-			ci.println("scheduler set to: " + this.executor.getCurrentSchedulerID());
+			this.executor.setScheduler("Single Thread Scheduler RR", SCHED2, currentUser);
+			this.executor.setScheduler(SCHED1, SCHED2, currentUser);
+			ci.println("scheduler set to: " + this.executor.getCurrentSchedulerID(currentUser));
 			try {
 				this.executor.startExecution();
 			} catch (PlanManagementException e1) {

@@ -94,7 +94,7 @@ public class PlanAdaptionEngine extends AbstractPlanAdaptionEngine implements
 		
 		if(this.useFirst) {
 			LOG.debug("Only one migration allowed");
-			for(int i : getExecutor().getLogicalQueryIds()) {
+			for(int i : getExecutor().getLogicalQueryIds(user)) {
 				getExecutor().stopQuery(i, user);
 			}
 			return;

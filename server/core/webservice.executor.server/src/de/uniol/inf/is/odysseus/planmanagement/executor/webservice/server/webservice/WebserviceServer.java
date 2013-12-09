@@ -268,14 +268,14 @@ public class WebserviceServer {
 	}
 
 	public StringListResponse getQueryBuildConfigurationNames(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new StringListResponse(ExecutorServiceBinding.getExecutor().getQueryBuildConfigurationNames(), true);
+		ISession user = loginWithSecurityToken(securityToken);
+		return new StringListResponse(ExecutorServiceBinding.getExecutor().getQueryBuildConfigurationNames(user), true);
 
 	}
 
 	public StringListResponse getSupportedQueryParsers(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		Set<String> parsers = ExecutorServiceBinding.getExecutor().getSupportedQueryParsers();
+		ISession user = loginWithSecurityToken(securityToken);
+		Set<String> parsers = ExecutorServiceBinding.getExecutor().getSupportedQueryParsers(user );
 		return new StringListResponse(parsers, true);
 
 	}
@@ -288,37 +288,37 @@ public class WebserviceServer {
 	}
 
 	public StringListResponse getRegisteredBufferPlacementStrategiesIDs(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredBufferPlacementStrategiesIDs(), true);
+		ISession user = loginWithSecurityToken(securityToken);
+		return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredBufferPlacementStrategiesIDs(user), true);
 	}
 
 	public StringListResponse getRegisteredSchedulingStrategies(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulingStrategies(), true);
+		ISession user = loginWithSecurityToken(securityToken);
+		return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulingStrategies(user), true);
 
 	}
 
 	public StringListResponse getRegisteredSchedulers(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulers(), true);
+		ISession user = loginWithSecurityToken(securityToken);
+		return new StringListResponse(ExecutorServiceBinding.getExecutor().getRegisteredSchedulers(user), true);
 	}
 
 	public Response setScheduler(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "scheduler") String scheduler, @WebParam(name = "scheduler_strategy") String schedulerStrategy) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		ExecutorServiceBinding.getExecutor().setScheduler(scheduler, schedulerStrategy);
+		ISession user = loginWithSecurityToken(securityToken);
+		ExecutorServiceBinding.getExecutor().setScheduler(scheduler, schedulerStrategy, user);
 		return new Response(true);
 
 	}
 
 	public StringResponse getCurrentSchedulerID(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulerID(), true);
+		ISession user = loginWithSecurityToken(securityToken);
+		return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulerID(user), true);
 
 	}
 
 	public StringResponse getCurrentSchedulingStrategyID(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulingStrategyID(), true);
+		ISession user = loginWithSecurityToken(securityToken);
+		return new StringResponse(ExecutorServiceBinding.getExecutor().getCurrentSchedulingStrategyID(user), true);
 
 	}
 
@@ -356,9 +356,10 @@ public class WebserviceServer {
 
 		IPhysicalQuery queryById;
 		LogicalQuery logicalQuery;
+		ISession user = loginWithSecurityToken(securityToken);
 		try {
 			queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryById(Integer.valueOf(id));
-			logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id));
+			logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryById(Integer.valueOf(id), user);
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
@@ -366,15 +367,15 @@ public class WebserviceServer {
 	}
 
 	public QueryResponse getLogicalQueryByName(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "name") String name) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
+		ISession session = loginWithSecurityToken(securityToken);
 		IPhysicalQuery queryById = ExecutorServiceBinding.getExecutor().getExecutionPlan().getQueryByName(name);
-		return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryByName(name), queryById.getSession().getUser().getName(), queryById.isOpened(), queryById.getRoots().size(), true);
+		return new QueryResponse((LogicalQuery) ExecutorServiceBinding.getExecutor().getLogicalQueryByName(name, session), queryById.getSession().getUser().getName(), queryById.isOpened(), queryById.getRoots().size(), true);
 
 	}
 
 	public IntegerCollectionResponse getLogicalQueryIds(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		return new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().getLogicalQueryIds(), true);
+		ISession session = loginWithSecurityToken(securityToken);
+		return new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().getLogicalQueryIds(session), true);
 	}
 
 	public ConnectionInformationResponse getConnectionInformation(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException {
@@ -434,10 +435,10 @@ public class WebserviceServer {
 	}
 
 	public SDFSchemaResponse getOutputSchema(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException, QueryNotExistsException {
-		loginWithSecurityToken(securityToken);
+		ISession session = loginWithSecurityToken(securityToken);
 		SDFSchema schema;
 		try {
-			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId);
+			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
@@ -452,8 +453,8 @@ public class WebserviceServer {
 	}
 
 	public SDFSchemaResponse getOutputSchemaByQueryId(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
-		SDFSchema schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId);
+		ISession session = loginWithSecurityToken(securityToken);
+		SDFSchema schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
 		for (SDFAttribute attr : attributes) {

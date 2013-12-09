@@ -32,7 +32,7 @@ public class StopAllQueriesCommand extends AbstractStopQueryCommand{
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {			
-			stop(executor.getLogicalQueryIds());
+			stop(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()));
 		} else {
 			logger.error(OdysseusNLS.NoExecutorFound);
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);

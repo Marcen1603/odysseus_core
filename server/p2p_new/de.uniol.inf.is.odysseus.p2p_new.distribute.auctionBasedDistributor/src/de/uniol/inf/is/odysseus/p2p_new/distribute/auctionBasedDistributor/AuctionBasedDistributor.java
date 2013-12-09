@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.ILogicalQueryDistributo
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.DistributionHelper;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.allocator.Allocator;
 import de.uniol.inf.is.odysseus.p2p_new.distribute.auctionBasedDistributor.calculator.CostCalculator;
@@ -139,7 +140,9 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 						
 						CostSummary relativeCosts = calcRelativeCosts(transCfg,
 								query);
-						
+
+						ISession session = UserManagementProvider.getSessionmanagement().loginSuperUser(null, "");
+
 						if(communicator.getRemotePeerIds().size()>0 &&
 								(relativeCosts.getCpuCost() < 1 || relativeCosts.getMemCost() <1 || FORCE_DISTRIBUTION)) {
 							log.info("Decided to distribute the query (relative costs: {})", relativeCosts);	
@@ -166,14 +169,14 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 								
 								// Lokalen plan als Master-Query registrieren
 								int id = ((IServerExecutor)sender).addQuery(q.getLogicalPlan(),
-										UserManagementProvider.getSessionmanagement().loginSuperUser(null, ""),
+										session,
 										transCfg.getName());
 		
 								if(Helper.containsJxtaOperators(q.getLogicalPlan())) {
 									QueryPartController.getInstance().registerAsMaster(q, sharedQueryID);
 								}							
 								
-								List<IPhysicalOperator> roots = sender.getPhysicalRoots(id);
+								List<IPhysicalOperator> roots = sender.getPhysicalRoots(id, session);
 								recorder.recordDataRate(roots.iterator().next());								
 							}
 							catch (CouldNotPartitionException e) {
@@ -184,7 +187,7 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 							log.info("Query can be processed locally. No need to distribute it");	
 							Collection<Integer> ids = addQuery(sender, query.getQueryText(), transCfg);		
 							
-							List<IPhysicalOperator> roots = sender.getPhysicalRoots(ids.iterator().next());
+							List<IPhysicalOperator> roots = sender.getPhysicalRoots(ids.iterator().next(), session);
 							recorder.recordDataRate(roots.iterator().next());
 						}
 					} catch (Exception e1) {

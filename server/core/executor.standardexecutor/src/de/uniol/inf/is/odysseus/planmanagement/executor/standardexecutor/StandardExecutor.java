@@ -138,15 +138,15 @@ public class StandardExecutor extends AbstractExecutor implements
 	 */
 	public void activate() {
 		// store buffer placement strategy in the configuration
-		Iterator<String> iter;
-		if (getRegisteredBufferPlacementStrategiesIDs() != null
-				&& (iter = getRegisteredBufferPlacementStrategiesIDs()
-						.iterator()).hasNext()) {
-			this.configuration.set(new ParameterBufferPlacementStrategy(
-					getBufferPlacementStrategy(iter.next())));
-		} else {
-			this.configuration.set(new ParameterBufferPlacementStrategy());
-		}
+//		Iterator<String> iter;
+//		if (getRegisteredBufferPlacementStrategiesIDs() != null
+//				&& (iter = getRegisteredBufferPlacementStrategiesIDs()
+//						.iterator()).hasNext()) {
+//			this.configuration.set(new ParameterBufferPlacementStrategy(
+//					getBufferPlacementStrategy(iter.next())));
+//		} else {
+//			this.configuration.set(new ParameterBufferPlacementStrategy());
+//		}
 		this.reloadLog = new ReloadLog();
 
 		instance = this;
@@ -1120,7 +1120,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * getRegisteredBufferPlacementStrategies()
 	 */
 	@Override
-	public Set<String> getRegisteredBufferPlacementStrategiesIDs() {
+	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession session) {
+		// TODO: Check access rights
 		try {
 			return getOptimizer().getRegisteredBufferPlacementStrategies();
 		} catch (NoOptimizerLoadedException e) {
@@ -1137,8 +1138,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * getRegisteredSchedulingStrategyFactories()
 	 */
 	@Override
-	public Set<String> getRegisteredSchedulingStrategies() {
-
+	public Set<String> getRegisteredSchedulingStrategies(ISession session) {
+		// TODO: Check access rights
 		try {
 			return getSchedulerManager().getSchedulingStrategy();
 		} catch (SchedulerException e) {
@@ -1155,8 +1156,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * getRegisteredSchedulerFactories()
 	 */
 	@Override
-	public Set<String> getRegisteredSchedulers() {
-
+	public Set<String> getRegisteredSchedulers(ISession session) {
+		// TODO: Check access rights
 		try {
 			return getSchedulerManager().getScheduler();
 		} catch (SchedulerException e) {
@@ -1173,7 +1174,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * setScheduler(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setScheduler(String scheduler, String schedulerStrategy) {
+	public void setScheduler(String scheduler, String schedulerStrategy, ISession session) {
+		// TODO: Check access rights
 		try {
 			getSchedulerManager().setActiveScheduler(scheduler,
 					schedulerStrategy, this.getExecutionPlan());
@@ -1190,7 +1192,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * getCurrentSchedulingStrategy()
 	 */
 	@Override
-	public String getCurrentSchedulingStrategyID() {
+	public String getCurrentSchedulingStrategyID(ISession user) {
 		try {
 			return getSchedulerManager().getActiveSchedulingStrategyID();
 		} catch (SchedulerException e) {
@@ -1207,7 +1209,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * getCurrentScheduler()
 	 */
 	@Override
-	public String getCurrentSchedulerID() {
+	public String getCurrentSchedulerID(ISession session) {
+		// TODO: Check rights
 		try {
 			return getSchedulerManager().getActiveSchedulerID();
 		} catch (SchedulerException e) {
@@ -1260,7 +1263,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public Collection<String> getQueryBuildConfigurationNames() {
+	public Collection<String> getQueryBuildConfigurationNames(ISession session) {
+		// TODO: Check access rights
 		return queryBuildConfigs.keySet();
 	}
 
@@ -1360,7 +1364,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public Collection<Integer> getLogicalQueryIds() {
+	public Collection<Integer> getLogicalQueryIds(ISession session) {
+		// TODO: Check access rights
 		Collection<Integer> result = new ArrayList<Integer>();
 		for (IPhysicalQuery pq : getExecutionPlan().getQueries()) {
 			result.add(pq.getID());
@@ -1369,8 +1374,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public SDFSchema getOutputSchema(int queryId) {
-		return getLogicalQueryById(queryId).getLogicalPlan().getOutputSchema();
+	public SDFSchema getOutputSchema(int queryId, ISession session) {
+		return getLogicalQueryById(queryId, session).getLogicalPlan().getOutputSchema();
 	}
 
 	private List<IPhysicalQuery> determineRunningQueries(IUser user) {

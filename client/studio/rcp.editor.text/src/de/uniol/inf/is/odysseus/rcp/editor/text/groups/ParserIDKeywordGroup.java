@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.rcp.editor.text.groups;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.IKeywordGroup;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
@@ -23,7 +24,7 @@ public class ParserIDKeywordGroup implements IKeywordGroup {
 	@Override
 	public String[] getKeywords() {
 		try {
-			return OdysseusRCPEditorTextPlugIn.getExecutor() != null?OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers().toArray(new String[0]):null;
+			return OdysseusRCPEditorTextPlugIn.getExecutor() != null?OdysseusRCPEditorTextPlugIn.getExecutor().getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession()).toArray(new String[0]):null;
 		} catch( Exception ex ) {
 			return new String[] { // Notlösung
 				"CQL", "PQL", "PQLHack"	

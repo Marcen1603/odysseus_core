@@ -757,13 +757,15 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public List<IPhysicalOperator> getPhysicalRoots(int queryID) {
+	public List<IPhysicalOperator> getPhysicalRoots(int queryID, ISession session) {
+		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID);
 		return pq.getRoots();
 	}
 
 	@Override
-	public ILogicalQuery getLogicalQueryById(int id) {
+	public ILogicalQuery getLogicalQueryById(int id, ISession session) {
+		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryById(id);
 		ILogicalQuery lq = null;
 		if (pq != null) {
@@ -773,7 +775,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public ILogicalQuery getLogicalQueryByName(String name) {
+	public ILogicalQuery getLogicalQueryByName(String name, ISession session) {
+		// TODO: Check access rights
 		IPhysicalQuery pq = executionPlan.getQueryByName(name);
 		ILogicalQuery lq = null;
 		if (pq != null) {
@@ -861,7 +864,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * getSupportedQueryParser()
 	 */
 	@Override
-	public Set<String> getSupportedQueryParsers() throws NoCompilerLoadedException {
+	public Set<String> getSupportedQueryParsers(ISession session) throws NoCompilerLoadedException {
 		ICompiler c;
 		c = getCompiler();
 		return c.getSupportedQueryParser();

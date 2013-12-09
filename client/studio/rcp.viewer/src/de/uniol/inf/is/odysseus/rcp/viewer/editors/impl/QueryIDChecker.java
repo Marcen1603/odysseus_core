@@ -33,7 +33,7 @@ final class QueryIDChecker extends Thread {
 
 			if( OdysseusRCPPlugIn.getExecutor() == null ) {
 				isRunning = false;
-			} else if (!OdysseusRCPPlugIn.getExecutor().getLogicalQueryIds().contains(input.getQueryID())) {
+			} else if (!OdysseusRCPPlugIn.getExecutor().getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()).contains(input.getQueryID())) {
 				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
 					public void run() {

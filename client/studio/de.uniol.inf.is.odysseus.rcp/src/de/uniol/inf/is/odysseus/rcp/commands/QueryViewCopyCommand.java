@@ -47,7 +47,7 @@ public class QueryViewCopyCommand extends AbstractHandler implements IHandler {
 			IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 			if (executor != null) {
 				int id = (Integer)selection;
-				ILogicalQuery query = executor.getLogicalQueryById(id);
+				ILogicalQuery query = executor.getLogicalQueryById(id, OdysseusRCPPlugIn.getActiveSession());
 				String queryText = query.getQueryText();
 				texts.add(queryText);				
 			} else {

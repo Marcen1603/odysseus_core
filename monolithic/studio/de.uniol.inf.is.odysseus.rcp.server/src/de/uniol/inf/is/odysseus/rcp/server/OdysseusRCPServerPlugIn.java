@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEven
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 
 /**
@@ -129,6 +130,6 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 	}
 
 	private String determineStatusManagerExecutorInfo() {
-		return serverExecutor.getCurrentSchedulerID() + " (" + serverExecutor.getCurrentSchedulingStrategyID() + ") " + (serverExecutor.isRunning() ? "Running" : "Stopped" );
+		return serverExecutor.getCurrentSchedulerID(OdysseusRCPPlugIn.getActiveSession()) + " (" + serverExecutor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn.getActiveSession()) + ") " + (serverExecutor.isRunning() ? "Running" : "Stopped" );
 	}
 }

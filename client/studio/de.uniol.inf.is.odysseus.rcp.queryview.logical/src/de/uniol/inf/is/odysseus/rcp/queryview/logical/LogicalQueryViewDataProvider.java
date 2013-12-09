@@ -31,6 +31,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewData;
 import de.uniol.inf.is.odysseus.rcp.views.query.IQueryViewDataProvider;
 import de.uniol.inf.is.odysseus.rcp.views.query.QueryView;
@@ -99,11 +100,11 @@ public class LogicalQueryViewDataProvider implements IQueryViewDataProvider, IDo
 	}
 	
 	private static List<ILogicalQuery> getLogicalQueries(IExecutor executor) {
-		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds();
+		Collection<Integer> logicalQueryIds = executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
 
 		List<ILogicalQuery> logicalQueries = Lists.newArrayListWithCapacity(logicalQueryIds.size());
 		for (Integer id : logicalQueryIds) {
-			logicalQueries.add(executor.getLogicalQueryById(id));
+			logicalQueries.add(executor.getLogicalQueryById(id, OdysseusRCPPlugIn.getActiveSession()));
 		}
 
 		return logicalQueries;

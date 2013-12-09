@@ -101,8 +101,8 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 	}
 
 	public void activate(ComponentContext c) {
-		scheduler = executor.getCurrentSchedulerID();
-		schedulingStrategy = executor.getCurrentSchedulingStrategyID();
+		scheduler = executor.getCurrentSchedulerID(user);
+		schedulingStrategy = executor.getCurrentSchedulingStrategyID(user);
 		bufferPlacement = "Standard Buffer Placement";
 	}
 
@@ -171,7 +171,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 
 			// executor.setDefaultBufferPlacementStrategy(bufferPlacement);
-			executor.setScheduler(scheduler, schedulingStrategy);
+			executor.setScheduler(scheduler, schedulingStrategy, user);
 			if (useBenchmarkMemUsage) {
 				this.avgMemListener = new AvgBenchmarkMemUsageListener();
 				executor.addPlanExecutionListener(avgMemListener);

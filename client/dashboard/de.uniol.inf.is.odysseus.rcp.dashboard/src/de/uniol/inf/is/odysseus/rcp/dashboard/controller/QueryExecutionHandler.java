@@ -85,7 +85,7 @@ public class QueryExecutionHandler {
 	private static Collection<IPhysicalOperator> determineRoots(Collection<Integer> queryIDs) {
 		final Collection<IPhysicalOperator> roots = Lists.newArrayList();
 		for (final Integer id : queryIDs) {
-			for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id)) {
+			for (final IPhysicalOperator rootOfQuery : DashboardPlugIn.getExecutor().getPhysicalRoots(id, OdysseusRCPPlugIn.getActiveSession())) {
 				if (!(rootOfQuery instanceof DefaultStreamConnection)) {
 					roots.add(rootOfQuery);
 				}

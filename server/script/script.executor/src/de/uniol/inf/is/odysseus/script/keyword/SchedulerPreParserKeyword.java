@@ -39,10 +39,10 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 		if (params.size() != 2){
 			throw new OdysseusScriptException("Illegal Scheduler Definition "+parameter);
 		}
-		if (!(executor.getRegisteredSchedulers().contains(params.get(0)))){
+		if (!(executor.getRegisteredSchedulers(caller).contains(params.get(0)))){
 			throw new OdysseusScriptException("Scheduler "+params.get(0)+" not found");			
 		}
-		if (!(executor.getRegisteredSchedulingStrategies().contains(params.get(1)))){
+		if (!(executor.getRegisteredSchedulingStrategies(caller).contains(params.get(1)))){
 			throw new OdysseusScriptException("Schedulingstrategy "+params.get(1)+" not found");			
 		}
 		
@@ -57,7 +57,7 @@ public class SchedulerPreParserKeyword extends AbstractPreParserExecutorKeyword 
 			throw new OdysseusScriptException("No executor found");
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
-		executor.setScheduler(params.get(0), params.get(1));
+		executor.setScheduler(params.get(0), params.get(1), caller);
 		return null;
 	}
 

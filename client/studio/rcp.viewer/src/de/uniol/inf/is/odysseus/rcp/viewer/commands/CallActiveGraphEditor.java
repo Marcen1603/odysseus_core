@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.impl.PhysicalGraphEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.create.IModelProvider;
@@ -47,11 +48,11 @@ public class CallActiveGraphEditor extends AbstractHandler implements IHandler {
 
 		final IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
 
-		final Collection<Integer> queryIds = executor.getLogicalQueryIds();
+		final Collection<Integer> queryIds = executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession());
 		try {
 			final ArrayList<IPhysicalOperator> roots = new ArrayList<IPhysicalOperator>();
 			for (final Integer queryId : queryIds) {
-				roots.addAll(executor.getPhysicalRoots(queryId));
+				roots.addAll(executor.getPhysicalRoots(queryId, OdysseusRCPPlugIn.getActiveSession()));
 			}
 			if (roots.isEmpty()) {
 				return null;

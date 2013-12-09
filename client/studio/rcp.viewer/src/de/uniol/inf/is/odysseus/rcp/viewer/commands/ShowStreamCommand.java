@@ -36,6 +36,7 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.ChooseOperatorWindow;
@@ -67,7 +68,7 @@ public class ShowStreamCommand extends AbstractHandler implements IHandler {
 				if( selectedObject instanceof Integer ) {
                     Integer queryID = (Integer)selectedObject;
                     IExecutor executor = OdysseusRCPViewerPlugIn.getExecutor();
-                    optionalOpForStream = chooseOperator( executor.getPhysicalRoots(queryID));
+                    optionalOpForStream = chooseOperator( executor.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()));
 				}
 
 				if (selectedObject instanceof IOdysseusNodeView) {

@@ -32,7 +32,7 @@ public class StartAllQueriesCommand extends AbstractStartQueryCommand{
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {			
-			start(executor.getLogicalQueryIds());
+			start(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()));
 		} else {
 			logger.error(OdysseusNLS.NoExecutorFound);
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);

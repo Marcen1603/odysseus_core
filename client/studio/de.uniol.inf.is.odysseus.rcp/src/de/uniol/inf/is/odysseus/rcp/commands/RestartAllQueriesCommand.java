@@ -16,7 +16,7 @@ public class RestartAllQueriesCommand extends AbstractRestartQueryCommand{
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		if (executor != null) {			
-			restart(executor.getLogicalQueryIds());
+			restart(executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession()));
 		} else {
 			logger.error(OdysseusNLS.NoExecutorFound);
 			MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);

@@ -33,6 +33,7 @@ import com.google.common.base.Optional;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IHasRoots;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.ChooseOperatorWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.AbstractJFreeChart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.Activator;
@@ -94,7 +95,7 @@ public abstract class AbstractCommand extends AbstractHandler {
 			if (selectedObject instanceof Integer) {
 				Integer queryID = (Integer) selectedObject;
 				IExecutor executor = Activator.getExecutor();
-				opForStream = chooseOperator(executor.getPhysicalRoots(queryID));
+				opForStream = chooseOperator(executor.getPhysicalRoots(queryID, OdysseusRCPPlugIn.getActiveSession()));
 			}
 		}
 

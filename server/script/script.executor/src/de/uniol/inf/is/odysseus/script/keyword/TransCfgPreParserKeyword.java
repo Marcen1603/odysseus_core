@@ -50,7 +50,7 @@ public class TransCfgPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		try {
-			return getServerExecutor().getQueryBuildConfigurationNames();
+			return getServerExecutor().getQueryBuildConfigurationNames(caller);
 		} catch (OdysseusScriptException e) {			
 			return new ArrayList<>();
 		}			
