@@ -11,13 +11,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckException;
 import de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 
-public class PeerExistsCheck implements IDistributionChecker {
+public class SomePeerExistsCheck implements IDistributionChecker {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PeerExistsCheck.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SomePeerExistsCheck.class);
 
 	@Override
 	public String getName() {
-		return "peerExisting";
+		return "somePeerExists";
 	}
 	
 	@Override
