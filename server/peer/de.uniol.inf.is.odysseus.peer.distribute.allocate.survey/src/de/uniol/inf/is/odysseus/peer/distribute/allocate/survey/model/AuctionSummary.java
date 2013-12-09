@@ -6,7 +6,8 @@ import java.util.concurrent.Future;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 
-public class AuctionSummary {
+public final class AuctionSummary {
+	
 	private final AuctionQueryAdvertisement query;
 	private final Future<List<AuctionResponseAdvertisement>> responses;
 	private final SubPlan subPlan;

@@ -6,7 +6,8 @@ import com.google.common.base.Objects;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
-public class CostSummary {
+public final class CostSummary {
+	
 	private final String operatorId;
 	private final double cpuCost;
 	private final double memCost;

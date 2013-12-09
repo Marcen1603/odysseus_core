@@ -121,6 +121,6 @@ public class Communicator implements IAdvertisementListener {
 
 	@Override
 	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
-
+		// do nothing
 	}
 }
