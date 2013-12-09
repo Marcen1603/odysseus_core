@@ -18,13 +18,6 @@
    </license>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.p2p_new"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.p2p_new.distribute.user"
          download-size="0"
          install-size="0"
@@ -53,6 +46,20 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.p2p_new.loadbalancer"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.p2p_new"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.latency"
          download-size="0"
          install-size="0"
          version="0.0.0"
