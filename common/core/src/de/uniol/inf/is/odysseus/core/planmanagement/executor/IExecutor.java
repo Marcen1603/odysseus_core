@@ -91,35 +91,8 @@ public interface IExecutor extends IClientPlanManager{
 			ISession user, String queryBuildConfigurationName, Context context)
 			throws PlanManagementException;
 
-	/**
-	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als logischer Plan
-	 * vorliegt.
-	 * 
-	 * @param logicalPlan
-	 *            logischer Plan der Anfrage
-	 * @param queryBuildConfigurationName
-	 *            Name der zu verwendeden Build-Configuration
-	 * @return vorl�ufige ID der neuen Anfrage
-	 * @throws PlanManagementException
-	 */
-	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
-			String queryBuildConfigurationName) throws PlanManagementException;
-
-	/**
-	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als physischer Plan
-	 * vorliegt.
-	 * 
-	 * @param physicalPlan
-	 *            physischer Plan der neuen Anfrage
-	 * @param queryBuildConfigurationName
-	 *            Name der zu verwendeden Build-Configuration
-	 * @throws PlanManagementException
-	 */
-	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
-			String queryBuildConfigurationName) throws PlanManagementException;
-
-	/**
-	 * This method tries to translate the given query to a logical plan and delivers the output schema for the root operator
+	
+	 /** This method tries to translate the given query to a logical plan and delivers the output schema for the root operator
 	 * Remark: It must be shure, that there in only one output operator, else the first one will be choosen that is found!
 	 * @param query The query text
 	 * @param parserID The parser to translate the query
