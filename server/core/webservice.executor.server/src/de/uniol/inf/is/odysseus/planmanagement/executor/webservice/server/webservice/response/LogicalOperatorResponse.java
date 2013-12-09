@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 public class LogicalOperatorResponse extends Response {
 
+	
 	private ILogicalOperator responseValue;
 
 	public LogicalOperatorResponse() {

@@ -12,6 +12,10 @@ public class StoredProcedure implements Serializable{
 
 	private List<String> variables;
 	
+	public StoredProcedure(){
+		
+	}
+	
 	public StoredProcedure(String name, String text, List<String> procVars){
 		this.name = name;
 		this.text = text;

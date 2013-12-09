@@ -550,19 +550,23 @@ public class WebserviceServer {
 		return info;
 	}
 
-	public StringMapStringListResponse getQueryParserTokens(String queryParser, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public StringMapStringListResponse getQueryParserTokens(@WebParam(name = "queryParser")String queryParser, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession caller = loginWithSecurityToken(securityToken);
 		Map<String, List<String>> result = getExecutor().getQueryParserTokens(queryParser, caller);
-		return new StringMapStringListResponse(result, true);
+		Map<String, ArrayList<String>> res = new HashMap<>();
+		for(Entry<String, List<String>> e : result.entrySet()){
+			res.put(e.getKey(), new ArrayList<>(e.getValue()));
+		}
+		return new StringMapStringListResponse(res, true);
 	}
 
-	public StringListResponse getQueryParserSuggestions(String queryParser, String hint, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public StringListResponse getQueryParserSuggestions(@WebParam(name = "queryParser")String queryParser, @WebParam(name = "hint") String hint, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession caller = loginWithSecurityToken(securityToken);
 		List<String> resp = getExecutor().getQueryParserSuggestions(queryParser, hint, caller);
 		return new StringListResponse(resp, true);
 	}
 
-	public SDFSchemaResponse determineOutputSchema(String query, String parserID, @WebParam(name = "securitytoken") String securityToken, int port, Context context) throws InvalidUserDataException {
+	public SDFSchemaResponse determineOutputSchema(@WebParam(name = "query")String query, @WebParam(name = "parserID")String parserID, @WebParam(name = "securitytoken") String securityToken, @WebParam(name = "port")int port, @WebParam(name = "context")Context context) throws InvalidUserDataException {
 		ISession caller = loginWithSecurityToken(securityToken);
 		SDFSchema schema = getExecutor().determineOutputSchema(query, parserID, caller, port, context);
 		return createSDFSchemaInformation(schema);
@@ -588,32 +592,32 @@ public class WebserviceServer {
 		return new StringListResponse(names, true);
 	}
 
-	public StringListResponse getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public StringListResponse getRegisteredAggregateFunctions(@WebParam(name = "datamodel")@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		Set<String> names = getExecutor().getRegisteredWrapperNames(user);
 		return new StringListResponse(names, true);
 	}
 
-	public LogicalOperatorResponse removeSink(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public LogicalOperatorResponse removeSinkByName(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		ILogicalOperator logicalOperator = getExecutor().removeSink(name, user);
 		return new LogicalOperatorResponse(logicalOperator, true);
 	}
 
-	public LogicalOperatorResponse removeSink(Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public LogicalOperatorResponse removeSinkByResource(@WebParam(name = "name")Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		ILogicalOperator logicalOperator = getExecutor().removeSink(name, user);
 		return new LogicalOperatorResponse(logicalOperator, true);
 	}
 
-	public Response removeViewOrStream(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public Response removeViewOrStreamByName(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		getExecutor().removeViewOrStream(name, user);
 		return new Response(true);
 	}
 
 	
-	public Response removeViewOrStream(Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public Response removeViewOrStreamByResource(@WebParam(name = "name")Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		getExecutor().removeViewOrStream(name, user);
 		return new Response(true);
@@ -633,13 +637,13 @@ public class WebserviceServer {
 		return new ResourceEntryLogicalOperatorListResponse(result, true);
 	}
 
-	public BooleanResponse containsViewOrStream(Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public BooleanResponse containsViewOrStreamByResource(@WebParam(name = "name")Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		boolean result = getExecutor().containsViewOrStream(name, user);
 		return new BooleanResponse(result, true);
 	}
 
-	public BooleanResponse containsViewOrStream(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public BooleanResponse containsViewOrStreamByName(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		boolean result = getExecutor().containsViewOrStream(name, user);
 		return new BooleanResponse(result, true);
@@ -651,7 +655,7 @@ public class WebserviceServer {
 		return new Response(true);
 	}
 
-	public Response addStoredProcedure(String name, StoredProcedure proc, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public Response addStoredProcedure(@WebParam(name = "name")String name, @WebParam(name = "storedprocedure") StoredProcedure proc, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		getExecutor().addStoredProcedure(name, proc, user);
 		return new Response(true);
@@ -659,14 +663,14 @@ public class WebserviceServer {
 	}
 
 	
-	public Response removeStoredProcedure(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public Response removeStoredProcedure(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		getExecutor().removeStoredProcedure(name, user);
 		return new Response(true);
 
 	}
 	
-	public StoredProcedureResponse getStoredProcedure(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public StoredProcedureResponse getStoredProcedure(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		StoredProcedure result = getExecutor().getStoredProcedure(name, user);
 		return new StoredProcedureResponse(result, true);
@@ -679,7 +683,7 @@ public class WebserviceServer {
 		return new StoredProcedureListResponse(result, true);
 	}
 
-	public BooleanResponse containsStoredProcedures(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public BooleanResponse containsStoredProcedures(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		boolean result = getExecutor().containsStoredProcedures(name, user);
 		return new BooleanResponse(result, true);
@@ -697,7 +701,7 @@ public class WebserviceServer {
 		return new LogicalOperatorInformationListResponse(result, true);
 	}
 
-	public LogicalOperatorInformationResponse getOperatorInformation(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+	public LogicalOperatorInformationResponse getOperatorInformation(@WebParam(name = "name")String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		LogicalOperatorInformation result = getExecutor().getOperatorInformation(name, user);
 		return new LogicalOperatorInformationResponse(result, true);

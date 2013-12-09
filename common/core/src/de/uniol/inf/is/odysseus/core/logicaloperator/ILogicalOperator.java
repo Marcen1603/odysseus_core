@@ -20,6 +20,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import com.sun.xml.internal.bind.AnyTypeAdapter;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
@@ -38,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Marco Grawunder
  * 
  */
-
+@XmlJavaTypeAdapter(AnyTypeAdapter.class)
 public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator, LogicalSubscription>, IClone, Serializable, ISerializable {
 
 	/**
