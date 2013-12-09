@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import net.jxta.content.ContentService;
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.endpoint.EndpointService;
+import net.jxta.peer.PeerInfoService;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.pipe.PipeService;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
@@ -20,6 +21,7 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	private ContentService contentService;
 	private DiscoveryService discoveryService;
 	private EndpointService endpointService;
+	private PeerInfoService informationService;
 	private PipeService pipeService;
 	
 	// called by OSGi
@@ -40,7 +42,8 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 				contentService = ownPeerGroup.getContentService();
 				discoveryService = ownPeerGroup.getDiscoveryService();
 				endpointService = ownPeerGroup.getEndpointService();
-				pipeService = ownPeerGroup.getPipeService();		
+				pipeService = ownPeerGroup.getPipeService();	
+				informationService = ownPeerGroup.getPeerInfoService();
 				
 				instance = JxtaServicesProvider.this;
 			}
@@ -90,6 +93,11 @@ public class JxtaServicesProvider implements IJxtaServicesProvider {
 	@Override
 	public PipeService getPipeService() {
 		return pipeService;
+	}
+	
+	@Override
+	public PeerInfoService getPeerInfoService() {
+		return informationService;
 	}
 	
 	public static JxtaServicesProvider getInstance() {
