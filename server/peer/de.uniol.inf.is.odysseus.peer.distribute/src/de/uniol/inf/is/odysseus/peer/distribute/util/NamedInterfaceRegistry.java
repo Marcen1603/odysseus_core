@@ -19,24 +19,47 @@ public class NamedInterfaceRegistry<T extends INamedInterface> {
 
 	public final void add( T interfaceContribution ) {
 		Preconditions.checkNotNull(interfaceContribution, "Interface contribution to add to registry must not be null!");
-		Preconditions.checkArgument(!contains(interfaceContribution.getName()), "Interface contribution %s already registered", interfaceContribution.getClass());
+		Preconditions.checkArgument(!contains(interfaceContribution.getName()), "Interface contribution %s already registered", determineSignature(interfaceContribution));
 		
 		interfaceMap.put(interfaceContribution.getName().toUpperCase(), interfaceContribution);
-		LOG.debug("Query part allocator added : {}", interfaceContribution.getName().toUpperCase());
+		if( LOG.isDebugEnabled() ) {
+			LOG.debug("Interface contribution added : {}", determineSignature(interfaceContribution));
+		}
 	}
-	
-	public final void remove( T allocator ) {
-		Preconditions.checkNotNull(allocator, "Interface contribution to remove from registry must not be null!");
+
+	public final void remove( T interfaceContribution ) {
+		Preconditions.checkNotNull(interfaceContribution, "Interface contribution to remove from registry must not be null!");
 		
-		String allocatorName = allocator.getName().toUpperCase();
+		String allocatorName = interfaceContribution.getName().toUpperCase();
 		if( interfaceMap.containsKey(allocatorName)) {
 			interfaceMap.remove(allocatorName);
-			LOG.debug("Interface contribution removed : {}", allocatorName);
+			if( LOG.isDebugEnabled() ) {
+				LOG.debug("Interface contribution removed : {}", determineSignature(interfaceContribution));
+			}
 		} else {
-			LOG.warn("Tried to remove Interface contribution which was not registered before: {}", allocatorName);
+			if( LOG.isDebugEnabled() ) {
+				LOG.warn("Tried to remove Interface contribution which was not registered before: {}", determineSignature(interfaceContribution));
+			}
 		}
 	}
 	
+	private static String determineSignature(INamedInterface iFace) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{").append(determinePrintableClassName(iFace)).append(":").append(iFace.getName()).append("}");
+		return sb.toString();
+	}
+	
+	private static String determinePrintableClassName(INamedInterface iFace) {
+		Class<?>[] classes = iFace.getClass().getInterfaces();
+		for (Class<?> clazz : classes ) {
+			if( !clazz.equals(INamedInterface.class) && !clazz.equals(iFace.getClass())) {
+				return clazz.getSimpleName();
+			}
+		}
+
+		return iFace.getClass().getSimpleName();
+	}
+
 	public final boolean contains( String name) {
 		Preconditions.checkNotNull(!Strings.isNullOrEmpty(name), "Name of Interface contribution must not be null or empty!");
 		

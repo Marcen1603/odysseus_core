@@ -195,15 +195,17 @@ public class QueryDistributor implements IQueryDistributor {
 	}
 
 	private static void checkDistribution(Collection<ILogicalOperator> operators, QueryBuildConfiguration config) throws DistributionCheckException {
-		ImmutableCollection<IDistributionChecker> checkers = DistributionCheckerRegistry.getInstance().getAll();
-		if (checkers.isEmpty()) {
+		ImmutableCollection<String> names = DistributionCheckerRegistry.getInstance().getNames();
+		if (names.isEmpty()) {
 			LOG.debug("No distribution checkers registered. No checks taken.");
 			return;
 		}
 
-		LOG.debug("Begin distribution checks with {} checkers.", checkers.size());
-		for (IDistributionChecker checker : checkers) {
-			LOG.debug("Checking with {}", checker.getClass());
+		LOG.debug("Begin distribution checks with {} checkers.", names.size());
+		for (String name : names) {
+			IDistributionChecker checker = DistributionCheckerRegistry.getInstance().get(name);
+			LOG.debug("Checking with {}", checker.getName());
+			
 			checker.check(operators, config);
 		}
 		LOG.debug("All checks passed");

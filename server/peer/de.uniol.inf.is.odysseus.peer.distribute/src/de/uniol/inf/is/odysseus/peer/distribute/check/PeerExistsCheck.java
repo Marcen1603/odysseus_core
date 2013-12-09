@@ -14,6 +14,11 @@ import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 public class PeerExistsCheck implements IDistributionChecker {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PeerExistsCheck.class);
+
+	@Override
+	public String getName() {
+		return "peerExisting";
+	}
 	
 	@Override
 	public void check(Collection<ILogicalOperator> operatorss, QueryBuildConfiguration config) throws DistributionCheckException {
@@ -24,5 +29,4 @@ public class PeerExistsCheck implements IDistributionChecker {
 		
 		LOG.debug("There are {} remote peers which can be used for distribution.", remotePeersCount );
 	}
-
 }
