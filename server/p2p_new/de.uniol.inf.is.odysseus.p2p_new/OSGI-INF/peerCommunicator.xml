@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.p2p_new.PeerCommunicator">
+   <implementation class="de.uniol.inf.is.odysseus.p2p_new.communication.PeerCommunicator"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.p2p_new.communication.IPeerCommunicator"/>
+   </service>
+</scr:component>
