@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 public class CyclicQueryPreParserKeyword extends
@@ -40,7 +39,7 @@ public class CyclicQueryPreParserKeyword extends
 			String parserID = (String) variables.get("PARSER");
 			if (parserID == null)
 				throw new OdysseusScriptException("Parser not set");
-			if (!executor.getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession()).contains(parserID))
+			if (!executor.getSupportedQueryParsers(caller).contains(parserID))
 				throw new OdysseusScriptException("Parser " + parserID
 						+ " not found");
 			String transCfg = (String) variables.get("TRANSCFG");

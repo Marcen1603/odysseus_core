@@ -35,7 +35,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -58,7 +57,7 @@ public class DropAllQueriesPreParserKeyword extends AbstractPreParserExecutorKey
 		IExecutor executor = getServerExecutor();
 		if (executor == null)
 			throw new OdysseusScriptException("No executor found");
-		for (int id : executor.getLogicalQueryIds(OdysseusRCPPlugIn.getActiveSession())) {
+		for (int id : executor.getLogicalQueryIds(caller)) {
 			executor.removeQuery(id, caller);
 		}	
 		return null;

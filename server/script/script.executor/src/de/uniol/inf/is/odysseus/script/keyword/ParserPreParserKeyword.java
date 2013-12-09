@@ -22,7 +22,6 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
 /**
@@ -54,7 +53,7 @@ public class ParserPreParserKeyword extends AbstractPreParserExecutorKeyword {
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		try {
-			return getServerExecutor().getSupportedQueryParsers(OdysseusRCPPlugIn.getActiveSession());
+			return getServerExecutor().getSupportedQueryParsers(caller);
 		} catch (PlanManagementException e) {			
 			e.printStackTrace();
 		} catch (OdysseusScriptException e) {		
