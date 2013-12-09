@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -143,6 +144,8 @@ public class QueryDistributor implements IQueryDistributor {
 				}
 			}
 
+			correctedAllocationMap = forceLocalOperators(correctedAllocationMap);
+			
 			insertJxtaOperators(correctedAllocationMap);
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(correctedAllocationMap, config);
 
@@ -165,6 +168,40 @@ public class QueryDistributor implements IQueryDistributor {
 		} else {
 			LOG.debug("There are no local queries in all {} given queries.", queriesToDistribute.size());
 		}
+	}
+
+	private static Map<ILogicalQueryPart, PeerID> forceLocalOperators(Map<ILogicalQueryPart, PeerID> partMap) {
+		Map<ILogicalQueryPart, PeerID> resultMap = Maps.newHashMap();
+		for( ILogicalQueryPart part : partMap.keySet() ) {
+			
+			Collection<ILogicalOperator> localOperators = collectLocalOperators(part.getOperators());
+			if( localOperators.isEmpty() ) {
+				resultMap.put(part, partMap.get(part));
+			} else {
+				Collection<ILogicalOperator> nonLocalOperators = Lists.newArrayList(part.getOperators());
+				nonLocalOperators.removeAll(localOperators);
+				
+				if( !nonLocalOperators.isEmpty() ) {
+					resultMap.put(new LogicalQueryPart(nonLocalOperators), partMap.get(part));
+				}
+				resultMap.put(new LogicalQueryPart(localOperators), P2PNetworkManagerService.get().getLocalPeerID());
+			}
+		}
+		return resultMap;
+	}
+
+	private static Collection<ILogicalOperator> collectLocalOperators(Collection<ILogicalOperator> operators) {
+		Collection<ILogicalOperator> localOperators = Lists.newArrayList();
+		for( ILogicalOperator operator : operators ) {
+			if( isDestinationNameLocal(operator)) {
+				localOperators.add(operator);
+			}
+		}
+		return localOperators;
+	}
+
+	private static boolean isDestinationNameLocal(ILogicalOperator operator) {
+		return !Strings.isNullOrEmpty(operator.getDestinationName()) && operator.getDestinationName().equalsIgnoreCase("local");
 	}
 
 	private static void callExecutorToAddLocalQueries(Collection<ILogicalQuery> localQueriesToExecutor, IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config) throws QueryDistributionException {
