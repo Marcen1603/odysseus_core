@@ -508,6 +508,9 @@
    <extension
          point="de.uniol.inf.is.odysseus.rcp.LoginContribution">
       <loginContribution
+            class="de.uniol.inf.is.odysseus.rcp.login.ClientConnectionContribution">
+      </loginContribution>
+      <loginContribution
             class="de.uniol.inf.is.odysseus.rcp.login.UsernameLoginContribution">
       </loginContribution>
    </extension>

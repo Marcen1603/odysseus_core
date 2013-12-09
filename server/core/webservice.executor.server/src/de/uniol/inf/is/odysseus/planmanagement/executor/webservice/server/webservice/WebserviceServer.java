@@ -45,6 +45,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -52,7 +54,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
@@ -78,19 +82,27 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ConnectionInformationResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.GraphNode;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.IntegerCollectionResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.LogicalOperatorInformationListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.LogicalOperatorInformationResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.LogicalOperatorResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.OperatorBuilderInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.OperatorBuilderListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ParameterInfo;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.QueryResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ResourceEntryLogicalOperatorListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.Response;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFAttributeInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeInformation;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SourceInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SourceListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StoredProcedureListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StoredProcedureResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringListResponse;
+import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringMapStringListResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.StringResponse;
 
 /**
@@ -106,8 +118,8 @@ public class WebserviceServer {
 	private static final int SINK_MIN_PORT = 10000;
 	private static final int SINK_MAX_PORT = 20000;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebserviceServer.class); 
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(WebserviceServer.class);
+
 	// Session management needed for logout.
 	// identified by securitytoken
 	@XmlTransient
@@ -129,7 +141,7 @@ public class WebserviceServer {
 		String webServiceEndpoint = OdysseusConfiguration.get("WebService.Endpoint");
 		Endpoint endpoint = Endpoint.publish(webServiceEndpoint, server);
 		if (endpoint.isPublished()) {
-			LOGGER.info("Webservice published at "+webServiceEndpoint);
+			LOGGER.info("Webservice published at " + webServiceEndpoint);
 		}
 	}
 
@@ -165,7 +177,7 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
-	public IntegerCollectionResponse addQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "parser") String parser, @WebParam(name = "query") String query, @WebParam(name = "transformationconfig") String transCfg,  @WebParam(name = "context") Context context) throws CreateQueryException, InvalidUserDataException {
+	public IntegerCollectionResponse addQuery(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "parser") String parser, @WebParam(name = "query") String query, @WebParam(name = "transformationconfig") String transCfg, @WebParam(name = "context") Context context) throws CreateQueryException, InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
 		try {
 			IntegerCollectionResponse response = new IntegerCollectionResponse(ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, transCfg, context), true);
@@ -275,7 +287,7 @@ public class WebserviceServer {
 
 	public StringListResponse getSupportedQueryParsers(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<String> parsers = ExecutorServiceBinding.getExecutor().getSupportedQueryParsers(user );
+		Set<String> parsers = ExecutorServiceBinding.getExecutor().getSupportedQueryParsers(user);
 		return new StringListResponse(parsers, true);
 
 	}
@@ -322,8 +334,7 @@ public class WebserviceServer {
 
 	}
 
-	public StringResponse getName(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
-		loginWithSecurityToken(securityToken);
+	public StringResponse getName() {
 		return new StringResponse(ExecutorServiceBinding.getExecutor().getName(), true);
 
 	}
@@ -442,6 +453,11 @@ public class WebserviceServer {
 		} catch (Exception e) {
 			throw new QueryNotExistsException();
 		}
+		return createSDFSchemaInformation(schema);
+
+	}
+
+	private SDFSchemaResponse createSDFSchemaInformation(SDFSchema schema) {
 		Collection<SDFAttribute> attributes = schema.getAttributes();
 		Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
 		for (SDFAttribute attr : attributes) {
@@ -449,19 +465,12 @@ public class WebserviceServer {
 		}
 		SDFSchemaInformation info = new SDFSchemaInformation(schema.getURI(), attrInfo);
 		return new SDFSchemaResponse(info, true);
-
 	}
 
 	public SDFSchemaResponse getOutputSchemaByQueryId(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "queryId") int queryId) throws InvalidUserDataException {
 		ISession session = loginWithSecurityToken(securityToken);
 		SDFSchema schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
-		Collection<SDFAttribute> attributes = schema.getAttributes();
-		Collection<SDFAttributeInformation> attrInfo = new ArrayList<SDFAttributeInformation>();
-		for (SDFAttribute attr : attributes) {
-			attrInfo.add(new SDFAttributeInformation(attr.getSourceName(), attr.getAttributeName(), new SDFDatatypeInformation(attr.getDatatype().getURI())));
-		}
-		SDFSchemaInformation info = new SDFSchemaInformation(schema.getURI(), attrInfo);
-		return new SDFSchemaResponse(info, true);
+		return createSDFSchemaInformation(schema);
 
 	}
 
@@ -469,13 +478,7 @@ public class WebserviceServer {
 
 		ISession session = loginWithSecurityToken(securityToken);
 		SDFSchema schema = ExecutorServiceBinding.getExecutor().getDataDictionary(session.getTenant()).getSources().get(sourcename).getOutputSchema();
-		Collection<SDFAttribute> attributes = schema.getAttributes();
-		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
-		for (SDFAttribute attribute : attributes) {
-			attributeInfos.add(new SDFAttributeInformation(attribute.getSourceName(), attribute.getAttributeName(), new SDFDatatypeInformation(attribute.getDatatype().getURI())));
-		}
-		SDFSchemaInformation info = new SDFSchemaInformation(schema.getURI(), attributeInfos);
-		return new SDFSchemaResponse(info, true);
+		return createSDFSchemaInformation(schema);
 
 	}
 
@@ -545,5 +548,158 @@ public class WebserviceServer {
 			info.setMapValueDataType(setParameterInfo(mapParameter.getValueParameter()));
 		}
 		return info;
+	}
+
+	public StringMapStringListResponse getQueryParserTokens(String queryParser, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession caller = loginWithSecurityToken(securityToken);
+		Map<String, List<String>> result = getExecutor().getQueryParserTokens(queryParser, caller);
+		return new StringMapStringListResponse(result, true);
+	}
+
+	public StringListResponse getQueryParserSuggestions(String queryParser, String hint, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession caller = loginWithSecurityToken(securityToken);
+		List<String> resp = getExecutor().getQueryParserSuggestions(queryParser, hint, caller);
+		return new StringListResponse(resp, true);
+	}
+
+	public SDFSchemaResponse determineOutputSchema(String query, String parserID, @WebParam(name = "securitytoken") String securityToken, int port, Context context) throws InvalidUserDataException {
+		ISession caller = loginWithSecurityToken(securityToken);
+		SDFSchema schema = getExecutor().determineOutputSchema(query, parserID, caller, port, context);
+		return createSDFSchemaInformation(schema);
+	}
+
+	// TODO: why is physicalroots in iexecutor?
+	// public List<IPhysicalOperator> getPhysicalRoots(int queryID,
+	// @WebParam(name = "securitytoken") String securityToken) throws
+	// InvalidUserDataException {
+	// ISession caller = loginWithSecurityToken(securityToken);
+	// return getExecutor().getPhysicalRoots(queryID, caller);
+	// }
+
+	public SDFDatatypeListResponse getRegisteredDatatypes(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		Set<SDFDatatype> dts = getExecutor().getRegisteredDatatypes(user);
+		return new SDFDatatypeListResponse(dts, true);
+	}
+
+	public StringListResponse getRegisteredWrapperNames(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		Set<String> names = getExecutor().getRegisteredWrapperNames(user);
+		return new StringListResponse(names, true);
+	}
+
+	public StringListResponse getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		Set<String> names = getExecutor().getRegisteredWrapperNames(user);
+		return new StringListResponse(names, true);
+	}
+
+	public LogicalOperatorResponse removeSink(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		ILogicalOperator logicalOperator = getExecutor().removeSink(name, user);
+		return new LogicalOperatorResponse(logicalOperator, true);
+	}
+
+	public LogicalOperatorResponse removeSink(Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		ILogicalOperator logicalOperator = getExecutor().removeSink(name, user);
+		return new LogicalOperatorResponse(logicalOperator, true);
+	}
+
+	public Response removeViewOrStream(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		getExecutor().removeViewOrStream(name, user);
+		return new Response(true);
+	}
+
+	
+	public Response removeViewOrStream(Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		getExecutor().removeViewOrStream(name, user);
+		return new Response(true);
+
+	}
+	
+	public ResourceEntryLogicalOperatorListResponse getStreamsAndViews(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		Set<Entry<Resource,ILogicalOperator>> result = getExecutor().getStreamsAndViews(user);
+		return new ResourceEntryLogicalOperatorListResponse(result, true);
+	}
+
+	
+	public ResourceEntryLogicalOperatorListResponse getSinks(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		Set<Entry<Resource,ILogicalOperator>> result = getExecutor().getStreamsAndViews(user);
+		return new ResourceEntryLogicalOperatorListResponse(result, true);
+	}
+
+	public BooleanResponse containsViewOrStream(Resource name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		boolean result = getExecutor().containsViewOrStream(name, user);
+		return new BooleanResponse(result, true);
+	}
+
+	public BooleanResponse containsViewOrStream(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		boolean result = getExecutor().containsViewOrStream(name, user);
+		return new BooleanResponse(result, true);
+	}
+	
+	public Response reloadStoredQueries(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		getExecutor().reloadStoredQueries(user);
+		return new Response(true);
+	}
+
+	public Response addStoredProcedure(String name, StoredProcedure proc, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		getExecutor().addStoredProcedure(name, proc, user);
+		return new Response(true);
+
+	}
+
+	
+	public Response removeStoredProcedure(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		getExecutor().removeStoredProcedure(name, user);
+		return new Response(true);
+
+	}
+	
+	public StoredProcedureResponse getStoredProcedure(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		StoredProcedure result = getExecutor().getStoredProcedure(name, user);
+		return new StoredProcedureResponse(result, true);
+	}
+
+	
+	public StoredProcedureListResponse getStoredProcedures(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		List<StoredProcedure> result = getExecutor().getStoredProcedures(user);
+		return new StoredProcedureListResponse(result, true);
+	}
+
+	public BooleanResponse containsStoredProcedures(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		boolean result = getExecutor().containsStoredProcedures(name, user);
+		return new BooleanResponse(result, true);
+	}
+	
+	public StringListResponse getOperatorNames(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		List<String> result = getExecutor().getOperatorNames(user);
+		return new StringListResponse(result, true);
+	}
+
+	public LogicalOperatorInformationListResponse getOperatorInformations(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		List<LogicalOperatorInformation> result = getExecutor().getOperatorInformations(user);
+		return new LogicalOperatorInformationListResponse(result, true);
+	}
+
+	public LogicalOperatorInformationResponse getOperatorInformation(String name, @WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
+		ISession user = loginWithSecurityToken(securityToken);
+		LogicalOperatorInformation result = getExecutor().getOperatorInformation(name, user);
+		return new LogicalOperatorInformationResponse(result, true);
 	}
 }

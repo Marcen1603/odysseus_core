@@ -1,0 +1,18 @@
+<project name="wsNameClent" basedir=".">
+
+	<property name="wsdl" value="http://localhost:9669/odysseus?wsdl" />
+	<target name="wsimport">
+		<exec executable="wsimport">
+			<arg value="-verbose" />
+			<arg value="-keep" />
+			<arg value="-d" />
+			<arg value="bin" />
+			<arg value="-s" />
+			<arg value="src" />
+			<arg value="-p" />
+			<arg value="de.uniol.inf.is.odysseus.webservice.client" />
+			<arg value="${wsdl}" />
+		</exec>
+	</target>
+
+</project>

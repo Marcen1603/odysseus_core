@@ -30,9 +30,6 @@
 
 package de.uniol.inf.is.odysseus.sensorregistry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -40,7 +37,9 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Endpoint;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebserviceServer;
@@ -56,15 +55,12 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 @XmlSeeAlso({ SensorSchema.class, SensorAttribute.class, StringResponse.class })
 public class SensorRegistryService extends WebserviceServer {
 
-	public SensorRegistryService(IExecutor executor) {
-		super(executor);	
-	}
 
 	private static Logger LOG = LoggerFactory.getLogger(SensorRegistryService.class); 
 	private static final String TRANSFORMATION_CONFIGURATION = "Standard";
 
 	public static void startServer() {
-		SensorRegistryService server = new SensorRegistryService(ExecutorServiceBinding.getExecutor());
+		SensorRegistryService server = new SensorRegistryService();
 		Endpoint endpoint = Endpoint.publish("http://0.0.0.0:9999/odysseus", server);
 		if (endpoint.isPublished()) {
 			LOG.debug("Webservice published!");

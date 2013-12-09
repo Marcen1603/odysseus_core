@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="doc" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="maxInputOperatorCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="minInputOperatorCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -33,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "operatorBuilderInformation", propOrder = {
+    "doc",
     "maxInputOperatorCount",
     "minInputOperatorCount",
     "name",
@@ -40,11 +42,36 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class OperatorBuilderInformation {
 
+    protected String doc;
     protected int maxInputOperatorCount;
     protected int minInputOperatorCount;
     protected String name;
     @XmlElement(nillable = true)
     protected List<ParameterInfo> parameters;
+
+    /**
+     * Gets the value of the doc property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDoc() {
+        return doc;
+    }
+
+    /**
+     * Sets the value of the doc property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDoc(String value) {
+        this.doc = value;
+    }
 
     /**
      * Gets the value of the maxInputOperatorCount property.
