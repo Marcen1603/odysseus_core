@@ -12,15 +12,28 @@ import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.CostModelService;
 
-public class CostCalculator {
+public class BidCalculator {
 
-	private static final Logger log = LoggerFactory.getLogger(CostCalculator.class);
+	private static final Logger log = LoggerFactory.getLogger(BidCalculator.class);
 
-	public static double calcBid(ILogicalOperator plan, CostSummary absolutePlanCosts) {
-		return calcBid(plan, absolutePlanCosts.getCpuCost(), absolutePlanCosts.getMemCost());
+	public static double calcBid( ILogicalQuery query, String transCfgName ) {
+		CostSummary summary = calcCostsForPlan(query, transCfgName);
+		return calcBidImpl(query.getLogicalPlan(), summary.getCpuCost(), summary.getMemCost());
 	}
 
-	private static double calcBid(ILogicalOperator query, double cpuCosts, double memCosts) {
+	@SuppressWarnings("unchecked")
+	private static CostSummary calcCostsForPlan(ILogicalQuery query, String transCfgName) {
+		IPhysicalQuery p = Helper.getPhysicalQuery(query, transCfgName);
+
+		ICost<IPhysicalOperator> cost = CostModelService.get().estimateCost(p.getPhysicalChilds(), false);
+		OperatorCost<IPhysicalOperator> c = ((OperatorCost<IPhysicalOperator>) cost);
+
+		double cpuCost = c.getCpuCost();
+		double memCost = c.getMemCost();
+		return new CostSummary(null, cpuCost, memCost, query.getLogicalPlan());
+	}
+
+	private static double calcBidImpl(ILogicalOperator query, double cpuCosts, double memCosts) {
 		if (!Helper.allSourcesAvailable(query)) {
 			log.debug("Not all sources are available. Bid = 0 then.");
 			return 0;
@@ -45,22 +58,10 @@ public class CostCalculator {
 		double remainingCpuPerc = (remainingCpu - cpuCosts) / maximumCost.getCpuCost();
 		log.debug("Remaining costs(%): MEM at {} %, CPU at {} %", remainingMemPerc * 100, remainingCpuPerc * 100);
 
-		double bid = 0.5 * remainingMemPerc + 0.5 * remainingCpuPerc;
+		double bid = ( remainingMemPerc + remainingCpuPerc ) / 2;
 		log.debug("Resulting bid = {}", bid);
 
 		return bid;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static CostSummary calcCostsForPlan(ILogicalQuery query, String transCfgName) {
-		IPhysicalQuery p = Helper.getPhysicalQuery(query, transCfgName);
-
-		ICost<IPhysicalOperator> cost = CostModelService.get().estimateCost(p.getPhysicalChilds(), false);
-		OperatorCost<IPhysicalOperator> c = ((OperatorCost<IPhysicalOperator>) cost);
-
-		double cpuCost = c.getCpuCost();
-		double memCost = c.getMemCost();
-		return new CostSummary(null, cpuCost, memCost, query.getLogicalPlan());
 	}
 
 	private static String formatCosts(double memCost, double cpuCost) {

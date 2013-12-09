@@ -18,17 +18,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSummary;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.CostCalculator;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.BidCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 
 public final class SurveyBasedAllocatorImpl {
@@ -59,7 +57,8 @@ public final class SurveyBasedAllocatorImpl {
 				log.info("Got {} bids from remote peers", bids.size());
 
 				// calc own bid
-				bids.add(wrapInAuctionResponseAdvertisement(auction.getAuction().getAuctionId(), calcOwnBid(auction.getAuction().getPqlStatement(), auction.getAuction().getTransCfgName())));
+				double bidValue = BidCalculator.calcBid(Helper.getLogicalQuery(auction.getAuction().getPqlStatement()).get(0), auction.getAuction().getTransCfgName());
+				bids.add(wrapInAuctionResponseAdvertisement(auction.getAuction().getAuctionId(), bidValue));
 
 				Collections.sort(bids);
 				AuctionResponseAdvertisement bid = bids.get(bids.size() - 1);
@@ -151,12 +150,5 @@ public final class SurveyBasedAllocatorImpl {
 		}
 
 		return localParts;
-	}
-
-	private static double calcOwnBid(String pqlStatement, String transCfgName) {
-		ILogicalQuery query = Helper.getLogicalQuery(pqlStatement).get(0);
-		CostSummary costs = CostCalculator.calcCostsForPlan(query, transCfgName);
-
-		return CostCalculator.calcBid(query.getLogicalPlan(), costs);
 	}
 }
