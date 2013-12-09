@@ -165,7 +165,7 @@ public class AuctionBasedDistributor implements ILogicalQueryDistributor {
 								log.info("Subplans allocated in {} ms", sw.stop().getTimeInMillis());
 								
 								// Lokalen plan als Master-Query registrieren
-								int id = sender.addQuery(q.getLogicalPlan(),
+								int id = ((IServerExecutor)sender).addQuery(q.getLogicalPlan(),
 										UserManagementProvider.getSessionmanagement().loginSuperUser(null, ""),
 										transCfg.getName());
 		

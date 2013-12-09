@@ -106,6 +106,34 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			ISession user, String queryBuildConfigurationName,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws PlanManagementException;
+	
+	
+	/**
+	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als logischer Plan
+	 * vorliegt.
+	 * 
+	 * @param logicalPlan
+	 *            logischer Plan der Anfrage
+	 * @param queryBuildConfigurationName
+	 *            Name der zu verwendeden Build-Configuration
+	 * @return vorl�ufige ID der neuen Anfrage
+	 * @throws PlanManagementException
+	 */
+	public Integer addQuery(ILogicalOperator logicalPlan, ISession user,
+			String queryBuildConfigurationName) throws PlanManagementException;
+
+	/**
+	 * addQuery fuegt Odysseus eine Anfrage hinzu, die als physischer Plan
+	 * vorliegt.
+	 * 
+	 * @param physicalPlan
+	 *            physischer Plan der neuen Anfrage
+	 * @param queryBuildConfigurationName
+	 *            Name der zu verwendeden Build-Configuration
+	 * @throws PlanManagementException
+	 */
+	public Integer addQuery(List<IPhysicalOperator> physicalPlan, ISession user,
+			String queryBuildConfigurationName) throws PlanManagementException;
 
 	/**
 	 * getConfiguration liefert die aktuelle Konfiguration der

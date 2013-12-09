@@ -32,7 +32,8 @@ Import-Package: de.uniol.inf.is.odysseus.core.server,
 Service-Component: OSGI-INF/ExecutorService.xml,
  OSGI-INF/operatorBuilderFactory.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.slf4j
 Export-Package: de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server,
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice,
  de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception,
