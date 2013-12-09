@@ -49,15 +49,16 @@ public class OperatorSetPartitioner implements IQueryPartitioner {
 		
 		visitedOperators.add(operator);
 
-		if (!isStateful(operator)) {
-			for (LogicalSubscription sub : operator.getSubscriptions()) {
+		for (LogicalSubscription sub : operator.getSubscriptions()) {
+			ILogicalOperator targetOperator = sub.getTarget();
+			if( !isStateful(targetOperator)) {
 				collectUntilStatefulOperators(sub.getTarget(), visitedOperators);
 			}
 		}
 
-		for (LogicalSubscription sub : operator.getSubscribedToSource()) {
-			ILogicalOperator targetOperator = sub.getTarget();
-			if (!isStateful(targetOperator)) {
+		if( !isStateful(operator)) {
+			for (LogicalSubscription sub : operator.getSubscribedToSource()) {
+				ILogicalOperator targetOperator = sub.getTarget();
 				collectUntilStatefulOperators(targetOperator, visitedOperators);
 			}
 		}
