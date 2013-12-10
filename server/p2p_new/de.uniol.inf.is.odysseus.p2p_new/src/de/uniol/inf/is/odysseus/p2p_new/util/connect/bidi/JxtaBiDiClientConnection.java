@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.util.IJxtaConnectionListener;
 
 public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 
@@ -45,5 +46,18 @@ public class JxtaBiDiClientConnection extends JxtaBiDiConnection {
 		}
 
 		super.connect();
+	}
+	
+	@Override
+	protected void fireMessageReceiveEvent(byte[] data) {
+		synchronized( getListeners() ) {
+			for (final IJxtaConnectionListener listener : getListeners().toArray(new IJxtaConnectionListener[0])) {
+				try {
+					listener.onReceiveData(this, data);
+				} catch (final Throwable t) {
+					LOG.error("Exception in JxtaConnection listener", t);
+				}
+			}
+		}
 	}
 }

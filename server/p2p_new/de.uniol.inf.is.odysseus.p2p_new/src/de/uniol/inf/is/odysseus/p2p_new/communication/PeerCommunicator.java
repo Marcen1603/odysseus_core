@@ -23,6 +23,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.impl.P2PDictionary;
@@ -43,8 +44,11 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	private final Map<IJxtaConnection, PeerID> waitingClientConnections = Maps.newHashMap();
 	private final Collection<IJxtaConnection> waitingServerConnections = Lists.newArrayList();
 
-	private final Map<IJxtaConnection, PeerID> activeConnections = Maps.newHashMap();
-	private final Map<PeerID, IJxtaConnection> activeConnectionsPeerID = Maps.newHashMap();
+	private final Map<IJxtaConnection, PeerID> activeConnectionsOut = Maps.newHashMap();
+	private final Map<IJxtaConnection, PeerID> activeConnectionsIn = Maps.newHashMap();
+	
+	private final Map<PeerID, IJxtaConnection> activeConnectionsOut_PeerID = Maps.newHashMap();
+	private final Map<PeerID, IJxtaConnection> activeConnectionsIn_PeerID = Maps.newHashMap();
 
 	private IP2PDictionary p2pDictionary;
 
@@ -114,7 +118,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 	@Override
 	public boolean isConnected(PeerID destinationPeer) {
-		return activeConnectionsPeerID.containsKey(destinationPeer);
+		return activeConnectionsOut_PeerID.containsKey(destinationPeer);
 	}
 
 	@Override
@@ -122,7 +126,7 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		Preconditions.checkNotNull(destinationPeer, "Destination peer to send message must not be null!");
 		Preconditions.checkNotNull(message, "Message to send must not be null!");
 		
-		IJxtaConnection connection = activeConnectionsPeerID.get(destinationPeer);
+		IJxtaConnection connection = activeConnectionsOut_PeerID.get(destinationPeer);
 		try {
 			connection.send(message);
 		} catch (IOException e) {
@@ -132,13 +136,16 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 
 	@Override
 	public void onReceiveData(IJxtaConnection sender, byte[] data) {
+		
+		// receive data as server
 		if (waitingServerConnections.contains(sender)) {
 			readAndProcessNameInfos(sender, data);
 			waitingServerConnections.remove(sender);
 			return;
 		}
 		
-		PeerID peerID = activeConnections.get(sender);
+		// receiver data as client
+		PeerID peerID = activeConnectionsIn.get(sender);
 		if( peerID == null ) {
 			throw new RuntimeException("Got message from unknown connection/peer");
 		}
@@ -165,13 +172,13 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		String peerName = new String(nameBytes);
 		String peerID = new String(idBytes);
 
-		activeConnections.put(sender, toID(peerID));
-		activeConnectionsPeerID.put(toID(peerID), sender);
+		activeConnectionsOut.put(sender, toID(peerID));
+		activeConnectionsOut_PeerID.put(toID(peerID), sender);
 		
 		LOG.debug("Got connection info from peername {} with id {}", peerName, peerID);
 	}
 
-	public static int getInt(byte[] bytes, int offset) {
+	private static int getInt(byte[] bytes, int offset) {
 		int ret = 0;
 		for (int i = 0; i < 4 && i + offset < bytes.length; i++) {
 			ret <<= 8;
@@ -198,6 +205,9 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		waitingClientConnections.remove(sender);
 
 		LOG.debug("Established connection to remote server peer {}", peerName);
+		
+		activeConnectionsIn.put(sender, connectedServerPeerID);
+		activeConnectionsIn_PeerID.put(connectedServerPeerID, sender);
 
 		try {
 			sendNameInfos(sender);
@@ -230,6 +240,13 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 	@Override
 	public void onDisconnect(IJxtaConnection sender) {
 		LOG.debug("Lost connection to remote server");
+		
+		if( activeConnectionsIn.containsKey(sender)) {
+			PeerID peerID = activeConnectionsIn.get(sender);
+			
+			activeConnectionsIn.remove(sender);
+			activeConnectionsIn_PeerID.remove(peerID);
+		}
 	}
 
 	@Override
@@ -249,10 +266,10 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 			waitingServerConnections.remove(removedConnection);
 		}
 		
-		if( activeConnections.containsKey(sender)) {
-			PeerID peerID = activeConnections.get(sender);
-			activeConnections.remove(sender);
-			activeConnectionsPeerID.remove(peerID);
+		if( activeConnectionsOut.containsKey(sender)) {
+			PeerID peerID = activeConnectionsOut.get(sender);
+			activeConnectionsOut.remove(sender);
+			activeConnectionsOut_PeerID.remove(peerID);
 		}
 	}
 
@@ -316,5 +333,15 @@ public class PeerCommunicator extends P2PDictionaryAdapter implements IPeerCommu
 		advertisement.setPipeID(pipeID);
 		advertisement.setType(PipeService.UnicastType);
 		return advertisement;
+	}
+	
+	@Override
+	public void addListener(IPeerCommunicatorListener listener) {
+		PeerCommunicatorListenerRegistry.getInstance().add(listener);
+	}
+	
+	@Override
+	public void removeListener(IPeerCommunicatorListener listener) {
+		PeerCommunicatorListenerRegistry.getInstance().remove(listener);
 	}
 }

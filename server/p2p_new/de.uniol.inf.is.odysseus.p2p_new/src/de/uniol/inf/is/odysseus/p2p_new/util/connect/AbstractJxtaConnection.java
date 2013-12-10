@@ -107,7 +107,7 @@ public abstract class AbstractJxtaConnection implements IJxtaConnection {
 		}
 	}
 
-	protected final void fireMessageReceiveEvent(byte[] data) {
+	protected void fireMessageReceiveEvent(byte[] data) {
 		synchronized( listeners ) {
 			for (final IJxtaConnectionListener listener : listeners.toArray(new IJxtaConnectionListener[0])) {
 				try {
@@ -117,5 +117,9 @@ public abstract class AbstractJxtaConnection implements IJxtaConnection {
 				}
 			}
 		}
+	}
+	
+	protected final List<IJxtaConnectionListener> getListeners() {
+		return listeners;
 	}
 }
