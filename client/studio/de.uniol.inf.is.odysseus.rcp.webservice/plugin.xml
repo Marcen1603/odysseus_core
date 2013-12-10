@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.LoginContribution">
+      <loginContribution
+            class="de.uniol.inf.is.odysseus.rcp.webservice.ClientConnectionContribution">
+      </loginContribution>
+   </extension>
+</plugin>
