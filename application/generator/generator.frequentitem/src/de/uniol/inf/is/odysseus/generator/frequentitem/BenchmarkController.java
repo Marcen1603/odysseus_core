@@ -19,6 +19,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
+import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
@@ -81,7 +83,7 @@ public class BenchmarkController {
 		System.out.println("Connecting to Odysseus...");
 		WebserviceServerService wss = new WebserviceServerService();
 		server = wss.getWebserviceServerPort();
-		StringResponse resp = server.login("System", "manager");
+		StringResponse resp = server.login("System", "manager", "");
 		if (resp.isSuccessful()) {
 			System.out.println("connected!");
 			token = resp.getResponseValue();
@@ -146,7 +148,13 @@ public class BenchmarkController {
 	private void close() {
 		System.out.println("finished - all " + counter + " runs done!");
 		System.out.print("Installing close-query...");
-		server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency");
+		try {
+			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency");
+		} catch (CreateQueryException_Exception
+				| InvalidUserDataException_Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println(" done!");
 		System.out.println("Following throughputs were measured: ");
 		NumberFormat nf = NumberFormat.getNumberInstance();
@@ -184,7 +192,13 @@ public class BenchmarkController {
 					+ "fs3 = FILESINK({file='E:/Results/optimized - w${transactions} - s${support}/" + prefix
 					+ "optimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
 
-			server.addQuery(token, "OdysseusScript", queryOptimized, "StandardLatency");
+			try {
+				server.addQuery(token, "OdysseusScript", queryOptimized, "StandardLatency");
+			} catch (CreateQueryException_Exception
+					| InvalidUserDataException_Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if (currentSetting.equals(Setting.UNOPTIMIZED)) {
@@ -198,7 +212,13 @@ public class BenchmarkController {
 					+ "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(selected)) \n"
 					+ "fs3 = FILESINK({file='E:/Results/unoptimized - w${transactions} - s${support}/" + prefix
 					+ "unoptimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
-			server.addQuery(token, "OdysseusScript", queryUnoptimized, "StandardLatency");
+			try {
+				server.addQuery(token, "OdysseusScript", queryUnoptimized, "StandardLatency");
+			} catch (CreateQueryException_Exception
+					| InvalidUserDataException_Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		if (currentSetting.equals(Setting.INTEGRATION)) {
@@ -211,7 +231,13 @@ public class BenchmarkController {
 					+ "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(fis)) \n" 					
 					+ "fs3 = FILESINK({file='E:/Results/normal/" + prefix
 					+ "normal-S${support}-W${transactions}.csv', filetype='csv', append='true'}, stats)";
-			server.addQuery(token, "OdysseusScript", queryWithout, "StandardLatency");
+			try {
+				server.addQuery(token, "OdysseusScript", queryWithout, "StandardLatency");
+			} catch (CreateQueryException_Exception
+					| InvalidUserDataException_Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		System.out.println("****************************************************************************************");

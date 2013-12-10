@@ -29,6 +29,8 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
+import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
+import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServer;
 import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
@@ -82,7 +84,7 @@ public class BenchmarkController {
 		System.out.println("Connecting to Odysseus...");
 		WebserviceServerService wss = new WebserviceServerService();
 		server = wss.getWebserviceServerPort();
-		StringResponse resp = server.login("System", "manager");
+		StringResponse resp = server.login("System", "manager", "");
 		if (resp.isSuccessful()) {
 			System.out.println("connected!");
 			token = resp.getResponseValue();
@@ -109,7 +111,13 @@ public class BenchmarkController {
 	private void close() {
 		System.out.println("finished - all " + counter + " runs done!");
 		System.out.print("Installing close-query...");
-		server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency");
+		try {
+			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency");
+		} catch (CreateQueryException_Exception
+				| InvalidUserDataException_Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println(" done!");
 		System.out.println("Following throughputs were measured: ");
 		NumberFormat nf = NumberFormat.getNumberInstance();
@@ -138,7 +146,13 @@ public class BenchmarkController {
 		System.out.println("Start new query");
 		String query = loadQuery("C:" + File.separator + "Users" + File.separator + "dgeesen" + File.separator + "Dropbox" + File.separator + "Odysseus Projects" + File.separator
 				+ "Mining" + File.separator + "Classification.qry");
-		server.addQuery(token, "OdysseusScript", query, "StandardLatency");
+		try {
+			server.addQuery(token, "OdysseusScript", query, "StandardLatency");
+		} catch (CreateQueryException_Exception
+				| InvalidUserDataException_Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("****************************************************************************************");
 
 	}
