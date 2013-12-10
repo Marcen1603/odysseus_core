@@ -1,12 +1,16 @@
 package de.uniol.inf.is.odysseus.rcp.login.contrib;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
@@ -22,9 +26,21 @@ public class LoginContributionLifecycle {
 		Preconditions.checkArgument(!contributions.isEmpty(), "Collection of login contributions for lifecycle must not be empty!");
 		
 		LOG.debug("Creating lifecyle for {} login contributions", contributions.size());
-		this.contributions = contributions;
+		this.contributions = sortByPriorityAsc(contributions);
 	}
 	
+	private static Collection<ILoginContribution> sortByPriorityAsc(Collection<ILoginContribution> contributions) {
+		List<ILoginContribution> sorted = Lists.newArrayList(contributions);
+		Collections.sort(sorted, new Comparator<ILoginContribution>() {
+			@Override
+			public int compare(ILoginContribution a, ILoginContribution b) {
+				return Integer.compare(a.getPriority(), b.getPriority());
+			}
+		});
+		Collections.reverse(sorted);
+		return sorted;
+	}
+
 	public void onInitAll() {
 		LOG.debug("Init all login contributions");
 		for( ILoginContribution contribution : contributions ) {
