@@ -22,6 +22,14 @@
             id="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
             name="P2P">
       </category>
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
+            class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.ChatView"
+            icon="icons/chat.png"
+            id="de.uniol.inf.is.odysseus.rcp.p2p_new.ChatView"
+            name="Chat"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
