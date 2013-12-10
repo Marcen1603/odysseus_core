@@ -56,7 +56,7 @@ public class ClientConnectionContribution implements ILoginContribution {
 
 	@Override
 	public String getTitle() {
-		return "Connection";
+		return "WebService";
 	}
 
 	@Override
