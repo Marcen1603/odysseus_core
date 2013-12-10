@@ -81,6 +81,7 @@ public final class Login {
 		boolean allValid = lifecycle.areAllValid();
 		LOG.debug("Login contributions are valid = {}", allValid);
 		
+		boolean couldFinish = false;
 		do {
 			if( forceShow || !allValid || showWindow ) {
 				
@@ -109,7 +110,13 @@ public final class Login {
 			} else {
 				LOG.debug("Do not show the login window. Automatically login now.");
 			}
-		} while( !lifecycle.onFinishAll() );
+			
+			couldFinish = lifecycle.onFinishAll();
+			if( !couldFinish ) {
+				forceShow = true;
+			}
+			
+		} while( !couldFinish );
 	}
 
 	private static void insertShowWindowSetting(Map<String, String> savedConfig, boolean showAgain) {
