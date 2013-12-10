@@ -179,7 +179,7 @@ public class RestructHelper {
 		}
 
 		// Replace subscriptions to source
-		subscriptions = oldOP.getSubscribedToSource();
+		subscriptions = new ArrayList<>(oldOP.getSubscribedToSource());
 		for (LogicalSubscription s : subscriptions) {
 			oldOP.unsubscribeFromSource(s);
 			newOp.subscribeToSource(s.getTarget(), s.getSinkInPort(),
