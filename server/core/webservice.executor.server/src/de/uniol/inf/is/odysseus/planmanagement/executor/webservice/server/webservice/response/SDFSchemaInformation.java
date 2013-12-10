@@ -16,7 +16,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sdfSchemaInformation", propOrder = {
 		"uri",
-		"attributes"
+		"attributes",
+		"typeClass"
 })
 public class SDFSchemaInformation {
 
@@ -26,9 +27,11 @@ public class SDFSchemaInformation {
 	
 	public Collection<SDFAttributeInformation> attributes;
 	public String uri;
+	public Class<?> typeClass;
 	
-	public SDFSchemaInformation(String uri, Collection<SDFAttributeInformation> attributes) {
+	public SDFSchemaInformation(String uri, Collection<SDFAttributeInformation> attributes, Class<?> typeClass) {
 		this.uri = uri;
 		this.attributes = attributes;
+		this.typeClass = typeClass;
 	}
 }

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="parser" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="query" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="transformationconfig" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="context" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,7 +34,8 @@ import javax.xml.bind.annotation.XmlType;
     "securitytoken",
     "parser",
     "query",
-    "transformationconfig"
+    "transformationconfig",
+    "context"
 })
 public class AddQuery {
 
@@ -41,6 +43,7 @@ public class AddQuery {
     protected String parser;
     protected String query;
     protected String transformationconfig;
+    protected Object context;
 
     /**
      * Gets the value of the securitytoken property.
@@ -136,6 +139,30 @@ public class AddQuery {
      */
     public void setTransformationconfig(String value) {
         this.transformationconfig = value;
+    }
+
+    /**
+     * Gets the value of the context property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Object }
+     *     
+     */
+    public Object getContext() {
+        return context;
+    }
+
+    /**
+     * Sets the value of the context property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Object }
+     *     
+     */
+    public void setContext(Object value) {
+        this.context = value;
     }
 
 }

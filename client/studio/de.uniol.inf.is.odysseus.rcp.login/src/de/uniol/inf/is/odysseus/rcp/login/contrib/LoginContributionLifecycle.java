@@ -34,7 +34,7 @@ public class LoginContributionLifecycle {
 		Collections.sort(sorted, new Comparator<ILoginContribution>() {
 			@Override
 			public int compare(ILoginContribution a, ILoginContribution b) {
-				return Integer.compare(a.getPriority(), b.getPriority());
+				return Integer.compare(b.getPriority(), a.getPriority());
 			}
 		});
 		Collections.reverse(sorted);

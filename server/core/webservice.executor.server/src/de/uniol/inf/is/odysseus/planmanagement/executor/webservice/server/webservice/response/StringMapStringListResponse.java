@@ -1,26 +1,25 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 public class StringMapStringListResponse extends Response {
 	
-	private Map<String, ArrayList<String>> responseValue;
+	private List<StringMapListEntry> responseValue;
 	
 	public StringMapStringListResponse() {
 		super();
 	}
 	
-	public StringMapStringListResponse(Map<String, ArrayList<String>> responseValue, boolean success) {
+	public StringMapStringListResponse(List<StringMapListEntry> responseValue, boolean success) {
 		super(success);
 		this.responseValue = responseValue;
 	}
 	
-	public Map<String, ArrayList<String>> getResponseValue() {
+	public List<StringMapListEntry> getResponseValue() {
 		return this.responseValue;
 	}
 	
-	public void setResponseValue(Map<String, ArrayList<String>> value) {
+	public void setResponseValue(List<StringMapListEntry> value) {
 		this.responseValue = value;
 	}
 

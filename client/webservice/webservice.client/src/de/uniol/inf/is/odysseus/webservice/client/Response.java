@@ -34,12 +34,20 @@ import javax.xml.bind.annotation.XmlType;
     OperatorBuilderListResponse.class,
     SdfSchemaResponse.class,
     SourceListResponse.class,
+    StoredProcedureListResponse.class,
     BooleanResponse.class,
+    ResourceInformationListResponse.class,
     StringListResponse.class,
     ConnectionInformationResponse.class,
+    LogicalOperatorResponse.class,
+    StringMapStringListResponse.class,
+    IntegerCollectionResponse.class,
+    LogicalOperatorInformationResponse.class,
+    SdfDatatypeListResponse.class,
+    StoredProcedureResponse.class,
     StringResponse.class,
     QueryResponse.class,
-    IntegerCollectionResponse.class
+    LogicalOperatorInformationListResponse.class
 })
 public class Response {
 

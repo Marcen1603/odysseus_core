@@ -3,13 +3,17 @@ package de.uniol.inf.is.odysseus.core.collection;
 import java.io.Serializable;
 import java.util.Map;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.sun.xml.internal.bind.AnyTypeAdapter;
 
+@XmlJavaTypeAdapter(AnyTypeAdapter.class)
 public class Context {
 
 	private final Map<String, Serializable> contextMap = Maps.newHashMap();

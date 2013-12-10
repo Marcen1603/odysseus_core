@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.webservice.client;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="attributes" type="{http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/}sdfAttributeInformation" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="typeClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,13 +34,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sdfSchemaInformation", propOrder = {
     "uri",
-    "attributes"
+    "attributes",
+    "typeClass"
 })
 public class SdfSchemaInformation {
 
     protected String uri;
     @XmlElement(nillable = true)
     protected List<SdfAttributeInformation> attributes;
+    protected String typeClass;
 
     /**
      * Gets the value of the uri property.
@@ -91,6 +95,30 @@ public class SdfSchemaInformation {
             attributes = new ArrayList<SdfAttributeInformation>();
         }
         return this.attributes;
+    }
+
+    /**
+     * Gets the value of the typeClass property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTypeClass() {
+        return typeClass;
+    }
+
+    /**
+     * Sets the value of the typeClass property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTypeClass(String value) {
+        this.typeClass = value;
     }
 
 }

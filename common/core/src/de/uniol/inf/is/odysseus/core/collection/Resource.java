@@ -25,6 +25,11 @@ public class Resource implements Serializable, Comparable<Resource> {
 		}
 	}
 
+	public Resource(String username, String resourceName) {
+		this.user = username;
+		this.resourceName = resourceName;
+	}
+
 	public String getUser() {
 		return user;
 	}
