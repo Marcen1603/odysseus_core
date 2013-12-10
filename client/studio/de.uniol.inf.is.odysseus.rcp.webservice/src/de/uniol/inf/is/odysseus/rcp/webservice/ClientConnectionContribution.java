@@ -166,4 +166,8 @@ public class ClientConnectionContribution implements ILoginContribution {
 		return connected;		
 	}
 
+	@Override
+	public int getPriority() {
+		return 10;
+	}
 }

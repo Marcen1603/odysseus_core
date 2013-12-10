@@ -171,4 +171,9 @@ public class UsernameLoginContribution implements ILoginContribution {
 			return false;
 		}
 	}
+	
+	@Override
+	public int getPriority() {
+		return 0;
+	}
 }

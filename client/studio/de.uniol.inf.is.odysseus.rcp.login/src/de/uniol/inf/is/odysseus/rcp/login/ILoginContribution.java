@@ -17,4 +17,5 @@ public interface ILoginContribution {
 	
 	public Map<String, String> onSave();
 	public boolean onFinish();
+	public int getPriority();
 }

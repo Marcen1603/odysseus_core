@@ -191,4 +191,9 @@ public class P2PLoginContribution implements ILoginContribution {
 
 		return Optional.absent();
 	}
+	
+	@Override
+	public int getPriority() {
+		return 0;
+	}
 }
