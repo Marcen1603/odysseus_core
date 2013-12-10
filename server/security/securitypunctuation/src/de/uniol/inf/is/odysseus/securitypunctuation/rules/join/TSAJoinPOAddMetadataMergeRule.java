@@ -59,7 +59,7 @@ public class TSAJoinPOAddMetadataMergeRule extends AbstractTransformationRule<SA
 			if (operator.getMetadataMerge() != null) {
 				if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
 					if (transformConfig.getOption("isSecurityAware") != null) {
-						if (transformConfig.getOption("isSecurityAware")) {
+						if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) )  {
 							return true;
 						}
 					}

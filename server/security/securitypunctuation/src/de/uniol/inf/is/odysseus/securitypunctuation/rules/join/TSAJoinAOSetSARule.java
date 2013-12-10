@@ -103,7 +103,7 @@ public class TSAJoinAOSetSARule<K extends ITimeInterval, T extends IStreamObject
 		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 			if(operator.getAreas()==null){
 				if (transformConfig.getOption("isSecurityAware") != null) {
-					if (transformConfig.getOption("isSecurityAware")) {
+					if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) )  {
 						return true;
 					}
 				}

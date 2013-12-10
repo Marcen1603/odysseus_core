@@ -49,7 +49,7 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<TopAO> {
 	public void execute(TopAO topAO,
 			TransformationConfiguration transformConfig) {
 		if(transformConfig.getOption("isSecurityAware") != null) {		
-			if(transformConfig.getOption("isSecurityAware")) {
+			if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) )  {
 				Collection<IPhysicalOperator> physInputPOs = topAO.getPhysInputPOs();
 				ISource oldFather = null;
 

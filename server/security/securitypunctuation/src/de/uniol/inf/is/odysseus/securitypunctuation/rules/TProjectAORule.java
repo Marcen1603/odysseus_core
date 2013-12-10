@@ -46,7 +46,7 @@ public class TProjectAORule extends AbstractTransformationRule<ProjectAO> {
 		if (operator.getInputSchema().getType() == Tuple.class) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (transformConfig.getOption("isSecurityAware") != null) {
-					if (transformConfig.getOption("isSecurityAware")) {
+					if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) ) {
 						return true;
 
 					}

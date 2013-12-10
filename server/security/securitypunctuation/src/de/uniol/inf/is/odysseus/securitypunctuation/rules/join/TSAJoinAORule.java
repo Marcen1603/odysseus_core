@@ -85,7 +85,7 @@ public class TSAJoinAORule extends AbstractTransformationRule<JoinAO> {
 		if(operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)){
 			if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())){
 				if (transformConfig.getOption("isSecurityAware") != null) {
-					if (transformConfig.getOption("isSecurityAware")) {
+					if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) )  {
 						return true;
 					}
 				}

@@ -42,7 +42,7 @@ public class TSAJoinPOInsertDataMergeRule extends AbstractTransformationRule<SAJ
 		if(operator.getOutputSchema().getType() == Tuple.class){
 			if(operator.getDataMerge()==null){
 				if (transformConfig.getOption("isSecurityAware") != null) {
-					if (transformConfig.getOption("isSecurityAware")) {
+					if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) )  {
 						return true;
 					}
 				}

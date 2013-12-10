@@ -49,7 +49,7 @@ public class TSAStreamGroupingWithAggregationTIPORule extends AbstractTransforma
 		if(transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
 			if (operator.isAllPhysicalInputSet()) {
 				if (transformConfig.getOption("isSecurityAware") != null) {
-					if (transformConfig.getOption("isSecurityAware")) {
+					if (Boolean.parseBoolean((String)transformConfig.getOption("isSecurityAware")) ){
 						return true;
 					}
 				}
