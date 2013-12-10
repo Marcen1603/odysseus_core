@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.p2p_new.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.p2p_new.communication.IPeerCommunicatorListener;
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.communication.PeerCommunicatorListenerRegistry;
 
 public class PeerCommunicatorListenerService {

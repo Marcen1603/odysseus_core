@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.p2p_new.communication;
+package de.uniol.inf.is.odysseus.p2p_new;
 
+import de.uniol.inf.is.odysseus.p2p_new.communication.PeerCommunicationException;
 import net.jxta.peer.PeerID;
 
 public interface IPeerCommunicator {

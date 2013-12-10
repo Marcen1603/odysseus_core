@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
+
 public final class PeerCommunicatorListenerRegistry {
 
 	private static PeerCommunicatorListenerRegistry instance;
