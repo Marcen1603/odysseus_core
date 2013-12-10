@@ -141,7 +141,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * 
 	 * @return die aktuelle Konfiguration der AUsführungsumgebung
 	 */
-	public ExecutionConfiguration getConfiguration();
+	public ExecutionConfiguration getConfiguration(ISession session);
 
 	/**
 	 * Get specific query build configuration
@@ -155,9 +155,9 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 */
 	public Map<String, IQueryBuildConfigurationTemplate> getQueryBuildConfigurations();
 
-	public void addCompilerListener(ICompilerListener compilerListener);
+	public void addCompilerListener(ICompilerListener compilerListener, ISession session);
 
-	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID);
+	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID, ISession session);
 
 	/**
 	 * Get the current active scheduler
@@ -165,7 +165,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @return current active scheduler
 	 */
 
-	public IScheduler getCurrentScheduler();
+	public IScheduler getCurrentScheduler(ISession session);
 
 	/**
 	 * 
@@ -173,7 +173,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * 
 	 * @throws NoOptimizerLoadedException
 	 */
-	public OptimizationConfiguration getOptimizerConfiguration()
+	public OptimizationConfiguration getOptimizerConfiguration(ISession session)
 			throws NoOptimizerLoadedException;
 
 	/**
@@ -183,7 +183,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * 
 	 * @throws NoSystemMonitorLoadedException
 	 */
-	public ISystemMonitor getDefaultSystemMonitor()
+	public ISystemMonitor getDefaultSystemMonitor(ISession session)
 			throws NoSystemMonitorLoadedException;
 
 	/**
@@ -195,11 +195,11 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * 
 	 * @throws NoSystemMonitorLoadedException
 	 */
-	public ISystemMonitor newSystemMonitor(long period)
+	public ISystemMonitor newSystemMonitor(long period, ISession session)
 			throws NoSystemMonitorLoadedException;
 
 	IOptimizer getOptimizer() throws NoOptimizerLoadedException;
-
+	
 	ICompiler getCompiler();
 
 	Optional<ILogicalQueryDistributor> getLogicalQueryDistributor(String name);
@@ -227,6 +227,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			ISession caller) throws TransformationException;
 
 	IDataDictionaryWritable getDataDictionary(ITenant tenant);
+	IDataDictionaryWritable getDataDictionary(ISession session);
 
 	public boolean removeAllQueries(ISession caller);
 
@@ -238,6 +239,9 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			IPhysicalQuery affectedQuery) throws SchedulerException,
 			NoSchedulerLoadedException;
 
+	public ISchedulerManager getSchedulerManager(ISession session);
+
+	// TODO: Remove method
 	public ISchedulerManager getSchedulerManager();
 
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query);

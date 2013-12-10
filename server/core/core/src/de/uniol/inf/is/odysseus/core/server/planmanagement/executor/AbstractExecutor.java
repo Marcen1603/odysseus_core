@@ -235,7 +235,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * getConfiguration ()
 	 */
 	@Override
-	public ExecutionConfiguration getConfiguration() {
+	public ExecutionConfiguration getConfiguration(ISession session) {
 		return configuration;
 	}
 
@@ -523,12 +523,14 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public IOptimizer getOptimizer() throws NoOptimizerLoadedException {
+		// TODO: 
 		if (this.optimizer != null) {
 			return this.optimizer;
 		}
 
 		throw new NoOptimizerLoadedException();
 	}
+	
 
 	/**
 	 * schedulerManager liefert den aktuellen Scheduling-Manager. Sollte keiner
@@ -538,6 +540,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * @throws SchedulerException
 	 */
 	@Override
+	public ISchedulerManager getSchedulerManager(ISession session) throws SchedulerException {
+		// TODO: Check access rights
+		return getSchedulerManager();
+	}
+	
+	@Override
 	public ISchedulerManager getSchedulerManager() throws SchedulerException {
 		if (this.schedulerManager != null) {
 			return this.schedulerManager;
@@ -546,7 +554,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		throw new SchedulerException();
 	}
 
-	@Override
+	@Override	
 	public ICompiler getCompiler() throws NoCompilerLoadedException {
 		if (this.compiler != null) {
 			return this.compiler;
@@ -930,7 +938,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public void addCompilerListener(ICompilerListener compilerListener) {
+	public void addCompilerListener(ICompilerListener compilerListener, ISession session) {
+		// TODO: Check right
 		this.compilerListener.add(compilerListener);
 		// if Compiler already bound
 		if (compiler != null) {
@@ -942,18 +951,24 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	public IDataDictionaryWritable getDataDictionary(ITenant tenant) {
 		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(tenant);
 	}
+	
+	@Override
+	public IDataDictionaryWritable getDataDictionary(ISession session) {
+		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(session.getTenant());
+	}
+	
 
 	@Override
 	public void reloadStoredQueries(ISession caller) {
 		LOG.debug("Try to load queries from data dictionary");
-		if (getDataDictionary(caller.getTenant()) != null) {
-			List<ILogicalQuery> q = getDataDictionary(caller.getTenant()).getQueries(caller.getUser(), caller);
+		if (getDataDictionary(caller) != null) {
+			List<ILogicalQuery> q = getDataDictionary(caller).getQueries(caller.getUser(), caller);
 			for (ILogicalQuery query : q) {
 				try {
 					if (query.getQueryText() != null) {
-						addQuery(query.getQueryText(), query.getParserId(), caller, getDataDictionary(caller.getTenant()).getQueryBuildConfigName(query.getID()), (Context) null);
+						addQuery(query.getQueryText(), query.getParserId(), caller, getDataDictionary(caller).getQueryBuildConfigName(query.getID()), (Context) null);
 					} else if (query.getLogicalPlan() != null) {
-						addQuery(query.getLogicalPlan(), caller, getDataDictionary(caller.getTenant()).getQueryBuildConfigName(query.getID()));
+						addQuery(query.getLogicalPlan(), caller, getDataDictionary(caller).getQueryBuildConfigName(query.getID()));
 					} else {
 						LOG.warn("Query " + query + " cannot be loaded");
 					}
@@ -980,53 +995,53 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	// Compiler Facade
 	@Override
 	public List<IExecutorCommand> translateQuery(String queries, String parser, ISession currentUser, Context context) {
-		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary(currentUser.getTenant()), context);
+		return getCompiler().translateQuery(queries, parser, currentUser, getDataDictionary(currentUser), context);
 	}
 
 	@Override
 	public IPhysicalQuery transform(ILogicalQuery query, TransformationConfiguration transformationConfiguration, ISession caller) throws TransformationException {
-		return getCompiler().transform(query, transformationConfiguration, caller, getDataDictionary(caller.getTenant()));
+		return getCompiler().transform(query, transformationConfiguration, caller, getDataDictionary(caller));
 	}
 
 	// DataDictionary Facade
 	@Override
 	public ILogicalOperator removeSink(String name, ISession caller) {
-		return getDataDictionary(caller.getTenant()).removeSink(name, caller);
+		return getDataDictionary(caller).removeSink(name, caller);
 	}
 
 	@Override
 	public ILogicalOperator removeSink(Resource name, ISession caller) {
-		return getDataDictionary(caller.getTenant()).removeSink(name, caller);
+		return getDataDictionary(caller).removeSink(name, caller);
 	}
 
 	@Override
 	public void removeViewOrStream(String name, ISession caller) {
-		getDataDictionary(caller.getTenant()).removeViewOrStream(name, caller);
+		getDataDictionary(caller).removeViewOrStream(name, caller);
 	}
 
 	@Override
 	public void removeViewOrStream(Resource name, ISession caller) {
-		getDataDictionary(caller.getTenant()).removeViewOrStream(name, caller);
+		getDataDictionary(caller).removeViewOrStream(name, caller);
 	}
 
 	@Override
 	public Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller) {
-		return getDataDictionary(caller.getTenant()).getStreamsAndViews(caller);
+		return getDataDictionary(caller).getStreamsAndViews(caller);
 	}
 
 	@Override
 	public Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller) {
-		return getDataDictionary(caller.getTenant()).getSinks(caller);
+		return getDataDictionary(caller).getSinks(caller);
 	}
 
 	@Override
 	public boolean containsViewOrStream(Resource name, ISession caller) {
-		return getDataDictionary(caller.getTenant()).containsViewOrStream(name, caller);
+		return getDataDictionary(caller).containsViewOrStream(name, caller);
 	}
 
 	@Override
 	public boolean containsViewOrStream(String name, ISession caller) {
-		return getDataDictionary(caller.getTenant()).containsViewOrStream(name, caller);
+		return getDataDictionary(caller).containsViewOrStream(name, caller);
 	}
 
 	/*
@@ -1038,7 +1053,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public Set<SDFDatatype> getRegisteredDatatypes(ISession caller) {
-		return getDataDictionary(caller.getTenant()).getDatatypes();
+		return getDataDictionary(caller).getDatatypes();
 	}
 
 	/*
@@ -1075,7 +1090,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public LogicalOperatorInformation getOperatorInformation(String name, ISession caller) {
-		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(name, caller, getDataDictionary(caller.getTenant()));
+		IOperatorBuilder builder = OperatorBuilderFactory.createOperatorBuilder(name, caller, getDataDictionary(caller));
 		LogicalOperatorInformation loi = new LogicalOperatorInformation();
 		loi.setOperatorName(builder.getName());
 		LogicalOperator annotation = builder.getOperatorClass().getAnnotation(LogicalOperator.class);
@@ -1142,8 +1157,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		// treat special cases
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SOURCES")) {
-			Set<Entry<Resource, ILogicalOperator>> v = getDataDictionary(caller.getTenant()).getViews(caller);
-			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller.getTenant()).getStreams(caller);
+			Set<Entry<Resource, ILogicalOperator>> v = getDataDictionary(caller).getViews(caller);
+			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller).getStreams(caller);
 			List<String> ret = new LinkedList<>();
 			if (v != null) {
 				for (Entry<Resource, ILogicalOperator> e : v) {
@@ -1158,11 +1173,11 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			return ret;
 		}
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_DATATYPES")) {
-			Set<String> s = getDataDictionary(caller.getTenant()).getDatatypeNames();
+			Set<String> s = getDataDictionary(caller).getDatatypeNames();
 			return new LinkedList<>(s);
 		}
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SINKS")) {
-			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller.getTenant()).getSinks(caller);
+			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller).getSinks(caller);
 			List<String> ret = new LinkedList<>();
 			if (s != null) {
 				for (Entry<Resource, ILogicalOperator> e : s) {

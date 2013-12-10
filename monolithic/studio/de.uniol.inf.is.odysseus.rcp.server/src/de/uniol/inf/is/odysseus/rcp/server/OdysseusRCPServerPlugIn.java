@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEvent.SchedulerManagerEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
@@ -35,27 +36,29 @@ import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventListener {
+public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements
+		IEventListener {
 
-	private static final Logger LOG = LoggerFactory.getLogger(OdysseusRCPServerPlugIn.class);
-	
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.server"; 
-	
+	private static final Logger LOG = LoggerFactory
+			.getLogger(OdysseusRCPServerPlugIn.class);
+
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.server";
+
 	public static final String USER_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.UserView";
 	public static final String PARTIAL_PLAN_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.PartialPlanView";
 	public static final String SOURCES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SourcesView";
 	public static final String SINK_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.SinkView";
 	public static final String MEP_FUNCTIONS_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.MEPFunctionsView";
 	public static final String STORED_PROCEDURES_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.StoredProceduresView";
-	
+
 	private static IServerExecutor serverExecutor;
-	
+
 	private static ImageManager imageManager;
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		imageManager = new ImageManager(context.getBundle());
 		imageManager.register("source", "icons/sources.png");
 		imageManager.register("sink", "icons/sinks.png");
@@ -69,34 +72,35 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		
+
 		imageManager.disposeAll();
 	}
-	
+
 	public static ImageManager getImageManager() {
 		return imageManager;
 	}
-	
+
 	public void bindExecutor(IExecutor executor) {
-		if( executor instanceof IServerExecutor ) {
+		if (executor instanceof IServerExecutor) {
 			serverExecutor = (IServerExecutor) executor;
 			LOG.debug("ServerExecutor " + executor + " bound");
-			
+
 			prepareServerExecutor();
-		
+
 		} else {
-			LOG.error("Using Executor of Class " + executor.getClass().getName() + " instead of " + IServerExecutor.class.getName());
+			LOG.error("Using Executor of Class "
+					+ executor.getClass().getName() + " instead of "
+					+ IServerExecutor.class.getName());
 		}
 	}
 
-
 	public void unbindExecutor(IExecutor executor) {
-		if( executor == serverExecutor ) {
+		if (executor == serverExecutor) {
 			serverExecutor = null;
 			LOG.debug("ServerExecutor " + executor + " unbound.");
-		} 
+		}
 	}
-	
+
 	public static IServerExecutor getServerExecutor() {
 		return serverExecutor;
 	}
@@ -109,27 +113,43 @@ public class OdysseusRCPServerPlugIn extends AbstractUIPlugin implements IEventL
 			((SchedulerManagerEvent) event).getValue().subscribeToAll(this);
 		}
 
-		if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED || event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED || event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
+		if (event.getEventType() == SchedulingEventType.SCHEDULING_STARTED
+				|| event.getEventType() == SchedulingEventType.SCHEDULING_STOPPED
+				|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_REMOVED
+				|| event.getEventType() == SchedulerManagerEventType.SCHEDULER_SET) {
 			try {
-				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, determineStatusManagerExecutorInfo());
+				StatusBarManager.getInstance().setMessage(
+						StatusBarManager.SCHEDULER_ID,
+						determineStatusManagerExecutorInfo());
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	private void prepareServerExecutor() {
-		//StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID, determineStatusManagerExecutorInfo());
 
-		if (serverExecutor.getSchedulerManager() != null) {
-			serverExecutor.getSchedulerManager().subscribeToAll(this);
-			serverExecutor.getSchedulerManager().getActiveScheduler().subscribeToAll(this);
+	private void prepareServerExecutor() {
+		// StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID,
+		// determineStatusManagerExecutorInfo());
+		ISession session = OdysseusRCPPlugIn.getActiveSession();
+		if (session != null) {
+			if (serverExecutor.getSchedulerManager(session) != null) {
+				serverExecutor.getSchedulerManager(session).subscribeToAll(this);
+				serverExecutor.getSchedulerManager(session).getActiveScheduler()
+						.subscribeToAll(this);
+			}
+
 		}
-		
 		serverExecutor.startExecution();
 	}
 
 	private String determineStatusManagerExecutorInfo() {
-		return serverExecutor.getCurrentSchedulerID(OdysseusRCPPlugIn.getActiveSession()) + " (" + serverExecutor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn.getActiveSession()) + ") " + (serverExecutor.isRunning() ? "Running" : "Stopped" );
+		return serverExecutor.getCurrentSchedulerID(OdysseusRCPPlugIn
+				.getActiveSession())
+				+ " ("
+				+ serverExecutor
+						.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn
+								.getActiveSession())
+				+ ") "
+				+ (serverExecutor.isRunning() ? "Running" : "Stopped");
 	}
 }

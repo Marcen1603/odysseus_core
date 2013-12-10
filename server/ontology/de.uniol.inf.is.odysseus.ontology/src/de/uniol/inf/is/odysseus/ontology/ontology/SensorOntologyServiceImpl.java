@@ -224,13 +224,13 @@ public class SensorOntologyServiceImpl implements SensorOntologyService, IEventL
 
     private void registerDataDictionaryListener() {
         if ((SensorOntologyServiceImpl.getExecutor() != null) && (SensorOntologyServiceImpl.getActiveSession() != null)) {
-            SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession().getTenant()).addListener(this);
+            SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession()).addListener(this);
             this.createStreamsAndViewsInOntology();
         }
     }
 
     private void createStreamsAndViewsInOntology() {
-        final IDataDictionaryWritable dataDictionary = SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession().getTenant());
+        final IDataDictionaryWritable dataDictionary = SensorOntologyServiceImpl.getExecutor().getDataDictionary(SensorOntologyServiceImpl.getActiveSession());
         final Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dataDictionary.getStreamsAndViews(SensorOntologyServiceImpl.getActiveSession());
         for (final Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
             final String name = streamAndView.getKey().getResourceName();

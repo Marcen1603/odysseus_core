@@ -35,7 +35,7 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 		getTreeViewer().setLabelProvider(new StoredProceduresViewLabelProvider());
 		refresh();
 		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).addListener(this);
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).addListener(this);
 			UserManagementProvider.getSessionmanagement().subscribe(this);
 		}
 		// UserManagement.getInstance().addUserManagementListener(this);
@@ -53,7 +53,7 @@ public class StoredProceduresView extends ViewPart implements IDataDictionaryLis
 	@Override
 	public void dispose() {
 		if (OdysseusRCPPlugIn.getExecutor() instanceof IServerExecutor) {
-			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).removeListener(this);
+			((IServerExecutor) OdysseusRCPPlugIn.getExecutor()).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).removeListener(this);
 		}
 		super.dispose();
 	}

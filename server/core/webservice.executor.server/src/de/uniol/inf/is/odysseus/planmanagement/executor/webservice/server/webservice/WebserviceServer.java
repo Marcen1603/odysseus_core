@@ -477,14 +477,14 @@ public class WebserviceServer {
 	public SDFSchemaResponse getOutputSchemaBySource(@WebParam(name = "securitytoken") String securityToken, @WebParam(name = "sourcename") String sourcename) throws InvalidUserDataException {
 
 		ISession session = loginWithSecurityToken(securityToken);
-		SDFSchema schema = ExecutorServiceBinding.getExecutor().getDataDictionary(session.getTenant()).getSources().get(sourcename).getOutputSchema();
+		SDFSchema schema = ExecutorServiceBinding.getExecutor().getDataDictionary(session).getSources().get(sourcename).getOutputSchema();
 		return createSDFSchemaInformation(schema);
 
 	}
 
 	public SourceListResponse getSources(@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<Entry<Resource, ILogicalOperator>> sources = ExecutorServiceBinding.getExecutor().getDataDictionary(user.getTenant()).getStreamsAndViews(user);
+		Set<Entry<Resource, ILogicalOperator>> sources = ExecutorServiceBinding.getExecutor().getDataDictionary(user).getStreamsAndViews(user);
 		List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
 		for (Entry<Resource, ILogicalOperator> source : sources) {
 			SDFSchema schema = source.getValue().getOutputSchema();

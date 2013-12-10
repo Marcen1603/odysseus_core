@@ -336,7 +336,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	public void _lsbuffer(CommandInterpreter ci) {
 		Set<String> bufferList = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 		if (bufferList != null) {
-			String current = this.executor.getConfiguration().get(ParameterBufferPlacementStrategy.class).getValue().getName();
+			String current = this.executor.getConfiguration(currentUser).get(ParameterBufferPlacementStrategy.class).getValue().getName();
 			ci.println("Available bufferplacement strategies:");
 			if (current == null) {
 				System.out.print("no strategy - SELECTED");
@@ -415,12 +415,12 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 				String bufferName = args[0];
 				Set<String> list = this.executor.getRegisteredBufferPlacementStrategiesIDs(currentUser);
 				if (list.contains(bufferName)) {
-					this.executor.getConfiguration().set(new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName)));
+					this.executor.getConfiguration(currentUser).set(new ParameterBufferPlacementStrategy(executor.getBufferPlacementStrategy(bufferName,currentUser)));
 					ci.println("Strategy " + bufferName + " set.");
 					return;
 				}
 
-				this.executor.getConfiguration().set(new ParameterBufferPlacementStrategy());
+				this.executor.getConfiguration(currentUser).set(new ParameterBufferPlacementStrategy());
 				if ("no strategy".equalsIgnoreCase(bufferName)) {
 					ci.println("Current strategy removed.");
 				} else {

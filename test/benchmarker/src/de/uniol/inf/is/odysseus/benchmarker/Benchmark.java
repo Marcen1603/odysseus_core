@@ -215,7 +215,7 @@ public class Benchmark implements IErrorEventListener, IBenchmark, IEventListene
 			}
 			List<IBenchmarkResult<ILatency>> results = new ArrayList<IBenchmarkResult<ILatency>>();
 
-			ISchedulerManager schedulermanager = executor.getSchedulerManager();
+			ISchedulerManager schedulermanager = executor.getSchedulerManager(user);
 			IScheduler curScheduler = schedulermanager.getActiveScheduler();
 			curScheduler.subscribe(this, SchedulingEventType.SCHEDULING_STOPPED);
 

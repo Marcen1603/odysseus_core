@@ -81,7 +81,7 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 	public void dispose() {
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
 		if (e instanceof IServerExecutor) {
-			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).removeListener(this);
+			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).removeListener(this);
 			UserManagementProvider.getSessionmanagement().subscribe(this);
 		}
 		super.dispose();
@@ -169,7 +169,7 @@ public class SinkView extends ViewPart implements IDataDictionaryListener, IUser
 		refresh();
 		IExecutor e = OdysseusRCPPlugIn.getExecutor();
 		if (e instanceof IServerExecutor) {
-			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession().getTenant()).addListener(this);
+			((IServerExecutor) e).getDataDictionary(OdysseusRCPPlugIn.getActiveSession()).addListener(this);
 		}
 		// UserManagement.getUsermanagement().addUserManagementListener(this);
 		getSite().setSelectionProvider(getTreeViewer());
