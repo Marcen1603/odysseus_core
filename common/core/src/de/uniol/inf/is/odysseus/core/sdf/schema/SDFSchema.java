@@ -41,6 +41,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	private List<String> baseSourceNames = new ArrayList<String>();
 
 	final private Class<? extends IStreamObject> type;
+	
+	private Boolean outOfOrder;
 
 	protected SDFSchema(String URI, Class<? extends IStreamObject> type) {
 		super(URI);
@@ -50,22 +52,25 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 	}
 
+	
 	/**
-	 * @param attributes1
+	 * @param schema
 	 */
-	public SDFSchema(String uri, SDFSchema attributes1) {
-		super(uri, attributes1);
-		if (attributes1 != null) {
-			if (attributes1.getBaseSourceNames() != null) {
-				if (attributes1.getBaseSourceNames().size() == 1
-						&& attributes1.getBaseSourceNames().get(0).equals("")) {
+	public SDFSchema(String uri, SDFSchema schema) {
+		super(uri, schema);
+		if (schema != null) {
+			if (schema.getBaseSourceNames() != null) {
+				if (schema.getBaseSourceNames().size() == 1
+						&& schema.getBaseSourceNames().get(0).equals("")) {
 					baseSourceNames.add(uri);
 				}
-				baseSourceNames.addAll(attributes1.getBaseSourceNames());
+				baseSourceNames.addAll(schema.getBaseSourceNames());
 			}
-			this.type = attributes1.type;
+			this.type = schema.type;
+			this.outOfOrder = schema.outOfOrder;
 		}else{
 			type = null;
+			this.outOfOrder = null;
 		}
 
 	}
@@ -99,6 +104,10 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return type;
 	}
 	
+	public boolean isInOrder() {
+		return (outOfOrder == null)||(outOfOrder == false);
+	}
+		
 	@Override
 	public SDFSchema clone() {
 		return new SDFSchema(this.getURI(), this);
