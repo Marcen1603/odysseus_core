@@ -8,5 +8,4 @@ public interface ILogicalQueryPart {
 
 	public ImmutableCollection<ILogicalOperator> getOperators();
 	
-	public ILogicalQueryPart clone();
 }
