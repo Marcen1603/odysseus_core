@@ -27,8 +27,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class TransformationConfiguration {
 	private final Set<String> metaTypes = new TreeSet<String>();
-	private Map<String, Object> options;
-	private ITransformationHelper transformHelper;
+	final private Map<String, Object> options = new HashMap<String, Object>();
+	final private ITransformationHelper transformHelper = new StandardTransformationHelper();;
 	private boolean virtualTransformation;
 	
 //	public TransformationConfiguration(ITransformationHelper transformHelper, String... metaTypes) {
@@ -50,12 +50,12 @@ public class TransformationConfiguration {
 //		this.transformHelper = transformHelper;
 //	}
 
+	public TransformationConfiguration(){
+		
+	}
 	
 	public TransformationConfiguration(String... metaTypes) {
-
 		this.metaTypes.addAll(Arrays.asList(metaTypes));
-		this.options = new HashMap<String, Object>();	
-		this.transformHelper = new StandardTransformationHelper();
 	}
 
 	
@@ -66,8 +66,6 @@ public class TransformationConfiguration {
 			tmp.add(type.getName());
 		}
 		this.metaTypes.addAll(tmp);
-		this.options = new HashMap<String, Object>();
-		this.transformHelper = new StandardTransformationHelper();
 	}
 
 	
