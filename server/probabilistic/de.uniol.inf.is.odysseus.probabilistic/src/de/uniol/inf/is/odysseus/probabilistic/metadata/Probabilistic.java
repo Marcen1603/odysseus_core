@@ -146,5 +146,10 @@ public class Probabilistic implements IProbabilistic {
     public final Class<? extends IMetaAttribute>[] getClasses() {
         return Probabilistic.CLASSES;
     }
+    
+    @Override
+    public String getName() {
+    	return "Probabilistic";
+    }
 
 }

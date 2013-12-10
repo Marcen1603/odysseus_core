@@ -136,4 +136,10 @@ public class IntervalLatencyPriority extends TimeInterval implements ILatency,
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return classes;
 	}
+	
+	@Override
+	public String getName() {
+		return "IntervalLatencyPriority";
+	}
+	
 }

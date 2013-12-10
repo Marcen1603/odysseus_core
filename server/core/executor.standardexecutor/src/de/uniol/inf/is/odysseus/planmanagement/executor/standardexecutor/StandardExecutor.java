@@ -766,7 +766,12 @@ public class StandardExecutor extends AbstractExecutor implements
 			String buildConfigurationName,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws QueryAddException {
+		if (buildConfigurationName == null){
+			buildConfigurationName = "Standard";
+		}
 		IQueryBuildConfigurationTemplate settings = getQueryBuildConfiguration(buildConfigurationName);
+
+		// Could not happend
 		if (settings == null) {
 			throw new QueryAddException("Transformation Configuration "
 					+ buildConfigurationName + " not found");
@@ -774,8 +779,8 @@ public class StandardExecutor extends AbstractExecutor implements
 		ArrayList<IQueryBuildSetting<?>> newSettings = new ArrayList<IQueryBuildSetting<?>>(
 				settings.getConfiguration());
 
-		// TODO: Funktioniert das so???
 		if (overwriteSetting != null) {
+			
 			for (IQueryBuildSetting<?> overwrite : overwriteSetting) {
 				for (IQueryBuildSetting<?> setting : settings
 						.getConfiguration()) {

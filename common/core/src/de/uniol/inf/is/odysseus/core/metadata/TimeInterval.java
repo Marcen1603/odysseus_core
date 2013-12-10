@@ -453,4 +453,8 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		return classes;
 	}
 
+	@Override
+	public String getName() {
+		return "TimeInterval";
+	}
 }

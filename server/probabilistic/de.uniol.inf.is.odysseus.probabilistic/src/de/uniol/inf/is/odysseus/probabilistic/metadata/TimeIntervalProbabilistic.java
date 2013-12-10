@@ -132,4 +132,9 @@ public class TimeIntervalProbabilistic extends TimeInterval implements ITimeInte
     public Class<? extends IMetaAttribute>[] getClasses() {
         return TimeIntervalProbabilistic.CLASSES;
     }
+    
+    @Override
+    public String getName() {
+    	return "TimeIntervalProbabilistic";
+    }
 }

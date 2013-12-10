@@ -113,4 +113,9 @@ public class IntervalLatency extends TimeInterval implements ILatency, ILatencyT
 		return classes;
 	}
 	
+	@Override
+	public String getName() {
+		return "IntervalLatency";
+	}
+	
 }

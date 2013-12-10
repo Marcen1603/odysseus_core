@@ -123,4 +123,9 @@ public class TimeIntervalProbabilisticLatency extends TimeIntervalProbabilistic 
     public final Class<? extends IMetaAttribute>[] getClasses() {
         return TimeIntervalProbabilisticLatency.CLASSES;
     }
+    
+    @Override
+    public String getName() {
+    	return "TimeIntervalProbabilisticLatency";
+    }
 }

@@ -120,4 +120,8 @@ public class Latency implements ILatency{
 		return classes;
 	}
 
+	@Override
+	public String getName() {
+		return "Latency";
+	}
 }

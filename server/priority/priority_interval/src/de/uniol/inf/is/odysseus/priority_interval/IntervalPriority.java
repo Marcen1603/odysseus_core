@@ -74,4 +74,9 @@ public class IntervalPriority extends TimeInterval implements IPriority {
 	public Class<? extends IMetaAttribute>[] getClasses() {
 		return classes;
 	}
+	
+	@Override
+	public String getName() {
+		return "IntervalPriority";
+	}
 }

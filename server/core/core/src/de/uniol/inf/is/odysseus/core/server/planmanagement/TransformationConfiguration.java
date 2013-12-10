@@ -21,38 +21,39 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 public class TransformationConfiguration {
-	private final Set<String> metaTypes;
+	private final Set<String> metaTypes = new TreeSet<String>();
 	private Map<String, Object> options;
 	private ITransformationHelper transformHelper;
 	private boolean virtualTransformation;
 	
-	public TransformationConfiguration(ITransformationHelper transformHelper, String... metaTypes) {
-		this.metaTypes = toSet(metaTypes);
-		this.options = new HashMap<String, Object>();	
-		this.transformHelper = transformHelper;
-	}
+//	public TransformationConfiguration(ITransformationHelper transformHelper, String... metaTypes) {
+//		this.metaTypes = toSet(metaTypes);
+//		this.options = new HashMap<String, Object>();	
+//		this.transformHelper = transformHelper;
+//	}
 	
 
-	@SafeVarargs
-	public TransformationConfiguration(ITransformationHelper transformHelper,
-			Class<? extends IMetaAttribute>... metaTypes) {
-		HashSet<String> tmp = new HashSet<String>();
-		for(Class<? extends IMetaAttribute> type : metaTypes) {
-			tmp.add(type.getName());
-		}
-		this.metaTypes = Collections.unmodifiableSet(tmp);
-		this.options = new HashMap<String, Object>();
-		this.transformHelper = transformHelper;
-	}
+//	@SafeVarargs
+//	public TransformationConfiguration(ITransformationHelper transformHelper,
+//			Class<? extends IMetaAttribute>... metaTypes) {
+//		HashSet<String> tmp = new HashSet<String>();
+//		for(Class<? extends IMetaAttribute> type : metaTypes) {
+//			tmp.add(type.getName());
+//		}
+//		this.metaTypes = Collections.unmodifiableSet(tmp);
+//		this.options = new HashMap<String, Object>();
+//		this.transformHelper = transformHelper;
+//	}
 
 	
 	public TransformationConfiguration(String... metaTypes) {
 
-		this.metaTypes = toSet(metaTypes);
+		this.metaTypes.addAll(Arrays.asList(metaTypes));
 		this.options = new HashMap<String, Object>();	
 		this.transformHelper = new StandardTransformationHelper();
 	}
@@ -64,7 +65,7 @@ public class TransformationConfiguration {
 		for(Class<? extends IMetaAttribute> type : metaTypes) {
 			tmp.add(type.getName());
 		}
-		this.metaTypes = Collections.unmodifiableSet(tmp);
+		this.metaTypes.addAll(tmp);
 		this.options = new HashMap<String, Object>();
 		this.transformHelper = new StandardTransformationHelper();
 	}
@@ -83,7 +84,7 @@ public class TransformationConfiguration {
 	}
 
 	public Set<String> getMetaTypes() {
-		return metaTypes;
+		return Collections.unmodifiableSet(metaTypes);
 	}
 	
 	public void setVirtualTransformation(boolean virtualTransformation) {
@@ -127,5 +128,10 @@ public class TransformationConfiguration {
 	
 	public ITransformationHelper getTransformationHelper(){
 		return this.transformHelper;
+	}
+
+	public void addTypes(Set<String> types) {
+		
+		metaTypes.addAll(types);
 	}
 }

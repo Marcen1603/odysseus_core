@@ -33,10 +33,14 @@ public class MetadataRegistry {
 	private static final String LOGGER_NAME = MetadataRegistry.class.getName();
 
 	private static Map<Set<String>, Class<? extends IMetaAttribute>> combinedMetadataTypes = new HashMap<Set<String>, Class<? extends IMetaAttribute>>();
+	
+	private static Map<String, Class<? extends IMetaAttribute>> byName = new HashMap<>();
 
 	public static void addMetadataType(IMetaAttribute type){
 		
 		logger.debug("New Metadatatype registered "+type.getClass());
+		
+		byName.put(type.getName(), type.getClass());
 		
 		Class<? extends IMetaAttribute> implementationType = type.getClass();		
 		HashSet<String> typeSet = toStringSet(type.getClasses());
@@ -75,6 +79,10 @@ public class MetadataRegistry {
 		synchronized (combinedMetadataTypes) {
 			Class<? extends IMetaAttribute> type = combinedMetadataTypes
 					.get(types);
+			if (type == null){
+				
+			}
+			
 			if (type == null) {
 				throw new IllegalArgumentException("No metadata type for: "
 						+ types.toString());
@@ -84,6 +92,15 @@ public class MetadataRegistry {
 		}
 	}
 
+	public static Class<? extends IMetaAttribute> getMetadataTypeByName(String name){
+		Class<? extends IMetaAttribute> type = byName.get(name);
+		if (type == null){
+			throw new IllegalArgumentException("No metadata type for: "
+					+ name);
+		}
+		return type;
+	}
+	
 	public static Set<Set<String>> getAvailableMetadataCombinations() {
 		synchronized (combinedMetadataTypes) {
 			return combinedMetadataTypes.keySet();
