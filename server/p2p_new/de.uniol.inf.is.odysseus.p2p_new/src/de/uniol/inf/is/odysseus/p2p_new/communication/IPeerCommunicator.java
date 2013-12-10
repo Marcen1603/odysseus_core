@@ -4,6 +4,7 @@ import net.jxta.peer.PeerID;
 
 public interface IPeerCommunicator {
 
-	public void send( PeerID destinationPeer, byte[] message );
+	public boolean isConnected( PeerID destinationPeer );
+	public void send( PeerID destinationPeer, byte[] message ) throws PeerCommunicationException;
 	
 }
