@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
+import de.uniol.inf.is.odysseus.test.runner.TestContext;
 
 /**
  * Testkomponente f�r Query-Tests mit Nexmark
@@ -83,20 +83,20 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	}
 
 	@Override
-	public Object startTesting(String[] args) {
+	public Object runTest(TestContext context) {
 		checkNotNull(executor, "Executor must be bound");
 		checkNotNull(parser, "Parser must be bound");
-		checkNotNull(UserManagementProvider.getSessionmanagement(), "session management not set");
-		checkArgument(args.length == 3, "NexmarkTest needs exactly three arguments: [User], [Password], [FolderWithQueries]");
+		checkNotNull(UserManagementProvider.getSessionmanagement(), "session management not set");		
 		ITenant tenant = UserManagementProvider.getDefaultTenant();
 		
-		ISession session = UserManagementProvider.getSessionmanagement().login(args[0], args[1].getBytes(),tenant);
-
-		out = createWriter(args[2]);
+		ISession session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(),tenant);		
 
 		Map<String, File> queries = Maps.newHashMap();
 		Map<String, File> results = Maps.newHashMap();
-		ImmutableList<File> fileArray = determineQueryFiles(args[2]);
+		//TODO: fetch directory
+		String directory = "";
+		
+		ImmutableList<File> fileArray = determineQueryFiles(directory);
 
 		determineQueriesAndResults( fileArray, queries, results );
 
@@ -152,22 +152,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
                 results.put(pre, file);
             }
         }        
-    }
-
-    private static BufferedWriter createWriter(String directory) {
-        checkNotNull(directory, "directory must not be null");
-        
-        // Creating resultfile in dir
-		String filename = directory + "/result" + System.currentTimeMillis() + ".log";
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
-			LOG.debug("Created result file " + filename);
-			return out;
-		} catch (IOException e) {
-			LOG.error("Error creating file " + filename, e);
-			throw new RuntimeException("Error during creating filename " + filename, e);
-		}
-    }
+    }  
 
 	private void waitProcessing() throws OdysseusScriptException {
 		synchronized (this) {
@@ -306,7 +291,7 @@ public class TestComponent implements ITestComponent, ICompareSinkListener {
 	}
 
 	@Override
-	public void setUp() {
+	public void setupTest(TestContext context) {
 		// TODO Auto-generated method stub
 		
 	}

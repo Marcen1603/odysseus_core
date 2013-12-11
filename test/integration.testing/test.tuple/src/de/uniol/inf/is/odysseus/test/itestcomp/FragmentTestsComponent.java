@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser;
 import de.uniol.inf.is.odysseus.test.TupleTestActivator;
 import de.uniol.inf.is.odysseus.test.runner.ITestComponent;
+import de.uniol.inf.is.odysseus.test.runner.TestContext;
 
 
 public class FragmentTestsComponent implements ITestComponent, BundleListener {
@@ -72,7 +73,7 @@ public class FragmentTestsComponent implements ITestComponent, BundleListener {
 	private static File file  = new File("FragmentTestsComponent.txt");
 
 	@Override
-	public void setUp() {
+	public void setupTest(TestContext context) {
 		logIntoFile("----------------------------------------------------------------------------" + NEWLINE);
 		logIntoFile("SET UP " + this.getClass().getSimpleName() + " AT " + new Date().toString() + NEWLINE);
 		// read all installed bundles and check for tests-folder
@@ -106,7 +107,7 @@ public class FragmentTestsComponent implements ITestComponent, BundleListener {
 	}
 	
 	@Override
-	public Object startTesting(String[] args) {
+	public Object runTest(TestContext context) {
 		logIntoFile("STARTED " + this.getClass().getSimpleName() + " AT " + new Date().toString()  + NEWLINE);
 
 		if(isExecuting){

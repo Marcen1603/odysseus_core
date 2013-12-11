@@ -20,11 +20,10 @@ package de.uniol.inf.is.odysseus.test.runner;
  * executed during Odysseus Test. The Plugin test.runner
  * executes them, when they are registered over Declarative Services.
  * 
- * @author Timo Michelsen
+ * @author Timo Michelsen, Dennis Geesen
  *
  */
 public interface ITestComponent {
-	public void setUp();
-	public Object startTesting(String[] args);
-	
+	public void setupTest(TestContext context);
+	public Object runTest(TestContext context);	
 }

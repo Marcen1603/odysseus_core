@@ -23,56 +23,47 @@ import com.google.common.base.Preconditions;
 /**
  * Wrapper class for an implementation of ITestComponent.
  * 
- * @author Timo Michelsen, Alexander Funk
- *
+ * @author Timo Michelsen, Alexander Funk, Dennis Geesen
+ * 
  */
 public class TestComponentRunner extends Thread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestComponentRunner.class);
 	private final ITestComponent component;
-	private final String[] args;
+	private final TestContext context;
 	private Object testResult;
-	
-	public TestComponentRunner( ITestComponent component, String[] args ) {
+
+	public TestComponentRunner(ITestComponent component, TestContext context) {
 		Preconditions.checkNotNull(component, "Component must not be null!");
-		Preconditions.checkNotNull(args, "Args must not be null");
-		
+		Preconditions.checkNotNull(context, "Args must not be null");
 		setName("TestComponentRunner:" + component);
+		this.context = context;
 		this.component = component;
-		this.args = args;
-		
-		component.setUp();
+
+		component.setupTest(context);
 	}
-	
+
 	@Override
 	public void run() {
-		LOG.debug("Start Testcomponent '" + component + "'. Arguments = '" + argsToString(args) + "'");
+		LOG.debug("Start Testcomponent '" + component + "'");
 		long startTime = System.nanoTime();
-		testResult = component.startTesting(args);
+		testResult = component.runTest(context);
 		long elapsedTime = System.nanoTime() - startTime;
 		LOG.debug("End Testcomponent '" + component + "'. Duration = " + toMillis(elapsedTime) + " ms");
 	}
-	
-	private static long toMillis(long elapsedTime) {
-        return elapsedTime / 1000000;
-    }
 
-    public final Object getResult() {
-		if(testResult == null ) {
+	private static long toMillis(long elapsedTime) {
+		return elapsedTime / 1000000;
+	}
+
+	public final Object getResult() {
+		if (testResult == null) {
 			throw new IllegalStateException("TestComponent " + component + " not finished.");
 		}
 		return testResult;
 	}
-	
+
 	public final ITestComponent getTestComponent() {
 		return component;
-	}
-	
-	private static String argsToString( String[] args ) {
-	    StringBuilder sb = new StringBuilder();
-	    for( String str: args ) {
-	        sb.append(str).append(" ");
-	    }
-	    return sb.toString();
-	}
+	}	
 }

@@ -38,31 +38,30 @@ import com.google.common.collect.Lists;
 public class TestRunnerApplication implements IApplication {
 
 	private static final List<TestComponentRunner> RUNNERS = Lists.newArrayList();
-	private static final List<ITestComponent> COMPONENT_CACHE = Lists.newArrayList();
+	private final List<ITestComponent> components = Lists.newArrayList();
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestRunnerPlugIn.class);
 	private static String[] args;
-
-	private static boolean applicationStarted;
+	
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		args = (String[]) context.getArguments().get("application.args");
+		TestContext testcontext = new TestContext();
+		testcontext.setUsername(args[0]);
+		testcontext.setPassword(args[1]);
 		System.out.println("Starting Odysseus...");
 		boolean result = startBundles(context.getBrandingBundle().getBundleContext());
 		if (result) {
-			System.out.println("Odysseus is up and running!");
-			applicationStarted = true;
+			System.out.println("Odysseus is up and running!");			
 			System.out.println("Starting component tests...");
-			if (!COMPONENT_CACHE.isEmpty()) {
-				for (ITestComponent component : COMPONENT_CACHE) {
-					startTestComponentImpl(component, args);
-				}
-				COMPONENT_CACHE.clear();
+			for (ITestComponent component : components) {
+				startTestComponentImpl(component, testcontext);
+
 			}
 			System.out.println("Component test finished.");
 			return IApplication.EXIT_OK;
-		}else{
+		} else {
 			System.out.println("Odysseus could not be started! Test failed!");
 		}
 		return -1;
@@ -84,18 +83,15 @@ public class TestRunnerApplication implements IApplication {
 	}
 
 	public void startTestComponent(ITestComponent component) {
-		if (applicationStarted) {
-			startTestComponentImpl(component, args);
-		} else {
-			COMPONENT_CACHE.add(component);
-		}
+		components.add(component);
+
 	}
 
-	private static void startTestComponentImpl(ITestComponent component, String[] args) {
+	private static void startTestComponentImpl(ITestComponent component, TestContext context) {
 		Preconditions.checkNotNull(component, "Component must not be null!");
 		Preconditions.checkNotNull(args, "Args are not set here!");
 
-		TestComponentRunner runner = new TestComponentRunner(component, args);
+		TestComponentRunner runner = new TestComponentRunner(component, context);
 		RUNNERS.add(runner);
 
 		LOG.debug("Start TestComponent" + component);
