@@ -26,17 +26,9 @@ public class LogicalQueryPart implements ILogicalQueryPart {
 		operators.add(operator);
 	}
 	
-	public LogicalQueryPart(LogicalQueryPart part) {
-		
-		
-		
-	}
-	
 	@Override
 	public ILogicalQueryPart clone() {
-		
-		return new LogicalQueryPart(this);
-		
+		return new LogicalQueryPart(getOperators());
 	}
 
 	@Override
