@@ -21,6 +21,12 @@ import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 public class QueryPartModificationHelper {
 
 	/**
+	 * The separator for different arguments within the modificator parameter. <br />
+	 * e.g.: <name><separator<
+	 */
+	public static final String SEPARATOR_WITHIN_MODIFICATOR_PARAMETER = null;
+
+	/**
 	 * Performs a deep cloning of a query part. <br />
 	 * Each operator will be cloned and for the subscriptions there are two scenarios: <br />
 	 * 1. If both operators connected with the subscription are within the query part, the clones 
