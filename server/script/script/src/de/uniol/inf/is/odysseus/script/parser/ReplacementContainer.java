@@ -112,7 +112,7 @@ public final class ReplacementContainer {
 
 	private void putImpl(String key, String value) {
 		replacements.put(key, value);
-		context.put(key, value);
+		context.putOrReplace(key, value);
 	}
 	
 	public static void addDefault( String key, String value ) {
