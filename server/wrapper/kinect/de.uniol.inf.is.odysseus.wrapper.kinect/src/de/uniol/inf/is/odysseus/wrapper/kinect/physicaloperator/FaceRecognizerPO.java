@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.wrapper.kinect.physicaloperator;
 
-import static com.googlecode.javacv.cpp.opencv_contrib.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_imgproc.*;
+import static com.googlecode.javacv.cpp.opencv_contrib.createLBPHFaceRecognizer;
+import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
+import static com.googlecode.javacv.cpp.opencv_imgproc.CV_RGB2GRAY;
+import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
+import static com.googlecode.javacv.cpp.opencv_imgproc.cvEqualizeHist;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.googlecode.javacv.cpp.opencv_contrib.FaceRecognizer;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
@@ -27,8 +26,7 @@ public class FaceRecognizerPO
 		AbstractPipe<Tuple<? extends ITimeInterval>, Tuple<? extends ITimeInterval>> {
 	private SDFSchema schema;
 	private static String trainingData;
-	private static final Logger log = LoggerFactory
-			.getLogger(FaceRecognizerPO.class);
+//	private static final Logger log = LoggerFactory.getLogger(FaceRecognizerPO.class);
 	private FaceRecognizer faceRecognizer;
 	private static Properties nameDb;
 
