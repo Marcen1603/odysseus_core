@@ -396,8 +396,12 @@ public class OperatorTestComponent implements ITestComponent, IPlanModificationL
         checkNotNull(directory, "directory must not be null");
         
         // Creating resultfile in dir
-		String filename = directory + "/result" + System.currentTimeMillis() + ".log";
-		try {
+		String filename = directory + File.separatorChar+"result" + System.currentTimeMillis() + ".log";
+		try {	
+			File f = new File(filename);
+			if(!f.exists()){
+				f.getParentFile().mkdirs();
+			}
 			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
 			LOG.debug("Created result file " + filename);
 			return out;
