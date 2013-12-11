@@ -19,6 +19,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
@@ -149,7 +150,7 @@ public class BenchmarkController {
 		System.out.println("finished - all " + counter + " runs done!");
 		System.out.print("Installing close-query...");
 		try {
-			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency");
+			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency", Context.empty());
 		} catch (CreateQueryException_Exception
 				| InvalidUserDataException_Exception e) {
 			// TODO Auto-generated catch block
@@ -193,7 +194,7 @@ public class BenchmarkController {
 					+ "optimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
 
 			try {
-				server.addQuery(token, "OdysseusScript", queryOptimized, "StandardLatency");
+				server.addQuery(token, "OdysseusScript", queryOptimized, "StandardLatency", Context.empty());
 			} catch (CreateQueryException_Exception
 					| InvalidUserDataException_Exception e) {
 				// TODO Auto-generated catch block
@@ -213,7 +214,7 @@ public class BenchmarkController {
 					+ "fs3 = FILESINK({file='E:/Results/unoptimized - w${transactions} - s${support}/" + prefix
 					+ "unoptimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
 			try {
-				server.addQuery(token, "OdysseusScript", queryUnoptimized, "StandardLatency");
+				server.addQuery(token, "OdysseusScript", queryUnoptimized, "StandardLatency", Context.empty());
 			} catch (CreateQueryException_Exception
 					| InvalidUserDataException_Exception e) {
 				// TODO Auto-generated catch block
@@ -232,7 +233,7 @@ public class BenchmarkController {
 					+ "fs3 = FILESINK({file='E:/Results/normal/" + prefix
 					+ "normal-S${support}-W${transactions}.csv', filetype='csv', append='true'}, stats)";
 			try {
-				server.addQuery(token, "OdysseusScript", queryWithout, "StandardLatency");
+				server.addQuery(token, "OdysseusScript", queryWithout, "StandardLatency", Context.empty());
 			} catch (CreateQueryException_Exception
 					| InvalidUserDataException_Exception e) {
 				// TODO Auto-generated catch block

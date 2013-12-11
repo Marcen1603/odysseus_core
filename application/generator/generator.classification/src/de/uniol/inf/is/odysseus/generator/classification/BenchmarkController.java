@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.generator.IDataGenerator;
 import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
@@ -112,7 +113,7 @@ public class BenchmarkController {
 		System.out.println("finished - all " + counter + " runs done!");
 		System.out.print("Installing close-query...");
 		try {
-			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency");
+			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency", Context.empty());
 		} catch (CreateQueryException_Exception
 				| InvalidUserDataException_Exception e) {
 			// TODO Auto-generated catch block
@@ -147,7 +148,7 @@ public class BenchmarkController {
 		String query = loadQuery("C:" + File.separator + "Users" + File.separator + "dgeesen" + File.separator + "Dropbox" + File.separator + "Odysseus Projects" + File.separator
 				+ "Mining" + File.separator + "Classification.qry");
 		try {
-			server.addQuery(token, "OdysseusScript", query, "StandardLatency");
+			server.addQuery(token, "OdysseusScript", query, "StandardLatency", Context.empty());
 		} catch (CreateQueryException_Exception
 				| InvalidUserDataException_Exception e) {
 			// TODO Auto-generated catch block
