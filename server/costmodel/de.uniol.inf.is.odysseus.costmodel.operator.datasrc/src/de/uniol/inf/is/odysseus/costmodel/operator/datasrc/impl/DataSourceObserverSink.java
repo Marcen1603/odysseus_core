@@ -90,7 +90,7 @@ public class DataSourceObserverSink extends AbstractSink<IStreamObject<?>> {
 			this.connectingSource = connectingSource.get(); 
 			getLogger().debug("Source {} connected", source);					
 		} else {
-			getLogger().error("Could not connect to {}", source);
+			getLogger().warn("Could not connect to {}", source);
 		}
 	}
 	
