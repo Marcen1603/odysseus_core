@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mining.frequentitem.AssociationRule;
 import de.uniol.inf.is.odysseus.relational.base.predicate.ForPredicate.Type;
@@ -119,7 +120,7 @@ public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelat
 		this.innerSchema = listAttribute.getSubSchema();
 		
 		DirectAttributeResolver resolver = new DirectAttributeResolver(innerSchema);
-		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance());
+		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		
 		
 		this.relationalPredicate = new RelationalPredicate(expression);

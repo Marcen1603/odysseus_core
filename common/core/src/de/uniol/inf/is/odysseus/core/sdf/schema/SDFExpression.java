@@ -84,8 +84,9 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	public SDFExpression(String URI, String value,
 			IAttributeResolver attributeResolver,
-			IExpressionParser expressionParser)
+			IExpressionParser expressionParser, Pattern aggregatePattern)
 			throws SDFExpressionParseException {
+		this.pattern = aggregatePattern;
 		init(null, value, attributeResolver, expressionParser);
 	}
 
@@ -234,10 +235,6 @@ public class SDFExpression implements Serializable, IClone {
 
 	public SDFSchema getSchema() {
 		return this.schema;
-	}
-
-	public void setAggregatePattern(Pattern pattern){
-		this.pattern = pattern;
 	}
 	
 	private String substituteAggregations(String value,

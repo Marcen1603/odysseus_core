@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.ProbabilisticFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -176,7 +177,7 @@ public class TestJoinPO extends ProbabilisticDiscreteJoinTIPO<ITimeIntervalProba
         MEP.getInstance().addFunctionProvider(new ProbabilisticFunctionProvider());
         final SDFSchema schema = SDFSchema.union(TestJoinPO.getSchema1(), TestJoinPO.getSchema2());
         final DirectAttributeResolver resolver = new DirectAttributeResolver(schema);
-        final SDFExpression expression = new SDFExpression("", "a < 3.0 && b > 4.0 && g < 9.0", resolver, MEP.getInstance());
+        final SDFExpression expression = new SDFExpression("", "a < 3.0 && b > 4.0 && g < 9.0", resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
         final RelationalPredicate predicate = new RelationalPredicate(expression);
         predicate.init(TestJoinPO.getSchema1(), TestJoinPO.getSchema2(), true);
         return predicate;

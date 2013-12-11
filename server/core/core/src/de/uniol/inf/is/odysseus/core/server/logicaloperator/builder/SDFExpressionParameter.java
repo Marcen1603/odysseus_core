@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 public class SDFExpressionParameter extends
@@ -45,7 +46,7 @@ public class SDFExpressionParameter extends
 		}
 		if (getAttributeResolver() != null) {
 			setValue(new NamedExpressionItem(name, new SDFExpression("",
-					expression, getAttributeResolver(), MEP.getInstance())));
+					expression, getAttributeResolver(), MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern())));
 		} else {
 			throw new RuntimeException(
 					"missing expression or attribute resolver");

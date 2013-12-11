@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -114,7 +115,7 @@ public class JoinTransformationHelper {
 		String mepString = predicate.toString();
 		SDFSchema outputSchema = SDFSchema.union(ownSchema, otherSchema);
 		IAttributeResolver attrRes = new DirectAttributeResolver(outputSchema);
-		SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance());		
+		SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());		
 		// ===========================================
 		
 		IExpression<?> mepExpr = expr.getMEPExpression();

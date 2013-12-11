@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -218,7 +219,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 			String exprStr = inputSchema.getAttribute(0).getURI() + " == '"
 					+ this.triple.getSubject().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes,
-					MEP.getInstance());
+					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 			exprs.add(expr);
 		}
 
@@ -226,7 +227,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 			String exprStr = inputSchema.getAttribute(1).getURI() + " == '"
 					+ this.triple.getPredicate().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes,
-					MEP.getInstance());
+					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 			exprs.add(expr);
 		}
 
@@ -234,7 +235,7 @@ public class TriplePatternMatching extends AbstractLogicalOperator {
 			String exprStr = inputSchema.getAttribute(2).getURI() + " == '"
 					+ this.triple.getObject().getName() + "'";
 			SDFExpression expr = new SDFExpression(null, exprStr, attrRes,
-					MEP.getInstance());
+					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 			exprs.add(expr);
 		}
 

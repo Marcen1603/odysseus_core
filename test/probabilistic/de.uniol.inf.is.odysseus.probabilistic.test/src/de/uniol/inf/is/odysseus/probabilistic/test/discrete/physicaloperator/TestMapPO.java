@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.ProbabilisticFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
@@ -116,8 +117,8 @@ public class TestMapPO extends ProbabilisticDiscreteMapPO<IMetaAttribute> {
         final DirectAttributeResolver resolver = new DirectAttributeResolver(TestMapPO.getSchema());
         final MEP mep = MEP.getInstance();
         mep.addFunctionProvider(new ProbabilisticFunctionProvider());
-        final SDFExpression[] expressions = new SDFExpression[] { new SDFExpression("", "a * b", resolver, MEP.getInstance()), new SDFExpression("", "b * c", resolver, MEP.getInstance()),
-                new SDFExpression("", "c * toProbabilisticDouble([1.0,0.5])", resolver, MEP.getInstance()) };
+        final SDFExpression[] expressions = new SDFExpression[] { new SDFExpression("", "a * b", resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()), new SDFExpression("", "b * c", resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()),
+                new SDFExpression("", "c * toProbabilisticDouble([1.0,0.5])", resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()) };
         return expressions;
     }
 

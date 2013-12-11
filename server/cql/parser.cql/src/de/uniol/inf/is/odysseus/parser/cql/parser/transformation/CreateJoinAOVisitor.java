@@ -314,8 +314,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		for (SDFAttribute attr : subquery.getOutputSchema()) {
 			tmpResolver.addAttribute(attr);
 		}
-		SDFExpression expr = new SDFExpression("", expression, tmpResolver, MEP.getInstance());
-		expr.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+		SDFExpression expr = new SDFExpression("", expression, tmpResolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		RelationalPredicate predicate = new RelationalPredicate(expr);
 		existsAO.setPredicate(predicate);
 		return existsAO;

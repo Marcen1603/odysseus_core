@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
@@ -123,7 +124,7 @@ public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelati
 		this.innerSchema = listAttribute.getDatatype().getSchema();
 		
 		DirectAttributeResolver resolver = new DirectAttributeResolver(innerSchema);
-		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance());
+		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		
 		
 		this.relationalPredicate = new RelationalPredicate(expression);

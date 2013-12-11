@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
@@ -980,7 +981,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 			IAttributeResolver attrRes = new SPARQLDirectAttributeResolver(
 					topOfGroupGraphPattern.getOutputSchema());
 			SDFExpression expr = new SDFExpression(null,
-					filterConstraint.toString(), attrRes, MEP.getInstance());
+					filterConstraint.toString(), attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 			IPredicate selectPred = new TypeSafeRelationalPredicate(expr);
 			select.setPredicate(selectPred);
 			select.subscribeTo(topOfGroupGraphPattern,
@@ -1511,7 +1512,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 		}
 
 		SDFExpression expr = new SDFExpression(null, exprStr, attrRes,
-				MEP.getInstance());
+				MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 
 		IPredicate retval = new TypeSafeRelationalPredicate(expr);
 

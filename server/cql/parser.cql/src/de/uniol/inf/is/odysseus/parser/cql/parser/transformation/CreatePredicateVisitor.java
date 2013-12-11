@@ -51,8 +51,7 @@ public class CreatePredicateVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTBasicPredicate node, Object data) throws QueryParseException {
-		SDFExpression expression = new SDFExpression("", node.getPredicate(), (IAttributeResolver) data, MEP.getInstance());
-		expression.setAggregatePattern(AggregateFunctionBuilderRegistry.getAggregatePattern());
+		SDFExpression expression = new SDFExpression("", node.getPredicate(), (IAttributeResolver) data, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		RelationalPredicate rp = new RelationalPredicate(expression);
 		return rp;
 	}

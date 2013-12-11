@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticFunction;
 
@@ -119,7 +120,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      *            The expression parser, i.e., MEP
      */
     public SDFProbabilisticExpression(final String uri, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
-        super(uri, string, attributeResolver, parser);
+        super(uri, string, attributeResolver, parser, AggregateFunctionBuilderRegistry.getAggregatePattern());
         this.init(null, string, attributeResolver, parser);
     }
 

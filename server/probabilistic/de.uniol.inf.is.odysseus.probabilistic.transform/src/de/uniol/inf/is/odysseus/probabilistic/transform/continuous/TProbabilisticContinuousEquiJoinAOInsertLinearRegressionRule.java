@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
@@ -257,7 +258,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
 
         final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
         final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
-        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance());
+        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
         return expr;
     }
 

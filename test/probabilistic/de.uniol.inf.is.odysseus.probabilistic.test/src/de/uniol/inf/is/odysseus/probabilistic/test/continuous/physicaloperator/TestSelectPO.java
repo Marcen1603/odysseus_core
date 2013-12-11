@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.ProbabilisticFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
@@ -171,7 +172,7 @@ public class TestSelectPO extends ProbabilisticContinuousSelectPO<IProbabilistic
         MEP.getInstance().addFunctionProvider(new ProbabilisticFunctionProvider());
         final SDFSchema schema = TestSelectPO.getSchema();
         final DirectAttributeResolver resolver = new DirectAttributeResolver(TestSelectPO.getSchema());
-        final SDFExpression expression = new SDFExpression("", "b < 3.0 && b > 4.0", resolver, MEP.getInstance());
+        final SDFExpression expression = new SDFExpression("", "b < 3.0 && b > 4.0", resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
         final RelationalPredicate predicate = new RelationalPredicate(expression);
         predicate.init(schema, null, false);
         return predicate;

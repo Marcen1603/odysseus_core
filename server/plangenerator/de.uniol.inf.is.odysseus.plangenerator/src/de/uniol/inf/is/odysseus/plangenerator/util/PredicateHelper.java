@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
@@ -255,7 +256,7 @@ public class PredicateHelper {
 		try {
 			new SDFExpression(null,
 					expression.getExpressionString(), attrResolver,
-					MEP.getInstance());
+					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		} catch (IllegalArgumentException e) {
 			result = false;
 		}
@@ -346,11 +347,11 @@ public class PredicateHelper {
 			return predicate;
 		}
 		return new RelationalPredicate(new SDFExpression(null, sb.toString(),
-				this.resolver, MEP.getInstance()));
+				this.resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()));
 	}
 
 	public IRelationalPredicate createTruePredicate() {
 		return new RelationalPredicate(new SDFExpression(null, "true",
-				this.resolver, MEP.getInstance()));
+				this.resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()));
 	}
 }

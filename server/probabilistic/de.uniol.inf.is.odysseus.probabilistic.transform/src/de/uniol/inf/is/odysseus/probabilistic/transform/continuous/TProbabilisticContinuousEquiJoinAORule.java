@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -152,7 +153,7 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
 
         final SDFSchema inputSchema = SDFSchema.union(leftInputSchema, rightInputSchema);
         final IAttributeResolver attrRes = new DirectAttributeResolver(inputSchema);
-        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance());
+        final SDFExpression expr = new SDFExpression(null, mepString, attrRes, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
         return expr;
     }
 

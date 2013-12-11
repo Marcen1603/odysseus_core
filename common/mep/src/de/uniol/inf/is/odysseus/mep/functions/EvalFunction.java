@@ -45,7 +45,7 @@ public class EvalFunction extends AbstractFunction<Object> {
 	@Override
 	public Object getValue() {
 		SDFExpression expression = new SDFExpression("",
-				(String) getInputValue(0), null, MEP.getInstance());
+				(String) getInputValue(0), null, MEP.getInstance(), null);
 		return expression.getValue();
 	}
 
