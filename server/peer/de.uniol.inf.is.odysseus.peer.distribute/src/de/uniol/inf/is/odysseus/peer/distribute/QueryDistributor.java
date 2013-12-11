@@ -117,6 +117,7 @@ public class QueryDistributor implements IQueryDistributor {
 			if (modifiedQueryParts == null || modifiedQueryParts.isEmpty()) {
 				throw new QueryDistributionException("Query part modificator '" + modificator.getName() + "' retured null or empty query part list!");
 			}
+			checkPartitions(modifiedQueryParts, LogicalQueryHelper.getAllOperators(query)); // collect again since modifier could add/remove operators
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Got {} modified query parts: ", modifiedQueryParts.size());
 				for (ILogicalQueryPart part : modifiedQueryParts) {
@@ -131,10 +132,10 @@ public class QueryDistributor implements IQueryDistributor {
 			}
 
 			LOG.debug("Check allocation map returned by allocator {}", allocator.getName());
-			Map<ILogicalQueryPart, PeerID> correctedAllocationMap = checkAllocationMap(allocationMap, modifiedQueryParts);
+			checkAllocationMap(allocationMap, modifiedQueryParts);
 			if (LOG.isDebugEnabled()) {
-				for (ILogicalQueryPart part : correctedAllocationMap.keySet()) {
-					PeerID allocatedPeerID = correctedAllocationMap.get(part);
+				for (ILogicalQueryPart part : allocationMap.keySet()) {
+					PeerID allocatedPeerID = allocationMap.get(part);
 					Optional<String> remotePeerName = P2PDictionaryService.get().getRemotePeerName(allocatedPeerID);
 					if (!allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 						LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
@@ -144,7 +145,7 @@ public class QueryDistributor implements IQueryDistributor {
 				}
 			}
 
-			correctedAllocationMap = forceLocalOperators(correctedAllocationMap);
+			Map<ILogicalQueryPart, PeerID> correctedAllocationMap = forceLocalOperators(allocationMap);
 			
 			insertJxtaOperators(correctedAllocationMap);
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(correctedAllocationMap, config);
@@ -282,9 +283,7 @@ public class QueryDistributor implements IQueryDistributor {
 		}
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> checkAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
-		Map<ILogicalQueryPart, PeerID> correctMap = Maps.newHashMap();
-
+	private static void checkAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
 		ImmutableList<PeerID> knownRemotePeerIDs = P2PDictionaryService.get().getRemotePeerIDs();
 		PeerID localPeerID = P2PNetworkManagerService.get().getLocalPeerID();
 
@@ -294,14 +293,10 @@ public class QueryDistributor implements IQueryDistributor {
 				if (!knownRemotePeerIDs.contains(allocatedPeer) && !allocatedPeer.equals(localPeerID)) {
 					throw new QueryDistributionException("Allocated query part " + queryPart + " to an unknown remote peer " + allocatedPeer);
 				}
-				correctMap.put(queryPart, allocatedPeer);
 			} else {
-				LOG.warn("Query part {} was not allocated! Allocate to local as default!");
-				correctMap.put(queryPart, localPeerID);
+				throw new QueryDistributionException("Query part " + queryPart + " is not allocated!");
 			}
 		}
-
-		return correctMap;
 	}
 
 	private static void insertJxtaOperators(Map<ILogicalQueryPart, PeerID> allocationMap) {
