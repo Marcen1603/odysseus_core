@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.modify.none;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
@@ -17,7 +18,7 @@ public class NoneQueryPartModificator implements IQueryPartModificator {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> modify(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration config) throws QueryPartModificationException {
+	public Collection<ILogicalQueryPart> modify(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration config, List<String> modificatorParameters) throws QueryPartModificationException {
 		return Lists.newArrayList(queryParts);
 	}
 

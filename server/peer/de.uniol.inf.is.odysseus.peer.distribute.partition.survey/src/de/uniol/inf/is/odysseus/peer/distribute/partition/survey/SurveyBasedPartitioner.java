@@ -30,7 +30,7 @@ public class SurveyBasedPartitioner implements IQueryPartitioner {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config) throws QueryPartitionException {
+	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 		Helper.addOperatorIds(operators);
 		ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), true);
 

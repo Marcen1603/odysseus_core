@@ -26,7 +26,9 @@ public class PeerQueryPartitionerPreParserKeyword extends AbstractPreParserKeywo
 			throw new OdysseusScriptException("Partitioner name for query partitioning is missing");
 		}
 		
-		String partitionerName = parameter.trim();
+		String[] splitted = parameter.trim().split(" ");
+		String partitionerName = splitted[0].trim();
+		
 		if( !QueryPartitionerRegistry.getInstance().contains(partitionerName)) {
 			throw new OdysseusScriptException("Query Partitioner name '" + partitionerName + "' is not registered!");
 		}
@@ -36,7 +38,9 @@ public class PeerQueryPartitionerPreParserKeyword extends AbstractPreParserKeywo
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
-		settings.add(new QueryPartitionerParameter(parameter.trim()));
+		String[] splitted = parameter.trim().split(" ");
+		List<String> parameters = KeywordHelper.generateParameterList(splitted);
+		settings.add(new QueryPartitionerParameter(splitted[0], parameters));
 		
 		return null;
 	}

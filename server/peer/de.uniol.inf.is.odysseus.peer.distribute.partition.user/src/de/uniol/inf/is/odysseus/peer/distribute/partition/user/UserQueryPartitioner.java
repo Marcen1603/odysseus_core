@@ -27,7 +27,7 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config) throws QueryPartitionException {
+	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 		return determineQueryParts(operators);
 	}
 

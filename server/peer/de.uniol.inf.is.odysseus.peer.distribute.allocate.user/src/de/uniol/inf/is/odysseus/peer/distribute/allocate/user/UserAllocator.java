@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.user;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -31,7 +32,7 @@ public class UserAllocator implements IQueryPartAllocator {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config) throws QueryPartAllocationException {
+	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		
 		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
 		

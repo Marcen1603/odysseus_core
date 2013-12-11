@@ -25,7 +25,9 @@ public class PeerQueryPartAllocatorPreParserKeyword extends AbstractPreParserKey
 			throw new OdysseusScriptException("Query part allocator name is missing");
 		}
 		
-		String allocatorName = parameter.trim();
+		String[] splitted = parameter.trim().split(" ");
+		String allocatorName = splitted[0].trim();
+		
 		if( !QueryPartAllocatorRegistry.getInstance().contains(allocatorName)) {
 			throw new OdysseusScriptException("Query Part Allocator name '" + allocatorName + "' is not registered!");
 		}
@@ -35,7 +37,10 @@ public class PeerQueryPartAllocatorPreParserKeyword extends AbstractPreParserKey
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
-		settings.add(new QueryPartAllocatorParameter(parameter.trim()));
+		
+		String[] splitted = parameter.trim().split(" ");
+		List<String> parameters = KeywordHelper.generateParameterList(splitted);
+		settings.add(new QueryPartAllocatorParameter(splitted[0], parameters));
 		
 		return null;
 	}

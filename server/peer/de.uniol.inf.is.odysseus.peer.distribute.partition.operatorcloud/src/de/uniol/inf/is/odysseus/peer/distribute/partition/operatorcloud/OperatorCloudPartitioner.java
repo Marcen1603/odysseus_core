@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.partition.operatorcloud;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
@@ -19,7 +20,7 @@ public class OperatorCloudPartitioner implements IQueryPartitioner {
 	}
 
 	@Override
-	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config) throws QueryPartitionException {
+	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 		Collection<ILogicalQueryPart> parts = Lists.newArrayList();
 		
 		for( ILogicalOperator operator : operators ) {

@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.distribute.util;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -33,5 +35,20 @@ public final class ParameterHelper {
 			throw new QueryDistributionException("Setting of " + settingName + " is not set but needed.");
 		}
 		return stringSetting.getValue();
+	}
+	
+	public static List<String> determineQueryPartitionerParameters(QueryBuildConfiguration config) {
+		QueryPartitionerParameter queryParameter = config.get(QueryPartitionerParameter.class);
+		return queryParameter.getParameters();
+	}
+	
+	public static List<String> determineQueryPartModificatorParameters(QueryBuildConfiguration config) {
+		QueryPartModificatorParameter queryParameter = config.get(QueryPartModificatorParameter.class);
+		return queryParameter.getParameters();
+	}
+	
+	public static List<String> determineQueryPartAllocatorParameters(QueryBuildConfiguration config) {
+		QueryPartAllocatorParameter queryParameter = config.get(QueryPartAllocatorParameter.class);
+		return queryParameter.getParameters();
 	}
 }

@@ -25,7 +25,8 @@ public class PeerQueryPartModificatorPreParserKeyword extends AbstractPreParserK
 			throw new OdysseusScriptException("Query modificator name is missing");
 		}
 		
-		String modificatorName = parameter.trim();
+		String[] splitted = parameter.trim().split(" ");
+		String modificatorName = splitted[0].trim();
 		if( !QueryPartModificatorRegistry.getInstance().contains(modificatorName)) {
 			throw new OdysseusScriptException("Query Part Modificator name '" + modificatorName + "' is not registered!");
 		}
@@ -35,7 +36,9 @@ public class PeerQueryPartModificatorPreParserKeyword extends AbstractPreParserK
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
-		settings.add(new QueryPartModificatorParameter(parameter.trim()));
+		String[] splitted = parameter.trim().split(" ");
+		List<String> parameters = KeywordHelper.generateParameterList(splitted);
+		settings.add(new QueryPartModificatorParameter(splitted[0], parameters));
 		
 		return null;
 	}

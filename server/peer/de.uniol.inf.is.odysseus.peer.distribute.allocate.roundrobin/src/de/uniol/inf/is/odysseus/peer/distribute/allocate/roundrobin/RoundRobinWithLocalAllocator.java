@@ -21,7 +21,7 @@ public class RoundRobinWithLocalAllocator implements IQueryPartAllocator {
 	}
 
 	@Override
-	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config) throws QueryPartAllocationException {
+	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
 		List<PeerID> peerIDs = Lists.newArrayList(knownRemotePeers);
 		peerIDs.add(localPeerID);
 		
