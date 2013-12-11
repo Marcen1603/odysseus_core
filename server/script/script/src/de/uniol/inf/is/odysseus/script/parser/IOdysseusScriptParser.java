@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.script.parser;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -39,10 +38,6 @@ public interface IOdysseusScriptParser {
 	public List<PreParserStatement> parseScript(String completeText, ISession caller, Context context) throws OdysseusScriptException;
 
 	public List<PreParserStatement> parseScript(String[] textToParse, ISession caller, Context context) throws OdysseusScriptException;
-
-	public Map<String, String> getReplacements(String text) throws OdysseusScriptException;
-
-	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException;
 
 	public String getParameterKey();
 

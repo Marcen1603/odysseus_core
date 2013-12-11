@@ -223,7 +223,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			textToParse = removeAllComments(textToParse);
 
 			// first, we rewrite loops to serial query text
-			String[] text = rewriteLoop(textToParse);
+			String[] text = rewriteLoop(textToParse, context);
 
 			// after that, we are looking for procedures and replace them
 			text = runProcedures(text, caller);
@@ -433,7 +433,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return Arrays.asList(procText.split(System.lineSeparator()));
 	}
 
-	private String[] rewriteLoop(String[] textToParse) throws OdysseusScriptException {
+	private String[] rewriteLoop(String[] textToParse, Context context) throws OdysseusScriptException {
 		List<String> text = new ArrayList<String>();
 		int from = -1;
 		int to = -1;
@@ -466,7 +466,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 					if (parts.length < 4) {
 						throw new OdysseusScriptException("Missing parameters in loop definition. Definition should be like \"variable 1 TO 10\"");
 					}
-					Map<String, String> repl = getReplacements(Arrays.copyOf(textToParse, from - 1));
+					Map<String, String> repl = getReplacements(Arrays.copyOf(textToParse, from - 1), context);
 					String variable = parts[0].trim();
 					String fromStr = parts[1].trim();
 					if (fromStr.startsWith(REPLACEMENT_START_KEY) && fromStr.endsWith(REPLACEMENT_END_KEY)) {
@@ -527,14 +527,9 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 		return text.toArray(new String[0]);
 	}
 
-	@Override
-	public Map<String, String> getReplacements(String text) throws OdysseusScriptException {
-		return getReplacements(splitToList(text).toArray(new String[0]));
-	}
-
-	@Override
-	public Map<String, String> getReplacements(String[] text) throws OdysseusScriptException {
+	private static Map<String, String> getReplacements(String[] text, Context context) throws OdysseusScriptException {
 		ReplacementContainer repl = new ReplacementContainer();
+		repl.connect(context);
 		boolean isInProcedure = false;
 
 		try {
