@@ -94,9 +94,7 @@ public class QueryDistributor implements IQueryDistributor {
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
 
-			Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(query);
-			LogicalQueryHelper.removeTopAOs(operators);
-			operators = LogicalQueryHelper.replaceStreamAOs(operators);
+			Collection<ILogicalOperator> operators = collectRelevantOperators(query);
 			tryCheckDistribution(config, operators);
 
 			LOG.debug("Begin partitioning of query {}", query);
@@ -106,23 +104,16 @@ public class QueryDistributor implements IQueryDistributor {
 			}
 			checkPartitions(queryParts, operators);
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Got {} query parts: ", queryParts.size());
-				for (ILogicalQueryPart part : queryParts) {
-					LOG.debug("QueryPart: {}", part);
-				}
+				printQueryParts(queryParts);
 			}
-
+			
 			LOG.debug("Begin modifying query parts of query {}", query);
 			Collection<ILogicalQueryPart> modifiedQueryParts = tryModifyQueryParts(config, modificator, queryParts);
 			if (modifiedQueryParts == null || modifiedQueryParts.isEmpty()) {
 				throw new QueryDistributionException("Query part modificator '" + modificator.getName() + "' retured null or empty query part list!");
 			}
-			checkPartitions(modifiedQueryParts, LogicalQueryHelper.getAllOperators(query)); // collect again since modifier could add/remove operators
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Got {} modified query parts: ", modifiedQueryParts.size());
-				for (ILogicalQueryPart part : modifiedQueryParts) {
-					LOG.debug("QueryPart: {}", part);
-				}
+				printQueryParts(modifiedQueryParts);
 			}
 
 			LOG.debug("Begin allocation of query parts");
@@ -134,21 +125,17 @@ public class QueryDistributor implements IQueryDistributor {
 			LOG.debug("Check allocation map returned by allocator {}", allocator.getName());
 			checkAllocationMap(allocationMap, modifiedQueryParts);
 			if (LOG.isDebugEnabled()) {
-				for (ILogicalQueryPart part : allocationMap.keySet()) {
-					PeerID allocatedPeerID = allocationMap.get(part);
-					Optional<String> remotePeerName = P2PDictionaryService.get().getRemotePeerName(allocatedPeerID);
-					if (!allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
-						LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
-					} else {
-						LOG.debug("Allocated query part {} --> local", part);
-					}
-				}
+				printAllocationMap(allocationMap);
 			}
 
 			Map<ILogicalQueryPart, PeerID> correctedAllocationMap = forceLocalOperators(allocationMap);
+			Map<ILogicalQueryPart, PeerID> mergedAllocationMap = mergeQueryPartsWithSamePeer(correctedAllocationMap);
+			if( LOG.isDebugEnabled() ) {
+				printAllocationMap(mergedAllocationMap);
+			}
 			
-			insertJxtaOperators(correctedAllocationMap);
-			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(correctedAllocationMap, config);
+			insertJxtaOperators(mergedAllocationMap);
+			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(mergedAllocationMap, config);
 
 			if (!localQueryParts.isEmpty()) {
 				LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());
@@ -168,6 +155,32 @@ public class QueryDistributor implements IQueryDistributor {
 			callExecutorToAddLocalQueries(localQueriesToExecutor, serverExecutor, caller, config);
 		} else {
 			LOG.debug("There are no local queries in all {} given queries.", queriesToDistribute.size());
+		}
+	}
+
+	private static Collection<ILogicalOperator> collectRelevantOperators(ILogicalQuery query) {
+		Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(query);
+		LogicalQueryHelper.removeTopAOs(operators);
+		operators = LogicalQueryHelper.replaceStreamAOs(operators);
+		return operators;
+	}
+
+	private static void printQueryParts(Collection<ILogicalQueryPart> modifiedQueryParts) {
+		LOG.debug("Got {} query parts: ", modifiedQueryParts.size());
+		for (ILogicalQueryPart part : modifiedQueryParts) {
+			LOG.debug("QueryPart: {}", part);
+		}
+	}
+
+	private static void printAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap) {
+		for (ILogicalQueryPart part : allocationMap.keySet()) {
+			PeerID allocatedPeerID = allocationMap.get(part);
+			Optional<String> remotePeerName = P2PDictionaryService.get().getRemotePeerName(allocatedPeerID);
+			if (!allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+				LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
+			} else {
+				LOG.debug("Allocated query part {} --> local", part);
+			}
 		}
 	}
 
@@ -199,6 +212,47 @@ public class QueryDistributor implements IQueryDistributor {
 			}
 		}
 		return localOperators;
+	}
+	
+	private static Map<ILogicalQueryPart, PeerID> mergeQueryPartsWithSamePeer(Map<ILogicalQueryPart, PeerID> allocationMap) {
+		LOG.debug("Merging query parts with same peerid if possible");
+		
+		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(allocationMap.keySet());
+		Map<LogicalSubscription, ILogicalOperator> subs = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
+		
+		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap(allocationMap);
+		for( LogicalSubscription sub : subs.keySet() ) {
+			ILogicalOperator startOperator = subs.get(sub);
+			ILogicalOperator targetOperator = sub.getTarget();
+			
+			ILogicalQueryPart startQueryPart = queryPartAssignment.get(startOperator);
+			ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
+			
+			PeerID startPeerID = result.get(startQueryPart);
+			PeerID targetPeerID = result.get(targetQueryPart);
+			
+			if( startPeerID.equals(targetPeerID) ) {
+				LOG.debug("Merging query parts {} and {}", startQueryPart, targetQueryPart);
+				ILogicalQueryPart mergedPart = mergeQueryParts(startQueryPart, targetQueryPart);
+				result.remove(startQueryPart);
+				result.remove(targetQueryPart);
+				result.put(mergedPart, startPeerID);
+				
+				for(ILogicalOperator op : mergedPart.getOperators()) {
+					queryPartAssignment.put(op, mergedPart);
+				}
+			}
+		}
+		
+		return result;
+	}
+
+	private static ILogicalQueryPart mergeQueryParts(ILogicalQueryPart startQueryPart, ILogicalQueryPart targetQueryPart) {
+		Collection<ILogicalOperator> mergedOperators = Lists.newArrayList();
+		mergedOperators.addAll(startQueryPart.getOperators());
+		mergedOperators.addAll(targetQueryPart.getOperators());
+		
+		return new LogicalQueryPart(mergedOperators);
 	}
 
 	private static boolean isDestinationNameLocal(ILogicalOperator operator) {
