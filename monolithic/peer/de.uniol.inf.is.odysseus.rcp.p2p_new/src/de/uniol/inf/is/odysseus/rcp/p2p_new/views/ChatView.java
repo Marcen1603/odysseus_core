@@ -200,7 +200,7 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 		try {
 			if (selectedPeerID.isPresent()) {
-				appendToChatTextAsync(getCurrentTime() + " " + P2PNetworkManagerService.get().getLocalPeerName() + ": (to " + determinePeerName(selectedPeerID.get()) + ") " + text);
+				appendToChatTextAsync(getCurrentTime() + " " + P2PNetworkManagerService.get().getLocalPeerName() + " (to " + determinePeerName(selectedPeerID.get()) + "): " + text);
 
 				PeerCommunicatorService.get().send(selectedPeerID.get(), message);
 			} else {
@@ -342,11 +342,14 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	public void remotePeerAdded(IP2PDictionary sender, PeerID id, String name) {
 		peerIDs.add(id);
 		refreshTableAsync();
+		appendToChatTextAsync("<New peer '" + name + "' discovered>");
 	}
 
 	@Override
 	public void remotePeerRemoved(IP2PDictionary sender, PeerID id, String name) {
 		peerIDs.remove(id);
 		refreshTableAsync();
+		
+		appendToChatTextAsync("<Peer '" + name + "' disappeared>");
 	}
 }
