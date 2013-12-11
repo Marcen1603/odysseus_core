@@ -42,7 +42,7 @@ public final class ReplacementContainer {
 
 	private void fromReplacementsToContext() {
 		for( String key : replacements.keySet() ) {
-			context.put(key, replacements.get(key));
+			context.putOrReplace(key, replacements.get(key));
 		}
 	}
 	
