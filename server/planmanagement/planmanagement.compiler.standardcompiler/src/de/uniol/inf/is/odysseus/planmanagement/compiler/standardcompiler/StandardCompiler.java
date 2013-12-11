@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.planmanagement.compiler.standardcompiler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +59,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  * @author Wolf Bauer, Tobias Witt
  * 
  */
-public class StandardCompiler implements ICompiler {
+public class StandardCompiler implements ICompiler {	
+	
 	/**
 	 * {@link ITransformation} service
 	 */
@@ -404,19 +406,16 @@ public class StandardCompiler implements ICompiler {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID).getTokens(user);
 		}
-
-		throw new QueryParseException("Parser with ID " + parserID
-				+ " not registered.");		
+		return new HashMap<>();
+				
 	}
 
 	@Override
 	public List<String> getQueryParserSuggestions(String parserID, String hint, ISession user) {
 		if (this.parserList.containsKey(parserID)) {
 			return this.parserList.get(parserID).getSuggestions(hint, user);
-		}
-
-		throw new QueryParseException("Parser with ID " + parserID
-				+ " not registered.");
+		}		
+		return new ArrayList<>();
 	}
 
 }

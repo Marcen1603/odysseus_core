@@ -1,16 +1,9 @@
 package de.uniol.inf.is.odysseus.rcp.editor.text.cql;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 
 /**
@@ -56,14 +49,6 @@ public class Activator extends AbstractUIPlugin {
 		return OdysseusRCPEditorTextPlugIn.getExecutor();
 	}
 	
-	public static List<String> getDatatypeNames(){
-		List<String> list = new ArrayList<>();
-		ISession caller = OdysseusRCPPlugIn.getActiveSession();
-		Set<SDFDatatype> dts = OdysseusRCPEditorTextPlugIn.getExecutor().getRegisteredDatatypes(caller);
-		for(SDFDatatype dt : dts){
-			list.add(dt.getQualName());
-		}
-		return list;
-	}
+	
 	
 }

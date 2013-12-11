@@ -15,15 +15,21 @@
  */
 package de.uniol.inf.is.odysseus.rcp.editor.text;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguagePropertiesProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.templates.OdysseusScriptTemplateRegistry;
 
@@ -110,5 +116,16 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 
 	public static IEditorLanguagePropertiesProvider getEditorCompletionProvider(String parserName) {
 		return completionproviders.get(parserName);
+	}
+	
+	
+	public static List<String> getDatatypeNames(){
+		List<String> list = new ArrayList<>();
+		ISession caller = OdysseusRCPPlugIn.getActiveSession();
+		Set<SDFDatatype> dts = OdysseusRCPEditorTextPlugIn.getExecutor().getRegisteredDatatypes(caller);
+		for(SDFDatatype dt : dts){
+			list.add(dt.getQualName());
+		}
+		return list;
 	}
 }

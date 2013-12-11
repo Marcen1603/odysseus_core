@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.cep.sase;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,6 +153,8 @@ public class SaseBuilder implements IQueryParser, BundleActivator {
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) {
 		Map<String, List<String>> tokens = new HashMap<>();		
+		List<String> staticTokens = Arrays.asList(SaseParser.tokenNames);
+		tokens.put("TOKEN", staticTokens);
 		return tokens;
 	}
 	

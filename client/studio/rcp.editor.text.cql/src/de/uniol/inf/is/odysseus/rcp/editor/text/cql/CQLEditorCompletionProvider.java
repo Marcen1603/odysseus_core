@@ -72,7 +72,7 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 		}
 		// then, add also all datatypes
 		
-		liste.addAll(Activator.getDatatypeNames());
+		liste.addAll(OdysseusRCPEditorTextPlugIn.getDatatypeNames());
 		return liste;
 	}
 
