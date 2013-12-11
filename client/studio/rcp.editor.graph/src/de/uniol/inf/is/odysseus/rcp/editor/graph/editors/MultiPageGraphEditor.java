@@ -411,8 +411,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	public void executeScript() {
 		IFile file = ((FileEditorInput) getEditorInput()).getFile();
 		String pql = getPQLString();
-		pql = ParserClientUtil.replaceClientReplacements(pql, file);
-		Activator.getDefault().getExecutor().addQuery(pql, "PQL", Activator.getDefault().getCaller(), "Standard", null);
+		Activator.getDefault().getExecutor().addQuery(pql, "PQL", Activator.getDefault().getCaller(), "Standard", ParserClientUtil.createRCPContext(file));
 	}
 
 }

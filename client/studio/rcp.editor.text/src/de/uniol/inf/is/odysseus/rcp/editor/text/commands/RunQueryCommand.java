@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
@@ -146,9 +145,8 @@ public class RunQueryCommand extends AbstractHandler implements IHandler {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					String text = readLinesFromFile(scriptFile);
-					text = ParserClientUtil.replaceClientReplacements(text, scriptFile);
 					IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-					executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard", Context.empty());
+					executor.addQuery(text, "OdysseusScript", OdysseusRCPPlugIn.getActiveSession(), "Standard", ParserClientUtil.createRCPContext(scriptFile));
 				} catch (Throwable ex) {
 					return new Status(IStatus.ERROR, IEditorTextParserConstants.PLUGIN_ID, "Script Execution Error", ex);
 				}

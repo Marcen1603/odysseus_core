@@ -36,7 +36,7 @@ public class IncludePreParserKeyword extends AbstractPreParserKeyword {
 			includingFiles.add(parameter);
 			
 			String[] lines = readTextLinesFromFile(includingFile);
-			getParser().validate(lines, caller, Context.empty());
+			getParser().validate(lines, caller, context);
 			
 		} catch( Exception ex ) {
 			throw new OdysseusScriptException("Could not read including file '" + parameter + "' for validating", ex );

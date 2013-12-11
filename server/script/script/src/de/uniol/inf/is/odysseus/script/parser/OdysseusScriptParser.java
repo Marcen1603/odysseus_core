@@ -77,8 +77,6 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 	private int currentLine;
 	private int keyStartedAtLine;
 
-	// private Map<String, String> defaultReplacements = new HashMap<>();
-
 	@Override
 	public String getParameterKey() {
 		return PARAMETER_KEY;
@@ -708,7 +706,7 @@ public class OdysseusScriptParser implements IOdysseusScriptParser, IQueryParser
 			}
 			throw new QueryParseException(message.toString(), e);
 		}
-		throw new QueryParseException("Parsing Odysseus script failed with an unknown reason!", e);
+		throw new QueryParseException("Parsing Odysseus script failed:" + e.getMessage(), e);
 	}
 
 	@Override

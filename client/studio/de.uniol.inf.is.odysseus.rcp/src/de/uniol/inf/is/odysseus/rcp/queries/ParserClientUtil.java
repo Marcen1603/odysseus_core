@@ -1,50 +1,33 @@
 package de.uniol.inf.is.odysseus.rcp.queries;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
+
 public class ParserClientUtil {
 
-	private static final String REPLACEMENT_START_KEY = "${";
-	private static final String REPLACEMENT_END_KEY = "}";
-
-	public static String replaceClientReplacements(String text, IFile file) {
+	public static Context createRCPContext(IFile file) {
 		IProject project = file.getProject();
-		Map<String, String> replacements = new HashMap<>();
 		String localRootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
-		replacements.put("WORKSPACE", localRootLocation);
-		replacements.put("WORKSPACE/", localRootLocation + File.separator);
-		replacements.put("WORKSPACE\\", localRootLocation + File.separator);
-		replacements.put("PROJECT", project.getName());
-		replacements.put("PROJECTPATH", project.getLocation().toOSString());
-		replacements.put("PROJECTPATH\\", project.getLocation().toOSString() + File.separator);
-		replacements.put("PROJECTPATH/", project.getLocation().toOSString() + File.separator);
-		replacements.put("WORKSPACEPROJECT", localRootLocation + File.separator + project.getName());
-		replacements.put("WORKSPACEPROJECT\\", localRootLocation + File.separator + project + File.separator);
-		replacements.put("WORKSPACEPROJECT/", localRootLocation + File.separator + project + File.separator);
-		replacements.put("\\", File.separator);
-		replacements.put("/", File.separator);
-		for (Entry<String, String> replacement : replacements.entrySet()) {
-			String pattern = REPLACEMENT_START_KEY + replacement.getKey() + REPLACEMENT_END_KEY;
-			text = text.replace(pattern, replacement.getValue());
 
-		}
-		return text;
-
+		Context context = Context.empty();
+		context.put("WORKSPACE", localRootLocation);
+		context.put("WORKSPACE/", localRootLocation + File.separator);
+		context.put("WORKSPACE\\", localRootLocation + File.separator);
+		context.put("PROJECT", project.getName());
+		context.put("PROJECTPATH", project.getLocation().toOSString());
+		context.put("PROJECTPATH\\", project.getLocation().toOSString() + File.separator);
+		context.put("PROJECTPATH/", project.getLocation().toOSString() + File.separator);
+		context.put("WORKSPACEPROJECT", localRootLocation + File.separator + project.getName());
+		context.put("WORKSPACEPROJECT\\", localRootLocation + File.separator + project + File.separator);
+		context.put("WORKSPACEPROJECT/", localRootLocation + File.separator + project + File.separator);
+		context.put("\\", File.separator);
+		context.put("/", File.separator);
+		
+		return context;
 	}
-
-	public static String[] replaceClientReplacements(String[] lines, IFile scriptFile) {
-		for (int i = 0; i < lines.length; i++) {
-			lines[i] = replaceClientReplacements(lines[i], scriptFile);
-		}
-		return lines;
-
-	}
-
 }
