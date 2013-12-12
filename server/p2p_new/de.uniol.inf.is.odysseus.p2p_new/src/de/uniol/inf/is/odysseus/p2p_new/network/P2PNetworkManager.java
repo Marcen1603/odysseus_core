@@ -17,6 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
@@ -88,7 +89,7 @@ public final class P2PNetworkManager implements IP2PNetworkManager {
 		
 		LOG.debug("Starting p2p network. peerName = {}, groupName = {}", peerName, groupName);
 		
-		final File conf = new File(System.getProperty("user.home") + System.getProperty("file.separator") + peerName);
+		final File conf = new File(OdysseusConfiguration.getHomeDir() + "peers" + File.separator + peerName);
 		NetworkManager.RecursiveDelete(conf);
 		
 		peerID = IDFactory.newPeerID(PeerGroupID.defaultNetPeerGroupID);
