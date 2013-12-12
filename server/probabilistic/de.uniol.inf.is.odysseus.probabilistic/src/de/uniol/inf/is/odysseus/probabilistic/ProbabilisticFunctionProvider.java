@@ -86,6 +86,7 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.Proba
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToLongFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ProbabilisticDoubleToShortFunction;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.functions.transform.ToProbabilisticDoubleFunction;
+import de.uniol.inf.is.odysseus.probabilistic.functions.TimelinessFunction;
 
 /**
  * Function provider for probabilistic functions.
@@ -197,6 +198,8 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
             functions.add(new EuclideanDistanceFunctionVector());
             // ProbabilisticFunctionProvider.LOG.info(String.format(
             // "Register functions: %s", functions));
+
+            functions.add(new TimelinessFunction());
         }
         catch (final Exception e) {
             ProbabilisticFunctionProvider.LOG.error(e.getMessage(), e);
