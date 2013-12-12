@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.p2p_new.adv;
 
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.Advertisement;
+import net.jxta.id.ID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
@@ -27,7 +30,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 	private final List<IAdvertisementListener> listeners = Lists.newArrayList();
 	
-	private List<Advertisement> knownAdvertisements = Lists.newArrayList();
+	private Map<ID, Advertisement> knownAdvertisements = Maps.newHashMap();
 	private RepeatingJobThread discoveryThread;
 
 	// called by OSGi-DS
@@ -80,7 +83,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 
 	private void fireLateAdvertisementEvents(IAdvertisementListener listener) {
 		synchronized (knownAdvertisements) {
-			for (Advertisement adv : knownAdvertisements) {
+			for (Advertisement adv : knownAdvertisements.values()) {
 				try {
 					listener.advertisementAdded(this, adv);
 				} catch( Throwable t ) {
@@ -100,7 +103,7 @@ public class AdvertisementManager implements IAdvertisementManager {
 	@Override
 	public ImmutableCollection<Advertisement> getAdvertisements() {
 		synchronized( knownAdvertisements ) {
-			return ImmutableList.copyOf(knownAdvertisements);
+			return ImmutableList.copyOf(knownAdvertisements.values());
 		}
 	}
 
@@ -134,24 +137,24 @@ public class AdvertisementManager implements IAdvertisementManager {
 	}
 
 	private void processAdvertisements(Enumeration<Advertisement> advs) {
-		List<Advertisement> newAdvertisements = Lists.newArrayList();
-		List<Advertisement> oldAdvertisements = null;
+		Map<ID, Advertisement> newAdvertisements = Maps.newHashMap();
+		Map<ID, Advertisement> oldAdvertisements = null;
 		synchronized( knownAdvertisements ) {
-			oldAdvertisements = Lists.newArrayList(knownAdvertisements);
+			oldAdvertisements = Maps.newHashMap(knownAdvertisements);
 		}
 		
 		while (advs.hasMoreElements()) {
 			final Advertisement adv = advs.nextElement();
-			newAdvertisements.add(adv);
+			newAdvertisements.put(adv.getID(), adv);
 
-			if( oldAdvertisements.contains(adv)) {
-				oldAdvertisements.remove(adv);
+			if( oldAdvertisements.containsKey(adv.getID())) {
+				oldAdvertisements.remove(adv.getID());
 			} else {
 				fireAdvertisementAddEvent(adv);
 			}
 		}
 		
-		for( Advertisement removedAdvertisement : oldAdvertisements) {
+		for( Advertisement removedAdvertisement : oldAdvertisements.values()) {
 			fireAdvertisementRemoveEvent(removedAdvertisement);
 		}
 		
