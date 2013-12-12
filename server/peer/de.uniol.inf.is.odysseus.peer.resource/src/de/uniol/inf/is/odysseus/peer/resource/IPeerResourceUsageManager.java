@@ -14,4 +14,7 @@ public interface IPeerResourceUsageManager {
 	public Optional<IResourceUsage> getLocalResourceUsage();
 	
 	public Collection<PeerID> getRemotePeers();
+	
+	public void addListener( IPeerResourceUsageManagerListener listener);
+	public void removeListener( IPeerResourceUsageManagerListener listener);
 }

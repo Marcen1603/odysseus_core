@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.rcp.login;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.peer.resource;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.rcp,
@@ -20,5 +21,5 @@ Import-Package: de.uniol.inf.is.odysseus.rcp,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources,
  org.slf4j
-Service-Component: OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaReceiverOperatorDetailProvider.xml,OSGI-INF/jxtaSenderOperatorDetailProvider.xml,OSGI-INF/serverExecutorService.xml,OSGI-INF/p2pNetworkManagerService.xml,OSGI-INF/p2pNetworkListener.xml,
- OSGI-INF/peerCommunicatorService.xml
+Service-Component: OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaReceiverOperatorDetailProvider.xml,OSGI-INF/jxtaSenderOperatorDetailProvider.xml,OSGI-INF/serverExecutorService.xml,OSGI-INF/p2pNetworkManagerService.xml,OSGI-INF/p2pNetworkListener.xml,OSGI-INF/peerCommunicatorService.xml,
+ OSGI-INF/PeerResourceUsageManagerService.xml

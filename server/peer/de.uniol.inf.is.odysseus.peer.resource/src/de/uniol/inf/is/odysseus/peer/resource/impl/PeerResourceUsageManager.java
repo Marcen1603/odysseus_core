@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
+import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManagerListener;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 
@@ -26,6 +27,8 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceUsageCheckThread.class);
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
+	private final Collection<IPeerResourceUsageManagerListener> listeners = Lists.newArrayList();
+	
 	private IResourceUsage localUsage;
 	private ResourceUsageCheckThread checkThread;
 	
@@ -88,9 +91,23 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 					IResourceUsage oldUsage = usageMap.get(peerID);
 					if( isOlder(oldUsage, usage)) {
 						usageMap.put(peerID, usage);
+						fireChangeEvent(peerID);
 					}
 				} else {
 					usageMap.put(peerID, usage);
+					fireChangeEvent(peerID);
+				}
+			}
+		}
+	}
+
+	private void fireChangeEvent(PeerID peerID) {
+		synchronized( listeners ) {
+			for( IPeerResourceUsageManagerListener listener : listeners ) {
+				try {
+					listener.resourceUsageChanged(this, peerID);
+				} catch( Throwable t ) {
+					LOG.error("Exception in peer resource usage manager listener", t);
 				}
 			}
 		}
@@ -103,5 +120,23 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	@Override
 	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
 		// do nothing
+	}
+
+	@Override
+	public void addListener(IPeerResourceUsageManagerListener listener) {
+		Preconditions.checkNotNull(listener, "Peer resoucre usage manager listener must not be null!");
+		
+		synchronized(listeners ) {
+			listeners.add(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(IPeerResourceUsageManagerListener listener) {
+		Preconditions.checkNotNull(listener, "Peer resoucre usage manager listener must not be null!");
+		
+		synchronized( listeners ) {
+			listeners.remove(listener);
+		}
 	}
 }

@@ -12,3 +12,4 @@ Require-Bundle: Jxta.2.6;bundle-version="1.0.0",
  sigar;bundle-version="1.0.0"
 Service-Component: OSGI-INF/PeerResourceUsageManager.xml, OSGI-INF/P2PNetworkManagerService.xml, OSGI-INF/JxtaServicesProviderService.xml
 Import-Package: org.osgi.framework
+Export-Package: de.uniol.inf.is.odysseus.peer.resource
