@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
@@ -117,7 +118,7 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
      * java.lang.String)
      */
     @Override
-    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, final int[] pos, final boolean partialAggregateInput,
+    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, SDFSchema schema, final int[] pos, final boolean partialAggregateInput,
             final String datatype) {
         IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
         if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_AVG)) {

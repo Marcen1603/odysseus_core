@@ -20,6 +20,7 @@ import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
@@ -45,7 +46,7 @@ public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
 	}
 
 	@Override
-	public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key,
+	public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, SDFSchema schema,
 			int[] pos, boolean partialAggregateInput, String datatype) {
 		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
 		if (key.getName().equalsIgnoreCase(SCRIPT)) {

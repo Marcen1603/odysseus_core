@@ -7,6 +7,7 @@ Bundle-Activator: de.uniol.inf.is.odysseus.prototyping.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate,

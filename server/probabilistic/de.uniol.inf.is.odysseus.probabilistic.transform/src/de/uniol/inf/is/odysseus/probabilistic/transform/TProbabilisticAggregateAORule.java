@@ -102,7 +102,7 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
                         throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
                     }
                     @SuppressWarnings("rawtypes")
-                    final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), posArray, partialAggregateInput, inDatatype);
+                    final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), p.getE1(), posArray, partialAggregateInput, inDatatype);
                     operator.setInitFunction(p, aggFunction);
                     operator.setMergeFunction(p, aggFunction);
                     operator.setEvalFunction(p, aggFunction);

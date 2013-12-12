@@ -184,7 +184,7 @@ public class AggregateAO extends UnaryLogicalOp {
 						getInputSchema().getType(), f.getName());
 				int[] posArray = new int[1];
 				posArray[0] = 0;
-				IAggregateFunction<?, ?> realAggFunc = builder.createAggFunction(f, posArray, false, type.getURI());
+				IAggregateFunction<?, ?> realAggFunc = builder.createAggFunction(f, getInputSchema(), posArray, false, type.getURI());
 				type = realAggFunc.getPartialAggregateType();
 				
 				outAttribs.add(new SDFAttribute(a.getE1().getSourceName(), a
