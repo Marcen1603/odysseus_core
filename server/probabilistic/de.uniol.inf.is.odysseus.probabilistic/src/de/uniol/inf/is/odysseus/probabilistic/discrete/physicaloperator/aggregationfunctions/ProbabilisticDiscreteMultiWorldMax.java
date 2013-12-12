@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
@@ -21,23 +21,22 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 
 /**
- * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
+ *         FIXME Implement probabilistic Max aggregation function
  */
-public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
-
+public class ProbabilisticDiscreteMultiWorldMax extends AbstractAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> {
     /**
 	 * 
 	 */
-    private static final long serialVersionUID = 5755032915277288119L;
+    private static final long serialVersionUID = 1454835520786158651L;
     /** The attribute position. */
     private final int pos;
     /** The result data type. */
     private final String datatype;
 
     /**
-     * Gets an instance of {@link ProbabilisticDiscreteMultiWorldAvg}.
+     * Gets an instance of {@link ProbabilisticDiscreteMultiWorldMax}.
      * 
      * @param pos
      *            The attribute position
@@ -45,14 +44,14 @@ public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunctio
      *            The partial aggregate input
      * @param datatype
      *            The result datatype
-     * @return An instance of {@link ProbabilisticDiscreteMultiWorldAvg}
+     * @return An instance of {@link ProbabilisticDiscreteMultiWorldMax}
      */
-    public static ProbabilisticDiscreteMultiWorldAvg getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
-        return new ProbabilisticDiscreteMultiWorldAvg(pos, partialAggregateInput, datatype);
+    public static ProbabilisticDiscreteMultiWorldMax getInstance(final int pos, final boolean partialAggregateInput, final String datatype) {
+        return new ProbabilisticDiscreteMultiWorldMax(pos, partialAggregateInput, datatype);
     }
 
     /**
-     * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldAvg}.
+     * Creates a new instance of {@link ProbabilisticDiscreteMultiWorldMax}.
      * 
      * @param pos
      *            The attribute position
@@ -61,8 +60,8 @@ public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunctio
      * @param datatype
      *            The result datatype
      */
-    protected ProbabilisticDiscreteMultiWorldAvg(final int pos, final boolean partialAggregateInput, final String datatype) {
-        super("AVG", partialAggregateInput);
+    protected ProbabilisticDiscreteMultiWorldMax(final int pos, final boolean partialAggregateInput, final String datatype) {
+        super("MAX", partialAggregateInput);
         this.pos = pos;
         this.datatype = datatype;
     }
@@ -75,7 +74,7 @@ public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunctio
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> init(final ProbabilisticTuple<?> in) {
-        final MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>(this.datatype);
+        final MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>> pa = new MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>(this.datatype, true);
 
         pa.add((AbstractProbabilisticValue<?>) in.getAttribute(this.pos));
 
@@ -92,13 +91,12 @@ public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunctio
      */
     @Override
     public final IPartialAggregate<ProbabilisticTuple<?>> merge(final IPartialAggregate<ProbabilisticTuple<?>> p, final ProbabilisticTuple<?> toMerge, final boolean createNew) {
-        MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = null;
+        MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>> pa = null;
         if (createNew) {
-            pa = new MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p).getSum(),
-                    ((MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p).getCount(), this.datatype);
+            pa = new MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>(((MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>) p).getAggregate(), this.datatype, true);
         }
         else {
-            pa = (MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+            pa = (MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>) p;
         }
 
         pa.add((AbstractProbabilisticValue<?>) toMerge.getAttribute(this.pos));
@@ -117,7 +115,7 @@ public class ProbabilisticDiscreteMultiWorldAvg extends AbstractAggregateFunctio
     @SuppressWarnings("rawtypes")
     @Override
     public final ProbabilisticTuple<?> evaluate(final IPartialAggregate<ProbabilisticTuple<?>> p) {
-        final MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldAvgPartialAggregate<ProbabilisticTuple<?>>) p;
+        final MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>> pa = (MultiWorldMinMaxPartialAggregate<ProbabilisticTuple<?>>) p;
         final ProbabilisticTuple<?> r = new ProbabilisticTuple(1, true);
         r.setAttribute(0, pa.getAggregate());
         return r;

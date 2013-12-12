@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions;
 
 import java.util.HashMap;
 import java.util.Map;

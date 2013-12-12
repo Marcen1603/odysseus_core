@@ -31,15 +31,15 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggreg
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMin;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousStdDev;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousSum;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteCompleteness;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteCount;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldAvg;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMax;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMin;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldSum;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteOneWorldAvg;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteOneWorldSum;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteStdDev;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCompleteness;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCount;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldAvg;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMax;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMin;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldSum;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteOneWorldAvg;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteOneWorldSum;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteStdDev;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
