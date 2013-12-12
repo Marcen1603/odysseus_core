@@ -31,7 +31,6 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 	private static final String ADVERTISEMENT_TYPE = "jxta:ResourceUsageAdvertisement";
 	private static final long serialVersionUID = 1L;
 
-	private static final String ID_TAG = "id";
 	private static final String PEER_ID_TAG = "peerid";
 	private static final String MEM_FREE_TAG = "memfree";
 	private static final String MEM_MAX_TAG = "memmax";
@@ -39,9 +38,8 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 	private static final String CPU_MAX_TAG = "cpumax";
 	private static final String TIMESTAMP_TAG = "timestamp";
 	
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG, TIMESTAMP_TAG };
+	private static final String[] INDEX_FIELDS = new String[] { PEER_ID_TAG, TIMESTAMP_TAG };
 
-	private ID id;
 	private IResourceUsage usage; 
 	
 	public ResourceUsageAdvertisement(Element<?> root) {
@@ -58,7 +56,6 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		Preconditions.checkNotNull(adv, "Advertisement to copy must not be null!");
 
 		usage = adv.usage != null ? adv.usage.clone() : null;
-		id = adv.id;
 	}
 
 	ResourceUsageAdvertisement() {
@@ -92,7 +89,6 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 			((Attributable) doc).addAttribute("xmlns:jxta", "http://jxta.org");
 		}
 
-		appendElement(doc, ID_TAG, id.toString());
 		appendElement(doc, PEER_ID_TAG, usage.getPeerID().toString());
 		appendElement(doc, MEM_FREE_TAG, String.valueOf(usage.getMemFreeBytes()));
 		appendElement(doc, MEM_MAX_TAG, String.valueOf(usage.getMemMaxBytes()));
@@ -105,7 +101,7 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 
 	@Override
 	public ID getID() {
-		return id;
+		return usage.getPeerID();
 	}
 
 	@Override
@@ -121,14 +117,10 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((usage.getPeerID() == null) ? 0 : usage.getPeerID().hashCode());
 		return result;
 	}
 
-	public void setID(ID id) {
-		this.id = id;
-	}
-	
 	public void setResourceUsage( IResourceUsage usage ) {
 		Preconditions.checkNotNull(usage, "Resource usage for advertisement must not be null!");
 		
@@ -146,9 +138,7 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		long timestamp = 0;
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
-			if (elem.getName().equals(ID_TAG)) {
-				id = convertToID(elem.getTextValue());
-			} else if (elem.getName().equals(PEER_ID_TAG)) {
+			if (elem.getName().equals(PEER_ID_TAG)) {
 				peerID = convertToPeerID(elem.getTextValue());
 			} else if (elem.getName().equals(MEM_FREE_TAG)) {
 				memFreeBytes = Long.valueOf(elem.getTextValue());
@@ -187,13 +177,4 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		}
 	}
 
-	private static ID convertToID(String text) {
-		try {
-			final URI id = new URI(text);
-			return ID.create(id);
-		} catch (URISyntaxException | ClassCastException ex) {
-			LOG.error("Could not transform to pipeid: {}", text, ex);
-			return null;
-		}
-	}
 }

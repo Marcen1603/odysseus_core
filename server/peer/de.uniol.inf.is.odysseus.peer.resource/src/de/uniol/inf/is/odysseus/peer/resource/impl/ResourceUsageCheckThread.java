@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.peer.resource.impl;
 import java.io.IOException;
 
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.id.IDFactory;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Sigar;
@@ -54,7 +53,6 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 					manager.setLocalResourceUsage(usage);
 					
 					ResourceUsageAdvertisement adv = (ResourceUsageAdvertisement)AdvertisementFactory.newAdvertisement(ResourceUsageAdvertisement.getAdvertisementType());
-					adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 					adv.setResourceUsage(usage);
 					
 					try {
