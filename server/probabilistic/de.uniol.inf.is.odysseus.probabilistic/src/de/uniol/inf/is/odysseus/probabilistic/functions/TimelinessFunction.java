@@ -3,15 +3,19 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TimelinessFunction extends AbstractProbabilisticFunction<Double> {
+public class TimelinessFunction extends AbstractFunction<Double> {
 
     /**
      * 
@@ -42,11 +46,16 @@ public class TimelinessFunction extends AbstractProbabilisticFunction<Double> {
      */
     @Override
     public final Double getValue() {
+        Objects.requireNonNull(this.getInputValue(0));
+        Objects.requireNonNull(getMetaAttribute());
         double frequency = this.getNumericalInputValue(0);
-        long applicationTime = System.currentTimeMillis();
-        long streamTime = ((ITimeInterval) getMetaAttribute()).getStart().getMainPoint();
-
-        double timeliness = (1.0 - (applicationTime - streamTime) / frequency);
+        PointInTime applicationTime = PointInTime.currentPointInTime();
+        PointInTime streamTime = ((ITimeInterval) getMetaAttribute()).getStart();
+        PointInTime difference = applicationTime.minus(streamTime);
+        double timeliness = (1.0 - difference.getMainPoint() / (1000.0 / frequency));
+        if (timeliness < 0.0) {
+            timeliness = 0.0;
+        }
         return timeliness;
     }
 
@@ -79,4 +88,12 @@ public class TimelinessFunction extends AbstractProbabilisticFunction<Double> {
         return TimelinessFunction.ACC_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        // We need access to the meta data of each tuple
+        return false;
+    }
 }
