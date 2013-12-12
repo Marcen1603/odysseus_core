@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 abstract public class AbstractWindowAO extends UnaryLogicalOp {
@@ -107,6 +108,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		return this.partitionedBy != null;
 	}
 
+	@Parameter(name = "PARTITION", type = ResolvedSDFAttributeParameter.class, optional = true, isList = true)
 	public void setPartitionBy(List<SDFAttribute> partitionedBy) {
 		this.partitionedBy = partitionedBy;
 	}
