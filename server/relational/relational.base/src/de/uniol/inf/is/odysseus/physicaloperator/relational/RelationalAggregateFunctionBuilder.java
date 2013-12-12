@@ -32,6 +32,7 @@ public class RelationalAggregateFunctionBuilder implements
     private final static String FIRST = "FIRST";
     private final static String NTH = "NTH";
     private final static String RATE = "RATE";
+    private final static String COMPLETENESS = "COMPLETENESS";
     
 	private static Collection<String> names = new LinkedList<String>();
 	{
@@ -46,6 +47,7 @@ public class RelationalAggregateFunctionBuilder implements
         names.add(FIRST);
         names.add(NTH);
         names.add(RATE);
+        names.add(COMPLETENESS);
 	}
 	
 	@Override
@@ -75,7 +77,9 @@ public class RelationalAggregateFunctionBuilder implements
 		} else if (key.getName().equalsIgnoreCase(NTH)) {
 			aggFunc = RelationalNth.getInstance(Integer.parseInt(key
 					.getProperty("nth")), partialAggregateInput);
-		} else {
+        } else if (key.getName().equalsIgnoreCase(COMPLETENESS)) {
+            aggFunc = RelationalCompleteness.getInstance(pos[0], partialAggregateInput, datatype);
+        } else {
 			throw new IllegalArgumentException("No such Aggregatefunction");
 		}
 		return aggFunc;
