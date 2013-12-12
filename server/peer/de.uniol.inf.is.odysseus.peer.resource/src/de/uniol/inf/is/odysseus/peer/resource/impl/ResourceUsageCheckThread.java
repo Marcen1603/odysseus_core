@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 public class ResourceUsageCheckThread extends RepeatingJobThread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceUsageCheckThread.class);
-	private static final int REFRESH_INTERVAL_MILLIS = 5000;
+	private static final int REFRESH_INTERVAL_MILLIS = 10000;
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	
 	private final Sigar sigar = new Sigar();
@@ -58,8 +58,8 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 					adv.setResourceUsage(usage);
 					
 					try {
-						JxtaServicesProviderService.get().getDiscoveryService().remotePublish(adv, 5000);
-						JxtaServicesProviderService.get().getDiscoveryService().publish(adv, 5000, 5000);
+						JxtaServicesProviderService.get().getDiscoveryService().remotePublish(adv, REFRESH_INTERVAL_MILLIS);
+						JxtaServicesProviderService.get().getDiscoveryService().publish(adv, REFRESH_INTERVAL_MILLIS, REFRESH_INTERVAL_MILLIS);
 					} catch (IOException e) {
 						LOG.error("Could not publish resource usage advertisement", e);
 					}
