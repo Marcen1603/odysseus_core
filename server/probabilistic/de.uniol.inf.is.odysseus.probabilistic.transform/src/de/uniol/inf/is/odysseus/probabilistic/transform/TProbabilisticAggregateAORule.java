@@ -92,7 +92,7 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
                             builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "CONTINUOUS_" + p.getE2().getName());
                         }
                         else {
-                            builder = null;
+                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
                         }
                     }
                     else {

@@ -25,11 +25,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousAvg;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousCompleteness;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousCount;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMax;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMin;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousStdDev;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousSum;
+import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteCompleteness;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteCount;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldAvg;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicalperator.aggregationfunctions.ProbabilisticDiscreteMultiWorldMax;
@@ -67,6 +69,10 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
     private static final String DISCRETE_STDDEV = "DISCRETE_STDDEV";
     /** The STDDEV aggregate. */
     private static final String CONTINUOUS_STDDEV = "CONTINUOUS_STDDEV";
+    /** The STDDEV aggregate. */
+    private static final String DISCRETE_COMPLETENESS = "DISCRETE_COMPLETENESS";
+    /** The STDDEV aggregate. */
+    private static final String CONTINUOUS_COMPLETENESS = "CONTINUOUS_COMPLETENESS";
     /** The available aggregate functions. */
     private static Collection<String> names = new LinkedList<String>();
     {
@@ -76,6 +82,9 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COUNT);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.DISCRETE_AVG);
         ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_AVG);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.DISCRETE_COMPLETENESS);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COMPLETENESS);
+
     };
 
     /*
@@ -176,6 +185,12 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
         else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_STDDEV)) {
             aggFunc = ProbabilisticContinuousStdDev.getInstance(pos[0], partialAggregateInput, datatype);
             throw new IllegalArgumentException("STDDEV Aggregatefunction not implemented");
+        }
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_COMPLETENESS)) {
+            aggFunc = ProbabilisticDiscreteCompleteness.getInstance(pos[0], partialAggregateInput, datatype);
+        }
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COMPLETENESS)) {
+            aggFunc = ProbabilisticContinuousCompleteness.getInstance(pos[0], partialAggregateInput, datatype);
         }
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");
