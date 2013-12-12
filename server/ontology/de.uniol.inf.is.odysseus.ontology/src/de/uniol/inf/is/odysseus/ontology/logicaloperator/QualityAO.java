@@ -167,54 +167,54 @@ public class QualityAO extends UnaryLogicalOp {
 
         for (final SDFAttribute attribute : attributes) {
             final List<SensingDevice> sensingDevices = this.getSensingDevices(attribute);
-            // if (!sensingDevices.isEmpty()) {
-            // FIXME What happens if there are more than one sensing device?
-            final SensingDevice sensingDevice = sensingDevices.get(0);
+            if (!sensingDevices.isEmpty()) {
+                // FIXME What happens if there are more than one sensing device?
+                final SensingDevice sensingDevice = sensingDevices.get(0);
 
-            final List<MeasurementCapability> measurementCapabilities = sensingDevice.getHasMeasurementCapabilities(attribute.getAttributeName());
-            final Map<String, Map<StringBuilder, StringBuilder>> attributeMeasurementPropertyExpression = new HashMap<String, Map<StringBuilder, StringBuilder>>();
+                final List<MeasurementCapability> measurementCapabilities = sensingDevice.getHasMeasurementCapabilities(attribute.getAttributeName());
+                final Map<String, Map<StringBuilder, StringBuilder>> attributeMeasurementPropertyExpression = new HashMap<String, Map<StringBuilder, StringBuilder>>();
 
-            for (final MeasurementCapability measurementCapability : measurementCapabilities) {
+                for (final MeasurementCapability measurementCapability : measurementCapabilities) {
 
-                final Map<String, StringBuilder> measurementPropertyExpression = this.getMeasurementPropertyExpressions(measurementCapability);
-                final StringBuilder conditionExpression = this.getConditionExpression(measurementCapability);
+                    final Map<String, StringBuilder> measurementPropertyExpression = this.getMeasurementPropertyExpressions(measurementCapability);
+                    final StringBuilder conditionExpression = this.getConditionExpression(measurementCapability);
 
-                for (final String measurementPropertyName : measurementPropertyExpression.keySet()) {
-                    if (!attributeMeasurementPropertyExpression.containsKey(measurementPropertyName)) {
-                        attributeMeasurementPropertyExpression.put(measurementPropertyName, new HashMap<StringBuilder, StringBuilder>());
+                    for (final String measurementPropertyName : measurementPropertyExpression.keySet()) {
+                        if (!attributeMeasurementPropertyExpression.containsKey(measurementPropertyName)) {
+                            attributeMeasurementPropertyExpression.put(measurementPropertyName, new HashMap<StringBuilder, StringBuilder>());
+                        }
+                        final Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression.get(measurementPropertyName);
+
+                        conditionMeasurementPropertyMapping.put(conditionExpression, measurementPropertyExpression.get(measurementPropertyName));
                     }
+
+                }
+
+                for (final String measurementPropertyName : measurementPropertyNames) {
                     final Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression.get(measurementPropertyName);
+                    final StringBuilder expression = new StringBuilder();
 
-                    conditionMeasurementPropertyMapping.put(conditionExpression, measurementPropertyExpression.get(measurementPropertyName));
-                }
-
-            }
-            // }
-            for (final String measurementPropertyName : measurementPropertyNames) {
-                final Map<StringBuilder, StringBuilder> conditionMeasurementPropertyMapping = attributeMeasurementPropertyExpression.get(measurementPropertyName);
-                final StringBuilder expression = new StringBuilder();
-
-                for (final StringBuilder conditionExpression : conditionMeasurementPropertyMapping.keySet()) {
-                    if (expression.length() != 0) {
-                        expression.append(", ");
+                    for (final StringBuilder conditionExpression : conditionMeasurementPropertyMapping.keySet()) {
+                        if (expression.length() != 0) {
+                            expression.append(", ");
+                        }
+                        expression.append("eif(");
+                        expression.append(conditionExpression);
+                        expression.append(",");
+                        expression.append("sMin(");
+                        expression.append(conditionMeasurementPropertyMapping.get(conditionExpression));
+                        expression.append(")");
+                        expression.append(",");
+                        // expression.append(Double.MAX_VALUE);
+                        expression.append(1.0);
+                        expression.append(")");
                     }
-                    expression.append("eif(");
-                    expression.append(conditionExpression);
-                    expression.append(",");
-                    expression.append("sMin(");
-                    expression.append(conditionMeasurementPropertyMapping.get(conditionExpression));
-                    expression.append(")");
-                    expression.append(",");
-                    // expression.append(Double.MAX_VALUE);
-                    expression.append(1.0);
-                    expression.append(")");
+                    expression.insert(0, "sMin([");
+                    expression.append("])");
+                    expressions[i] = new SDFExpression(expression.toString(), MEP.getInstance());
+                    i++;
                 }
-                expression.insert(0, "sMin([");
-                expression.append("])");
-                expressions[i] = new SDFExpression(expression.toString(), MEP.getInstance());
-                i++;
             }
-
         }
         return expressions;
     }
@@ -253,7 +253,8 @@ public class QualityAO extends UnaryLogicalOp {
                 if (!measurementPropertyExpressions.containsKey(measurementProperty.getResource().getLocalName())) {
                     expressionBuilder = new StringBuilder();
                     measurementPropertyExpressions.put(measurementProperty.getResource().getLocalName(), expressionBuilder);
-                } else {
+                }
+                else {
                     expressionBuilder = measurementPropertyExpressions.get(measurementProperty.getResource().getLocalName());
                 }
                 if (expressionBuilder.length() != 0) {
@@ -261,7 +262,8 @@ public class QualityAO extends UnaryLogicalOp {
                 }
                 if (measurementProperty.getExpression() != null) {
                     expressionBuilder.append(measurementProperty.getExpression());
-                } else {
+                }
+                else {
                     expressionBuilder.append(0.0);
                 }
             }

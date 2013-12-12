@@ -405,6 +405,7 @@ public class ProbabilisticTupleDataHandler extends AbstractDataHandler<Probabili
      */
     @Override
     public final int memSize(final Object attribute) {
+        Objects.requireNonNull(attribute);
         final ProbabilisticTuple<?> r = (ProbabilisticTuple<?>) attribute;
 
         int size = 0;
