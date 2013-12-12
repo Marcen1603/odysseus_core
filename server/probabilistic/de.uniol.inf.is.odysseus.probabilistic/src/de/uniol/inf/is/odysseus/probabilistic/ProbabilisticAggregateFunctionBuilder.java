@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
@@ -30,7 +31,6 @@ import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggreg
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousCount;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMax;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousMin;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousStdDev;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.aggregationfunctions.ProbabilisticContinuousSum;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCompleteness;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregationfunctions.ProbabilisticDiscreteCount;
@@ -47,44 +47,29 @@ import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.aggregat
  */
 public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunctionBuilder {
     /** The SUM aggregate. */
-    private static final String DISCRETE_SUM = "DISCRETE_SUM";
-    /** The SUM aggregate. */
-    private static final String CONTINUOUS_SUM = "CONTINUOUS_SUM";
+    private static final String SUM = "SUM";
     /** The COUNT aggregate. */
-    private static final String DISCRETE_COUNT = "DISCRETE_COUNT";
-    /** The COUNT aggregate. */
-    private static final String CONTINUOUS_COUNT = "CONTINUOUS_OUNT";
+    private static final String COUNT = "COUNT";
     /** The AVG aggregate. */
-    private static final String DISCRETE_AVG = "DISCRETE_AVG";
-    /** The AVG aggregate. */
-    private static final String CONTINUOUS_AVG = "CONTINUOUS_AVG";
+    private static final String AVG = "AVG";
     /** The MIN aggregate. */
-    private static final String DISCRETE_MIN = "DISCRETE_MIN";
-    /** The MIN aggregate. */
-    private static final String CONTINUOUS_MIN = "CONTINUOUS_MIN";
+    private static final String MIN = "MIN";
     /** The MAX aggregate. */
-    private static final String DISCRETE_MAX = "DISCRETE_MAX";
-    /** The MAX aggregate. */
-    private static final String CONTINUOUS_MAX = "CONTINUOUS_MAX";
+    private static final String MAX = "MAX";
     /** The STDDEV aggregate. */
-    private static final String DISCRETE_STDDEV = "DISCRETE_STDDEV";
+    private static final String STDDEV = "STDDEV";
     /** The STDDEV aggregate. */
-    private static final String CONTINUOUS_STDDEV = "CONTINUOUS_STDDEV";
-    /** The STDDEV aggregate. */
-    private static final String DISCRETE_COMPLETENESS = "DISCRETE_COMPLETENESS";
-    /** The STDDEV aggregate. */
-    private static final String CONTINUOUS_COMPLETENESS = "CONTINUOUS_COMPLETENESS";
+    private static final String COMPLETENESS = "COMPLETENESS";
     /** The available aggregate functions. */
     private static Collection<String> names = new LinkedList<String>();
     {
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.DISCRETE_SUM);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_SUM);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.DISCRETE_COUNT);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COUNT);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.DISCRETE_AVG);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_AVG);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.DISCRETE_COMPLETENESS);
-        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COMPLETENESS);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.SUM);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.COUNT);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.AVG);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.MIN);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.MAX);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.STDDEV);
+        ProbabilisticAggregateFunctionBuilder.names.add(ProbabilisticAggregateFunctionBuilder.COMPLETENESS);
 
     };
 
@@ -118,80 +103,90 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
      * java.lang.String)
      */
     @Override
-    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, SDFSchema schema, final int[] pos, final boolean partialAggregateInput,
-            final String datatype) {
+    public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, SDFSchema schema, final int[] pos,
+            final boolean partialAggregateInput, final String outputDatatype) {
         IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
-        if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_AVG)) {
-            if (datatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
-                aggFunc = ProbabilisticDiscreteMultiWorldAvg.getInstance(pos[0], partialAggregateInput, datatype);
+        SDFAttribute attribute = schema.get(pos[0]);
+        SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
+        if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
+            if (datatype.isDiscrete()) {
+                if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
+                    aggFunc = ProbabilisticDiscreteMultiWorldAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                }
+                else {
+                    aggFunc = ProbabilisticDiscreteOneWorldAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                }
             }
             else {
-                aggFunc = ProbabilisticDiscreteOneWorldAvg.getInstance(pos[0], partialAggregateInput, datatype);
+                aggFunc = ProbabilisticContinuousAvg.getInstance(pos[0], partialAggregateInput, outputDatatype);
             }
         }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_AVG)) {
-            aggFunc = ProbabilisticContinuousAvg.getInstance(pos[0], partialAggregateInput, datatype);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_SUM)) {
-            if (datatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
-                aggFunc = ProbabilisticDiscreteMultiWorldSum.getInstance(pos[0], partialAggregateInput, datatype);
-            }
-            else {
-                aggFunc = ProbabilisticDiscreteOneWorldSum.getInstance(pos[0], partialAggregateInput, datatype);
-            }
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_SUM)) {
-            aggFunc = ProbabilisticContinuousSum.getInstance(pos[0], partialAggregateInput, datatype);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_COUNT)) {
-            aggFunc = ProbabilisticDiscreteCount.getInstance(pos[0], partialAggregateInput, datatype);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COUNT)) {
-            aggFunc = ProbabilisticContinuousCount.getInstance(pos[0], partialAggregateInput, datatype);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_MIN)) {
-            if (datatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
-                aggFunc = ProbabilisticDiscreteMultiWorldMin.getInstance(pos[0], partialAggregateInput, datatype);
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.SUM)) {
+            if (datatype.isDiscrete()) {
+                if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
+                    aggFunc = ProbabilisticDiscreteMultiWorldSum.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                }
+                else {
+                    aggFunc = ProbabilisticDiscreteOneWorldSum.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                }
             }
             else {
-                // aggFunc =
-                // ProbabilisticDiscreteOneWorldMin.getInstance(pos[0],
-                // partialAggregateInput, datatype);
+                aggFunc = ProbabilisticContinuousSum.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            }
+        }
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COUNT)) {
+            if (datatype.isDiscrete()) {
+                aggFunc = ProbabilisticDiscreteCount.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            }
+            else {
+                aggFunc = ProbabilisticContinuousCount.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            }
+        }
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.MIN)) {
+            if (datatype.isDiscrete()) {
+                if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
+                    aggFunc = ProbabilisticDiscreteMultiWorldMin.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                }
+                else {
+                    // aggFunc =
+                    // ProbabilisticDiscreteOneWorldMin.getInstance(pos[0],
+                    // partialAggregateInput, datatype);
+                    throw new IllegalArgumentException("MIN Aggregatefunction not implemented");
+                }
+            }
+            else {
+                aggFunc = ProbabilisticContinuousMin.getInstance(pos[0], partialAggregateInput, outputDatatype);
                 throw new IllegalArgumentException("MIN Aggregatefunction not implemented");
             }
         }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_MIN)) {
-            aggFunc = ProbabilisticContinuousMin.getInstance(pos[0], partialAggregateInput, datatype);
-            throw new IllegalArgumentException("MIN Aggregatefunction not implemented");
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_MAX)) {
-            if (datatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
-                aggFunc = ProbabilisticDiscreteMultiWorldMax.getInstance(pos[0], partialAggregateInput, datatype);
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.MAX)) {
+            if (datatype.isDiscrete()) {
+                if (outputDatatype.equalsIgnoreCase(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE.toString())) {
+                    aggFunc = ProbabilisticDiscreteMultiWorldMax.getInstance(pos[0], partialAggregateInput, outputDatatype);
+                }
+                else {
+                    // aggFunc =
+                    // ProbabilisticDiscreteOneWorldMax.getInstance(pos[0],
+                    // partialAggregateInput, datatype);
+                    throw new IllegalArgumentException("MAX Aggregatefunction not implemented");
+                }
             }
             else {
-                // aggFunc =
-                // ProbabilisticDiscreteOneWorldMax.getInstance(pos[0],
-                // partialAggregateInput, datatype);
+                aggFunc = ProbabilisticContinuousMax.getInstance(pos[0], partialAggregateInput, outputDatatype);
                 throw new IllegalArgumentException("MAX Aggregatefunction not implemented");
             }
         }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_MAX)) {
-            aggFunc = ProbabilisticContinuousMax.getInstance(pos[0], partialAggregateInput, datatype);
-            throw new IllegalArgumentException("MAX Aggregatefunction not implemented");
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_STDDEV)) {
-            aggFunc = ProbabilisticDiscreteStdDev.getInstance(pos[0], partialAggregateInput, datatype);
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.STDDEV)) {
+            aggFunc = ProbabilisticDiscreteStdDev.getInstance(pos[0], partialAggregateInput, outputDatatype);
             throw new IllegalArgumentException("STDDEV Aggregatefunction not implemented");
         }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_STDDEV)) {
-            aggFunc = ProbabilisticContinuousStdDev.getInstance(pos[0], partialAggregateInput, datatype);
-            throw new IllegalArgumentException("STDDEV Aggregatefunction not implemented");
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.DISCRETE_COMPLETENESS)) {
-            aggFunc = ProbabilisticDiscreteCompleteness.getInstance(pos[0], partialAggregateInput, datatype);
-        }
-        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.CONTINUOUS_COMPLETENESS)) {
-            aggFunc = ProbabilisticContinuousCompleteness.getInstance(pos[0], partialAggregateInput, datatype);
+        else if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.COMPLETENESS)) {
+            if (datatype.isDiscrete()) {
+                aggFunc = ProbabilisticDiscreteCompleteness.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            }
+            else {
+                aggFunc = ProbabilisticContinuousCompleteness.getInstance(pos[0], partialAggregateInput, outputDatatype);
+            }
         }
         else {
             throw new IllegalArgumentException("No such Aggregatefunction");

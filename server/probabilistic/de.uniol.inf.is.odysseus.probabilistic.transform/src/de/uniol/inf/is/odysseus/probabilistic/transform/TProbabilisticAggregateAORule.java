@@ -85,15 +85,7 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
 
                     if (e.getValue().getDatatype() instanceof SDFProbabilisticDatatype) {
                         final SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) e.getValue().getDatatype();
-                        if (datatype.isDiscrete()) {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "DISCRETE_" + p.getE2().getName());
-                        }
-                        else if (datatype.isContinuous()) {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), "CONTINUOUS_" + p.getE2().getName());
-                        }
-                        else {
-                            builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
-                        }
+                        builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
                     }
                     else {
                         builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
