@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.relational.transform.TMapAORule;
 
 /**
@@ -51,6 +52,9 @@ public class TProbabilisticMapAORule extends TMapAORule {
                 boolean isProbabilisticDiscreteOrContinuous = false;
                 for (final SDFExpression expr : operator.getExpressions()) {
                     if (SchemaUtils.containsProbabilisticAttributes(expr.getAllAttributes())) {
+                        isProbabilisticDiscreteOrContinuous = true;
+                    }
+                    if (expr.getType() instanceof SDFProbabilisticDatatype) {
                         isProbabilisticDiscreteOrContinuous = true;
                     }
                 }
