@@ -95,7 +95,7 @@ public class RelationalPredicate extends AbstractPredicate<Tuple<?>> implements 
 			if (curAttribute == null) {
 				throw new IllegalArgumentException("Needed attribute for expression "+expression+" may not be null!");
 			}
-			int pos = indexOf(leftSchema, curAttribute);
+			int pos = leftSchema.indexOf(curAttribute);
 			if (pos == -1) {
 				if (rightSchema == null && checkRightSchema) {
 					throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + leftSchema + " and rightSchema is null!");
