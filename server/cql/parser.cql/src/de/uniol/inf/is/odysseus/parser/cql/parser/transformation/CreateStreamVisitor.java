@@ -191,11 +191,12 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		if (attribType.isDate()) {
 			dtConstrains.put("format", astAttrType.getDateFormat());
 		}
+		Resource resource = new Resource(this.caller.getUser(), this.name);
 		if (attribType.isMeasurementValue() && astAttrType.jjtGetNumChildren() > 0) {
-			attribute = new SDFAttribute(this.name, attrName, attribType, null, dtConstrains, (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
+			attribute = new SDFAttribute(resource.toString(), attrName, attribType, null, dtConstrains, (List<?>) astAttrType.jjtGetChild(0).jjtAccept(this, data));
 		}
 		if (attribute == null) {
-			attribute = new SDFAttribute(this.name, attrName, attribType, null, dtConstrains);
+			attribute = new SDFAttribute(resource.toString(), attrName, attribType, null, dtConstrains);
 		}
 		this.attributes.add(attribute);
 		return data;
@@ -269,8 +270,9 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		options.put("host", host);
 		options.put("port", port + "");
 		options.put("autoconnect", autoReconnect + "");
-		AccessAO source = new AccessAO(new Resource(caller.getUser(), name), wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
-		source.setOutputSchema(new SDFSchema(name, Tuple.class, this.attributes));
+		Resource resource = new Resource(caller.getUser(), name);
+		AccessAO source = new AccessAO(resource, wrapperName, "NonBlockingTcp","SizeByteBuffer", new TupleDataHandler().getSupportedDataTypes().get(0), options);
+		source.setOutputSchema(new SDFSchema(resource.toString(), Tuple.class, this.attributes));
 		CreateStreamCommand cmd = new CreateStreamCommand(name, source, caller);
 		commands.add(cmd);
 		return cmd;
