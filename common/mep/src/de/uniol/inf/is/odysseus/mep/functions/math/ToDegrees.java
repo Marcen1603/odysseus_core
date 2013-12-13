@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.mep.functions.transform;
+package de.uniol.inf.is.odysseus.mep.functions.math;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -26,9 +26,7 @@ public class ToDegrees extends AbstractFunction<Double> {
 	 * 
 	 */
 	private static final long serialVersionUID = 3137250935924025881L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT,
-			SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING };
+    private static final SDFDatatype[] accTypes =  SDFDatatype.NUMBERS;
 
 	@Override
 	public int getArity() {
@@ -55,7 +53,7 @@ public class ToDegrees extends AbstractFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		Double val = Double.parseDouble(getInputValue(0).toString());
+	    Double val = getNumericalInputValue(0).doubleValue();
 		return Math.toDegrees(val);
 	}
 

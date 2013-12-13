@@ -26,9 +26,7 @@ public class ToRadians extends AbstractFunction<Double> {
 	 * 
 	 */
 	private static final long serialVersionUID = -616286834459140847L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT,
-			SDFDatatype.INTEGER, SDFDatatype.LONG, SDFDatatype.STRING };
+	private static final SDFDatatype[] accTypes =  SDFDatatype.NUMBERS;
 
 	@Override
 	public int getArity() {
@@ -55,7 +53,7 @@ public class ToRadians extends AbstractFunction<Double> {
 
 	@Override
 	public Double getValue() {
-		Double val = Double.parseDouble(getInputValue(0).toString());
+		Double val = getNumericalInputValue(0).doubleValue();
 		return Math.toRadians(val);
 	}
 
