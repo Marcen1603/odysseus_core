@@ -234,7 +234,7 @@ public class QueryDistributor implements IQueryDistributor {
 			PeerID startPeerID = result.get(startQueryPart);
 			PeerID targetPeerID = result.get(targetQueryPart);
 			
-			if( startPeerID.equals(targetPeerID) ) {
+			if( startPeerID.equals(targetPeerID) && !startQueryPart.equals(targetQueryPart)) {
 				LOG.debug("Merging query parts {} and {}", startQueryPart, targetQueryPart);
 				ILogicalQueryPart mergedPart = mergeQueryParts(startQueryPart, targetQueryPart);
 				result.remove(startQueryPart);
