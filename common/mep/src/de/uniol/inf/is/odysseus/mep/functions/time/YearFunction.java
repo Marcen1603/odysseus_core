@@ -39,4 +39,12 @@ public class YearFunction extends AbstractDateFunction {
 		return calendar.get(Calendar.YEAR);
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

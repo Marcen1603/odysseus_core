@@ -39,4 +39,12 @@ public class DayFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.DATE);
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

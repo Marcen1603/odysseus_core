@@ -39,4 +39,12 @@ public class SecondFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.SECOND);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

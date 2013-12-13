@@ -43,4 +43,11 @@ public class MinuteFunction extends AbstractDateFunction{
 	}
 
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

@@ -40,4 +40,11 @@ public class WeekFunction extends AbstractDateFunction{
 	}
 
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

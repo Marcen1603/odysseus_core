@@ -19,4 +19,12 @@ public class WeekdayFunction extends AbstractDateFunction {
 		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

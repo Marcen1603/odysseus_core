@@ -39,4 +39,12 @@ public class HourFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.HOUR_OF_DAY);
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

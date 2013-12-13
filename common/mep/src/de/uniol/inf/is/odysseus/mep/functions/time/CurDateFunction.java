@@ -67,4 +67,13 @@ public class CurDateFunction extends AbstractFunction<Date> {
 	public SDFDatatype getReturnType() {
 		return SDFDatatype.DATE;
 	}
+	
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return false;
+    }
 }

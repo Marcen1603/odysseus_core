@@ -40,4 +40,12 @@ public class MonthFunction extends AbstractDateFunction{
 		return calendar.get(Calendar.MONTH + 1);
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

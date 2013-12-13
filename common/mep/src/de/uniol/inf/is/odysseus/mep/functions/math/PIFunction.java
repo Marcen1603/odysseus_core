@@ -61,5 +61,12 @@ public class PIFunction extends AbstractFunction<Double> {
     public SDFDatatype getReturnType() {
         return SDFDatatype.DOUBLE;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return true;
+    }
 }

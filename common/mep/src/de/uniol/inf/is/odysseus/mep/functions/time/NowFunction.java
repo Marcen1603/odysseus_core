@@ -62,4 +62,12 @@ public class NowFunction extends AbstractFunction<Long> {
 		return SDFDatatype.LONG;
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return false;
+    }
 }

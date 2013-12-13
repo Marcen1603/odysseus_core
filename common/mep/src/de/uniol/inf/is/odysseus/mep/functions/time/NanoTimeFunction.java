@@ -64,4 +64,12 @@ public class NanoTimeFunction extends AbstractFunction<Long> {
 		return SDFDatatype.LONG;
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return false;
+    }
 }
