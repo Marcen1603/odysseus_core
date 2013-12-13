@@ -198,7 +198,6 @@ public class SourcesView extends ViewPart implements IDataDictionaryListener, IU
 
 	@Override
 	public void sessionEventOccured(ISessionEvent event) {
-		refresh();
 	}
 
 }
