@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
 public class SessionManagementService {
 	public static ISession getActiveSession() {
-		return getSessionManagement().loginSuperUser(null, "");
+		return UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
 	}
 
 	public static ISessionManagement getSessionManagement() {
