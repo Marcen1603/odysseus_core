@@ -101,6 +101,7 @@ import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DebsDateFormatParse;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteFunction;
@@ -269,6 +270,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new MinuteFunction());
         registerFunction(new HourFunction());
         registerFunction(new DayFunction());
+        registerFunction(new DayOfMonthFunction());
         registerFunction(new WeekdayFunction());
         registerFunction(new WeekFunction());
         registerFunction(new MonthFunction());
