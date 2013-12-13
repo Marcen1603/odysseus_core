@@ -110,6 +110,10 @@ public class QualityAO extends UnaryLogicalOp {
         return this.properties;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public SDFSchema getOutputSchemaIntern(final int pos) {
         this.calcOutputSchema();
@@ -128,6 +132,10 @@ public class QualityAO extends UnaryLogicalOp {
         return new QualityAO(this);
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     @Override
     public void initialize() {
         super.initialize();
@@ -153,6 +161,22 @@ public class QualityAO extends UnaryLogicalOp {
         this.expressions = this.estimateExpressions();
     }
 
+    /**
+     * Constructs the expressions for the measurement properties.
+     * 
+     * The expression for each property is of the form:
+     * 
+     * sMin(eif(Condition1_1 AND Condition1_2,sMin([Property1_1Expr1,
+     * Property1_1Expr2]),1.0),eif(Condition2_1 AND
+     * Condition2_2,sMin([Property2_1Expr1, Property2_2Expr2]),1.0))
+     * 
+     * 
+     * With ConditionX_Y being different conditions for one measurement
+     * capability. And PropertyX_YExprZ being an expression for one property under the
+     * given condition
+     * 
+     * @return The expressions used during processing
+     */
     private SDFExpression[] estimateExpressions() {
         final List<SDFAttribute> attributes = this.getAttributes();
         final List<String> measurementPropertyNames = this.getProperties();
@@ -205,8 +229,7 @@ public class QualityAO extends UnaryLogicalOp {
                         expression.append(conditionMeasurementPropertyMapping.get(conditionExpression));
                         expression.append(")");
                         expression.append(",");
-                        // expression.append(Double.MAX_VALUE);
-                        expression.append(1.0);
+                        expression.append(Double.MAX_VALUE);
                         expression.append(")");
                     }
                     expression.insert(0, "sMin([");
@@ -219,10 +242,26 @@ public class QualityAO extends UnaryLogicalOp {
         return expressions;
     }
 
+    /**
+     * Get all sensing devices providing the given attribute
+     * 
+     * @param attribute
+     *            The attribute
+     * @return The list of sensing devices
+     */
     private List<SensingDevice> getSensingDevices(final SDFAttribute attribute) {
+        Objects.requireNonNull(attribute);
+        Objects.requireNonNull(SensorOntologyServiceImpl.getOntology());
         return SensorOntologyServiceImpl.getOntology().getSensingDevices(attribute);
     }
 
+    /**
+     * Constructs the condition expression for the given measurement capability
+     * 
+     * @param measurementCapability
+     *            The measurement capability
+     * @return A {@link StringBuilder} object containing the condition predicate
+     */
     private StringBuilder getConditionExpression(final MeasurementCapability measurementCapability) {
         final List<Condition> conditions = measurementCapability.getInConditions();
 
@@ -230,12 +269,15 @@ public class QualityAO extends UnaryLogicalOp {
 
         for (final Condition condition : conditions) {
             if (conditionExpression.length() != 0) {
+                // Concatenate each condition with an AND
                 conditionExpression.append(" AND ");
             }
 
             final List<SDFAttribute> observerAttributes = SensorOntologyServiceImpl.getOntology().getAttributes(condition);
 
             conditionExpression.append("(");
+            // Inject the observed attribute name for evaluation during
+            // processing
             conditionExpression.append(String.format(condition.toString(), observerAttributes.get(0).getAttributeName()));
             conditionExpression.append(")");
         }
@@ -243,6 +285,17 @@ public class QualityAO extends UnaryLogicalOp {
         return conditionExpression;
     }
 
+    /**
+     * Construct the vectors for the measurement properties.
+     * 
+     * The vector consists of single expressions that are evaluated during
+     * processing.
+     * 
+     * @param measurementCapability
+     *            The measurement capability
+     * @return A map including the name of the property and a vector of
+     *         expressions to evaluate
+     */
     private Map<String, StringBuilder> getMeasurementPropertyExpressions(final MeasurementCapability measurementCapability) {
         final Map<String, StringBuilder> measurementPropertyExpressions = new HashMap<String, StringBuilder>();
         final List<MeasurementProperty> measurementProperties = measurementCapability.getHasMeasurementProperties();

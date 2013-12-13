@@ -301,9 +301,17 @@ public class QueryManagerImpl implements QueryManager {
         final String sensingDeviceLabel = SDFUtils.getSensingDeviceLabel(attribute);
         final String measurementCapabilityLabel = attribute.getAttributeName();
 
-        final String queryString = "SELECT *  WHERE { " + "?foi rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " ; " + "ssn:" + SSN.hasProperty.getLocalName() + " ?p . " + "?sd rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " ; "
-                + "ssn:" + SSN.observes.getLocalName() + " ?p ; " + "ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?mc . " + "?mc  rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.MeasurementCapability.getLocalName() + " ; " + "ssn:" + SSN.forProperty.getLocalName() + " ?p . " + ""
-                + "?foi rdfs:" + RDFS.label.getLocalName() + " \"" + featureOfInterestLabel + "\" . " + "?sd rdfs:" + RDFS.label.getLocalName() + " \"" + sensingDeviceLabel + "\" . " + "?mc rdfs:" + RDFS.label.getLocalName() + " \"" + measurementCapabilityLabel + "\"" + "}";
+        final String queryString = "SELECT *  WHERE { " + 
+        "?foi rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.FeatureOfInterest.getLocalName() + " ; " + 
+        "ssn:" + SSN.hasProperty.getLocalName() + " ?p . " + 
+        "?sd rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.SensingDevice.getLocalName() + " ; " +
+        "ssn:" + SSN.observes.getLocalName() + " ?p ; " +
+        "ssn:" + SSN.hasMeasurementCapability.getLocalName() + " ?mc . " +
+        "?mc  rdf:" + RDF.type.getLocalName() + " ssn:" + SSN.MeasurementCapability.getLocalName() + " ; " + 
+        "ssn:" + SSN.forProperty.getLocalName() + " ?p . " + 
+        "?foi rdfs:" + RDFS.label.getLocalName() + " \"" + featureOfInterestLabel + "\" . " + 
+        "?sd rdfs:" + RDFS.label.getLocalName() + " \"" + sensingDeviceLabel + "\" . " + 
+        "?mc rdfs:" + RDFS.label.getLocalName() + " \"" + measurementCapabilityLabel + "\"" + "}";
 
         final Query query = QueryFactory.create(QueryManagerImpl.QUERY_PREFIX + queryString);
         final QueryExecution qExec = QueryExecutionFactory.create(query, this.getInferenceModel());

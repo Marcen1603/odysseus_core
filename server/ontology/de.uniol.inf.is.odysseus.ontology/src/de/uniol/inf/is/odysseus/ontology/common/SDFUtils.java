@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.ontology.common;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
@@ -23,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
  */
 public final class SDFUtils {
     public static String getFeatureOfInterestLabel(final SDFAttribute attribute) {
+        Objects.requireNonNull(attribute);
         final String sourceName = attribute.getSourceName();
         if (sourceName != null) {
             final String[] sourceArray = sourceName.split(":");
@@ -30,7 +33,8 @@ public final class SDFUtils {
                 final int pos = sourceArray[0].indexOf(".");
                 if (pos > 0) {
                     return sourceArray[0].substring(pos + 1, sourceArray[0].length());
-                } else {
+                }
+                else {
                     return sourceArray[0];
                 }
             }
@@ -39,6 +43,7 @@ public final class SDFUtils {
     }
 
     public static String getSensingDeviceLabel(final SDFAttribute attribute) {
+        Objects.requireNonNull(attribute);
         final String sourceName = attribute.getSourceName();
         if (sourceName != null) {
             final String[] sourceArray = sourceName.split(":");
