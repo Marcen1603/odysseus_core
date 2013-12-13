@@ -29,9 +29,7 @@ public class SqrtFunction extends AbstractFunction<Double> {
 	 * 
 	 */
 	private static final long serialVersionUID = 487637946406721528L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFDatatype.DOUBLE, SDFDatatype.BYTE, SDFDatatype.FLOAT,
-			SDFDatatype.INTEGER, SDFDatatype.LONG };
+	private static final SDFDatatype[] accTypes =  SDFDatatype.NUMBERS;
 
 	@Override
 	public int getArity() {

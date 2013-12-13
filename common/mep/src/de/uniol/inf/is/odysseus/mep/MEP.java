@@ -59,6 +59,7 @@ import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.MD5Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA1Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA256Function;
+import de.uniol.inf.is.odysseus.mep.functions.crypt.SHA512Function;
 import de.uniol.inf.is.odysseus.mep.functions.math.AbsoluteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcCosinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.ArcSinusFunction;
@@ -88,12 +89,14 @@ import de.uniol.inf.is.odysseus.mep.functions.math.SqrtFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SqrtValue;
 import de.uniol.inf.is.odysseus.mep.functions.math.SquareValue;
 import de.uniol.inf.is.odysseus.mep.functions.math.TangensFunction;
+import de.uniol.inf.is.odysseus.mep.functions.math.ToDegrees;
 import de.uniol.inf.is.odysseus.mep.functions.math.ToRadians;
 import de.uniol.inf.is.odysseus.mep.functions.math.UnaryMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.UpperFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.ContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
@@ -105,17 +108,18 @@ import de.uniol.inf.is.odysseus.mep.functions.time.MonthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.NanoTimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.NowFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondFunction;
-import de.uniol.inf.is.odysseus.mep.functions.time.ToDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.DateToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToByteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToFloatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToIntegerFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToShortFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToByteFunction;
-import de.uniol.inf.is.odysseus.mep.functions.transform.ToDegrees;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromNumberFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToDoubleFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToFloatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToIntegerFunction;
@@ -246,6 +250,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new LikeFunction());
         registerFunction(new ContainsFunction());
         registerFunction(new StringPlusOperator());
+        registerFunction(new StringMinusOperator());
         registerFunction(new ConcatFunction());
         registerFunction(new SubStringFunction());
         registerFunction(new LengthFunction());
@@ -254,7 +259,9 @@ public class MEP implements IExpressionParser {
         
         /** Date Functions */
         registerFunction(new DebsDateFormatParse());
-        registerFunction(new ToDateFunction());      
+        registerFunction(new ToDateFromStringFunction());      
+        registerFunction(new ToDateFromNumberFunction());
+        registerFunction(new DateToStringFunction()); 
         
         registerFunction(new SecondFunction());
         registerFunction(new MinuteFunction());
@@ -272,6 +279,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new MD5Function());
         registerFunction(new SHA1Function());
         registerFunction(new SHA256Function());
+        registerFunction(new SHA512Function());
         
         registerFunction(new UUIDFunction());
         registerFunction(new EvalFunction());

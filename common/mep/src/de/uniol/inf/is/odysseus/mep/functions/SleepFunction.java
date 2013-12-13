@@ -39,8 +39,9 @@ public class SleepFunction extends AbstractFunction<Double> {
         int time = getNumericalInputValue(0).intValue();
         try {
             Thread.sleep(time);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         return 1.0;
     }

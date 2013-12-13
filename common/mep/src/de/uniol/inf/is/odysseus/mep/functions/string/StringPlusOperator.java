@@ -72,7 +72,7 @@ public class StringPlusOperator extends AbstractBinaryOperator<String> {
 		if(argPos < 0){
 			throw new IllegalArgumentException("negative argument index not allowed");
 		}
-		if(argPos > this.getArity()-1){
+		if(argPos >= this.getArity()){
 			throw new IllegalArgumentException(this.getSymbol() + " has only " +this.getArity() + " argument(s).");
 		}
         //			accTypes[1] = String.class; // string concatenation

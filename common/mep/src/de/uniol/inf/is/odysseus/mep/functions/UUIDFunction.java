@@ -66,4 +66,11 @@ public class UUIDFunction extends AbstractFunction<String> {
 		return SDFDatatype.STRING;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return false;
+    }
 }

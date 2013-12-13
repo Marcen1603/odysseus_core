@@ -54,4 +54,11 @@ public class EvalFunction extends AbstractFunction<Object> {
 		return SDFDatatype.OBJECT;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean optimizeConstantParameter() {
+        return false;
+    }
 }

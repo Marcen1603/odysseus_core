@@ -30,7 +30,7 @@ public class RandomFunction2 extends AbstractFunction<Integer> {
 	 */
 	private static final long serialVersionUID = -5923905039135136079L;
 
-	private Random rnd;
+//	private Random rnd;
 
 	@Override
 	public int getArity() {
@@ -44,9 +44,11 @@ public class RandomFunction2 extends AbstractFunction<Integer> {
 
 	@Override
 	public Integer getValue() {
-		if (rnd == null){
-			rnd = new Random(getNumericalInputValue(0).longValue());
-		}
+        // FIXME only one instance of the MEP function exists!
+        // if (rnd == null){
+        // rnd = new Random(getNumericalInputValue(0).longValue());
+        // }
+	    Random rnd = new Random(getNumericalInputValue(0).longValue());
 		return rnd.nextInt(getNumericalInputValue(1).intValue());
 	}
 
