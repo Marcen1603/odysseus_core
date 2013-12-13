@@ -19,6 +19,8 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.xml.bind.DatatypeConverter;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -47,7 +49,7 @@ public class MD5Function extends AbstractFunction<String> {
 			throw new IllegalArgumentException(
 					"negative argument index not allowed");
 		}
-		if (argPos > this.getArity()) {
+		if (argPos >= this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s): a string");
 		}
@@ -66,10 +68,7 @@ public class MD5Function extends AbstractFunction<String> {
 			MessageDigest algorithm = MessageDigest.getInstance("MD5");
 			algorithm.reset();
 			algorithm.update(getInputValue(0).toString().getBytes(charset));
-			byte[] digest = algorithm.digest();
-			for (int i = 0; i < digest.length; i++) {
-				sb.append(Integer.toHexString(0xFF & digest[i]));
-			}
+			sb.append(DatatypeConverter.printHexBinary(algorithm.digest()));
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}

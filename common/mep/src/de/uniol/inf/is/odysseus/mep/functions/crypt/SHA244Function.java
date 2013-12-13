@@ -13,16 +13,18 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * Returns the SHA-512 hash sum of a string.
+ * Returns the SHA-244 hash sum of a string.
+ * The SHA-244 is not available in every JDK.
+ * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class SHA512Function extends AbstractFunction<String> {
+public class SHA244Function extends AbstractFunction<String> {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 1658098544887285057L;
+    private static final long serialVersionUID = 8609120626336351385L;
     private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFDatatype.STRING };
     private final Charset charset = Charset.forName("UTF8");
 
@@ -44,14 +46,14 @@ public class SHA512Function extends AbstractFunction<String> {
 
     @Override
     public String getSymbol() {
-        return "sha512";
+        return "sha244";
     }
 
     @Override
     public String getValue() {
         StringBuilder sb = new StringBuilder();
         try {
-            MessageDigest algorithm = MessageDigest.getInstance("SHA-512");
+            MessageDigest algorithm = MessageDigest.getInstance("SHA-244");
             algorithm.reset();
             algorithm.update(getInputValue(0).toString().getBytes(charset));
             sb.append(DatatypeConverter.printHexBinary(algorithm.digest()));
