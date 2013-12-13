@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing;
 import java.util.Collection;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -23,11 +26,15 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public final class CostEstimationHelper {
 
+	private static final Logger LOG = LoggerFactory.getLogger(CostEstimationHelper.class);
+	
 	private CostEstimationHelper() {
 		// do not instatiate this
 	}
 	
 	public static Map<ILogicalQueryPart, OperatorCost<?>> determineQueryPartCosts(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) {
+		LOG.debug("Estimating query part costs");
+		
 		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
 			
 			@Override
@@ -62,6 +69,7 @@ public final class CostEstimationHelper {
 			OperatorCost<?> costs = (OperatorCost<?>)CostModelService.get().estimateCost(physicalQuery.getPhysicalChilds(), false);
 			
 			result.put(queryPart, costs);
+			LOG.debug("Query part {} costs {}", queryPart, costs);
 		}
 		return result;
 	}

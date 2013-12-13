@@ -10,10 +10,10 @@ public class LoadBalancerFactory {
 
 	public static ILoadBalancer create(String type) throws LoadBalancerFactoryException {
 		
-		switch (type) {
+		switch (type.toLowerCase()) {
 		
-		case "min":
-			return new MinLoadBalancer();
+		case "mincpu":
+			return new MinCPULoadBalancer();
 			
 		case "max":
 			return new MaxLoadBalancer();
