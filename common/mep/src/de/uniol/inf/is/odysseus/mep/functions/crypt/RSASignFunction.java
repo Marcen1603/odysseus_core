@@ -64,7 +64,7 @@ public class RSASignFunction extends AbstractFunction<String> {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
-            Signature signature = Signature.getInstance("SHA1withRSA");
+            Signature signature = Signature.getInstance("SHA256withRSA");
             SignedObject signedObject = new SignedObject(object, privateKey, signature);
             return DatatypeConverter.printHexBinary(signedObject.getSignature());
         }

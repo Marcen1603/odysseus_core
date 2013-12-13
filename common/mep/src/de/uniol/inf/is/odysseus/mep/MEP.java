@@ -57,6 +57,8 @@ import de.uniol.inf.is.odysseus.mep.functions.compare.NotEqualsStringOperator2;
 import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerEqualsOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.SmallerThanOperator;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.DSAFunction;
+import de.uniol.inf.is.odysseus.mep.functions.crypt.DSASignFunction;
+import de.uniol.inf.is.odysseus.mep.functions.crypt.DSAVerifyFunction;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.MD5Function;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.RSAFunction;
 import de.uniol.inf.is.odysseus.mep.functions.crypt.RSASignFunction;
@@ -319,6 +321,8 @@ public class MEP implements IExpressionParser {
         registerFunction(new SHA384Function());
         registerFunction(new SHA512Function());
         registerFunction(new DSAFunction());
+        registerFunction(new DSASignFunction());
+        registerFunction(new DSAVerifyFunction());
         registerFunction(new RSAFunction());
         registerFunction(new RSASignFunction());
         registerFunction(new RSAVerifyFunction());

@@ -68,7 +68,7 @@ public class RSAVerifyFunction extends AbstractFunction<Boolean> {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
-            Signature signature = Signature.getInstance("SHA1withRSA");
+            Signature signature = Signature.getInstance("SHA256withRSA");
 
             signature.initVerify(publicKey);
             ByteArrayOutputStream b = new ByteArrayOutputStream();
