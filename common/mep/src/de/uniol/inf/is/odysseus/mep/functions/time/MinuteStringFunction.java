@@ -27,7 +27,7 @@ public class MinuteStringFunction extends AbstractDateStringFunction {
     public Integer getValue() {
         Date date = null;
         try {
-            date = getDateFormat().parse(getInputValue(0).toString());
+            date = getDateTimeFormat(getInputValue(1).toString()).parse(getInputValue(0).toString());
         }
         catch (ParseException e) {
             throw new RuntimeException(e);
