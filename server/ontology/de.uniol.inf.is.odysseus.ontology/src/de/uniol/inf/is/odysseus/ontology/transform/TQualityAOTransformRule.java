@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.ontology.transform;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +48,11 @@ public class TQualityAOTransformRule extends AbstractTransformationRule<QualityA
      */
     @Override
     public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(transformConfig);
 
-        IPhysicalOperator mapPO;
         TQualityAOTransformRule.LOG.debug("Transform QualityAO to Map operator with expressions: " + Arrays.toString(operator.getExpressions()));
-        mapPO = new RelationalMapPO<IMetaAttribute>(operator.getInputSchema(), operator.getExpressions(), false, false);
+        IPhysicalOperator mapPO = new RelationalMapPO<IMetaAttribute>(operator.getInputSchema(), operator.getExpressions(), false, false);
 
         this.defaultExecute(operator, mapPO, transformConfig, true, true);
 
@@ -61,6 +63,10 @@ public class TQualityAOTransformRule extends AbstractTransformationRule<QualityA
      */
     @Override
     public final boolean isExecutable(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(transformConfig);
+
         if (operator.isAllPhysicalInputSet()) {
             // if (operator.getInputSchema().getType() ==
             // ProbabilisticTuple.class) {

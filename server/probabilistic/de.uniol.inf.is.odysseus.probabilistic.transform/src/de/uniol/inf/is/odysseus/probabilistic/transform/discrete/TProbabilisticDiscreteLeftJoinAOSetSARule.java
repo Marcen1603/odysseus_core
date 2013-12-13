@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -56,11 +57,15 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
 
     @SuppressWarnings("unchecked")
     @Override
-    public void execute(final LeftJoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+    public void execute(final LeftJoinTIPO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getSubscribedToSource(0));
+        Objects.requireNonNull(operator.getSubscribedToSource(1));
+        Objects.requireNonNull(transformConfig);
         final ProbabilisticDiscreteJoinTISweepArea<?, ?>[] areas = new ProbabilisticDiscreteJoinTISweepArea[2];
 
         final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
-                joinPO.getOutputSchema().size());
+                operator.getOutputSchema().size());
         IMetadataMergeFunction<?> metadataMerge;
         if (transformConfig.getMetaTypes().size() > 1) {
             final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
@@ -71,12 +76,12 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
             metadataMerge = TIMergeFunction.getInstance();
         }
         final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-        if (joinPO.getPredicate() != null) {
-            attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(joinPO.getPredicate().getAttributes()));
+        if (operator.getPredicate() != null) {
+            attributes.addAll(SchemaUtils.getDiscreteProbabilisticAttributes(operator.getPredicate().getAttributes()));
         }
 
-        final SDFSchema leftSchema = joinPO.getSubscribedToSource(0).getSchema();
-        final SDFSchema rightSchema = joinPO.getSubscribedToSource(1).getSchema();
+        final SDFSchema leftSchema = operator.getSubscribedToSource(0).getSchema();
+        final SDFSchema rightSchema = operator.getSubscribedToSource(1).getSchema();
 
         final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
         leftAttributes.retainAll(attributes);
@@ -92,11 +97,14 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
             areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);
         }
 
-        joinPO.setAreas(areas);
+        operator.setAreas(areas);
     }
 
     @Override
     public boolean isExecutable(final LeftJoinTIPO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getOutputSchema());
+        Objects.requireNonNull(transformConfig);   
         if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();

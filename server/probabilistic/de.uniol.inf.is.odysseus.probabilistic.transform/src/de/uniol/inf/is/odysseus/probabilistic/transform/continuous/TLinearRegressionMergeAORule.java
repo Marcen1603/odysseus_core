@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -50,7 +52,9 @@ public class TLinearRegressionMergeAORule extends AbstractTransformationRule<Lin
      */
     @Override
     public final void execute(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
-        final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(),
+        Objects.requireNonNull(operator);
+       Objects.requireNonNull(config);
+           final IPhysicalOperator linearRegressionMergePO = new LinearRegressionMergePO<ITimeInterval>(operator.getInputSchema(), operator.determineDependentList(), operator.determineExplanatoryList(),
                 operator.getRegressionCoefficientsPos(), operator.getResidualPos());
         this.defaultExecute(operator, linearRegressionMergePO, config, true, true);
     }
@@ -64,7 +68,10 @@ public class TLinearRegressionMergeAORule extends AbstractTransformationRule<Lin
      */
     @Override
     public final boolean isExecutable(final LinearRegressionMergeAO operator, final TransformationConfiguration config) {
-        if (operator.isAllPhysicalInputSet()) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(config);
+         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }

@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -52,16 +54,18 @@ public class TProbabilisiticDiscreteMapAORule extends TMapAORule {
      * java.lang.Object)
      */
     @Override
-    public final void execute(final MapAO mapAO, final TransformationConfiguration transformConfig) {
+    public final void execute(final MapAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(transformConfig);
         IPhysicalOperator mapPO;
 
-        final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[mapAO.getExpressions().size()];
+        final SDFProbabilisticExpression[] expressions = new SDFProbabilisticExpression[operator.getExpressions().size()];
         for (int i = 0; i < expressions.length; i++) {
-            expressions[i] = new SDFProbabilisticExpression(mapAO.getExpressions().get(i));
+            expressions[i] = new SDFProbabilisticExpression(operator.getExpressions().get(i));
         }
-        mapPO = new ProbabilisticDiscreteMapPO<IMetaAttribute>(mapAO.getInputSchema(), expressions, false, false);
+        mapPO = new ProbabilisticDiscreteMapPO<IMetaAttribute>(operator.getInputSchema(), expressions, false, false);
 
-        this.defaultExecute(mapAO, mapPO, transformConfig, true, true);
+        this.defaultExecute(operator, mapPO, transformConfig, true, true);
     }
 
     /*
@@ -73,6 +77,9 @@ public class TProbabilisiticDiscreteMapAORule extends TMapAORule {
      */
     @Override
     public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(transformConfig);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 

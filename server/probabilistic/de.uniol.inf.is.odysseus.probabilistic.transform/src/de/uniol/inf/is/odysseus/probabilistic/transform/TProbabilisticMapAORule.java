@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -46,6 +48,10 @@ public class TProbabilisticMapAORule extends TMapAORule {
      */
     @Override
     public final boolean isExecutable(final MapAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(transformConfig);
+
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
 

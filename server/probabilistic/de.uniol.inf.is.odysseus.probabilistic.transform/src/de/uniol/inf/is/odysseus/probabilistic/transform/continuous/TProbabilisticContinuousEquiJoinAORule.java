@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -65,7 +67,9 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
      */
     @Override
     public final void execute(final JoinAO operator, final TransformationConfiguration config) {
-        final JoinTIPO joinPO = new JoinTIPO();
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+         final JoinTIPO joinPO = new JoinTIPO();
 
         boolean isCross = false;
         final IPredicate pred = operator.getPredicate();
@@ -94,6 +98,9 @@ public class TProbabilisticContinuousEquiJoinAORule extends AbstractTransformati
      */
     @Override
     public final boolean isExecutable(final JoinAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(transformConfig);
         final IPredicate<?> predicate = operator.getPredicate();
         if (predicate != null) {
             if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {

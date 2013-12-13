@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.probabilistic;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -105,8 +108,17 @@ public class ProbabilisticAggregateFunctionBuilder implements IAggregateFunction
     @Override
     public final IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> createAggFunction(final AggregateFunction key, SDFSchema schema, final int[] pos,
             final boolean partialAggregateInput, final String outputDatatype) {
-        IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(key.getName());
+        Objects.requireNonNull(pos);
+        Objects.requireNonNull(schema);
+        Preconditions.checkElementIndex(0, pos.length);
+        Preconditions.checkElementIndex(pos[0], schema.size());
+
         SDFAttribute attribute = schema.get(pos[0]);
+        Preconditions.checkArgument(attribute.getDatatype() instanceof SDFProbabilisticDatatype);
+
+        IAggregateFunction<ProbabilisticTuple<?>, ProbabilisticTuple<?>> aggFunc = null;
         SDFProbabilisticDatatype datatype = (SDFProbabilisticDatatype) attribute.getDatatype();
         if (key.getName().equalsIgnoreCase(ProbabilisticAggregateFunctionBuilder.AVG)) {
             if (datatype.isDiscrete()) {

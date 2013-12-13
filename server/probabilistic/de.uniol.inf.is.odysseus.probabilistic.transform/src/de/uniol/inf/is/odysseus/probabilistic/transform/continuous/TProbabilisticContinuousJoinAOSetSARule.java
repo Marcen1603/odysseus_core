@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -45,18 +46,23 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
     }
 
     @Override
-    public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
-        final ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+    public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(transformConfig);
+      final ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
 
         areas[0] = new JoinTISweepArea();
         areas[1] = new JoinTISweepArea();
 
-        joinPO.setAreas(areas);
+        operator.setAreas(areas);
     }
 
     @Override
     public boolean isExecutable(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
-        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getOutputSchema());
+        Objects.requireNonNull(transformConfig);
+      if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);

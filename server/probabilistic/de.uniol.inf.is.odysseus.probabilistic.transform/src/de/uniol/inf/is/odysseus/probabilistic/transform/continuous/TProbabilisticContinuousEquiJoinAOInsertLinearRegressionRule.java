@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -68,6 +69,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      */
     @Override
     public final void execute(final JoinAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
 
         final SDFExpression expr = this.getExpression(operator);
         final int port = this.getProbabilisticViewPort(operator, expr);
@@ -89,6 +92,9 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      */
     @Override
     public final boolean isExecutable(final JoinAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(transformConfig);
         final IPredicate<?> predicate = operator.getPredicate();
         if (predicate != null) {
             if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {
@@ -142,6 +148,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * @return
      */
     private boolean hasLinearRegressionMergeAOAsFather(final ILogicalOperator operator) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getSubscriptions());
         boolean hasLinearRegressionMergeAOAsFather = false;
         for (final LogicalSubscription sub : operator.getSubscriptions()) {
             if (sub.getTarget() instanceof LinearRegressionMergeAO) {
@@ -159,6 +167,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * @return
      */
     private boolean hasLinearRegressionAOAsChild(final ILogicalOperator operator, final int port) {
+        Objects.requireNonNull(operator);
         final LogicalSubscription child = operator.getSubscribedToSource(port);
         return (child.getTarget() instanceof LinearRegressionAO);
     }
@@ -170,7 +179,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * @param expr
      */
     private void insertLinearRegressionMergeAO(final ILogicalOperator operator, final int port, final SDFExpression expr) {
-
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(expr);
         final Map<SDFAttribute, List<SDFAttribute>> attributes = PredicateUtils.getEquiExpressionAtributes(expr.getMEPExpression(), expr.getAttributeResolver());
 
         final Set<SDFAttribute> dependentList = new HashSet<SDFAttribute>();
@@ -208,6 +218,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * @param expr
      */
     private void insertLinearRegressionAO(final ILogicalOperator operator, final int port, final SDFExpression expr) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(expr);
         final Map<SDFAttribute, List<SDFAttribute>> attributes = PredicateUtils.getEquiExpressionAtributes(expr.getMEPExpression(), expr.getAttributeResolver());
 
         final Set<SDFAttribute> dependentList = new HashSet<SDFAttribute>();
@@ -252,6 +264,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * @return
      */
     private SDFExpression getExpression(final ILogicalOperator operator) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getPredicate());
         final String mepString = operator.getPredicate().toString();
         final SDFSchema leftInputSchema = operator.getInputSchema(0);
         final SDFSchema rightInputSchema = operator.getInputSchema(1);
@@ -269,6 +283,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule extend
      * @return
      */
     private int getProbabilisticViewPort(final ILogicalOperator operator, final SDFExpression expr) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(expr);
         int port = -1;
         final Map<SDFAttribute, List<SDFAttribute>> attributes = PredicateUtils.getEquiExpressionAtributes(expr.getMEPExpression(), expr.getAttributeResolver());
         for (final SDFAttribute leftAttr : attributes.keySet()) {

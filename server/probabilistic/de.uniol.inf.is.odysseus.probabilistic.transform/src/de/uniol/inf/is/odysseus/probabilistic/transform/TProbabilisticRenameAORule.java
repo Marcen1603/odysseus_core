@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
@@ -47,6 +49,10 @@ public class TProbabilisticRenameAORule extends TRenameAORule {
      */
     @Override
     public final boolean isExecutable(final RenameAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(transformConfig);
+
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;

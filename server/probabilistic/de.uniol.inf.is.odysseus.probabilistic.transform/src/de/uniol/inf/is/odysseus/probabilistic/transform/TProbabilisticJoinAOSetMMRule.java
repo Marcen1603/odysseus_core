@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
@@ -45,12 +47,17 @@ public class TProbabilisticJoinAOSetMMRule extends AbstractTransformationRule<Jo
      * {@inheritDoc}
      */
     @Override
-    public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+    public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
+        Objects.requireNonNull(transformConfig);
+        Objects.requireNonNull(transformConfig.getMetaTypes());
+        
         if (transformConfig.getMetaTypes().size() > 1) {
-            ((CombinedMergeFunction) joinPO.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
+            ((CombinedMergeFunction) operator.getMetadataMerge()).add(new ProbabilisticMetadataMergeFunction());
         }
         else {
-            joinPO.setMetadataMerge(TIMergeFunction.getInstance());
+            operator.setMetadataMerge(TIMergeFunction.getInstance());
         }
     }
 
@@ -60,6 +67,10 @@ public class TProbabilisticJoinAOSetMMRule extends AbstractTransformationRule<Jo
      */
     @Override
     public boolean isExecutable(final JoinTIPO<?, ?> operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(transformConfig);
+        Objects.requireNonNull(transformConfig.getMetaTypes());
+        
         if (transformConfig.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
             if (operator.getMetadataMerge() != null) {
                 if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {

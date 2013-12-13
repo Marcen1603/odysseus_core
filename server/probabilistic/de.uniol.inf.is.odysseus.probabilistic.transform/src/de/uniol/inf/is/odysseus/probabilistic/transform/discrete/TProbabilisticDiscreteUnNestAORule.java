@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnNestAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -44,6 +46,9 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
      */
     @Override
     public final void execute(final UnNestAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);   
+     
         final ProbabilisticDiscreteUnNestPO<?> po = new ProbabilisticDiscreteUnNestPO<ITimeIntervalProbabilistic>(operator.getAttributePosition());
         this.defaultExecute(operator, po, config, true, true);
     }
@@ -63,7 +68,10 @@ public class TProbabilisticDiscreteUnNestAORule extends TUnnestAORule {
      */
     @Override
     public final boolean isExecutable(final UnNestAO operator, final TransformationConfiguration config) {
-        if (operator.isAllPhysicalInputSet()) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(config);   
+         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return SchemaUtils.isDiscreteProbabilisticAttribute(operator.getInputSchema().get(operator.getAttributePosition()));
             }

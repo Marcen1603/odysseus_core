@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.logicaloperator.ExistenceToPayloadAO;
@@ -46,6 +48,8 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
      */
     @Override
     public final void execute(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
         this.defaultExecute(operator, new RelationalExistenceToPayloadPO(), config, true, true);
     }
 
@@ -57,6 +61,9 @@ public class TRelationalExistenceToPayloadRule extends AbstractTransformationRul
      */
     @Override
     public final boolean isExecutable(final ExistenceToPayloadAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(config);
         if (operator.getInputSchema(0).getType() == ProbabilisticTuple.class) {
             if (operator.isAllPhysicalInputSet()) {
                 return true;

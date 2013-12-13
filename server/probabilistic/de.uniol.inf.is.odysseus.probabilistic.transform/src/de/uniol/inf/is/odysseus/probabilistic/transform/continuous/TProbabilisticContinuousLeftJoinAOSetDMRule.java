@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -22,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalLeftMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
@@ -44,19 +46,27 @@ public class TProbabilisticContinuousLeftJoinAOSetDMRule extends AbstractTransfo
     }
 
     @Override
-    public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> joinPO, final TransformationConfiguration transformConfig) {
-        joinPO.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(joinPO.getLeftSchema(), joinPO.getRightSchema(), joinPO.getOutputSchema()));
-        this.update(joinPO);
+    public void execute(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getLeftSchema());
+        Objects.requireNonNull(operator.getRightSchema());
+        Objects.requireNonNull(operator.getOutputSchema());
+        Objects.requireNonNull(transformConfig);
+        operator.setDataMerge(new RelationalLeftMergeFunction<ITimeInterval>(operator.getLeftSchema(), operator.getRightSchema(), operator.getOutputSchema()));
+        this.update(operator);
     }
 
     @Override
     public boolean isExecutable(final LeftJoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getOutputSchema());
+        Objects.requireNonNull(transformConfig);
         if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
             if (operator.getDataMerge() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
                 if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    throw new IllegalArgumentException("Not implemented");
+                    throw new TransformationException("Not implemented");
 
                 }
             }

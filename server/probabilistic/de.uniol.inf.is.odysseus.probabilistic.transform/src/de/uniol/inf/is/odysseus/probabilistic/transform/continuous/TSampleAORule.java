@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -49,6 +51,8 @@ public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
      */
     @Override
     public final void execute(final SampleAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
         final IPhysicalOperator samplePO = new SamplePO<ITimeInterval>(operator.determineAttributesList(), operator.getSamples());
         this.defaultExecute(operator, samplePO, config, true, true);
     }
@@ -62,6 +66,9 @@ public class TSampleAORule extends AbstractTransformationRule<SampleAO> {
      */
     @Override
     public final boolean isExecutable(final SampleAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(config);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;

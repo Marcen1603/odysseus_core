@@ -20,10 +20,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -51,7 +54,6 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
     /** The Logger. */
-    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(TQualityAOTransformRule.class);
 
     @Override
@@ -62,18 +64,19 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unused")
     @Override
     public final void execute(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(operator.getProperties());
+        Objects.requireNonNull(transformConfig);
+
         final SDFSchema schema = operator.getInputSchema();
         final List<SDFAttribute> attributes = operator.getAttributes();
-        final List<String> measurementPropertyNames = operator.getProperties();
 
         final Map<String, List<SDFAttribute>> toJoinStreams = new HashMap<String, List<SDFAttribute>>();
         final Map<String, Double> frequencies = new HashMap<String, Double>();
         for (final SDFAttribute attribute : attributes) {
-
-            final Map<String, Map<String, String>> conditionPropertyMapping = new HashMap<String, Map<String, String>>();
 
             final List<SensingDevice> sensingDevices = SensorOntologyServiceImpl.getOntology().getSensingDevices(attribute);
             if (!sensingDevices.isEmpty()) {
@@ -116,6 +119,9 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
 
                 }
             }
+            else {
+                LOG.warn("No sensing devices observe {}", attribute.getAttributeName());
+            }
         }
         this.concatConditionObserverStreams(operator, toJoinStreams, frequencies);
     }
@@ -125,6 +131,8 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
      */
     @Override
     public final boolean isExecutable(final QualityAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(transformConfig);
         // if (operator.getInputSchema().getType() == ProbabilisticTuple.class)
         // {
         if (!this.hasJoinAOAsChild(operator)) {
@@ -158,9 +166,15 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
      * @param observers
      *            The map of sensing devices and the necessary properties.
      * @param frequencies
-     *            The list of frequencies of each sensing device used to calculate the required window size
+     *            The list of frequencies of each sensing device used to
+     *            calculate the required window size
      */
     private void concatConditionObserverStreams(final ILogicalOperator operator, final Map<String, List<SDFAttribute>> observers, final Map<String, Double> frequencies) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(observers);
+        Objects.requireNonNull(frequencies);
+
         final SDFSchema schema = operator.getInputSchema(0);
 
         for (final String sourceName : observers.keySet()) {
@@ -193,6 +207,9 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
      * @return The view or stream with the given name subscribed to the parent
      */
     private ILogicalOperator insertViewOrStream(final ILogicalOperator parent, final String sourceName) {
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(sourceName);
+
         final ILogicalOperator viewOrStream = this.getDataDictionary().getViewOrStream(sourceName, this.getCaller());
 
         parent.subscribeToSource(viewOrStream, 1, 0, viewOrStream.getOutputSchema());
@@ -201,16 +218,19 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
     }
 
     /**
-     * Inserts the {@link JoinAO} operator to join the view or stream to the current processing graph.
+     * Inserts the {@link JoinAO} operator to join the view or stream to the
+     * current processing graph.
      * 
      * @param parent
      *            The parent operator
      * @return The {@link JoinAO} subscribed to the parent
      */
     private JoinAO insertCrossproductAO(final ILogicalOperator parent) {
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(0));
+
         final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
 
-        System.out.println(child);
         final JoinAO joinAO = new JoinAO();
 
         final Collection<LogicalSubscription> subs = child.getSubscriptions();
@@ -225,7 +245,8 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
     }
 
     /**
-     * Inserts the {@link ProjectAO} operator to project the stream to the necessary attributes.
+     * Inserts the {@link ProjectAO} operator to project the stream to the
+     * necessary attributes.
      * 
      * @param parent
      *            The parent operator
@@ -234,6 +255,10 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
      * @return The {@link ProjectAO} subscribed to the parent
      */
     private ProjectAO insertProjectAO(final ILogicalOperator parent, final List<SDFAttribute> attributes) {
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(1));
+        Objects.requireNonNull(attributes);
+
         final ProjectAO projectAO = new ProjectAO();
         final ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
         final List<SDFAttribute> userAwareAttributes = new ArrayList<SDFAttribute>();
@@ -253,7 +278,8 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
     }
 
     /**
-     * Inserts the {@link WindowAO} operator to set the end timestamp for the crossproduct operation.
+     * Inserts the {@link WindowAO} operator to set the end timestamp for the
+     * crossproduct operation.
      * 
      * @param parent
      *            The parent operator
@@ -262,6 +288,10 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
      * @return The {@link WindowAO} subscribed to the parent
      */
     private WindowAO insertWindowAO(final ILogicalOperator parent, final double frequency) {
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(1));
+        Preconditions.checkArgument(frequency >= 0.0);
+
         final WindowAO windowAO = new WindowAO();
         final ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
 
@@ -276,7 +306,8 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
             windowAO.setWindowType(WindowType.TIME);
             windowAO.setWindowAdvance(1L);
             windowAO.setWindowSize((long) (1.0 / frequency));
-        } else {
+        }
+        else {
             windowAO.setWindowType(WindowType.TUPLE);
             windowAO.setWindowAdvance(1L);
             windowAO.setWindowSize(1L);
@@ -290,9 +321,12 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
      * 
      * @param operator
      *            The operator
-     * @return <code>true</code> if there is already a join operator attached to the operator
+     * @return <code>true</code> if there is already a join operator attached to
+     *         the operator
      */
     private boolean hasJoinAOAsChild(final ILogicalOperator operator) {
+        Objects.requireNonNull(operator);
+
         final LogicalSubscription child = operator.getSubscribedToSource(0);
         return ((child != null) && (child.getTarget() instanceof JoinAO));
     }

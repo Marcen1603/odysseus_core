@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
+import java.util.Objects;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
@@ -59,6 +60,8 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public final void execute(final JoinAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
         final ProbabilisticDiscreteJoinTIPO joinPO = new ProbabilisticDiscreteJoinTIPO();
 
         boolean isCross = false;
@@ -89,6 +92,9 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
      */
     @Override
     public final boolean isExecutable(final JoinAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(config);
         final IPredicate<?> predicate = operator.getPredicate();
         if (predicate != null) {
             if ((operator.getInputSchema(0).getType() == ProbabilisticTuple.class) || (operator.getInputSchema(1).getType() == ProbabilisticTuple.class)) {

@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -47,15 +48,21 @@ public class TProbabilisticContinuousJoinAOSetDMRule extends AbstractTransformat
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void execute(final JoinTIPO joinPO, final TransformationConfiguration transformConfig) {
+    public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getOutputSchema());
+        Objects.requireNonNull(transformConfig);
         final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
-                joinPO.getOutputSchema().size());
-        joinPO.setDataMerge(dataMerge);
-        this.update(joinPO);
+                operator.getOutputSchema().size());
+        operator.setDataMerge(dataMerge);
+        this.update(operator);
     }
 
     @Override
     public boolean isExecutable(final JoinTIPO<ITimeInterval, Tuple<ITimeInterval>> operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getOutputSchema());
+        Objects.requireNonNull(transformConfig);
         if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
             if (operator.getDataMerge() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();

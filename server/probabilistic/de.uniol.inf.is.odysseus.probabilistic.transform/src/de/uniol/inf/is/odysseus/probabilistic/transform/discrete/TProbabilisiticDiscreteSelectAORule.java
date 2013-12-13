@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -51,15 +53,19 @@ public class TProbabilisiticDiscreteSelectAORule extends TSelectAORule {
      * java.lang.Object)
      */
     @Override
-    public final void execute(final SelectAO selectAO, final TransformationConfiguration transformConfig) {
-        final int[] probabilisticAttributePos = SchemaUtils.getAttributePos(selectAO.getInputSchema(), PredicateUtils.getAttributes(selectAO.getPredicate()));
+    public final void execute(final SelectAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(operator.getPredicate());
+        Objects.requireNonNull(transformConfig);
+        final int[] probabilisticAttributePos = SchemaUtils.getAttributePos(operator.getInputSchema(), PredicateUtils.getAttributes(operator.getPredicate()));
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        final IPhysicalOperator selectPO = new ProbabilisticDiscreteSelectPO(selectAO.getPredicate(), probabilisticAttributePos);
-        if (selectAO.getHeartbeatRate() > 0) {
+        final IPhysicalOperator selectPO = new ProbabilisticDiscreteSelectPO(operator.getPredicate(), probabilisticAttributePos);
+        if (operator.getHeartbeatRate() > 0) {
             ((ProbabilisticDiscreteSelectPO<?>) selectPO).setHeartbeatGenerationStrategy(new NElementHeartbeatGeneration<ITimeIntervalProbabilistic, ProbabilisticTuple<ITimeIntervalProbabilistic>>(
-                    selectAO.getHeartbeatRate()));
+                    operator.getHeartbeatRate()));
         }
-        this.defaultExecute(selectAO, selectPO, transformConfig, true, true);
+        this.defaultExecute(operator, selectPO, transformConfig, true, true);
     }
 
     /*
@@ -71,6 +77,10 @@ public class TProbabilisiticDiscreteSelectAORule extends TSelectAORule {
      */
     @Override
     public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(operator.getPredicate());
+        Objects.requireNonNull(transformConfig);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 if (SchemaUtils.containsDiscreteProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {

@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -50,6 +52,8 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
      */
     @Override
     public final void execute(final EMAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+         Objects.requireNonNull(config);
         final IPhysicalOperator emPO = new EMPO<ITimeInterval>(operator.determineAttributesList(), operator.getMixtures(), operator.getIterations(), operator.getThreshold(), operator.isIncremental(),
                 operator.getPredicate());
         this.defaultExecute(operator, emPO, config, true, true);
@@ -64,6 +68,9 @@ public class TEMAORule extends AbstractTransformationRule<EMAO> {
      */
     @Override
     public final boolean isExecutable(final EMAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(config);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;

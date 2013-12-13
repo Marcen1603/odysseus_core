@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,9 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
      */
     @Override
     public final void execute(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
+        Objects.requireNonNull(config);
         if (!((CombinedMergeFunction<?>) operator.getMetadataMerge()).providesMergeFunctionFor(IProbabilistic.class)) {
             TProbabilisticValidatorRule.LOG.error(this + " WARN: No Probabilistic merge function set for " + operator);
         }
@@ -65,6 +70,10 @@ public class TProbabilisticValidatorRule extends AbstractTransformationRule<IHas
      */
     @Override
     public final boolean isExecutable(final IHasMetadataMergeFunction<?> operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getMetadataMerge());
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(config.getMetaTypes());
         if (config.getMetaTypes().contains(IProbabilistic.class.getCanonicalName())) {
             if (operator.getMetadataMerge() instanceof CombinedMergeFunction) {
                 return true;

@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.collection.FESortedClonablePair;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -27,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
@@ -56,6 +58,10 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
     @SuppressWarnings("unchecked")
     @Override
     public final void execute(final AggregatePO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(operator.getInputSchema());
+        
         @SuppressWarnings({ "rawtypes" })
         final RelationalGroupProcessor r = new RelationalGroupProcessor(operator.getInputSchema(), operator.getInternalOutputSchema(), operator.getGroupingAttribute(), operator.getAggregations());
         operator.setGroupProcessor(r);
@@ -91,7 +97,7 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
                         builder = AggregateFunctionBuilderRegistry.getBuilder(inputSchema.getType(), p.getE2().getName());
                     }
                     if (builder == null) {
-                        throw new RuntimeException("Could not find a builder for " + p.getE2().getName());
+                        throw new TransformationException("Could not find a builder for " + p.getE2().getName());
                     }
                     @SuppressWarnings("rawtypes")
                     final IAggregateFunction aggFunction = builder.createAggFunction(p.getE2(), p.getE1(), posArray, partialAggregateInput, inDatatype);
@@ -113,6 +119,9 @@ public class TProbabilisticAggregateAORule extends TAggregatePORule {
      */
     @Override
     public final boolean isExecutable(final AggregatePO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(operator.getInputSchema());
         if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
             if (operator.getGroupProcessor() == null) {
                 return true;

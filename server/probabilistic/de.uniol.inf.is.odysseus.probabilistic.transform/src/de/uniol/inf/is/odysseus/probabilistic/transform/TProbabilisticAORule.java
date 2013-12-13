@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -47,6 +49,10 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
      */
     @Override
     public final void execute(final ProbabilisticAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(operator.getAttribute());
         final int pos = operator.getInputSchema().indexOf(operator.getAttribute());
         final ProbabilisticFactory mUpdater = new ProbabilisticFactory(pos);
         final MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<IProbabilistic, Tuple<? extends IProbabilistic>>(mUpdater);
@@ -62,6 +68,9 @@ public class TProbabilisticAORule extends AbstractTransformationRule<Probabilist
      */
     @Override
     public final boolean isExecutable(final ProbabilisticAO operator, final TransformationConfiguration config) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+        Objects.requireNonNull(operator.getInputSchema());        
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;

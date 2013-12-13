@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -48,7 +50,9 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
      */
     @Override
     public final void execute(final KalmanFilterAO operator, final TransformationConfiguration config) {
-        final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(),
+        Objects.requireNonNull(operator);
+       Objects.requireNonNull(config);
+           final IPhysicalOperator filterPO = new KalmanFilterPO<ITimeInterval>(operator.determineAttributesList(), operator.getStateTransition(), operator.getControl(), operator.getProcessNoise(),
                 operator.getMeasurement(), operator.getMeasurementNoise());
         this.defaultExecute(operator, filterPO, config, true, true);
     }
@@ -62,7 +66,10 @@ public class TKalmanFilterAORule extends AbstractTransformationRule<KalmanFilter
      */
     @Override
     public final boolean isExecutable(final KalmanFilterAO operator, final TransformationConfiguration config) {
-        if (operator.isAllPhysicalInputSet()) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(config);
+          if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 return true;
             }

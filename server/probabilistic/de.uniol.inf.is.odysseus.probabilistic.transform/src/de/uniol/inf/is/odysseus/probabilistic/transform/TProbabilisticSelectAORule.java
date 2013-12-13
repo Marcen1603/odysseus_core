@@ -15,6 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform;
 
+import java.util.Objects;
+
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
@@ -49,6 +51,10 @@ public class TProbabilisticSelectAORule extends TSelectAORule {
      */
     @Override
     public final boolean isExecutable(final SelectAO operator, final TransformationConfiguration transformConfig) {
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(operator.getPredicate());
+        Objects.requireNonNull(transformConfig);
         if (operator.isAllPhysicalInputSet()) {
             if (operator.getInputSchema().getType() == ProbabilisticTuple.class) {
                 if (!SchemaUtils.containsProbabilisticAttributes(PredicateUtils.getAttributes(operator.getPredicate()))) {
