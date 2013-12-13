@@ -42,7 +42,7 @@ public class NanoTimeFunction extends AbstractFunction<Long> {
 			throw new IllegalArgumentException(
 					"negative argument index not allowed");
 		}
-		if (argPos > this.getArity()) {
+		if (argPos >= this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has "
 					+ this.getArity() + " argument(s).");
 		}

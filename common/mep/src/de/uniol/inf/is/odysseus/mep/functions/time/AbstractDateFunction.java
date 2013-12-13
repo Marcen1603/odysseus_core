@@ -19,7 +19,7 @@ abstract public class AbstractDateFunction extends AbstractFunction<Integer> {
 			throw new IllegalArgumentException(
 					"negative argument index not allowed");
 		}
-		if (argPos > this.getArity()) {
+		if (argPos >= this.getArity()) {
 			throw new IllegalArgumentException(this.getSymbol() + " has only "
 					+ this.getArity() + " argument(s): a date");
 		}
