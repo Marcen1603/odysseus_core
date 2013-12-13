@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.peer.distribute.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -14,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
@@ -22,6 +25,8 @@ public final class LogicalQueryHelper {
 
 	private static final String PQL_PARSER_ID = "PQL";
 
+	private static int connectionCounter = 0;
+	
 	private LogicalQueryHelper() {
 		// do not instantiate this
 	}
@@ -135,4 +140,66 @@ public final class LogicalQueryHelper {
 		}
 		return sinks;
 	}
+	
+	public static void disconnectQueryParts( Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator ) {
+		Preconditions.checkNotNull(generator, "Operator generator must not be null!");
+		
+		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(queryParts);
+		Map<LogicalSubscription, ILogicalOperator> subsToReplace = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
+
+		for (LogicalSubscription subToReplace : subsToReplace.keySet()) {
+			ILogicalOperator sourceOperator = subsToReplace.get(subToReplace);
+			ILogicalOperator sinkOperator = subToReplace.getTarget();
+			
+			generator.beginDisconnect(sourceOperator, sinkOperator);
+
+			ILogicalOperator source = generator.createSourceofSink(sinkOperator);
+			source.setOutputSchema(sourceOperator.getOutputSchema());
+			source.setName("RCV_" + connectionCounter);
+			
+			ILogicalOperator sink = generator.createSinkOfSource(sourceOperator);
+			sink.setOutputSchema(sourceOperator.getOutputSchema());
+			sink.setName("SND_" + connectionCounter);
+
+			sourceOperator.unsubscribeSink(subToReplace);
+
+			sourceOperator.subscribeSink(sink, 0, subToReplace.getSourceOutPort(), sourceOperator.getOutputSchema());
+			sinkOperator.subscribeToSource(source, subToReplace.getSinkInPort(), 0, source.getOutputSchema());
+			
+			connectionCounter++;
+		}
+
+	}
+
+	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(Collection<ILogicalQueryPart> queryParts) {
+		Map<ILogicalOperator, ILogicalQueryPart> map = Maps.newHashMap();
+		for (ILogicalQueryPart part : queryParts) {
+			for (ILogicalOperator operator : part.getOperators()) {
+				map.put(operator, part);
+			}
+		}
+		return map;
+	}
+
+	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
+		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(queryPartAssignment.keySet());
+
+		Map<LogicalSubscription, ILogicalOperator> subsToReplace = Maps.newHashMap();
+		while (!operatorsToVisit.isEmpty()) {
+			ILogicalOperator currentOperator = operatorsToVisit.remove(0);
+
+			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
+			for (LogicalSubscription sinkSub : sinkSubs) {
+				ILogicalOperator targetOperator = sinkSub.getTarget();
+
+				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
+				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
+				if (!currentQueryPart.equals(targetQueryPart)) {
+					subsToReplace.put(sinkSub, currentOperator);
+				}
+			}
+		}
+		return subsToReplace;
+	}
+
 }

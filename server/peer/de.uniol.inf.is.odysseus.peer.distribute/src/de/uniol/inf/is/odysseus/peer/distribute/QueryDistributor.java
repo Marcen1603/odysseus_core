@@ -39,14 +39,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.service.JxtaServicesProviderServ
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
 
 public class QueryDistributor implements IQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
-
-	private static int jxtaConnectionCounter = 0;
 
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
@@ -138,7 +137,7 @@ public class QueryDistributor implements IQueryDistributor {
 				printAllocationMap(mergedAllocationMap);
 			}
 			
-			insertJxtaOperators(mergedAllocationMap);
+			insertJxtaOperators(mergedAllocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(mergedAllocationMap, config);
 
 			if (!localQueryParts.isEmpty()) {
@@ -251,6 +250,37 @@ public class QueryDistributor implements IQueryDistributor {
 		return result;
 	}
 
+	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
+		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(queryPartAssignment.keySet());
+
+		Map<LogicalSubscription, ILogicalOperator> subsToReplace = Maps.newHashMap();
+		while (!operatorsToVisit.isEmpty()) {
+			ILogicalOperator currentOperator = operatorsToVisit.remove(0);
+
+			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
+			for (LogicalSubscription sinkSub : sinkSubs) {
+				ILogicalOperator targetOperator = sinkSub.getTarget();
+
+				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
+				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
+				if (!currentQueryPart.equals(targetQueryPart)) {
+					subsToReplace.put(sinkSub, currentOperator);
+				}
+			}
+		}
+		return subsToReplace;
+	}
+
+	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(Collection<ILogicalQueryPart> queryParts) {
+		Map<ILogicalOperator, ILogicalQueryPart> map = Maps.newHashMap();
+		for (ILogicalQueryPart part : queryParts) {
+			for (ILogicalOperator operator : part.getOperators()) {
+				map.put(operator, part);
+			}
+		}
+		return map;
+	}
+
 	private static ILogicalQueryPart mergeQueryParts(ILogicalQueryPart startQueryPart, ILogicalQueryPart targetQueryPart) {
 		Collection<ILogicalOperator> mergedOperators = Lists.newArrayList();
 		mergedOperators.addAll(startQueryPart.getOperators());
@@ -357,66 +387,41 @@ public class QueryDistributor implements IQueryDistributor {
 		}
 	}
 
-	private static void insertJxtaOperators(Map<ILogicalQueryPart, PeerID> allocationMap) {
-		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(allocationMap.keySet());
-		Map<LogicalSubscription, ILogicalOperator> subsToReplace = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
-
-		for (LogicalSubscription subToReplace : subsToReplace.keySet()) {
-			ILogicalOperator sourceOperator = subsToReplace.get(subToReplace);
-			ILogicalOperator sinkOperator = subToReplace.getTarget();
-			LOG.debug("Create JXTA-Connection #{} between {} and {}", new Object[] { jxtaConnectionCounter, sourceOperator, sinkOperator });
-
-			PipeID pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID());
-
-			JxtaReceiverAO access = new JxtaReceiverAO();
-			access.setPipeID(pipeID.toString());
-			access.setOutputSchema(sourceOperator.getOutputSchema());
-			access.setSchema(sourceOperator.getOutputSchema().getAttributes());
-			access.setName("RCV_" + jxtaConnectionCounter);
-
-			JxtaSenderAO sender = new JxtaSenderAO();
-			sender.setPipeID(pipeID.toString());
-			sender.setOutputSchema(sourceOperator.getOutputSchema());
-			sender.setName("SND_" + jxtaConnectionCounter);
-
-			sourceOperator.unsubscribeSink(subToReplace);
-
-			sourceOperator.subscribeSink(sender, 0, subToReplace.getSourceOutPort(), sourceOperator.getOutputSchema());
-			sinkOperator.subscribeToSource(access, subToReplace.getSinkInPort(), 0, access.getOutputSchema());
-
-			jxtaConnectionCounter++;
-		}
-	}
-
-	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
-		List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(queryPartAssignment.keySet());
-
-		Map<LogicalSubscription, ILogicalOperator> subsToReplace = Maps.newHashMap();
-		while (!operatorsToVisit.isEmpty()) {
-			ILogicalOperator currentOperator = operatorsToVisit.remove(0);
-
-			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
-			for (LogicalSubscription sinkSub : sinkSubs) {
-				ILogicalOperator targetOperator = sinkSub.getTarget();
-
-				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
-				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
-				if (!currentQueryPart.equals(targetQueryPart)) {
-					subsToReplace.put(sinkSub, currentOperator);
-				}
+	private static void insertJxtaOperators(Collection<ILogicalQueryPart> queryParts) {
+		LogicalQueryHelper.disconnectQueryParts(queryParts, new IOperatorGenerator() {
+			
+			private PipeID pipeID;
+			private ILogicalOperator sourceOp;
+			
+			@Override
+			public void beginDisconnect(ILogicalOperator sourceOperator, ILogicalOperator sinkOperator) {
+				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] {sourceOperator, sinkOperator });
+				
+				pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID());
+				sourceOp = sourceOperator;
 			}
-		}
-		return subsToReplace;
-	}
-
-	private static Map<ILogicalOperator, ILogicalQueryPart> determineOperatorAssignment(Collection<ILogicalQueryPart> queryParts) {
-		Map<ILogicalOperator, ILogicalQueryPart> map = Maps.newHashMap();
-		for (ILogicalQueryPart part : queryParts) {
-			for (ILogicalOperator operator : part.getOperators()) {
-				map.put(operator, part);
+			
+			@Override
+			public ILogicalOperator createSourceofSink(ILogicalOperator sink) {
+				JxtaReceiverAO access = new JxtaReceiverAO();
+				access.setPipeID(pipeID.toString());
+				access.setSchema(sourceOp.getOutputSchema().getAttributes());
+				return access;
 			}
-		}
-		return map;
+			
+			@Override
+			public ILogicalOperator createSinkOfSource(ILogicalOperator source) {
+				JxtaSenderAO sender = new JxtaSenderAO();
+				sender.setPipeID(pipeID.toString());
+				return sender;
+			}
+			
+			@Override
+			public void endDisconnect() {
+				pipeID = null;
+				sourceOp = null;
+			}
+		});
 	}
 
 	private static Collection<ILogicalQueryPart> distributeToRemotePeers(Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) {
