@@ -105,7 +105,9 @@ import de.uniol.inf.is.odysseus.mep.functions.math.UpperFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.ConcatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.ContainsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.string.LengthFunction;
+import de.uniol.inf.is.odysseus.mep.functions.string.StringDivisionOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
+import de.uniol.inf.is.odysseus.mep.functions.string.StringMultiplicationOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
@@ -275,6 +277,8 @@ public class MEP implements IExpressionParser {
         registerFunction(new ContainsFunction());
         registerFunction(new StringPlusOperator());
         registerFunction(new StringMinusOperator());
+        registerFunction(new StringMultiplicationOperator());
+        registerFunction(new StringDivisionOperator());
         registerFunction(new ConcatFunction());
         registerFunction(new SubStringFunction());
         registerFunction(new LengthFunction());
