@@ -46,7 +46,7 @@ public class StringDivisionOperator extends AbstractBinaryOperator<Integer> {
 
     @Override
     public SDFDatatype getReturnType() {
-        return SDFDatatype.STRING;
+        return SDFDatatype.INTEGER;
     }
 
     @Override
