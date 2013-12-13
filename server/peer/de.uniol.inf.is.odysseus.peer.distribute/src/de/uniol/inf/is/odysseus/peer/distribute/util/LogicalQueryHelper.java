@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
@@ -202,4 +203,60 @@ public final class LogicalQueryHelper {
 		return subsToReplace;
 	}
 
+	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(Collection<ILogicalQueryPart> queryParts) {
+		Collection<ILogicalOperator> operators = Lists.newArrayList();
+		for (ILogicalQueryPart part : queryParts) {
+			operators.addAll(part.getOperators());
+		}
+
+		// copy --> original
+		Map<ILogicalOperator, ILogicalOperator> operatorCopyMap = createOperatorCopyMap(operators);
+		createSubscriptionsInCopies(operatorCopyMap);
+
+		Map<ILogicalQueryPart, ILogicalQueryPart> map = Maps.newHashMap();
+
+		for (ILogicalQueryPart queryPart : queryParts) {
+			Collection<ILogicalOperator> copyOperatorsOfCopyPart = Lists.newArrayList();
+
+			for (ILogicalOperator queryPartOperator : queryPart.getOperators()) {
+				copyOperatorsOfCopyPart.add(getCopyOfMap(queryPartOperator, operatorCopyMap));
+			}
+
+			ILogicalQueryPart copyQueryPart = new LogicalQueryPart(copyOperatorsOfCopyPart);
+			map.put(copyQueryPart, queryPart);
+		}
+
+		return map;
+	}
+
+	private static Map<ILogicalOperator, ILogicalOperator> createOperatorCopyMap(Collection<ILogicalOperator> operators) {
+		Map<ILogicalOperator, ILogicalOperator> copyMap = Maps.newHashMap();
+		for (ILogicalOperator operator : operators) {
+			copyMap.put(operator.clone(), operator);
+		}
+		return copyMap;
+	}
+
+	private static void createSubscriptionsInCopies(Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
+		for (ILogicalOperator copyOperator : operatorCopyMap.keySet()) {
+			ILogicalOperator originalOperator = operatorCopyMap.get(copyOperator);
+
+			for (LogicalSubscription sub : originalOperator.getSubscriptions()) {
+				ILogicalOperator originalTarget = sub.getTarget();
+				ILogicalOperator copyTarget = getCopyOfMap(originalTarget, operatorCopyMap);
+
+				copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+			}
+		}
+	}
+	
+	public static ILogicalOperator getCopyOfMap(ILogicalOperator originalOperator, Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
+		for (ILogicalOperator copy : operatorCopyMap.keySet()) {
+			if (operatorCopyMap.get(copy).equals(originalOperator)) {
+				return copy;
+			}
+		}
+
+		throw new RuntimeException("Could not find the copy of " + originalOperator);
+	}
 }

@@ -6,22 +6,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
-import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.SubPlanManipulator;
+import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class SurveyBasedAllocator implements IQueryPartAllocator {
 
@@ -35,7 +35,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), true);
 
 		// copy --> original
-		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = copyQueryParts(queryParts);
+		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
 
 		Map<SubPlan, ILogicalQueryPart> subPlans = transformToSubPlans(queryPartsCopyMap.keySet());
 		Map<String, List<SubPlan>> allocationMap = SurveyBasedAllocatorImpl.allocate(sharedQueryID, subPlans.keySet(), config);
@@ -43,63 +43,6 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 		Map<PeerID, Collection<ILogicalQueryPart>> allocationMapParts = transformToLogicalQueryParts(allocationMapPeerID, subPlans, queryPartsCopyMap);
 		return revertMap(allocationMapParts);
-	}
-
-	private static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryParts(Collection<ILogicalQueryPart> queryParts) {
-		Collection<ILogicalOperator> operators = Lists.newArrayList();
-		for (ILogicalQueryPart part : queryParts) {
-			operators.addAll(part.getOperators());
-		}
-
-		// copy --> original
-		Map<ILogicalOperator, ILogicalOperator> operatorCopyMap = createOperatorCopyMap(operators);
-		createSubscriptionsInCopies(operatorCopyMap);
-
-		Map<ILogicalQueryPart, ILogicalQueryPart> map = Maps.newHashMap();
-
-		for (ILogicalQueryPart queryPart : queryParts) {
-			Collection<ILogicalOperator> copyOperatorsOfCopyPart = Lists.newArrayList();
-
-			for (ILogicalOperator queryPartOperator : queryPart.getOperators()) {
-				copyOperatorsOfCopyPart.add(getCopyOfMap(queryPartOperator, operatorCopyMap));
-			}
-
-			ILogicalQueryPart copyQueryPart = new LogicalQueryPart(copyOperatorsOfCopyPart);
-			map.put(copyQueryPart, queryPart);
-		}
-
-		return map;
-	}
-
-	private static Map<ILogicalOperator, ILogicalOperator> createOperatorCopyMap(Collection<ILogicalOperator> operators) {
-		Map<ILogicalOperator, ILogicalOperator> copyMap = Maps.newHashMap();
-		for (ILogicalOperator operator : operators) {
-			copyMap.put(operator.clone(), operator);
-		}
-		return copyMap;
-	}
-
-	private static void createSubscriptionsInCopies(Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
-		for (ILogicalOperator copyOperator : operatorCopyMap.keySet()) {
-			ILogicalOperator originalOperator = operatorCopyMap.get(copyOperator);
-
-			for (LogicalSubscription sub : originalOperator.getSubscriptions()) {
-				ILogicalOperator originalTarget = sub.getTarget();
-				ILogicalOperator copyTarget = getCopyOfMap(originalTarget, operatorCopyMap);
-
-				copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-			}
-		}
-	}
-
-	private static ILogicalOperator getCopyOfMap(ILogicalOperator originalOperator, Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
-		for (ILogicalOperator copy : operatorCopyMap.keySet()) {
-			if (operatorCopyMap.get(copy).equals(originalOperator)) {
-				return copy;
-			}
-		}
-
-		throw new RuntimeException("Could not find the copy of " + originalOperator);
 	}
 
 	private static Map<SubPlan, ILogicalQueryPart> transformToSubPlans(Collection<ILogicalQueryPart> queryParts) {
