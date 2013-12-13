@@ -19,8 +19,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /*
+ * 
  * Diese Klasse dient dazu, einen �bergebenen Double-Wert zu quadrieren.
+ * @Deprected Use PowerOperator
  */
+@Deprecated
 public class SquareValue extends AbstractFunction<Object>{
 
 	/**
