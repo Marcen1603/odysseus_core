@@ -115,6 +115,8 @@ import de.uniol.inf.is.odysseus.mep.functions.time.NanoTimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.NowFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.SysDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayFunction;
@@ -298,6 +300,9 @@ public class MEP implements IExpressionParser {
         registerFunction(new NowFunction());
         registerFunction(new CurDateFunction());
         registerFunction(new NanoTimeFunction());
+        
+        registerFunction(new SysDateFunction());
+        registerFunction(new StreamDateFunction());
         
         registerFunction(new MD5Function());
         registerFunction(new SHA1Function());
