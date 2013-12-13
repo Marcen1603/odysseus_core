@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject.Kind;
@@ -25,6 +26,7 @@ public class UDFClassLoader extends ClassLoader {
     }
 
     public UDFClassLoader(Map<String, String> map) {
+        Objects.requireNonNull(map);
         List<UDFSource> list = new ArrayList<UDFSource>();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             list.add(new UDFSource(entry.getKey(), Kind.SOURCE, entry.getValue()));
@@ -39,6 +41,7 @@ public class UDFClassLoader extends ClassLoader {
      */
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+        Objects.requireNonNull(name);
         synchronized (this.manager) {
             UDFOutput output = this.manager.remove(name);
             if (output != null) {

@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@
  */
 package de.uniol.inf.is.odysseus.prototyping.aggregation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,329 +38,289 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
  * @author Christian Kuka <christian.kuka@offis.de>
  * @version 1.0
  */
-public class BeanAggregation extends
-		AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
-	/**
+public class BeanAggregation extends AbstractAggregateFunction<Tuple<?>, Tuple<?>> {
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -911617324088128058L;
-	private final Logger LOG = LoggerFactory.getLogger(BeanAggregation.class);
-	/** The bean instance */
-	private Object bean;
-	/** The bean class name */
-	private String beanClassName;
-	/** The init method */
-	private Method initMethod = null;
-	/** The merge method */
-	private Method mergeMethod = null;
-	/** The evaluate method */
-	private Method evaluateMethod = null;
-	/** Position array to support multiple attributes for aggregation */
-	private int[] positions;
-	final private String datatype;
+    private static final long serialVersionUID = -911617324088128058L;
+    private final Logger LOG = LoggerFactory.getLogger(BeanAggregation.class);
+    /** The bean instance */
+    private Object bean;
+    /** The bean class name */
+    private String beanClassName;
+    /** The init method */
+    private Method initMethod = null;
+    /** The merge method */
+    private Method mergeMethod = null;
+    /** The evaluate method */
+    private Method evaluateMethod = null;
+    /** Position array to support multiple attributes for aggregation */
+    private int[] positions;
+    final private String datatype;
 
-	/**
-	 * 
-	 * @param pos
-	 * @param className
-	 */
-	public BeanAggregation(int pos, String className, boolean partialAggregateInput, String datatype) {
-		this(new int[] { pos }, className, partialAggregateInput, datatype);
-	}
+    /**
+     * 
+     * @param pos
+     * @param className
+     */
+    public BeanAggregation(int pos, String className, boolean partialAggregateInput, String datatype) {
+        this(new int[] { pos }, className, partialAggregateInput, datatype);
+    }
 
-	/**
-	 * 
-	 * @param pos
-	 * @param className
-	 */
-	public BeanAggregation(int[] pos, String className, boolean partialAggregateInput, String datatype) {
-		super(className, partialAggregateInput);
-		this.positions = pos;
-		this.beanClassName = className;
-		this.datatype = datatype;
-	}
+    /**
+     * 
+     * @param pos
+     * @param className
+     */
+    public BeanAggregation(int[] pos, String className, boolean partialAggregateInput, String datatype) {
+        super(className, partialAggregateInput);
+        this.positions = pos;
+        this.beanClassName = className;
+        this.datatype = datatype;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-	 * .IInitializer#init(java.lang.Object)
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
-		Tuple<?> ret = null;
-		try {
-			Object pojo = this.getBean();
-			if (pojo != null) {
-				// initialize all methods (init, merge, evaluate)
-				this.initMethods(getBean().getClass());
-				try {
-					// Check if the init method has variable arguments
-					if (this.initMethod.isVarArgs()) {
-						// cast the attribute array into an object to call the
-						// vararg method
-						Object attributes = getAttributes(in, this.positions);
-						// check if the init method needs additional meta
-						// attributes
-						if (this.initMethod.getAnnotation(Init.class).meta()) {
-							// call the init method with meta attributes
-							ret = new Tuple(
-									new Object[] { this.initMethod.invoke(pojo,
-											in.getMetadata(), attributes) }, false);
-						} else {
-							// call the init method without meta attributes
-							ret = new Tuple(
-									new Object[] { this.initMethod.invoke(pojo,
-											attributes) }, false);
-						}
-					} else {
-						// get all parameters of the init method if it has a fix
-						// set of parameters
-						Class<?>[] params = this.mergeMethod
-								.getParameterTypes();
-						// check if the init method need additional meta
-						// attributes
-						if (this.initMethod.getAnnotation(Init.class).meta()) {
-							// call the init method with meta attributes and the
-							// possible number of attributes from the tuple
-							Object[] attributes = new Object[params.length];
-							attributes[0] = in.getMetadata();
-							System.arraycopy(getAttributes(in, this.positions),
-									0, attributes, 1, params.length - 1);
-							ret = new Tuple(
-									new Object[] { this.initMethod.invoke(pojo,
-											attributes) }, false);
-						} else {
-							// call the init method with the possible number of
-							// attributes from the tuple
-							ret = new Tuple(
-									new Object[] { this.initMethod.invoke(pojo,
-											Arrays.copyOfRange(
-													getAttributes(in,
-															this.positions), 0,
-													params.length)) }, false);
-						}
-					}
-				} catch (Exception e) {
-					LOG.error(e.getMessage(), e);
-				}
-			}
-		} catch (InstantiationException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		IPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
-				ret, datatype);
-		return pa;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
+     * .IInitializer#init(java.lang.Object)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public IPartialAggregate<Tuple<?>> init(Tuple<?> in) {
+        IPartialAggregate<Tuple<?>> pa = null;
+        try {
+            Tuple<?> ret = null;
+            Object pojo = this.getBean();
+            if (pojo != null) {
+                // initialize all methods (init, merge, evaluate)
+                this.initMethods(getBean().getClass());
+                // Check if the init method has variable arguments
+                if (this.initMethod.isVarArgs()) {
+                    // cast the attribute array into an object to call the
+                    // vararg method
+                    Object attributes = getAttributes(in, this.positions);
+                    // check if the init method needs additional meta
+                    // attributes
+                    if (this.initMethod.getAnnotation(Init.class).meta()) {
+                        // call the init method with meta attributes
+                        ret = new Tuple(new Object[] { this.initMethod.invoke(pojo, in.getMetadata(), attributes) }, false);
+                    }
+                    else {
+                        // call the init method without meta attributes
+                        ret = new Tuple(new Object[] { this.initMethod.invoke(pojo, attributes) }, false);
+                    }
+                }
+                else {
+                    // get all parameters of the init method if it has a fix
+                    // set of parameters
+                    Class<?>[] params = this.mergeMethod.getParameterTypes();
+                    // check if the init method need additional meta
+                    // attributes
+                    if (this.initMethod.getAnnotation(Init.class).meta()) {
+                        // call the init method with meta attributes and the
+                        // possible number of attributes from the tuple
+                        Object[] attributes = new Object[params.length];
+                        attributes[0] = in.getMetadata();
+                        System.arraycopy(getAttributes(in, this.positions), 0, attributes, 1, params.length - 1);
+                        ret = new Tuple(new Object[] { this.initMethod.invoke(pojo, attributes) }, false);
+                    }
+                    else {
+                        // call the init method with the possible number of
+                        // attributes from the tuple
+                        ret = new Tuple(new Object[] { this.initMethod.invoke(pojo, Arrays.copyOfRange(getAttributes(in, this.positions), 0, params.length)) }, false);
+                    }
+                }
+            }
+            pa = new ElementPartialAggregate<Tuple<?>>(ret, datatype);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-	 * .IMerger
-	 * #merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-	 * .basefunctions .IPartialAggregate, java.lang.Object, boolean)
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p,
-			Tuple<?> toMerge, boolean createNew) {
-		// Create the partial object for holding temp. results
-		ElementPartialAggregate<Tuple<?>> pa = null;
-		if (createNew) {
-			pa = new ElementPartialAggregate<Tuple<?>>(
-					((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
-		} else {
-			pa = (ElementPartialAggregate<Tuple<?>>) p;
-		}
-		Tuple<?> ret = null;
-		try {
-			Object pojo = this.getBean();
-			if (pojo != null) {
-				try {
-					// Check if the merge method has variable arguments
-					if (this.mergeMethod.isVarArgs()) {
-						// cast the attribute array into an object to call the
-						// vararg method
-						Object attributes = getAttributes(toMerge,
-								this.positions);
-						// check if the merge method needs additional meta
-						// attributes
-						if (this.mergeMethod.getAnnotation(Merge.class).meta()) {
-							// call the merge method with meta attributes
-							ret = new Tuple(
-									new Object[] { this.mergeMethod.invoke(
-											pojo, pa.getElem().getAttribute(0),
-											toMerge.getMetadata(), attributes) }, false);
-						} else {
-							// call the merge method with meta attributes
-							ret = new Tuple(
-									new Object[] { this.mergeMethod.invoke(
-											pojo, pa.getElem().getAttribute(0),
-											attributes) }, false);
-						}
-					} else {
-						// get all parameters of the merge method if it has a
-						// fix set of parameters
-						Class<?>[] params = this.mergeMethod
-								.getParameterTypes();
-						if (this.mergeMethod.getAnnotation(Merge.class).meta()) {
-							// call the merge method with meta attributes and
-							// the possible number of attributes from the tuple
-							Object[] attributes = new Object[params.length];
-							attributes[0] = pa.getElem().getAttribute(0);
-							attributes[1] = toMerge.getMetadata();
-							System.arraycopy(
-									getAttributes(toMerge, this.positions), 0,
-									attributes, 2, params.length - 2);
-							ret = new Tuple(
-									new Object[] { this.mergeMethod.invoke(
-											pojo, attributes) }, false);
-						} else {
-							// call the merge method with the possible number of
-							// attributes from the tuple
-							Object[] attributes = new Object[params.length];
-							attributes[0] = pa.getElem().getAttribute(0);
-							System.arraycopy(
-									getAttributes(toMerge, this.positions), 0,
-									attributes, 1, params.length - 1);
-							ret = new Tuple(
-									new Object[] { this.mergeMethod.invoke(
-											pojo, attributes) }, false);
-						}
-					}
-				} catch (Exception e) {
-					LOG.error(e.getMessage(), e);
-				}
-			}
-		} catch (InstantiationException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		pa.setElem(ret);
-		return pa;
-	}
+        }
+        catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return pa;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
-	 * .IEvaluator
-	 * #evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
-	 * .basefunctions.IPartialAggregate)
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
-		// The result tuple
-		ElementPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(
-				((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
+     * .IMerger
+     * #merge(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
+     * .basefunctions .IPartialAggregate, java.lang.Object, boolean)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public IPartialAggregate<Tuple<?>> merge(IPartialAggregate<Tuple<?>> p, Tuple<?> toMerge, boolean createNew) {
+        // Create the partial object for holding temp. results
+        ElementPartialAggregate<Tuple<?>> pa = null;
+        if (createNew) {
+            pa = new ElementPartialAggregate<Tuple<?>>(((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
+        }
+        else {
+            pa = (ElementPartialAggregate<Tuple<?>>) p;
+        }
+        try {
+            Tuple<?> ret = null;
 
-		Tuple<?> ret = null;
-		try {
-			Object pojo = this.getBean();
-			if (pojo != null) {
-				try {
-					// call the evaluate method with the partial object
-					ret = new Tuple(new Object[] { this.evaluateMethod.invoke(
-							pojo, pa.getElem().getAttribute(0)) }, false);
-				} catch (Exception e) {
-					LOG.error(e.getMessage(), e);
-				}
-			}
-		} catch (InstantiationException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
-			LOG.error(e.getMessage(), e);
-		} catch (ClassNotFoundException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		return ret;
-	}
+            Object pojo = this.getBean();
+            if (pojo != null) {
+                // Check if the merge method has variable arguments
+                if (this.mergeMethod.isVarArgs()) {
+                    // cast the attribute array into an object to call the
+                    // vararg method
+                    Object attributes = getAttributes(toMerge, this.positions);
+                    // check if the merge method needs additional meta
+                    // attributes
+                    if (this.mergeMethod.getAnnotation(Merge.class).meta()) {
+                        // call the merge method with meta attributes
+                        ret = new Tuple(new Object[] { this.mergeMethod.invoke(pojo, pa.getElem().getAttribute(0), toMerge.getMetadata(), attributes) }, false);
+                    }
+                    else {
+                        // call the merge method with meta attributes
+                        ret = new Tuple(new Object[] { this.mergeMethod.invoke(pojo, pa.getElem().getAttribute(0), attributes) }, false);
+                    }
+                }
+                else {
+                    // get all parameters of the merge method if it has a
+                    // fix set of parameters
+                    Class<?>[] params = this.mergeMethod.getParameterTypes();
+                    if (this.mergeMethod.getAnnotation(Merge.class).meta()) {
+                        // call the merge method with meta attributes and
+                        // the possible number of attributes from the tuple
+                        Object[] attributes = new Object[params.length];
+                        attributes[0] = pa.getElem().getAttribute(0);
+                        attributes[1] = toMerge.getMetadata();
+                        System.arraycopy(getAttributes(toMerge, this.positions), 0, attributes, 2, params.length - 2);
+                        ret = new Tuple(new Object[] { this.mergeMethod.invoke(pojo, attributes) }, false);
+                    }
+                    else {
+                        // call the merge method with the possible number of
+                        // attributes from the tuple
+                        Object[] attributes = new Object[params.length];
+                        attributes[0] = pa.getElem().getAttribute(0);
+                        System.arraycopy(getAttributes(toMerge, this.positions), 0, attributes, 1, params.length - 1);
+                        ret = new Tuple(new Object[] { this.mergeMethod.invoke(pojo, attributes) }, false);
+                    }
+                }
+            }
+            pa.setElem(ret);
+        }
+        catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return pa;
+    }
 
-	/**
-	 * Getter for the aggregation bean instance
-	 * 
-	 * @return
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 */
-	public Object getBean() throws InstantiationException,
-			IllegalAccessException, ClassNotFoundException {
-		if (this.bean == null) {
-			this.bean = createBean();
-		}
-		return this.bean;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions
+     * .IEvaluator
+     * #evaluate(de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate
+     * .basefunctions.IPartialAggregate)
+     */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Tuple<?> evaluate(IPartialAggregate<Tuple<?>> p) {
+        // The result tuple
+        ElementPartialAggregate<Tuple<?>> pa = new ElementPartialAggregate<Tuple<?>>(((ElementPartialAggregate<Tuple<?>>) p).getElem(), datatype);
 
-	/**
-	 * Search the bean class and create an instance of it
-	 * 
-	 * @return The created instance of the bean
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 */
-	private Object createBean() throws InstantiationException,
-			IllegalAccessException, ClassNotFoundException {
-		if (this.beanClassName != null) {
-			Class<?> type = Class.forName(beanClassName, true, this.getClass()
-					.getClassLoader());
-			if (type != null) {
-				return type.newInstance();
-			}
-		}
-		throw new ClassNotFoundException();
-	}
+        Tuple<?> ret = null;
+        try {
+            Object pojo = this.getBean();
+            if (pojo != null) {
+                // call the evaluate method with the partial object
+                ret = new Tuple(new Object[] { this.evaluateMethod.invoke(pojo, pa.getElem().getAttribute(0)) }, false);
+            }
+        }
+        catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IllegalArgumentException | InvocationTargetException e) {
+            LOG.error(e.getMessage(), e);
+            ret = new Tuple(new Object[] { null }, false);
+            throw new RuntimeException(e);
+        }
 
-	/**
-	 * Initialize the three needed methods based on their annotations
-	 * 
-	 * @param targetClass
-	 */
-	private void initMethods(Class<?> targetClass) {
-		do {
-			Method[] methods = targetClass.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++) {
-				Method method = methods[i];
-				if (method.getAnnotation(Init.class) != null) {
-					this.initMethod = method;
-				}
-				if (method.getAnnotation(Merge.class) != null) {
-					this.mergeMethod = method;
-				}
-				if (method.getAnnotation(Evaluate.class) != null) {
-					this.evaluateMethod = method;
-				}
-			}
-			targetClass = targetClass.getSuperclass();
-		} while (targetClass != null);
-	}
+        return ret;
+    }
 
-	/**
-	 * Return the attributes from the tuple
-	 * 
-	 * @param in
-	 * @param positions
-	 * @return
-	 */
-	private static Object[] getAttributes(Tuple<?> in, int[] positions) {
-		Object[] attributes = new Object[positions.length];
-		for (int i = 0; i < positions.length; ++i) {
-			attributes[i] = in.getAttribute(positions[i]);
-		}
-		return attributes;
-	}
+    /**
+     * Getter for the aggregation bean instance
+     * 
+     * @return
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
+    public Object getBean() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        if (this.bean == null) {
+            this.bean = createBean();
+        }
+        return this.bean;
+    }
+
+    /**
+     * Search the bean class and create an instance of it
+     * 
+     * @return The created instance of the bean
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
+    private Object createBean() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        if (this.beanClassName != null) {
+            Class<?> type = Class.forName(beanClassName, true, this.getClass().getClassLoader());
+            if (type != null) {
+                return type.newInstance();
+            }
+        }
+        throw new ClassNotFoundException();
+    }
+
+    /**
+     * Initialize the three needed methods based on their annotations
+     * 
+     * @param targetClass
+     */
+    private void initMethods(Class<?> targetClass) {
+        Objects.requireNonNull(targetClass);
+        do {
+            Method[] methods = targetClass.getDeclaredMethods();
+            for (int i = 0; i < methods.length; i++) {
+                Method method = methods[i];
+                if (method.getAnnotation(Init.class) != null) {
+                    this.initMethod = method;
+                }
+                if (method.getAnnotation(Merge.class) != null) {
+                    this.mergeMethod = method;
+                }
+                if (method.getAnnotation(Evaluate.class) != null) {
+                    this.evaluateMethod = method;
+                }
+            }
+            targetClass = targetClass.getSuperclass();
+        }
+        while (targetClass != null);
+    }
+
+    /**
+     * Return the attributes from the tuple
+     * 
+     * @param in
+     * @param positions
+     * @return
+     */
+    private static Object[] getAttributes(Tuple<?> in, int[] positions) {
+        Objects.requireNonNull(in);
+        Objects.requireNonNull(positions);
+        Object[] attributes = new Object[positions.length];
+        for (int i = 0; i < positions.length; ++i) {
+            attributes[i] = in.getAttribute(positions[i]);
+        }
+        return attributes;
+    }
 }

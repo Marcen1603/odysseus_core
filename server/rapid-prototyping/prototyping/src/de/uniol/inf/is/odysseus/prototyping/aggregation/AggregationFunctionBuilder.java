@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.prototyping.aggregation;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -26,40 +27,42 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 public class AggregationFunctionBuilder implements IAggregateFunctionBuilder {
-	private final static String SCRIPT = "SCRIPT";
-	private final static String BEAN = "BEAN";
-	private static Collection<String> names = new LinkedList<String>();
-	{
-		names.add(SCRIPT);
-		names.add(BEAN);
-	}
+    private final static String SCRIPT = "SCRIPT";
+    private final static String BEAN = "BEAN";
+    private static Collection<String> names = new LinkedList<String>();
+    {
+        names.add(SCRIPT);
+        names.add(BEAN);
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Class<? extends IStreamObject> getDatamodel() {
-		return Tuple.class;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Class<? extends IStreamObject> getDatamodel() {
+        return Tuple.class;
+    }
 
-	@Override
-	public Collection<String> getFunctionNames() {
-		return names;
-	}
+    @Override
+    public Collection<String> getFunctionNames() {
+        return names;
+    }
 
-	@Override
-	public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, SDFSchema schema,
-			int[] pos, boolean partialAggregateInput, String datatype) {
-		IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
-		if (key.getName().equalsIgnoreCase(SCRIPT)) {
-			aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"),
-					partialAggregateInput, datatype);
-		} else if (key.getName().equalsIgnoreCase(BEAN)) {
-			aggFunc = new BeanAggregation(pos, key.getProperty("resource"),
-					partialAggregateInput, datatype);
-		} else {
-			throw new IllegalArgumentException(String.format(
-					"No such Aggregatefunction: %s", key.getName()));
-		}
-		return aggFunc;
-	}
+    @Override
+    public IAggregateFunction<?, ?> createAggFunction(AggregateFunction key, SDFSchema schema, int[] pos, boolean partialAggregateInput, String datatype) {
+        IAggregateFunction<Tuple<?>, Tuple<?>> aggFunc = null;
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(key.getName());
+        Objects.requireNonNull(key.getProperty("resource"));
+
+        if (key.getName().equalsIgnoreCase(SCRIPT)) {
+            aggFunc = new JSR223Aggregation(pos, key.getProperty("resource"), partialAggregateInput, datatype);
+        }
+        else if (key.getName().equalsIgnoreCase(BEAN)) {
+            aggFunc = new BeanAggregation(pos, key.getProperty("resource"), partialAggregateInput, datatype);
+        }
+        else {
+            throw new IllegalArgumentException(String.format("No such Aggregatefunction: %s", key.getName()));
+        }
+        return aggFunc;
+    }
 
 }

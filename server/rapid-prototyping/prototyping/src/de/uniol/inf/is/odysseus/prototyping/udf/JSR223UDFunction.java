@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,109 +44,104 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 @UserDefinedFunction(name = "Script")
-public class JSR223UDFunction
-		implements
-		IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
-	private static final String KEY_ATTRIBUTE = "attr";
-	private static final String KEY_ATTRIBUTES = "attrs";
-	private static final String KEY_META = "meta";
-	private final Logger LOG = LoggerFactory.getLogger(JSR223UDFunction.class);
+public class JSR223UDFunction implements IUserDefinedFunction<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+    private static final String KEY_ATTRIBUTE = "attr";
+    private static final String KEY_ATTRIBUTES = "attrs";
+    private static final String KEY_META = "meta";
+    private final Logger LOG = LoggerFactory.getLogger(JSR223UDFunction.class);
 
-	/** The script engine */
-	private ScriptEngine engine;
-	/** The compiled script if supported */
-	private CompiledScript compiledScript;
-	/** The script reader **/
-	private InputStreamReader script;
-	/** The path to the script file */
-	private String fileName;
+    /** The script engine */
+    private ScriptEngine engine;
+    /** The compiled script if supported */
+    private CompiledScript compiledScript;
+    /** The script reader **/
+    private InputStreamReader script;
+    /** The path to the script file */
+    private String fileName;
 
-	@Override
-	public void init(String initString) {
-		this.fileName = initString;
-		String extension = this.fileName.substring(this.fileName
-				.lastIndexOf(".") + 1);
-		ScriptEngineManager manager = new ScriptEngineManager();
-		this.engine = manager.getEngineByExtension(extension);
-		if (this.engine == null) {
-			LOG.error("No scripting engine was found");
-		}
-		if (LOG.isDebugEnabled()) {
-			List<ScriptEngineFactory> engines = manager.getEngineFactories();
-			LOG.debug("The following " + engines.size()
-					+ " scripting engines were found");
-			for (ScriptEngineFactory engine : engines) {
-				LOG.debug("Engine name: {}", engine.getEngineName());
-				LOG.debug("\tVersion: {}", engine.getEngineVersion());
-				LOG.debug("\tLanguage: {}", engine.getLanguageName());
-				List<String> extensions = engine.getExtensions();
-				if (extensions.size() > 0) {
-					LOG.debug("\tEngine supports the following extensions:");
-					for (String e : extensions) {
-						LOG.debug("\t\t{}", e);
-					}
-				}
-				List<String> shortNames = engine.getNames();
-				if (shortNames.size() > 0) {
-					LOG.debug("\tEngine has the following short names:");
-					for (String n : engine.getNames()) {
-						LOG.debug("\t\t{}", n);
-					}
-				}
-				LOG.debug("=========================");
-			}
-		}
-		File scriptFile = new File(this.fileName);
-		try {
-			this.script = new InputStreamReader(new FileInputStream(scriptFile));
-			if ((this.compiledScript == null) && (engine instanceof Compilable)) {
-				try {
-					this.compiledScript = ((Compilable) engine)
-							.compile(this.script);
-				} catch (ScriptException e) {
-					LOG.error(e.getMessage(), e);
-				}
-			}
-		} catch (FileNotFoundException e) {
-			LOG.error(e.getMessage(), e);
-		}
-	}
+    @Override
+    public void init(String initString) {
+        this.fileName = initString;
+        String extension = this.fileName.substring(this.fileName.lastIndexOf(".") + 1);
+        ScriptEngineManager manager = new ScriptEngineManager();
+        this.engine = manager.getEngineByExtension(extension);
+        if (this.engine == null) {
+            LOG.error("No scripting engine was found");
+        }
+        if (LOG.isDebugEnabled()) {
+            List<ScriptEngineFactory> engines = manager.getEngineFactories();
+            LOG.debug("The following " + engines.size() + " scripting engines were found");
+            for (ScriptEngineFactory engine : engines) {
+                LOG.debug("Engine name: {}", engine.getEngineName());
+                LOG.debug("\tVersion: {}", engine.getEngineVersion());
+                LOG.debug("\tLanguage: {}", engine.getLanguageName());
+                List<String> extensions = engine.getExtensions();
+                if (extensions.size() > 0) {
+                    LOG.debug("\tEngine supports the following extensions:");
+                    for (String e : extensions) {
+                        LOG.debug("\t\t{}", e);
+                    }
+                }
+                List<String> shortNames = engine.getNames();
+                if (shortNames.size() > 0) {
+                    LOG.debug("\tEngine has the following short names:");
+                    for (String n : engine.getNames()) {
+                        LOG.debug("\t\t{}", n);
+                    }
+                }
+                LOG.debug("=========================");
+            }
+        }
+        File scriptFile = new File(this.fileName);
+        try {
+            this.script = new InputStreamReader(new FileInputStream(scriptFile));
+            if ((this.compiledScript == null) && (engine instanceof Compilable)) {
+                this.compiledScript = ((Compilable) engine).compile(this.script);
+            }
+        }
+        catch (FileNotFoundException | ScriptException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Tuple<? extends IMetaAttribute> process(
-			Tuple<? extends IMetaAttribute> in, int port) {
-		Tuple<?> ret = null;
-		Bindings bindings = this.engine.createBindings();
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Tuple<? extends IMetaAttribute> process(Tuple<? extends IMetaAttribute> in, int port) {
+        Tuple<?> ret = null;
+        Bindings bindings = this.engine.createBindings();
 
-		Object[] attributes = in.getAttributes();
-		bindings.put(KEY_ATTRIBUTES, attributes.length);
-		for (int i = 0; i < attributes.length; ++i) {
-			bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
-		}
-		bindings.put(KEY_META, in.getMetadata());
-		try {
-			if (this.compiledScript != null) {
-				this.compiledScript.eval(bindings);
-			} else {
-				if (script != null) {
-					engine.eval(this.script, bindings);
-				}
-			}
-		} catch (ScriptException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		Object[] retObj = new Object[attributes.length];
-		for (int i = 0; i < attributes.length; ++i) {
-			retObj[i] = bindings.get(KEY_ATTRIBUTE + i);
-		}
-		ret = new Tuple(retObj, false);
-		return ret;
-	}
+        Object[] attributes = in.getAttributes();
+        bindings.put(KEY_ATTRIBUTES, attributes.length);
+        for (int i = 0; i < attributes.length; ++i) {
+            bindings.put(KEY_ATTRIBUTE + i, attributes[i]);
+        }
+        bindings.put(KEY_META, in.getMetadata());
+        try {
+            if (this.compiledScript != null) {
+                this.compiledScript.eval(bindings);
+            }
+            else {
+                if (script != null) {
+                    engine.eval(this.script, bindings);
+                }
+            }
+        }
+        catch (ScriptException e) {
+            LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        Object[] retObj = new Object[attributes.length];
+        for (int i = 0; i < attributes.length; ++i) {
+            retObj[i] = bindings.get(KEY_ATTRIBUTE + i);
+        }
+        ret = new Tuple(retObj, false);
+        return ret;
+    }
 
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
-	}
+    @Override
+    public OutputMode getOutputMode() {
+        return OutputMode.MODIFIED_INPUT;
+    }
 
 }

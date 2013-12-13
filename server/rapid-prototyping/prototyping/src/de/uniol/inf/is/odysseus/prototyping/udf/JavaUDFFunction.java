@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public class JavaUDFFunction
 
 	@Override
 	public void init(String initString) {
+	    Objects.requireNonNull(initString);
 		String path = initString;
 		File javaFile = new File(path);
 		String fileName = javaFile.getName();
@@ -68,6 +70,7 @@ public class JavaUDFFunction
 				| ClassNotFoundException | InstantiationException
 				| IllegalAccessException e) {
 			LOG.error(e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -83,6 +86,7 @@ public class JavaUDFFunction
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			LOG.error(e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 		ret = new Tuple(retObj, false);
 		return ret;
