@@ -30,7 +30,7 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	
 	@Override
 	public String getName() {
-		return "loadbalacing";
+		return "loadbalancing";
 	}
 
 	@Override

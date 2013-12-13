@@ -155,11 +155,11 @@ public final class LogicalQueryHelper {
 			generator.beginDisconnect(sourceOperator, sinkOperator);
 
 			ILogicalOperator source = generator.createSourceofSink(sinkOperator);
-			source.setOutputSchema(sourceOperator.getOutputSchema());
+			source.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			source.setName("RCV_" + connectionCounter);
 			
 			ILogicalOperator sink = generator.createSinkOfSource(sourceOperator);
-			sink.setOutputSchema(sourceOperator.getOutputSchema());
+			sink.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			sink.setName("SND_" + connectionCounter);
 
 			sourceOperator.unsubscribeSink(subToReplace);
@@ -263,7 +263,7 @@ public final class LogicalQueryHelper {
 	public static ILogicalOperator appendTopAO( ILogicalQueryPart queryPart ) {
 		Preconditions.checkNotNull(queryPart, "Query part to append TopAO must not be null!");
 		
-		Collection<ILogicalOperator> sinks = getSinks(queryPart.getOperators());
+		Collection<ILogicalOperator> sinks = getSinks(getAllOperators(queryPart.getOperators().iterator().next()));
 		
 		TopAO topAO = new TopAO();
 		int inputPort = 0;
