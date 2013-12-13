@@ -90,6 +90,7 @@ import de.uniol.inf.is.odysseus.mep.functions.math.PIFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.PowerOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.RoundFunction;
+import de.uniol.inf.is.odysseus.mep.functions.math.SignFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SinusFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SqrtFunction;
 import de.uniol.inf.is.odysseus.mep.functions.math.SqrtValue;
@@ -248,6 +249,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new RandomFunction());
         registerFunction(new RandomFunction2());
         registerFunction(new RoundFunction());
+        registerFunction(new SignFunction());
 
         registerFunction(new PIFunction());
         registerFunction(new EFunction());

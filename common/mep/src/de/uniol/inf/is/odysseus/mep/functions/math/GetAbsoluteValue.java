@@ -20,7 +20,9 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /*
  * Diese Klasse dient dazu, den Betrag eines Wertes zu erhalten.
+ * @Deprecated Use AbsoluteFunction
  */
+@Deprecated
 public class GetAbsoluteValue extends AbstractFunction<Object>{
 
 	/**
