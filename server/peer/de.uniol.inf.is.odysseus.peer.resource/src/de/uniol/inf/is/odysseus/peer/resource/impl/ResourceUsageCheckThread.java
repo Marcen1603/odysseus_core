@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 public class ResourceUsageCheckThread extends RepeatingJobThread {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceUsageCheckThread.class);
-	private static final int REFRESH_INTERVAL_MILLIS = 10000;
+	private static final int REFRESH_INTERVAL_MILLIS = 10 *1000;
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	
 	private final Sigar sigar = new Sigar();

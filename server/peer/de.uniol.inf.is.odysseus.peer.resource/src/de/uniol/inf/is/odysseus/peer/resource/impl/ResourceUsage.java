@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public final class ResourceUsage implements IResourceUsage {
 
-	private static final double SIMILARITY_FACTOR_PERCENT = 4;
+	private static final double SIMILARITY_FACTOR_PERCENT = 9;
 
 	private final PeerID peerID;
 
