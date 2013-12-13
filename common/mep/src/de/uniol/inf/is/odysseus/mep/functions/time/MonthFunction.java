@@ -37,7 +37,7 @@ public class MonthFunction extends AbstractDateFunction{
 		// The first month is 1 not 0
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime((Date) getInputValue(0));
-		return calendar.get(Calendar.MONTH + 1);
+		return calendar.get(Calendar.MONTH) + 1;
 	}
 
 

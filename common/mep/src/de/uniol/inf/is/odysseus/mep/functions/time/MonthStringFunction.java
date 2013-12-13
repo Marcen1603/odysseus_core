@@ -35,7 +35,7 @@ public class MonthStringFunction extends AbstractDateStringFunction {
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return calendar.get(Calendar.MONTH + 1);
+        return calendar.get(Calendar.MONTH) + 1;
     }
 
     /**
