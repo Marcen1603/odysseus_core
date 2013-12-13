@@ -259,4 +259,18 @@ public final class LogicalQueryHelper {
 
 		throw new RuntimeException("Could not find the copy of " + originalOperator);
 	}
+	
+	public static ILogicalOperator appendTopAO( ILogicalQueryPart queryPart ) {
+		Preconditions.checkNotNull(queryPart, "Query part to append TopAO must not be null!");
+		
+		Collection<ILogicalOperator> sinks = getSinks(queryPart.getOperators());
+		
+		TopAO topAO = new TopAO();
+		int inputPort = 0;
+		for (ILogicalOperator sink : sinks) {
+			topAO.subscribeToSource(sink, inputPort++, 0, sink.getOutputSchema());
+		}
+
+		return topAO;
+	}
 }
