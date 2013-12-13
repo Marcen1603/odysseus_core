@@ -117,6 +117,7 @@ import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToFloatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToIntegerFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToShortFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.ToBooleanFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToByteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromNumberFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.ToDateFromStringFunction;
@@ -218,6 +219,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ArcTangensFunction());
         registerFunction(new ArcTangens2Function());
         registerFunction(new ToNumberFunction());
+        registerFunction(new ToBooleanFunction());
         registerFunction(new ToByteFunction());
         registerFunction(new ToShortFunction());
         registerFunction(new ToFloatFunction());
