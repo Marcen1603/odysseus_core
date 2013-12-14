@@ -89,7 +89,7 @@ public class GenericProvider extends AbstractDataGenerator {
                             // Class<?> generatorClass =
                             // Class.forName(attributeParameter[1]
                             // + "Generator");
-                            Class<?> generatorClass = Activator.getGeneratorClass(attributeParameter[1] + "Generator");
+                            Class<?> generatorClass = Activator.getGeneratorClass((attributeParameter[1] + "Generator").toUpperCase());
 
                             Constructor<?>[] constructors = generatorClass.getDeclaredConstructors();
                             for (Constructor<?> constructor : constructors) {
@@ -124,9 +124,12 @@ public class GenericProvider extends AbstractDataGenerator {
                                     break;
                                 }
                             }
-
-                            generator.init();
-                            this.generators.put(attributeParameter[0], generator);
+                            if (generator != null) {
+                                generator.init();
+                                this.generators.put(attributeParameter[0], generator);
+                            }else {
+                                throw new IllegalArgumentException("No value generator found");
+                            }
                         }
                         catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                             // TODO Auto-generated catch block

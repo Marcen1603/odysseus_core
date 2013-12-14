@@ -53,36 +53,36 @@ public class Activator implements BundleActivator {
 
     private static Map<String, Class<?>> generators = new HashMap<String, Class<?>>();
     static {
-        generators.put("ConstantValueGenerator", ConstantValueGenerator.class);
-        generators.put("BetaDistributionGenerator", BetaDistributionGenerator.class);
-        generators.put("BinomialDistributionGenerator", BinomialDistributionGenerator.class);
-        generators.put("CauchyDistributionGenerator", CauchyDistributionGenerator.class);
-        generators.put("ChiSquaredDistributionGenerator", ChiSquaredDistributionGenerator.class);
-        generators.put("EmpiricalDistributionGenerator", EmpiricalDistributionGenerator.class);
-        generators.put("EnumeratedIntegerDistributionGenerator", EnumeratedIntegerDistributionGenerator.class);
-        generators.put("EnumeratedRealDistributionGenerator", EnumeratedRealDistributionGenerator.class);
-        generators.put("ExponentialDistributionGenerator", ExponentialDistributionGenerator.class);
-        generators.put("FDistributionGenerator", FDistributionGenerator.class);
-        generators.put("GammaDistributionGenerator", GammaDistributionGenerator.class);
-        generators.put("GaussianRandomGenerator", GaussianRandomGenerator.class);
-        generators.put("GeometricDistributionGenerator", GeometricDistributionGenerator.class);
-        generators.put("HypergeometricDistributionGenerator", HypergeometricDistributionGenerator.class);
-        generators.put("LevyDistributionGenerator", LevyDistributionGenerator.class);
-        generators.put("LogNormalDistributionGenerator", LogNormalDistributionGenerator.class);
-        generators.put("NormalDistributionGenerator", NormalDistributionGenerator.class);
-        generators.put("ParetoDistributionGenerator", ParetoDistributionGenerator.class);
-        generators.put("PascalDistributionGenerator", PascalDistributionGenerator.class);
-        generators.put("TDistributionGenerator", TDistributionGenerator.class);
-        generators.put("TriangularDistributionGenerator", TriangularDistributionGenerator.class);
-        generators.put("UniformDistributionGenerator", UniformDistributionGenerator.class);
-        generators.put("UniformIntegerDistributionGenerator", UniformIntegerDistributionGenerator.class);
-        generators.put("UniformRealDistributionGenerator", UniformRealDistributionGenerator.class);
-        generators.put("WeibullDistributionGenerator", WeibullDistributionGenerator.class);
-        generators.put("ZipfDistributionGenerator", ZipfDistributionGenerator.class);
-        generators.put("AlternatingGenerator", AlternatingGenerator.class);
-        generators.put("IncreaseGenerator", IncreaseGenerator.class);
-        generators.put("AlternatingDurationSwitchGenerator", AlternatingDurationSwitchGenerator.class);
-        generators.put("SwitchGenerator", SwitchGenerator.class);
+        generators.put("ConstantValueGenerator".toUpperCase(), ConstantValueGenerator.class);
+        generators.put("BetaDistributionGenerator".toUpperCase(), BetaDistributionGenerator.class);
+        generators.put("BinomialDistributionGenerator".toUpperCase(), BinomialDistributionGenerator.class);
+        generators.put("CauchyDistributionGenerator".toUpperCase(), CauchyDistributionGenerator.class);
+        generators.put("ChiSquaredDistributionGenerator".toUpperCase(), ChiSquaredDistributionGenerator.class);
+        generators.put("EmpiricalDistributionGenerator".toUpperCase(), EmpiricalDistributionGenerator.class);
+        generators.put("EnumeratedIntegerDistributionGenerator".toUpperCase(), EnumeratedIntegerDistributionGenerator.class);
+        generators.put("EnumeratedRealDistributionGenerator".toUpperCase(), EnumeratedRealDistributionGenerator.class);
+        generators.put("ExponentialDistributionGenerator".toUpperCase(), ExponentialDistributionGenerator.class);
+        generators.put("FDistributionGenerator".toUpperCase(), FDistributionGenerator.class);
+        generators.put("GammaDistributionGenerator".toUpperCase(), GammaDistributionGenerator.class);
+        generators.put("GaussianRandomGenerator".toUpperCase(), GaussianRandomGenerator.class);
+        generators.put("GeometricDistributionGenerator".toUpperCase(), GeometricDistributionGenerator.class);
+        generators.put("HypergeometricDistributionGenerator".toUpperCase(), HypergeometricDistributionGenerator.class);
+        generators.put("LevyDistributionGenerator".toUpperCase(), LevyDistributionGenerator.class);
+        generators.put("LogNormalDistributionGenerator".toUpperCase(), LogNormalDistributionGenerator.class);
+        generators.put("NormalDistributionGenerator".toUpperCase(), NormalDistributionGenerator.class);
+        generators.put("ParetoDistributionGenerator".toUpperCase(), ParetoDistributionGenerator.class);
+        generators.put("PascalDistributionGenerator".toUpperCase(), PascalDistributionGenerator.class);
+        generators.put("TDistributionGenerator".toUpperCase(), TDistributionGenerator.class);
+        generators.put("TriangularDistributionGenerator".toUpperCase(), TriangularDistributionGenerator.class);
+        generators.put("UniformDistributionGenerator".toUpperCase(), UniformDistributionGenerator.class);
+        generators.put("UniformIntegerDistributionGenerator".toUpperCase(), UniformIntegerDistributionGenerator.class);
+        generators.put("UniformRealDistributionGenerator".toUpperCase(), UniformRealDistributionGenerator.class);
+        generators.put("WeibullDistributionGenerator".toUpperCase(), WeibullDistributionGenerator.class);
+        generators.put("ZipfDistributionGenerator".toUpperCase(), ZipfDistributionGenerator.class);
+        generators.put("AlternatingGenerator".toUpperCase(), AlternatingGenerator.class);
+        generators.put("IncreaseGenerator".toUpperCase(), IncreaseGenerator.class);
+        generators.put("AlternatingDurationSwitchGenerator".toUpperCase(), AlternatingDurationSwitchGenerator.class);
+        generators.put("SwitchGenerator".toUpperCase(), SwitchGenerator.class);
     }
 
     static BundleContext getContext() {
