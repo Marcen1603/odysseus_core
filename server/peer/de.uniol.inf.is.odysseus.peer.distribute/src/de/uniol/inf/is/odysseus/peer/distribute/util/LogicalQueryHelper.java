@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -367,5 +368,22 @@ public final class LogicalQueryHelper {
 		}
 
 		return topAO;
+	}
+
+	public static Optional<ILogicalQueryPart> determineQueryPart(
+			Collection<ILogicalQueryPart> queryParts, ILogicalOperator operator) {
+		
+		Preconditions.checkNotNull(queryParts, "Query parts for determination must be not null!");
+		Preconditions.checkNotNull(operator, "Operator to determine query part must be not null!");
+		
+		for(ILogicalQueryPart part : queryParts) {
+			
+			if(part.getOperators().contains(operator))
+				return Optional.of(part);
+			
+		}
+		
+		return Optional.absent();
+		
 	}
 }
