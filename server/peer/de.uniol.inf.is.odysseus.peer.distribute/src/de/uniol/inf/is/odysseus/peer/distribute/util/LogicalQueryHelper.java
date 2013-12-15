@@ -142,6 +142,70 @@ public final class LogicalQueryHelper {
 		return sinks;
 	}
 	
+	/**
+	 * Collects all operators within a query part, which are subscribed to sources outside the query part.
+	 * @param part The query part to process.
+	 * @return A collection of all relative sources within <code>part</code>.
+	 */
+	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(
+			final ILogicalQueryPart part) {
+		
+		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
+		
+		// The return value
+		final Collection<ILogicalOperator> relativeSources = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : part.getOperators()) {
+			
+			for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+				
+				if(!part.getOperators().contains(subToSource.getTarget())) {
+					
+					relativeSources.add(operator);
+					break;
+					
+				}
+				
+			}
+			
+		}
+		
+		return relativeSources;
+		
+	}
+	
+	/**
+	 * Collects all operators within a query part, which are subscribed to sinks outside the query part.
+	 * @param part The query part to process.
+	 * @return A collection of all relative sinks within <code>part</code>.
+	 */
+	public static Collection<ILogicalOperator> getRelativeSinksOfLogicalQueryPart(
+			final ILogicalQueryPart part) {
+		
+		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
+		
+		// The return value
+		final Collection<ILogicalOperator> relativeSinks = Lists.newArrayList();
+		
+		for(ILogicalOperator operator : part.getOperators()) {
+			
+			for(LogicalSubscription subToSink : operator.getSubscriptions()) {
+				
+				if(!part.getOperators().contains(subToSink.getTarget())) {
+					
+					relativeSinks.add(operator);
+					break;
+					
+				}
+				
+			}
+			
+		}
+		
+		return relativeSinks;
+		
+	}
+	
 	public static void disconnectQueryParts( Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator ) {
 		Preconditions.checkNotNull(generator, "Operator generator must not be null!");
 		
