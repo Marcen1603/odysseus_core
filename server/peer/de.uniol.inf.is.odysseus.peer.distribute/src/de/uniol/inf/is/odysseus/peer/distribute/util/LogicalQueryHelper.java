@@ -8,6 +8,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.IPair;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -265,6 +267,35 @@ public final class LogicalQueryHelper {
 			}
 		}
 		return subsToReplace;
+	}
+	
+	public static IPair<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartDeep(ILogicalQueryPart queryPart) {
+		
+		Preconditions.checkNotNull(queryPart, "Query part to be copied must be not null!");
+		
+		Collection<ILogicalOperator> operators = queryPart.getOperators();
+
+		// copy --> original
+		Map<ILogicalOperator, ILogicalOperator> operatorCopyMap = createOperatorCopyMap(operators);
+		
+		for(ILogicalOperator operator : operatorCopyMap.keySet()) {
+			
+			for(LogicalSubscription subcription : operator.getSubscriptions()) {
+				
+				if(!operatorCopyMap.keySet().contains(subcription.getTarget()))
+					continue;
+				
+				ILogicalOperator source = getCopyOfMap(operator, operatorCopyMap);
+				ILogicalOperator sink = getCopyOfMap(subcription.getTarget(), operatorCopyMap);
+				
+				source.subscribeSink(sink, subcription.getSinkInPort(), subcription.getSourceOutPort(), subcription.getSchema());				
+				
+			}
+			
+		}
+		
+		ILogicalQueryPart copy = new LogicalQueryPart(operatorCopyMap.keySet());
+		return new Pair<ILogicalQueryPart, ILogicalQueryPart>(queryPart, copy);
 	}
 
 	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(Collection<ILogicalQueryPart> queryParts) {
