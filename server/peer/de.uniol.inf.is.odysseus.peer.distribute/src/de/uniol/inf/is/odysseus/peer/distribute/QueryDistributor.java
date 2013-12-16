@@ -131,14 +131,19 @@ public class QueryDistributor implements IQueryDistributor {
 				printAllocationMap(allocationMap);
 			}
 
-			Map<ILogicalQueryPart, PeerID> correctedAllocationMap = forceLocalOperators(allocationMap);
-			Map<ILogicalQueryPart, PeerID> mergedAllocationMap = mergeQueryPartsWithSamePeer(correctedAllocationMap);
-			if( LOG.isDebugEnabled() ) {
-				printAllocationMap(mergedAllocationMap);
+			allocationMap = forceLocalOperators(allocationMap);
+			
+			if( ParameterHelper.determineDoMerge(config)) {
+				allocationMap = mergeQueryPartsWithSamePeer(allocationMap);
+				if( LOG.isDebugEnabled() ) {
+					printAllocationMap(allocationMap);
+				}
+			} else {
+				LOG.debug("Merging query parts omitted");
 			}
 			
-			insertJxtaOperators(mergedAllocationMap.keySet());
-			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(mergedAllocationMap, config);
+			insertJxtaOperators(allocationMap.keySet());
+			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);
 
 			if (!localQueryParts.isEmpty()) {
 				LOG.debug("Building local logical query out of {} local query parts", localQueryParts.size());

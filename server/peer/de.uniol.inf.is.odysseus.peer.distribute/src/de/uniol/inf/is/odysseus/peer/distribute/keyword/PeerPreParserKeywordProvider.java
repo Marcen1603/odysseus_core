@@ -16,6 +16,7 @@ public class PeerPreParserKeywordProvider implements IPreParserKeywordProvider {
 		keywords.put(PeerQueryPartitionerPreParserKeyword.KEYWORD, PeerQueryPartitionerPreParserKeyword.class);
 		keywords.put(PeerQueryPartModificatorPreParserKeyword.KEYWORD, PeerQueryPartModificatorPreParserKeyword.class);
 		keywords.put(PeerQueryPartAllocatorPreParserKeyword.KEYWORD, PeerQueryPartAllocatorPreParserKeyword.class);
+		keywords.put(DoMergePreParserKeyword.KEYWORD, DoMergePreParserKeyword.class);
 		
 		return keywords;
 	}

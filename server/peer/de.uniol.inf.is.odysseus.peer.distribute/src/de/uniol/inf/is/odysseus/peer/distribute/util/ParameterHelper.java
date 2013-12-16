@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
+import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoMergeParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartAllocatorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartModificatorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartitionerParameter;
@@ -50,5 +51,13 @@ public final class ParameterHelper {
 	public static List<String> determineQueryPartAllocatorParameters(QueryBuildConfiguration config) {
 		QueryPartAllocatorParameter queryParameter = config.get(QueryPartAllocatorParameter.class);
 		return queryParameter.getParameters();
+	}
+
+	public static boolean determineDoMerge(QueryBuildConfiguration config) {
+		DoMergeParameter param = config.get(DoMergeParameter.class);
+		if( param == null ) {
+			return true;
+		}
+		return param.getValue();
 	}
 }
