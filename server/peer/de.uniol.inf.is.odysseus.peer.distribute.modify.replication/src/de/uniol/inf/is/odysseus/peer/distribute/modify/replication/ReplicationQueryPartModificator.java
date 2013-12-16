@@ -562,20 +562,28 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps.newHashMap();
-		
-		for(ILogicalQueryPart origin : queryParts) {
 	
-			Collection<ILogicalQueryPart> copies = Lists.newArrayList();
+		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists.newArrayList();
+		for(int copyNo = 0; copyNo < degreeOfReplication; copyNo++) {
+			plainCopies.add(LogicalQueryHelper.copyQueryPartsDeep(queryParts));
+		}
+		
+		for( Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies ) {
 			
-			for(int copyNo = 0; copyNo < degreeOfReplication; copyNo++)
-				copies.add(LogicalQueryHelper.copyQueryPartDeep(origin).getE1());
-			
-			copiesToOriginPart.put(origin, copies);
-			
+			for( ILogicalQueryPart copy : plainCopyMap.keySet() ) {
+				
+				Collection<ILogicalQueryPart> copyList = null;
+				if( copiesToOriginPart.containsKey(plainCopyMap.get(copy))) {
+					copyList = copiesToOriginPart.get(plainCopyMap.get(copy));
+				} else {
+					copyList = Lists.newArrayList();
+					copiesToOriginPart.put(plainCopyMap.get(copy), copyList);
+				}
+				copyList.add(copy);
+			}
 		}
 		
 		return copiesToOriginPart;
-		
 	}
 
 	/**
