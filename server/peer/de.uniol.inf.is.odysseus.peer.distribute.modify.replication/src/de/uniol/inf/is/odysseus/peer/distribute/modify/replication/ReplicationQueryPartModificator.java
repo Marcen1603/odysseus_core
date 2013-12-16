@@ -490,10 +490,10 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			merger.subscribeSink(replicatedTarget, subscription.getSinkInPort(), 0, subscription.getSchema());
 			
 			// Create modified query part
-			Collection<ILogicalOperator> operators = queryPartOfReplicatedTarget.getOperators();
-			operators.add(merger);
+			Collection<ILogicalOperator> operatorsWithMerger = Lists.newArrayList(queryPartOfReplicatedTarget.getOperators());
+			operatorsWithMerger.add(merger);
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
-			modifiedQueryParts.add(new LogicalQueryPart(operators));
+			modifiedQueryParts.add(new LogicalQueryPart(operatorsWithMerger));
 			modifiedReplicatesToOrigin.put(originPartOfTarget, modifiedQueryParts);
 			
 		}
