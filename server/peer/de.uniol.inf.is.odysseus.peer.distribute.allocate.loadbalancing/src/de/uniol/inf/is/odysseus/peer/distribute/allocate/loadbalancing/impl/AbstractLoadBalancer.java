@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 public abstract class AbstractLoadBalancer implements ILoadBalancer {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractLoadBalancer.class);
+	private static final double THEORETICAL_CPU_LOAD_PER_STOPPED_QUERY = 0.001;
 
 	protected static class Usage {
 		public long mem;
@@ -26,6 +27,9 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 		
 		public double cpu;
 		public double maxCpu;
+		
+		public int runningQueriesCount;
+		public int stoppedQueriesCount;
 	}
 
 	@Override
@@ -62,6 +66,7 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 
 			minUsage.mem += newMemCost;
 			minUsage.cpu += newCpuCost;
+			minUsage.runningQueriesCount++;
 			
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Set usage of {} to mem={} and cpu={}", new Object[] { peerName, minUsage.mem, minUsage.cpu });
@@ -86,12 +91,21 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 
 			Usage usage = new Usage();
 			usage.mem = resUsage.getMemMaxBytes() - resUsage.getMemFreeBytes();
-			usage.cpu = resUsage.getCpuMax() - resUsage.getCpuFree();
+			usage.cpu = determineTheoreticalCPULoad(resUsage);
 			usage.maxCpu = resUsage.getCpuMax();
 			usage.maxMem = resUsage.getMemMaxBytes();
+			usage.stoppedQueriesCount = resUsage.getRunningQueriesCount();
+			usage.runningQueriesCount = resUsage.getStoppedQueriesCount();
+			
 			usageMap.put(peerID, usage);
 		}
+		
 		return usageMap;
+	}
+	
+	private static double determineTheoreticalCPULoad(IResourceUsage usage) {
+		double theoLoad = ( usage.getCpuMax() - usage.getCpuFree() ) + (THEORETICAL_CPU_LOAD_PER_STOPPED_QUERY * usage.getStoppedQueriesCount());
+		return theoLoad > usage.getCpuMax() ? usage.getCpuMax() : theoLoad;
 	}
 	
 	protected abstract PeerID selectPeerID(Map<PeerID, Usage> currentUsages, long newMemCost, double newCpuCost);
