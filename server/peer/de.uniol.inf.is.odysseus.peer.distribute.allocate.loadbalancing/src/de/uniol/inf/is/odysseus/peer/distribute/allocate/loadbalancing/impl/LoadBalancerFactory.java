@@ -16,7 +16,7 @@ public class LoadBalancerFactory {
 			return new MinCPULoadBalancer();
 			
 		case "max":
-			return new MaxLoadBalancer();
+			return new MaxCPULoadBalancer();
 			
 		case "avg":
 			return new AvgLoadBalancer();

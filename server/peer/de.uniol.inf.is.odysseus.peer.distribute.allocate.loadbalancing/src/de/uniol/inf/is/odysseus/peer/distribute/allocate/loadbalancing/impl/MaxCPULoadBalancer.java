@@ -4,24 +4,28 @@ import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
-public class MinCPULoadBalancer extends AbstractLoadBalancer {
+public class MaxCPULoadBalancer extends AbstractLoadBalancer {
 
 	@Override
 	protected PeerID selectPeerID(Map<PeerID, Usage> currentUsages, long newMemCost, double newCpuCost) {
-		Usage min = new Usage();
-		min.mem = Long.MAX_VALUE;
-		min.cpu = Double.MAX_VALUE;
+		Usage max = new Usage();
+		max.mem = Long.MIN_VALUE;
+		max.cpu = Double.MIN_VALUE;
 
 		PeerID minPeerID = null;
 		for (PeerID peerID : currentUsages.keySet()) {
 			Usage usage = currentUsages.get(peerID);
-			if( usage.cpu < min.cpu ) {
-				min = usage;
+			if( usage.cpu > max.cpu && doNotOverload(usage, newMemCost, newCpuCost)) {
+				max = usage;
 				minPeerID = peerID;
 			}
 		}
 
 		return minPeerID;
+	}
+
+	private static boolean doNotOverload(Usage usage, long newMemCost, double newCpuCost) {
+		return usage.cpu + newCpuCost < usage.maxCpu && usage.mem + newMemCost < usage.maxMem;
 	}
 
 }
