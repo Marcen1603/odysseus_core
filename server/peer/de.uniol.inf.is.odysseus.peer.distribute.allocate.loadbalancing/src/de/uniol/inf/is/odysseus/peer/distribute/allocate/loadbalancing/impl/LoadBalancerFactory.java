@@ -18,10 +18,8 @@ public class LoadBalancerFactory {
 		case "maxcpu":
 			return new MaxCPULoadBalancer();
 			
-		case "avg":
-			return new AvgLoadBalancer();
 		}
-
+		
 		throw new LoadBalancerFactoryException("Load balancer type '" + type + "' not known");
 	}
 }

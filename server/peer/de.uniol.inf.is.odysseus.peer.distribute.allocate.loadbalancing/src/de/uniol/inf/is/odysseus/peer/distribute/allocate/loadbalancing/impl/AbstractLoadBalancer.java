@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 public abstract class AbstractLoadBalancer implements ILoadBalancer {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractLoadBalancer.class);
-	private static final double THEORETICAL_CPU_LOAD_PER_STOPPED_QUERY = 0.001;
 
 	protected static class Usage {
 		public long mem;
@@ -35,10 +34,7 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 	@Override
 	public Map<ILogicalQueryPart, PeerID> balance(Map<PeerID, IResourceUsage> currentResourceUsageMap, Map<ILogicalQueryPart, OperatorCost<?>> partCosts) {
 
-		Map<PeerID, Usage> estimatedUsages = transform(currentResourceUsageMap);
-		if (LOG.isDebugEnabled()) {
-			printPeerResourceUsageMap(estimatedUsages);
-		}
+		Map<PeerID, Usage> estimatedUsages = LoadBalancerHelper.transform(currentResourceUsageMap);
 
 		Map<ILogicalQueryPart, PeerID> result = Maps.newHashMap();
 		for (ILogicalQueryPart queryPart : partCosts.keySet()) {
@@ -74,38 +70,6 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 		}
 
 		return result;
-	}
-
-	private static void printPeerResourceUsageMap(Map<PeerID, Usage> estimatedUsages) {
-		for (PeerID peerID : estimatedUsages.keySet()) {
-			Usage estimateUsage = estimatedUsages.get(peerID);
-			Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
-			LOG.debug("ResourceUsage of {}: mem = {}, cpu = {}", new Object[] { peerName.isPresent() ? peerName.get() : "<unknown>", estimateUsage.mem, estimateUsage.cpu });
-		}
-	}
-
-	private static Map<PeerID, Usage> transform(Map<PeerID, IResourceUsage> currentResourceUsageMap) {
-		Map<PeerID, Usage> usageMap = Maps.newHashMap();
-		for (PeerID peerID : currentResourceUsageMap.keySet()) {
-			IResourceUsage resUsage = currentResourceUsageMap.get(peerID);
-
-			Usage usage = new Usage();
-			usage.mem = resUsage.getMemMaxBytes() - resUsage.getMemFreeBytes();
-			usage.cpu = determineTheoreticalCPULoad(resUsage);
-			usage.maxCpu = resUsage.getCpuMax();
-			usage.maxMem = resUsage.getMemMaxBytes();
-			usage.stoppedQueriesCount = resUsage.getRunningQueriesCount();
-			usage.runningQueriesCount = resUsage.getStoppedQueriesCount();
-			
-			usageMap.put(peerID, usage);
-		}
-		
-		return usageMap;
-	}
-	
-	private static double determineTheoreticalCPULoad(IResourceUsage usage) {
-		double theoLoad = ( usage.getCpuMax() - usage.getCpuFree() ) + (THEORETICAL_CPU_LOAD_PER_STOPPED_QUERY * usage.getStoppedQueriesCount());
-		return theoLoad > usage.getCpuMax() ? usage.getCpuMax() : theoLoad;
 	}
 	
 	protected abstract PeerID selectPeerID(Map<PeerID, Usage> currentUsages, long newMemCost, double newCpuCost);
