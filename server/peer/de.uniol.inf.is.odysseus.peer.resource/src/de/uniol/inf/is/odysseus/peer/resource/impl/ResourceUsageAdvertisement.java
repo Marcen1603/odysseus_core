@@ -36,6 +36,8 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 	private static final String MEM_MAX_TAG = "memmax";
 	private static final String CPU_FREE_TAG = "cpufree";
 	private static final String CPU_MAX_TAG = "cpumax";
+	private static final String RUNNING_QUERIES_COUNT_TAG = "runningQueriesCount";
+	private static final String STOPPED_QUERIES_COUNT_TAG = "stoppedQueriesCount";
 	private static final String TIMESTAMP_TAG = "timestamp";
 	
 	private static final String[] INDEX_FIELDS = new String[] { PEER_ID_TAG, TIMESTAMP_TAG };
@@ -95,6 +97,8 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		appendElement(doc, CPU_FREE_TAG, String.valueOf(usage.getCpuFree()));
 		appendElement(doc, CPU_MAX_TAG, String.valueOf(usage.getCpuMax()));
 		appendElement(doc, TIMESTAMP_TAG, String.valueOf(usage.getTimestamp()));
+		appendElement(doc, RUNNING_QUERIES_COUNT_TAG, String.valueOf(usage.getRunningQueriesCount()));
+		appendElement(doc, STOPPED_QUERIES_COUNT_TAG, String.valueOf(usage.getStoppedQueriesCount()));
 		
 		return doc;
 	}
@@ -136,6 +140,8 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		double cpuFree = 0;
 		double cpuMax = 0;
 		long timestamp = 0;
+		int runningQueriesCount = 0;
+		int stoppedQueriesCount = 0;
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			if (elem.getName().equals(PEER_ID_TAG)) {
@@ -150,10 +156,14 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 				cpuMax = Double.valueOf(elem.getTextValue());
 			} else if (elem.getName().equals(TIMESTAMP_TAG)) {
 				timestamp = Long.valueOf(elem.getTextValue());
+			} else if (elem.getName().equals(RUNNING_QUERIES_COUNT_TAG)) {
+				runningQueriesCount = Integer.valueOf(elem.getTextValue());
+			} else if (elem.getName().equals(STOPPED_QUERIES_COUNT_TAG)) {
+				stoppedQueriesCount = Integer.valueOf(elem.getTextValue());
 			} 
 		}
 		
-		usage = new ResourceUsage(peerID, memFreeBytes, memMaxBytes, cpuFree, cpuMax, timestamp);
+		usage = new ResourceUsage(peerID, memFreeBytes, memMaxBytes, cpuFree, cpuMax, timestamp, runningQueriesCount, stoppedQueriesCount);
 	}
 
 	public static String getAdvertisementType() {

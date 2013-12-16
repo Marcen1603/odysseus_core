@@ -11,6 +11,9 @@ public interface IResourceUsage {
 	public double getCpuMax();
 	public long getMemFreeBytes();
 	public long getMemMaxBytes();
+	
+	public int getRunningQueriesCount();
+	public int getStoppedQueriesCount();
 
 	public IResourceUsage clone();
 }

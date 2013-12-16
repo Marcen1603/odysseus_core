@@ -12,10 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.resource.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.peer.resource.service.ServerExecutorService;
 
 public class ResourceUsageCheckThread extends RepeatingJobThread {
 
@@ -46,7 +48,19 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 				long maxMemory = RUNTIME.totalMemory();
 				long freeMemory = RUNTIME.freeMemory();
 				
-				IResourceUsage usage = new ResourceUsage(P2PNetworkManagerService.get().getLocalPeerID(), freeMemory, maxMemory, cpuFree, cpuMax, System.currentTimeMillis());
+				int runningQueries = 0;
+				int stoppedQueries = 0;
+				for( IPhysicalQuery physicalQuery : ServerExecutorService.get().getExecutionPlan().getQueries() ) {
+					if( physicalQuery.isOpened() ) {
+						runningQueries++;
+					} else {
+						stoppedQueries++;
+					}
+				}
+				
+				IResourceUsage usage = new ResourceUsage(P2PNetworkManagerService.get().getLocalPeerID(), 
+						freeMemory, maxMemory, cpuFree, cpuMax, System.currentTimeMillis(), 
+						runningQueries, stoppedQueries);
 				
 				if( !manager.getLocalResourceUsage().isPresent() || !ResourceUsage.areSimilar(manager.getLocalResourceUsage().get(), usage)) {
 					LOG.debug("Set new current local resource usage: {}", usage);

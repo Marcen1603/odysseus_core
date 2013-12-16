@@ -17,10 +17,13 @@ public final class ResourceUsage implements IResourceUsage {
 
 	private final double cpuFree;
 	private final double cpuMax;
+	
+	private final int runningQueriesCount;
+	private final int stoppedQueriesCount;
 
 	private final long timestamp;
 
-	ResourceUsage(PeerID peerID, long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, long timestamp) {
+	ResourceUsage(PeerID peerID, long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, long timestamp, int runningQueriesCount, int stoppedQueriesCount) {
 		Preconditions.checkNotNull(peerID, "PeerID must not be null!");
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
@@ -37,6 +40,9 @@ public final class ResourceUsage implements IResourceUsage {
 		this.memMaxBytes = memMaxBytes;
 		this.cpuFree = cpuFree;
 		this.cpuMax = cpuMax;
+		
+		this.stoppedQueriesCount = stoppedQueriesCount;
+		this.runningQueriesCount = runningQueriesCount;
 
 		this.timestamp = timestamp;
 	}
@@ -49,6 +55,8 @@ public final class ResourceUsage implements IResourceUsage {
 		memMaxBytes = copy.memMaxBytes;
 		cpuFree = copy.cpuFree;
 		cpuMax = copy.cpuMax;
+		stoppedQueriesCount = copy.stoppedQueriesCount;
+		runningQueriesCount = copy.runningQueriesCount;
 		
 		timestamp = copy.timestamp;
 	}
@@ -57,6 +65,11 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkNotNull(one, "First resource usage to check similarity must not be null!");
 		Preconditions.checkNotNull(other, "Second resource usage to check similarity must not be null!");
 		Preconditions.checkArgument(one.getPeerID().equals(other.getPeerID()), "resource usages to check similarity must be from the same peer");
+		
+		// shortcut to avoid calculations below if possible
+		if( one.getRunningQueriesCount() != other.getRunningQueriesCount() || one.getStoppedQueriesCount() != other.getStoppedQueriesCount() ) {
+			return false;
+		}
 
 		double memFreeDiffPercent = determineDiffPercent(one.getMemFreeBytes(), other.getMemFreeBytes());
 		double memMaxDiffPercent = determineDiffPercent(one.getMemMaxBytes(), other.getMemMaxBytes());
@@ -115,6 +128,16 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public long getMemMaxBytes() {
 		return memMaxBytes;
+	}
+	
+	@Override
+	public int getRunningQueriesCount() {
+		return runningQueriesCount;
+	}
+	
+	@Override
+	public int getStoppedQueriesCount() {
+		return stoppedQueriesCount;
 	}
 	
 	@Override
