@@ -87,6 +87,8 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 			Usage usage = new Usage();
 			usage.mem = resUsage.getMemMaxBytes() - resUsage.getMemFreeBytes();
 			usage.cpu = resUsage.getCpuMax() - resUsage.getCpuFree();
+			usage.maxCpu = resUsage.getCpuMax();
+			usage.maxMem = resUsage.getMemMaxBytes();
 			usageMap.put(peerID, usage);
 		}
 		return usageMap;
