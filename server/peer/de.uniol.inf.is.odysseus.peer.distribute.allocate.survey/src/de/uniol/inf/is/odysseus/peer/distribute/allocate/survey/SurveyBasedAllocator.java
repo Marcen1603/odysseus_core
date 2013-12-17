@@ -32,13 +32,13 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
-		ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), true);
+		ID auctionID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), true);
 
 		// copy --> original
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
 
 		Map<SubPlan, ILogicalQueryPart> subPlans = transformToSubPlans(queryPartsCopyMap.keySet());
-		Map<String, List<SubPlan>> allocationMap = SurveyBasedAllocatorImpl.allocate(sharedQueryID, subPlans.keySet(), config);
+		Map<String, List<SubPlan>> allocationMap = SurveyBasedAllocatorImpl.allocate(auctionID, subPlans.keySet(), config);
 		Map<PeerID, List<SubPlan>> allocationMapPeerID = transformToPeerIDMap(allocationMap);
 
 		Map<PeerID, Collection<ILogicalQueryPart>> allocationMapParts = transformToLogicalQueryParts(allocationMapPeerID, subPlans, queryPartsCopyMap);

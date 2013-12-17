@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +15,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -32,7 +33,7 @@ public class Communicator implements IAdvertisementListener {
 	private static final long WAIT_TIME = 4000;
 	
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
-	private final Map<String, Mailbox<AuctionResponseAdvertisement>> mailboxForAuctions = Maps.newHashMap();
+	private final Map<String, Collection<AuctionResponseAdvertisement>> mailboxForAuctions = Maps.newHashMap();
 	
 	private static Communicator instance;
 
@@ -50,12 +51,11 @@ public class Communicator implements IAdvertisementListener {
 		return instance;
 	}
 
-	public Future<List<AuctionResponseAdvertisement>> publishAuction(final AuctionQueryAdvertisement adv) {
+	public Future<Collection<AuctionResponseAdvertisement>> publishAuction(final AuctionQueryAdvertisement adv) {
 		synchronized (mailboxForAuctions) {
-			Mailbox<AuctionResponseAdvertisement> mailbox = mailboxForAuctions.get(adv.getAuctionId());
+			Collection<AuctionResponseAdvertisement> mailbox = mailboxForAuctions.get(adv.getAuctionId());
 			if (mailbox == null) {
-				mailbox = new Mailbox<>(adv.getSharedQueryID());
-				mailboxForAuctions.put(adv.getAuctionId(), mailbox);
+				mailboxForAuctions.put(adv.getAuctionId(), Lists.<AuctionResponseAdvertisement>newArrayList());
 			}
 		}
 
@@ -67,15 +67,17 @@ public class Communicator implements IAdvertisementListener {
 			}
 		}
 		
-		return executorService.submit(new Callable<List<AuctionResponseAdvertisement>>() {
+		return executorService.submit(new Callable<Collection<AuctionResponseAdvertisement>>() {
+			
 			@Override
-			public List<AuctionResponseAdvertisement> call() throws Exception {
+			public Collection<AuctionResponseAdvertisement> call() throws Exception {
 				Thread.sleep(WAIT_TIME);
+				
 				synchronized (mailboxForAuctions) {
-					Mailbox<AuctionResponseAdvertisement> mailbox = mailboxForAuctions.remove(adv.getAuctionId());
-					return mailbox.getMails();
+					return mailboxForAuctions.remove(adv.getAuctionId());
 				}
 			}
+			
 		});
 	}
 
@@ -103,7 +105,6 @@ public class Communicator implements IAdvertisementListener {
 					bid.setOwnerPeerId(P2PNetworkManagerService.get().getLocalPeerID());
 					bid.setPqlStatement(adv.getPqlStatement());
 					bid.setTransCfgName(adv.getTransCfgName());
-					bid.setSharedQueryID(adv.getSharedQueryID());
 					bid.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 					JxtaServicesProviderService.get().getDiscoveryService().remotePublish(adv.getOwnerPeerId().toString(), bid, WAIT_TIME);
 					LOG.debug("Sent bid {} to auction {} of peer {}", new String[] { "" + bidValue, adv.getAuctionId(), adv.getOwnerPeerId().toString() });
@@ -117,9 +118,9 @@ public class Communicator implements IAdvertisementListener {
 	private void processAuctionResponeAdvertisement(AuctionResponseAdvertisement advertisement) {
 		if (!advertisement.getOwnerPeerId().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 			synchronized (this.mailboxForAuctions) {
-				Mailbox<AuctionResponseAdvertisement> mailbox = mailboxForAuctions.get(advertisement.getAuctionId());
+				Collection<AuctionResponseAdvertisement> mailbox = mailboxForAuctions.get(advertisement.getAuctionId());
 				if (mailbox != null) {
-					mailbox.getMails().add(advertisement);
+					mailbox.add(advertisement);
 				}
 			}
 		}

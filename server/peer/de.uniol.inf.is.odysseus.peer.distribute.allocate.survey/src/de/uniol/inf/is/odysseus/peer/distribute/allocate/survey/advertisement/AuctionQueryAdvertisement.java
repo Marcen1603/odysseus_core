@@ -30,14 +30,12 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 	private static final String ID_TAG = "id";
 	private static final String PQL_TAG = "pql";
 	private static final String PEER_ID_TAG = "peerId";
-	private static final String SHARED_QUERY_ID_TAG = "sharedQueryId";
 	private static final String TRANSCFG_NAME_TAG = "transcfg";
 	private static final String AUCTION_ID_TAG = "auctionId";
 	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
 	private static final Logger log = LoggerFactory.getLogger(AuctionQueryAdvertisement.class);
 	
 	private ID id;
-	private ID sharedQueryID;
 	private String auctionId;
 	private String pqlStatement;
 	private String transCfgName;
@@ -65,7 +63,6 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		Preconditions.checkNotNull(adv, "Advertisement to copy must not be null!");
 
 		this.id = adv.id;
-		this.sharedQueryID = adv.sharedQueryID;
 		this.pqlStatement = adv.pqlStatement;
 		this.transCfgName = adv.transCfgName;
 		this.ownerPeerId = adv.ownerPeerId;
@@ -101,7 +98,6 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		appendElement(doc, PQL_TAG, pqlStatement);
 		appendElement(doc, PEER_ID_TAG, ownerPeerId.toString());
 		appendElement(doc, AUCTION_ID_TAG, auctionId.toString());
-		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
 		appendElement(doc, TRANSCFG_NAME_TAG, transCfgName);
 
 		return doc;
@@ -120,10 +116,6 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 	public String getPqlStatement() {
 		return pqlStatement;
 	}
-	
-	public ID getSharedQueryID() {
-		return sharedQueryID;
-	}	
 	
 	public String getTransCfgName() {
 		return transCfgName;
@@ -149,10 +141,6 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		this.pqlStatement = pqlStatement;
 	}
 
-	public void setSharedQueryID(ID sharedQueryID) {
-		this.sharedQueryID = sharedQueryID;
-	}	
-	
 	public void setTransCfgName(String transCfgName) {
 		this.transCfgName = transCfgName;
 	}
@@ -174,8 +162,6 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 				setOwnerPeerId(convertToPeerID(elem.getTextValue()));
 			} else if (elem.getName().equals(AUCTION_ID_TAG)) {
 				setAuctionId(elem.getTextValue());
-			} else if (elem.getName().equals(SHARED_QUERY_ID_TAG)) {
-				setSharedQueryID(convertToID(elem.getTextValue()));				
 			} else if (elem.getName().equals(TRANSCFG_NAME_TAG)) {
 				setTransCfgName(elem.getTextValue());
 			}

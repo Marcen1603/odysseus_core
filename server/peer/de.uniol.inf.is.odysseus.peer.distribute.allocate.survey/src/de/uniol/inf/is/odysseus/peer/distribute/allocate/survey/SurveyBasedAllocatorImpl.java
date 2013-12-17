@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.ID;
@@ -25,8 +23,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSum
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.PQLGeneratorService;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.BidCalculator;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 
 public final class SurveyBasedAllocatorImpl {
@@ -37,8 +35,8 @@ public final class SurveyBasedAllocatorImpl {
 		
 	}	
 	
-	public static Map<String, List<SubPlan>> allocate(ID sharedQueryID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
-		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(sharedQueryID, subPlans, transCfg);
+	public static Map<String, List<SubPlan>> allocate(ID auctionID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
+		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(auctionID, subPlans, transCfg);
 		return evaluateBids(auctions, subPlans);
 	}
 
@@ -52,7 +50,7 @@ public final class SurveyBasedAllocatorImpl {
 		Map<String, List<SubPlan>> winners = Maps.newHashMap();
 		try {
 			for (AuctionSummary auction : auctions) {
-				List<AuctionResponseAdvertisement> bids = auction.getResponsesFuture().get();
+				Collection<AuctionResponseAdvertisement> bids = auction.getResponsesFuture().get();
 
 				log.info("Got {} bids from remote peers", bids.size());
 
@@ -60,8 +58,7 @@ public final class SurveyBasedAllocatorImpl {
 				double bidValue = BidCalculator.calcBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 				bids.add(wrapInAuctionResponseAdvertisement(auction.getAuctionAdvertisement().getAuctionId(), bidValue));
 
-				Collections.sort(bids);
-				AuctionResponseAdvertisement bid = bids.get(bids.size() - 1);
+				AuctionResponseAdvertisement bid = determineBestBid(bids);
 
 				String peerName = bid.getOwnerPeerId().toString();
 				if (peerName.equals(P2PNetworkManagerService.get().getLocalPeerID().toString())) {
@@ -85,6 +82,16 @@ public final class SurveyBasedAllocatorImpl {
 		return winners;
 	}
 	
+	private static AuctionResponseAdvertisement determineBestBid(Collection<AuctionResponseAdvertisement> bids) {
+		AuctionResponseAdvertisement bestBid = null;
+		for( AuctionResponseAdvertisement bid : bids ) {
+			if( bestBid == null || bid.getBid() > bestBid.getBid() ) {
+				bestBid = bid;
+			}
+		}
+		return bestBid;
+	}
+
 	private static AuctionResponseAdvertisement wrapInAuctionResponseAdvertisement(String auctionId, double bid) {
 		final AuctionResponseAdvertisement adv = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
 		adv.setBid(bid);
@@ -115,7 +122,7 @@ public final class SurveyBasedAllocatorImpl {
 		}
 	}
 
-	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(ID sharedQueryID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
+	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(ID auctionID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
 		Preconditions.checkNotNull(subPlans, "SubPlans must not be null!");
 
 		List<AuctionSummary> auctions = Lists.newArrayList();
@@ -124,14 +131,13 @@ public final class SurveyBasedAllocatorImpl {
 		for (SubPlan subPlan : subPlans) {
 			final AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
 			adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(subPlan.getLogicalPlan()));
-			adv.setSharedQueryID(sharedQueryID);
 			adv.setTransCfgName(transCfg.getName());
-			adv.setAuctionId(UUID.randomUUID().toString());
+			adv.setAuctionId(auctionID.toString());
 			auctions.add(new AuctionSummary(adv, Communicator.getInstance().publishAuction(adv), subPlan));
 			auctionsCount++;
 		}
 
-		log.info("Auctions for {} remote sub plans listed (sharedQueryId: {})", auctionsCount, sharedQueryID);
+		log.info("Auctions for {} remote sub plans listed (sharedQueryId: {})", auctionsCount, auctionID);
 
 		return auctions;
 	}
