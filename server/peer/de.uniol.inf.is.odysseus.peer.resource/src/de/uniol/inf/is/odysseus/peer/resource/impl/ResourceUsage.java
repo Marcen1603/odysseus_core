@@ -20,10 +20,15 @@ public final class ResourceUsage implements IResourceUsage {
 	
 	private final int runningQueriesCount;
 	private final int stoppedQueriesCount;
+	
+	private final double netBandwidthMax;
+	private final double netOutputRate;
+	private final double netInputRate;
 
 	private final long timestamp;
 
-	ResourceUsage(PeerID peerID, long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, long timestamp, int runningQueriesCount, int stoppedQueriesCount) {
+	ResourceUsage(PeerID peerID, long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, long timestamp, int runningQueriesCount, int stoppedQueriesCount, 
+			double netBandwidthMax, double netOutputRate, double netInputRate) {
 		Preconditions.checkNotNull(peerID, "PeerID must not be null!");
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
@@ -34,6 +39,11 @@ public final class ResourceUsage implements IResourceUsage {
 		
 		Preconditions.checkArgument(memFreeBytes <= memMaxBytes, "Memory free bytes cannot be higher than maximum bytes: %s > %s", memFreeBytes, memMaxBytes);
 		Preconditions.checkArgument(cpuFree <= cpuMax, "Cpu free cannot be higher than cpu max: %s > %s", cpuFree, cpuMax);
+		
+		Preconditions.checkArgument(netBandwidthMax >= 0, "Network maximum bandwidth must be zero or positive");
+		Preconditions.checkArgument(netOutputRate >= 0, "Network maximum bandwidth must be zero or positive");
+		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
+		
 
 		this.peerID = peerID;
 		this.memFreeBytes = memFreeBytes;
@@ -43,6 +53,10 @@ public final class ResourceUsage implements IResourceUsage {
 		
 		this.stoppedQueriesCount = stoppedQueriesCount;
 		this.runningQueriesCount = runningQueriesCount;
+		
+		this.netBandwidthMax = netBandwidthMax;
+		this.netOutputRate = netOutputRate;
+		this.netInputRate = netInputRate;
 
 		this.timestamp = timestamp;
 	}
@@ -57,6 +71,10 @@ public final class ResourceUsage implements IResourceUsage {
 		cpuMax = copy.cpuMax;
 		stoppedQueriesCount = copy.stoppedQueriesCount;
 		runningQueriesCount = copy.runningQueriesCount;
+		
+		netBandwidthMax = copy.netBandwidthMax;
+		netInputRate = copy.netInputRate;
+		netOutputRate = copy.netOutputRate;
 		
 		timestamp = copy.timestamp;
 	}
@@ -75,8 +93,11 @@ public final class ResourceUsage implements IResourceUsage {
 		double memMaxDiffPercent = determineDiffPercent(one.getMemMaxBytes(), other.getMemMaxBytes());
 		double cpuFreeDiffPercent = determineDiffPercent(one.getCpuFree(), other.getCpuFree());
 		double cpuMaxDiffPercent = determineDiffPercent(one.getCpuMax(), other.getCpuMax());
+		double netBandwidthMaxPercent = determineDiffPercent(one.getNetBandwidthMax(), other.getNetBandwidthMax());
+		double netOutputRatePercent = determineDiffPercent(one.getNetInputRate(), other.getNetInputRate());
+		double netInputRatePercent = determineDiffPercent(one.getNetOutputRate(), other.getNetOutputRate());
 		
-		return areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent);
+		return areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent, netBandwidthMaxPercent, netOutputRatePercent, netInputRatePercent);
 	}
 
 	private static double determineDiffPercent(double a, double b) {
@@ -143,7 +164,23 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{Free MEM = ").append(getMemFreeBytes()).append(" / ").append(getMemMaxBytes()).append(", Free Cpu = ").append(getCpuFree()).append(" / ").append(getCpuMax()).append("}");
+		sb.append("{Free MEM = ").append(getMemFreeBytes()).append(" / ").append(getMemMaxBytes()).append(", Free Cpu = ").append(getCpuFree()).append(" / ").append(getCpuMax());
+		sb.append("Network in = ").append(getNetInputRate()).append(", out = ").append(getNetOutputRate()).append(" of ").append(getNetBandwidthMax()).append("}");
 		return sb.toString();
+	}
+	
+	@Override
+	public double getNetBandwidthMax() {
+		return netBandwidthMax;
+	}
+	
+	@Override
+	public double getNetInputRate() {
+		return netInputRate;
+	}
+	
+	@Override
+	public double getNetOutputRate() {
+		return netOutputRate;
 	}
 }

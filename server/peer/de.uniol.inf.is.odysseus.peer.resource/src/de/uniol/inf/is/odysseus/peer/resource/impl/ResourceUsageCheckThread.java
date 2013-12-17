@@ -5,6 +5,7 @@ import java.io.IOException;
 import net.jxta.document.AdvertisementFactory;
 
 import org.hyperic.sigar.CpuPerc;
+import org.hyperic.sigar.NetInterfaceStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	
 	private final Sigar sigar = new Sigar();
+	private long previousInputTotal = 0;
+	private long previousOutputTotal = 0;
 	
 	private final PeerResourceUsageManager manager;
 
@@ -48,6 +51,19 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 				long maxMemory = RUNTIME.totalMemory();
 				long freeMemory = RUNTIME.freeMemory();
 				
+				String interfaceName = sigar.getNetInterfaceConfig(null).getName();
+				long rawSpeed = sigar.getNetInterfaceStat(interfaceName).getSpeed(); // rawSpeed = -1 if os is not supported (yet)
+				double bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : 0;
+				NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
+				
+				long inputTotal = net.getRxBytes();
+				long outputTotal = net.getTxBytes();
+				
+				double netInputRate = ( inputTotal - previousInputTotal ) / 1024;
+				double netOutputRate = ( outputTotal - previousOutputTotal ) / 1024;
+				previousInputTotal = inputTotal;
+				previousOutputTotal = outputTotal;
+				
 				int runningQueries = 0;
 				int stoppedQueries = 0;
 				for( IPhysicalQuery physicalQuery : ServerExecutorService.get().getExecutionPlan().getQueries() ) {
@@ -60,7 +76,7 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 				
 				IResourceUsage usage = new ResourceUsage(P2PNetworkManagerService.get().getLocalPeerID(), 
 						freeMemory, maxMemory, cpuFree, cpuMax, System.currentTimeMillis(), 
-						runningQueries, stoppedQueries);
+						runningQueries, stoppedQueries, bandwidthInKBs, netOutputRate, netInputRate);
 				
 				if( !manager.getLocalResourceUsage().isPresent() || !ResourceUsage.areSimilar(manager.getLocalResourceUsage().get(), usage)) {
 					LOG.debug("Set new current local resource usage: {}", usage);
