@@ -309,7 +309,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		}
 		
 		// Preconditions 2
-		if(originPart.getOperators().contains(subscription.getTarget()))
+		if(subscription == null || originPart.getOperators().contains(subscription.getTarget()))
 			return modifiedReplicatesToOrigin;
 		
 		// The query part containing the origin target
