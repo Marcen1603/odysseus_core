@@ -280,8 +280,8 @@ public abstract class AbstractScheduler implements
 	}
 
 	@Override
-	public void removeLeafSources(List<IIterableSource<?>> sources) {
-		this.sources.removeAll(sources);
+	public void removeLeafSources(List<IIterableSource<?>> sources) {		
+		this.sources.removeAll(sources);		
 		process_setLeafSources(this.sources);
 	}
 

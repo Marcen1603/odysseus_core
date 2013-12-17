@@ -73,7 +73,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 			e.printStackTrace();
 		}
 
-		logger.debug("Removing " + this.hashCode() + " Sources " + sources);
+		logger.debug("Removing Source Executor " + this.getName() + " with sources: " + sources);
 		// caller.removeSourceThread(this);
 
 	}
@@ -104,7 +104,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 				try {
 					if (!processableSources) {
 						if (logger.isTraceEnabled()) {
-							logger.trace("Waiting for open sources to process "
+							logger.trace(this.getName()+" - Waiting for open sources to process "
 									+ sources);
 						}
 						sources.wait(1000);

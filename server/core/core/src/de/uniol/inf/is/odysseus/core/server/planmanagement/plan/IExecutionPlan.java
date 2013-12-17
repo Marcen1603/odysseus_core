@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public interface IExecutionPlan extends IClone, IReoptimizeRequester<AbstractPlanReoptimizeRule>,
 IReoptimizeHandler<IPlanReoptimizeListener> {
 
-	public void setLeafSources(List<IIterableSource<?>> leafSources);
+	public void updateLeafSources();
 
 	public List<IIterableSource<?>> getLeafSources();
 

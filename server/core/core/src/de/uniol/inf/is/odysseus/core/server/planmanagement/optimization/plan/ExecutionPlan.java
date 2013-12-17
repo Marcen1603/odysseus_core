@@ -126,10 +126,13 @@ public class ExecutionPlan implements IExecutionPlan {
 	 * #setSources(java.util.List)
 	 */
 	@Override
-	public void setLeafSources(List<IIterableSource<?>> leafSources) {
+	public void updateLeafSources() {
 		this.open = false;
 		this.leafSources.clear();
-		this.leafSources.addAll(leafSources);
+		for (IPhysicalQuery query : this.queries.values()) {
+			this.leafSources.addAll(query.getIteratableLeafSources());			
+		} 
+		
 	}
 
 
@@ -178,7 +181,9 @@ public class ExecutionPlan implements IExecutionPlan {
 	 */
 	@Override
 	public synchronized IPhysicalQuery removeQuery(int queryID) {
-		return this.queries.remove(queryID);
+		IPhysicalQuery removed = this.queries.remove(queryID);
+		updateLeafSources();
+		return removed;
 	}
 
 	

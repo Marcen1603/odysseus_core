@@ -76,7 +76,7 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 	@Override
 	protected synchronized void process_setLeafSources(
 			List<IIterableSource<?>> newSources) {
-		synchronized (sourceThreads) {
+		synchronized (sourceThreads) {			
 			removeUnscheduledSources();
 			if (newSources != null) {
 				Map<MultipleSourceExecutor, List<IIterableSource<?>>> toAdd = new HashMap<>();

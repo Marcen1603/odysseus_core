@@ -15,15 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.planmanagement.optimization.plan.standardplanoptimizer;
 
-import java.util.ArrayList;
-
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * StandardPlanOptimizer is the standard plan optimizer used by odysseus. 
@@ -48,17 +44,7 @@ public class StandardPlanOptimizer implements IPlanOptimizer {
 	public void optimizePlan(OptimizationConfiguration parameters, IExecutionPlan toOptimize, IDataDictionary dd)
 			throws QueryOptimizationException {
 	
-		ArrayList<IIterableSource<?>> leafSources = new ArrayList<IIterableSource<?>>();
-
-		// Get Roots, PartialPlans and IIterableSource for the execution plan.
-		// Each query will be one PartialPlan. Duplicated operators will be
-		// ignored.
-		for (IPhysicalQuery query : toOptimize.getQueries()) {
-			leafSources.addAll(query.getIteratableLeafSources());
-		} // for (IQuery query : allQueries)
-
-		// Update ExecutionPlan with the found informations.
-		toOptimize.setLeafSources(leafSources);
+		toOptimize.updateLeafSources();
 
 	}
 
