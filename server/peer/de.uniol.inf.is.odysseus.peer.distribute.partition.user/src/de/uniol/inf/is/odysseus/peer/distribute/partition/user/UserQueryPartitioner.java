@@ -47,6 +47,9 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 			operatorsToVisit.removeAll(partOperators);
 
 			ILogicalQueryPart part = new LogicalQueryPart(partOperators);
+			for( ILogicalOperator operator : partOperators ) {
+				operator.setDestinationName(chosenDestination);
+			}
 			parts.add(part);
 		}
 
