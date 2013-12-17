@@ -206,7 +206,9 @@ public class QueryDistributor implements IQueryDistributor {
 				if( !nonLocalOperators.isEmpty() ) {
 					resultMap.put(new LogicalQueryPart(nonLocalOperators), partMap.get(part));
 				}
-				resultMap.put(new LogicalQueryPart(localOperators), P2PNetworkManagerService.get().getLocalPeerID());
+				LogicalQueryPart localQueryPart = new LogicalQueryPart(localOperators);
+				resultMap.put(localQueryPart, P2PNetworkManagerService.get().getLocalPeerID());
+				LOG.debug("Created new local query part {}", localQueryPart);
 			}
 		}
 		return resultMap;
