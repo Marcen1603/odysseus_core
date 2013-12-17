@@ -324,7 +324,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 	private void delayedRemoveSources(List<IIterableSource<?>> removeList) {
 		// logger.debug("Trying to remove " + toRemove.size() + " sources");
 		synchronized (sources) {
-			sources.addAll(removeList);
+			sources.removeAll(removeList);
 		}
 		logger.debug("Removed Sources " + removeList);
 		removeList.clear();
