@@ -85,7 +85,6 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Determine degree of replication
 		final int degreeOfReplication = 
 				ReplicationQueryPartModificator.determineDegreeOfReplication(queryParts.size(), modificatorParameters);
-		ReplicationQueryPartModificator.log.debug("Degree of replication set to {}.", degreeOfReplication);
 		
 		// Copy the query parts (mutable map)
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> replicatesToOrigin = 
@@ -290,6 +289,22 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
 			modifiedQueryParts.add(new LogicalQueryPart(operators));
 			modifiedReplicatesToOrigin.put(new LogicalQueryPart(operators), modifiedQueryParts);
+			
+			if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
+				
+				String strSinks = "(";
+				for(int sinkNo = 0; sinkNo < replicatedSinks.size(); sinkNo++) {
+					
+					strSinks += ((List<ILogicalOperator>) replicatedSinks).get(sinkNo).getName();
+							
+					if(sinkNo == replicatedSinks.size() - 1)
+						strSinks += ")";
+					else strSinks += ", ";
+					
+				}
+				ReplicationQueryPartModificator.log.debug("Inserted a merger after {}.", strSinks);
+				
+			}
 			
 		}
 		
@@ -498,6 +513,21 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 		}
 		
+		if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
+			
+			String strSinks = "(";
+			for(int sinkNo = 0; sinkNo < replicatedSinks.size(); sinkNo++) {
+				
+				strSinks += ((List<ILogicalOperator>) replicatedSinks).get(sinkNo).getName();
+						
+				if(sinkNo == replicatedSinks.size() - 1)
+					strSinks += ")";
+				else strSinks += ", ";
+				
+			}
+			ReplicationQueryPartModificator.log.debug("Inserted a merger between {} and {}.", strSinks, replicatedTarget);
+			
+		}
 		return modifiedReplicatesToOrigin;
 		
 	}
@@ -534,6 +564,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				copiedSinks.add(((List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(replicate)).get(sinkNo));
 			
 			copiedToOriginSinks.put(originSinks.get(sinkNo), copiedSinks);
+			ReplicationQueryPartModificator.log.debug("Found {} as a relative sink of {}.", originSinks.get(sinkNo).getName(), originPart);
 			
 		}
 		
@@ -583,11 +614,12 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 				}
 				
 				copyList.add(copy);
+				ReplicationQueryPartModificator.log.debug("Created query part {} as a copy of query part {}.", copy, plainCopyMap.get(copy));
 				
 			}
 			
 		}
-		
+
 		return copiesToOriginPart;
 		
 	}
@@ -673,6 +705,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 		}
 		
+		ReplicationQueryPartModificator.log.debug("Degree of replication set to {}.", degreeOfReplication);
 		return degreeOfReplication;
 		
 	}
