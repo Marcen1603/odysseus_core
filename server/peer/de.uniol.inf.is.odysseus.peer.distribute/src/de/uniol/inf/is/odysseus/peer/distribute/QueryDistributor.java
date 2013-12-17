@@ -452,6 +452,7 @@ public class QueryDistributor implements IQueryDistributor {
 
 				JxtaServicesProviderService.get().getDiscoveryService().remotePublish(peerID.toString(), adv, 15000);
 				LOG.debug("Sent query part {} to peerID {}", part, peerID);
+				LOG.debug("PQL-Query of query part {} is\n{}", part, adv.getPqlStatement());
 			}
 		}
 		return localParts;
