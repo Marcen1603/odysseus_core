@@ -564,36 +564,42 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps.newHashMap();
 	
 		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists.newArrayList();
-		for(int copyNo = 0; copyNo < degreeOfReplication; copyNo++) {
+		for(int copyNo = 0; copyNo < degreeOfReplication; copyNo++)
 			plainCopies.add(LogicalQueryHelper.copyQueryPartsDeep(queryParts));
-		}
 		
-		for( Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies ) {
+		for(Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies) {
 			
-			for( ILogicalQueryPart copy : plainCopyMap.keySet() ) {
+			for(ILogicalQueryPart copy : plainCopyMap.keySet() ) {
 				
 				Collection<ILogicalQueryPart> copyList = null;
-				if( copiesToOriginPart.containsKey(plainCopyMap.get(copy))) {
+				
+				if(copiesToOriginPart.containsKey(plainCopyMap.get(copy)))
 					copyList = copiesToOriginPart.get(plainCopyMap.get(copy));
-				} else {
+				else {
+					
 					copyList = Lists.newArrayList();
 					copiesToOriginPart.put(plainCopyMap.get(copy), copyList);
+					
 				}
+				
 				copyList.add(copy);
+				
 			}
+			
 		}
 		
 		return copiesToOriginPart;
+		
 	}
 
 	/**
 	 * Determines the degree of replications given by the user (Odysseus script). <br />
 	 * #PEER_MODIFICATION replication <degree>
 	 * @param numQueryParts The number of query parts, which shall be replicated.
-	 * @param modificatorParameters The parameters for the modification given by the user.
+	 * @param modificatorParameters The parameters for the modification given by the user without the parameter "replication".
 	 * @return The degree of parallelism given by the user.
 	 * @throws QueryPartModificationException if <code>numQueryyParts</code> is less than 1, <code>modificatorParameters</code> is null or 
-	 * does not contain at least the name of this modifier and the desired degree of replication. Last one must be an integer greater or equal to 
+	 * does not contain at least the desired degree of replication, which must be an integer greater or equal to 
 	 * {@value #min_degree}.
 	 */
 	private static int determineDegreeOfReplication(int numQueryParts, List<String> modificatorParameters) throws QueryPartModificationException {
@@ -611,17 +617,10 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			ReplicationQueryPartModificator.log.error(e.getMessage(), e);
 			throw e;
 			
-		} else if(modificatorParameters.size() < 2) {
+		} else if(modificatorParameters.isEmpty()) {
 			
-			QueryPartModificationException e = new QueryPartModificationException("Parameters for query part replicator must at least contain two " +
-					"arguments: name of replicator and degree of replication!");
-			ReplicationQueryPartModificator.log.error(e.getMessage(), e);
-			throw e;
-			
-		} else if(!modificatorParameters.get(0).equals(ReplicationQueryPartModificator.name)) {
-			
-			QueryPartModificationException e = new QueryPartModificationException("First parameter for query part replicator must be its name: " + 
-					ReplicationQueryPartModificator.name + "!");
+			QueryPartModificationException e = new QueryPartModificationException("Parameters for query part replicator must at least contain one " +
+					"arguments: degree of replication!");
 			ReplicationQueryPartModificator.log.error(e.getMessage(), e);
 			throw e;
 			
@@ -633,11 +632,11 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Preconditions 2
 		try {
 			
-			degreeOfReplication = Integer.parseInt(modificatorParameters.get(1));
+			degreeOfReplication = Integer.parseInt(modificatorParameters.get(0));
 			if(degreeOfReplication < ReplicationQueryPartModificator.min_degree) {
 				
-				QueryPartModificationException e = new QueryPartModificationException("Second parameter for query part replicator, " +
-						"the degree of replication must be at least" + ReplicationQueryPartModificator.min_degree + "!");
+				QueryPartModificationException e = new QueryPartModificationException("First parameter for query part replicator, " +
+						"the degree of replication, must be at least" + ReplicationQueryPartModificator.min_degree + "!");
 				ReplicationQueryPartModificator.log.error(e.getMessage(), e);
 				throw e;
 				
@@ -645,7 +644,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 		} catch(NumberFormatException nfe) {
 			
-			QueryPartModificationException e = new QueryPartModificationException("Second parameter for query part replicator must be an integer!", nfe);
+			QueryPartModificationException e = new QueryPartModificationException("First parameter for query part replicator must be an integer!", nfe);
 			ReplicationQueryPartModificator.log.error(e.getMessage(), e);
 			throw e;
 			
@@ -657,7 +656,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Preconditions 3
 		if(!optDict.isPresent()) {
 			
-			QueryPartModificationException e = new QueryPartModificationException("No IP2PDictionary available!");
+			QueryPartModificationException e = new QueryPartModificationException("No P2PDictionary available!");
 			ReplicationQueryPartModificator.log.error(e.getMessage(), e);
 			throw e;
 			
