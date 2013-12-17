@@ -160,6 +160,13 @@ public final class LogicalQueryHelper {
 		
 		for(ILogicalOperator operator : part.getOperators()) {
 			
+			if(operator.getSubscribedToSource().isEmpty()) {
+				
+				relativeSources.add(operator);
+				continue;
+				
+			}
+			
 			for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 				
 				if(!part.getOperators().contains(subToSource.getTarget())) {
@@ -191,6 +198,14 @@ public final class LogicalQueryHelper {
 		final Collection<ILogicalOperator> relativeSinks = Lists.newArrayList();
 		
 		for(ILogicalOperator operator : part.getOperators()) {
+			
+			
+			if(operator.getSubscriptions().isEmpty()) {
+				
+				relativeSinks.add(operator);
+				continue;
+				
+			}
 			
 			for(LogicalSubscription subToSink : operator.getSubscriptions()) {
 				
