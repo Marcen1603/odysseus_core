@@ -94,7 +94,9 @@ public final class LogicalQueryHelper {
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 
+				setDestinationNames(operator, streamPlanCopy);			
 				replaceWithSubplan(operator, streamPlanCopy);
+					
 				operatorsToRemove.add(operator);
 				operatorsToAdd.add(streamPlanCopy);
 			}
@@ -104,7 +106,13 @@ public final class LogicalQueryHelper {
 		operators.addAll(operatorsToAdd);
 
 		return operators;
+	}
 
+	private static void setDestinationNames(ILogicalOperator fromOperator, ILogicalOperator toOperator) {
+		Collection<ILogicalOperator> streamPlanOperators = getAllOperators(toOperator);
+		for( ILogicalOperator streamPlanOperator : streamPlanOperators ) {
+			streamPlanOperator.setDestinationName(fromOperator.getDestinationName());
+		}
 	}
 
 	public static void replaceWithSubplan(ILogicalOperator leafOp, ILogicalOperator newOp) {
