@@ -59,7 +59,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 
 		/************* Index ****************/
 		TableViewerColumn indexColumn = new TableViewerColumn(peersTable, SWT.NONE);
-		indexColumn.getColumn().setText("Index");
+		indexColumn.getColumn().setText("#");
 		indexColumn.setLabelProvider(new CellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -87,7 +87,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 				cell.setText(determinePeerName((PeerID) cell.getElement()));
 			}
 		});
-		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		new ColumnViewerSorter(peersTable, nameColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -110,7 +110,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(addressColumn.getColumn(), new ColumnWeightData(10, 25, true));
 		new ColumnViewerSorter(peersTable, addressColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -134,7 +134,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(memColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(memColumn.getColumn(), new ColumnWeightData(3, 25, true));
 		new ColumnViewerSorter(peersTable, memColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -167,7 +167,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 				}
 			}
 		});
-		tableColumnLayout.setColumnData(cpuColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		tableColumnLayout.setColumnData(cpuColumn.getColumn(), new ColumnWeightData(3, 25, true));
 		new ColumnViewerSorter(peersTable, cpuColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
@@ -180,6 +180,63 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 				} else if( optResourceUsage1.isPresent() && optResourceUsage2.isPresent() ) {
 					return Double.compare(calcCpuPercentage(optResourceUsage1.get()), calcCpuPercentage(optResourceUsage2.get()));
 				}
+				return 0;
+			}
+		};
+		
+		/************* Querycounts ****************/
+		TableViewerColumn queriesColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		queriesColumn.getColumn().setText("Queries");
+		queriesColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				PeerID peerID = (PeerID) cell.getElement();
+				Optional<IResourceUsage> optResourceUsage = PeerResourceManagerService.get().getRemoteResourceUsage(peerID);
+				if (optResourceUsage.isPresent()) {
+					IResourceUsage usage = optResourceUsage.get();
+					cell.setText(usage.getRunningQueriesCount() + " / " + ( usage.getRunningQueriesCount() + usage.getStoppedQueriesCount() ));
+				} else {
+					cell.setText("<unknown>");
+				}
+			}
+		});
+		tableColumnLayout.setColumnData(queriesColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(peersTable, queriesColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
+				Optional<IResourceUsage> optResourceUsage1 = PeerResourceManagerService.get().getRemoteResourceUsage((PeerID)e1);
+				Optional<IResourceUsage> optResourceUsage2 = PeerResourceManagerService.get().getRemoteResourceUsage((PeerID)e2);
+				if( optResourceUsage1.isPresent() && !optResourceUsage2.isPresent() ) {
+					return 1;
+				} else if( !optResourceUsage1.isPresent() && optResourceUsage2.isPresent() ) {
+					return -1;
+				} else if( optResourceUsage1.isPresent() && optResourceUsage2.isPresent() ) {
+					return Double.compare(optResourceUsage1.get().getRunningQueriesCount(), optResourceUsage2.get().getRunningQueriesCount());
+				}
+				return 0;
+			}
+		};
+		
+		/************* Bandwidth ****************/
+		TableViewerColumn netColumn = new TableViewerColumn(peersTable, SWT.NONE);
+		netColumn.getColumn().setText("Network");
+		netColumn.setLabelProvider(new CellLabelProvider() {
+			@Override
+			public void update(ViewerCell cell) {
+				PeerID peerID = (PeerID) cell.getElement();
+				Optional<IResourceUsage> optResourceUsage = PeerResourceManagerService.get().getRemoteResourceUsage(peerID);
+				if (optResourceUsage.isPresent()) {
+					IResourceUsage usage = optResourceUsage.get();
+					cell.setText( ( usage.getNetInputRate() + usage.getNetOutputRate() ) + " / " + usage.getNetBandwidthMax());
+				} else {
+					cell.setText("<unknown>");
+				}
+			}
+		});
+		tableColumnLayout.setColumnData(netColumn.getColumn(), new ColumnWeightData(5, 25, true));
+		new ColumnViewerSorter(peersTable, netColumn) {
+			@Override
+			protected int doCompare(Viewer viewer, Object e1, Object e2) {
 				return 0;
 			}
 		};
