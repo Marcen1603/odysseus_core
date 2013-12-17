@@ -9,8 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.uniol.inf.is.odysseus.core.collection.IPair;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -293,34 +291,42 @@ public final class LogicalQueryHelper {
 		return subsToReplace;
 	}
 	
-	// TODO at least a documentation, that subscriptions to outside the query part will be ignored
-	public static IPair<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartDeep(ILogicalQueryPart queryPart) {
+	/**
+	 * Removes all subscriptions whose target is not within the given query part.
+	 * @param queryPart The query part to cut.
+	 */
+	public static void cutQueryPart(ILogicalQueryPart queryPart) {
 		
-		Preconditions.checkNotNull(queryPart, "Query part to be copied must be not null!");
+		Preconditions.checkNotNull(queryPart, "Query part to be cut must be not null!");
 		
 		Collection<ILogicalOperator> operators = queryPart.getOperators();
-
-		// copy --> original
-		Map<ILogicalOperator, ILogicalOperator> operatorCopyMap = createOperatorCopyMap(operators);
-		
-		for(ILogicalOperator operator : operatorCopyMap.keySet()) {
+		for(ILogicalOperator operator : operators) {
 			
+			Collection<LogicalSubscription> subsToRemove = Lists.newArrayList();
 			for(LogicalSubscription subcription : operator.getSubscriptions()) {
 				
-				if(!operatorCopyMap.keySet().contains(subcription.getTarget()))
-					continue;
-				
-				ILogicalOperator source = getCopyOfMap(operator, operatorCopyMap);
-				ILogicalOperator sink = getCopyOfMap(subcription.getTarget(), operatorCopyMap);
-				
-				source.subscribeSink(sink, subcription.getSinkInPort(), subcription.getSourceOutPort(), subcription.getSchema());				
+				if(!operators.contains(subcription.getTarget()))
+					subsToRemove.add(subcription);	
 				
 			}
 			
+			for(LogicalSubscription sub : subsToRemove)
+				operator.unsubscribeSink(sub);
+			
+			subsToRemove.clear();
+			for(LogicalSubscription subcription : operator.getSubscribedToSource()) {
+				
+				if(!operators.contains(subcription.getTarget()))
+					subsToRemove.add(subcription);	
+				
+			}
+			
+			for(LogicalSubscription sub : subsToRemove)
+				operator.unsubscribeSink(sub);
+			
+			
 		}
 		
-		ILogicalQueryPart copy = new LogicalQueryPart(operatorCopyMap.keySet());
-		return new Pair<ILogicalQueryPart, ILogicalQueryPart>(queryPart, copy);
 	}
 
 	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(Collection<ILogicalQueryPart> queryParts) {
