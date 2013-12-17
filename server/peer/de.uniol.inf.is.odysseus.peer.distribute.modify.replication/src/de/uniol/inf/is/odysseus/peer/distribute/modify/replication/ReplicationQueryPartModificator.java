@@ -86,12 +86,12 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		final int degreeOfReplication = 
 				ReplicationQueryPartModificator.determineDegreeOfReplication(queryParts.size(), modificatorParameters);
 		
-		// Copy the query parts (mutable map)
+		// Copy the query parts
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> replicatesToOrigin = 
 				ReplicationQueryPartModificator.copyQueryParts(queryParts, degreeOfReplication);
 		
 		// Modify each query part
-		for(ILogicalQueryPart originPart : replicatesToOrigin.keySet())
+		for(ILogicalQueryPart originPart : queryParts)
 			replicatesToOrigin.putAll(ReplicationQueryPartModificator.modify(originPart, replicatesToOrigin));
 		
 		// Create the return value
@@ -508,6 +508,12 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			Collection<ILogicalOperator> operatorsWithMerger = Lists.newArrayList(queryPartOfReplicatedTarget.getOperators());
 			operatorsWithMerger.add(merger);
 			Collection<ILogicalQueryPart> modifiedQueryParts = Lists.newArrayList();
+			for(ILogicalQueryPart part : replicatesToOrigin.get(originPartOfTarget)) {
+				
+				if(!part.equals(queryPartOfReplicatedTarget))
+					modifiedQueryParts.add(part);
+				
+			}
 			modifiedQueryParts.add(new LogicalQueryPart(operatorsWithMerger));
 			modifiedReplicatesToOrigin.put(originPartOfTarget, modifiedQueryParts);
 			
