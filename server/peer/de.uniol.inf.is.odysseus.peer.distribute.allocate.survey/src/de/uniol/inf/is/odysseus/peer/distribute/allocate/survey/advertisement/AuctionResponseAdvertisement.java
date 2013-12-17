@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-public final class AuctionResponseAdvertisement extends Advertisement implements Serializable, Comparable<AuctionResponseAdvertisement> {
+public final class AuctionResponseAdvertisement extends Advertisement implements Serializable {
 	private static final long serialVersionUID = 8933981347574448287L;
 	private static final String ADVERTISEMENT_TYPE = "jxta:BidAdvertisement";
 	private static final String ID_TAG = "id";
@@ -43,6 +43,7 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 	private String pqlStatement;
 	private String transCfgName;
 	private PeerID ownerPeerId;
+	
 	private double bid;
 
 	public static String getAdvertisementType() {
@@ -229,18 +230,5 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 
 	public void setBid(double bid) {
 		this.bid = bid;
-	}
-
-	@Override
-	public int compareTo(AuctionResponseAdvertisement o) {
-		if(this.bid > o.bid) {
-			return 1;
-		}
-		else if(this.bid < o.bid) {
-			return -1;
-		}
-		else {
-			return 0;
-		}
 	}
 }
