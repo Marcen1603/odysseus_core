@@ -293,6 +293,7 @@ public final class LogicalQueryHelper {
 		return subsToReplace;
 	}
 	
+	// TODO at least a documentation, that subscriptions to outside the query part will be ignored
 	public static IPair<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartDeep(ILogicalQueryPart queryPart) {
 		
 		Preconditions.checkNotNull(queryPart, "Query part to be copied must be not null!");
