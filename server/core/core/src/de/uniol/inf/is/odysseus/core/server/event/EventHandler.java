@@ -223,50 +223,61 @@ class EventDispatcher extends Thread {
 		IEvent<?, ?> eventToFire = null;
 		Long timeStamp = null;
 		Object caller = null;
-		while (!isInterrupted()) {
-			synchronized (eventQueue) {
-				while (!isInterrupted() && eventQueue.isEmpty()
-						&& eventTimestamps.isEmpty()) {
-					try {
-						eventQueue.wait(1000);
-					} catch (InterruptedException e) {
+		
+		try {
+			while (!isInterrupted()) {
+				synchronized (eventQueue) {
+					while (!isInterrupted() && eventQueue.isEmpty()
+							&& eventTimestamps.isEmpty()) {
+						try {
+							eventQueue.wait(1000);
+						} catch (InterruptedException e) {
+						}
+					}
+					if (isInterrupted()) {
+						logger.debug("INTERRUPTED " + getName());
+						continue;
+					}
+					eventToFire = eventQueue.removeFirst();
+					timeStamp = eventTimestamps.removeFirst();
+					caller = callerList.removeFirst();
+				}
+	
+				synchronized (handler.eventListener) {
+					Map<IEventType, ArrayList<IEventListener>> el = handler.eventListener
+							.get(caller);
+					if (el != null) {
+						ArrayList<IEventListener> list = el.get(eventToFire
+								.getEventType());
+						if (list != null) {
+							synchronized (list) {
+								for (IEventListener listener : list) {
+									try {
+										listener.eventOccured(eventToFire, timeStamp);
+									} catch( Throwable t ) {
+										logger.debug("Exception in event listener", t);
+									}
+								}
+							}
+						}
 					}
 				}
-				if (isInterrupted()) {
-					logger.debug("INTERRUPTED " + getName());
-					continue;
-				}
-				eventToFire = eventQueue.removeFirst();
-				timeStamp = eventTimestamps.removeFirst();
-				caller = callerList.removeFirst();
-			}
-
-			synchronized (handler.eventListener) {
-				Map<IEventType, ArrayList<IEventListener>> el = handler.eventListener
-						.get(caller);
-				if (el != null) {
-					ArrayList<IEventListener> list = el.get(eventToFire
-							.getEventType());
-					if (list != null) {
-						synchronized (list) {
-							for (IEventListener listener : list) {
+				synchronized (handler.genericEventListener) {
+					if (handler.genericEventListener.get(caller) != null) {
+						for (IEventListener listener : handler.genericEventListener
+								.get(caller)) {
+							try {
 								listener.eventOccured(eventToFire, timeStamp);
+							} catch( Throwable t ) {
+								logger.debug("Exception in event listener", t);
 							}
 						}
 					}
 				}
 			}
-			synchronized (handler.genericEventListener) {
-				if (handler.genericEventListener.get(caller) != null) {
-					for (IEventListener listener : handler.genericEventListener
-							.get(caller)) {
-						listener.eventOccured(eventToFire, timeStamp);
-					}
-				}
-			}
+		} finally {
+			logger.debug("Event Dispatcher terminated: " + getName());
 		}
-
-		logger.debug("Event Dispatcher terminated: " + getName());
 	}
 
 	@Override
