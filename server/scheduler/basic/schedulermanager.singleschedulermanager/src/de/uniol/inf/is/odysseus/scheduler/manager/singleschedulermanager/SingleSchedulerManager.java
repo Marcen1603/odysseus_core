@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,392 +54,433 @@ import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
  * @author Wolf Bauer, Marco Grawunder
  * 
  */
-public class SingleSchedulerManager extends AbstractSchedulerManager implements IInfoProvider, IPlanModificationListener {
+public class SingleSchedulerManager extends AbstractSchedulerManager implements
+		IInfoProvider, IPlanModificationListener {
 
-    static Logger logger = LoggerFactory.getLogger(SingleSchedulerManager.class);
+	static Logger logger = LoggerFactory
+			.getLogger(SingleSchedulerManager.class);
 
-    /**
-     * The current active {@link IScheduler}.
-     */
-    private IScheduler activeScheduler;
+	/**
+	 * The current active {@link IScheduler}.
+	 */
+	private IScheduler activeScheduler;
 
-    /**
-     * The current active scheduling strategy as id.
-     */
-    private String activeSchedulingStrategy;
+	/**
+	 * The current active scheduling strategy as id.
+	 */
+	private String activeSchedulingStrategy;
 
-    /**
-     * The current active scheduler as id.
-     */
-    private String activeSchedulerString;
+	/**
+	 * The current active scheduler as id.
+	 */
+	private String activeSchedulerString;
 
-    Properties props = new Properties();
-    boolean configSchedulerDirty = false;
-    boolean configSchedulingDirty = false;
-    boolean activated = false;
+	Properties props = new Properties();
+	boolean configSchedulerDirty = false;
+	boolean configSchedulingDirty = false;
+	boolean activated = false;
 
 	private Map<IIterableSource<?>, Integer> sourceUsage = new HashMap<>();
 
-    /**
-     * OSGi-Method: Is called when this object will be activated by OSGi (after
-     * constructor and bind-methods). This method can be used to configure this
-     * object.
-     */
-    @SuppressWarnings("unused")
-    private void activate() {
-        logger.info("Activate schedulererManager.");
-        Set<String> schedulers = getScheduler();
-        Set<String> strats = getSchedulingStrategy();
-        String defaultScheduler = null;
-        String defaultStrat = null;
+	/**
+	 * OSGi-Method: Is called when this object will be activated by OSGi (after
+	 * constructor and bind-methods). This method can be used to configure this
+	 * object.
+	 */
+	@SuppressWarnings("unused")
+	private void activate() {
+		logger.info("Activate schedulererManager.");
+		Set<String> schedulers = getScheduler();
+		Set<String> strats = getSchedulingStrategy();
+		String defaultScheduler = null;
+		String defaultStrat = null;
 
-        // create default scheduler
-        if (schedulers != null && strats != null) {
+		// create default scheduler
+		if (schedulers != null && strats != null) {
 
-            try {
-                File f = FileUtils.openOrCreateFile(OdysseusConfiguration.get("schedulingConfigFile"));
-                FileInputStream in;
-                in = new FileInputStream(f);
-                props.load(in);
-                in.close();
+			try {
+				File f = FileUtils.openOrCreateFile(OdysseusConfiguration
+						.get("schedulingConfigFile"));
+				FileInputStream in;
+				in = new FileInputStream(f);
+				props.load(in);
+				in.close();
 
-                if (props.getProperty("defaultScheduler") == null || props.getProperty("defaultScheduler").length() == 0) {
-                    logger.info("No Scheduler-Config-File found.");
-                    props.setProperty("defaultScheduler", schedulers.iterator().hasNext() ? schedulers.iterator().next() : null);
-                    props.setProperty("defaultStrat", strats.iterator().hasNext() ? strats.iterator().next() : null);
-                    FileOutputStream out;
-                    try {
-                        out = new FileOutputStream(OdysseusConfiguration.get("schedulingConfigFile"));
-                        props.store(out, "--- Scheduling Property File edit only if you know what you are doing ---");
-                        out.close();
-                        logger.info("New Scheduler-Config-File created");
-                    } catch (Exception e2) {
-                        e2.printStackTrace();
-                    }
-                }
+				if (props.getProperty("defaultScheduler") == null
+						|| props.getProperty("defaultScheduler").length() == 0) {
+					logger.info("No Scheduler-Config-File found.");
+					props.setProperty("defaultScheduler", schedulers.iterator()
+							.hasNext() ? schedulers.iterator().next() : null);
+					props.setProperty("defaultStrat", strats.iterator()
+							.hasNext() ? strats.iterator().next() : null);
+					FileOutputStream out;
+					try {
+						out = new FileOutputStream(
+								OdysseusConfiguration
+										.get("schedulingConfigFile"));
+						props.store(out,
+								"--- Scheduling Property File edit only if you know what you are doing ---");
+						out.close();
+						logger.info("New Scheduler-Config-File created");
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+				}
 
-                defaultScheduler = props.getProperty("defaultScheduler");
-                defaultStrat = props.getProperty("defaultStrat");
+				defaultScheduler = props.getProperty("defaultScheduler");
+				defaultStrat = props.getProperty("defaultStrat");
 
-                setActiveScheduler(defaultScheduler, defaultStrat, null);
+				setActiveScheduler(defaultScheduler, defaultStrat, null);
 
-                logger.info("Active scheduler. " + this.activeScheduler.getClass());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        activated = true;
-    }
+				logger.info("Active scheduler. "
+						+ this.activeScheduler.getClass());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		activated = true;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
-     * setActiveScheduler(java.lang.String, java.lang.String,
-     * de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
-     */
-    @Override
-    public void setActiveScheduler(String schedulerToSet, String schedulingStrategyToSet, IExecutionPlan executionPlan) {
-        List<IIterableSource<?>> leafSources = executionPlan != null ? executionPlan.getLeafSources() : null;
-        Collection<IPhysicalQuery> partialPlans = executionPlan != null ? executionPlan.getQueries() : null;
-        setActiveScheduler(schedulerToSet, schedulingStrategyToSet, leafSources, partialPlans);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * setActiveScheduler(java.lang.String, java.lang.String,
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
+	 */
+	@Override
+	public void setActiveScheduler(String schedulerToSet,
+			String schedulingStrategyToSet, IExecutionPlan executionPlan) {
+		List<IIterableSource<?>> leafSources = executionPlan != null ? executionPlan
+				.getLeafSources() : null;
+		Collection<IPhysicalQuery> partialPlans = executionPlan != null ? executionPlan
+				.getQueries() : null;
+		setActiveScheduler(schedulerToSet, schedulingStrategyToSet,
+				leafSources, partialPlans);
+	}
 
-    private void setActiveScheduler(String schedulerToSet, String schedulingStrategyToSet, List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
-        Set<String> schedulers = getScheduler();
-        Set<String> strats = getSchedulingStrategy();
+	private void setActiveScheduler(String schedulerToSet,
+			String schedulingStrategyToSet,
+			List<IIterableSource<?>> leafSources,
+			Collection<IPhysicalQuery> partialPlans) {
+		Set<String> schedulers = getScheduler();
+		Set<String> strats = getSchedulingStrategy();
 
-        boolean wasRunning = false;
+		boolean wasRunning = false;
 
-        if (activeScheduler != null && activeScheduler.isRunning()) {
-            activeScheduler.stopScheduling();
-            wasRunning = true;
-        }
+		if (activeScheduler != null && activeScheduler.isRunning()) {
+			activeScheduler.stopScheduling();
+			wasRunning = true;
+		}
 
-        // Test if this scheduler is loaded
-        if (!schedulers.contains(schedulerToSet)) {
-            logger.debug(schedulerToSet + " not loaded (now)");
-            configSchedulerDirty = true;
-            schedulerToSet = schedulers.iterator().hasNext() ? schedulers.iterator().next() : null;
-            logger.debug("using default " + schedulerToSet);
-        }
-        if (!strats.contains(schedulingStrategyToSet)) {
-            logger.debug(schedulingStrategyToSet + " not loaded (now)");
-            configSchedulingDirty = true;
-            schedulingStrategyToSet = strats.iterator().hasNext() ? strats.iterator().next() : null;
-            logger.debug("using default " + schedulingStrategyToSet);
-        }
+		// Test if this scheduler is loaded
+		if (!schedulers.contains(schedulerToSet)) {
+			logger.debug(schedulerToSet + " not loaded (now)");
+			configSchedulerDirty = true;
+			schedulerToSet = schedulers.iterator().hasNext() ? schedulers
+					.iterator().next() : null;
+			logger.debug("using default " + schedulerToSet);
+		}
+		if (!strats.contains(schedulingStrategyToSet)) {
+			logger.debug(schedulingStrategyToSet + " not loaded (now)");
+			configSchedulingDirty = true;
+			schedulingStrategyToSet = strats.iterator().hasNext() ? strats
+					.iterator().next() : null;
+			logger.debug("using default " + schedulingStrategyToSet);
+		}
 
-        try {
-            if (this.activeScheduler != null) {
-                fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULER_REMOVED, this.activeScheduler));
-            }
-            logger.debug("Set active Scheduler " + schedulerToSet + " (" + schedulingStrategyToSet + ")");
-            // create a new scheduler an set the error listener
-            this.activeScheduler = createScheduler(schedulerToSet, schedulingStrategyToSet);
-            this.activeScheduler.addErrorEventListener(this);
-            fire(new SchedulerManagerEvent(this, SchedulerManagerEventType.SCHEDULER_SET, this.activeScheduler));
-            this.activeSchedulingStrategy = schedulingStrategyToSet;
-            this.activeSchedulerString = schedulerToSet;
-            if (wasRunning) {
-                activeScheduler.startScheduling();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			if (this.activeScheduler != null) {
+				fire(new SchedulerManagerEvent(this,
+						SchedulerManagerEventType.SCHEDULER_REMOVED,
+						this.activeScheduler));
+			}
+			logger.debug("Set active Scheduler " + schedulerToSet + " ("
+					+ schedulingStrategyToSet + ")");
+			// create a new scheduler an set the error listener
+			this.activeScheduler = createScheduler(schedulerToSet,
+					schedulingStrategyToSet);
+			this.activeScheduler.addErrorEventListener(this);
+			fire(new SchedulerManagerEvent(this,
+					SchedulerManagerEventType.SCHEDULER_SET,
+					this.activeScheduler));
+			this.activeSchedulingStrategy = schedulingStrategyToSet;
+			this.activeSchedulerString = schedulerToSet;
+			if (wasRunning) {
+				activeScheduler.startScheduling();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        // refresh the scheduling
-        if (leafSources != null || partialPlans != null) {
-            refreshScheduling(leafSources, partialPlans);
-        }
+		// refresh the scheduling
+		if (leafSources != null || partialPlans != null) {
+			refreshScheduling(leafSources, partialPlans);
+		}
 
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos
-     * ()
-     */
-    @Override
-    public String getInfos() {
-        String infos = "<SchedulerManager class=\"" + this + "\"> ";
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider#getInfos
+	 * ()
+	 */
+	@Override
+	public String getInfos() {
+		String infos = "<SchedulerManager class=\"" + this + "\"> ";
 
-        infos += getInfoString(this.activeScheduler, "ActiveScheduler");
+		infos += getInfoString(this.activeScheduler, "ActiveScheduler");
 
-        for (String scheduler : getScheduler()) {
-            infos += getInfoString(scheduler, "Additional SchedulerFactory: ");
-        }
+		for (String scheduler : getScheduler()) {
+			infos += getInfoString(scheduler, "Additional SchedulerFactory: ");
+		}
 
-        infos += AppEnv.LINE_SEPARATOR + "</SchedulerManager> ";
+		infos += AppEnv.LINE_SEPARATOR + "</SchedulerManager> ";
 
-        return infos;
-    }
+		return infos;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
-     * #isRunning()
-     */
-    @Override
-    public boolean isRunning() throws NoSchedulerLoadedException {
-        return activeScheduler != null && this.activeScheduler.isRunning();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
+	 * #isRunning()
+	 */
+	@Override
+	public boolean isRunning() throws NoSchedulerLoadedException {
+		return activeScheduler != null && this.activeScheduler.isRunning();
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
-     * setTimeSlicePerStrategy(long)
-     */
-    @Override
-    public void setTimeSlicePerStrategy(long time) throws NoSchedulerLoadedException {
-        this.activeScheduler.setTimeSlicePerStrategy(time);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * setTimeSlicePerStrategy(long)
+	 */
+	@Override
+	public void setTimeSlicePerStrategy(long time)
+			throws NoSchedulerLoadedException {
+		this.activeScheduler.setTimeSlicePerStrategy(time);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
-     * #startScheduling ()
-     */
-    @Override
-    public void startScheduling() throws NoSchedulerLoadedException, OpenFailedException {
-        if (!this.activeScheduler.isRunning()) {
-            logger.debug("Start scheduling.");
-            this.activeScheduler.startScheduling();
-            logger.debug("Scheduling started.");
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
+	 * #startScheduling ()
+	 */
+	@Override
+	public void startScheduling() throws NoSchedulerLoadedException,
+			OpenFailedException {
+		if (!this.activeScheduler.isRunning()) {
+			logger.debug("Start scheduling.");
+			this.activeScheduler.startScheduling();
+			logger.debug("Scheduling started.");
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
-     * #stopScheduling ()
-     */
-    @Override
-    public void stopScheduling() throws NoSchedulerLoadedException {
-        if (this.activeScheduler.isRunning()) {
-            logger.debug("Stop scheduling.");
-            this.activeScheduler.stopScheduling();
-            logger.debug("Scheduling stopped.");
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager
+	 * #stopScheduling ()
+	 */
+	@Override
+	public void stopScheduling() throws NoSchedulerLoadedException {
+		if (this.activeScheduler.isRunning()) {
+			logger.debug("Stop scheduling.");
+			this.activeScheduler.stopScheduling();
+			logger.debug("Scheduling stopped.");
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
-     * refreshScheduling
-     * (de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
-     */
-    @Override
-    public void refreshScheduling(IExecutionPlan execPlan) throws NoSchedulerLoadedException {
-        // Update Source/Query assignment
-    	sourceUsage.clear();
-    	for (IPhysicalQuery p: execPlan.getQueries()){
-    		increaseSourceUsage(p);
-    	}
-    	refreshScheduling(execPlan.getLeafSources(), execPlan.getQueries());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * refreshScheduling
+	 * (de.uniol.inf.is.odysseus.core.server.scheduler.manager.IScheduleable)
+	 */
+	@Override
+	public void refreshScheduling(IExecutionPlan execPlan)
+			throws NoSchedulerLoadedException {
+		// Update Source/Query assignment
+		sourceUsage.clear();
+		for (IPhysicalQuery p : execPlan.getQueries()) {
+			increaseSourceUsage(p);
+		}
+		refreshScheduling(execPlan.getLeafSources(), execPlan.getQueries());
+	}
 
-    private void refreshScheduling(List<IIterableSource<?>> leafSources, Collection<IPhysicalQuery> partialPlans) {
-        // Determine query source assignment   	
-    	logger.debug("Refresh Scheduling. Set Sources");
-        this.activeScheduler.setLeafSources(leafSources);
-        logger.debug("Refresh Scheduling. Set Partial Plans");
-        this.activeScheduler.setPartialPlans(partialPlans);
-        logger.debug("Refresh Scheduling. Done");
-    }
-    
-    @Override
-    public void addQuery(IPhysicalQuery affectedQuery) {
-    	logger.debug("AddQuery "+affectedQuery);
-    	increaseSourceUsage(affectedQuery);
-    	this.activeScheduler.addLeafSources(affectedQuery.getIteratableLeafSources());
-    	this.activeScheduler.addPartialPlan(affectedQuery);
-    }
+	private void refreshScheduling(List<IIterableSource<?>> leafSources,
+			Collection<IPhysicalQuery> partialPlans) {
+		// Determine query source assignment
+		logger.debug("Refresh Scheduling. Set Sources");
+		this.activeScheduler.setLeafSources(leafSources);
+		logger.debug("Refresh Scheduling. Set Partial Plans");
+		this.activeScheduler.setPartialPlans(partialPlans);
+		logger.debug("Refresh Scheduling. Done");
+	}
+
+	@Override
+	public void addQuery(IPhysicalQuery affectedQuery) {
+		logger.debug("AddQuery " + affectedQuery);
+		increaseSourceUsage(affectedQuery);
+		this.activeScheduler.addLeafSources(affectedQuery
+				.getIteratableLeafSources());
+		this.activeScheduler.addPartialPlan(affectedQuery);
+	}
 
 	private void increaseSourceUsage(IPhysicalQuery affectedQuery) {
-		for (IIterableSource<?> s : affectedQuery.getIteratableLeafSources()){
-    		Integer count = sourceUsage.get(s);
-    		if (count == null){
-    			sourceUsage.put(s,1);
-    		}else{
-    			sourceUsage.put(s,count+1);
-    		}
-    	}
+		for (IIterableSource<?> s : affectedQuery.getIteratableLeafSources()) {
+			Integer count = sourceUsage.get(s);
+			if (count == null) {
+				sourceUsage.put(s, 1);
+			} else {
+				sourceUsage.put(s, count + 1);
+			}
+		}
 	}
-	
-	private List<IIterableSource<?>> decreaseSourceUsage(IPhysicalQuery affectedQuery) {
+
+	private List<IIterableSource<?>> decreaseSourceUsage(
+			IPhysicalQuery affectedQuery) {
 		List<IIterableSource<?>> ret = new LinkedList<>();
-		for (IIterableSource<?> s : affectedQuery.getIteratableLeafSources()){
-    		Integer count = sourceUsage.get(s);
-    		if (count == null){
-    			logger.error("Trying to remove not scheduled source"+s);
-    		}else{
-    			if (count > 1){
-    				sourceUsage.put(s,count-1);
-    			}else{
-    				sourceUsage.remove(s);
-    				ret.add(s);
-    			}
-    		}
-    	}
+		synchronized (sourceUsage) {
+			for (IIterableSource<?> s : affectedQuery
+					.getIteratableLeafSources()) {
+				Integer count = sourceUsage.get(s);
+				if (count == null) {
+					logger.error("Trying to remove not scheduled source" + s);
+				} else {
+					if (count > 1) {
+						sourceUsage.put(s, count - 1);
+					} else {
+						sourceUsage.remove(s);
+						ret.add(s);
+					}
+				}
+			}
+		}
 		return ret;
 	}
-	
-    
-    @Override
-    public void removeQuery(IPhysicalQuery affectedQuery) {
-    	logger.debug("RemoveQuery "+affectedQuery);
-    	this.activeScheduler.removePartialPlan(affectedQuery);
-    	List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
-    	this.activeScheduler.removeLeafSources(toRemove);
-    }
-    
-    @Override
-    public void startedQuery(IPhysicalQuery affectedQuery) {
-    	logger.debug("StartedQuery "+affectedQuery);
-    	this.activeScheduler.addLeafSources(affectedQuery.getIteratableLeafSources());
-    	this.activeScheduler.addPartialPlan(affectedQuery);   	
-    }
-    
-    @Override
-    public void stoppedQuery(IPhysicalQuery affectedQuery) {
-    	// TODO: Is there anything that needs to be done?    	
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
-     * setSchedulerCount(int)
-     */
-    @Override
-    public void setSchedulerCount(int schedulerCount) {
-        // do nothing use only one scheduler
-    }
+	@Override
+	public void removeQuery(IPhysicalQuery affectedQuery) {
+		logger.debug("RemoveQuery " + affectedQuery);
+		this.activeScheduler.removePartialPlan(affectedQuery);
+		List<IIterableSource<?>> toRemove = decreaseSourceUsage(affectedQuery);
+		this.activeScheduler.removeLeafSources(toRemove);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
-     * getActiveScheduler()
-     */
-    @Override
-    public String getActiveSchedulerID() {
-        return activeSchedulerString;
-    }
+	@Override
+	public void startedQuery(IPhysicalQuery affectedQuery) {
+		logger.debug("StartedQuery " + affectedQuery);
+		this.activeScheduler.addLeafSources(affectedQuery
+				.getIteratableLeafSources());
+		this.activeScheduler.addPartialPlan(affectedQuery);
+	}
 
-    @Override
-    public IScheduler getActiveScheduler() {
-        return activeScheduler;
-    }
+	@Override
+	public void stoppedQuery(IPhysicalQuery affectedQuery) {
+		// TODO: Is there anything that needs to be done?
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
-     * getActiveSchedulingStrategy()
-     */
-    @Override
-    public String getActiveSchedulingStrategyID() {
-        return activeSchedulingStrategy;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * setSchedulerCount(int)
+	 */
+	@Override
+	public void setSchedulerCount(int schedulerCount) {
+		// do nothing use only one scheduler
+	}
 
-    @Override
-    public synchronized void schedulingsChanged() {
-        logger.debug("SchedulingChanged " + configSchedulerDirty + " " + configSchedulingDirty);
-        if (configSchedulerDirty || configSchedulingDirty) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * getActiveScheduler()
+	 */
+	@Override
+	public String getActiveSchedulerID() {
+		return activeSchedulerString;
+	}
 
-            Set<String> schedulers = getScheduler();
-            Set<String> strats = getSchedulingStrategy();
-            // logger.debug(""+strats);
-            String defaultScheduler = props.getProperty("defaultScheduler");
-            String defaultStrat = props.getProperty("defaultStrat");
-            // logger.debug(" "+defaultScheduler+" "+defaultStrat);
+	@Override
+	public IScheduler getActiveScheduler() {
+		return activeScheduler;
+	}
 
-            if (configSchedulerDirty) {
-                // Test if this scheduler is loaded
-                if (!schedulers.contains(defaultScheduler)) {
-                    configSchedulerDirty = true;
-                    defaultScheduler = schedulers.iterator().hasNext() ? schedulers.iterator().next() : null;
-                } else {
-                    configSchedulerDirty = false;
-                    logger.debug("using Scheduler " + defaultScheduler);
-                }
-            }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uniol.inf.is.odysseus.scheduler.manager.ISchedulerManager#
+	 * getActiveSchedulingStrategy()
+	 */
+	@Override
+	public String getActiveSchedulingStrategyID() {
+		return activeSchedulingStrategy;
+	}
 
-            if (configSchedulingDirty) {
-                if (!strats.contains(defaultStrat)) {
-                    configSchedulingDirty = true;
-                    defaultStrat = strats.iterator().hasNext() ? strats.iterator().next() : null;
-                } else {
-                    configSchedulingDirty = false;
-                    logger.debug("Using Scheduling Strategy " + defaultStrat);
-                }
-            }
+	@Override
+	public synchronized void schedulingsChanged() {
+		logger.debug("SchedulingChanged " + configSchedulerDirty + " "
+				+ configSchedulingDirty);
+		if (configSchedulerDirty || configSchedulingDirty) {
 
-            if (!configSchedulerDirty && !configSchedulingDirty) {
-                logger.debug("Set Scheduler " + defaultScheduler + " " + defaultStrat);
+			Set<String> schedulers = getScheduler();
+			Set<String> strats = getSchedulingStrategy();
+			// logger.debug(""+strats);
+			String defaultScheduler = props.getProperty("defaultScheduler");
+			String defaultStrat = props.getProperty("defaultStrat");
+			// logger.debug(" "+defaultScheduler+" "+defaultStrat);
 
-                setActiveScheduler(defaultScheduler, defaultStrat, activeScheduler.getLeafSources(), activeScheduler.getPartialPlans());
-            }
-        }
-    }
+			if (configSchedulerDirty) {
+				// Test if this scheduler is loaded
+				if (!schedulers.contains(defaultScheduler)) {
+					configSchedulerDirty = true;
+					defaultScheduler = schedulers.iterator().hasNext() ? schedulers
+							.iterator().next() : null;
+				} else {
+					configSchedulerDirty = false;
+					logger.debug("using Scheduler " + defaultScheduler);
+				}
+			}
 
-    @Override
-    public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-        if (this.activeScheduler instanceof IPlanModificationListener) {
-            ((IPlanModificationListener) this.activeScheduler).planModificationEvent(eventArgs);
-        }
-    }
+			if (configSchedulingDirty) {
+				if (!strats.contains(defaultStrat)) {
+					configSchedulingDirty = true;
+					defaultStrat = strats.iterator().hasNext() ? strats
+							.iterator().next() : null;
+				} else {
+					configSchedulingDirty = false;
+					logger.debug("Using Scheduling Strategy " + defaultStrat);
+				}
+			}
+
+			if (!configSchedulerDirty && !configSchedulingDirty) {
+				logger.debug("Set Scheduler " + defaultScheduler + " "
+						+ defaultStrat);
+
+				setActiveScheduler(defaultScheduler, defaultStrat,
+						activeScheduler.getLeafSources(),
+						activeScheduler.getPartialPlans());
+			}
+		}
+	}
+
+	@Override
+	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
+		if (this.activeScheduler instanceof IPlanModificationListener) {
+			((IPlanModificationListener) this.activeScheduler)
+					.planModificationEvent(eventArgs);
+		}
+	}
 
 }
