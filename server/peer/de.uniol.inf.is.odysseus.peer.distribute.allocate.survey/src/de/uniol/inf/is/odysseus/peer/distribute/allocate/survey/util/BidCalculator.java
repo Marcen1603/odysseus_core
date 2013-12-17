@@ -30,7 +30,7 @@ public class BidCalculator {
 
 		double cpuCost = c.getCpuCost();
 		double memCost = c.getMemCost();
-		return new CostSummary(null, cpuCost, memCost, query.getLogicalPlan());
+		return new CostSummary(cpuCost, memCost, query.getLogicalPlan());
 	}
 
 	private static double calcBidImpl(ILogicalOperator query, double cpuCosts, double memCosts) {

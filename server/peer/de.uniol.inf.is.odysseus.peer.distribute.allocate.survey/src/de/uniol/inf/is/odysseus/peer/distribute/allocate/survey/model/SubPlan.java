@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -30,18 +29,8 @@ public class SubPlan {
 	private List<ILogicalOperator> sinks = Lists.newArrayList();
 	private List<ILogicalOperator> sources = Lists.newArrayList();
 
-	public SubPlan(String destinationName, ILogicalOperator... operators) {
-		addDestinationName(destinationName);
-		addOperators(operators);
-	}
-
 	public SubPlan(ILogicalOperator... operators) {
 		addOperators(operators);
-	}
-
-	public SubPlan(Collection<String> destinationNames, ILogicalOperator[] array) {
-		destinationNames.addAll(destinationNames);
-		addOperators(array);
 	}
 
 	public void addOperators(ILogicalOperator... operators) {

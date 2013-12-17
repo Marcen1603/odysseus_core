@@ -52,13 +52,13 @@ public final class SurveyBasedAllocatorImpl {
 		Map<String, List<SubPlan>> winners = Maps.newHashMap();
 		try {
 			for (AuctionSummary auction : auctions) {
-				List<AuctionResponseAdvertisement> bids = auction.getResponses().get();
+				List<AuctionResponseAdvertisement> bids = auction.getResponsesFuture().get();
 
 				log.info("Got {} bids from remote peers", bids.size());
 
 				// calc own bid
-				double bidValue = BidCalculator.calcBid(Helper.getLogicalQuery(auction.getAuction().getPqlStatement()).get(0), auction.getAuction().getTransCfgName());
-				bids.add(wrapInAuctionResponseAdvertisement(auction.getAuction().getAuctionId(), bidValue));
+				double bidValue = BidCalculator.calcBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
+				bids.add(wrapInAuctionResponseAdvertisement(auction.getAuctionAdvertisement().getAuctionId(), bidValue));
 
 				Collections.sort(bids);
 				AuctionResponseAdvertisement bid = bids.get(bids.size() - 1);
@@ -122,11 +122,6 @@ public final class SurveyBasedAllocatorImpl {
 
 		int auctionsCount = 0;
 		for (SubPlan subPlan : subPlans) {
-
-			if (subPlan.hasLocalDestination()) {
-				log.info("Sub plan {} will be placed on local host", subPlan);
-				continue;
-			}
 			final AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
 			adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(subPlan.getLogicalPlan()));
 			adv.setSharedQueryID(sharedQueryID);
