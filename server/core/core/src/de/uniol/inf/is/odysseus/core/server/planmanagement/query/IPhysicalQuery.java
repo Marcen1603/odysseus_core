@@ -176,5 +176,10 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 * @param q the logical query to be associated with this physical query
 	 */
 	public void setLogicalQueryAndAdoptItsID(ILogicalQuery q);
-
+	
+	/**
+	 * 
+	 */
+	public void setAsStopping(boolean isStopping);
+	public boolean isMarkedAsStopping();
 }

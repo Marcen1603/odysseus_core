@@ -138,15 +138,15 @@ public class StandardExecutor extends AbstractExecutor implements
 	 */
 	public void activate() {
 		// store buffer placement strategy in the configuration
-//		Iterator<String> iter;
-//		if (getRegisteredBufferPlacementStrategiesIDs() != null
-//				&& (iter = getRegisteredBufferPlacementStrategiesIDs()
-//						.iterator()).hasNext()) {
-//			this.configuration.set(new ParameterBufferPlacementStrategy(
-//					getBufferPlacementStrategy(iter.next())));
-//		} else {
-//			this.configuration.set(new ParameterBufferPlacementStrategy());
-//		}
+		// Iterator<String> iter;
+		// if (getRegisteredBufferPlacementStrategiesIDs() != null
+		// && (iter = getRegisteredBufferPlacementStrategiesIDs()
+		// .iterator()).hasNext()) {
+		// this.configuration.set(new ParameterBufferPlacementStrategy(
+		// getBufferPlacementStrategy(iter.next())));
+		// } else {
+		// this.configuration.set(new ParameterBufferPlacementStrategy());
+		// }
 		this.reloadLog = new ReloadLog();
 
 		instance = this;
@@ -322,10 +322,12 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	private List<ILogicalQuery> distributeQueries(
-			QueryBuildConfiguration parameters, ISession caller, List<ILogicalQuery> queries) {
-		String[] strParameters = parameters.get(ParameterDistributionType.class).getValue().split(" ");
+			QueryBuildConfiguration parameters, ISession caller,
+			List<ILogicalQuery> queries) {
+		String[] strParameters = parameters
+				.get(ParameterDistributionType.class).getValue().split(" ");
 		String distributorName = strParameters[0];
-		
+
 		List<ILogicalQuery> resultQueries = Lists.newArrayList();
 
 		LOG.debug("Beginning distribution of queries");
@@ -345,14 +347,14 @@ public class StandardExecutor extends AbstractExecutor implements
 						"Could not distribute query. Logical distributor '"
 								+ distributorName + "' was not found.");
 			}
-		} else if( hasQueryDistributor() ) {
+		} else if (hasQueryDistributor()) {
 			LOG.debug("Using new way to distribute (peer)");
-			
+
 			// distribution is async. If there are local queries, the
 			// distributer will call the executor explictly
 			getQueryDistributor().distribute(this, caller, queries, parameters);
 			return Lists.newArrayList();
-		} 
+		}
 
 		return resultQueries;
 	}
@@ -389,8 +391,9 @@ public class StandardExecutor extends AbstractExecutor implements
 			// extract query and go the standard way
 			if (cmd instanceof CreateQueryCommand) {
 				newQueries.add(((CreateQueryCommand) cmd).getQuery());
-			}else if (cmd instanceof GetQueryCommand){
-				optimizedQueries.add(executionPlan.getQueryById(((GetQueryCommand)cmd).getQueryID()));
+			} else if (cmd instanceof GetQueryCommand) {
+				optimizedQueries.add(executionPlan
+						.getQueryById(((GetQueryCommand) cmd).getQueryID()));
 			} else {
 				// execute command
 				LOG.debug("Executing " + cmd);
@@ -451,8 +454,8 @@ public class StandardExecutor extends AbstractExecutor implements
 			ArrayList<IPhysicalQuery> newQueries,
 			OptimizationConfiguration conf, ISession session) {
 		// Work in Progress
-		for(IPhysicalQuery q : newQueries) {
-			if(q.getLogicalQuery() == null) {
+		for (IPhysicalQuery q : newQueries) {
+			if (q.getLogicalQuery() == null) {
 				ILogicalQuery emptyLogicalQuery = new LogicalQuery();
 				emptyLogicalQuery.setParserId("");
 				emptyLogicalQuery.setQueryText("");
@@ -478,13 +481,13 @@ public class StandardExecutor extends AbstractExecutor implements
 
 		for (IPhysicalQuery query : newQueries) {
 			query.addReoptimizeListener(this);
-			
+
 			if (query.getLogicalQuery() != null) {
-				getDataDictionary(session).addQuery(
-						query.getLogicalQuery(), query.getSession(),
-						conf.getName());
+				getDataDictionary(session).addQuery(query.getLogicalQuery(),
+						query.getSession(), conf.getName());
 			}
-			// add the queries by themselves instead in bulk, the rcp-view doesn't update properly otherwise
+			// add the queries by themselves instead in bulk, the rcp-view
+			// doesn't update properly otherwise
 			getExecutionPlan().addQuery(query);
 			firePlanModificationEvent(new QueryPlanModificationEvent(this,
 					PlanModificationEventType.QUERY_ADDED, query));
@@ -497,7 +500,6 @@ public class StandardExecutor extends AbstractExecutor implements
 		// by the optimizer,
 		// but since we don't need the transformation of a logical query in this
 		// case, we do it here instead.
-
 
 		this.executionPlanLock.unlock();
 
@@ -535,12 +537,12 @@ public class StandardExecutor extends AbstractExecutor implements
 	 *         {@link IBufferPlacementStrategy} will be found.
 	 */
 	@Override
-	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID, ISession session) {
+	public IBufferPlacementStrategy getBufferPlacementStrategy(String stratID,
+			ISession session) {
 		// TODO: Check rights
 		return getBufferPlacementStrategy(stratID);
 	};
-	
-	
+
 	public IBufferPlacementStrategy getBufferPlacementStrategy(String strategy) {
 		try {
 			this.executionPlanLock.lock();
@@ -566,7 +568,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	public Collection<Integer> addQuery(String query, String parserID,
 			ISession user, String buildConfigurationName, Context context)
 			throws PlanManagementException {
-		return addQuery(query, parserID, user, buildConfigurationName, context, null);
+		return addQuery(query, parserID, user, buildConfigurationName, context,
+				null);
 	}
 
 	@Override
@@ -585,8 +588,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	private Collection<Integer> addQuery(String query, String parserID,
-			ISession user, QueryBuildConfiguration buildConfiguration, Context context)
-			throws PlanManagementException {
+			ISession user, QueryBuildConfiguration buildConfiguration,
+			Context context) throws PlanManagementException {
 		try {
 			List<IExecutorCommand> newQueries = createQueries(query, user,
 					buildConfiguration, context);
@@ -681,8 +684,10 @@ public class StandardExecutor extends AbstractExecutor implements
 	// ------------
 
 	@Override
-	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q, ISession user, String confName) {
-		IPhysicalQuery oldQuery = this.getExecutionPlan().getQueryById(idOfRunningQuery);
+	public Integer addIdenticalQuery(Integer idOfRunningQuery, ILogicalQuery q,
+			ISession user, String confName) {
+		IPhysicalQuery oldQuery = this.getExecutionPlan().getQueryById(
+				idOfRunningQuery);
 		List<IPhysicalOperator> oldOps = new ArrayList<IPhysicalOperator>();
 		oldOps.addAll(oldQuery.getAllOperators());
 		IPhysicalQuery newQuery = new PhysicalQuery(oldOps);
@@ -693,16 +698,15 @@ public class StandardExecutor extends AbstractExecutor implements
 		List<IPhysicalQuery> queries = new ArrayList<IPhysicalQuery>();
 		queries.add(newQuery);
 		LOG.debug("Adding identical Query");
-		getDataDictionary(user).addQuery(
-				newQuery.getLogicalQuery(), newQuery.getSession(),
-				confName);
+		getDataDictionary(user).addQuery(newQuery.getLogicalQuery(),
+				newQuery.getSession(), confName);
 		getExecutionPlan().addQuery(newQuery);
 		firePlanModificationEvent(new QueryPlanModificationEvent(this,
 				PlanModificationEventType.QUERY_ADDED, newQuery));
 		this.executionPlanLock.unlock();
 		return newQuery.getID();
 	}
-	
+
 	@Override
 	public Integer addQuery(List<IPhysicalOperator> physicalPlan,
 			ISession user, String buildConfigurationName)
@@ -742,7 +746,7 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public SDFSchema determineOutputSchema(String query, String parserID,
-			ISession user, int port,Context context) {
+			ISession user, int port, Context context) {
 		List<IExecutorCommand> commands = getCompiler().translateQuery(query,
 				parserID, user, getDataDictionary(user), context);
 		if (commands.size() != 1) {
@@ -766,7 +770,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			String buildConfigurationName,
 			List<IQueryBuildSetting<?>> overwriteSetting)
 			throws QueryAddException {
-		if (buildConfigurationName == null){
+		if (buildConfigurationName == null) {
 			buildConfigurationName = "Standard";
 		}
 		IQueryBuildConfigurationTemplate settings = getQueryBuildConfiguration(buildConfigurationName);
@@ -780,7 +784,7 @@ public class StandardExecutor extends AbstractExecutor implements
 				settings.getConfiguration());
 
 		if (overwriteSetting != null) {
-			
+
 			for (IQueryBuildSetting<?> overwrite : overwriteSetting) {
 				for (IQueryBuildSetting<?> setting : settings
 						.getConfiguration()) {
@@ -814,8 +818,7 @@ public class StandardExecutor extends AbstractExecutor implements
 			try {
 				executionPlanLock.lock();
 				getOptimizer().beforeQueryRemove(queryToRemove,
-						this.executionPlan, null,
-						getDataDictionary(caller));
+						this.executionPlan, null, getDataDictionary(caller));
 				executionPlanChanged(PlanModificationEventType.QUERY_REMOVE,
 						queryToRemove);
 				stopQuery(queryToRemove.getID(), caller);
@@ -839,8 +842,8 @@ public class StandardExecutor extends AbstractExecutor implements
 						}
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
-							getDataDictionary(caller)
-									.removeOperator(id.getValue());
+							getDataDictionary(caller).removeOperator(
+									id.getValue());
 							toRemove.add(id.getKey());
 						}
 					} else { // Remove ids from query sharing with this removed
@@ -848,8 +851,8 @@ public class StandardExecutor extends AbstractExecutor implements
 						for (Entry<IOperatorOwner, Resource> id : p
 								.getUniqueIds().entrySet()) {
 							if (id.getKey().getID() == queryToRemove.getID()) {
-								getDataDictionary(caller)
-										.removeOperator(id.getValue());
+								getDataDictionary(caller).removeOperator(
+										id.getValue());
 								toRemove.add(id.getKey());
 							}
 						}
@@ -1023,33 +1026,39 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	private void stopQuery(IPhysicalQuery queryToStop) {
-		if (hasPlanAdaptionEngine()) {
-			// stop adapting this query so the plan cannot change while trying
-			// to close it.
-			getPlanAdaptionEngine().setQueryAsStopped(queryToStop);
-		}
-
-		try {
-			this.executionPlanLock.lock();
-			getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
-			executionPlanChanged(PlanModificationEventType.QUERY_STOP,
-					queryToStop);
-			if (isRunning()) {
-				queryToStop.close();
-				LOG.info("Query " + queryToStop.getID() + " stopped.");
-				firePlanModificationEvent(new QueryPlanModificationEvent(this,
-						PlanModificationEventType.QUERY_STOP, queryToStop));
-			} else {
-				throw new RuntimeException(
-						"Scheduler not running. Query cannot be stopped");
+		// There are two ways, a query can be stopped. By a scheduler or by the executor. Run into this method only once, else there will be a deadlock!
+		if (!queryToStop.isMarkedAsStopping()) {
+			queryToStop.setAsStopping(true);
+			if (hasPlanAdaptionEngine()) {
+				// stop adapting this query so the plan cannot change while
+				// trying
+				// to close it.
+				getPlanAdaptionEngine().setQueryAsStopped(queryToStop);
 			}
-		} catch (Exception e) {
-			LOG.warn("Query not stopped. An Error while optimizing occurd (ID: "
-					+ queryToStop.getID() + ")." + e.getMessage());
-			throw new RuntimeException(e);
-			// return;
-		} finally {
-			this.executionPlanLock.unlock();
+
+			try {
+				this.executionPlanLock.lock();
+				getOptimizer().beforeQueryStop(queryToStop, this.executionPlan);
+				executionPlanChanged(PlanModificationEventType.QUERY_STOP,
+						queryToStop);
+				if (isRunning()) {
+					queryToStop.close();
+					LOG.info("Query " + queryToStop.getID() + " stopped.");
+					firePlanModificationEvent(new QueryPlanModificationEvent(
+							this, PlanModificationEventType.QUERY_STOP,
+							queryToStop));
+				} else {
+					throw new RuntimeException(
+							"Scheduler not running. Query cannot be stopped");
+				}
+			} catch (Exception e) {
+				LOG.warn("Query not stopped. An Error while optimizing occurd (ID: "
+						+ queryToStop.getID() + ")." + e.getMessage());
+				throw new RuntimeException(e);
+				// return;
+			} finally {
+				this.executionPlanLock.unlock();
+			}
 		}
 	}
 
@@ -1131,7 +1140,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * getRegisteredBufferPlacementStrategies()
 	 */
 	@Override
-	public Set<String> getRegisteredBufferPlacementStrategiesIDs(ISession session) {
+	public Set<String> getRegisteredBufferPlacementStrategiesIDs(
+			ISession session) {
 		// TODO: Check access rights
 		try {
 			return getOptimizer().getRegisteredBufferPlacementStrategies();
@@ -1185,7 +1195,8 @@ public class StandardExecutor extends AbstractExecutor implements
 	 * setScheduler(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void setScheduler(String scheduler, String schedulerStrategy, ISession session) {
+	public void setScheduler(String scheduler, String schedulerStrategy,
+			ISession session) {
 		// TODO: Check access rights
 		try {
 			getSchedulerManager().setActiveScheduler(scheduler,
@@ -1234,9 +1245,9 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public IScheduler getCurrentScheduler(ISession session) {
 		return getCurrentScheduler();
-		
+
 	};
-	
+
 	protected IScheduler getCurrentScheduler() {
 		try {
 			return getSchedulerManager().getActiveScheduler();
@@ -1248,11 +1259,12 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public OptimizationConfiguration getOptimizerConfiguration(ISession session) throws NoOptimizerLoadedException {
+	public OptimizationConfiguration getOptimizerConfiguration(ISession session)
+			throws NoOptimizerLoadedException {
 		// TODO: Check rights
-		return getOptimizerConfiguration();		
+		return getOptimizerConfiguration();
 	};
-	
+
 	protected OptimizationConfiguration getOptimizerConfiguration()
 			throws NoOptimizerLoadedException {
 		return this.getOptimizer().getConfiguration();
@@ -1264,8 +1276,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		// TODO: Checks rights
 		return getDefaultSystemMonitor();
 	}
-	
-	
+
 	protected ISystemMonitor getDefaultSystemMonitor()
 			throws NoSystemMonitorLoadedException {
 		if (this.systemMonitorFactory == null) {
@@ -1275,11 +1286,12 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	@Override
-	public ISystemMonitor newSystemMonitor(long period, ISession session) throws NoSystemMonitorLoadedException {
+	public ISystemMonitor newSystemMonitor(long period, ISession session)
+			throws NoSystemMonitorLoadedException {
 		// TODO: Check Rights
 		return newSystemMonitor(period);
 	};
-	
+
 	protected ISystemMonitor newSystemMonitor(long period)
 			throws NoSystemMonitorLoadedException {
 		if (this.systemMonitorFactory == null) {
@@ -1300,7 +1312,7 @@ public class StandardExecutor extends AbstractExecutor implements
 		// TODO: Check access rights
 		return queryBuildConfigs.keySet();
 	}
-	
+
 	@Override
 	public IQueryBuildConfigurationTemplate getQueryBuildConfiguration(
 			String name) {
@@ -1390,11 +1402,11 @@ public class StandardExecutor extends AbstractExecutor implements
 			}
 		}
 	}
-	
+
 	@Override
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query) {
 		// TODO: Check access rights;
-		//ISession caller = query.getUser();		
+		// ISession caller = query.getUser();
 		return queryBuildParameter.get(query);
 	}
 
@@ -1410,7 +1422,8 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public SDFSchema getOutputSchema(int queryId, ISession session) {
-		return getLogicalQueryById(queryId, session).getLogicalPlan().getOutputSchema();
+		return getLogicalQueryById(queryId, session).getLogicalPlan()
+				.getOutputSchema();
 	}
 
 	private List<IPhysicalQuery> determineRunningQueries(IUser user) {
@@ -1453,25 +1466,21 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public StoredProcedure getStoredProcedure(String name, ISession caller) {
-		return getDataDictionary(caller).getStoredProcedure(name,
-				caller);
+		return getDataDictionary(caller).getStoredProcedure(name, caller);
 	}
 
 	@Override
 	public void removeStoredProcedure(String name, ISession caller) {
-		getDataDictionary(caller).removeStoredProcedure(name,
-				caller);
+		getDataDictionary(caller).removeStoredProcedure(name, caller);
 	}
 
 	@Override
 	public List<StoredProcedure> getStoredProcedures(ISession caller) {
-		return getDataDictionary(caller)
-				.getStoredProcedures(caller);
+		return getDataDictionary(caller).getStoredProcedures(caller);
 	}
 
 	@Override
 	public boolean containsStoredProcedures(String name, ISession caller) {
-		return getDataDictionary(caller).containsStoredProcedure(
-				name, caller);
+		return getDataDictionary(caller).containsStoredProcedure(name, caller);
 	}
 }
