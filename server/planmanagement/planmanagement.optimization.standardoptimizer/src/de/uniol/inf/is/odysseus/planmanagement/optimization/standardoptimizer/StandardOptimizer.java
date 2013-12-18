@@ -40,14 +40,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class StandardOptimizer extends AbstractOptimizer {
 
-	protected static Logger _logger = null;
-
-	protected static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(StandardOptimizer.class);
-		}
-		return _logger;
-	}
+	protected static Logger LOG = LoggerFactory.getLogger(StandardOptimizer.class);;
 
 	public static final long MONITORING_PERIOD = 30000;
 
@@ -81,8 +74,7 @@ public class StandardOptimizer extends AbstractOptimizer {
 			}
 			// Add new queries to the execution plan and optimize new plan
 			currentExecPlan.addQueries(optimizedQueries);
-			this.planOptimizer.optimizePlan(parameter, currentExecPlan, dd);
-
+			currentExecPlan.updateLeafSources();
 		}
 		return optimizedQueries;
 	}
@@ -91,7 +83,6 @@ public class StandardOptimizer extends AbstractOptimizer {
 	public void beforeQueryRemove(IPhysicalQuery removedQuery,
 			IExecutionPlan executionPlan, OptimizationConfiguration parameter,
 			IDataDictionary dd) throws QueryOptimizationException {
-		this.planOptimizer.optimizePlan(parameter, executionPlan, dd);
 	}
 
 	@Override

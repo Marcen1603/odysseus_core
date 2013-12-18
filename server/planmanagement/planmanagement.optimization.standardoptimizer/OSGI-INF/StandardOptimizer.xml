@@ -18,7 +18,6 @@
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.optimization.standardoptimizer.StandardOptimizer"/>
    <reference bind="bindBufferPlacementStrategy" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrategy" name="IBufferPlacementStrategy" policy="dynamic" unbind="unbindBufferPlacementStrategy"/>
    <reference bind="bindPostOptimizationAction" cardinality="0..n" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPostOptimizationAction" name="IPostOptimizationAction" policy="dynamic" unbind="unbindPostOptimizationAction"/>
-   <reference bind="bindPlanOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.IPlanOptimizer" name="IPlanOptimizer" policy="dynamic" unbind="unbindPlanOptimizer"/>
    <reference bind="bindQueryOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer" name="IQueryOptimizer" policy="dynamic" unbind="unbindQueryOptimizer"/>
    <reference bind="bindQuerySharingOptimizer" cardinality="0..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer" name="IQuerySharingOptimizer" policy="dynamic" unbind="unbindQuerySharingOptimizer"/>
     <service>

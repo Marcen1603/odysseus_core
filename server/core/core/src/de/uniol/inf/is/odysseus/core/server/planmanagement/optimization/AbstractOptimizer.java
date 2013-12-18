@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IBufferPlacementStrat
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.plan.IPlanOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
@@ -69,11 +68,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	 */
 	private List<IPostOptimizationAction> postOptimizationActions = new ArrayList<IPostOptimizationAction>();
 	
-	/**
-	 * Registered plan optimization service.
-	 */
-	protected IPlanOptimizer planOptimizer;
-
 	/**
 	 * Registered query optimization service.
 	 */
@@ -141,27 +135,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 		getLogger().debug("unbindPostOptimizationAction "+postOptimizationAction);
 		synchronized (this.postOptimizationActions) {
 			this.postOptimizationActions.remove(postOptimizationAction);
-		}
-	}
-
-	
-	/**
-	 * Method to bind a {@link IPlanOptimizer}. Used by OSGi.
-	 * 
-	 * @param planOptimizer new {@link IPlanOptimizer} service
-	 */
-	public void bindPlanOptimizer(IPlanOptimizer planOptimizer) {
-		this.planOptimizer = planOptimizer;
-	}
-
-	/**
-	 * Method to unbind a {@link IPlanOptimizer}. Used by OSGi.
-	 * 
-	 * @param planOptimizer {@link IPlanOptimizer} service to unbind
-	 */
-	public void unbindPlanOptimizer(IPlanOptimizer planOptimizer) {
-		if (this.planOptimizer == planOptimizer) {
-			this.planOptimizer = null;
 		}
 	}
 
@@ -331,7 +304,6 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 //		infos += getInfoString(this.planMigrationStrategy,
 //				"PlanMigrationStrategie");
-		infos += getInfoString(this.planOptimizer, "PlanOptimizer");
 		infos += getInfoString(this.queryOptimizer, "QueryOptimizer");
 
 		infos += AppEnv.LINE_SEPARATOR + "</Optimizer> ";
