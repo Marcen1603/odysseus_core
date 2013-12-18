@@ -299,6 +299,14 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	public static PointInTime getZeroTime() {
 		return ZERO.clone();
 	}
+	
+	public static PointInTime parsePointInTime(String s){
+		if(s.equalsIgnoreCase(INFINITY_SYMBOL)){
+			return PointInTime.INFINITY;
+		}else{
+			return new PointInTime(Long.parseLong(s.trim()));
+		}
+	}
 
 
 }
