@@ -1,0 +1,21 @@
+///OdysseusScript
+#PARSER PQL
+#TRANSCFG Standard
+#RUNQUERY
+percentage = ACCESS({
+	source='percentage', 
+	wrapper='GenericPull',
+	transport='file', 
+	protocol='SimpleCSV',
+	dataHandler='Tuple', 
+	options=[
+		['filename', '$input0'], 
+		['csv.delimiter', ';'],
+		['csv.trim', 'true']
+		], 
+	schema=[
+		['timestamp', 'STARTTIMESTAMP'], 
+		['percentage', 'INTEGER']
+]})
+project0 = project({attributes = ['percentage']}, percentage)
+file0 = filesink({file='$output0'}, project0)
