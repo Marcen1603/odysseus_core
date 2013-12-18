@@ -69,7 +69,11 @@ public class GenericProvider extends AbstractDataGenerator {
         }
         if (file == null) {
             try {
-                file = (new File(schemaFile)).toURI().toURL();
+                File schemaPath = new File(schemaFile);
+                if (!schemaPath.exists()) {
+                    schemaPath = new File(System.getProperty("user.home") + File.separator + schemaFile);
+                }
+                file = schemaPath.toURI().toURL();
             }
             catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -127,7 +131,8 @@ public class GenericProvider extends AbstractDataGenerator {
                             if (generator != null) {
                                 generator.init();
                                 this.generators.put(attributeParameter[0], generator);
-                            }else {
+                            }
+                            else {
                                 throw new IllegalArgumentException("No value generator found");
                             }
                         }
