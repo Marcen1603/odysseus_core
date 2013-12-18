@@ -21,38 +21,30 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * Greater-Equals operator for continuous probabilistic values.
+ * Equals operator for continuous probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousGreaterEqualsOperatorVector extends AbstractProbabilisticContinuousCompareOperator {
+public class ProbabilisticContinuousEqualsVectorOperator extends AbstractProbabilisticContinuousCompareOperator {
 
     /**
-	 * 
-	 */
-    private static final long serialVersionUID = -9122605635777338549L;
+     * 
+     */
+    private static final long serialVersionUID = 3016679134461973157L;
 
     /**
      * 
      * {@inheritDoc}
      */
     @Override
-    public final int getPrecedence() {
-        return 8;
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSymbol() {
-        return ">=";
+    public final String getSymbol() {
+        return "==";
     }
 
     /**
@@ -70,11 +62,28 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
         System.arraycopy(b[0], 0, lowerBoundData, 0, b[0].length);
         final double[] upperBoundData = new double[a.getDimension()];
         Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
+        System.arraycopy(b[0], 0, lowerBoundData, 0, b[0].length);
 
         final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
         final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
 
-        return this.getValueInternal(a, lowerBound, upperBound);
+        a.setScale(Double.POSITIVE_INFINITY);
+        final Interval[] support = new Interval[a.getDimension()];
+        for (int i = 0; i < a.getDimension(); i++) {
+            final Interval interval = new Interval(lowerBound.getEntry(i), upperBound.getEntry(i));
+            support[i] = a.getSupport(i).intersection(interval);
+        }
+        a.setSupport(support);
+        return a;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPrecedence() {
+        return 9;
     }
 
     /**
@@ -95,7 +104,6 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
         if (argPos >= this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
-        return ProbabilisticContinuousGreaterEqualsOperatorVector.ACC_TYPES[argPos];
+        return ProbabilisticContinuousEqualsVectorOperator.ACC_TYPES[argPos];
     }
-
 }

@@ -21,12 +21,12 @@ package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousSmallerOperator extends ProbabilisticContinuousSmallerEqualsOperator {
+public class ProbabilisticContinuousSmallerVectorOperator extends ProbabilisticContinuousSmallerEqualsVectorOperator {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -1978828532807864673L;
+    private static final long serialVersionUID = 6744058190515174151L;
 
     /**
      * {@inheritDoc}

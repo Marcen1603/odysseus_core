@@ -16,24 +16,25 @@
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
 
 /**
- * Smaller operator for continuous probabilistic values.
+ * Greater operator for continuous probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousSmallerOperator extends ProbabilisticContinuousSmallerEqualsOperator {
+public class ProbabilisticContinuousGreaterVectorOperator extends ProbabilisticContinuousGreaterEqualsOperatorVector {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -1978828532807864673L;
+    private static final long serialVersionUID = -2524539771244683448L;
 
     /**
+     * 
      * {@inheritDoc}
      */
     @Override
-    public String getSymbol() {
-        return "<";
+    public final String getSymbol() {
+        return ">";
     }
 
 }

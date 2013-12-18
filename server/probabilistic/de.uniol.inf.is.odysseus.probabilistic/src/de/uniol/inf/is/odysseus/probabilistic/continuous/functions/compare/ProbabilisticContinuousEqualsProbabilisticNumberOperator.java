@@ -1,21 +1,10 @@
 /**
- * Copyright 2013 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
 
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
@@ -23,20 +12,19 @@ import org.apache.commons.math3.linear.RealVector;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * Equals operator for continuous probabilistic values.
- * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilisticContinuousCompareOperator {
+public class ProbabilisticContinuousEqualsProbabilisticNumberOperator extends AbstractProbabilisticContinuousCompareOperator {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 3016679134461973157L;
+    private static final long serialVersionUID = 7656616835285616813L;
 
     /*
      * 
@@ -55,7 +43,12 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
     public final NormalDistributionMixture getValue() {
         final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
 
-        final Double b = this.getNumericalInputValue(1);
+        final AbstractProbabilisticValue<?> probabilisticVaue = (AbstractProbabilisticValue<?>) this.getInputValue(1);
+        double b = 0.0;
+        for (final Entry<?, Double> bEntry : probabilisticVaue.getValues().entrySet()) {
+            b += ((Number) bEntry.getKey()).doubleValue() * bEntry.getValue();
+        }
+
         final double[] lowerBoundData = new double[a.getDimension()];
         Arrays.fill(lowerBoundData, b);
         final double[] upperBoundData = new double[a.getDimension()];
@@ -86,7 +79,7 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
     /*
      * 
@@ -100,6 +93,7 @@ public class ProbabilisticContinuousEqualsOperator extends AbstractProbabilistic
         if (argPos >= this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
-        return ProbabilisticContinuousEqualsOperator.ACC_TYPES[argPos];
+        return ProbabilisticContinuousEqualsProbabilisticNumberOperator.ACC_TYPES[argPos];
     }
+
 }

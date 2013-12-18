@@ -25,17 +25,25 @@ import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalD
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * Greater-Equals operator for continuous probabilistic values.
+ * Smaller-Equals operator for continuous probabilistic values.
  * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousGreaterEqualsOperatorVector extends AbstractProbabilisticContinuousCompareOperator {
+public class ProbabilisticContinuousSmallerEqualsVectorOperator extends AbstractProbabilisticContinuousCompareOperator {
 
     /**
 	 * 
 	 */
     private static final long serialVersionUID = -9122605635777338549L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSymbol() {
+        return "<=";
+    }
 
     /**
      * 
@@ -47,16 +55,6 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
     }
 
     /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSymbol() {
-        return ">=";
-    }
-
-    /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -67,9 +65,9 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
         final double[][] b = (double[][]) this.getInputValue(1);
         final double[] lowerBoundData = new double[a.getDimension()];
         Arrays.fill(lowerBoundData, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b[0], 0, lowerBoundData, 0, b[0].length);
         final double[] upperBoundData = new double[a.getDimension()];
         Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
+        System.arraycopy(b[0], 0, upperBoundData, 0, b[0].length);
 
         final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
         final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
@@ -77,14 +75,17 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
         return this.getValueInternal(a, lowerBound, upperBound);
     }
 
-    /**
+    /*
+     * 
+     * 
+     * 
+     * /**
      * Accepted data types.
      */
     public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE },
             { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
 
     /**
-     * 
      * {@inheritDoc}
      */
     @Override
@@ -92,10 +93,10 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
         if (argPos < 0) {
             throw new IllegalArgumentException("negative argument index not allowed");
         }
-        if (argPos >= this.getArity()) {
+        if (argPos > (this.getArity() - 1)) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
-        return ProbabilisticContinuousGreaterEqualsOperatorVector.ACC_TYPES[argPos];
+        return ProbabilisticContinuousSmallerEqualsVectorOperator.ACC_TYPES[argPos];
     }
 
 }

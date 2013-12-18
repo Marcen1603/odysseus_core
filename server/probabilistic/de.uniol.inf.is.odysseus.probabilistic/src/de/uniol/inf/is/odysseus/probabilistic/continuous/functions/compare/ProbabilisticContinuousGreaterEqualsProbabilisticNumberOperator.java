@@ -1,41 +1,37 @@
 /**
- * Copyright 2013 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 
  */
 package de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare;
 
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
+import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * Greater-Equals operator for continuous probabilistic values.
- * 
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticContinuousGreaterEqualsOperatorVector extends AbstractProbabilisticContinuousCompareOperator {
+public class ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator extends AbstractProbabilisticContinuousCompareOperator {
 
     /**
-	 * 
-	 */
-    private static final long serialVersionUID = -9122605635777338549L;
+     * 
+     */
+    private static final long serialVersionUID = -3834057191681240434L;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSymbol() {
+        return ">=";
+    }
 
     /**
      * 
@@ -51,25 +47,19 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
      * {@inheritDoc}
      */
     @Override
-    public String getSymbol() {
-        return ">=";
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
     public final NormalDistributionMixture getValue() {
-        final Object[] aVector = this.getInputValue(0);
-        final NormalDistributionMixture a = ((NormalDistributionMixture) aVector[0]).clone();
+        final NormalDistributionMixture a = ((NormalDistributionMixture) this.getInputValue(0)).clone();
 
-        final double[][] b = (double[][]) this.getInputValue(1);
+        final AbstractProbabilisticValue<?> probabilisticVaue = (AbstractProbabilisticValue<?>) this.getInputValue(1);
+
+        double b = 0.0;
+        for (final Entry<?, Double> bEntry : probabilisticVaue.getValues().entrySet()) {
+            b += ((Number) bEntry.getKey()).doubleValue() * bEntry.getValue();
+        }
         final double[] lowerBoundData = new double[a.getDimension()];
         Arrays.fill(lowerBoundData, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b[0], 0, lowerBoundData, 0, b[0].length);
         final double[] upperBoundData = new double[a.getDimension()];
-        Arrays.fill(upperBoundData, Double.POSITIVE_INFINITY);
+        Arrays.fill(upperBoundData, b);
 
         final RealVector lowerBound = MatrixUtils.createRealVector(lowerBoundData);
         final RealVector upperBound = MatrixUtils.createRealVector(upperBoundData);
@@ -80,8 +70,7 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE },
-            { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
     /**
      * 
@@ -95,7 +84,7 @@ public class ProbabilisticContinuousGreaterEqualsOperatorVector extends Abstract
         if (argPos >= this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
-        return ProbabilisticContinuousGreaterEqualsOperatorVector.ACC_TYPES[argPos];
+        return ProbabilisticContinuousGreaterEqualsProbabilisticNumberOperator.ACC_TYPES[argPos];
     }
 
 }
