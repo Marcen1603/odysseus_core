@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.pde.ui.EquinoxLauncher">
 <booleanAttribute key="append.args" value="true"/>
 <booleanAttribute key="automaticAdd" value="false"/>
-<booleanAttribute key="automaticValidate" value="false"/>
+<booleanAttribute key="automaticValidate" value="true"/>
 <stringAttribute key="bootstrap" value=""/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="clearConfig" value="false"/>
@@ -21,5 +21,5 @@
 <booleanAttribute key="tracing" value="false"/>
 <booleanAttribute key="useCustomFeatures" value="false"/>
 <booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="workspace_bundles" value="de.uniol.inf.is.odysseus.generator.probabilistic@default:default,de.uniol.inf.is.odysseus.generator@default:default,org.apache.commons.math3@default:default"/>
+<stringAttribute key="workspace_bundles" value="com.google.guava@default:default,com.rits.cloning@default:default,de.uniol.inf.is.odysseus.core@default:default,de.uniol.inf.is.odysseus.generator.probabilistic@default:default,de.uniol.inf.is.odysseus.generator@default:default,de.uniol.inf.is.odysseus.probabilistic.common@default:default,io.netty@default:default,jna@default:default,org.apache.commons.math3@default:default,org.objenesis@default:default"/>
 </launchConfiguration>

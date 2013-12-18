@@ -50,9 +50,12 @@ public class Activator implements BundleActivator {
 
         bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
 
-        StreamServer probabilistic = new StreamServer(54325, new ProbabilisticProvider());
-        probabilistic.start();
-        server.add(probabilistic);
+        StreamServer probabilistic1 = new StreamServer(54325, new ProbabilisticProvider());
+        probabilistic1.start();
+        StreamServer probabilistic2 = new StreamServer(54326, new ProbabilisticProvider());
+        probabilistic2.start();
+        server.add(probabilistic1);
+        server.add(probabilistic2);
     }
 
     /*

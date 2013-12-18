@@ -24,9 +24,11 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
 import de.uniol.inf.is.odysseus.generator.error.NoError;
+import de.uniol.inf.is.odysseus.generator.valuegenerator.ConstantValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.IValueGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.distribution.NormalDistributionGenerator;
 import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerator;
+import de.uniol.inf.is.odysseus.probabilistic.common.CovarianceMatrixUtils;
 
 /**
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -34,9 +36,11 @@ import de.uniol.inf.is.odysseus.generator.valuegenerator.evolve.IncreaseGenerato
 public class ProbabilisticProvider extends AbstractDataGenerator {
 
     enum Attribute {
-        Time, Value
+        Time, Class, X, Y
     }
 
+    private List<IValueGenerator> discreteProbabilityGenerators = new ArrayList<IValueGenerator>();
+    private List<IValueGenerator> continuousProbabilityGenerators = new ArrayList<IValueGenerator>();
     private final Map<Attribute, IValueGenerator> generators = new HashMap<Attribute, IValueGenerator>();
 
     public ProbabilisticProvider() {
@@ -47,8 +51,14 @@ public class ProbabilisticProvider extends AbstractDataGenerator {
     public synchronized List<DataTuple> next() {
         DataTuple tuple = new DataTuple();
         tuple.addLong(this.generators.get(Attribute.Time).nextValue());
-        tuple.addDouble(this.generators.get(Attribute.Value).nextValue());
 
+        // Add discrete distribution
+        generateDiscreteAttribute(tuple, Attribute.Class);
+
+        // Add index to distributions for X and Y
+        tuple.addInteger(0);
+        tuple.addInteger(0);
+        generateContinuousAttribute(tuple, new Attribute[] { Attribute.X, Attribute.Y });
         try {
             Thread.sleep(1000);
         }
@@ -66,9 +76,24 @@ public class ProbabilisticProvider extends AbstractDataGenerator {
         timeGenerator.init();
         this.generators.put(Attribute.Time, timeGenerator);
 
-        IValueGenerator normalDistributionGenerator = new NormalDistributionGenerator(new NoError());
-        normalDistributionGenerator.init();
-        this.generators.put(Attribute.Value, normalDistributionGenerator);
+        discreteProbabilityGenerators.add(new ConstantValueGenerator(new NoError(), 0.75));
+        discreteProbabilityGenerators.add(new ConstantValueGenerator(new NoError(), 0.25));
+        for (int i = 0; i < discreteProbabilityGenerators.size(); i++) {
+            discreteProbabilityGenerators.get(i).init();
+        }
+        IValueGenerator classGenerator = new NormalDistributionGenerator(new NoError());
+        classGenerator.init();
+        this.generators.put(Attribute.Class, classGenerator);
+
+        continuousProbabilityGenerators.add(new ConstantValueGenerator(new NoError(), 0.75));
+        continuousProbabilityGenerators.add(new ConstantValueGenerator(new NoError(), 0.25));
+        IValueGenerator xGenerator = new NormalDistributionGenerator(new NoError());
+        xGenerator.init();
+        this.generators.put(Attribute.X, xGenerator);
+        IValueGenerator yGenerator = new NormalDistributionGenerator(new NoError());
+        yGenerator.init();
+        this.generators.put(Attribute.Y, yGenerator);
+
     }
 
     @Override
@@ -79,6 +104,49 @@ public class ProbabilisticProvider extends AbstractDataGenerator {
     @Override
     public ProbabilisticProvider newCleanInstance() {
         return new ProbabilisticProvider();
+    }
+
+    private void generateDiscreteAttribute(final DataTuple tuple, final Attribute attribute) {
+        tuple.addInteger(discreteProbabilityGenerators.size());
+        for (int i = 0; i < discreteProbabilityGenerators.size(); i++) {
+            tuple.addDouble(this.generators.get(attribute).nextValue());
+            tuple.addDouble(discreteProbabilityGenerators.get(i).nextValue());
+        }
+    }
+
+    private void generateContinuousAttribute(final DataTuple tuple, final Attribute[] attributes) {
+        int mixtures = continuousProbabilityGenerators.size();
+        int dimension = attributes.length;
+        // Number of mixtures
+        tuple.addInteger(mixtures);
+        // Dimension
+        tuple.addInteger(dimension);
+        this.generateContinuousAttributeMixture(tuple, attributes.length, attributes);
+        // The scalling
+        tuple.addDouble(1.0);
+        // Support vector
+        for (int i = 0; i < (dimension * 2); i++) {
+            // The support on each dimension
+            if ((i % 2) == 0) {
+                tuple.addDouble(Double.NEGATIVE_INFINITY);
+            }
+            else {
+                tuple.addDouble(Double.POSITIVE_INFINITY);
+            }
+        }
+    }
+
+    private void generateContinuousAttributeMixture(final DataTuple tuple, final int dimension, final Attribute[] attributes) {
+        for (int c = 0; c < continuousProbabilityGenerators.size(); c++) {
+            tuple.addDouble(continuousProbabilityGenerators.get(c).nextValue());
+            for (Attribute attr : attributes) {
+                tuple.addDouble(this.generators.get(attr).nextValue());
+            }
+
+            for (int i = 0; i < CovarianceMatrixUtils.getCovarianceTriangleSizeFromDimension(dimension); i++) {
+                tuple.addDouble(1.0);
+            }
+        }
     }
 
     public static void main(final String[] args) {
