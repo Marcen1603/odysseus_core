@@ -1,0 +1,16 @@
+///OdysseusScript
+#PARSER CQL
+#TRANSCFG Standard
+#RUNQUERY
+DROP STREAM nexmark:auction2;
+#RUNQUERY
+DROP STREAM nexmark:person2;
+#RUNQUERY
+ATTACH STREAM nexmark:auction2 (timestamp STARTTIMESTAMP,	id INTEGER,	itemname STRING,	description STRING,	initialbid INTEGER,	reserve INTEGER,	expires LONG,	seller INTEGER ,category INTEGER) FILE 'nexmark/daten/nexmark_auction2.csv' AS SimpleCSV;
+#RUNQUERY
+ATTACH STREAM nexmark:person2 (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRING,creditcard STRING,city STRING,state STRING) FILE 'nexmark/daten/nexmark_person2.csv' AS SimpleCSV;
+
+#RUNQUERY
+SELECT p.name, p.city, p.state, a.id FROM nexmark:auction2 [UNBOUNDED] AS a, nexmark:person2 [UNBOUNDED] AS p WHERE a.seller=p.id AND a.category < 150 AND (p.state='Oregon' OR p.state='Idaho' OR p.state='California');
+	
+
