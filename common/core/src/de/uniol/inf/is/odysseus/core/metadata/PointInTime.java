@@ -303,7 +303,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 	public static PointInTime parsePointInTime(String s){
 		if(s.equalsIgnoreCase(INFINITY_SYMBOL)){
 			return PointInTime.INFINITY;
-		}else{
+		}else{			
 			return new PointInTime(Long.parseLong(s.trim()));
 		}
 	}
