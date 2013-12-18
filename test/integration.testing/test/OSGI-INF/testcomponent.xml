@@ -14,11 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="TestNexmark">
-   <implementation class="de.uniol.inf.is.odysseus.test.TestComponent"/>
-   <reference bind="bindExecutor" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor" name="IExecutor" policy="static"/>
-   <reference bind="bindScriptParser" cardinality="1..1" interface="de.uniol.inf.is.odysseus.script.parser.IOdysseusScriptParser" name="IOdysseusScriptParser" policy="static"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.test.runner.ITestComponent"/>
-   </service>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="TestRunner">
+   <implementation class="de.uniol.inf.is.odysseus.test.runner.TestRunnerApplication"/>
+   <reference bind="addTestComponent" cardinality="1..n" interface="de.uniol.inf.is.odysseus.test.component.ITestComponent" name="ITestComponent" policy="static" unbind="removeTestComponent"/>
 </scr:component>
