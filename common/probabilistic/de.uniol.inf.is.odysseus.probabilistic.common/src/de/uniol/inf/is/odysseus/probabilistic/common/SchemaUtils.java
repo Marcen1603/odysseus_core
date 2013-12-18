@@ -351,7 +351,6 @@ public class SchemaUtils {
     public static int getAttributePos(final SDFSchema schema, final SDFAttribute attribute) {
         Objects.requireNonNull(schema);
         Objects.requireNonNull(attribute);
-        Preconditions.checkArgument(schema.contains(attribute));
         return schema.indexOf(attribute);
     }
 

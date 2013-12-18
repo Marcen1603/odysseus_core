@@ -31,10 +31,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
@@ -103,7 +103,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
         final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
 
         for (int port = 0; port < 2; port++) {
-            areas[port] = new ProbabilisticDiscreteJoinTISweepArea(rightProbabilisticAttributePos, leftProbabilisticAttributePos, dataMerge, metadataMerge);
+            areas[port] = new ProbabilisticDiscreteJoinTISweepArea(leftProbabilisticAttributePos, rightProbabilisticAttributePos, dataMerge, metadataMerge);
         }
 
         operator.setAreas(areas);
@@ -121,7 +121,7 @@ public class TProbabilisticDiscreteJoinAOSetSARule extends AbstractTransformatio
         Objects.requireNonNull(operator);
         Objects.requireNonNull(transformConfig);
         if (operator.getAreas() == null) {
-            if (operator instanceof ProbabilisticDiscreteJoinTIPO) {
+            if (operator instanceof ProbabilisticJoinTIPO) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
                 if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {

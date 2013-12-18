@@ -151,25 +151,33 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
         synchronized (this.expressions) {
             double scale = 1.0;
             for (int i = 0; i < this.expressions.length; ++i) {
-                int d = 0;
+                int d = -1;
+                SDFProbabilisticExpression expression = this.expressions[i];
                 final Object[] values = new Object[this.variables[i].length];
                 for (int j = 0; j < this.variables[i].length; ++j) {
                     Object attribute = outputVal.getAttribute(this.variables[i][j].getPos());
                     if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-                        d = ((ProbabilisticContinuousDouble) attribute).getDistribution();
-                        attribute = outputVal.getDistribution(d);
+                        int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
+                        attribute = outputVal.getDistribution(index);
                         scale = ((NormalDistributionMixture) attribute).getScale();
+                        // FIXME What happens if we have more than one
+                        // distribution inside an expression or even other
+                        // functions? (CKu 17.12.2013)
+                        if (d >= 0) {
+                            throw new IllegalArgumentException("More than one distribution not supported inside predicate");
+                        }
+                        d = index;
                     }
                     values[j] = attribute;
                 }
 
-                this.expressions[i].bindMetaAttribute(outputVal.getMetadata());
-                this.expressions[i].bindDistributions(outputVal.getDistributions());
-                this.expressions[i].bindAdditionalContent(outputVal.getAdditionalContent());
-                this.expressions[i].bindVariables(values);
+                expression.bindMetaAttribute(outputVal.getMetadata());
+                expression.bindDistributions(outputVal.getDistributions());
+                expression.bindAdditionalContent(outputVal.getAdditionalContent());
+                expression.bindVariables(values);
 
-                final Object expr = this.expressions[i].getValue();
-                if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
+                final Object expr = expression.getValue();
+                if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
                     final NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
                     jointProbability *= scale / distribution.getScale();
                     // distribution.getAttributes()[0] = i;
@@ -180,7 +188,10 @@ public class ProbabilisticContinuousSelectPO<T extends IMetaAttribute> extends A
                     d++;
                 }
                 else {
-                    outputVal.setAttribute(i, expr);
+                    if (!(Boolean) expr) {
+                        jointProbability = 0.0;
+                        ((IProbabilistic) outputVal.getMetadata()).setExistence(jointProbability);
+                    }
                 }
             }
         }

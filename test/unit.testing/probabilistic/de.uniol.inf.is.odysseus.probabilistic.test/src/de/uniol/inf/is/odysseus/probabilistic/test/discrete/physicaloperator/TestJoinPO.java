@@ -41,12 +41,12 @@ import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.ProbabilisticDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTISweepArea;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.TimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 
@@ -55,7 +55,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetada
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TestJoinPO extends ProbabilisticDiscreteJoinTIPO<ITimeIntervalProbabilistic, Tuple<ITimeIntervalProbabilistic>> {
+public class TestJoinPO extends ProbabilisticJoinTIPO<ITimeIntervalProbabilistic, Tuple<ITimeIntervalProbabilistic>> {
     /** The logger for debug purpose. */
     private static final Logger LOG = LoggerFactory.getLogger(TestJoinPO.class);
 

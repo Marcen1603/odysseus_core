@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.transform.discrete;
+package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Objects;
 import java.util.Set;
@@ -29,9 +29,8 @@ import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator.ProbabilisticDiscreteJoinTIPO;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.DefaultProbabilisticTIDummyDataCreation;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
+import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticJoinTIPO;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -41,7 +40,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRule<JoinAO> {
+public class TProbabilisiticJoinAORule extends AbstractTransformationRule<JoinAO> {
     /*
      * 
      * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#getPriority()
@@ -62,7 +61,7 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
     public final void execute(final JoinAO operator, final TransformationConfiguration config) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(config);
-        final ProbabilisticDiscreteJoinTIPO joinPO = new ProbabilisticDiscreteJoinTIPO();
+        final ProbabilisticJoinTIPO joinPO = new ProbabilisticJoinTIPO();
 
         boolean isCross = false;
         final IPredicate pred = operator.getPredicate();
@@ -101,7 +100,7 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
 
                 if (operator.isAllPhysicalInputSet() && !(operator instanceof LeftJoinAO)) {
                     final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                    if (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes)) {
+                    if (SchemaUtils.containsProbabilisticAttributes(attributes)) {
                         return true;
                     }
                 }
@@ -116,7 +115,7 @@ public class TProbabilisiticDiscreteJoinAORule extends AbstractTransformationRul
      */
     @Override
     public final String getName() {
-        return "JoinAO -> discrete probabilistic Join";
+        return "JoinAO -> probabilistic Join";
     }
 
     /*

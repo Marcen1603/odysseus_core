@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
+package de.uniol.inf.is.odysseus.probabilistic.transform;
 
 import java.util.Objects;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
-import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
-import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -39,7 +33,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class TProbabilisticContinuousJoinAOSetDMRule extends AbstractTransformationRule<JoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
+public class TProbabilisticJoinAOSetDMRule extends AbstractTransformationRule<JoinTIPO<ITimeInterval, Tuple<ITimeInterval>>> {
 
     @Override
     public int getPriority() {
@@ -65,11 +59,7 @@ public class TProbabilisticContinuousJoinAOSetDMRule extends AbstractTransformat
         Objects.requireNonNull(transformConfig);
         if (operator.getOutputSchema().getType() == ProbabilisticTuple.class) {
             if (operator.getDataMerge() == null) {
-                final IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                if (SchemaUtils.containsContinuousProbabilisticAttributes(attributes)) {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

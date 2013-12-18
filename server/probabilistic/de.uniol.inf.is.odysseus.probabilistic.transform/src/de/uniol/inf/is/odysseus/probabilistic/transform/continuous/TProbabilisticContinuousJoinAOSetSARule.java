@@ -15,21 +15,31 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.transform.continuous;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.CombinedMergeFunction;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.PredicateUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.physicaloperator.ProbabilisticContinuousJoinTISweepArea;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ITimeIntervalProbabilistic;
+import de.uniol.inf.is.odysseus.probabilistic.metadata.ProbabilisticMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.transform.TransformationConstants;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
-import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTISweepArea;
-import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TIMergeFunction;
+import de.uniol.inf.is.odysseus.server.intervalapproach.TimeIntervalInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -49,10 +59,40 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
     public void execute(final JoinTIPO operator, final TransformationConfiguration transformConfig) {
         Objects.requireNonNull(operator);
         Objects.requireNonNull(transformConfig);
-      final ITimeIntervalSweepArea[] areas = new ITimeIntervalSweepArea[2];
+        final ProbabilisticContinuousJoinTISweepArea<?, ?>[] areas = new ProbabilisticContinuousJoinTISweepArea[2];
 
-        areas[0] = new JoinTISweepArea();
-        areas[1] = new JoinTISweepArea();
+        final IDataMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic> dataMerge = new ProbabilisticMergeFunction<Tuple<ITimeIntervalProbabilistic>, ITimeIntervalProbabilistic>(
+                operator.getOutputSchema().size());
+        IMetadataMergeFunction<?> metadataMerge;
+        if (transformConfig.getMetaTypes().size() > 1) {
+            final CombinedMergeFunction<ITimeIntervalProbabilistic> combinedMetadataMerge = new CombinedMergeFunction<ITimeIntervalProbabilistic>();
+            combinedMetadataMerge.add(new TimeIntervalInlineMetadataMergeFunction());
+            metadataMerge = combinedMetadataMerge;
+        }
+        else {
+            metadataMerge = TIMergeFunction.getInstance();
+        }
+        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+        if (operator.getPredicate() != null) {
+            attributes.addAll(SchemaUtils.getContinuousProbabilisticAttributes(operator.getPredicate().getAttributes()));
+        }
+
+        final SDFSchema leftSchema = operator.getSubscribedToSource(0).getSchema();
+        final SDFSchema rightSchema = operator.getSubscribedToSource(1).getSchema();
+
+        final List<SDFAttribute> leftAttributes = new ArrayList<SDFAttribute>(leftSchema.getAttributes());
+        leftAttributes.retainAll(attributes);
+
+        final List<SDFAttribute> rightAttributes = new ArrayList<SDFAttribute>(rightSchema.getAttributes());
+        rightAttributes.retainAll(attributes);
+        rightAttributes.removeAll(leftAttributes);
+
+        final int[] rightProbabilisticAttributePos = SchemaUtils.getAttributePos(rightSchema, rightAttributes);
+        final int[] leftProbabilisticAttributePos = SchemaUtils.getAttributePos(leftSchema, leftAttributes);
+
+        for (int port = 0; port < 2; port++) {
+            areas[port] = new ProbabilisticContinuousJoinTISweepArea(leftProbabilisticAttributePos, rightProbabilisticAttributePos, dataMerge, metadataMerge);
+        }
 
         operator.setAreas(areas);
     }
@@ -62,7 +102,7 @@ public class TProbabilisticContinuousJoinAOSetSARule extends AbstractTransformat
         Objects.requireNonNull(operator);
         Objects.requireNonNull(operator.getOutputSchema());
         Objects.requireNonNull(transformConfig);
-      if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
+        if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && transformConfig.getMetaTypes().contains(ITimeInterval.class.getCanonicalName())) {
             if (operator.getAreas() == null) {
                 final IPredicate<?> predicate = operator.getPredicate();
                 final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);

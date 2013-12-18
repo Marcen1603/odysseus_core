@@ -16,12 +16,15 @@
 package de.uniol.inf.is.odysseus.probabilistic.base.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
@@ -35,6 +38,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.NotPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
 //import de.uniol.inf.is.odysseus.core.server.predicate.AndPredicate;
@@ -108,17 +112,70 @@ public final class PredicateUtils {
      *            The predicate
      * @return A list of predicates
      */
-    @SuppressWarnings("rawtypes")
-    public static List<IPredicate> splitPredicate(final IPredicate<?> predicate) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Collection<IPredicate<?>> conjunctiveSplit(final IPredicate<?> predicate) {
+        Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
         if (PredicateUtils.isAndPredicate(predicate)) {
             if (predicate instanceof AndPredicate) {
-                return ComplexPredicateHelper.splitPredicate(predicate);
+
+                Stack<IPredicate<?>> predicateStack = new Stack<IPredicate<?>>();
+                predicateStack.push(predicate);
+                while (!predicateStack.isEmpty()) {
+                    IPredicate curPredicate = predicateStack.pop();
+                    if (curPredicate instanceof AndPredicate) {
+                        predicateStack.push(((AndPredicate) curPredicate).getLeft());
+                        predicateStack.push(((AndPredicate) curPredicate).getRight());
+                    }
+                    else {
+                        result.add(curPredicate);
+                    }
+                }
+                return result;
             }
-            else if (predicate instanceof RelationalPredicate) {
-                return ((RelationalPredicate) predicate).splitPredicate(false);
+            else if (predicate instanceof IPredicate) {
+                result.addAll((Collection<? extends IPredicate<?>>) predicate.conjunctiveSplit(false));
+                return result;
             }
         }
-        final ArrayList<IPredicate> predicates = new ArrayList<IPredicate>();
+        final ArrayList<IPredicate<?>> predicates = new ArrayList<IPredicate<?>>();
+        predicates.add(predicate);
+        return predicates;
+    }
+
+    /**
+     * Splits the given predicate if it is an OR predicate into sub-predicates.
+     * 
+     * @param predicate
+     *            The predicate
+     * @return A list of predicates
+     */
+    @SuppressWarnings("rawtypes")
+    public static Collection<IPredicate<?>> disjunctiveSplit(final IPredicate<?> predicate) {
+        Collection<IPredicate<?>> result = new LinkedList<IPredicate<?>>();
+        if (PredicateUtils.isAndPredicate(predicate)) {
+            if (predicate instanceof OrPredicate) {
+
+                Stack<IPredicate<?>> predicateStack = new Stack<IPredicate<?>>();
+                predicateStack.push(predicate);
+                while (!predicateStack.isEmpty()) {
+                    IPredicate curPredicate = predicateStack.pop();
+                    if (curPredicate instanceof OrPredicate) {
+                        predicateStack.push(((OrPredicate) curPredicate).getLeft());
+                        predicateStack.push(((OrPredicate) curPredicate).getRight());
+                    }
+                    else {
+                        result.add(curPredicate);
+                    }
+                }
+                return result;
+            }
+            else if (predicate instanceof IPredicate) {
+                // result.addAll((Collection<? extends IPredicate<?>>)
+                // predicate.disconjunctiveSplit(false));
+                return result;
+            }
+        }
+        final ArrayList<IPredicate<?>> predicates = new ArrayList<IPredicate<?>>();
         predicates.add(predicate);
         return predicates;
     }
@@ -133,7 +190,7 @@ public final class PredicateUtils {
     @SuppressWarnings("rawtypes")
     public static Set<SDFAttribute> getAttributes(final IPredicate<?> predicate) {
         final Set<SDFAttribute> attributes = new HashSet<SDFAttribute>();
-        final List<IPredicate> predicates = PredicateUtils.splitPredicate(predicate);
+        final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
         for (final IPredicate pre : predicates) {
             if (pre instanceof RelationalPredicate) {
                 attributes.addAll(((RelationalPredicate) pre).getAttributes());
@@ -160,8 +217,7 @@ public final class PredicateUtils {
      */
     public static List<SDFExpression> getExpressions(final IPredicate<?> predicate) {
         final List<SDFExpression> expressions = new ArrayList<SDFExpression>();
-        @SuppressWarnings("rawtypes")
-        final List<IPredicate> predicates = PredicateUtils.splitPredicate(predicate);
+        final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
         for (final IPredicate<?> pre : predicates) {
             if (pre instanceof RelationalPredicate) {
                 expressions.add(((RelationalPredicate) pre).getExpression());
@@ -191,6 +247,37 @@ public final class PredicateUtils {
             final IExpression<?> arg2 = eq.getArgument(1);
             if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return true if the given expression is of the form:
+     * 
+     * A.x=B.y AND A.y=B.z AND * ...
+     * 
+     * and the attributes are continuous probabilistic distributions
+     * 
+     * @param expression
+     *            The expression
+     * @return <code>true</code> iff the expression is of the given form
+     */
+    public static boolean isEquiContinuousExpression(final IExpression<?> expression) {
+        Objects.requireNonNull(expression);
+        if (expression instanceof AndOperator) {
+            return PredicateUtils.isEquiContinuousExpression(((AndOperator) expression).getArgument(0)) && PredicateUtils.isEquiContinuousExpression(((AndOperator) expression).getArgument(1));
+
+        }
+        if (expression instanceof EqualsOperator) {
+            final EqualsOperator eq = (EqualsOperator) expression;
+            final IExpression<?> arg1 = eq.getArgument(0);
+            final IExpression<?> arg2 = eq.getArgument(1);
+
+            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
+                if ((arg1.getReturnType() instanceof SDFProbabilisticDatatype) && (arg2.getReturnType() instanceof SDFProbabilisticDatatype)) {
+                    return ((SDFProbabilisticDatatype) arg1.getReturnType()).isContinuous() && ((SDFProbabilisticDatatype) arg2.getReturnType()).isContinuous();
+                }
             }
         }
         return false;
@@ -235,6 +322,54 @@ public final class PredicateUtils {
                     attributes.put(key, new ArrayList<SDFAttribute>());
                 }
                 attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
+            }
+        }
+        return attributes;
+    }
+
+    /**
+     * Return the map of attributes used in a equi continuous expression.
+     * 
+     * @param expression
+     *            The expression
+     * @param resolver
+     *            The attribute resolver
+     * @return The map of attributes
+     */
+    public static Map<SDFAttribute, List<SDFAttribute>> getEquiContinuousExpressionAtributes(final IExpression<?> expression, final IAttributeResolver resolver) {
+        Objects.requireNonNull(expression);
+        Objects.requireNonNull(resolver);
+        final Map<SDFAttribute, List<SDFAttribute>> attributes = new HashMap<SDFAttribute, List<SDFAttribute>>();
+        if (expression instanceof AndOperator) {
+            final Map<SDFAttribute, List<SDFAttribute>> leftAttributes = PredicateUtils.getEquiContinuousExpressionAtributes(((AndOperator) expression).getArgument(0), resolver);
+            for (final SDFAttribute key : leftAttributes.keySet()) {
+                if (!attributes.containsKey(key)) {
+                    attributes.put(key, new ArrayList<SDFAttribute>());
+                }
+                attributes.get(key).addAll(leftAttributes.get(key));
+            }
+            final Map<SDFAttribute, List<SDFAttribute>> rigthAttributes = PredicateUtils.getEquiContinuousExpressionAtributes(((AndOperator) expression).getArgument(1), resolver);
+            for (final SDFAttribute key : rigthAttributes.keySet()) {
+                if (!attributes.containsKey(key)) {
+                    attributes.put(key, new ArrayList<SDFAttribute>());
+                }
+                attributes.get(key).addAll(rigthAttributes.get(key));
+            }
+        }
+        if (expression instanceof EqualsOperator) {
+            final EqualsOperator eq = (EqualsOperator) expression;
+            final IExpression<?> arg1 = eq.getArgument(0);
+            final IExpression<?> arg2 = eq.getArgument(1);
+            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
+                if ((arg1.getReturnType() instanceof SDFProbabilisticDatatype) && (arg2.getReturnType() instanceof SDFProbabilisticDatatype)) {
+                    if (((SDFProbabilisticDatatype) arg1.getReturnType()).isContinuous() && ((SDFProbabilisticDatatype) arg2.getReturnType()).isContinuous()) {
+                        final SDFAttribute key = resolver.getAttribute(((Variable) arg1).getIdentifier());
+                        if (!attributes.containsKey(key)) {
+                            attributes.put(key, new ArrayList<SDFAttribute>());
+                        }
+                        attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
+                    }
+                }
             }
         }
         return attributes;

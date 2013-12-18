@@ -119,9 +119,11 @@ public class SDFProbabilisticDatatype extends SDFDatatype {
     /** Probabilistic continuous double vector datatype. */
     public static final SDFDatatype VECTOR_PROBABILISTIC_CONTINUOUS_DOUBLE = new SDFProbabilisticDatatype("VectorProbabilisticContinuousDouble");
     /** Probabilistic discrete numbers. */
-    public static final SDFDatatype[] PROBABILISTIC_NUMBERS = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_BOOLEAN,
-            SDFProbabilisticDatatype.PROBABILISTIC_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_LONG, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT,
-            SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
+    public static final SDFDatatype[] PROBABILISTIC_NUMBERS = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_BYTE, SDFProbabilisticDatatype.PROBABILISTIC_SHORT,
+            SDFProbabilisticDatatype.PROBABILISTIC_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_LONG, SDFProbabilisticDatatype.PROBABILISTIC_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE };
+    public static final SDFDatatype[] PROBABILISTIC_CONTINUOUS_NUMBERS = new SDFDatatype[] { SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_BYTE,
+            SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_SHORT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_INTEGER, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_LONG,
+            SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_FLOAT, SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE };
 
     /**
      * Checks whether the data type is a probabilistic data type.

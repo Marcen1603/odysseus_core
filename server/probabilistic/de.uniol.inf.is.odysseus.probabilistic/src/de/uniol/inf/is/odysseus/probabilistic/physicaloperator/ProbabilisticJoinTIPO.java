@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.uniol.inf.is.odysseus.probabilistic.discrete.physicaloperator;
+package de.uniol.inf.is.odysseus.probabilistic.physicaloperator;
 
 import java.util.Iterator;
 
@@ -34,9 +34,9 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
  * @param <K>
  * @param <T>
  */
-public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
+public class ProbabilisticJoinTIPO<K extends ITimeIntervalProbabilistic, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
     /** The logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDiscreteJoinTIPO.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticJoinTIPO.class);
 
     /*
      * 
@@ -51,9 +51,9 @@ public class ProbabilisticDiscreteJoinTIPO<K extends ITimeIntervalProbabilistic,
         if (this.isDone()) {
             return;
         }
-        if (ProbabilisticDiscreteJoinTIPO.LOG.isDebugEnabled()) {
+        if (ProbabilisticJoinTIPO.LOG.isDebugEnabled()) {
             if (!this.isOpen()) {
-                ProbabilisticDiscreteJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
+                ProbabilisticJoinTIPO.LOG.error("process next called on non opened operator " + this + " with " + object + " from " + port);
                 return;
             }
         }

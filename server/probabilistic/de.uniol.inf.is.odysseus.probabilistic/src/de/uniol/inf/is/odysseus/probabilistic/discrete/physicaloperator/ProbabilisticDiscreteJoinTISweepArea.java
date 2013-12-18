@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
@@ -111,6 +112,14 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
                     iter = this.getElements().iterator();
                     while (iter.hasNext()) {
                         final T next = iter.next();
+                        if (TimeInterval.totallyBefore(next.getMetadata(), element
+                                .getMetadata())) {
+                            continue;
+                        }
+                        if (TimeInterval.totallyAfter(next.getMetadata(), element
+                                .getMetadata())) {
+                            break;
+                        }
                         world = this.evaluateWorld(this.getQueryPredicate(), element, next, this.leftProbabilisticAttributePos, this.rightProbabilisticAttributePos, order);
                         if (world.getMetadata().getExistence() > 0.0) {
                             result.add(world);
@@ -124,7 +133,15 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
                     iter = this.getElements().iterator();
                     while (iter.hasNext()) {
                         final T next = iter.next();
-                        world = this.evaluateWorld(this.getQueryPredicate(), next, element, this.rightProbabilisticAttributePos, this.leftProbabilisticAttributePos, order);
+                        if (TimeInterval.totallyBefore(next.getMetadata(), element
+                                .getMetadata())) {
+                            continue;
+                        }
+                        if (TimeInterval.totallyAfter(next.getMetadata(), element
+                                .getMetadata())) {
+                            break;
+                        }
+                        world = this.evaluateWorld(this.getQueryPredicate(), next, element, this.leftProbabilisticAttributePos, this.rightProbabilisticAttributePos, order);
                         if (world.getMetadata().getExistence() > 0.0) {
                             result.add(world);
                             if (extract) {
@@ -258,7 +275,7 @@ public class ProbabilisticDiscreteJoinTISweepArea<K extends ITimeIntervalProbabi
     @SuppressWarnings("unchecked")
     private T evaluateWorld(final IPredicate<? super T> predicate, final T left, final T right, final int[] leftProbabilisticAttributePositions, final int[] rightProbabilisticAttributePositions,
             final Order order) {
-        final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, Order.LeftRight);
+        final T outputVal = (T) this.dataMerge.merge((T) left.clone(), (T) right.clone(), this.metadataMerge, order);
         final double[] outSum = new double[leftProbabilisticAttributePositions.length + rightProbabilisticAttributePositions.length];
         for (final int rightProbabilisticAttributePo : rightProbabilisticAttributePositions) {
             ((AbstractProbabilisticValue<?>) outputVal.getAttribute(left.size() + rightProbabilisticAttributePo)).getValues().clear();

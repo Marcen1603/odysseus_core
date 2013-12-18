@@ -25,15 +25,15 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousEqualsVectorOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterEqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterEqualsOperatorVector;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousGreaterVectorOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerEqualsVectorOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperator;
-import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.compare.ProbabilisticContinuousSmallerVectorOperator;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As2DVectorFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.As3DVectorFunction;
 import de.uniol.inf.is.odysseus.probabilistic.continuous.functions.math.BhattacharyyaDistanceFunction;
@@ -160,15 +160,15 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
             functions.add(new ProbabilisticIntegrateFunction());
 
             functions.add(new ProbabilisticContinuousSmallerEqualsOperator());
-            functions.add(new ProbabilisticContinuousSmallerEqualsOperatorVector());
+            functions.add(new ProbabilisticContinuousSmallerEqualsVectorOperator());
             functions.add(new ProbabilisticContinuousSmallerOperator());
-            functions.add(new ProbabilisticContinuousSmallerOperatorVector());
+            functions.add(new ProbabilisticContinuousSmallerVectorOperator());
             functions.add(new ProbabilisticContinuousGreaterEqualsOperator());
             functions.add(new ProbabilisticContinuousGreaterEqualsOperatorVector());
             functions.add(new ProbabilisticContinuousGreaterOperator());
-            functions.add(new ProbabilisticContinuousGreaterOperatorVector());
+            functions.add(new ProbabilisticContinuousGreaterVectorOperator());
             functions.add(new ProbabilisticContinuousEqualsOperator());
-            functions.add(new ProbabilisticContinuousEqualsOperatorVector());
+            functions.add(new ProbabilisticContinuousEqualsVectorOperator());
 
             /** Arithmetic functions for discrete probabilistic values */
             functions.add(new ProbabilisticContinuousMinusOperator());

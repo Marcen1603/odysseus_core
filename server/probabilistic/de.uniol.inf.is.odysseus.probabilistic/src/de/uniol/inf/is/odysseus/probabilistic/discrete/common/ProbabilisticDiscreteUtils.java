@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.discrete.datatype.AbstractProbabilisticValue;
 
@@ -44,12 +42,10 @@ public final class ProbabilisticDiscreteUtils {
     public static Object[][] getWorlds(final Tuple<?> input, final int[] probabilisticAttributePos) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(probabilisticAttributePos);
-        Preconditions.checkArgument(probabilisticAttributePos.length > 0);
 
         final Iterator<?>[] attributeIters = new Iterator<?>[probabilisticAttributePos.length];
         int worldNum = 1;
         for (int i = 0; i < probabilisticAttributePos.length; i++) {
-            Preconditions.checkArgument(probabilisticAttributePos[i] >= 0);
             final AbstractProbabilisticValue<?> attribute = (AbstractProbabilisticValue<?>) input.getAttribute(probabilisticAttributePos[i]);
             worldNum *= attribute.getValues().size();
             attributeIters[i] = attribute.getValues().entrySet().iterator();
