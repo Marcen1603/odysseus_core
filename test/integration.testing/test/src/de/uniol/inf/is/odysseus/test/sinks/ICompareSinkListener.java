@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.test;
+package de.uniol.inf.is.odysseus.test.sinks;
 
 /**
  * Listener for {@code SimpleCompareSink} to inform other
