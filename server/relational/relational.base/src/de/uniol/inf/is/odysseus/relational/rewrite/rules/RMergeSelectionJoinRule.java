@@ -61,18 +61,17 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 
 	@Override
 	public boolean isExecutable(JoinAO join, RewriteConfiguration config) {
-		return false;
 		
-//		if (join.getSubscriptions().size() > 1) {
-//			return false;
-//		}
-//		
-//		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
-//			if (isValidSelectAO(sel, join)) {
-//				return true;
-//			}
-//		}
-//		return false;
+		if (join.getSubscriptions().size() > 1) {
+			return false;
+		}
+		
+		for (SelectAO sel : getAllOfSameTyp(new SelectAO())) {
+			if (isValidSelectAO(sel, join)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
