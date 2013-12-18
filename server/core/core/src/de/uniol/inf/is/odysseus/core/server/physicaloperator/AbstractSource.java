@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,10 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
+	// Locking
 	private IMyLock locker = new NonLockingLock();
+	private ReentrantLock openCloseLock = new ReentrantLock();
+
 	final private List<PhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
 	// Only active subscription are served on transfer
 	final private List<PhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<PhysicalSubscription<ISink<? super T>>>();
@@ -268,46 +272,57 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 
-		// Hint: ignore callPath on sources because the source does not call any
-		// subscription
+		openCloseLock.lock();
+		try {
 
-		// o can be null, if operator is top operator
-		// otherwise top operator cannot be opened
-		if (caller != null) {
-			// Find subscription for caller
-			PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-					caller, sourcePort, sinkPort);
-			if (sub == null) {
-				throw new OpenFailedException(
-						"Open called from an unsubscribed sink " + caller);
+			// Hint: ignore callPath on sources because the source does not call
+			// any
+			// subscription
+
+			// o can be null, if operator is top operator
+			// otherwise top operator cannot be opened
+			if (caller != null) {
+				// Find subscription for caller
+				PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+						caller, sourcePort, sinkPort);
+				if (sub == null) {
+					throw new OpenFailedException(
+							"Open called from an unsubscribed sink " + caller);
+				}
+				// Add Subscription to the list of active subscriptions
+				addActiveSubscription(sub);
+
+				// increase numer of open calls for this subscription
+				// Hint: Because of query sharing, there can be more than one
+				// way, an open call occurs
+				// op1 --> op2 --> op3
+				// op4 --> op2
+				// We need to remember how many times open was called, and
+				// decrement
+				// by close calls
+				// Remove subscription if no one is interested anymore (i.e. the
+				// number
+				// of open calls == 0) --> Remove from activeSubscriptions
+				// Operator can be closed if all active Subscriptions are
+				// removed
+				sub.incOpenCalls();
 			}
-			// Add Subscription to the list of active subscriptions
-			addActiveSubscription(sub);
+			// Because of multiple calls from different source, the operator may
+			// already have been initialized (isOpen())
+			// in other cases open the operator
+			if (!isOpen()) {
+				fire(openInitEvent);
+				process_open();
+				fire(openDoneEvent);
+				open.set(true);
+			}
 
-			// increase numer of open calls for this subscription
-			// Hint: Because of query sharing, there can be more than one
-			// way, an open call occurs
-			// op1 --> op2 --> op3
-			// op4 --> op2
-			// We need to remember how many times open was called, and decrement
-			// by close calls
-			// Remove subscription if no one is interested anymore (i.e. the
-			// number
-			// of open calls == 0) --> Remove from activeSubscriptions
-			// Operator can be closed if all active Subscriptions are removed
-			sub.incOpenCalls();
+			reconnectSinks();
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
 		}
-		// Because of multiple calls from different source, the operator may
-		// already have been initialized (isOpen())
-		// in other cases open the operator
-		if (!isOpen()) {
-			fire(openInitEvent);
-			process_open();
-			fire(openDoneEvent);
-			open.set(true);
-		}
-
-		reconnectSinks();
 	}
 
 	/**
@@ -475,42 +490,54 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
-		getLogger().trace("CLOSE "+getName());
-		PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
-				caller, sourcePort, sinkPort);
-		if (sub == null) {
-			throw new RuntimeException(
-					"Close called from an unsubscribed sink ");
-		}
-		getLogger().trace("Closing from "+sub);
-		// Hint: Multiple Open calls can occur per subscription because of query
-		// sharing
-		// Op1 --> Op2 --> Op3
-		// Op4 --> Op2
-		// Op3 must not be closed before Op1 and Op4 have called close (via Op2)
-		sub.decOpenCalls();
-		// if this subscription has no more callers, remove it from
-		// the set of activeSubscriptions
-		if (sub.getOpenCalls() == 0) {
+		try {
+			openCloseLock.lock();
 
-			// The are some sink, that are not connected by open (because they
-			// will never
-			// call close) kept in list connectedSinks
-			// If all by open connected subscriptions are removed, close
-			// operator
-			if ((activeSinkSubscriptions.size()-1)  == connectedSinks.size()) {
-				getLogger().trace("Closing " + toString());
-				fire(this.closeInitEvent);
-				this.process_close();
-				open.set(false);
-				stopMonitoring();
-				fire(this.closeDoneEvent);
+			getLogger().trace("CLOSE " + getName());
+			PhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(
+					caller, sourcePort, sinkPort);
+			if (sub == null) {
+				throw new RuntimeException(
+						"Close called from an unsubscribed sink ");
 			}
-			removeActiveSubscription(sub);
-			// Close all sinks that are not connected by open
-			if (activeSinkSubscriptions.size() == connectedSinks.size()) {
-				closeAllSinkSubscriptions();
+			getLogger().trace("Closing from " + sub);
+			// Hint: Multiple Open calls can occur per subscription because of
+			// query
+			// sharing
+			// Op1 --> Op2 --> Op3
+			// Op4 --> Op2
+			// Op3 must not be closed before Op1 and Op4 have called close (via
+			// Op2)
+			sub.decOpenCalls();
+			// if this subscription has no more callers, remove it from
+			// the set of activeSubscriptions
+			if (sub.getOpenCalls() == 0) {
+
+				// The are some sink, that are not connected by open (because
+				// they
+				// will never
+				// call close) kept in list connectedSinks
+				// If all by open connected subscriptions are removed, close
+				// operator
+				if ((activeSinkSubscriptions.size() - 1) == connectedSinks
+						.size()) {
+					getLogger().trace("Closing " + toString());
+					fire(this.closeInitEvent);
+					this.process_close();
+					open.set(false);
+					stopMonitoring();
+					fire(this.closeDoneEvent);
+				}
+				removeActiveSubscription(sub);
+				// Close all sinks that are not connected by open
+				if (activeSinkSubscriptions.size() == connectedSinks.size()) {
+					closeAllSinkSubscriptions();
+				}
 			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
 		}
 	}
 
@@ -529,7 +556,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	}
 
 	protected void propagateDone() {
-		getLogger().trace("Propagate done "+getName());
+		getLogger().trace("Propagate done " + getName());
 		// Could be that the query is already closed. In this cases the done
 		// event
 		// does not of any interest any more
@@ -621,13 +648,13 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	final public void subscribeSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false,0);
+		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
 
 	@Override
 	public void connectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		//subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		sink.addOwner(this.getOwner());
@@ -645,7 +672,7 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	@Override
 	public void disconnectSink(ISink<? super T> sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		//unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		// unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		PhysicalSubscription<ISink<? super T>> sub = new PhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
 		removeActiveSubscription(sub);
@@ -766,12 +793,11 @@ public abstract class AbstractSource<T> extends AbstractMonitoringDataProvider
 	public boolean isOwnedByAny(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAny(owners);
 	}
-	
+
 	@Override
 	public boolean isOwnedByAll(List<IOperatorOwner> owners) {
 		return ownerHandler.isOwnedByAll(owners);
 	}
-
 
 	@Override
 	public boolean hasOwner() {

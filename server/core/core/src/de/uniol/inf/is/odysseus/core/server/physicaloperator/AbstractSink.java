@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	final private List<PhysicalSubscription<ISource<? extends R>>> subscribedToSource = new CopyOnWriteArrayList<PhysicalSubscription<ISource<? extends R>>>();
 
 	protected int noInputPorts = -1;
+	private ReentrantLock openCloseLock = new ReentrantLock();
 
 	private String name;
 	private Map<String, String> infos = new TreeMap<>();
@@ -207,34 +209,46 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	protected void open(List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
-		openFor.addAll(forOwners);
-		// allInputsDone = false;
-		// getLogger().trace("open() " + this);
-		// The operator can already be initialized from former calls
-		if (!isOpen()) {
-			fire(openInitEvent);
-			process_open();
-			fire(openDoneEvent);
-		}
-		// In every case, the sink is now open (no need to check, its cheaper to
-		// always set this value to true
-		// Hint: The operator can be opened by another method (c.f.
-		// AbstractPipe)
-		this.sinkOpen.set(true);
 
-		// Call open on all registered sources0
-		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
-			// Check if callPath contains this call already to avoid cycles
-			if (!containsSubscription(callPath, getInstance(),
-					sub.getSourceOutPort(), sub.getSinkInPort())) {
-				sub.setDone(false);
-				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
-						sub.getSinkInPort(), sub.getSourceOutPort(), null));
-				if (sub.getTarget().isOwnedByAny(forOwners)) {
-					sub.getTarget().open(getInstance(), sub.getSourceOutPort(),
-							sub.getSinkInPort(), callPath, forOwners);
+		openCloseLock.lock();
+		try {
+
+			openFor.addAll(forOwners);
+			// allInputsDone = false;
+			// getLogger().trace("open() " + this);
+			// The operator can already be initialized from former calls
+			if (!isOpen()) {
+				fire(openInitEvent);
+				process_open();
+				fire(openDoneEvent);
+			}
+			// In every case, the sink is now open (no need to check, its
+			// cheaper to
+			// always set this value to true
+			// Hint: The operator can be opened by another method (c.f.
+			// AbstractPipe)
+			this.sinkOpen.set(true);
+
+			// Call open on all registered sources0
+			for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
+				// Check if callPath contains this call already to avoid cycles
+				if (!containsSubscription(callPath, getInstance(),
+						sub.getSourceOutPort(), sub.getSinkInPort())) {
+					sub.setDone(false);
+					callPath.add(new PhysicalSubscription<ISink<?>>(
+							getInstance(), sub.getSinkInPort(), sub
+									.getSourceOutPort(), null));
+					if (sub.getTarget().isOwnedByAny(forOwners)) {
+						sub.getTarget().open(getInstance(),
+								sub.getSourceOutPort(), sub.getSinkInPort(),
+								callPath, forOwners);
+					}
 				}
 			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
 		}
 	}
 
@@ -317,50 +331,62 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 	protected void internal_close(
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners, boolean doProcessClose) {
-		openFor.removeAll(forOwners);
-		if (this.sinkOpen.get()) {
-			try {
-				callCloseOnChildren(callPath, forOwners);
-				if (openFor.size() == 0) {
-					if (doProcessClose) {
-						process_close();
+
+		openCloseLock.lock();
+		try {
+
+			openFor.removeAll(forOwners);
+			if (this.sinkOpen.get()) {
+				try {
+					callCloseOnChildren(callPath, forOwners);
+					if (openFor.size() == 0) {
+						if (doProcessClose) {
+							process_close();
+						}
+						stopMonitoring();
 					}
-					stopMonitoring();
-				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			} finally {
-				if (openFor.size() == 0) {
-					this.sinkOpen.set(false);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				} finally {
+					if (openFor.size() == 0) {
+						this.sinkOpen.set(false);
+					}
 				}
 			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			openCloseLock.unlock();
 		}
 	}
 
 	protected void callCloseOnChildren(
 			List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
+		openCloseLock.lock();
 		for (PhysicalSubscription<ISource<? extends R>> sub : this.subscribedToSource) {
 			if (!containsSubscription(callPath, getInstance(),
 					sub.getSourceOutPort(), sub.getSinkInPort())) {
 				callPath.add(new PhysicalSubscription<ISink<?>>(getInstance(),
 						sub.getSinkInPort(), sub.getSourceOutPort(), null));
-				try{
-				if (sub.getTarget().isOwnedByAny(forOwners)) {
-					// Call close only on sources from the list of owners
-					ISink<R> instance = getInstance();
-					int outport = sub.getSourceOutPort();
-					int inPort = sub.getSinkInPort();
-					logger.trace("Close for " + getName() + " on Child: "
-							+ sub.getTarget()+" in Thread "+Thread.currentThread().getName());
-					sub.getTarget().close(instance, outport, inPort, callPath,
-							forOwners);
-				}
-				}catch(Throwable e){
+				try {
+					if (sub.getTarget().isOwnedByAny(forOwners)) {
+						// Call close only on sources from the list of owners
+						ISink<R> instance = getInstance();
+						int outport = sub.getSourceOutPort();
+						int inPort = sub.getSinkInPort();
+						logger.trace("Close for " + getName() + " on Child: "
+								+ sub.getTarget() + " in Thread "
+								+ Thread.currentThread().getName());
+						sub.getTarget().close(instance, outport, inPort,
+								callPath, forOwners);
+					}
+				} catch (Throwable e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		openCloseLock.unlock();
 	}
 
 	protected void process_close() {
