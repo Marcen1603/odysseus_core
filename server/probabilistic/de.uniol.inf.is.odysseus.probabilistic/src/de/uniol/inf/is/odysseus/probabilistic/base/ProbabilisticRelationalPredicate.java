@@ -23,8 +23,6 @@ import de.uniol.inf.is.odysseus.probabilistic.base.common.ExpressionUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
-import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.ProbabilisticContinuousDouble;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.metadata.IProbabilistic;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
@@ -45,9 +43,9 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
 
     protected SDFProbabilisticExpression expression;
 
-    private PredicateEvaluator[] deterministicExpressions;
-    private PredicateEvaluator[] discreteDistributionExpressions;
-    private PredicateEvaluator[] continuousDistributionExpressions;
+    private IPredicateEvaluator[][] deterministicExpressions;
+    private IPredicateEvaluator[][] discreteDistributionExpressions;
+    private IPredicateEvaluator[][] continuousDistributionExpressions;
 
     protected int[] attributePositions;
 
@@ -102,14 +100,14 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
 
     public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
 
-        ProbabilisticTuple<? extends IProbabilistic> output = null;
+        ProbabilisticTuple<? extends IProbabilistic> output = input;
         for (int i = 0; i < this.deterministicExpressions.length; ++i) {
             output = evaluateDeterministicPredicate(input, deterministicExpressions[i]);
-            if (output == null) {
+            if (output.getMetadata().getExistence() == 0.0) {
                 break;
             }
         }
-        if (output != null) {
+        if (output.getMetadata().getExistence() > 0.0) {
             for (int i = 0; i < this.discreteDistributionExpressions.length; ++i) {
                 output = evaluateDiscreteDistributionPredicate(output, discreteDistributionExpressions[i]);
             }
@@ -120,9 +118,7 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
             }
             return output;
         }
-        else {
-            return input;
-        }
+        return output;
     }
 
     public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right) {
@@ -271,178 +267,113 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
         return this.expression.toString();
     }
 
-    private ProbabilisticTuple<? extends IProbabilistic> evaluateDeterministicPredicate(ProbabilisticTuple<? extends IProbabilistic> input, PredicateEvaluator evaluator) {
-        Collection<SDFProbabilisticExpression> expressions = evaluator.expressions;
-        boolean result = true;
-        for (SDFProbabilisticExpression expression : expressions) {
-            final Object[] values = new Object[evaluator.varHelper.length];
-            for (int j = 0; j < evaluator.varHelper.length; ++j) {
-                Object attribute = input.getAttribute(evaluator.varHelper[j].getPos());
-                if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-                    int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
-                    attribute = input.getDistribution(index);
-                }
-                values[j] = attribute;
-            }
-
-            expression.bindMetaAttribute(input.getMetadata());
-            expression.bindDistributions(input.getDistributions());
-            expression.bindAdditionalContent(input.getAdditionalContent());
-            expression.bindVariables(values);
-
-            result = (boolean) expression.getValue();
-            if (result) {
-                break;
-            }
-        }
-        if (!result) {
-            return null;
-        }
-        return input;
-    }
-
-    private ProbabilisticTuple<? extends IProbabilistic> evaluateDiscreteDistributionPredicate(ProbabilisticTuple<? extends IProbabilistic> input, PredicateEvaluator evaluator) {
+    private ProbabilisticTuple<? extends IProbabilistic> evaluateDeterministicPredicate(ProbabilisticTuple<? extends IProbabilistic> input, IPredicateEvaluator[] evaluators) {
+        Objects.requireNonNull(input);
 
         ProbabilisticTuple<? extends IProbabilistic> output = null;
-
-        Collection<SDFProbabilisticExpression> expressions = evaluator.expressions;
-        double existence = input.getMetadata().getExistence();
-        for (SDFProbabilisticExpression expression : expressions) {
-            ProbabilisticTuple<? extends IProbabilistic> clone = input.clone();
-
-            final Object[] values = new Object[evaluator.varHelper.length];
-            for (int j = 0; j < evaluator.varHelper.length; ++j) {
-                Object attribute = input.getAttribute(evaluator.varHelper[j].getPos());
-                if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-                    int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
-                    attribute = input.getDistribution(index);
-                }
-                values[j] = attribute;
-            }
-
-            expression.bindMetaAttribute(input.getMetadata());
-            expression.bindDistributions(input.getDistributions());
-            expression.bindAdditionalContent(input.getAdditionalContent());
-            expression.bindVariables(values);
-
-            // Evaluate all worlds....
-
-            if ((output == null) || (clone.getMetadata().getExistence() > existence)) {
-                output = clone;
-                existence = clone.getMetadata().getExistence();
+        for (IPredicateEvaluator evaluator : evaluators) {
+            output = evaluator.evaluate(input);
+            if (output.getMetadata().getExistence() > 0.0) {
+                return output;
             }
         }
-        if (existence == 0.0) {
-            return null;
+        if (output == null) {
+            output = input;
         }
-        output.getMetadata().setExistence(existence);
         return output;
     }
 
-    private ProbabilisticTuple<? extends IProbabilistic> evaluateContinuousDistributionPredicate(ProbabilisticTuple<? extends IProbabilistic> input, PredicateEvaluator evaluator) {
+    private ProbabilisticTuple<? extends IProbabilistic> evaluateDiscreteDistributionPredicate(ProbabilisticTuple<? extends IProbabilistic> input, IPredicateEvaluator[] evaluators) {
+        Objects.requireNonNull(input);
+
         ProbabilisticTuple<? extends IProbabilistic> output = null;
-
-        Collection<SDFProbabilisticExpression> expressions = evaluator.expressions;
-        double existence = input.getMetadata().getExistence();
-        double scale = 1.0;
-        for (SDFProbabilisticExpression expression : expressions) {
-            ProbabilisticTuple<? extends IProbabilistic> clone = input.clone();
-
-            final Object[] values = new Object[evaluator.varHelper.length];
-            int d = -1;
-            for (int j = 0; j < evaluator.varHelper.length; ++j) {
-                Object attribute = input.getAttribute(evaluator.varHelper[j].getPos());
-                if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
-                    int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
-                    attribute = input.getDistribution(index);
-                    scale = ((NormalDistributionMixture) attribute).getScale();
-                    // FIXME What happens if we have more than one
-                    // distribution inside an expression or even other
-                    // functions? (CKu 17.12.2013)
-                    if (d >= 0) {
-                        throw new IllegalArgumentException("More than one distribution not supported inside predicate");
-                    }
-                    d = index;
-                }
-                values[j] = attribute;
-            }
-
-            expression.bindMetaAttribute(input.getMetadata());
-            expression.bindDistributions(input.getDistributions());
-            expression.bindAdditionalContent(input.getAdditionalContent());
-            expression.bindVariables(values);
-
-            final Object expr = expression.getValue();
-            if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-                final NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
-                existence *= scale / distribution.getScale();
-                // distribution.getAttributes()[0] = i;
-                output.setDistribution(d, distribution);
-                d++;
-            }
-            else {
-                if (!(Boolean) expr) {
-                    existence = 0.0;
-                }
-            }
-
-            // Evaluate
-
-            if ((output == null) || (clone.getMetadata().getExistence() > existence)) {
-                output = clone;
-                existence = clone.getMetadata().getExistence();
+        double existence = 0.0;
+        for (IPredicateEvaluator evaluator : evaluators) {
+            ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
+            if ((output == null) || (tmp.getMetadata().getExistence() > existence)) {
+                output = tmp;
+                existence = tmp.getMetadata().getExistence();
             }
         }
-        if (existence == 0.0) {
-            return null;
+        if (output == null) {
+            output = input;
         }
-        output.getMetadata().setExistence(existence);
-        return null;
+        return output;
+    }
+
+    private ProbabilisticTuple<? extends IProbabilistic> evaluateContinuousDistributionPredicate(ProbabilisticTuple<? extends IProbabilistic> input, IPredicateEvaluator[] evaluators) {
+        Objects.requireNonNull(input);
+
+        ProbabilisticTuple<? extends IProbabilistic> output = null;
+        double existence = 0.0;
+        for (IPredicateEvaluator evaluator : evaluators) {
+            ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
+            if ((output == null) || (tmp.getMetadata().getExistence() > existence)) {
+                output = tmp;
+                existence = tmp.getMetadata().getExistence();
+            }
+        }
+        if (output == null) {
+            output = input;
+        }
+        return output;
     }
 
     private void initExpression(SDFSchema schema, SDFProbabilisticExpression expression) {
-        List<PredicateEvaluator> deterministicExpr = new ArrayList<PredicateEvaluator>();
-        List<PredicateEvaluator> discreteDistributionExpr = new ArrayList<PredicateEvaluator>();
-        List<PredicateEvaluator> continuousDistributionExpr = new ArrayList<PredicateEvaluator>();
+        List<IPredicateEvaluator[]> deterministicExpr = new ArrayList<IPredicateEvaluator[]>();
+        List<IPredicateEvaluator[]> discreteDistributionExpr = new ArrayList<IPredicateEvaluator[]>();
+        List<IPredicateEvaluator[]> continuousDistributionExpr = new ArrayList<IPredicateEvaluator[]>();
 
-        Collection<SDFProbabilisticExpression> split = ExpressionUtils.conjunctiveSplitExpression(expression);
-
-        for (SDFExpression expr : split) {
-            final List<SDFAttribute> neededAttributes = expr.getAllAttributes();
-
-            final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
-
-            for (int j = 0; j < neededAttributes.size(); j++) {
-                final SDFAttribute curAttribute = neededAttributes.get(j);
-                varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+        for (SDFExpression conjunctiveSplitExpression : ExpressionUtils.conjunctiveSplitExpression(expression)) {
+            List<IPredicateEvaluator> deterministicDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
+            List<IPredicateEvaluator> discreteDistributionDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
+            List<IPredicateEvaluator> continuousDistributionDisjunctiveExpr = new ArrayList<IPredicateEvaluator>();
+            if (!SchemaUtils.containsProbabilisticAttributes(conjunctiveSplitExpression.getAllAttributes())) {
+                for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
+                    final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
+                    final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
+                    for (int j = 0; j < neededAttributes.size(); j++) {
+                        final SDFAttribute curAttribute = neededAttributes.get(j);
+                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                    }
+                    deterministicDisjunctiveExpr.add(new DeterministicPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper));
+                }
             }
-            if (!SchemaUtils.containsProbabilisticAttributes(expr.getAllAttributes())) {
-                deterministicExpr.add(new PredicateEvaluator(ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(expr)), varHelper));
-            }
-            else if (!SchemaUtils.containsContinuousProbabilisticAttributes(expr.getAllAttributes())) {
-                discreteDistributionExpr.add(new PredicateEvaluator(ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(expr)), varHelper));
+            else if (!SchemaUtils.containsContinuousProbabilisticAttributes(conjunctiveSplitExpression.getAllAttributes())) {
+                for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
+                    final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
+                    final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
+                    for (int j = 0; j < neededAttributes.size(); j++) {
+                        final SDFAttribute curAttribute = neededAttributes.get(j);
+                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                    }
+                    Collection<SDFAttribute> discreteProbabilisticAttributes = SchemaUtils.getDiscreteProbabilisticAttributes(neededAttributes);
+                    discreteDistributionDisjunctiveExpr.add(new DiscreteDistributionPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper, SchemaUtils
+                            .getAttributePos(schema, discreteProbabilisticAttributes)));
+                }
             }
             else {
-                continuousDistributionExpr.add(new PredicateEvaluator(ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(expr)), varHelper));
+                for (SDFExpression disjunctiveSplitExpression : ExpressionUtils.disjunctiveSplitExpression(new SDFProbabilisticExpression(conjunctiveSplitExpression))) {
+                    final List<SDFAttribute> neededAttributes = disjunctiveSplitExpression.getAllAttributes();
+                    final VarHelper[] varHelper = new VarHelper[neededAttributes.size()];
+                    for (int j = 0; j < neededAttributes.size(); j++) {
+                        final SDFAttribute curAttribute = neededAttributes.get(j);
+                        varHelper[j++] = new VarHelper(schema.indexOf(curAttribute), 0, curAttribute.getDatatype() instanceof SDFProbabilisticDatatype);
+                    }
+                    continuousDistributionDisjunctiveExpr.add(new ContinuousDistributionPredicateEvaluator(new SDFProbabilisticExpression(disjunctiveSplitExpression), varHelper));
+                }
             }
+
+            deterministicExpr.add(deterministicDisjunctiveExpr.toArray(new IPredicateEvaluator[deterministicDisjunctiveExpr.size()]));
+            discreteDistributionExpr.add(discreteDistributionDisjunctiveExpr.toArray(new IPredicateEvaluator[discreteDistributionDisjunctiveExpr.size()]));
+            continuousDistributionExpr.add(continuousDistributionDisjunctiveExpr.toArray(new IPredicateEvaluator[continuousDistributionDisjunctiveExpr.size()]));
+
         }
 
-        this.deterministicExpressions = deterministicExpr.toArray(new PredicateEvaluator[deterministicExpr.size()]);
-        this.discreteDistributionExpressions = discreteDistributionExpr.toArray(new PredicateEvaluator[deterministicExpr.size()]);
-        this.continuousDistributionExpressions = continuousDistributionExpr.toArray(new PredicateEvaluator[deterministicExpr.size()]);
+        this.deterministicExpressions = deterministicExpr.toArray(new IPredicateEvaluator[deterministicExpr.size()][]);
+        this.discreteDistributionExpressions = discreteDistributionExpr.toArray(new IPredicateEvaluator[deterministicExpr.size()][]);
+        this.continuousDistributionExpressions = continuousDistributionExpr.toArray(new IPredicateEvaluator[deterministicExpr.size()][]);
     }
-
-    private class PredicateEvaluator {
-        VarHelper[] varHelper;
-        Collection<SDFProbabilisticExpression> expressions;
-
-        /**
-         * Creates a new instances of a predicate evaluator.
-         */
-        public PredicateEvaluator(Collection<SDFProbabilisticExpression> expressions, VarHelper[] varHelper) {
-            this.expressions = expressions;
-            this.varHelper = varHelper;
-        }
-    }
-
+    
+    
 }
