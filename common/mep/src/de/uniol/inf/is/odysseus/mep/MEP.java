@@ -111,21 +111,30 @@ import de.uniol.inf.is.odysseus.mep.functions.string.StringMultiplicationOperato
 import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusNumberOperator;
+import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusOperator;
+import de.uniol.inf.is.odysseus.mep.functions.time.DatePlusNumberOperator;
+import de.uniol.inf.is.odysseus.mep.functions.time.DatePlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayOfMonthStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DayStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.DaysFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DebsDateFormatParse;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.HourStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.HoursFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MinuteStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.MinutesFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MonthFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.MonthStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.MonthsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.NanoTimeFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.NowFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SecondStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.SecondsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.StreamDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.SysDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekFunction;
@@ -134,6 +143,7 @@ import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.YearsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DateToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToByteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToFloatFunction;
@@ -291,6 +301,11 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToDateFromNumberFunction());
         registerFunction(new DateToStringFunction()); 
         
+        registerFunction(new DatePlusOperator()); 
+        registerFunction(new DatePlusNumberOperator()); 
+        registerFunction(new DateMinusOperator()); 
+        registerFunction(new DateMinusNumberOperator()); 
+        
         registerFunction(new SecondFunction());
         registerFunction(new MinuteFunction());
         registerFunction(new HourFunction());
@@ -310,6 +325,13 @@ public class MEP implements IExpressionParser {
         registerFunction(new WeekStringFunction());
         registerFunction(new MonthStringFunction());
         registerFunction(new YearStringFunction());
+        
+        registerFunction(new SecondsFunction());
+        registerFunction(new MinutesFunction());
+        registerFunction(new HoursFunction());
+        registerFunction(new DaysFunction());
+        registerFunction(new MonthsFunction());
+        registerFunction(new YearsFunction());
         
         registerFunction(new NowFunction());
         registerFunction(new CurDateFunction());
