@@ -110,6 +110,7 @@ import de.uniol.inf.is.odysseus.mep.functions.string.StringMinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringMultiplicationOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.StringPlusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.string.SubStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.time.BusinessDaysFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.CurDateFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusNumberOperator;
 import de.uniol.inf.is.odysseus.mep.functions.time.DateMinusOperator;
@@ -145,6 +146,7 @@ import de.uniol.inf.is.odysseus.mep.functions.time.YearFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearsFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DateToStringFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToBooleanFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToByteFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToFloatFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToIntegerFunction;
@@ -239,6 +241,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new DoubleToFloatFunction());
         registerFunction(new DoubleToShortFunction());
         registerFunction(new DoubleToByteFunction());
+        registerFunction(new DoubleToBooleanFunction());
         registerFunction(new FloorFunction());
         registerFunction(new IfFunction());
         registerFunction(new SinusFunction());
@@ -332,6 +335,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new DaysFunction());
         registerFunction(new MonthsFunction());
         registerFunction(new YearsFunction());
+        registerFunction(new BusinessDaysFunction());
         
         registerFunction(new NowFunction());
         registerFunction(new CurDateFunction());

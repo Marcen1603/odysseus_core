@@ -38,7 +38,7 @@ public class DaysFunction extends AbstractFunction<Integer> {
         Calendar b = Calendar.getInstance();
         b.setTime((Date) getInputValue(1));
         int days = 0;
-        while ((a.before(b)) || (a.equals(b))) {
+        while (a.compareTo(b) <= 0) {
             days++;
             a.add(Calendar.DATE, 1);
         }

@@ -40,7 +40,7 @@ public class MonthsFunction extends AbstractFunction<Integer> {
         Calendar b = Calendar.getInstance();
         b.setTime((Date) getInputValue(1));
         int months = 0;
-        while ((a.before(b)) || (a.equals(b))) {
+        while (a.compareTo(b) <= 0) {
             months++;
             a.add(Calendar.MONTH, 1);
         }
