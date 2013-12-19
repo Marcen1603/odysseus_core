@@ -61,7 +61,7 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 
 		for (final ILogicalOperator operator : operators) {
 			String destinationName = getDestinationName(operator);
-			if( !Strings.isNullOrEmpty(destinationName)) {
+			if( Strings.isNullOrEmpty(destinationName)) {
 				throw new RuntimeException("Could not determine destination name of operator " + operator);
 			}
 			destinationNames.put(operator, destinationName);

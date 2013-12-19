@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
+import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoForceLocalParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoMergeParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartAllocatorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartModificatorParameter;
@@ -18,6 +19,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.registry.QueryPartitionerRegistr
 
 public final class ParameterHelper {
 	
+	private static final boolean DO_FORCE_LOCAL_DEFAULT_VALUE = true;
+	private static final boolean DO_MERGE_DEFAULT_VALUE = true;
+
 	public static IQueryPartitioner determineQueryPartitioner(QueryBuildConfiguration config) throws QueryDistributionException {
 		return QueryPartitionerRegistry.getInstance().get(getStringValueOfParameter(config, QueryPartitionerParameter.class, "Query partitioner"));
 	}
@@ -56,7 +60,15 @@ public final class ParameterHelper {
 	public static boolean determineDoMerge(QueryBuildConfiguration config) {
 		DoMergeParameter param = config.get(DoMergeParameter.class);
 		if( param == null ) {
-			return true;
+			return DO_MERGE_DEFAULT_VALUE;
+		}
+		return param.getValue();
+	}
+	
+	public static boolean determineDoForceLocal(QueryBuildConfiguration config) {
+		DoForceLocalParameter param = config.get(DoForceLocalParameter.class);
+		if( param == null ) {
+			return DO_FORCE_LOCAL_DEFAULT_VALUE;
 		}
 		return param.getValue();
 	}

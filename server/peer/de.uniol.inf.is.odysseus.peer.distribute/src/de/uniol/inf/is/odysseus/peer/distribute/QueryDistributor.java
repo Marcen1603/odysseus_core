@@ -131,7 +131,14 @@ public class QueryDistributor implements IQueryDistributor {
 				printAllocationMap(allocationMap);
 			}
 
-			allocationMap = forceLocalOperators(allocationMap);
+			if( ParameterHelper.determineDoForceLocal(config)) {
+				allocationMap = forceLocalOperators(allocationMap);
+				if( LOG.isDebugEnabled() ) {
+					printAllocationMap(allocationMap);
+				}
+			} else {
+				LOG.debug("Ommitting forcing operators with 'local' to be locally executed");
+			}
 			
 			if( ParameterHelper.determineDoMerge(config)) {
 				allocationMap = mergeQueryPartsWithSamePeer(allocationMap);
@@ -193,6 +200,8 @@ public class QueryDistributor implements IQueryDistributor {
 	}
 
 	private static Map<ILogicalQueryPart, PeerID> forceLocalOperators(Map<ILogicalQueryPart, PeerID> partMap) {
+		LOG.debug("Forcing operators with 'local' as destination name (if any) to be locally executed");
+
 		Map<ILogicalQueryPart, PeerID> resultMap = Maps.newHashMap();
 		for( ILogicalQueryPart part : partMap.keySet() ) {
 			
@@ -200,11 +209,14 @@ public class QueryDistributor implements IQueryDistributor {
 			if( localOperators.isEmpty() ) {
 				resultMap.put(part, partMap.get(part));
 			} else {
+				LOG.debug("Splitting query part {} into local and non-local", part);
 				Collection<ILogicalOperator> nonLocalOperators = Lists.newArrayList(part.getOperators());
 				nonLocalOperators.removeAll(localOperators);
 				
 				if( !nonLocalOperators.isEmpty() ) {
-					resultMap.put(new LogicalQueryPart(nonLocalOperators), partMap.get(part));
+					LogicalQueryPart nonLocalQueryPart = new LogicalQueryPart(nonLocalOperators);
+					resultMap.put(nonLocalQueryPart, partMap.get(part));
+					LOG.debug("Created new query part {}", nonLocalQueryPart);
 				}
 				LogicalQueryPart localQueryPart = new LogicalQueryPart(localOperators);
 				resultMap.put(localQueryPart, P2PNetworkManagerService.get().getLocalPeerID());
