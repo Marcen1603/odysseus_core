@@ -38,16 +38,16 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 		final List<ILogicalOperator> operatorsToVisit = Lists.newArrayList(operators);
 
 		while (!operatorsToVisit.isEmpty()) {
-			final ILogicalOperator chosenOperator = operatorsToVisit.get(0);
-			final String chosenDestination = destinations.get(chosenOperator);
+			ILogicalOperator chosenOperator = operatorsToVisit.get(0);
+			String chosenDestination = destinations.get(chosenOperator);
 
-			final List<ILogicalOperator> partOperators = Lists.newArrayList();
+			List<ILogicalOperator> partOperators = Lists.newArrayList();
 			collectOperatorsWithEqualDestination(chosenOperator, chosenDestination, partOperators, destinations);
 
 			operatorsToVisit.removeAll(partOperators);
 
 			ILogicalQueryPart part = new LogicalQueryPart(partOperators);
-			for( ILogicalOperator operator : partOperators ) {
+			for (ILogicalOperator operator : partOperators) {
 				operator.setDestinationName(chosenDestination);
 			}
 			parts.add(part);
@@ -55,32 +55,40 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 
 		return parts;
 	}
-	
+
 	private static Map<ILogicalOperator, String> determineDestinationNames(Collection<ILogicalOperator> operators) {
 		final Map<ILogicalOperator, String> destinationNames = Maps.newHashMap();
 
 		for (final ILogicalOperator operator : operators) {
-			destinationNames.put(operator, getDestinationName(operator));
+			String destinationName = getDestinationName(operator);
+			if( !Strings.isNullOrEmpty(destinationName)) {
+				throw new RuntimeException("Could not determine destination name of operator " + operator);
+			}
+			destinationNames.put(operator, destinationName);
 		}
 
 		return destinationNames;
 	}
-	
+
 	private static String getDestinationName(ILogicalOperator operator) {
-		if( operator instanceof StreamAO ) {
+		if (operator instanceof StreamAO) {
 			return LOCAL_DESTINATION_NAME;
 		}
-		
+
 		if (!Strings.isNullOrEmpty(operator.getDestinationName())) {
 			return operator.getDestinationName();
 		}
 		if (operator.getSubscribedToSource().size() > 0) {
-			return getDestinationName(operator.getSubscribedToSource().iterator().next().getTarget());
+			return getDestinationName(getOnePreviousOperator(operator));
 		}
-		
+
 		return LOCAL_DESTINATION_NAME;
 	}
-	
+
+	private static ILogicalOperator getOnePreviousOperator(ILogicalOperator operator) {
+		return operator.getSubscribedToSource().iterator().next().getTarget();
+	}
+
 	private static void collectOperatorsWithEqualDestination(ILogicalOperator operator, String chosenDestination, List<ILogicalOperator> collectedOperators, Map<ILogicalOperator, String> destinations) {
 		if (collectedOperators.contains(operator)) {
 			return;
