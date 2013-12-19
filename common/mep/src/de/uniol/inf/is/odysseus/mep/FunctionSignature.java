@@ -49,6 +49,9 @@ public class FunctionSignature {
 
 	public boolean contains(List<SDFDatatype> parameters) {
 		boolean contains = true;
+        if (parameters.size() != this.parameters.size()) {
+            return false;
+        }
 		for (int i = 0; i < parameters.size(); i++) {
 			SDFDatatype[] datatypes = this.parameters.get(i);
 			if (!Arrays.asList(datatypes).contains(parameters.get(i))) {
