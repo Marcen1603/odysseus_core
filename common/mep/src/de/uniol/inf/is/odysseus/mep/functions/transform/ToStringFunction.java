@@ -37,7 +37,7 @@ public class ToStringFunction extends AbstractFunction<String> {
 
 	@Override
 	public String getValue() {
-		return Double.toString(getNumericalInputValue(0));
+	    return getInputValue(0).toString();
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class ToStringFunction extends AbstractFunction<String> {
 		return SDFDatatype.STRING;
 	}
 	
-	public static final SDFDatatype[] accTypes = new SDFDatatype[]{SDFDatatype.INTEGER, SDFDatatype.SHORT, SDFDatatype.LONG, SDFDatatype.DOUBLE, SDFDatatype.FLOAT};
+	public static final SDFDatatype[] accTypes = SDFDatatype.NUMBERS;
 	
 	@Override
 	public SDFDatatype[] getAcceptedTypes(int argPos){
