@@ -48,7 +48,7 @@ public class ProtocolHandlerHelper {
 		return rootDoc;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "null" })
+	@SuppressWarnings({ "rawtypes" })
 	public static IProtocolHandler createProtocolHandlerFromStatement(TextElement<?> statement) {
 		Enumeration<? extends TextElement<?>> elements = statement.getChildren();
 		ITransportDirection direction = null;
