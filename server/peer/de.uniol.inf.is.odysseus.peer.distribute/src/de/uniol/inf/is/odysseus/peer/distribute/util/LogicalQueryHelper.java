@@ -230,6 +230,98 @@ public final class LogicalQueryHelper {
 		
 	}
 	
+	/**
+	 * Collects all relative (and real) sources of a query part and it's copies. <br />
+	 * The origin query part will not be modified.
+	 * @param originPart The query part whose sources shall be collected.
+	 * @param copies A collection of all copies of <code>originPart</code>.
+	 * @return A mapping of copied relative (and real) sources to the origin ones.
+	 * @throws NullPointerException if <code>originPart</code> or <code>copies</code> is null.
+	 * @throws IllegalArgumentException if at least one entry of <code>copies</code> does not contain all sources of <code>originPart</code>.
+	 */
+	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSources(
+			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
+		
+		// Preconditions
+		if(originPart == null)
+			throw new NullPointerException("Origin query part to collect relative sources must be not null!");
+		else if(copies == null)
+			throw new NullPointerException("List of copies to collect relative sources must be not null!");
+		
+		// The return value
+		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSources = Maps.newHashMap();
+		
+		// Collect origin sinks
+		List<ILogicalOperator> originSources = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(originPart);
+		for(int sourceNo = 0; sourceNo < originSources.size(); sourceNo++) {
+			
+			Collection<ILogicalOperator> copiedSources = Lists.newArrayList();
+			
+			try {
+			
+				for(ILogicalQueryPart copy : copies)
+					copiedSources.add(((List<ILogicalOperator>) LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(copy)).get(sourceNo));
+				
+			} catch(IndexOutOfBoundsException e) {
+				
+				throw new IllegalArgumentException("At least one copy does not contain all sources of the origin!");
+				
+			}
+			
+			copiedToOriginSources.put(originSources.get(sourceNo), copiedSources);
+			
+		}
+		
+		return copiedToOriginSources;
+		
+	}
+	
+	/**
+	 * Collects all relative (and real) sinks of a query part and it's copies. <br />
+	 * The origin query part will not be modified.
+	 * @param originPart The query part whose sinks shall be collected.
+	 * @param copies A collection of all copies of <code>originPart</code>.
+	 * @return A mapping of copied relative (and real) sinks to the origin ones.
+	 * @throws NullPointerException if <code>originPart</code> or <code>copies</code> is null.
+	 * @throws IllegalArgumentException if at least one entry of <code>copies</code> does not contain all sinks of <code>originPart</code>.
+	 */
+	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(
+			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
+		
+		// Preconditions
+		if(originPart == null)
+			throw new NullPointerException("Origin query part to collect relative sinks must be not null!");
+		else if(copies == null)
+			throw new NullPointerException("List of copies to collect relative sinks must be not null!");
+		
+		// The return value
+		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = Maps.newHashMap();
+		
+		// Collect origin sinks
+		List<ILogicalOperator> originSinks = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(originPart);
+		for(int sinkNo = 0; sinkNo < originSinks.size(); sinkNo++) {
+			
+			Collection<ILogicalOperator> copiedSinks = Lists.newArrayList();
+			
+			try {
+			
+				for(ILogicalQueryPart copy : copies)
+					copiedSinks.add(((List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(copy)).get(sinkNo));
+				
+			} catch(IndexOutOfBoundsException e) {
+				
+				throw new IllegalArgumentException("At least one copy does not contain all sinks of the origin!");
+				
+			}
+			
+			copiedToOriginSinks.put(originSinks.get(sinkNo), copiedSinks);
+			
+		}
+		
+		return copiedToOriginSinks;
+		
+	}
+	
 	public static void disconnectQueryParts( Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator ) {
 		Preconditions.checkNotNull(generator, "Operator generator must not be null!");
 		
@@ -353,6 +445,54 @@ public final class LogicalQueryHelper {
 		}
 
 		return map;
+	}
+	
+	/**
+	 * Makes as many copies of query parts as given by the number of copies. All copied query parts will be cut, so there will be no 
+	 * subscription from or to outwards a query part. <br />
+	 * The origin query parts will not be modified.
+	 * @param queryParts A collection of query parts to copy.
+	 * @param numCopies The number of copies to make.
+	 * @throws NullPointerException if <code>queryParts</code> is null.
+	 */
+	public static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyAndCutQueryParts(
+			Collection<ILogicalQueryPart> queryParts, int numCopies) throws NullPointerException {
+		
+		// Preconditions
+		if(queryParts == null)
+			throw new NullPointerException("Query parts to be copied must be not null!");
+		
+		// The return value
+		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps.newHashMap();
+	
+		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists.newArrayList();
+		for(int copyNo = 0; copyNo < numCopies; copyNo++)
+			plainCopies.add(LogicalQueryHelper.copyQueryPartsDeep(queryParts));
+		
+		for(Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies) {
+			
+			for(ILogicalQueryPart copy : plainCopyMap.keySet() ) {
+				
+				Collection<ILogicalQueryPart> copyList = null;
+				
+				if(copiesToOriginPart.containsKey(plainCopyMap.get(copy)))
+					copyList = copiesToOriginPart.get(plainCopyMap.get(copy));
+				else {
+					
+					copyList = Lists.newArrayList();
+					copiesToOriginPart.put(plainCopyMap.get(copy), copyList);
+					
+				}
+			
+				LogicalQueryHelper.cutQueryPart(copy);
+				copyList.add(copy);
+				
+			}
+			
+		}
+
+		return copiesToOriginPart;
+		
 	}
 
 	private static Map<ILogicalOperator, ILogicalOperator> createOperatorCopyMap(Collection<ILogicalOperator> operators) {
