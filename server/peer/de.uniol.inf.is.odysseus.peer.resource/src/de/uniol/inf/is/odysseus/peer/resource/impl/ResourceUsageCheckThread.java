@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.peer.resource.service.ServerExecutorService;
 
 public class ResourceUsageCheckThread extends RepeatingJobThread {
 
+	private static final double DEFAULT_BANDWIDTH_KB = 1024.0;
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceUsageCheckThread.class);
 	private static final int REFRESH_INTERVAL_MILLIS = 10 *1000;
 	private static final Runtime RUNTIME = Runtime.getRuntime();
@@ -35,7 +36,7 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 	public ResourceUsageCheckThread(PeerResourceUsageManager manager) {
 		super(REFRESH_INTERVAL_MILLIS, "Resource usage checker");
 		
-		Preconditions.checkNotNull("Peer resource manager must not be null!");
+		Preconditions.checkNotNull(manager, "Peer resource manager must not be null!");
 		this.manager = manager;
 	}
 	
@@ -53,7 +54,7 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 				
 				String interfaceName = sigar.getNetInterfaceConfig(null).getName();
 				long rawSpeed = sigar.getNetInterfaceStat(interfaceName).getSpeed(); // rawSpeed = -1 if os is not supported (yet)
-				double bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : 0;
+				double bandwidthInKBs = rawSpeed >= 0 ? rawSpeed / 1024.0 : DEFAULT_BANDWIDTH_KB;
 				NetInterfaceStat net = sigar.getNetInterfaceStat(interfaceName);
 				
 				long inputTotal = net.getRxBytes();
