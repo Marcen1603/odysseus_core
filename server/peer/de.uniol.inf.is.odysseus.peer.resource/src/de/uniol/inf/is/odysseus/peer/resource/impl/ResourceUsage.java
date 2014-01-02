@@ -102,8 +102,27 @@ public final class ResourceUsage implements IResourceUsage {
 		double netBandwidthMaxPercent = determineDiffPercent(one.getNetBandwidthMax(), other.getNetBandwidthMax());
 		double netOutputRatePercent = determineDiffPercent(one.getNetInputRate(), other.getNetInputRate());
 		double netInputRatePercent = determineDiffPercent(one.getNetOutputRate(), other.getNetOutputRate());
+		boolean pingsAreSimilar = determineIfPingsAreSimilar(one.getPingMap(), other.getPingMap());
 		
-		return areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent, netBandwidthMaxPercent, netOutputRatePercent, netInputRatePercent);
+		return pingsAreSimilar && areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent, netBandwidthMaxPercent, netOutputRatePercent, netInputRatePercent);
+	}
+
+	private static boolean determineIfPingsAreSimilar(Map<PeerID, Long> pingMap1, Map<PeerID, Long> pingMap2) {
+		if( pingMap1.size() != pingMap2.size() ) {
+			return false;
+		}
+		
+		for( PeerID peerID1 : pingMap1.keySet() ) {
+			if( !pingMap2.containsKey(peerID1)) {
+				return false;
+			} else {
+				if( determineDiffPercent( pingMap1.get(peerID1), pingMap2.get(peerID1)) > SIMILARITY_FACTOR_PERCENT ) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	private static double determineDiffPercent(double a, double b) {

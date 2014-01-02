@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManagerListener;
-import de.uniol.inf.is.odysseus.peer.resource.IPingTable;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 
@@ -31,8 +30,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private final Collection<IPeerResourceUsageManagerListener> listeners = Lists.newArrayList();
-	
-	private final PingTable pingTable = new PingTable();
 	
 	private IResourceUsage localUsage;
 	private ResourceUsageCheckThread checkThread;
@@ -154,10 +151,5 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		synchronized( listeners ) {
 			listeners.remove(listener);
 		}
-	}
-
-	@Override
-	public IPingTable getPingTable() {
-		return pingTable;
 	}
 }

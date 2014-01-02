@@ -13,8 +13,6 @@ public interface IPeerResourceUsageManager {
 	
 	public Optional<IResourceUsage> getLocalResourceUsage();
 	
-	public IPingTable getPingTable();
-	
 	public Collection<PeerID> getRemotePeers();
 	
 	public void addListener( IPeerResourceUsageManagerListener listener);
