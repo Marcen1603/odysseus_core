@@ -83,21 +83,25 @@ public class QueryDistributor implements IQueryDistributor {
 
 		LOG.debug("{} queries will be distributed if possible.", queries.size());
 
-		List<InterfaceParametersPair<IQueryPartitioner>> partitioners = ParameterHelper.determineQueryPartitioner(config);
-		List<InterfaceParametersPair<IQueryPartModificator>> modificators = ParameterHelper.determineQueryPartModificator(config);
-		List<InterfaceParametersPair<IQueryPartAllocator>> allocators = ParameterHelper.determineQueryPartAllocator(config);
+		List<InterfaceParametersPair<IQueryDistributionPreProcessor>> preProcessors = ParameterHelper.determineQueryDistributionPreProcessors(config);
+		List<InterfaceParametersPair<IQueryPartitioner>> partitioners = ParameterHelper.determineQueryPartitioners(config);
+		List<InterfaceParametersPair<IQueryPartModificator>> modificators = ParameterHelper.determineQueryPartModificators(config);
+		List<InterfaceParametersPair<IQueryPartAllocator>> allocators = ParameterHelper.determineQueryPartAllocators(config);
+		List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors = ParameterHelper.determineQueryDistributionPostProcessors(config);
 		
 		if( LOG.isDebugEnabled() ) {
+			LOG.debug("Using preprocessors: {}", interfaceListToString(preProcessors));
 			LOG.debug("Using (first) partitioner: {}", interfaceListToString(partitioners));
 			LOG.debug("Using modificators: {}", interfaceListToString(modificators));
 			LOG.debug("Using (first) allocators: {}", interfaceListToString(allocators));
+			LOG.debug("Using postprocessors: {}", interfaceListToString(postProcessors));
 		}
 
 		Collection<ILogicalQuery> localQueriesToExecutor = Lists.newArrayList();
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
 			
-			// preProcess
+			tryPreProcess(serverExecutor, caller, config, preProcessors, query);
 
 			Collection<ILogicalOperator> operators = collectRelevantOperators(query);
 			
@@ -106,7 +110,7 @@ public class QueryDistributor implements IQueryDistributor {
 			Collection<ILogicalQueryPart> modifiedQueryParts = tryModifyQueryParts(config, modificators, queryParts );
 			Map<ILogicalQueryPart, PeerID> allocationMap = tryAllocate(config, allocators, modifiedQueryParts);
 
-			if( ParameterHelper.determineDoForceLocal(config)) {
+			if( ParameterHelper.isDoForceLocal(config)) {
 				allocationMap = forceLocalOperators(allocationMap);
 				if( LOG.isDebugEnabled() ) {
 					printAllocationMap(allocationMap);
@@ -115,7 +119,7 @@ public class QueryDistributor implements IQueryDistributor {
 				LOG.debug("Ommitting forcing operators with 'local' to be locally executed");
 			}
 			
-			if( ParameterHelper.determineDoMerge(config)) {
+			if( ParameterHelper.isDoMerge(config)) {
 				allocationMap = mergeQueryPartsWithSamePeer(allocationMap);
 				if( LOG.isDebugEnabled() ) {
 					printAllocationMap(allocationMap);
@@ -124,7 +128,7 @@ public class QueryDistributor implements IQueryDistributor {
 				LOG.debug("Merging query parts omitted");
 			}
 			
-			// postProcess
+			tryPostProcess(serverExecutor, caller, allocationMap, config, postProcessors);
 			
 			insertJxtaOperators(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);
@@ -171,6 +175,17 @@ public class QueryDistributor implements IQueryDistributor {
 		return sb.toString();
 	}
 
+	private static void tryPreProcess(IServerExecutor serverExecutor, ISession caller, QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryDistributionPreProcessor>> preProcessors, ILogicalQuery query) throws QueryDistributionException {
+		try  {
+			for( InterfaceParametersPair<IQueryDistributionPreProcessor> preProcessor : preProcessors ) {
+				preProcessor.getInterface().preProcess(serverExecutor, caller, query, config);
+			}
+			
+		} catch( Throwable t ) {
+			throw new QueryDistributionException("Could not preprocess query", t);
+		}
+	}
+	
 	private static Collection<ILogicalOperator> collectRelevantOperators(ILogicalQuery query) {
 		Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(query);
 		LogicalQueryHelper.removeTopAOs(operators);
@@ -268,6 +283,16 @@ public class QueryDistributor implements IQueryDistributor {
 		}
 		
 		return result;
+	}
+	
+	private static void tryPostProcess(IServerExecutor serverExecutor, ISession caller, Map<ILogicalQueryPart, PeerID> allocationMap, QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryDistributionPostProcessor>> postProcessors) throws QueryDistributionException {
+		try {
+			for( InterfaceParametersPair<IQueryDistributionPostProcessor> postProcessor : postProcessors ) {
+				postProcessor.getInterface().postProcess(serverExecutor, caller, allocationMap, config);
+			}
+		} catch( Throwable t ) {
+			throw new QueryDistributionException("Could not post process query distribution", t);
+		}
 	}
 
 	private static Map<LogicalSubscription, ILogicalOperator> determineSubscriptionsAcrossQueryParts(Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment) {
