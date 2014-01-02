@@ -30,8 +30,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
  */
 public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	
-	// TODO erneut testen
-	
 	/**
 	 * The logger for this class.
 	 */
