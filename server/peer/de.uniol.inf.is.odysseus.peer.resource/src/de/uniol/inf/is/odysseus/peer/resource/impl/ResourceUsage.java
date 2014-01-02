@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.resource.impl;
 
+import java.util.Map;
+
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -26,9 +29,10 @@ public final class ResourceUsage implements IResourceUsage {
 	private final double netInputRate;
 
 	private final long timestamp;
+	private final Map<PeerID, Long> pingMap;
 
 	ResourceUsage(PeerID peerID, long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, long timestamp, int runningQueriesCount, int stoppedQueriesCount, 
-			double netBandwidthMax, double netOutputRate, double netInputRate) {
+			double netBandwidthMax, double netOutputRate, double netInputRate, Map<PeerID, Long> pingMap) {
 		Preconditions.checkNotNull(peerID, "PeerID must not be null!");
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
@@ -43,7 +47,7 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkArgument(netBandwidthMax >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netOutputRate >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
-		
+		Preconditions.checkNotNull(pingMap, "Ping map must not be null!");
 
 		this.peerID = peerID;
 		this.memFreeBytes = memFreeBytes;
@@ -59,6 +63,7 @@ public final class ResourceUsage implements IResourceUsage {
 		this.netInputRate = netInputRate;
 
 		this.timestamp = timestamp;
+		this.pingMap = pingMap;
 	}
 	
 	private ResourceUsage( ResourceUsage copy ) {
@@ -77,6 +82,7 @@ public final class ResourceUsage implements IResourceUsage {
 		netOutputRate = copy.netOutputRate;
 		
 		timestamp = copy.timestamp;
+		pingMap = copy.pingMap;
 	}
 		
 	static boolean areSimilar(IResourceUsage one, IResourceUsage other) {
@@ -165,7 +171,8 @@ public final class ResourceUsage implements IResourceUsage {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Free MEM = ").append(getMemFreeBytes()).append(" / ").append(getMemMaxBytes()).append(", Free Cpu = ").append(getCpuFree()).append(" / ").append(getCpuMax());
-		sb.append("Network in = ").append(getNetInputRate()).append(", out = ").append(getNetOutputRate()).append(" of ").append(getNetBandwidthMax()).append("}");
+		sb.append("Network in = ").append(getNetInputRate()).append(", out = ").append(getNetOutputRate()).append(" of ").append(getNetBandwidthMax()).append(", ");
+		sb.append("Pings = ").append(pingMap.values()).append("}");
 		return sb.toString();
 	}
 	
@@ -182,5 +189,10 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public double getNetOutputRate() {
 		return netOutputRate;
+	}
+	
+	@Override
+	public ImmutableMap<PeerID, Long> getPingMap() {
+		return ImmutableMap.copyOf(pingMap);
 	}
 }

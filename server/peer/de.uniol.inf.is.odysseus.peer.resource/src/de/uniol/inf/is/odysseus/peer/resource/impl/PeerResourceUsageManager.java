@@ -19,34 +19,50 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManagerListener;
+import de.uniol.inf.is.odysseus.peer.resource.IPingTable;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 
 public final class PeerResourceUsageManager implements IPeerResourceUsageManager, IAdvertisementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceUsageCheckThread.class);
+	
+	private static PeerResourceUsageManager instance;
 
 	private final Map<PeerID, IResourceUsage> usageMap = Maps.newHashMap();
 	private final Collection<IPeerResourceUsageManagerListener> listeners = Lists.newArrayList();
 	
+	private final PingTable pingTable = new PingTable();
+	
 	private IResourceUsage localUsage;
 	private ResourceUsageCheckThread checkThread;
+	private Pinger pinger;
 	
 	// called by OSGi-DS
 	public void activate() {
 		AdvertisementFactory.registerAdvertisementInstance(ResourceUsageAdvertisement.getAdvertisementType(), new ResourceUsageAdvertisementInstantiator());
 
-		checkThread = new ResourceUsageCheckThread(this);
+		pinger = new Pinger();
+		pinger.start();
+		
+		checkThread = new ResourceUsageCheckThread(this, pinger);
 		checkThread.start();
 		
+		instance = this;
 		LOG.debug("Activated");
 	}
 	
 	// called by OSGi-DS
 	public void deactivate() {
 		checkThread.stopRunning();
+		pinger.stopRunning();
 		
+		instance = null;
 		LOG.debug("Deactivated");
+	}
+	
+	public static PeerResourceUsageManager getInstance() {
+		return instance;
 	}
 	
 	@Override
@@ -138,5 +154,10 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		synchronized( listeners ) {
 			listeners.remove(listener);
 		}
+	}
+
+	@Override
+	public IPingTable getPingTable() {
+		return pingTable;
 	}
 }

@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+import java.util.Map;
 
 import net.jxta.document.Advertisement;
 import net.jxta.document.Attributable;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
@@ -42,6 +44,7 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 	private static final String NET_INPUT_RATE_TAG = "netInputRate";
 	private static final String NET_OUTPUT_RATE_TAG = "netOutputRate";
 	private static final String TIMESTAMP_TAG = "timestamp";
+	private static final String PINGS_TAG = "pings";
 	
 	private static final String[] INDEX_FIELDS = new String[] { PEER_ID_TAG, TIMESTAMP_TAG };
 
@@ -107,6 +110,12 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		appendElement(doc, NET_INPUT_RATE_TAG, String.valueOf(usage.getNetInputRate()));
 		appendElement(doc, NET_OUTPUT_RATE_TAG, String.valueOf(usage.getNetOutputRate()));
 		
+		Element<?> pingsElement = appendElement(doc, PINGS_TAG);
+		Map<PeerID, Long> pingMap = usage.getPingMap();
+		for( PeerID peerID : pingMap.keySet() ) {
+			appendElement(doc, pingsElement, peerID.toString(), String.valueOf(pingMap.get(peerID)));
+		}
+		
 		return doc;
 	}
 
@@ -152,6 +161,7 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 		double netBandwidthMax = 0;
 		double netInputRate = 0;
 		double netOutputRate = 0;
+		Map<PeerID, Long> pingMap = null;
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			if (elem.getName().equals(PEER_ID_TAG)) {
@@ -176,11 +186,25 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 				netInputRate = Double.valueOf(elem.getTextValue());
 			} else if (elem.getName().equals(NET_OUTPUT_RATE_TAG)) {
 				netOutputRate = Double.valueOf(elem.getTextValue());
+			} else if (elem.getName().equals(PINGS_TAG)) {
+				pingMap = determinePingsMap(elem);
 			} 
 		}
 		
 		usage = new ResourceUsage(peerID, memFreeBytes, memMaxBytes, cpuFree, cpuMax, timestamp, runningQueriesCount, stoppedQueriesCount,
-								netBandwidthMax, netOutputRate, netInputRate);
+								netBandwidthMax, netOutputRate, netInputRate, pingMap);
+	}
+
+	private Map<PeerID, Long> determinePingsMap(TextElement<?> elem) {
+		Map<PeerID, Long> resultMap = Maps.newHashMap();
+		
+		Enumeration<?> children = elem.getChildren();
+		while (children.hasMoreElements()) {
+			TextElement<?> child = (TextElement<?>) children.nextElement();
+			resultMap.put(convertToPeerID(child.getKey()), Long.valueOf(child.getTextValue()));
+		}
+		
+		return resultMap;
 	}
 
 	public static String getAdvertisementType() {
@@ -190,6 +214,20 @@ public final class ResourceUsageAdvertisement extends Advertisement implements S
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
 		final Element createElement = appendTo.createElement(tag, value);
+		appendTo.appendChild(createElement);
+		return createElement;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Element appendElement(StructuredDocument doc, Element appendTo, String tag, String value) {
+		final Element createElement = doc.createElement(tag, value);
+		appendTo.appendChild(createElement);
+		return createElement;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Element appendElement(StructuredDocument appendTo, String tag) {
+		final Element createElement = appendTo.createElement(tag);
 		appendTo.appendChild(createElement);
 		return createElement;
 	}
