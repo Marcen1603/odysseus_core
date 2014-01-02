@@ -7,6 +7,10 @@ public final class QueryPartAllocatorRegistry extends NamedInterfaceRegistry<IQu
 
 	private static QueryPartAllocatorRegistry instance;
 
+	private QueryPartAllocatorRegistry() {
+		
+	}
+	
 	public static QueryPartAllocatorRegistry getInstance() {
 		if( instance == null ) {
 			instance = new QueryPartAllocatorRegistry();

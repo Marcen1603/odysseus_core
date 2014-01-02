@@ -2,14 +2,17 @@ package de.uniol.inf.is.odysseus.peer.distribute.util;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
+import de.uniol.inf.is.odysseus.peer.distribute.parameter.AbstractQueryDistributionParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoForceLocalParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.DoMergeParameter;
+import de.uniol.inf.is.odysseus.peer.distribute.parameter.InterfaceNameParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartAllocatorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartModificatorParameter;
 import de.uniol.inf.is.odysseus.peer.distribute.parameter.QueryPartitionerParameter;
@@ -22,41 +25,45 @@ public final class ParameterHelper {
 	private static final boolean DO_FORCE_LOCAL_DEFAULT_VALUE = true;
 	private static final boolean DO_MERGE_DEFAULT_VALUE = true;
 
-	public static IQueryPartitioner determineQueryPartitioner(QueryBuildConfiguration config) throws QueryDistributionException {
-		return QueryPartitionerRegistry.getInstance().get(getStringValueOfParameter(config, QueryPartitionerParameter.class, "Query partitioner"));
+	public static List<InterfaceParametersPair<IQueryPartitioner>> determineQueryPartitioner(QueryBuildConfiguration config) throws QueryDistributionException {
+		List<InterfaceNameParametersPair> pairs = getPairsOfParameter(config, QueryPartitionerParameter.class, "Query partitioner");
+		
+		List<InterfaceParametersPair<IQueryPartitioner>> resultList = Lists.newArrayList();
+		for( InterfaceNameParametersPair pair : pairs ) {
+			resultList.add(new InterfaceParametersPair<IQueryPartitioner>(QueryPartitionerRegistry.getInstance().get(pair.getName()), pair.getParameters()));
+		}
+		return resultList;
 	}
 
-	public static IQueryPartModificator determineQueryPartModificator(QueryBuildConfiguration config) throws QueryDistributionException {
-		return QueryPartModificatorRegistry.getInstance().get(getStringValueOfParameter(config, QueryPartModificatorParameter.class, "Query part modificator"));
+	public static List<InterfaceParametersPair<IQueryPartModificator>> determineQueryPartModificator(QueryBuildConfiguration config) throws QueryDistributionException {
+		List<InterfaceNameParametersPair> pairs = getPairsOfParameter(config, QueryPartModificatorParameter.class, "Query part modificator");
+		
+		List<InterfaceParametersPair<IQueryPartModificator>> resultList = Lists.newArrayList();
+		for( InterfaceNameParametersPair pair : pairs ) {
+			resultList.add(new InterfaceParametersPair<IQueryPartModificator>(QueryPartModificatorRegistry.getInstance().get(pair.getName()), pair.getParameters()));
+		}
+		return resultList;
 	}
 
-	public static IQueryPartAllocator determineQueryPartAllocator(QueryBuildConfiguration config) throws QueryDistributionException {
-		return QueryPartAllocatorRegistry.getInstance().get(getStringValueOfParameter(config, QueryPartAllocatorParameter.class, "Query part allocator"));
+	public static List<InterfaceParametersPair<IQueryPartAllocator>> determineQueryPartAllocator(QueryBuildConfiguration config) throws QueryDistributionException {
+		List<InterfaceNameParametersPair> pairs = getPairsOfParameter(config, QueryPartAllocatorParameter.class, "Query part allocator");
+		
+		List<InterfaceParametersPair<IQueryPartAllocator>> resultMap = Lists.newArrayList();
+		for( InterfaceNameParametersPair pair : pairs ) {
+			resultMap.add(new InterfaceParametersPair<IQueryPartAllocator>(QueryPartAllocatorRegistry.getInstance().get(pair.getName()), pair.getParameters()));
+		}
+		return resultMap;
 	}
 	
-	private static String getStringValueOfParameter( QueryBuildConfiguration config, Class<? extends IQueryBuildSetting<String>> settingType, String settingName ) throws QueryDistributionException {
-		IQueryBuildSetting<String> stringSetting = config.get(settingType);
-		if( stringSetting == null ) {
+	private static List<InterfaceNameParametersPair> getPairsOfParameter( QueryBuildConfiguration config, Class<? extends AbstractQueryDistributionParameter> settingType, String settingName ) throws QueryDistributionException {
+		AbstractQueryDistributionParameter setting = config.get(settingType);
+		if( setting == null ) {
 			throw new QueryDistributionException("Setting of " + settingName + " is not set but needed.");
 		}
-		return stringSetting.getValue();
+				
+		return setting.getPairs();
 	}
 	
-	public static List<String> determineQueryPartitionerParameters(QueryBuildConfiguration config) {
-		QueryPartitionerParameter queryParameter = config.get(QueryPartitionerParameter.class);
-		return queryParameter.getParameters();
-	}
-	
-	public static List<String> determineQueryPartModificatorParameters(QueryBuildConfiguration config) {
-		QueryPartModificatorParameter queryParameter = config.get(QueryPartModificatorParameter.class);
-		return queryParameter.getParameters();
-	}
-	
-	public static List<String> determineQueryPartAllocatorParameters(QueryBuildConfiguration config) {
-		QueryPartAllocatorParameter queryParameter = config.get(QueryPartAllocatorParameter.class);
-		return queryParameter.getParameters();
-	}
-
 	public static boolean determineDoMerge(QueryBuildConfiguration config) {
 		DoMergeParameter param = config.get(DoMergeParameter.class);
 		if( param == null ) {

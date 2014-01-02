@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -36,9 +37,16 @@ public class PeerQueryPartModificatorPreParserKeyword extends AbstractPreParserK
 	public Object execute(Map<String, Object> variables, String parameter, ISession caller, Context context) throws OdysseusScriptException {
 		
 		List<IQueryBuildSetting<?>> settings = getAdditionalTransformationSettings(variables);
+		
 		String[] splitted = parameter.trim().split(" ");
 		List<String> parameters = KeywordHelper.generateParameterList(splitted);
-		settings.add(new QueryPartModificatorParameter(splitted[0], parameters));
+		
+		Optional<QueryPartModificatorParameter> optParameter = KeywordHelper.getQueryBuildSettingOfType( settings, QueryPartModificatorParameter.class);
+		if( optParameter.isPresent() ) {
+			optParameter.get().add(splitted[0], parameters);
+		} else {
+			settings.add(new QueryPartModificatorParameter(splitted[0], parameters));
+		}
 		
 		return null;
 	}

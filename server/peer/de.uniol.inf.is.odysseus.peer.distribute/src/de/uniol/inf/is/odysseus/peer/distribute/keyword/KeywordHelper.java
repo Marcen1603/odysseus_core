@@ -2,8 +2,11 @@ package de.uniol.inf.is.odysseus.peer.distribute.keyword;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 
 final class KeywordHelper {
 
@@ -24,4 +27,18 @@ final class KeywordHelper {
 
 		return parameters;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends IQueryBuildSetting<?>> Optional<T> getQueryBuildSettingOfType(List<IQueryBuildSetting<?>> settings, Class<T> parameterClass) {
+		Preconditions.checkNotNull(settings, "List of settings must not be null!");
+		Preconditions.checkNotNull(parameterClass, "Class of parameter to find must not be null!");
+		
+		for( IQueryBuildSetting<?> setting : settings ) {
+			if( setting.getClass().equals(parameterClass)) {
+				return (Optional<T>) Optional.of(setting);
+			}
+		}
+		return Optional.absent();
+	}
+
 }

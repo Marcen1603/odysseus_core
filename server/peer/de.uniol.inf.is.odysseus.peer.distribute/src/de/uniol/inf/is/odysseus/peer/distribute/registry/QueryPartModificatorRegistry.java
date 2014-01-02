@@ -7,6 +7,10 @@ public final class QueryPartModificatorRegistry extends NamedInterfaceRegistry<I
 
 	private static QueryPartModificatorRegistry instance;
 
+	private QueryPartModificatorRegistry() {
+		
+	}
+	
 	public static QueryPartModificatorRegistry getInstance() {
 		if( instance == null ) {
 			instance = new QueryPartModificatorRegistry();

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -40,11 +41,17 @@ public class PeerQueryPartAllocatorPreParserKeyword extends AbstractPreParserKey
 		
 		String[] splitted = parameter.trim().split(" ");
 		List<String> parameters = KeywordHelper.generateParameterList(splitted);
-		settings.add(new QueryPartAllocatorParameter(splitted[0], parameters));
+		
+		Optional<QueryPartAllocatorParameter> optParameter = KeywordHelper.getQueryBuildSettingOfType( settings, QueryPartAllocatorParameter.class);
+		if( optParameter.isPresent() ) {
+			optParameter.get().add(splitted[0], parameters);
+		} else {
+			settings.add(new QueryPartAllocatorParameter(splitted[0], parameters));
+		}
 		
 		return null;
 	}
-	
+
 	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		return QueryPartAllocatorRegistry.getInstance().getNames();

@@ -39,7 +39,9 @@ import de.uniol.inf.is.odysseus.peer.distribute.service.JxtaServicesProviderServ
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
+import de.uniol.inf.is.odysseus.peer.distribute.util.INamedInterface;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
+import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
 
@@ -81,55 +83,28 @@ public class QueryDistributor implements IQueryDistributor {
 
 		LOG.debug("{} queries will be distributed if possible.", queries.size());
 
-		IQueryPartitioner partitioner = ParameterHelper.determineQueryPartitioner(config);
-		IQueryPartModificator modificator = ParameterHelper.determineQueryPartModificator(config);
-		IQueryPartAllocator allocator = ParameterHelper.determineQueryPartAllocator(config);
+		List<InterfaceParametersPair<IQueryPartitioner>> partitioners = ParameterHelper.determineQueryPartitioner(config);
+		List<InterfaceParametersPair<IQueryPartModificator>> modificators = ParameterHelper.determineQueryPartModificator(config);
+		List<InterfaceParametersPair<IQueryPartAllocator>> allocators = ParameterHelper.determineQueryPartAllocator(config);
 		
-		List<String> partitionerParameter = ParameterHelper.determineQueryPartitionerParameters(config);
-		List<String> modificatorParameter = ParameterHelper.determineQueryPartModificatorParameters(config);
-		List<String> allocatorParameter = ParameterHelper.determineQueryPartAllocatorParameters(config);
-
-		LOG.debug("Using query partitioner: {} with parameters {}", partitioner.getName(), partitionerParameter);
-		LOG.debug("Using query part modificator: {} with parameters {}", modificator.getName(), modificatorParameter);
-		LOG.debug("Using query part allocator: {} with parameters {}", allocator.getName(), allocatorParameter);
+		if( LOG.isDebugEnabled() ) {
+			LOG.debug("Using (first) partitioner: {}", interfaceListToString(partitioners));
+			LOG.debug("Using modificators: {}", interfaceListToString(modificators));
+			LOG.debug("Using (first) allocators: {}", interfaceListToString(allocators));
+		}
 
 		Collection<ILogicalQuery> localQueriesToExecutor = Lists.newArrayList();
 		for (ILogicalQuery query : queries) {
 			LOG.debug("Start distribution of query {}", query);
+			
+			// preProcess
 
 			Collection<ILogicalOperator> operators = collectRelevantOperators(query);
-			tryCheckDistribution(config, operators);
-
-			LOG.debug("Begin partitioning of query {}", query);
-			Collection<ILogicalQueryPart> queryParts = tryPartitionQuery(config, partitioner, operators, partitionerParameter);
-			if (queryParts == null || queryParts.isEmpty()) {
-				throw new QueryDistributionException("Query partitioner '" + partitioner.getName() + "' retured null or empty query part list!");
-			}
-			checkPartitions(queryParts, operators);
-			if (LOG.isDebugEnabled()) {
-				printQueryParts(queryParts);
-			}
 			
-			LOG.debug("Begin modifying query parts of query {}", query);
-			Collection<ILogicalQueryPart> modifiedQueryParts = tryModifyQueryParts(config, modificator, queryParts, modificatorParameter);
-			if (modifiedQueryParts == null || modifiedQueryParts.isEmpty()) {
-				throw new QueryDistributionException("Query part modificator '" + modificator.getName() + "' retured null or empty query part list!");
-			}
-			if (LOG.isDebugEnabled()) {
-				printQueryParts(modifiedQueryParts);
-			}
-
-			LOG.debug("Begin allocation of query parts");
-			Map<ILogicalQueryPart, PeerID> allocationMap = tryAllocate(config, allocator, modifiedQueryParts, allocatorParameter);
-			if (allocationMap == null || allocationMap.isEmpty()) {
-				throw new QueryDistributionException("Query part allocation map from allocator '" + allocator.getName() + "' is null or empty!");
-			}
-
-			LOG.debug("Check allocation map returned by allocator {}", allocator.getName());
-			checkAllocationMap(allocationMap, modifiedQueryParts);
-			if (LOG.isDebugEnabled()) {
-				printAllocationMap(allocationMap);
-			}
+			tryCheckDistribution(config, operators);
+			Collection<ILogicalQueryPart> queryParts = tryPartitionQuery(config, partitioners, operators);
+			Collection<ILogicalQueryPart> modifiedQueryParts = tryModifyQueryParts(config, modificators, queryParts );
+			Map<ILogicalQueryPart, PeerID> allocationMap = tryAllocate(config, allocators, modifiedQueryParts);
 
 			if( ParameterHelper.determineDoForceLocal(config)) {
 				allocationMap = forceLocalOperators(allocationMap);
@@ -148,6 +123,8 @@ public class QueryDistributor implements IQueryDistributor {
 			} else {
 				LOG.debug("Merging query parts omitted");
 			}
+			
+			// postProcess
 			
 			insertJxtaOperators(allocationMap.keySet());
 			Collection<ILogicalQueryPart> localQueryParts = distributeToRemotePeers(allocationMap, config);
@@ -173,10 +150,34 @@ public class QueryDistributor implements IQueryDistributor {
 		}
 	}
 
+	private static <T extends INamedInterface> String interfaceListToString(List<InterfaceParametersPair<T>> interfaceMap) {
+		if( interfaceMap.isEmpty() ) {
+			return "{}";
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for( InterfaceParametersPair<T> t : interfaceMap) {
+			sb.append(t.getInterface().getName());
+			
+			List<String> params = t.getParameters();
+			sb.append("[");
+			for( String param : params ) {
+				sb.append(param).append(", ");
+			}
+			sb.append("], ");
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+
 	private static Collection<ILogicalOperator> collectRelevantOperators(ILogicalQuery query) {
 		Collection<ILogicalOperator> operators = LogicalQueryHelper.getAllOperators(query);
 		LogicalQueryHelper.removeTopAOs(operators);
 		operators = LogicalQueryHelper.replaceStreamAOs(operators);
+		
+		LOG.debug("Following operators are condidered during distribution: {}", operators);
+		
 		return operators;
 	}
 
@@ -356,9 +357,22 @@ public class QueryDistributor implements IQueryDistributor {
 		LOG.debug("All checks passed");
 	}
 
-	private static Collection<ILogicalQueryPart> tryPartitionQuery(QueryBuildConfiguration config, IQueryPartitioner partitioner, Collection<ILogicalOperator> operators, List<String> parameters) throws QueryDistributionException {
+	private static Collection<ILogicalQueryPart> tryPartitionQuery(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartitioner>> partitioners, Collection<ILogicalOperator> operators) throws QueryDistributionException {
+		LOG.debug("Begin partitioning");
+
 		try {
-			return partitioner.partition(operators, config, parameters);
+			InterfaceParametersPair<IQueryPartitioner> firstPartitioner = partitioners.get(0);
+			Collection<ILogicalQueryPart> partitions = firstPartitioner.getInterface().partition(operators, config, firstPartitioner.getParameters());
+			
+			if (partitions == null || partitions.isEmpty()) {
+				throw new QueryDistributionException("Query partitioner '" + firstPartitioner.getInterface().getName() + "' retured null or empty query part list!");
+			}
+			checkPartitions(partitions, operators);
+			if (LOG.isDebugEnabled()) {
+				printQueryParts(partitions);
+			}
+			
+			return partitions;
 		} catch (QueryPartitionException ex) {
 			throw new QueryDistributionException("Cannot partition query", ex);
 		}
@@ -374,17 +388,47 @@ public class QueryDistributor implements IQueryDistributor {
 		}
 	}
 
-	private static Collection<ILogicalQueryPart> tryModifyQueryParts(QueryBuildConfiguration config, IQueryPartModificator modificator, Collection<ILogicalQueryPart> queryParts, List<String> parameters) throws QueryDistributionException {
+	private static Collection<ILogicalQueryPart> tryModifyQueryParts(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartModificator>> modificators, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
+		LOG.debug("Begin modifying query parts");
+
 		try {
-			return modificator.modify(queryParts, config, parameters);
+			Collection<ILogicalQueryPart> currentPartitionState = queryParts;
+			for( InterfaceParametersPair<IQueryPartModificator> modificator : modificators ) {
+				currentPartitionState = modificator.getInterface().modify(currentPartitionState, config, modificator.getParameters());
+				
+				if (currentPartitionState == null || currentPartitionState.isEmpty()) {
+					throw new QueryDistributionException("Query part modificator '" + modificator.getInterface().getName() + "' retured null or empty query part list!");
+				}
+			}
+			
+			if (LOG.isDebugEnabled()) {
+				printQueryParts(currentPartitionState);
+			}
+
+			return currentPartitionState;
 		} catch (QueryPartModificationException ex) {
 			throw new QueryDistributionException("Could not modify query parts", ex);
 		}
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> tryAllocate(QueryBuildConfiguration config, IQueryPartAllocator allocator, Collection<ILogicalQueryPart> modifiedQueryParts, List<String> parameters) throws QueryDistributionException {
+	private static Map<ILogicalQueryPart, PeerID> tryAllocate(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartAllocator>> allocators, Collection<ILogicalQueryPart> modifiedQueryParts) throws QueryDistributionException {
+		LOG.debug("Begin allocation of query parts");
+
 		try {
-			return allocator.allocate(modifiedQueryParts, P2PDictionaryService.get().getRemotePeerIDs(), P2PNetworkManagerService.get().getLocalPeerID(), config, parameters);
+			InterfaceParametersPair<IQueryPartAllocator> firstAllocator = allocators.get(0);
+			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, P2PDictionaryService.get().getRemotePeerIDs(), P2PNetworkManagerService.get().getLocalPeerID(), config, firstAllocator.getParameters());
+			
+			if (allocationMap == null || allocationMap.isEmpty()) {
+				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");
+			}
+
+			LOG.debug("Check allocation map returned by allocator {}", firstAllocator.getInterface().getName());
+			checkAllocationMap(allocationMap, modifiedQueryParts);
+			if (LOG.isDebugEnabled()) {
+				printAllocationMap(allocationMap);
+			}
+			
+			return allocationMap;
 		} catch (QueryPartAllocationException ex) {
 			throw new QueryDistributionException("Could not allocate query parts", ex);
 		}

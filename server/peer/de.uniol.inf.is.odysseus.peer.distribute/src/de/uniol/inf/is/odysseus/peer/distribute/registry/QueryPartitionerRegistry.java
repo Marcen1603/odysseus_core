@@ -7,6 +7,10 @@ public final class QueryPartitionerRegistry extends NamedInterfaceRegistry<IQuer
 
 	private static QueryPartitionerRegistry instance;
 
+	private QueryPartitionerRegistry() {
+		
+	}
+	
 	public static QueryPartitionerRegistry getInstance() {
 		if( instance == null ) {
 			instance = new QueryPartitionerRegistry();
