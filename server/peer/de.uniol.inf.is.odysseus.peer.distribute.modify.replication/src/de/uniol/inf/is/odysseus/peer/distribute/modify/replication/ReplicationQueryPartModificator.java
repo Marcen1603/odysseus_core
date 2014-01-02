@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
  */
 public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	
+	// TODO erneut testen
+	
 	/**
 	 * The logger for this class.
 	 */
@@ -83,11 +85,23 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		
 			// Determine degree of replication
 			final int degreeOfReplication = 
-					ReplicationQueryPartModificator.determineDegreeOfReplication(queryParts.size(), modificatorParameters);
+					ReplicationQueryPartModificator.determineDegreeOfReplication(modificatorParameters);
+			ReplicationQueryPartModificator.checkDegreeOfReplication(queryParts.size(), degreeOfReplication);
+			ReplicationQueryPartModificator.log.debug("Degree of replication set to {}.", degreeOfReplication);
 			
 			// Copy the query parts
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> replicatesToOrigin = 
-					ReplicationQueryPartModificator.copyAndCutQueryParts(queryParts, degreeOfReplication);
+					LogicalQueryHelper.copyAndCutQueryParts(queryParts, degreeOfReplication);
+			if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
+				
+				for(ILogicalQueryPart origin : replicatesToOrigin.keySet()) {
+					
+					for(ILogicalQueryPart copy : replicatesToOrigin.get(origin))
+						ReplicationQueryPartModificator.log.debug("Created query part {} as a copy of query part {}.", copy, origin);
+					
+				}
+				
+			}
 			
 			// Modify each query part
 			for(ILogicalQueryPart originPart : queryParts)
@@ -137,12 +151,18 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		
 		// Collect all relative sinks
 		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = 
-				ReplicationQueryPartModificator.collectRelativeSinks(originPart , modifiedReplicatesToOrigin.get(originPart));
+				LogicalQueryHelper.collectRelativeSinks(originPart, modifiedReplicatesToOrigin.get(originPart));
+		if(ReplicationQueryPartModificator.log.isDebugEnabled()) {
+			
+			for(ILogicalOperator originSink : copiedToOriginSinks.keySet())
+					ReplicationQueryPartModificator.log.debug("Found {} as a relative sink of {}.", originSink.getName(), originPart);
+			
+		}
 		
 		// Modify each sink
 		for(ILogicalOperator originSink : copiedToOriginSinks.keySet()) {
 			
-			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.modifySink(originPart, replicatesToOrigin, originSink, 
+			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.modifySink(originPart, modifiedReplicatesToOrigin, originSink, 
 					copiedToOriginSinks.get(originSink)));
 			
 		}
@@ -188,7 +208,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Process real sinks
 		if(originSink.getSubscriptions().isEmpty()) {
 			
-			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processRealSink(originPart, replicatesToOrigin, originSink, 
+			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processRealSink(originPart, modifiedReplicatesToOrigin, originSink, 
 					replicatedSinks));
 			
 		}
@@ -196,7 +216,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 		// Process replicates for each subscription
 		for(LogicalSubscription subscription : originSink.getSubscriptions()) {
 			
-			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processSubscription(originPart, replicatesToOrigin, originSink, 
+			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processSubscription(originPart, modifiedReplicatesToOrigin, originSink, 
 					replicatedSinks, subscription));
 			
 		}
@@ -331,7 +351,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 			Optional<List<ILogicalOperator>> replicatedTargets = Optional.fromNullable(null);
 			Optional<List<ILogicalQueryPart>> queryPartOfReplicatedTarget = Optional.fromNullable(null);
-			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processTargetOfSubscription(originPart, replicatesToOrigin, 
+			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processTargetOfSubscription(originPart, modifiedReplicatesToOrigin, 
 					replicatedSinks, replicatedTargets, optTargetPart, queryPartOfReplicatedTarget, subscription));
 			
 		} else {
@@ -342,7 +362,7 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			for(ILogicalQueryPart replicate : replicatesToOrigin.get(optTargetPart.get()))
 				replicatedTargets.add(((ImmutableList<ILogicalOperator>) replicate.getOperators()).get(targetNo));
 			
-			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processTargetOfSubscription(originPart, replicatesToOrigin, 
+			modifiedReplicatesToOrigin.putAll(ReplicationQueryPartModificator.processTargetOfSubscription(originPart, modifiedReplicatesToOrigin, 
 					replicatedSinks, Optional.of(replicatedTargets), optTargetPart, 
 					Optional.of((List<ILogicalQueryPart>) replicatesToOrigin.get(optTargetPart.get())),	subscription));
 			
@@ -548,123 +568,16 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 	}
 
 	/**
-	 * Collects all relative (and real) sinks of a query part and it's replicates. <br />
-	 * The origin query part will not be modified.
-	 * @param originPart The query part whose sinks shall be collected.
-	 * @param replicates A collection of all replicates of <code>originPart</code>.
-	 * @return A mapping of replicated relative (and real) sinks to the origin ones.
-	 * @throws NullPointerException if <code>originPart</code> or <code>replicates</code> is null.
-	 * @throws IllegalArgumentException if at least one entry of <code>replicates</code> does not contain all sinks of <code>originPart</code>.
-	 */
-	private static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(
-			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> replicates) throws NullPointerException, IllegalArgumentException {
-		
-		// Preconditions
-		if(originPart == null)
-			throw new NullPointerException("Origin query part to collect relative sinks must be not null!");
-		else if(replicates == null)
-			throw new NullPointerException("List of replicates to collect relative sinks must be not null!");
-		
-		// The return value
-		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = Maps.newHashMap();
-		
-		// Collect origin sinks
-		List<ILogicalOperator> originSinks = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(originPart);
-		for(int sinkNo = 0; sinkNo < originSinks.size(); sinkNo++) {
-			
-			Collection<ILogicalOperator> copiedSinks = Lists.newArrayList();
-			
-			try {
-			
-				for(ILogicalQueryPart replicate : replicates)
-					copiedSinks.add(((List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(replicate)).get(sinkNo));
-				
-			} catch(IndexOutOfBoundsException e) {
-				
-				throw new IllegalArgumentException("At least one replicate does not contain all sinks of the origin!");
-				
-			}
-			
-			copiedToOriginSinks.put(originSinks.get(sinkNo), copiedSinks);
-			ReplicationQueryPartModificator.log.debug("Found {} as a relative sink of {}.", originSinks.get(sinkNo).getName(), originPart);
-			
-		}
-		
-		return copiedToOriginSinks;
-		
-	}
-
-	/**
-	 * Makes as many copies of query parts as given by the degree of replication. All copied query parts will be cut, so there will be no 
-	 * subscription from or to outwards a query part. <br />
-	 * The origin query parts will not be modified.
-	 * @param queryParts A collection of query parts to copy.
-	 * @param degreeOfReplication The degree of replication is the number of copies to make.
-	 * @throws NullPointerException if <code>queryParts</code> is null.
-	 * @throws IllegalArgumentException if <code>degreeOfReplication</code> is less than 1.
-	 */
-	private static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyAndCutQueryParts(
-			Collection<ILogicalQueryPart> queryParts, int degreeOfReplication) throws NullPointerException, IllegalArgumentException {
-		
-		// Preconditions
-		if(queryParts == null)
-			throw new NullPointerException("Query parts to be copied must be not null!");
-		else if(degreeOfReplication < 1)
-			throw new IllegalArgumentException("Degree of replication must be greater than 0!");
-		
-		// The return value
-		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps.newHashMap();
-	
-		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists.newArrayList();
-		for(int copyNo = 0; copyNo < degreeOfReplication; copyNo++)
-			plainCopies.add(LogicalQueryHelper.copyQueryPartsDeep(queryParts));
-		
-		for(Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies) {
-			
-			for(ILogicalQueryPart copy : plainCopyMap.keySet() ) {
-				
-				Collection<ILogicalQueryPart> copyList = null;
-				
-				if(copiesToOriginPart.containsKey(plainCopyMap.get(copy)))
-					copyList = copiesToOriginPart.get(plainCopyMap.get(copy));
-				else {
-					
-					copyList = Lists.newArrayList();
-					copiesToOriginPart.put(plainCopyMap.get(copy), copyList);
-					
-				}
-			
-				LogicalQueryHelper.cutQueryPart(copy);
-				copyList.add(copy);
-				ReplicationQueryPartModificator.log.debug("Created query part {} as a copy of query part {}.", copy, plainCopyMap.get(copy));
-				
-			}
-			
-		}
-
-		return copiesToOriginPart;
-		
-	}
-
-	/**
-	 * Determines the degree of replications given by the user (Odysseus script). <br />
+	 * Determines the degree of replication given by the user (Odysseus script). <br />
 	 * #PEER_MODIFICATION replication <degree>
-	 * @param numQueryParts The number of query parts, which shall be replicated.
 	 * @param modificatorParameters The parameters for the modification given by the user without the parameter "replication".
-	 * @return The degree of parallelism given by the user.
-	 * @throws NullPointerException if <code>modificatorParameters</code> is null or if no {@link IP2PDictionary} is available.
-	 * @throws IllegalArgumentException if <code>numQueryParts</code> is less than one, if <code>modificatorParameters</code> is empty or 
-	 * if the parameter for the degree of replication within <code>modificatorParameters</code> is less than {@value #min_degree}.
-	 * @throws NumberFormatException if the parameter for the degree of replication within <code>modificatorParameters</code> could not be cast to 
-	 * an integer.
+	 * @return The degree of replication given by the user.
+	 * @throws NullPointerException if <code>modificatorParameters</code> is null.
 	 */
-	private static int determineDegreeOfReplication(int numQueryParts, List<String> modificatorParameters) 
-			throws NullPointerException, IllegalArgumentException, NumberFormatException {
+	private static int determineDegreeOfReplication(List<String> modificatorParameters) throws NullPointerException {
 		
 		// Preconditions 1
-		if(numQueryParts < 1)
-			throw new IllegalArgumentException("At least one query part is needed for replication!");
-		else if(modificatorParameters == null)
+		if(modificatorParameters == null)
 			throw new NullPointerException("Parameters for query part replicator must not be null!");
 		
 		// The return value
@@ -699,10 +612,30 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 			
 		}		
 		
+		return degreeOfReplication;
+		
+	}
+	
+	/**
+	 * Compares the degree of replications given by the user with the number of available peers. 
+	 * @param numQueryParts The number of query parts, which shall be replicated.
+	 * @param degreeOfReplication The degree of replication given by the user.
+	 * @throws NullPointerException if no {@link IP2PDictionary} could be found.
+	 * @throws IllegalArgumentException if <code>numQueryParts</code> is less than one or 
+	 * if <code>degreeOfReplication</code> is less {@value #min_degree}.
+	 */
+	private static void checkDegreeOfReplication(int numQueryParts, int degreeOfReplication) throws NullPointerException, IllegalArgumentException {
+		
+		// Preconditions 1
+		if(numQueryParts < 1)
+			throw new IllegalArgumentException("At least one query part is needed for replication!");
+		else if(degreeOfReplication < ReplicationQueryPartModificator.min_degree)
+			throw new IllegalArgumentException("Degree of replication must be at least " + ReplicationQueryPartModificator.min_degree + "!");
+		
 		// The bound IP2PDictionary
 		Optional<IP2PDictionary> optDict = Activator.getP2PDictionary();
 		
-		// Preconditions 3
+		// Preconditions 2
 		if(!optDict.isPresent())
 			throw new NullPointerException("No P2PDictionary available!");
 		
@@ -716,9 +649,6 @@ public class ReplicationQueryPartModificator implements IQueryPartModificator {
 					degreeOfReplication * numQueryParts, numRemotePeers + 1);
 			
 		}
-		
-		ReplicationQueryPartModificator.log.debug("Degree of replication set to {}.", degreeOfReplication);
-		return degreeOfReplication;
 		
 	}
 
