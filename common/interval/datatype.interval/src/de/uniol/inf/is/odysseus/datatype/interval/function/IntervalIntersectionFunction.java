@@ -25,58 +25,52 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian.kuka@offis.de>
  * 
  */
-public class IntervalIntersectionFunction extends
-		AbstractFunction<IntervalDouble> {
-	/**
+public class IntervalIntersectionFunction extends AbstractFunction<IntervalDouble> {
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 5436861306816764016L;
-	private static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFIntervalDatatype.INTERVAL_BYTE,
-			SDFIntervalDatatype.INTERVAL_SHORT,
-			SDFIntervalDatatype.INTERVAL_INTEGER,
-			SDFIntervalDatatype.INTERVAL_FLOAT,
-			SDFIntervalDatatype.INTERVAL_DOUBLE,
-			SDFIntervalDatatype.INTERVAL_LONG };
+    private static final long serialVersionUID = 5436861306816764016L;
+    private static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
+            SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
 
-	@Override
-	public int getArity() {
-		return 2;
-	}
+    @Override
+    public int getArity() {
+        return 2;
+    }
 
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-	    if (argPos < 0) {
-            throw new IllegalArgumentException(
-                    "negative argument index not allowed");
+    @Override
+    public SDFDatatype[] getAcceptedTypes(int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
         }
         if (argPos > this.getArity() - 1) {
-            throw new IllegalArgumentException(this.getSymbol() + " has only "
-                    + this.getArity() + " argument(s).");
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
         }
         return accTypes;
-	}
+    }
 
-	@Override
-	public String getSymbol() {
-		return "intersection";
-	}
+    @Override
+    public String getSymbol() {
+        return "intersection";
+    }
 
-	@Override
-	public IntervalDouble getValue() {
-		IntervalDouble a = this.getInputValue(0);
-		IntervalDouble b = this.getInputValue(1);
-		if ((a.isEmpty()) || (b.isEmpty()) || (!(b.inf() <= a.sup()))
-				|| (!(a.inf() <= b.sup()))) {
-			return new IntervalDouble(Double.MAX_VALUE, Double.MIN_VALUE);
-		}
-		return new IntervalDouble(Math.max(a.inf(), b.inf()), Math.min(a.sup(),
-				b.sup()));
-	}
+    @Override
+    public IntervalDouble getValue() {
+        IntervalDouble a = this.getInputValue(0);
+        IntervalDouble b = this.getInputValue(1);
+        double max = Math.max(a.inf(), b.inf());
+        double min = Math.min(a.sup(), b.sup());
+        if (max <= min) {
+           return new IntervalDouble(max, min);
+        }
+        else {
+            return new IntervalDouble(Double.NaN, Double.NaN);
+        }
+    }
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
-	}
+    @Override
+    public SDFDatatype getReturnType() {
+        return SDFIntervalDatatype.INTERVAL_DOUBLE;
+    }
 
 }
