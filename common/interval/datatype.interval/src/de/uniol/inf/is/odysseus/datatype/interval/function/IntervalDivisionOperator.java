@@ -94,14 +94,12 @@ public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDou
 
     @Override
     public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
-        return operator.getClass() == IntervalPlusOperator.class || operator.getClass() == IntervalMinusOperator.class || operator.getClass() == PlusOperator.class
-                || operator.getClass() == MinusOperator.class;
+        return false;
     }
 
     @Override
     public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
-        return operator.getClass() == IntervalPlusOperator.class || operator.getClass() == IntervalMinusOperator.class || operator.getClass() == PlusOperator.class
-                || operator.getClass() == MinusOperator.class;
+        return false;
     }
 
     public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
