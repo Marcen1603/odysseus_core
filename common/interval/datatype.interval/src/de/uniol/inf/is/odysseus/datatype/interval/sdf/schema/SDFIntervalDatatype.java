@@ -63,12 +63,13 @@ public class SDFIntervalDatatype extends SDFDatatype {
 
 	@Override
 	public boolean isNumeric() {
-		return (this.getURI().equals(INTERVAL_LONG.getURI())
-				|| this.getURI().equals(INTERVAL_INTEGER.getURI())
-				|| this.getURI().equals(INTERVAL_DOUBLE.getURI())
-				|| this.getURI().equals(INTERVAL_FLOAT.getURI())
-				|| this.getURI().equals(INTERVAL_SHORT.getURI()) || this
-				.getURI().equals(INTERVAL_BYTE.getURI()));
+//		return (this.getURI().equals(INTERVAL_LONG.getURI())
+//				|| this.getURI().equals(INTERVAL_INTEGER.getURI())
+//				|| this.getURI().equals(INTERVAL_DOUBLE.getURI())
+//				|| this.getURI().equals(INTERVAL_FLOAT.getURI())
+//				|| this.getURI().equals(INTERVAL_SHORT.getURI()) || this
+//				.getURI().equals(INTERVAL_BYTE.getURI()));
+	    return false;
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class ToIntervalFunction extends AbstractFunction<IntervalDouble> {
      * 
      */
     private static final long serialVersionUID = 8339004565543022768L;
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.NUMBERS };
+    public static final SDFDatatype[] accTypes = SDFDatatype.NUMBERS;
 
     @Override
     public int getArity() {
@@ -32,7 +32,7 @@ public class ToIntervalFunction extends AbstractFunction<IntervalDouble> {
         if (argPos >= this.getArity()) {
             throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s): the interval inf and sup");
         }
-        return accTypes[argPos];
+        return accTypes;
     }
 
     @Override
