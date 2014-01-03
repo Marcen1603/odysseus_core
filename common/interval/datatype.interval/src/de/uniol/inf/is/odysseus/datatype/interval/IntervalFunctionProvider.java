@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalMultiplicatio
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPlusOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalPowerOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalUnionFunction;
+import de.uniol.inf.is.odysseus.datatype.interval.function.ToIntervalFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -39,31 +40,32 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
  * 
  */
 public class IntervalFunctionProvider implements IFunctionProvider {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory
-			.getLogger(IntervalFunctionProvider.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOG = LoggerFactory.getLogger(IntervalFunctionProvider.class);
 
-	public IntervalFunctionProvider() {
+    public IntervalFunctionProvider() {
 
-	}
+    }
 
-	@Override
-	public List<IFunction<?>> getFunctions() {
+    @Override
+    public List<IFunction<?>> getFunctions() {
 
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
 
-		functions.add(new IntervalMinusOperator());
-		functions.add(new IntervalPlusOperator());
-		functions.add(new IntervalMultiplicationOperator());
-		functions.add(new IntervalDivisionOperator());
-		functions.add(new IntervalPowerOperator());
+        functions.add(new IntervalMinusOperator());
+        functions.add(new IntervalPlusOperator());
+        functions.add(new IntervalMultiplicationOperator());
+        functions.add(new IntervalDivisionOperator());
+        functions.add(new IntervalPowerOperator());
 
-		functions.add(new IntervalUnionFunction());
-		functions.add(new IntervalIntersectionFunction());
-		functions.add(new IntervalDifferenceFunction());
-		// ProbabilisticFunctionProvider.LOG.info(String.format(
-		// "Register functions: %s", functions));
+        functions.add(new IntervalUnionFunction());
+        functions.add(new IntervalIntersectionFunction());
+        functions.add(new IntervalDifferenceFunction());
 
-		return functions;
-	}
+        functions.add(new ToIntervalFunction());
+        // ProbabilisticFunctionProvider.LOG.info(String.format(
+        // "Register functions: %s", functions));
+
+        return functions;
+    }
 }
