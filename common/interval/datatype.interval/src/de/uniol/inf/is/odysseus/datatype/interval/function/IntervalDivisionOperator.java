@@ -24,7 +24,6 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
 import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 
-
 /**
  * 
  * @author Christian Kuka <christian.kuka@offis.de>
@@ -32,96 +31,90 @@ import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
  */
 public class IntervalDivisionOperator extends AbstractBinaryOperator<IntervalDouble> {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = -3502588472297137429L;
+    private static final long serialVersionUID = -3502588472297137429L;
 
-	@Override
-	public int getPrecedence() {
-		return 5;
-	}
+    @Override
+    public int getPrecedence() {
+        return 5;
+    }
 
-	@Override
-	public String getSymbol() {
-		return "/";
-	}
+    @Override
+    public String getSymbol() {
+        return "/";
+    }
 
-	@Override
-	public IntervalDouble getValue() {
-		IntervalDouble a = getInputValue(0);
-		IntervalDouble b = getInputValue(1);
-		return getValueInternal(a, b);
-	}
+    @Override
+    public IntervalDouble getValue() {
+        IntervalDouble a = getInputValue(0);
+        IntervalDouble b = getInputValue(1);
+        return getValueInternal(a, b);
+    }
 
-	protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
-		if (!b.contains(0.0)) {
-			final double inf = Math.min(
-					Math.min(a.inf() / b.inf(), a.inf() / b.sup()),
-					Math.min(a.sup() / b.inf(), a.sup() / b.sup()));
-			final double sup = Math.max(
-					Math.max(a.inf() / b.inf(), a.inf() / b.sup()),
-					Math.max(a.sup() / b.inf(), a.sup() / b.sup()));
-			return new IntervalDouble(inf, sup);
-		} else {
-			return new IntervalDouble(Double.NaN, Double.NaN);
-		}
-	}
+    protected IntervalDouble getValueInternal(IntervalDouble a, IntervalDouble b) {
+        if ((b.inf() == 0.0) && (b.sup() == 0.0)) {
+            return new IntervalDouble(Double.NaN, Double.NaN);
+        }
+        else if (0 <= b.inf()) {
+            final double inf = Math.min(Math.min(a.inf() / b.inf(), a.inf() / b.sup()), Math.min(a.sup() / b.inf(), a.sup() / b.sup()));
+            final double sup = Math.max(Math.max(a.inf() / b.inf(), a.inf() / b.sup()), Math.max(a.sup() / b.inf(), a.sup() / b.sup()));
+            return new IntervalDouble(inf, sup);
+        }
+        else if (b.sup() <= 0) {
+            return getValueInternal(new IntervalDouble(-a.sup(), -a.inf()), new IntervalDouble(-b.sup(), -b.inf()));
+        }
+        else {
+            IntervalDouble left = getValueInternal(a, new IntervalDouble(b.inf(), 0.0));
+            IntervalDouble right = getValueInternal(a, new IntervalDouble(0.0, b.sup()));
+            return new IntervalDouble(Math.min(left.inf(), right.inf()), Math.max(left.sup(), right.sup()));
+        }
+    }
 
-	@Override
-	public SDFDatatype getReturnType() {
-		return SDFIntervalDatatype.INTERVAL_DOUBLE;
-	}
+    @Override
+    public SDFDatatype getReturnType() {
+        return SDFIntervalDatatype.INTERVAL_DOUBLE;
+    }
 
-	@Override
-	public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
-		return ASSOCIATIVITY.LEFT_TO_RIGHT;
-	}
+    @Override
+    public de.uniol.inf.is.odysseus.mep.IOperator.ASSOCIATIVITY getAssociativity() {
+        return ASSOCIATIVITY.LEFT_TO_RIGHT;
+    }
 
-	@Override
-	public boolean isCommutative() {
-		return true;
-	}
+    @Override
+    public boolean isCommutative() {
+        return true;
+    }
 
-	@Override
-	public boolean isAssociative() {
-		return true;
-	}
+    @Override
+    public boolean isAssociative() {
+        return true;
+    }
 
-	@Override
-	public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
-		return operator.getClass() == IntervalPlusOperator.class
-				|| operator.getClass() == IntervalMinusOperator.class
-				|| operator.getClass() == PlusOperator.class
-				|| operator.getClass() == MinusOperator.class;
-	}
+    @Override
+    public boolean isLeftDistributiveWith(IOperator<IntervalDouble> operator) {
+        return operator.getClass() == IntervalPlusOperator.class || operator.getClass() == IntervalMinusOperator.class || operator.getClass() == PlusOperator.class
+                || operator.getClass() == MinusOperator.class;
+    }
 
-	@Override
-	public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
-		return operator.getClass() == IntervalPlusOperator.class
-				|| operator.getClass() == IntervalMinusOperator.class
-				|| operator.getClass() == PlusOperator.class
-				|| operator.getClass() == MinusOperator.class;
-	}
+    @Override
+    public boolean isRightDistributiveWith(IOperator<IntervalDouble> operator) {
+        return operator.getClass() == IntervalPlusOperator.class || operator.getClass() == IntervalMinusOperator.class || operator.getClass() == PlusOperator.class
+                || operator.getClass() == MinusOperator.class;
+    }
 
-	public static final SDFDatatype[] accTypes = new SDFDatatype[] {
-			SDFIntervalDatatype.INTERVAL_BYTE,
-			SDFIntervalDatatype.INTERVAL_SHORT,
-			SDFIntervalDatatype.INTERVAL_INTEGER,
-			SDFIntervalDatatype.INTERVAL_FLOAT,
-			SDFIntervalDatatype.INTERVAL_DOUBLE,
-			SDFIntervalDatatype.INTERVAL_LONG };
+    public static final SDFDatatype[] accTypes = new SDFDatatype[] { SDFIntervalDatatype.INTERVAL_BYTE, SDFIntervalDatatype.INTERVAL_SHORT, SDFIntervalDatatype.INTERVAL_INTEGER,
+            SDFIntervalDatatype.INTERVAL_FLOAT, SDFIntervalDatatype.INTERVAL_DOUBLE, SDFIntervalDatatype.INTERVAL_LONG };
 
-	@Override
-	public SDFDatatype[] getAcceptedTypes(int argPos) {
-		if (argPos < 0) {
-			throw new IllegalArgumentException(
-					"negative argument index not allowed");
-		}
-		if (argPos > this.getArity() - 1) {
-			throw new IllegalArgumentException(this.getSymbol() + " has only "
-					+ this.getArity() + " argument(s).");
-		}
-		return accTypes;
-	}
+    @Override
+    public SDFDatatype[] getAcceptedTypes(int argPos) {
+        if (argPos < 0) {
+            throw new IllegalArgumentException("negative argument index not allowed");
+        }
+        if (argPos > this.getArity() - 1) {
+            throw new IllegalArgumentException(this.getSymbol() + " has only " + this.getArity() + " argument(s).");
+        }
+        return accTypes;
+    }
 }
