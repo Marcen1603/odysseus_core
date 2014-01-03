@@ -6,14 +6,18 @@ package de.uniol.inf.is.odysseus.probabilistic.base;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -32,16 +36,16 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class ProbabilisticRelationalPredicate implements IPredicate<ProbabilisticTuple<? extends IProbabilistic>> {
+public class ProbabilisticRelationalPredicate extends AbstractPredicate<ProbabilisticTuple<? extends IProbabilistic>> implements IProbabilisticRelationalPredicate {
     /**
      * 
      */
     private static final long serialVersionUID = -446918467035191505L;
 
-    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticRelationalPredicate.class);
 
     protected SDFProbabilisticExpression expression;
+    protected Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<SDFAttribute, SDFAttribute>();
 
     private IPredicateEvaluator[][] deterministicExpressions;
     private IPredicateEvaluator[][] discreteDistributionExpressions;
@@ -77,7 +81,7 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
         else {
             this.neededAttributes = new ArrayList<SDFAttribute>();
         }
-
+        this.replacementMap = new HashMap<SDFAttribute, SDFAttribute>(predicate.replacementMap);
     }
 
     /**
@@ -94,12 +98,13 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
      */
     @Override
     public boolean evaluate(ProbabilisticTuple<? extends IProbabilistic> left, ProbabilisticTuple<? extends IProbabilistic> right) {
-        ProbabilisticTuple<? extends IProbabilistic> result = probabilisticEvaluate(left, right);
-        return result.getMetadata().getExistence() > 0.0;
+//        ProbabilisticTuple<? extends IProbabilistic> result = probabilisticEvaluate(left, right);
+//        return result.getMetadata().getExistence() > 0.0;
+        throw new UnsupportedOperationException("Not supported, merge first and call evaluate");
+        
     }
 
     public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
-
         ProbabilisticTuple<? extends IProbabilistic> output = input;
         for (int i = 0; i < this.deterministicExpressions.length; ++i) {
             output = evaluateDeterministicPredicate(input, deterministicExpressions[i]);
@@ -122,15 +127,7 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
     }
 
     public ProbabilisticTuple<? extends IProbabilistic> probabilisticEvaluate(ProbabilisticTuple<?> left, ProbabilisticTuple<?> right) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void init() {
-
+        throw new UnsupportedOperationException("Not supported, merge first and call evaluate");
     }
 
     public void init(SDFSchema schema) {
@@ -141,8 +138,11 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
     }
 
     public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
+        init(leftSchema, rightSchema, true);
+    }
+
+    public void init(SDFSchema leftSchema, SDFSchema rightSchema, boolean checkRightSchema) {
         Objects.requireNonNull(leftSchema);
-        Objects.requireNonNull(rightSchema);
 
         List<SDFAttribute> neededAttributes = expression.getAllAttributes();
         this.attributePositions = new int[neededAttributes.size()];
@@ -150,17 +150,42 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
 
         for (int i = 0; i < neededAttributes.size(); i++) {
             SDFAttribute curAttribute = neededAttributes.get(i);
-            Objects.requireNonNull(curAttribute);
             int pos = leftSchema.indexOf(curAttribute);
             if (pos == -1) {
-                pos = rightSchema.indexOf(curAttribute);
-                if (pos == -1) {
-                    throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
+                if (rightSchema == null && checkRightSchema) {
+                    throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + leftSchema + " and rightSchema is null!");
+                }
+                if (checkRightSchema) {
+                    pos = indexOf(rightSchema, curAttribute);
+                    if (pos == -1) {
+                        throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
+                    }
                 }
                 this.fromRightChannel[i] = true;
             }
             this.attributePositions[i] = pos;
         }
+    }
+
+    private int indexOf(SDFSchema schema, SDFAttribute attr) {
+        SDFAttribute cqlAttr = getReplacement(attr);
+        Iterator<SDFAttribute> it = schema.iterator();
+        for (int i = 0; it.hasNext(); ++i) {
+            SDFAttribute a = it.next();
+            if (cqlAttr.equalsCQL(a)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private SDFAttribute getReplacement(SDFAttribute a) {
+        SDFAttribute ret = a;
+        SDFAttribute tmp = null;
+        while ((tmp = replacementMap.get(ret)) != null) {
+            ret = tmp;
+        }
+        return ret;
     }
 
     /**
@@ -169,6 +194,19 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
     @Override
     public List<SDFAttribute> getAttributes() {
         return Collections.unmodifiableList(this.expression.getAllAttributes());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void replaceAttribute(SDFAttribute curAttr, SDFAttribute newAttr) {
+        if (!curAttr.equals(newAttr)) {
+            replacementMap.put(curAttr, newAttr);
+        }
+        else {
+            LOG.warn("Replacement " + curAttr + " --> " + newAttr + " not added because they are equal!");
+        }
     }
 
     /**
@@ -306,6 +344,7 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
 
         ProbabilisticTuple<? extends IProbabilistic> output = null;
         double existence = 0.0;
+        // Evaluate OR predicate
         for (IPredicateEvaluator evaluator : evaluators) {
             ProbabilisticTuple<? extends IProbabilistic> tmp = evaluator.evaluate(input.clone());
             if ((output == null) || (tmp.getMetadata().getExistence() > existence)) {
@@ -374,6 +413,5 @@ public class ProbabilisticRelationalPredicate implements IPredicate<Probabilisti
         this.discreteDistributionExpressions = discreteDistributionExpr.toArray(new IPredicateEvaluator[deterministicExpr.size()][]);
         this.continuousDistributionExpressions = continuousDistributionExpr.toArray(new IPredicateEvaluator[deterministicExpr.size()][]);
     }
-    
-    
+
 }

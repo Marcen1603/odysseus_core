@@ -3,6 +3,10 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
+import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
+import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
+import org.apache.commons.math3.util.Pair;
+
 import de.uniol.inf.is.odysseus.probabilistic.common.VarHelper;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.continuous.datatype.NormalDistributionMixture;
@@ -31,22 +35,12 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         double jointProbability = ((IProbabilistic) input.getMetadata()).getExistence();
         synchronized (this.expression) {
-            double scale = 1.0;
-            int distributionIndex = -1;
             final Object[] values = new Object[this.varHelper.length];
             for (int j = 0; j < this.varHelper.length; ++j) {
                 Object attribute = input.getAttribute(this.varHelper[j].getPos());
                 if (attribute.getClass() == ProbabilisticContinuousDouble.class) {
                     int index = ((ProbabilisticContinuousDouble) attribute).getDistribution();
                     attribute = input.getDistribution(index);
-                    scale = ((NormalDistributionMixture) attribute).getScale();
-                    // FIXME What happens if we have more than one
-                    // distribution inside an expression or even other
-                    // functions? (CKu 17.12.2013)
-                    if (distributionIndex >= 0) {
-                        throw new IllegalArgumentException("More than one distribution not supported inside predicate");
-                    }
-                    distributionIndex = index;
                 }
                 values[j] = attribute;
             }
@@ -58,9 +52,25 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
 
             final Object expr = expression.getValue();
             if (expression.getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_CONTINUOUS_DOUBLE)) {
-                final NormalDistributionMixture distribution = (NormalDistributionMixture) expr;
-                jointProbability *= scale / distribution.getScale();
-                output.setDistribution(distributionIndex, distribution);
+                final NormalDistributionMixture newDistribution = (NormalDistributionMixture) expr;
+                int index = ((ProbabilisticContinuousDouble) output.getAttribute(newDistribution.getAttribute(0))).getDistribution();
+                final NormalDistributionMixture oldDistribution = output.getDistribution(index);
+
+                for (int i = 0; i < newDistribution.getSupport().length; i++) {
+                    double newMu = 0.0;
+                    double oldMu = 0.0;
+                    for (Pair<Double, MultivariateNormalDistribution> component : newDistribution.getMixtures().getComponents()) {
+                        newMu += component.getKey() * component.getValue().getMeans()[i];
+                    }
+                    for (Pair<Double, MultivariateNormalDistribution> component : oldDistribution.getMixtures().getComponents()) {
+                        oldMu += component.getKey() * component.getValue().getMeans()[i];
+                    }
+                    oldDistribution.setSupport(i, newDistribution.getSupport()[i].sub(newMu - oldMu));
+
+                }
+                jointProbability *= oldDistribution.getScale() / newDistribution.getScale();
+                oldDistribution.setScale(newDistribution.getScale());
+                output.setDistribution(index, oldDistribution);
                 ((IProbabilistic) output.getMetadata()).setExistence(jointProbability);
             }
             else {
