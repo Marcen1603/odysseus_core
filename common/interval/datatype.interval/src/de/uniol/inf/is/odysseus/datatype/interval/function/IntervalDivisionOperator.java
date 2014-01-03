@@ -21,8 +21,6 @@ import de.uniol.inf.is.odysseus.datatype.interval.datatype.IntervalDouble;
 import de.uniol.inf.is.odysseus.datatype.interval.sdf.schema.SDFIntervalDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.IOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.MinusOperator;
-import de.uniol.inf.is.odysseus.mep.functions.math.PlusOperator;
 
 /**
  * 
