@@ -253,14 +253,17 @@ public final class LogicalQueryHelper {
 		
 		// Collect origin sinks
 		List<ILogicalOperator> originSources = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(originPart);
-		for(int sourceNo = 0; sourceNo < originSources.size(); sourceNo++) {
+		for(ILogicalOperator source : originSources) {
 			
 			Collection<ILogicalOperator> copiedSources = Lists.newArrayList();
+			int sourceNo = -1;
 			
 			try {
 			
+				sourceNo = ((List<ILogicalOperator>) ((Collection<ILogicalOperator>) originPart.getOperators())).indexOf(source);
+				
 				for(ILogicalQueryPart copy : copies)
-					copiedSources.add(((List<ILogicalOperator>) LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(copy)).get(sourceNo));
+					copiedSources.add(((List<ILogicalOperator>) ((Collection<ILogicalOperator>) copy.getOperators())).get(sourceNo));
 				
 			} catch(IndexOutOfBoundsException e) {
 				
@@ -268,7 +271,7 @@ public final class LogicalQueryHelper {
 				
 			}
 			
-			copiedToOriginSources.put(originSources.get(sourceNo), copiedSources);
+			copiedToOriginSources.put(source, copiedSources);
 			
 		}
 		
@@ -299,14 +302,17 @@ public final class LogicalQueryHelper {
 		
 		// Collect origin sinks
 		List<ILogicalOperator> originSinks = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(originPart);
-		for(int sinkNo = 0; sinkNo < originSinks.size(); sinkNo++) {
+		for(ILogicalOperator sink : originSinks) {
 			
 			Collection<ILogicalOperator> copiedSinks = Lists.newArrayList();
+			int sinkNo = -1;
 			
 			try {
 			
+				sinkNo = ((List<ILogicalOperator>) ((Collection<ILogicalOperator>) originPart.getOperators())).indexOf(sink);
+				
 				for(ILogicalQueryPart copy : copies)
-					copiedSinks.add(((List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(copy)).get(sinkNo));
+					copiedSinks.add(((List<ILogicalOperator>) ((Collection<ILogicalOperator>) copy.getOperators())).get(sinkNo));
 				
 			} catch(IndexOutOfBoundsException e) {
 				
@@ -314,7 +320,7 @@ public final class LogicalQueryHelper {
 				
 			}
 			
-			copiedToOriginSinks.put(originSinks.get(sinkNo), copiedSinks);
+			copiedToOriginSinks.put(sink, copiedSinks);
 			
 		}
 		
