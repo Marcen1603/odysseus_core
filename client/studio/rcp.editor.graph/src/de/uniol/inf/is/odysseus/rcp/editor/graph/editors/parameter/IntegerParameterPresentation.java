@@ -44,6 +44,7 @@ public class IntegerParameterPresentation extends AbstractParameterPresentation<
 			val = Integer.parseInt(getValue().toString());
 		}
 		sp = new Spinner(parent, SWT.BORDER);
+		sp.setMaximum(Integer.MAX_VALUE);
 		sp.setSelection(val);
 		sp.addSelectionListener(new SelectionAdapter() {
 			/*
