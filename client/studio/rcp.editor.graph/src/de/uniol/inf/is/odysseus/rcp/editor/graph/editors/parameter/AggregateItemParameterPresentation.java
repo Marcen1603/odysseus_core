@@ -61,19 +61,7 @@ public class AggregateItemParameterPresentation extends
 	@Override
 	public String getPQLString() {
 		// ['count', 'id', 'count', 'PartialAggregate']
-		String str = "[";
-		if (getValue() != null) {
-			String function = getValue().get(0);
-			String onAttribute = getValue().get(1);
-			String newAttribute = getValue().get(2);
-			String datatype = getValue().get(3);
-			str = str + "'" + function + "', ";
-			str = str + "'" + onAttribute + "', ";
-			str = str + "'" + newAttribute + "', ";
-			str = str + "'" + datatype + "'";
-		}
-		str = str + "]";
-		return str;
+		return getListPQLString(getValue());
 	}
 
 	/*
@@ -85,13 +73,17 @@ public class AggregateItemParameterPresentation extends
 	 */
 	@Override
 	public void saveValueToXML(Node parent, Document builder) {
-		Element f = builder.createElement("function");
-		f.setTextContent(getValue().get(0));
-		parent.appendChild(f);
+		if (getValue().size() >= 1) {
+			Element f = builder.createElement("function");
+			f.setTextContent(getValue().get(0));
+			parent.appendChild(f);
+		}
 
-		Element a = builder.createElement("onAttribute");
-		a.setTextContent(getValue().get(1));
-		parent.appendChild(a);
+		if (getValue().size() >= 2) {
+			Element a = builder.createElement("onAttribute");
+			a.setTextContent(getValue().get(1));
+			parent.appendChild(a);
+		}
 
 		if (getValue().size() >= 3) {
 			Element n = builder.createElement("newAttribute");
@@ -120,34 +112,29 @@ public class AggregateItemParameterPresentation extends
 		String onAttribute = null;
 		String newAttribute = null;
 		String datatype = null;
+		ArrayList<String> aggItem = new ArrayList<>();
 		for (int i = 0; i < childs.getLength(); i++) {
 			if (childs.item(i) instanceof Element) {
 				Element el = (Element) childs.item(i);
 				if (el.getNodeName().equals("function")) {
 					function = el.getTextContent();
+					aggItem.add(function);
 				}
 				if (el.getNodeName().equals("onAttribute")) {
 					onAttribute = el.getTextContent();
+					aggItem.add(onAttribute);
 				}
 				if (el.getNodeName().equals("newAttribute")) {
 					newAttribute = el.getTextContent();
+					aggItem.add(newAttribute);
 				}
 				if (el.getNodeName().equals("datatype")) {
 					datatype = el.getTextContent();
+					aggItem.add(datatype);
 				}
 			}
 		}
-
-		if (function != null && onAttribute != null && newAttribute != null
-				&& datatype != null) {
-			ArrayList<String> aggItem = new ArrayList<>();
-			aggItem.add(function);
-			aggItem.add(onAttribute);
-			aggItem.add(newAttribute);
-			aggItem.add(datatype);
-			setValue(aggItem);
-		}
-
+		setValue(aggItem);
 	}
 
 	@Override
@@ -187,16 +174,11 @@ public class AggregateItemParameterPresentation extends
 	 */
 	@Override
 	protected Control createParameterWidget(Composite parent) {
-		String function = "";
-		String onAttribute = "";
-		String newAttribute = "";
-		String datatype = "";
-		if (getValue() != null) {
-			function = getValue().get(0);
-			onAttribute = getValue().get(1);
-			newAttribute = getValue().get(2);
-			datatype = getValue().get(3);
-		}
+		String function = getStringValue(getValue(), 0);
+		String onAttribute = getStringValue(getValue(), 1);
+		String newAttribute = getStringValue(getValue(), 2);
+		String datatype = getStringValue(getValue(), 3);
+
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(4, false));
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -269,13 +251,22 @@ public class AggregateItemParameterPresentation extends
 			String onAttribute = onAttributeCombo.getText();
 			String newAttribute = newAttributeText.getText();
 			String datatype = comboDatatype.getText();
-			if (!function.isEmpty() && !onAttribute.isEmpty()
-					&& !newAttribute.isEmpty() && !datatype.isEmpty()) {
+
+			if (newAttribute.isEmpty()) {
+				if (!function.isEmpty() && !onAttribute.isEmpty()) {
+					newAttribute = function + "_" + onAttribute;
+					newAttributeText.setText(newAttribute);
+				}
+			}
+
+			if (!function.isEmpty() && !onAttribute.isEmpty()) {
 				ArrayList<String> aggItem = new ArrayList<>();
 				aggItem.add(function);
 				aggItem.add(onAttribute);
 				aggItem.add(newAttribute);
-				aggItem.add(datatype);
+				if (!datatype.isEmpty()) {
+					aggItem.add(datatype);
+				}
 				setValue(aggItem);
 			} else {
 				setValue(null);

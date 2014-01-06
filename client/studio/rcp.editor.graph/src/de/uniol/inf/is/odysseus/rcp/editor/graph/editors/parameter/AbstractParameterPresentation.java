@@ -178,4 +178,27 @@ public abstract class AbstractParameterPresentation<V> implements IParameterPres
 		return this.operator.getGraph().getProject();
 	}
 	
+	protected String getListPQLString(List<String> value){
+		// ['count', 'id', 'count', 'PartialAggregate']
+		StringBuffer str = new StringBuffer("[");
+		if (getValue() != null) {
+			for (String s:value){
+				str.append("'").append(s).append("',");
+			}
+			str.delete(str.length()-1,str.length());
+		}
+		str.append("]");
+		return str.toString();
+	}
+	
+	protected String getStringValue(List<String> value, int i) {
+		String ret = "";
+		if (value != null && value.size() > i){
+			ret = value.get(i);
+		}
+	
+		return ret;
+	}
+
+	
 }
