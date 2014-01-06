@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 public interface IResourceUsage {
 
 	public PeerID getPeerID();
+	public boolean isLocal();
 	public long getTimestamp();
 	
 	public double getCpuFree();

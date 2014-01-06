@@ -405,8 +405,12 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 	}
 
 	@Override
-	public void resourceUsageChanged(IPeerResourceUsageManager sender, PeerID peerID) {
+	public void remoteResourceUsageChanged(IPeerResourceUsageManager sender, IResourceUsage peerID) {
 		refreshTable();
 	}
 
+	@Override
+	public void localResourceUsageChanged(IPeerResourceUsageManager sender, IResourceUsage localUsage) {
+		refreshTable();
+	}
 }

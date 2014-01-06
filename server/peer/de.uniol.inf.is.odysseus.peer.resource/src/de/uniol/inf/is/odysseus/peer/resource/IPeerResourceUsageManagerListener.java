@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.resource;
 
-import net.jxta.peer.PeerID;
 
 public interface IPeerResourceUsageManagerListener {
 
-	public void resourceUsageChanged( IPeerResourceUsageManager sender, PeerID peerID );
+	public void remoteResourceUsageChanged( IPeerResourceUsageManager sender, IResourceUsage remoteUsage );
+	public void localResourceUsageChanged( IPeerResourceUsageManager sender, IResourceUsage localUsage );
 }

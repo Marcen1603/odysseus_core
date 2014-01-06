@@ -89,6 +89,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		Preconditions.checkNotNull(localUsage);
 		
 		this.localUsage = localUsage;
+		fireChangeEvent(localUsage);
 	}
 	
 	@Override
@@ -104,21 +105,25 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 					IResourceUsage oldUsage = usageMap.get(peerID);
 					if( isOlder(oldUsage, usage)) {
 						usageMap.put(peerID, usage);
-						fireChangeEvent(peerID);
+						fireChangeEvent(usage);
 					}
 				} else {
 					usageMap.put(peerID, usage);
-					fireChangeEvent(peerID);
+					fireChangeEvent(usage);
 				}
 			}
 		}
 	}
 
-	private void fireChangeEvent(PeerID peerID) {
+	private void fireChangeEvent(IResourceUsage usage) {
 		synchronized( listeners ) {
 			for( IPeerResourceUsageManagerListener listener : listeners ) {
 				try {
-					listener.resourceUsageChanged(this, peerID);
+					if( usage.isLocal() ) {
+						listener.localResourceUsageChanged(this, usage);
+					} else {
+						listener.remoteResourceUsageChanged(this, usage);
+					}
 				} catch( Throwable t ) {
 					LOG.error("Exception in peer resource usage manager listener", t);
 				}
