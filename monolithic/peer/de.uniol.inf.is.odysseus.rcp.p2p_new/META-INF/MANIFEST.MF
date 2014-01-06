@@ -19,6 +19,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: de.uniol.inf.is.odysseus.rcp,
  de.uniol.inf.is.odysseus.rcp.server,
+ org.apache.commons.math.geometry,
  org.eclipse.ui.console,
  org.eclipse.ui.navigator.resources,
  org.slf4j

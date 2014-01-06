@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.peer.ping;
 
+import org.apache.commons.math.geometry.Vector3D;
+
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
@@ -12,5 +14,6 @@ public interface IPingMap {
 
 	public Optional<IPingMapNode> getNode(PeerID peer);
 	public ImmutableCollection<PeerID> getPeerIDs();
+	public Vector3D getLocalPosition();
 
 }
