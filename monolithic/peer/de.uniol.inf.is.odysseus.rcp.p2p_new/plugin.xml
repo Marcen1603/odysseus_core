@@ -31,15 +31,11 @@
             restorable="true">
       </view>
       <view
+            allowMultiple="false"
+            category="de.uniol.inf.is.odysseus.rcp.p2p_new.P2PCategory"
             class="de.uniol.inf.is.odysseus.rcp.p2p_new.views.PingMapView"
             id="de.uniol.inf.is.odysseus.rcp.p2p_new.PingMap"
             name="Ping Map"
-            restorable="true">
-      </view>
-      <view
-            class="de.uniol.inf.is.odysseus.rcp.p2p_new.ViewPart1"
-            id="de.uniol.inf.is.odysseus.rcp.p2p_new.view1"
-            name="name"
             restorable="true">
       </view>
    </extension>
