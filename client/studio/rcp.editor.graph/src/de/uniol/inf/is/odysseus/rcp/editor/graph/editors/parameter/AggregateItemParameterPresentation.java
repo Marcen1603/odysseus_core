@@ -42,7 +42,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
  * @author DGeesen
  * 
  */
-public class AggregateItemParameterPresentation extends AbstractParameterPresentation<List<String>> {
+public class AggregateItemParameterPresentation extends
+		AbstractParameterPresentation<List<String>> {
 
 	private Text newAttributeText;
 	private Combo functionCombo;
@@ -54,7 +55,8 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#getPQLString()
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#getPQLString()
 	 */
 	@Override
 	public String getPQLString() {
@@ -77,7 +79,9 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#saveValueToXML(org.w3c.dom.Node, org.w3c.dom.Document)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#saveValueToXML(org.w3c.dom.Node,
+	 * org.w3c.dom.Document)
 	 */
 	@Override
 	public void saveValueToXML(Node parent, Document builder) {
@@ -89,20 +93,25 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 		a.setTextContent(getValue().get(1));
 		parent.appendChild(a);
 
-		Element n = builder.createElement("newAttribute");
-		n.setTextContent(getValue().get(2));
-		parent.appendChild(n);
+		if (getValue().size() >= 3) {
+			Element n = builder.createElement("newAttribute");
+			n.setTextContent(getValue().get(2));
+			parent.appendChild(n);
+		}
 
-		Element d = builder.createElement("datatype");
-		d.setTextContent(getValue().get(3));
-		parent.appendChild(d);
+		if (getValue().size() == 4) {
+			Element d = builder.createElement("datatype");
+			d.setTextContent(getValue().get(3));
+			parent.appendChild(d);
+		}
 
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * IParameterPresentation#loadValueFromXML(org.w3c.dom.Node)
 	 */
 	@Override
 	public void loadValueFromXML(Node parent) {
@@ -129,7 +138,8 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 			}
 		}
 
-		if (function != null && onAttribute != null && newAttribute != null && datatype != null) {
+		if (function != null && onAttribute != null && newAttribute != null
+				&& datatype != null) {
 			ArrayList<String> aggItem = new ArrayList<>();
 			aggItem.add(function);
 			aggItem.add(onAttribute);
@@ -148,11 +158,13 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 
 		Label labelFunction = new Label(container, SWT.None);
 		labelFunction.setText("Function");
-		labelFunction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		labelFunction.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false));
 
 		Label labelAttribute = new Label(container, SWT.None);
 		labelAttribute.setText("Attribute");
-		labelAttribute.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		labelAttribute.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false));
 
 		Label labelName = new Label(container, SWT.None);
 		labelName.setText("Name");
@@ -160,7 +172,8 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 
 		Label labelDatatype = new Label(container, SWT.None);
 		labelDatatype.setText("Datatype");
-		labelDatatype.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		labelDatatype.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false));
 
 		return container;
 	}
@@ -168,7 +181,9 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.AbstractParameterPresentation#createParameterWidget(org.eclipse.swt.widgets.Composite)
+	 * @see de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.
+	 * AbstractParameterPresentation
+	 * #createParameterWidget(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	protected Control createParameterWidget(Composite parent) {
@@ -189,12 +204,14 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 		EntryModifyListener ml = new EntryModifyListener();
 
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> datamodel = getOperator().getInputSchemas().get(0).getType();
+		Class<? extends IStreamObject> datamodel = getOperator()
+				.getInputSchemas().get(0).getType();
 
 		functionCombo = new Combo(container, SWT.BORDER | SWT.DROP_DOWN);
 		int funcSelect = 0;
 		functionCombo.add("");
-		for (String func : Activator.getDefault().getInstalledAggregateFunctions(datamodel)) {
+		for (String func : Activator.getDefault()
+				.getInstalledAggregateFunctions(datamodel)) {
 			functionCombo.add(func);
 			if (func.equals(function)) {
 				funcSelect = functionCombo.getItemCount() - 1;
@@ -206,8 +223,10 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 		onAttributeCombo = new Combo(container, SWT.BORDER | SWT.DROP_DOWN);
 		int onSelect = 0;
 		onAttributeCombo.add("");
-		if (getOperator().getInputSchemas() != null && getOperator().getInputSchemas().get(port) != null) {
-			for (SDFAttribute posVal : getOperator().getInputSchemas().get(port).getAttributes()) {
+		if (getOperator().getInputSchemas() != null
+				&& getOperator().getInputSchemas().get(port) != null) {
+			for (SDFAttribute posVal : getOperator().getInputSchemas()
+					.get(port).getAttributes()) {
 				onAttributeCombo.add(posVal.getAttributeName());
 				if (posVal.getAttributeName().equals(onAttribute)) {
 					onSelect = onAttributeCombo.getItemCount() - 1;
@@ -225,7 +244,8 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 		newAttributeText = new Text(container, SWT.BORDER);
 		newAttributeText.setText(newAttribute);
 		newAttributeText.addModifyListener(ml);
-		newAttributeText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		newAttributeText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false));
 
 		comboDatatype = new Combo(container, SWT.BORDER | SWT.DROP_DOWN);
 		int dataTypeSelect = 0;
@@ -249,7 +269,8 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 			String onAttribute = onAttributeCombo.getText();
 			String newAttribute = newAttributeText.getText();
 			String datatype = comboDatatype.getText();
-			if (!function.isEmpty() && !onAttribute.isEmpty() && !newAttribute.isEmpty() && !datatype.isEmpty()) {
+			if (!function.isEmpty() && !onAttribute.isEmpty()
+					&& !newAttribute.isEmpty() && !datatype.isEmpty()) {
 				ArrayList<String> aggItem = new ArrayList<>();
 				aggItem.add(function);
 				aggItem.add(onAttribute);
@@ -261,17 +282,17 @@ public class AggregateItemParameterPresentation extends AbstractParameterPresent
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean hasValidValue() {
-		if(getValue()==null){
+		if (getValue() == null) {
 			return false;
 		}
-		
-		if(getValue().isEmpty()){
+
+		if (getValue().isEmpty()) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
