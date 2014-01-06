@@ -46,7 +46,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 
 	private static final int INVISIBLE_NODE_WIDTH_PIXELS = 160;
 	private static final int INVISIBLE_NODE_HEIGHT_PIXELS = 27;
-	private static final int SPACE_PIXELS = 20; 
+	private static final int SPACE_PIXELS = 100; 
 	private static final int SPACE_HEIGHT_PIXELS = 75; 
 	private static final SymbolElementInfo DUMMY_SYMBOL_INFO = new SymbolElementInfo("invisible", null, 5, 5);
 
@@ -102,21 +102,21 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 			int lastWidth = 0;
 			for (int index = 0; index < layers.get(layer).size(); index++) {
 				final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-				final int currWidth = currNode.getWidth();
+//				final int currWidth = currNode.getWidth();
 
 				posXRight[layer][index] = 0;
 				if (layer > 0) {
 					final int med = getMedian(currNode, layers.get(layer - 1), true);
-					final INodeView<IPhysicalOperator> parentNode = layers.get(layer - 1).get(med);
-					final int parentWidth = parentNode.getWidth();
+//					final INodeView<IPhysicalOperator> parentNode = layers.get(layer - 1).get(med);
+//					final int parentWidth = parentNode.getWidth();
 
-					if (parentWidth < currWidth) {
-						posXRight[layer][index] = posXRight[layer - 1][med] - (currWidth - parentWidth) / 2;
-					} else if (parentWidth > currWidth) {
-						posXRight[layer][index] = posXRight[layer - 1][med] + (parentWidth - currWidth) / 2;
-					} else {
+//					if (parentWidth < currWidth) {
+//						posXRight[layer][index] = posXRight[layer - 1][med] - (currWidth - parentWidth) / 2;
+//					} else if (parentWidth > currWidth) {
+//						posXRight[layer][index] = posXRight[layer - 1][med] + (parentWidth - currWidth) / 2;
+//					} else {
 						posXRight[layer][index] = posXRight[layer - 1][med];
-					}
+//					}
 
 				}
 
@@ -137,21 +137,21 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 			int lastX = highestX;
 			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
 				final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-				final int currWidth = currNode.getWidth();
+//				final int currWidth = currNode.getWidth();
 
 				posXLeft[layer][index] = highestX - currNode.getWidth();
 				if (layer > 0) {
 					final int med = getMedian(currNode, layers.get(layer - 1), true);
-					final INodeView<IPhysicalOperator> parentNode = layers.get(layer - 1).get(med);
-					final int parentWidth = parentNode.getWidth();
+//					final INodeView<IPhysicalOperator> parentNode = layers.get(layer - 1).get(med);
+//					final int parentWidth = parentNode.getWidth();
 
-					if (parentWidth < currWidth) {
-						posXLeft[layer][index] = posXLeft[layer - 1][med] - (currWidth - parentWidth) / 2;
-					} else if (parentWidth > currWidth) {
-						posXLeft[layer][index] = posXLeft[layer - 1][med] + (parentWidth - currWidth) / 2;
-					} else {
+//					if (parentWidth < currWidth) {
+//						posXLeft[layer][index] = posXLeft[layer - 1][med] - (currWidth - parentWidth) / 2;
+//					} else if (parentWidth > currWidth) {
+//						posXLeft[layer][index] = posXLeft[layer - 1][med] + (parentWidth - currWidth) / 2;
+//					} else {
 						posXLeft[layer][index] = posXLeft[layer - 1][med];
-					}
+//					}
 
 				}
 
@@ -164,28 +164,38 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 		}
 
 		logger.debug("Final NodeDisplay positions");
-		for (int layer = 0; layer < layers.size(); layer++) {
+//		for (int layer = 0; layer < layers.size(); layer++) {
+//			final int posY = layers.size() * SPACE_HEIGHT_PIXELS - SPACE_HEIGHT_PIXELS * (layer + 1);
+//
+//			if (layer == 0 || layer > 0 && layers.get(layer).size() > layers.get(layer - 1).size()) {
+//
+//				for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+//					final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
+//					currNode.setPosition(new Vector((posXRight[layer][index] + posXLeft[layer][index]) / 2, posY));
+//					System.err.println("#1: Position of " + currNode.getModelNode().getContent().getClass().getSimpleName() + " set to " + currNode.getPosition());
+//				}
+//			} else {
+//
+//				for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+//					final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
+//					final Collection<IConnectionView<IPhysicalOperator>> connectionsAsEnd = currNode.getConnectionsAsEnd();
+//					double sumX = 0;
+//					for (final IConnectionView<IPhysicalOperator> con : connectionsAsEnd) {
+//						sumX += con.getViewedStartNode().getPosition().getX();
+//					}
+//					currNode.setPosition(new Vector(sumX / connectionsAsEnd.size(), posY));
+//					System.err.println("2#: Position of " + currNode.getModelNode().getContent().getClass().getSimpleName() + " set to " + currNode.getPosition());
+//				}
+//			}
+//		}
+		for( int layer = 0; layer < layers.size(); layer++) {
 			final int posY = layers.size() * SPACE_HEIGHT_PIXELS - SPACE_HEIGHT_PIXELS * (layer + 1);
-
-			if (layer == 0 || layer > 0 && layers.get(layer).size() > layers.get(layer - 1).size()) {
-
-				for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
-					final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-					currNode.setPosition(new Vector((posXRight[layer][index] + posXLeft[layer][index]) / 2, posY));
-				}
-			} else {
-
-				for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
-					final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-					final Collection<IConnectionView<IPhysicalOperator>> connectionsAsEnd = currNode.getConnectionsAsEnd();
-					double sumX = 0;
-					for (final IConnectionView<IPhysicalOperator> con : connectionsAsEnd) {
-						sumX += con.getViewedStartNode().getPosition().getX();
-					}
-					currNode.setPosition(new Vector(sumX / connectionsAsEnd.size(), posY));
-				}
+			for( int index = layers.get( layer ).size() - 1; index >= 0; index-- ) {
+				INodeView<IPhysicalOperator> currNode = layers.get( layer ).get( index );
+				currNode.setPosition( new Vector(posXRight[layer][index], posY ) );
 			}
 		}
+
 	}
 
 	private static void layerByLayerSweep(List<List<INodeView<IPhysicalOperator>>> layers) {
@@ -367,7 +377,7 @@ public final class SugiyamaPositioner implements INodePositioner<IPhysicalOperat
 			if (indexes.isEmpty()) {
 				med = 0;
 			} else {
-				med = indexes.get(indexes.size() / 2);
+				med = indexes.get( (indexes.size() - 1) / 2);
 			}
 		} else {
 			med = 0;
