@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.relational.base.schema.TupleHelper;
 
-public class ObjectRelationalPredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate {
+public class ObjectRelationalPredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate<Tuple<?>> {
 
 	private static final long serialVersionUID = 1222104352250883947L;
 

@@ -29,14 +29,14 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.TruePredicate;
-import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
@@ -54,19 +54,19 @@ public class PredicateHelper {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(PredicateHelper.class);
 
-	private Map<ILogicalOperator, Set<IRelationalPredicate>> unsatisfiedPredicates;
+	private Map<ILogicalOperator, Set<IRelationalPredicate<?>>> unsatisfiedPredicates;
 
-	private Map<ILogicalOperator, Set<IRelationalPredicate>> joinToSatisfiedPredicates;
+	private Map<ILogicalOperator, Set<IRelationalPredicate<?>>> joinToSatisfiedPredicates;
 
 	private IAttributeResolver resolver;
 
 	public PredicateHelper() {
-		this.unsatisfiedPredicates = new HashMap<ILogicalOperator, Set<IRelationalPredicate>>();
-		this.joinToSatisfiedPredicates = new HashMap<ILogicalOperator, Set<IRelationalPredicate>>();
+		this.unsatisfiedPredicates = new HashMap<ILogicalOperator, Set<IRelationalPredicate<?>>>();
+		this.joinToSatisfiedPredicates = new HashMap<ILogicalOperator, Set<IRelationalPredicate<?>>>();
 	}
 
 	public void initialize(Set<ILogicalOperator> sources, Set<JoinAO> joins) {
-		Map<ILogicalOperator, Set<IRelationalPredicate>> predicateMap = collectPredicateMap(
+		Map<ILogicalOperator, Set<IRelationalPredicate<?>>> predicateMap = collectPredicateMap(
 				sources, joins);
 		SDFSchema schema = null;
 		for (ILogicalOperator source : predicateMap.keySet()) {
@@ -96,7 +96,7 @@ public class PredicateHelper {
 	 *            and the generatedPredicate.
 	 * @return
 	 */
-	public Pair<IPredicate<?>, Set<IRelationalPredicate>> generatePredicate(
+	public Pair<IPredicate<?>, Set<IRelationalPredicate<?>>> generatePredicate(
 			Set<ILogicalOperator> sources, ILogicalOperator newSource,
 			ILogicalOperator existingJoinPlan) {
 		sources.add(newSource);
@@ -104,9 +104,9 @@ public class PredicateHelper {
 			LOG.debug("[PredicateHelper] generatePredicate(...) only one or no source given.");
 		}
 
-		Set<IRelationalPredicate> possibleUnsatisfiedPredicates = getUnsatisfiedPredicates(
+		Set<IRelationalPredicate<?>> possibleUnsatisfiedPredicates = getUnsatisfiedPredicates(
 				sources, existingJoinPlan);
-		Set<IRelationalPredicate> satisfiablePredicates = getSatisfiablePredicates(
+		Set<IRelationalPredicate<?>> satisfiablePredicates = getSatisfiablePredicates(
 				possibleUnsatisfiedPredicates, sources);
 
 		if (satisfiablePredicates.isEmpty()) {
@@ -114,12 +114,12 @@ public class PredicateHelper {
 			return null;
 		}
 
-		Iterator<IRelationalPredicate> iterator = satisfiablePredicates
+		Iterator<IRelationalPredicate<?>> iterator = satisfiablePredicates
 				.iterator();
 		IPredicate<?> result = iterator.next();
 		if (satisfiablePredicates.size() > 1) {
 			while (iterator.hasNext()) {
-				IRelationalPredicate next = iterator.next();
+				IRelationalPredicate<?> next = iterator.next();
 				if (!(next instanceof TruePredicate)) {
 					result = ComplexPredicateHelper
 							.createAndPredicate(result, next);
@@ -130,7 +130,7 @@ public class PredicateHelper {
 			satisfiablePredicates.addAll(this.joinToSatisfiedPredicates.get(existingJoinPlan));
 			LOG.debug("Added existing satisfied predicates to list");
 		}
-		return new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
+		return new Pair<IPredicate<?>, Set<IRelationalPredicate<?>>>(
 				result, satisfiablePredicates);
 	}
 
@@ -141,7 +141,7 @@ public class PredicateHelper {
 	 * @param pair
 	 * @return a new predicate.
 	 */
-	public Pair<IPredicate<?>, Set<IRelationalPredicate>> generatePredicate(
+	public Pair<IPredicate<?>, Set<IRelationalPredicate<?>>> generatePredicate(
 			Pair<ILogicalOperator, ILogicalOperator> pair) {
 		Set<ILogicalOperator> source = new HashSet<ILogicalOperator>();
 		source.add(pair.getE1());
@@ -149,7 +149,7 @@ public class PredicateHelper {
 	}
 
 	public boolean allPredicatesSatisfied() {
-		for (Set<IRelationalPredicate> predicates : this.unsatisfiedPredicates
+		for (Set<IRelationalPredicate<?>> predicates : this.unsatisfiedPredicates
 				.values()) {
 			if (!predicates.isEmpty()) {
 				return false;
@@ -165,13 +165,13 @@ public class PredicateHelper {
 	 * @param predicates
 	 */
 	public void setSatisfied(ILogicalOperator joinPlan,
-			Set<IRelationalPredicate> predicates) {
+			Set<IRelationalPredicate<?>> predicates) {
 		this.joinToSatisfiedPredicates.put(joinPlan, predicates);
 	}
 
-	private Set<IRelationalPredicate> getUnsatisfiedPredicates(
+	private Set<IRelationalPredicate<?>> getUnsatisfiedPredicates(
 			Set<ILogicalOperator> sources, ILogicalOperator existingJoinPlan) {
-		Set<IRelationalPredicate> unsatisfied = new HashSet<IRelationalPredicate>();
+		Set<IRelationalPredicate<?>> unsatisfied = new HashSet<IRelationalPredicate<?>>();
 		// first collect all predicates which contain attributes originating
 		// from the sources.
 		for (ILogicalOperator source : sources) {
@@ -187,10 +187,10 @@ public class PredicateHelper {
 		return unsatisfied;
 	}
 
-	private Set<IRelationalPredicate> getSatisfiablePredicates(
-			Set<IRelationalPredicate> predicates, Set<ILogicalOperator> sources) {
-		Set<IRelationalPredicate> satisfiable = new HashSet<IRelationalPredicate>();
-		for (IRelationalPredicate predicate : predicates) {
+	private Set<IRelationalPredicate<?>> getSatisfiablePredicates(
+			Set<IRelationalPredicate<?>> predicates, Set<ILogicalOperator> sources) {
+		Set<IRelationalPredicate<?>> satisfiable = new HashSet<IRelationalPredicate<?>>();
+		for (IRelationalPredicate<?> predicate : predicates) {
 			if (isSatisfiable(predicate, sources)) {
 				satisfiable.add(predicate);
 			}
@@ -198,11 +198,11 @@ public class PredicateHelper {
 		return satisfiable;
 	}
 
-	private Map<ILogicalOperator, Set<IRelationalPredicate>> collectPredicateMap(
+	private Map<ILogicalOperator, Set<IRelationalPredicate<?>>> collectPredicateMap(
 			Set<ILogicalOperator> sources, Set<JoinAO> joins) {
-		Map<ILogicalOperator, Set<IRelationalPredicate>> predicateMap = new HashMap<ILogicalOperator, Set<IRelationalPredicate>>();
+		Map<ILogicalOperator, Set<IRelationalPredicate<?>>> predicateMap = new HashMap<ILogicalOperator, Set<IRelationalPredicate<?>>>();
 		for (ILogicalOperator source : sources) {
-			Set<IRelationalPredicate> predicates = collectPredicates(joins,
+			Set<IRelationalPredicate<?>> predicates = collectPredicates(joins,
 					source);
 			predicateMap.put(source, predicates);
 		}
@@ -219,12 +219,12 @@ public class PredicateHelper {
 	 *            ILogicalOperator (former AccessAO)
 	 * @return a collection of predicates based on the AccessAO.
 	 */
-	private Set<IRelationalPredicate> collectPredicates(Set<JoinAO> joins,
+	private Set<IRelationalPredicate<?>> collectPredicates(Set<JoinAO> joins,
 			ILogicalOperator source) {
-		Set<IRelationalPredicate> predicates = new HashSet<IRelationalPredicate>();
+		Set<IRelationalPredicate<?>> predicates = new HashSet<IRelationalPredicate<?>>();
 		for (JoinAO join : joins) {
 			for (IPredicate<?> predicate : join.getPredicates()) {
-				predicates.add((IRelationalPredicate) predicate);
+				predicates.add((IRelationalPredicate<?>) predicate);
 			}
 		}
 		return predicates;
@@ -238,7 +238,7 @@ public class PredicateHelper {
 	 * @param sources
 	 * @return true if satisfiable, false if not
 	 */
-	private boolean isSatisfiable(IRelationalPredicate predicate,
+	private boolean isSatisfiable(IRelationalPredicate<?> predicate,
 			Set<ILogicalOperator> sources) {
 		SDFSchema schema = null;
 		for (ILogicalOperator source : sources) {
@@ -283,17 +283,17 @@ public class PredicateHelper {
 	 * @return a set of IRelationalPredicates which use only one relation if
 	 *         possible.
 	 */
-	private Set<IRelationalPredicate> splitPredicates(
-			Set<IRelationalPredicate> predicates) {
-		Set<IRelationalPredicate> splitPredicates = new HashSet<IRelationalPredicate>();
-		for (IRelationalPredicate predicate : predicates) {
+	private Set<IRelationalPredicate<?>> splitPredicates(
+			Set<IRelationalPredicate<?>> predicates) {
+		Set<IRelationalPredicate<?>> splitPredicates = new HashSet<IRelationalPredicate<?>>();
+		for (IRelationalPredicate<?> predicate : predicates) {
 			splitPredicates.addAll(splitPredicate(predicate));
 		}
 		return splitPredicates;
 	}
 
-	private Set<IRelationalPredicate> splitPredicate(
-			IRelationalPredicate predicate) {
+	private Set<IRelationalPredicate<?>> splitPredicate(
+			IRelationalPredicate<?> predicate) {
 		// if (hasOnlyTwoRelations(predicate)) {
 		// HashSet<IRelationalPredicate> predicates = new
 		// HashSet<IRelationalPredicate>();
@@ -304,13 +304,13 @@ public class PredicateHelper {
 				|| predicate instanceof TypeSafeRelationalPredicate) {
 			return splitRelationalPredicate((RelationalPredicate) predicate);
 		}
-		return new HashSet<IRelationalPredicate>();
+		return new HashSet<IRelationalPredicate<?>>();
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Set<IRelationalPredicate> splitRelationalPredicate(
+	private Set<IRelationalPredicate<?>> splitRelationalPredicate(
 			RelationalPredicate predicate) {
-		Set<IRelationalPredicate> rPredicates = new HashSet<IRelationalPredicate>();
+		Set<IRelationalPredicate<?>> rPredicates = new HashSet<IRelationalPredicate<?>>();
 		// only conjunctive predicates can be split
 		if (predicate.isAndPredicate()) {
 			List<IPredicate> predicates = predicate.splitPredicate(false);
@@ -329,7 +329,7 @@ public class PredicateHelper {
 	 * @param predicate
 	 * @return
 	 */
-	private IRelationalPredicate cleanPredicate(RelationalPredicate predicate) {
+	private IRelationalPredicate<?> cleanPredicate(RelationalPredicate predicate) {
 		String expression = predicate.getExpression().getExpressionString();
 		String trimmedExpression = expression.trim();
 		StringBuilder sb = new StringBuilder();
@@ -350,7 +350,7 @@ public class PredicateHelper {
 				this.resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()));
 	}
 
-	public IRelationalPredicate createTruePredicate() {
+	public IRelationalPredicate<?> createTruePredicate() {
 		return new RelationalPredicate(new SDFExpression(null, "true",
 				this.resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern()));
 	}

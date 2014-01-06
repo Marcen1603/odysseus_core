@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * 
  */
 public class RegExPredicate extends AbstractPredicate<Tuple<?>>
-		implements IRelationalPredicate {
+		implements IRelationalPredicate<Tuple<?>> {
 
 	/**
 	 * 

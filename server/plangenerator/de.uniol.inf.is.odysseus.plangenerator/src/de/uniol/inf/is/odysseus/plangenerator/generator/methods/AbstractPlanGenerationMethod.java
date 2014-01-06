@@ -136,16 +136,16 @@ public abstract class AbstractPlanGenerationMethod implements
 				ILogicalOperator sourceClone = source.clone();
 				PlanGeneratorHelper.setOriginalForClone(sourceClone, source);
 				// Join von joinClone mit fehlender Quelle.
-				Pair<IPredicate<?>, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
+				Pair<IPredicate<?>, Set<IRelationalPredicate<?>>> predicatePair = this.predicateHelper
 						.generatePredicate(
 								this.partialJoinPlan2sources.get(joinPlan),
 								sourceClone, joinPlan);
 				JoinAO join = new JoinAO();
 				if (predicatePair == null) {
 					LOG.debug("Inserting true-predicate");
-					predicatePair = new Pair<IPredicate<?>, Set<IRelationalPredicate>>(
+					predicatePair = new Pair<IPredicate<?>, Set<IRelationalPredicate<?>>>(
 							this.predicateHelper.createTruePredicate(),
-							new HashSet<IRelationalPredicate>());
+							new HashSet<IRelationalPredicate<?>>());
 				}
 				if (predicatePair.getE1() != null) {
 					join.setPredicate(predicatePair.getE1());
@@ -179,7 +179,7 @@ public abstract class AbstractPlanGenerationMethod implements
 		// erzeugen.
 		for (Pair<ILogicalOperator, ILogicalOperator> pair : PlanGeneratorHelper
 				.joinSets(this.sources)) {
-			Pair<IPredicate<?>, Set<IRelationalPredicate>> predicatePair = this.predicateHelper
+			Pair<IPredicate<?>, Set<IRelationalPredicate<?>>> predicatePair = this.predicateHelper
 					.generatePredicate(pair);
 			ILogicalOperator join = new JoinAO();
 			if (predicatePair.getE1() != null) {

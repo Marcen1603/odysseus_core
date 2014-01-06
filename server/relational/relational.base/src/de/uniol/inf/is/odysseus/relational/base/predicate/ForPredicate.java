@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.mep.MEP;
  * @author Dennis Geesen
  * 
  */
-public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate {
+public class ForPredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate<Tuple<?>> {
 
 	public enum Type {
 		ANY, ALL

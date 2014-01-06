@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.ForPredicate.Type;
 import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalPredicate;
 
-public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate {
+public class RulePredicate extends AbstractPredicate<Tuple<?>> implements IRelationalPredicate<Tuple<?>> {
 
 
 	private static final long serialVersionUID = -1526635263167088936L;
