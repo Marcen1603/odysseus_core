@@ -112,6 +112,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
     return dd;
   }
 
+  static public boolean _updateQueryId = true;
+  static public void setUpdateQueryID(boolean updateQueryId){
+    _updateQueryId = updateQueryId;
+  }
+
   static final public List < IExecutorCommand > query() throws ParseException {
   Map < String, ILogicalOperator > namedOps = new HashMap < String, ILogicalOperator > ();
   Map < String, Map < String, Object > > namedOpParameters = new HashMap < String, Map < String, Object > > ();
@@ -207,7 +212,11 @@ public class PQLParserImpl implements PQLParserImplConstants {
         root.subscribeSink(topOperator, inputPort++, 0, root.getOutputSchema());
       }
       // create real query (with new id)
-      query = new LogicalQuery();
+      if (_updateQueryId){
+        query = new LogicalQuery();
+      }else{
+        query = new LogicalQuery(-1);
+      }
       // Set Owners for query 
       //AbstractTreeWalker walker = new AbstractTreeWalker();
       GenericGraphWalker walker = new GenericGraphWalker();
@@ -614,54 +623,6 @@ public class PQLParserImpl implements PQLParserImplConstants {
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_16() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(24)) return true;
-    if (jj_scan_token(CHAR_LITERAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_18() {
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(20)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_scan_token(BOOLEAN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(24)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_3R_8()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_9()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3R_17() {
-    if (jj_scan_token(27)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
-    if (jj_scan_token(28)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_12() {
     if (jj_scan_token(CHAR_LITERAL)) return true;
     return false;
@@ -724,6 +685,54 @@ public class PQLParserImpl implements PQLParserImplConstants {
   static private boolean jj_3R_9() {
     if (jj_scan_token(25)) return true;
     if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(24)) return true;
+    if (jj_scan_token(CHAR_LITERAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_18() {
+    if (jj_3R_8()) return true;
+    if (jj_scan_token(20)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_scan_token(BOOLEAN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(24)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_3R_8()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_9()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    if (jj_scan_token(27)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) jj_scanpos = xsp;
+    if (jj_scan_token(28)) return true;
     return false;
   }
 

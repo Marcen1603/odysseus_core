@@ -66,6 +66,11 @@ public class PQLParser implements IQueryParser {
 //		this.dataDictionary = dd;
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
+		boolean updateQueryId = true;
+		if (context.containsKey("tempQuery")){
+			updateQueryId = !(Boolean)context.get("tempQuery");
+		}
+		PQLParserImpl.setUpdateQueryID(updateQueryId);
 		try {
 			if (this.parser == null) {
 				try {

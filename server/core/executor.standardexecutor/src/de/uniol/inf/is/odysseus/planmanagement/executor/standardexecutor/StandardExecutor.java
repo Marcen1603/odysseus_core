@@ -747,8 +747,13 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public SDFSchema determineOutputSchema(String query, String parserID,
 			ISession user, int port, Context context) {
+		if (context == null){
+			context = Context.empty();
+		}
+		context.put("tempQuery", true);
 		List<IExecutorCommand> commands = getCompiler().translateQuery(query,
 				parserID, user, getDataDictionary(user), context);
+		context.remove("tempQuery");
 		if (commands.size() != 1) {
 			throw new IllegalArgumentException(
 					"Method can only be called for one query statement!");
