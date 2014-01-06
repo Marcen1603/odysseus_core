@@ -21,7 +21,7 @@ public final class PingMapNode implements IPingMapNode {
 
 	@Override
 	public Vector3D getPosition() {
-		return position;
+		return new Vector3D(1.0, position);
 	}
 	
 	@Override
