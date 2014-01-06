@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManagerListener;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.service.PeerResourceManagerService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.service.PingMapService;
 
 public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerResourceUsageManagerListener {
 
@@ -248,9 +249,9 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 			@Override
 			public void update(ViewerCell cell) {
 				PeerID peerID = (PeerID) cell.getElement();
-				Optional<Long> optPing = getPing(peerID);
+				Optional<Double> optPing = PingMapService.get().getPing(peerID);
 				if (optPing.isPresent()) {
-					cell.setText(String.valueOf(optPing.get()));
+					cell.setText(String.valueOf((long)(double)optPing.get()));
 				} else {
 					cell.setText("<unknown>");
 				}
@@ -260,8 +261,8 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 		new ColumnViewerSorter(peersTable, pingColumn) {
 			@Override
 			protected int doCompare(Viewer viewer, Object e1, Object e2) {
-				Optional<Long> ping1 = getPing((PeerID)e1);
-				Optional<Long> ping2 = getPing((PeerID)e2);
+				Optional<Double> ping1 = PingMapService.get().getPing((PeerID)e1);
+				Optional<Double> ping2 = PingMapService.get().getPing((PeerID)e2);
 				
 				if( !ping1.isPresent() && !ping2.isPresent() ) {
 					return 0;
@@ -273,7 +274,7 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 					return 1;
 				}
 				
-				return Long.compare(ping1.get(), ping2.get());
+				return Double.compare(ping1.get(), ping2.get());
 			}
 		};
 
@@ -308,18 +309,6 @@ public class PeerView extends ViewPart implements IP2PDictionaryListener, IPeerR
 		return 100.0 - ((resourceUsage.getCpuFree() / resourceUsage.getCpuMax()) * 100.0);
 	}
 	
-	private static Optional<Long> getPing( PeerID peerID ) {
-		Optional<IResourceUsage> localUsage = PeerResourceManagerService.get().getLocalResourceUsage();
-		if (localUsage.isPresent()) {
-			IResourceUsage usage = localUsage.get();
-			Long ping = usage.getPingMap().get(peerID);
-			if (ping != null) {
-				return Optional.of(ping);
-			} 
-		} 
-		return Optional.absent();
-	}
-
 	@Override
 	public void dispose() {
 		instance = null;

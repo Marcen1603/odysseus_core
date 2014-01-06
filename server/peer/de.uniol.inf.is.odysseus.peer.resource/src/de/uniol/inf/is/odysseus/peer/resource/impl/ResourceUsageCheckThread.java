@@ -1,10 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.resource.impl;
 
 import java.io.IOException;
-import java.util.Map;
 
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.peer.PeerID;
 
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.NetInterfaceStat;
@@ -34,16 +32,13 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 	private long previousOutputTotal = 0;
 	
 	private final PeerResourceUsageManager manager;
-	private final Pinger pinger;
 
-	public ResourceUsageCheckThread(PeerResourceUsageManager manager, Pinger pinger) {
+	public ResourceUsageCheckThread(PeerResourceUsageManager manager) {
 		super(REFRESH_INTERVAL_MILLIS, "Resource usage checker");
 		
 		Preconditions.checkNotNull(manager, "Peer resource manager must not be null!");
-		Preconditions.checkNotNull(pinger, "Pinger must not be null!");
 		
 		this.manager = manager;
-		this.pinger = pinger;
 	}
 	
 	@Override
@@ -81,11 +76,9 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 					}
 				}
 				
-				Map<PeerID, Long> pingMap = pinger.getPingMap();
-				
 				IResourceUsage usage = new ResourceUsage(P2PNetworkManagerService.get().getLocalPeerID(), 
 						freeMemory, maxMemory, cpuFree, cpuMax, System.currentTimeMillis(), 
-						runningQueries, stoppedQueries, bandwidthInKBs, netOutputRate, netInputRate, pingMap);
+						runningQueries, stoppedQueries, bandwidthInKBs, netOutputRate, netInputRate);
 				
 				if( !manager.getLocalResourceUsage().isPresent() || !ResourceUsage.areSimilar(manager.getLocalResourceUsage().get(), usage)) {
 					LOG.debug("Set new current local resource usage: {}", usage);

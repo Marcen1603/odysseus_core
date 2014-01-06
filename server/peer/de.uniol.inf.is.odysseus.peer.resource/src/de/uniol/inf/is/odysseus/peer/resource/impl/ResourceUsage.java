@@ -1,11 +1,8 @@
 package de.uniol.inf.is.odysseus.peer.resource.impl;
 
-import java.util.Map;
-
 import net.jxta.peer.PeerID;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
 
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
@@ -31,10 +28,9 @@ public final class ResourceUsage implements IResourceUsage {
 	private final double netInputRate;
 
 	private final long timestamp;
-	private final Map<PeerID, Long> pingMap;
 
 	ResourceUsage(PeerID peerID, long memFreeBytes, long memMaxBytes, double cpuFree, double cpuMax, long timestamp, int runningQueriesCount, int stoppedQueriesCount, 
-			double netBandwidthMax, double netOutputRate, double netInputRate, Map<PeerID, Long> pingMap) {
+			double netBandwidthMax, double netOutputRate, double netInputRate ) {
 		Preconditions.checkNotNull(peerID, "PeerID must not be null!");
 		
 		Preconditions.checkArgument(memFreeBytes >= 0, "Memory free bytes cannot be negative: %s", memFreeBytes);
@@ -49,7 +45,6 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkArgument(netBandwidthMax >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netOutputRate >= 0, "Network maximum bandwidth must be zero or positive");
 		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
-		Preconditions.checkNotNull(pingMap, "Ping map must not be null!");
 
 		this.peerID = peerID;
 		this.isLocal = P2PNetworkManagerService.get().getLocalPeerID().equals(peerID);
@@ -66,7 +61,6 @@ public final class ResourceUsage implements IResourceUsage {
 		this.netInputRate = netInputRate;
 
 		this.timestamp = timestamp;
-		this.pingMap = pingMap;
 	}
 	
 	private ResourceUsage( ResourceUsage copy ) {
@@ -86,7 +80,6 @@ public final class ResourceUsage implements IResourceUsage {
 		netOutputRate = copy.netOutputRate;
 		
 		timestamp = copy.timestamp;
-		pingMap = copy.pingMap;
 	}
 		
 	static boolean areSimilar(IResourceUsage one, IResourceUsage other) {
@@ -106,27 +99,8 @@ public final class ResourceUsage implements IResourceUsage {
 		double netBandwidthMaxPercent = determineDiffPercent(one.getNetBandwidthMax(), other.getNetBandwidthMax());
 		double netOutputRatePercent = determineDiffPercent(one.getNetInputRate(), other.getNetInputRate());
 		double netInputRatePercent = determineDiffPercent(one.getNetOutputRate(), other.getNetOutputRate());
-		boolean pingsAreSimilar = determineIfPingsAreSimilar(one.getPingMap(), other.getPingMap());
 		
-		return pingsAreSimilar && areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent, netBandwidthMaxPercent, netOutputRatePercent, netInputRatePercent);
-	}
-
-	private static boolean determineIfPingsAreSimilar(Map<PeerID, Long> pingMap1, Map<PeerID, Long> pingMap2) {
-		if( pingMap1.size() != pingMap2.size() ) {
-			return false;
-		}
-		
-		for( PeerID peerID1 : pingMap1.keySet() ) {
-			if( !pingMap2.containsKey(peerID1)) {
-				return false;
-			} else {
-				if( determineDiffPercent( pingMap1.get(peerID1), pingMap2.get(peerID1)) > SIMILARITY_FACTOR_PERCENT ) {
-					return false;
-				}
-			}
-		}
-		
-		return true;
+		return areAllValuesBelowThan(SIMILARITY_FACTOR_PERCENT, memFreeDiffPercent, memMaxDiffPercent, cpuFreeDiffPercent, cpuMaxDiffPercent, netBandwidthMaxPercent, netOutputRatePercent, netInputRatePercent);
 	}
 
 	private static double determineDiffPercent(double a, double b) {
@@ -195,7 +169,7 @@ public final class ResourceUsage implements IResourceUsage {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{Free MEM = ").append(getMemFreeBytes()).append(" / ").append(getMemMaxBytes()).append(", Free Cpu = ").append(getCpuFree()).append(" / ").append(getCpuMax());
 		sb.append("Network in = ").append(getNetInputRate()).append(", out = ").append(getNetOutputRate()).append(" of ").append(getNetBandwidthMax()).append(", ");
-		sb.append("Pings = ").append(pingMap.values()).append("}");
+		sb.append("}");
 		return sb.toString();
 	}
 	
@@ -212,11 +186,6 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public double getNetOutputRate() {
 		return netOutputRate;
-	}
-	
-	@Override
-	public ImmutableMap<PeerID, Long> getPingMap() {
-		return ImmutableMap.copyOf(pingMap);
 	}
 	
 	@Override

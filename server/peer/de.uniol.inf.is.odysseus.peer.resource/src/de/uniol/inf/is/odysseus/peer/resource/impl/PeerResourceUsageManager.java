@@ -33,16 +33,12 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	
 	private IResourceUsage localUsage;
 	private ResourceUsageCheckThread checkThread;
-	private Pinger pinger;
 	
 	// called by OSGi-DS
 	public void activate() {
 		AdvertisementFactory.registerAdvertisementInstance(ResourceUsageAdvertisement.getAdvertisementType(), new ResourceUsageAdvertisementInstantiator());
 
-		pinger = new Pinger();
-		pinger.start();
-		
-		checkThread = new ResourceUsageCheckThread(this, pinger);
+		checkThread = new ResourceUsageCheckThread(this);
 		checkThread.start();
 		
 		instance = this;
@@ -52,7 +48,6 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	// called by OSGi-DS
 	public void deactivate() {
 		checkThread.stopRunning();
-		pinger.stopRunning();
 		
 		instance = null;
 		LOG.debug("Deactivated");

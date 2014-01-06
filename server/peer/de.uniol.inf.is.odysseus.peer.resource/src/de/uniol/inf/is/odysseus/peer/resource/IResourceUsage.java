@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.peer.resource;
 
 import net.jxta.peer.PeerID;
 
-import com.google.common.collect.ImmutableMap;
-
 public interface IResourceUsage {
 
 	public PeerID getPeerID();
@@ -23,6 +21,4 @@ public interface IResourceUsage {
 	double getNetOutputRate();
 	
 	public IResourceUsage clone();
-	
-	public ImmutableMap<PeerID, Long> getPingMap();
 }

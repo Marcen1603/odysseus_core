@@ -1,23 +1,19 @@
-package de.uniol.inf.is.odysseus.peer.resource.impl;
+package de.uniol.inf.is.odysseus.peer.ping.impl;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
-import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
-import de.uniol.inf.is.odysseus.peer.resource.service.PeerCommunicatorService;
+import de.uniol.inf.is.odysseus.peer.ping.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.peer.ping.service.PeerCommunicatorService;
 
 public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListener {
 
@@ -28,37 +24,27 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	private static final byte PING_FLAG_BYTE = 78;
 	private static final byte PONG_FLAG_BYTE = 79;
 
-	private final Map<PeerID, Long> pings = Maps.newHashMap();
-
 	public Pinger() {
 		super(PING_INTERVAL, "Ping Thread");
 	}
 
 	@Override
 	public void beforeJob() {
-		waitForPeerCommunicator();
-		
-		PeerCommunicatorService.get().addListener(this);
-	}
+		PeerCommunicatorService.waitFor();
+		P2PDictionaryService.waitFor();
 
-	private static void waitForPeerCommunicator() {
-		while( !PeerCommunicatorService.isBound() ) {
-			try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-			}
-		}
+		PeerCommunicatorService.get().addListener(this);
 	}
 
 	@Override
 	public void doJob() {
-		Collection<PeerID> remotePeers = PeerResourceUsageManager.getInstance().getRemotePeers();
+		Collection<PeerID> remotePeers = P2PDictionaryService.get().getRemotePeerIDs();
 
 		byte[] message = createPingMessage();
 		IPeerCommunicator communicator = PeerCommunicatorService.get();
 		try {
 			for (PeerID remotePeer : remotePeers) {
-				if( communicator.isConnected(remotePeer)) {
+				if (communicator.isConnected(remotePeer)) {
 					communicator.send(remotePeer, message);
 				}
 			}
@@ -73,6 +59,22 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		byte[] message = new byte[9];
 		message[0] = PING_FLAG_BYTE;
 		System.arraycopy(longArray, 0, message, 1, longArray.length);
+		return message;
+	}
+	
+	private static byte[] createPongMessage(byte[] pingMessage) {
+		ByteBuffer buffer = ByteBuffer.wrap(pingMessage);
+		buffer.get(); // PING_FLAG_BYTE
+		
+		byte[] longArray = ByteBuffer.allocate(8).putLong(buffer.getLong()).array();
+		byte[] doubleXArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalX()).array();
+		byte[] doubleYArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalY()).array();
+
+		byte[] message = new byte[25];
+		message[0] = PONG_FLAG_BYTE;
+		System.arraycopy(longArray, 0, message, 1, longArray.length);
+		System.arraycopy(doubleXArray, 0, message, 9, doubleXArray.length);
+		System.arraycopy(doubleYArray, 0, message, 17, doubleYArray.length);
 
 		return message;
 	}
@@ -84,36 +86,24 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 
 	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
-		if( message[0] == PING_FLAG_BYTE ) {
-			message[0] = PONG_FLAG_BYTE;
+		if (message[0] == PING_FLAG_BYTE) {
+			byte[] pongMessage = createPongMessage(message);
 			try {
-				if( communicator.isConnected(senderPeer)) {
-					communicator.send(senderPeer, message);
+				if (communicator.isConnected(senderPeer)) {
+					communicator.send(senderPeer, pongMessage);
 				}
 			} catch (PeerCommunicationException e) {
 				LOG.error("Could not send pong-message", e);
 			}
-		} else if (message[0] == PONG_FLAG_BYTE ) {
+		} else if (message[0] == PONG_FLAG_BYTE) {
 			ByteBuffer buffer = ByteBuffer.wrap(message);
 			buffer.get();
+
+			long latency = System.currentTimeMillis() - buffer.getLong();
+			double remoteX = buffer.getDouble();
+			double remoteY = buffer.getDouble();
 			
-			long ping = System.currentTimeMillis() - buffer.getLong();
-			synchronized( pings ) {
-				LOG.debug("Ping is {} of {}", ping, senderPeer);
-				pings.put(senderPeer, ping);
-			}
-		}
-	}
-	
-	public Optional<Long> getPing( PeerID peerID ) {
-		synchronized(pings) {
-			return Optional.fromNullable(pings.get(peerID));
-		}
-	}
-	
-	public ImmutableMap<PeerID, Long> getPingMap() {
-		synchronized( pings ) {
-			return ImmutableMap.copyOf(pings);
+			PingMap.getInstance().update(senderPeer, remoteX, remoteY, latency);
 		}
 	}
 }

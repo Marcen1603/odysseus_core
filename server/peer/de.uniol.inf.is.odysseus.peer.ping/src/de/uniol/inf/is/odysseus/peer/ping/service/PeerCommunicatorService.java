@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.peer.resource.service;
+package de.uniol.inf.is.odysseus.peer.ping.service;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 
@@ -24,4 +24,11 @@ public class PeerCommunicatorService {
 		return communicator;
 	}
 	
+	public static void waitFor() {
+		while( !isBound() ) {
+			try {
+				Thread.sleep(250);
+			} catch( Throwable t ) {}
+		}
+	}
 }
