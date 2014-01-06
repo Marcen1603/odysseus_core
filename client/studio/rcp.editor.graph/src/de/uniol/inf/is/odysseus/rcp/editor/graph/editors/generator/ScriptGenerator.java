@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,20 +63,50 @@ public class ScriptGenerator {
 		// builder.append("#QUERY").append(System.lineSeparator());
 
 		// no we start at the sinks and walk through the plans
-		List<OperatorNode> foundOps = new ArrayList<>();
+		List<OperatorNode> foundOpsUnsorted = new ArrayList<>();
 		for (OperatorNode sink : sinks) {
-			foundOps.add(sink);
-			visitChildren(sink.getTargetConnections(), foundOps);
+			foundOpsUnsorted.add(sink);
+			visitChildren(sink.getTargetConnections(), foundOpsUnsorted);
 		}
-		// then we print the plan, but in other direction
-		Collections.reverse(foundOps);
+		
+		List<OperatorNode> foundOpsSorted = new ArrayList<>();
+		// Sort topological
+		while(foundOpsUnsorted.size() > 0){
+			Iterator<OperatorNode> nodeIter = foundOpsUnsorted.iterator();
+			while (nodeIter.hasNext()){
+				OperatorNode node = nodeIter.next();
+				// Operator hat no input
+				if (node.getTargetConnections().size() == 0){
+					foundOpsSorted.add(node);
+					nodeIter.remove();
+				}else{
+					// All Inputs are already in list
+					boolean allInputsSorted = true;
+					for (Connection c: node.getTargetConnections()){
+						if (! foundOpsSorted.contains(c.getSource())){
+							allInputsSorted = false;
+							break;
+						}
+					}
+					if (allInputsSorted){
+						foundOpsSorted.add(node);
+						nodeIter.remove();	
+					}
+				}
+			}
+		}
+		
+		
 		int i = 1;
-		for (OperatorNode node : foundOps) {
+		for (OperatorNode node : foundOpsSorted) {
 			if (!names.containsKey(node)) {
 				String name = node.getOperatorInformation().getOperatorName() + i;
 				names.put(node, name);
 				i++;
 			}
+			
+		}
+		for (OperatorNode node : foundOpsSorted) {
 			builder.append(nodeToString(names, node)).append(System.lineSeparator());
 		}
 		return builder.toString();
