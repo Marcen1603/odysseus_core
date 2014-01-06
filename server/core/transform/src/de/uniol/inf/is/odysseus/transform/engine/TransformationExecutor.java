@@ -95,7 +95,7 @@ public class TransformationExecutor implements ITransformation {
 
 		for (IPhysicalOperator physicalPO : roots.values()) {
 			IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new FindQueryRootsVisitor<IPhysicalOperator>();
-			GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
+			GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<ILogicalOperator>();
 			walker.prefixWalkPhysical(physicalPO, visitor);
 			ArrayList<IPhysicalOperator> plan = visitor.getResult();
 			for (IPhysicalOperator op : plan) {

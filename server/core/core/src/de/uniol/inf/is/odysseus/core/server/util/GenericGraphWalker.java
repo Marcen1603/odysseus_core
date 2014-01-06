@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
-public class GenericGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S, H>, H extends ISubscription<S>>{
+public class GenericGraphWalker<S extends ISubscriber<S, ? extends ISubscription<S>> & ISubscribable<S, ? extends ISubscription<S>>>{
 
 	Collection<S> visited;
 	Collection<IPhysicalOperator> visitedPhysical;
@@ -61,7 +61,7 @@ public class GenericGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S
 	 * @param visitor
 	 * @return
 	 */
-	public /*<R,T extends ISubscriber, H extends ISubscription<T>>*/ void prefixWalk(S node, IGraphNodeVisitor<S, R> visitor) {
+	public /*<R,T extends ISubscriber, H extends ISubscription<T>>*/ void prefixWalk(S node, IGraphNodeVisitor<S, ?> visitor) {
 		if(this.visited.contains(node)){				
 			return;
 		}		
@@ -69,20 +69,20 @@ public class GenericGraphWalker<R, S extends ISubscriber<S, H> & ISubscribable<S
 		
 		visitor.nodeAction(node);
 		
-		for (H s: node.getSubscribedToSource()){
+		for (ISubscription<S> s: node.getSubscribedToSource()){
 			visitor.beforeFromSinkToSourceAction(node, s.getTarget());
 			prefixWalk(s.getTarget(), visitor);
 			visitor.afterFromSinkToSourceAction(node, s.getTarget());
 		}
 		
-		for(H s: node.getSubscriptions()){
+		for(ISubscription<S> s: node.getSubscriptions()){
 			visitor.beforeFromSourceToSinkAction(node, s.getTarget());
 			prefixWalk(s.getTarget(), visitor);
 			visitor.afterFromSourceToSinkAction(node, s.getTarget());
 		}
 	}
 	
-	public void prefixWalkPhysical(IPhysicalOperator node, IGraphNodeVisitor<IPhysicalOperator, R> visitor){
+	public void prefixWalkPhysical(IPhysicalOperator node, IGraphNodeVisitor<IPhysicalOperator, ?> visitor){
 		if(this.visitedPhysical.contains(node)){
 			return;
 		}

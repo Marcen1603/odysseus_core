@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.server.util;
 import java.util.ArrayList;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 
@@ -31,7 +30,7 @@ public class GraphHelper {
 	 */
 	static public ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
 		IGraphNodeVisitor<IPhysicalOperator, ArrayList<IPhysicalOperator>> visitor = new CollectChildOperatorsVisitor<IPhysicalOperator>();
-		GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, ?> walker = new GenericGraphWalker<ArrayList<IPhysicalOperator>, ILogicalOperator, LogicalSubscription>();
+		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<ILogicalOperator>();
 		walker.prefixWalkPhysical(root, visitor);
 		return visitor.getResult();
 	}

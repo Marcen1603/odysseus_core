@@ -15,14 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.core.util;
 
-public interface IGraphNodeVisitor<T,R> {
-	public void nodeAction(T node);
+public interface IGraphNodeVisitor<NodeType, ResultType> {
+	public void nodeAction(NodeType node);
 	
-	public void beforeFromSinkToSourceAction(T sink, T source);
-	public void afterFromSinkToSourceAction(T sink, T source);
+	public void beforeFromSinkToSourceAction(NodeType sink, NodeType source);
+	public void afterFromSinkToSourceAction(NodeType sink, NodeType source);
 	
-	public void beforeFromSourceToSinkAction(T source, T sink);
-	public void afterFromSourceToSinkAction(T source, T sink);
+	public void beforeFromSourceToSinkAction(NodeType source, NodeType sink);
+	public void afterFromSourceToSinkAction(NodeType source, NodeType sink);
 	
-	public R getResult();
+	public ResultType getResult();
 }

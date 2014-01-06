@@ -50,7 +50,7 @@ public final class LogicalQueryHelper {
 
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
 
-		GenericGraphWalker<ILogicalOperator, ILogicalOperator, LogicalSubscription> walker = new GenericGraphWalker<>();
+		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
 
 		walker.prefixWalk(originPlan, copyVisitor);
 		return copyVisitor.getResult();
