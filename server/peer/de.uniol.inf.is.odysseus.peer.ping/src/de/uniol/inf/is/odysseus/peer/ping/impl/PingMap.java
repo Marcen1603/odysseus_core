@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.peer.ping.impl;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.math.geometry.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +32,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private final Map<PeerID, PingMapNode> nodes = Maps.newHashMap();
 	private final Pinger pinger = new Pinger();
 	
-	private double localX = 0.0;
-	private double localY = 0.0;
+	private Vector3D localPosition = new Vector3D();
 	private double timestep = 1.0;
 	
 	private IP2PDictionary dictionary;
@@ -74,12 +74,8 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		return Optional.fromNullable((IPingMapNode)nodes.get(peerID));
 	}
 	
-	public double getLocalX() {
-		return localX;
-	}
-	
-	public double getLocalY() {
-		return localY;
+	public Vector3D getLocalPosition() {
+		return localPosition;
 	}
 
 	@Override
@@ -87,8 +83,9 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		return ImmutableSet.copyOf(nodes.keySet());
 	}
 	
-	public void update( PeerID peerID, double x, double y, long latency ) {
+	public void update( PeerID peerID, Vector3D position, long latency ) {
 		Preconditions.checkNotNull(peerID, "PeerID to set latency must not be null!");
+		Preconditions.checkNotNull(position, "New position for update must not be null!");
 		Preconditions.checkArgument(latency >= 0, "Latency to set in ping map must be positive!");
 		
 		PingMapNode node = nodes.get(peerID);
@@ -96,41 +93,37 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 			node = new PingMapNode(peerID);
 			nodes.put(peerID, node);
 		}
-		node.setX(x);
-		node.setY(y);
+		node.setPosition(position);
 		
 		if( LOG.isDebugEnabled() ) {
-			LOG.debug("Updateing position to x={}, y={}, latency={} of peer {}", new Object[]{x, y, latency, peerID});
+			LOG.debug("Updateing position to {}, latency={} of peer {}", new Object[]{position, latency, peerID});
 		}
 		
-		double dirX = x - localX;
-		double dirY = y - localY;
-		if( Math.abs(dirX) < 0.00000001 && Math.abs(dirY) < 0.00000001) {
-			dirX = RAND.nextDouble() * 1000.0;
-			dirY = RAND.nextDouble() * 1000.0;
+		Vector3D direction = position.subtract(localPosition);
+		
+		if( Math.abs(direction.getX()) < 0.00000001 && Math.abs(direction.getY()) < 0.00000001 && Math.abs(direction.getZ()) < 0.00000001) {
+			direction = new Vector3D(RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0);
 		}
 		
-		double dirLength = Math.sqrt( (dirX * dirX) + (dirY * dirY));
-		
-		dirX /= dirLength;
-		dirY /= dirLength;
+		double dirLength = getLength(direction);
+		direction = direction.normalize();
 		
 		double distToPoint = dirLength - latency;
 		
-		double displacementX = dirX * distToPoint;
-		double displacementY = dirY * distToPoint;
-		
-		displacementX *= timestep;
-		displacementY *= timestep;
+		Vector3D displacement = direction.scalarMultiply(distToPoint);
+		displacement = displacement.scalarMultiply(timestep);
 		
 		timestep = Math.max( 0.05, timestep - 0.025);
 		
-		localX = localX + displacementX;
-		localY = localY + displacementY;
+		localPosition = localPosition.add(displacement);
 		
-		LOG.debug("Local position is now x={}, y={}", localX, localY);
+		LOG.debug("Local position is now {}", localPosition);
 	}
 
+	private static double getLength( Vector3D v ) {
+		return Math.sqrt( (v.getX() * v.getX() ) + (v.getY() * v.getY()) + (v.getZ() * v.getZ()));
+	}
+	
 	@Override
 	public Optional<Double> getPing(PeerID peerID) {
 		PingMapNode node = nodes.get(peerID);
@@ -138,9 +131,8 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 			return Optional.absent();
 		}
 		
-		double distX = node.getX() - localX;
-		double distY = node.getY() - localY;
-		double latency = Math.sqrt((distX * distX) + (distY * distY));
+		Vector3D direction = node.getPosition().subtract(localPosition);
+		double latency = getLength(direction);
 		
 		LOG.debug("Latency is {} of peer {}", latency, peerID);
 		
@@ -168,10 +160,8 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 			return Optional.absent();
 		}
 		
-		double distX = startNode.getX() - endNode.getX();
-		double distY = startNode.getY() - endNode.getY();
-		
-		double latency = Math.sqrt((distX * distX) + (distY * distY));
+		Vector3D distance = startNode.getPosition().subtract(endNode.getPosition());
+		double latency = getLength(distance);
 	
 		return Optional.of(latency);
 	}

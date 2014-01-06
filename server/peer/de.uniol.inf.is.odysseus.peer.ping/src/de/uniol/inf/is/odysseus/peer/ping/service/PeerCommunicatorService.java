@@ -24,11 +24,12 @@ public class PeerCommunicatorService {
 		return communicator;
 	}
 	
-	public static void waitFor() {
+	public static IPeerCommunicator waitFor() {
 		while( !isBound() ) {
 			try {
 				Thread.sleep(250);
 			} catch( Throwable t ) {}
 		}
+		return get();
 	}
 }

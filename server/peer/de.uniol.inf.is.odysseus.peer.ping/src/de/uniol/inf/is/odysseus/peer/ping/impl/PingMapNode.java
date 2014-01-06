@@ -1,16 +1,17 @@
 package de.uniol.inf.is.odysseus.peer.ping.impl;
 
+import net.jxta.peer.PeerID;
+
+import org.apache.commons.math.geometry.Vector3D;
+
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
-import net.jxta.peer.PeerID;
 
 public final class PingMapNode implements IPingMapNode {
 
 	private final PeerID peerID;
-	
-	private double x = 0.0;
-	private double y = 0.0;
+	private Vector3D position = Vector3D.zero;
 
 	PingMapNode(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID for being a pingmapnode must not be null!");
@@ -19,25 +20,18 @@ public final class PingMapNode implements IPingMapNode {
 	}
 
 	@Override
-	public double getX() {
-		return x;
+	public Vector3D getPosition() {
+		return position;
 	}
-
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	@Override
-	public double getY() {
-		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
-	}
-
+	
 	@Override
 	public PeerID getPeerID() {
 		return peerID;
+	}
+
+	public void setPosition(Vector3D position) {
+		Preconditions.checkNotNull(position, "Position for ping map node must not be null!");
+		
+		this.position = position;
 	}
 }
