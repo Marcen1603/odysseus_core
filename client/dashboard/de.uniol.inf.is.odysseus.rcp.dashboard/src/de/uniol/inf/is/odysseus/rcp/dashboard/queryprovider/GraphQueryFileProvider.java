@@ -55,7 +55,7 @@ public class GraphQueryFileProvider implements IDashboardPartQueryTextProvider {
 				Node pqlDataNode = pqlNode.getFirstChild();
 				String pqlText = pqlDataNode.getNodeValue();
 				
-				pqlText = "#PARSER PQL" + System.lineSeparator() + "#TRANSCFG Standard" + System.lineSeparator() + "#QUERY" + System.lineSeparator() + pqlText;
+				pqlText = "#PARSER PQL" + System.lineSeparator() + "#TRANSCFG Standard" + System.lineSeparator() + "#RUNQUERY" + System.lineSeparator() + pqlText;
 				
 				return ImmutableList.of(pqlText);
 				
