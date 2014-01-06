@@ -13,12 +13,14 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.GraphQueryFileProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
@@ -49,6 +51,11 @@ public class QueryExecutionHandler {
 			
 			ImmutableList<String> queryText = simpleProvider.getQueryText();
 			this.lines = queryText.toArray(new String[queryText.size()]);
+		} else if( provider instanceof GraphQueryFileProvider ) {
+			GraphQueryFileProvider graphProvider = (GraphQueryFileProvider)provider;
+			
+			this.scriptFile = null;
+			this.lines = graphProvider.getQueryText().toArray(new String[0]);
 		}
 		
 	}
@@ -67,7 +74,8 @@ public class QueryExecutionHandler {
 			for(String line : lines){
 				query = query + System.lineSeparator() + line;
 			}
-			Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, "Standard", ParserClientUtil.createRCPContext(scriptFile));
+			Context context = scriptFile != null ? ParserClientUtil.createRCPContext(scriptFile) : Context.empty();
+			Collection<Integer> ids = OdysseusRCPPlugIn.getExecutor().addQuery(query, "OdysseusScript", caller, "Standard", context);
 			
 			queryIDs = ids;
 			queryRoots = determineRoots(queryIDs);

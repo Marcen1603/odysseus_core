@@ -79,7 +79,6 @@ public class NewDashboardPartWizard extends Wizard implements INewWizard {
 			final IDashboardPartHandler handler = new XMLDashboardPartHandler();
 			handler.save(part, dashboardPartFile);
 	
-			// open editor
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(new FileEditorInput(dashboardPartFile), DashboardPlugIn.DASHBOARD_PART_EDITOR_ID, true);
 
 			return true;

@@ -57,6 +57,7 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartUtil;
 import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPlugIn;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.GraphQueryFileProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
@@ -64,12 +65,15 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.OdysseusRCPEditorTextPlugIn;
 public class QueryFileSelectionPage extends WizardPage {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryFileSelectionPage.class);
+	private static final List<String> ALLOWED_EXTENSIONS = Lists.newArrayList("grp", OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION);
+	
 	private final ContainerSelectionPage page1;
 
 	private TableViewer filesTable;
 	private Button chooseSourceRadio;
 	private Button chooseQueryRadio;
 	private Combo sourceCombo;
+	
 
 	protected QueryFileSelectionPage(String pageName, ContainerSelectionPage page1) {
 		super(pageName);
@@ -210,7 +214,11 @@ public class QueryFileSelectionPage extends WizardPage {
 	
 	public IDashboardPartQueryTextProvider getQueryTextProvider() {
 		if( isQueryFileSelected() ) {
-			return new ResourceFileQueryTextProvider(getSelectedQueryFile());
+			if( getSelectedQueryFile().getFileExtension().equalsIgnoreCase("grp")) {
+				return new GraphQueryFileProvider(getSelectedQueryFile());
+			} else {
+				return new ResourceFileQueryTextProvider(getSelectedQueryFile());
+			}
 		}
 		
 		List<String> sourceSelectAllText = Lists.newArrayList();
@@ -260,7 +268,7 @@ public class QueryFileSelectionPage extends WizardPage {
 			}
 		} else if (resource instanceof IFile) {
 			final IFile file = (IFile) resource;
-			if (OdysseusRCPEditorTextPlugIn.QUERY_TEXT_EXTENSION.equals(file.getFileExtension())) {
+			if (ALLOWED_EXTENSIONS.contains(file.getFileExtension())) {
 				foundFiles.add(file);
 			}
 		}

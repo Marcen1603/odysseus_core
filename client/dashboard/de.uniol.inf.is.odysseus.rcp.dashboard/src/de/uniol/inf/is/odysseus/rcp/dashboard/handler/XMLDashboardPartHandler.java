@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.rcp.dashboard.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -58,6 +59,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.DashboardPartRegistry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartHandler;
 import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
+import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.GraphQueryFileProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.ResourceFileQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.queryprovider.SimpleQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.dashboard.util.FileUtil;
@@ -71,6 +73,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	public static final String QUERY_TEXT_XML_ELEMENT = "Query";
 	public static final String QUERY_TEXT_FILE_PROVIDER_XML_ELEMENT = "File";
 	public static final String QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT = "Text";
+	private static final String QUERY_TEXT_GRAPH_PROVIDER_XML_ELEMENT = "Graph";
 
 	public static final String CLASS_XML_ATTRIBUTE = "class";
 	public static final String SETTING_NAME_XML_ATTRIBUTE = "name";
@@ -190,7 +193,15 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 			final Element textElement = doc.createElement(QUERY_TEXT_TEXT_PROVIDER_XML_ELEMENT);
 			queryElement.appendChild(textElement);
 			textElement.appendChild(doc.createTextNode(FileUtil.concat(((SimpleQueryTextProvider) queryTextProvider).getQueryText())));
-
+			
+		} else if( queryTextProvider instanceof GraphQueryFileProvider ) {
+			final Element fileElement = doc.createElement(QUERY_TEXT_GRAPH_PROVIDER_XML_ELEMENT);
+			queryElement.appendChild(fileElement);
+			String qryfileName = ((GraphQueryFileProvider) queryTextProvider).getGraphFile().getFullPath().toString();
+			String projectName = ((GraphQueryFileProvider) queryTextProvider).getGraphFile().getProject().toString();
+			String nameToSave = qryfileName.substring(projectName.length());
+			fileElement.setAttribute(FILE_XML_ATTRIBUTE, nameToSave);	
+			
 		} else {
 			throw new DashboardHandlerException("Unknown IDashboardPartQueryTextProvider " + queryTextProvider.getClass());
 		}
@@ -254,7 +265,7 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 	}
 
 	private static IFile getQueryFile(IProject relativeProject, String fileName) throws FileNotFoundException {
-		IPath queryFilePath = new Path(relativeProject.getFullPath().toString() + fileName);
+		IPath queryFilePath = new Path(relativeProject.getFullPath().toString() + File.separator + fileName);
 		
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(queryFilePath);
 		if (!file.exists()) {
@@ -295,6 +306,14 @@ public class XMLDashboardPartHandler implements IDashboardPartHandler {
 							final String queryText = child.getChildNodes().item(0).getNodeValue();
 
 							return new SimpleQueryTextProvider(FileUtil.separateLines(queryText));
+						} else if( QUERY_TEXT_GRAPH_PROVIDER_XML_ELEMENT.equals(child.getNodeName())) {
+							final String fileName = getAttribute(child, FILE_XML_ATTRIBUTE, null);
+							if (Strings.isNullOrEmpty(fileName)) {
+								throw new DashboardHandlerException("FileName for query must not be null or empty.");
+							}
+
+							final IFile file = getQueryFile(relativeProject, fileName);
+							return new GraphQueryFileProvider(file);
 						}
 					}
 				}
