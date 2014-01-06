@@ -43,18 +43,23 @@ public class GenericProvider extends AbstractDataGenerator {
     @Override
     public synchronized List<DataTuple> next() {
         DataTuple tuple = new DataTuple();
-        for (String attribute : generators.keySet()) {
-            tuple.addDouble(this.generators.get(attribute).nextValue());
+        if (generators.size() > 0) {
+            for (String attribute : generators.keySet()) {
+                tuple.addDouble(this.generators.get(attribute).nextValue());
+            }
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            List<DataTuple> list = new ArrayList<DataTuple>();
+            list.add(tuple);
+            return list;
         }
-        try {
-            Thread.sleep(1000);
+        else {
+            throw new IllegalArgumentException("Empty generator list");
         }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        List<DataTuple> list = new ArrayList<DataTuple>();
-        list.add(tuple);
-        return list;
     }
 
     @Override
