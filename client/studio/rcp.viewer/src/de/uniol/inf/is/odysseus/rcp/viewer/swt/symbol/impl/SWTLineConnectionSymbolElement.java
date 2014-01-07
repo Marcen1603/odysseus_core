@@ -50,7 +50,9 @@ public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElemen
 			actualGC.setForeground( inactiveLineColor );
 		}
 	
+		actualGC.setLineWidth(2);
 		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
+		actualGC.setLineWidth(1);
 	}
 	
 	private boolean isConnectionOpened() {
