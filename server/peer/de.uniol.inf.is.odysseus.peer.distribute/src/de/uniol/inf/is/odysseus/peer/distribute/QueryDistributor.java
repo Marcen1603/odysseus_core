@@ -25,11 +25,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartAdvertisement;
-import de.uniol.inf.is.odysseus.peer.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
@@ -42,6 +42,7 @@ public class QueryDistributor implements IQueryDistributor {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
 
 	private static IPQLGenerator pqlGenerator;
+	private static IJxtaServicesProvider jxtaServicesProvider;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -52,6 +53,18 @@ public class QueryDistributor implements IQueryDistributor {
 	public static void unbindPQLGenerator(IPQLGenerator serv) {
 		if (pqlGenerator == serv) {
 			pqlGenerator = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
 		}
 	}
 	
@@ -215,7 +228,7 @@ public class QueryDistributor implements IQueryDistributor {
 				adv.setSharedQueryID(sharedQueryID);
 				adv.setTransCfgName(parameters.getName());
 
-				JxtaServicesProviderService.get().getDiscoveryService().remotePublish(peerID.toString(), adv, 15000);
+				jxtaServicesProvider.getDiscoveryService().remotePublish(peerID.toString(), adv, 15000);
 				LOG.debug("Sent query part {} to peerID {}", part, peerID);
 				LOG.debug("PQL-Query of query part {} is\n{}", part, adv.getPqlStatement());
 			}

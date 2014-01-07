@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
-import de.uniol.inf.is.odysseus.peer.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
 
@@ -51,36 +51,51 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	protected static final String REMOVE_MSG_TYPE = "remove";
 
 	private static QueryPartController instance;
+	private static IServerExecutor executor;
+	private static IJxtaServicesProvider jxtaServicesProvider;
 
-	protected final Map<ID, OutputPipe> outputPipeMap = Maps.newHashMap();
-
-	protected final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
-
-	protected final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
-
+	private final Map<ID, OutputPipe> outputPipeMap = Maps.newHashMap();
+	private final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
+	private final Map<Integer, ID> sharedQueryIDMap = Maps.newHashMap();
 	private final List<OutputPipeResolver> runningResolvers = Lists.newArrayList();
 
-	protected IServerExecutor executor;
+	private boolean inEvent;
 
-	protected boolean inEvent;
+	// called by OSGi-DS
+	public static void bindExecutor(IExecutor exe) {
+		executor = (IServerExecutor) exe;
+	}
+	
+	// called by OSGi-DS
+	public static void unbindExecutor(IExecutor exe) {
+		if (executor == exe) {
+			executor = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
+		}
+	}
 
 	// called by OSGi-DS
 	public void activate() {
+		executor.addPlanModificationListener(this);
+		
 		instance = this;
-
 		LOG.debug("Query part controller activated");
 	}
-
-	// called by OSGi-DS
-	public void bindExecutor(IExecutor exe) {
-		executor = (IServerExecutor) exe;
-		executor.addPlanModificationListener(this);
-
-		LOG.debug("Bound ServerExecutor {}", exe);
-	}
-
+	
 	// called by OSGi-DS
 	public void deactivate() {
+		executor.removePlanModificationListener(this);
 		instance = null;
 
 		stopResolvers(runningResolvers);
@@ -214,7 +229,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		try {
 			if (!inputPipeMap.containsKey(sharedQueryID)) {
 				final PipeAdvertisement adv = createPipeAdvertisement(sharedQueryID);
-				final InputPipe inputPipe = JxtaServicesProviderService.get().getPipeService().createInputPipe(adv, this);
+				final InputPipe inputPipe = jxtaServicesProvider.getPipeService().createInputPipe(adv, this);
 				
 				inputPipeMap.put(sharedQueryID, inputPipe);
 				LOG.debug("Created new input pipe for shared query id {}", sharedQueryID);
@@ -225,16 +240,6 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 			LOG.debug("Local ids shared: {}", ids);
 		} catch (final IOException ex) {
 			LOG.error("Could not create input pipe for {}", sharedQueryID, ex);
-		}
-	}
-
-	// called by OSGi-DS
-	public void unbindExecutor(IExecutor exe) {
-		if (executor == exe) {
-			LOG.debug("Unbound ServerExecutor {}", exe);
-
-			executor.removePlanModificationListener(this);
-			executor = null;
 		}
 	}
 

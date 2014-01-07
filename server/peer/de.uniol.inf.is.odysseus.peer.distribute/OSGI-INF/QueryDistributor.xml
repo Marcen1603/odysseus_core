@@ -5,4 +5,5 @@
       <provide interface="de.uniol.inf.is.odysseus.core.server.distribution.IQueryDistributor"/>
    </service>
    <reference bind="bindPQLGenerator" cardinality="1..1" interface="de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator" name="IPQLGenerator" policy="static" unbind="unbindPQLGenerator"/>
+   <reference bind="bindJxtaServicesProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider" name="IJxtaServicesProvider" policy="static" unbind="unbindJxtaServicesProvider"/>
 </scr:component>
