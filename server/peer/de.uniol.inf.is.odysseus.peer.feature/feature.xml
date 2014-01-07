@@ -80,13 +80,6 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.rcp.p2p_new"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.uniol.inf.is.odysseus.peer.distribute.partition.querycloud"
          download-size="0"
          install-size="0"
@@ -206,6 +199,13 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.peer.ping"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.peer.rcp"
          download-size="0"
          install-size="0"
          version="0.0.0"

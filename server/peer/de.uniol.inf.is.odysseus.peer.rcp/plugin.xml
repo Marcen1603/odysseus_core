@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
+            class="de.uniol.inf.is.odysseus.peer.rcp.views.PeerView"
+            icon="icons/peer.png"
+            id="de.uniol.inf.is.odysseus.rcp.peer.PeerView"
+            name="Peers"
+            restorable="true">
+      </view>
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
+            class="de.uniol.inf.is.odysseus.peer.rcp.views.P2PSourcesViewPart"
+            id="de.uniol.inf.is.odysseus.rcp.peer.P2PSources"
+            name="P2P Sources"
+            restorable="true">
+      </view>
+      <category
+            id="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
+            name="Peer">
+      </category>
+      <view
+            category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
+            class="de.uniol.inf.is.odysseus.peer.rcp.views.ChatView"
+            icon="icons/chat.png"
+            id="de.uniol.inf.is.odysseus.rcp.peer.ChatView"
+            name="Chat"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="de.uniol.inf.is.odysseus.rcp.peer.PeerCategory"
+            class="de.uniol.inf.is.odysseus.peer.rcp.views.PingMapView"
+            id="de.uniol.inf.is.odysseus.rcp.peer.PingMap"
+            name="Ping Map"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RefreshPeerViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshPeerViewCommand"
+            name="Refresh Peer View">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.ImportCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ImportCommand"
+            name="Import">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.ImportAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ImportAllCommand"
+            name="Import All">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RemoveImportCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportCommand"
+            name="Remove Import">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RemoveImportAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportAllCommand"
+            name="Remove Import All">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RemoveExportCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportCommand"
+            name="Remove Export">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RemoveExportAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportAllCommand"
+            name="Remove all exports">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.ExportCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ExportCommand"
+            name="Export">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.ExportAllCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.ExportAllCommand"
+            name="Export all">
+      </command>
+      <command
+            defaultHandler="de.uniol.inf.is.odysseus.peer.rcp.commands.RefreshP2PSourcesViewCommand"
+            id="de.uniol.inf.is.odysseus.rcp.commands.RefreshP2PSourcesCommand"
+            name="Refresh P2PSources">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.peer.PeerView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshPeerViewCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.peer.P2PSources">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RefreshP2PSourcesCommand"
+               icon="icons/refresh.gif"
+               label="Refresh"
+               style="push"
+               tooltip="Refresh">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator6"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ImportCommand"
+               icon="icons/import.png"
+               label="Import"
+               style="push"
+               tooltip="Import">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ImportAllCommand"
+               icon="icons/importAll.png"
+               label="Import all"
+               style="push"
+               tooltip="Import All">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportCommand"
+               icon="icons/removeImport.png"
+               label="Remove import"
+               style="push"
+               tooltip="Remove Import">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportCommand"
+               icon="icons/removeExport.png"
+               label="Remove export"
+               style="push"
+               tooltip="Remove export">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator7"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportAllCommand"
+               icon="icons/removeImportAll.png"
+               label="Remove all imports"
+               style="push"
+               tooltip="Remove all imports">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportAllCommand"
+               icon="icons/removeExportAll.png"
+               label="Remove all exports"
+               style="push"
+               tooltip="Remove all exports">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator1"
+               visible="false">
+         </separator>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.peer.P2PSources">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ImportCommand"
+               icon="icons/import.png"
+               label="Import"
+               style="push"
+               tooltip="Import">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator5"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveImportCommand"
+               icon="icons/removeImport.png"
+               label="Remove import"
+               style="push">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportCommand"
+               icon="icons/removeExport.png"
+               label="Remove export"
+               style="push"
+               tooltip="Remove export">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExportCommand"
+               icon="icons/export.png"
+               label="Export"
+               style="push">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator4"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportCommand"
+               icon="icons/removeExport.png"
+               label="Remove export"
+               style="push"
+               tooltip="Remove export">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator9"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExportCommand"
+               icon="icons/export.png"
+               label="Export"
+               style="push"
+               tooltip="Export">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.ExportAllCommand"
+               icon="icons/exportAll.png"
+               label="Export all"
+               style="push"
+               tooltip="Export all">
+         </command>
+         <separator
+               name="de.uniol.inf.is.odysseus.rcp.p2p_new.separator8"
+               visible="true">
+         </separator>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportCommand"
+               icon="icons/removeExport.png"
+               label="Remove export"
+               style="push"
+               tooltip="Remove export">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.RemoveExportAllCommand"
+               icon="icons/removeExportAll.png"
+               label="Remove all exports"
+               style="push"
+               tooltip="Remove all exports">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="de.uniol.inf.is.odysseus.peer.rcp.perspectives.P2PPerspective"
+            icon="icons/peerComputing.png"
+            id="de.uniol.inf.is.odysseus.rcp.peer.Perspective"
+            name="Peer">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="de.uniol.inf.is.odysseus.rcp.peer.Perspective">
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.peer.PeerView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="true">
+         </view>
+         <view
+               id="de.uniol.inf.is.odysseus.rcp.peer.P2PSources"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="de.uniol.inf.is.odysseus.rcp.views.SourcesView"
+               minimized="false"
+               moveable="true"
+               ratio="0.3f"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer"
+               showTitle="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="de.uniol.inf.is.odysseus.peer.rcp.StartUp">
+      </startup>
+   </extension>
+   <extension
+         point="de.uniol.inf.is.odysseus.rcp.LoginContribution">
+      <loginContribution
+            class="de.uniol.inf.is.odysseus.peer.rcp.login.P2PLoginContribution">
+      </loginContribution>
+   </extension>
+
+</plugin>
