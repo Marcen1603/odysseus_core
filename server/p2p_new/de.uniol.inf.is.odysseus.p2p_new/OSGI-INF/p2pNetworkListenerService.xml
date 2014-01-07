@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.p2p_new.P2PNetworkListenerService">
-   <implementation class="de.uniol.inf.is.odysseus.p2p_new.network.P2PNetworkListenerService"/>
-   <reference bind="bindP2PNetworkListener" cardinality="0..n" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkListener" name="IP2PNetworkListener" policy="static" unbind="unbindP2PNetworkListener"/>
-</scr:component>

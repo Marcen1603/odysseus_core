@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="true" name="de.uniol.inf.is.odysseus.p2p_new.JxtaServicesProvider">
-   <implementation class="de.uniol.inf.is.odysseus.p2p_new.provider.JxtaServicesProvider"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider"/>
-   </service>
-   <reference cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static"/>
-</scr:component>
