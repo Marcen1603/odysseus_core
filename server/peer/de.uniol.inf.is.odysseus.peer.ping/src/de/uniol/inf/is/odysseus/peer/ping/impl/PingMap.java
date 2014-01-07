@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 import de.uniol.inf.is.odysseus.peer.ping.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.peer.ping.service.P2PNetworkManagerService;
 
 public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 
@@ -128,6 +129,12 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	
 	@Override
 	public Optional<Double> getPing(PeerID peerID) {
+		Preconditions.checkNotNull(peerID, "PeerID to get ping must not be null!");
+		
+		if( isLocalPeerID(peerID)) {
+			return Optional.of(0.0);
+		}
+		
 		PingMapNode node = nodes.get(peerID);
 		if( node == null ) {
 			return Optional.absent();
@@ -139,6 +146,10 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		LOG.debug("Latency is {} of peer {}", latency, peerID);
 		
 		return Optional.of(latency);
+	}
+
+	private static boolean isLocalPeerID(PeerID peerID) {
+		return P2PNetworkManagerService.get().getLocalPeerID().equals(peerID);
 	}
 	
 	@Override
@@ -155,6 +166,13 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 
 	@Override
 	public Optional<Double> getRemotePing(PeerID start, PeerID end) {
+		Preconditions.checkNotNull(start, "Starting peerID must not be null!");
+		Preconditions.checkNotNull(end, "Ending peerID must not be null!");
+		
+		if( start.equals(end)) {
+			return Optional.of(0.0);
+		}
+		
 		PingMapNode startNode = nodes.get(start);
 		PingMapNode endNode = nodes.get(end);
 		
