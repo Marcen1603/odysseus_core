@@ -485,7 +485,6 @@ class SvgLoader {
 	 * @param str
 	 * @return
 	 */
-	@SuppressWarnings("null")
 	private static SvgTransform getTransform(char[] ca, int[] range) {
 		int s1 = range[0];
 
