@@ -11,14 +11,14 @@ import org.hyperic.sigar.SigarException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
+import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
-import de.uniol.inf.is.odysseus.peer.resource.service.JxtaServicesProviderService;
-import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.resource.service.ServerExecutorService;
 
 public class ResourceUsageCheckThread extends RepeatingJobThread {
 
@@ -27,24 +27,90 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 	private static final int REFRESH_INTERVAL_MILLIS = 10 *1000;
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	
+	private static ResourceUsageCheckThread instance;
+	private static PeerResourceUsageManager resourceUsageManager;
+	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static IP2PNetworkManager p2pNetworkManager;
+	private static IServerExecutor serverExecutor;
+	
 	private final Sigar sigar = new Sigar();
 	private long previousInputTotal = 0;
 	private long previousOutputTotal = 0;
 	
-	private final PeerResourceUsageManager manager;
-
-	public ResourceUsageCheckThread(PeerResourceUsageManager manager) {
+	public ResourceUsageCheckThread() {
 		super(REFRESH_INTERVAL_MILLIS, "Resource usage checker");
+	}
+	
+	// called by OSGi-DS
+	public static void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		resourceUsageManager = (PeerResourceUsageManager)serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		if (resourceUsageManager == serv) {
+			resourceUsageManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindExecutor(IExecutor serv) {
+		serverExecutor = (IServerExecutor)serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindExecutor(IExecutor serv) {
+		if (serverExecutor == serv) {
+			serverExecutor = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public void activate() {
+		instance = this;
 		
-		Preconditions.checkNotNull(manager, "Peer resource manager must not be null!");
+		start();
+	}
+
+	// called by OSGi-DS
+	public void deactivate() {
+		instance = null;
 		
-		this.manager = manager;
+		stopRunning();
+	}
+
+	public static ResourceUsageCheckThread getInstance() {
+		return instance;
 	}
 	
 	@Override
 	public void doJob() {
 		try {
-			if( P2PNetworkManagerService.isBound() && P2PNetworkManagerService.get().isStarted()) {
+			if( p2pNetworkManager.isStarted()) {
 				int cpuMax = sigar.getCpuPercList().length;
 				
 				CpuPerc perc = sigar.getCpuPerc();
@@ -68,7 +134,7 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 				
 				int runningQueries = 0;
 				int stoppedQueries = 0;
-				for( IPhysicalQuery physicalQuery : ServerExecutorService.get().getExecutionPlan().getQueries() ) {
+				for( IPhysicalQuery physicalQuery : serverExecutor.getExecutionPlan().getQueries() ) {
 					if( physicalQuery.isOpened() ) {
 						runningQueries++;
 					} else {
@@ -76,20 +142,20 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 					}
 				}
 				
-				IResourceUsage usage = new ResourceUsage(P2PNetworkManagerService.get().getLocalPeerID(), 
+				IResourceUsage usage = new ResourceUsage(p2pNetworkManager.getLocalPeerID(), 
 						freeMemory, maxMemory, cpuFree, cpuMax, System.currentTimeMillis(), 
 						runningQueries, stoppedQueries, bandwidthInKBs, netOutputRate, netInputRate);
 				
-				if( !manager.getLocalResourceUsage().isPresent() || !ResourceUsage.areSimilar(manager.getLocalResourceUsage().get(), usage)) {
+				if( !resourceUsageManager.getLocalResourceUsage().isPresent() || !ResourceUsage.areSimilar(resourceUsageManager.getLocalResourceUsage().get(), usage)) {
 					LOG.debug("Set new current local resource usage: {}", usage);
-					manager.setLocalResourceUsage(usage);
+					resourceUsageManager.setLocalResourceUsage(usage);
 					
 					ResourceUsageAdvertisement adv = (ResourceUsageAdvertisement)AdvertisementFactory.newAdvertisement(ResourceUsageAdvertisement.getAdvertisementType());
 					adv.setResourceUsage(usage);
 					
 					try {
-						JxtaServicesProviderService.get().getDiscoveryService().remotePublish(adv, REFRESH_INTERVAL_MILLIS);
-						JxtaServicesProviderService.get().getDiscoveryService().publish(adv, REFRESH_INTERVAL_MILLIS, REFRESH_INTERVAL_MILLIS);
+						jxtaServicesProvider.getDiscoveryService().remotePublish(adv, REFRESH_INTERVAL_MILLIS);
+						jxtaServicesProvider.getDiscoveryService().publish(adv, REFRESH_INTERVAL_MILLIS, REFRESH_INTERVAL_MILLIS);
 					} catch (IOException e) {
 						LOG.error("Could not publish resource usage advertisement", e);
 					}

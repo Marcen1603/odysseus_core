@@ -5,14 +5,12 @@ import net.jxta.peer.PeerID;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
-import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 
 public final class ResourceUsage implements IResourceUsage {
 
 	private static final double SIMILARITY_FACTOR_PERCENT = 9;
 
 	private final PeerID peerID;
-	private final boolean isLocal;
 
 	private final long memFreeBytes;
 	private final long memMaxBytes;
@@ -47,7 +45,6 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkArgument(netInputRate >= 0, "Network maximum bandwidth must be zero or positive");
 
 		this.peerID = peerID;
-		this.isLocal = P2PNetworkManagerService.get().getLocalPeerID().equals(peerID);
 		this.memFreeBytes = memFreeBytes;
 		this.memMaxBytes = memMaxBytes;
 		this.cpuFree = cpuFree;
@@ -67,7 +64,6 @@ public final class ResourceUsage implements IResourceUsage {
 		Preconditions.checkNotNull(copy, "ResourceUsage to copy must not be null!");
 		
 		peerID = copy.peerID;
-		isLocal = copy.isLocal;
 		memFreeBytes = copy.memFreeBytes;
 		memMaxBytes = copy.memMaxBytes;
 		cpuFree = copy.cpuFree;
@@ -186,10 +182,5 @@ public final class ResourceUsage implements IResourceUsage {
 	@Override
 	public double getNetOutputRate() {
 		return netOutputRate;
-	}
-	
-	@Override
-	public boolean isLocal() {
-		return isLocal;
 	}
 }

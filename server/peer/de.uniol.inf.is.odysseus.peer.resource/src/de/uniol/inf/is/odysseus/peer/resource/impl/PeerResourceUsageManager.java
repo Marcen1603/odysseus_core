@@ -17,10 +17,10 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManagerListener;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
-import de.uniol.inf.is.odysseus.peer.resource.service.P2PNetworkManagerService;
 
 public final class PeerResourceUsageManager implements IPeerResourceUsageManager, IAdvertisementListener {
 
@@ -32,23 +32,31 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 	private final Collection<IPeerResourceUsageManagerListener> listeners = Lists.newArrayList();
 	
 	private IResourceUsage localUsage;
-	private ResourceUsageCheckThread checkThread;
+	
+	private static IP2PNetworkManager p2pNetworkManager;
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
 	
 	// called by OSGi-DS
 	public void activate() {
 		AdvertisementFactory.registerAdvertisementInstance(ResourceUsageAdvertisement.getAdvertisementType(), new ResourceUsageAdvertisementInstantiator());
 
-		checkThread = new ResourceUsageCheckThread(this);
-		checkThread.start();
-		
 		instance = this;
 		LOG.debug("Activated");
 	}
 	
 	// called by OSGi-DS
 	public void deactivate() {
-		checkThread.stopRunning();
-		
 		instance = null;
 		LOG.debug("Deactivated");
 	}
@@ -93,7 +101,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 			ResourceUsageAdvertisement resourceUsageAdv = (ResourceUsageAdvertisement)adv;
 			IResourceUsage usage = resourceUsageAdv.getResourceUsage();
 			PeerID peerID = usage.getPeerID();
-			if( !peerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+			if( !peerID.equals(p2pNetworkManager.getLocalPeerID())) {
 				LOG.debug("Got resource usage {} from peerid {}", usage, peerID);
 				
 				if( usageMap.containsKey(peerID)) {
@@ -114,7 +122,7 @@ public final class PeerResourceUsageManager implements IPeerResourceUsageManager
 		synchronized( listeners ) {
 			for( IPeerResourceUsageManagerListener listener : listeners ) {
 				try {
-					if( usage.isLocal() ) {
+					if( p2pNetworkManager.getLocalPeerID().equals(usage.getPeerID()) ) {
 						listener.localResourceUsageChanged(this, usage);
 					} else {
 						listener.remoteResourceUsageChanged(this, usage);

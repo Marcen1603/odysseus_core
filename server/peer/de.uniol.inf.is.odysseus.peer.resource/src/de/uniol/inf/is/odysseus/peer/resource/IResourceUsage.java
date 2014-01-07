@@ -5,7 +5,6 @@ import net.jxta.peer.PeerID;
 public interface IResourceUsage {
 
 	public PeerID getPeerID();
-	public boolean isLocal();
 	public long getTimestamp();
 	
 	public double getCpuFree();
