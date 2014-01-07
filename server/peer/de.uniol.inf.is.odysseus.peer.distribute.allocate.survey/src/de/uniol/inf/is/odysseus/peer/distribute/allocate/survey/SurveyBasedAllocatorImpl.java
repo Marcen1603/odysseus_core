@@ -17,23 +17,46 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.BidCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 
 public final class SurveyBasedAllocatorImpl {
 
-	private static final Logger log = LoggerFactory.getLogger(SurveyBasedAllocatorImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedAllocatorImpl.class);
+	
+	private static IP2PNetworkManager p2pNetworkManager;
+	private static IPQLGenerator pqlGenerator;
 
-	private SurveyBasedAllocatorImpl() {
-		
-	}	
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
+	}
 	
 	public static Map<String, List<SubPlan>> allocate(ID auctionID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(auctionID, subPlans, transCfg);
@@ -52,7 +75,7 @@ public final class SurveyBasedAllocatorImpl {
 			for (AuctionSummary auction : auctions) {
 				Collection<AuctionResponseAdvertisement> bids = auction.getResponsesFuture().get();
 
-				log.info("Got {} bids from remote peers", bids.size());
+				LOG.info("Got {} bids from remote peers", bids.size());
 
 				// calc own bid
 				double bidValue = BidCalculator.calcBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
@@ -61,7 +84,7 @@ public final class SurveyBasedAllocatorImpl {
 				AuctionResponseAdvertisement bid = determineBestBid(bids);
 
 				String peerName = bid.getOwnerPeerId().toString();
-				if (peerName.equals(P2PNetworkManagerService.get().getLocalPeerID().toString())) {
+				if (peerName.equals(p2pNetworkManager.getLocalPeerID().toString())) {
 					peerName = "local";
 				}
 
@@ -74,7 +97,7 @@ public final class SurveyBasedAllocatorImpl {
 				auction.getSubPlan().addDestinationName(peerName);
 				list.add(auction.getSubPlan());
 
-				log.debug("Peer {} won auction {} with bid {}", new String[] { peerName, bid.getAuctionId(), bid.getBid() + "" });
+				LOG.debug("Peer {} won auction {} with bid {}", new String[] { peerName, bid.getAuctionId(), bid.getBid() + "" });
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,7 +119,7 @@ public final class SurveyBasedAllocatorImpl {
 		final AuctionResponseAdvertisement adv = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
 		adv.setBid(bid);
 		adv.setAuctionId(auctionId);
-		adv.setOwnerPeerId(P2PNetworkManagerService.get().getLocalPeerID());
+		adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 		return adv;
 	}
 	
@@ -130,14 +153,14 @@ public final class SurveyBasedAllocatorImpl {
 		int auctionsCount = 0;
 		for (SubPlan subPlan : subPlans) {
 			final AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
-			adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(subPlan.getLogicalPlan()));
+			adv.setPqlStatement(pqlGenerator.generatePQLStatement(subPlan.getLogicalPlan()));
 			adv.setTransCfgName(transCfg.getName());
 			adv.setAuctionId(auctionID.toString());
 			auctions.add(new AuctionSummary(adv, Communicator.getInstance().publishAuction(adv), subPlan));
 			auctionsCount++;
 		}
 
-		log.info("Auctions for {} remote sub plans listed (sharedQueryId: {})", auctionsCount, auctionID);
+		LOG.info("Auctions for {} remote sub plans listed (sharedQueryId: {})", auctionsCount, auctionID);
 
 		return auctions;
 	}

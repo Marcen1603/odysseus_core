@@ -13,5 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.p2p_new;bundle-version="1.0.0"
-Service-Component: OSGI-INF/UserAllocator.xml,OSGI-INF/P2PDictionaryService.xml,
- OSGI-INF/P2PNetworkManagerService.xml
+Service-Component: OSGI-INF/UserAllocator.xml

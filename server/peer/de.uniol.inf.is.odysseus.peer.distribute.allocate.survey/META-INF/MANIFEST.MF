@@ -8,7 +8,8 @@ Bundle-Vendor: Timo Michelsen
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/SurveyBasedAllocator.xml,OSGI-INF/PQLGeneratorService.xml,OSGI-INF/JxtaServicesProviderService.xml,OSGI-INF/P2PNetworkManagerService.xml,OSGI-INF/P2PDictionaryService.xml,OSGI-INF/ServerExecutorService.xml,OSGI-INF/CostModelService.xml, OSGI-INF/Communicator.xml
+Service-Component: OSGI-INF/SurveyBasedAllocator.xml,OSGI-INF/Communicator.xml,OSGI-INF/SurveyBasedAllocatorImpl.xml,OSGI-INF/Helper.xml,
+ OSGI-INF/BidCalculator.xml
 Require-Bundle: de.uniol.inf.is.odysseus.peer.distribute;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",

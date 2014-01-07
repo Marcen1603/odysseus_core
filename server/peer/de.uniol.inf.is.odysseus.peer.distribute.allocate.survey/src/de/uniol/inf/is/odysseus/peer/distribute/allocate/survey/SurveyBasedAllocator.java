@@ -15,16 +15,30 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.SubPlanManipulator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class SurveyBasedAllocator implements IQueryPartAllocator {
 
+	private static IP2PNetworkManager p2pNetworkManager;
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+	
 	@Override
 	public String getName() {
 		return "survey";
@@ -32,7 +46,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
-		ID auctionID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), true);
+		ID auctionID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true);
 
 		// copy --> original
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
@@ -65,7 +79,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 			PeerID peerID;
 			if (isLocal(peerName)) {
-				peerID = P2PNetworkManagerService.get().getLocalPeerID();
+				peerID = p2pNetworkManager.getLocalPeerID();
 			} else {
 				peerID = toID(peerName);
 			}
@@ -77,7 +91,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 
 	private static boolean isLocal(String peerName) {
-		return "local".equalsIgnoreCase(peerName) || P2PNetworkManagerService.get().getLocalPeerID().toString().equalsIgnoreCase(peerName);
+		return "local".equalsIgnoreCase(peerName) || p2pNetworkManager.getLocalPeerID().toString().equalsIgnoreCase(peerName);
 	}
 
 	private static PeerID toID(String text) {
