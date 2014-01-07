@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
@@ -37,9 +38,11 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private double timestep = 1.0;
 	
 	private IP2PDictionary dictionary;
+	private IP2PNetworkManager networkManager;
 	
 	public void activate() {
 		dictionary = P2PDictionaryService.waitFor();
+		networkManager = P2PNetworkManagerService.waitFor();
 		dictionary.addListener(this);
 		
 		pinger.start();
@@ -52,6 +55,7 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	public void deactivate() {
 		dictionary.removeListener(this);
 		dictionary = null;
+		networkManager = null;
 		
 		pinger.stopRunning();
 		
@@ -148,8 +152,8 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 		return Optional.of(latency);
 	}
 
-	private static boolean isLocalPeerID(PeerID peerID) {
-		return P2PNetworkManagerService.get().getLocalPeerID().equals(peerID);
+	private boolean isLocalPeerID(PeerID peerID) {
+		return networkManager.getLocalPeerID().equals(peerID);
 	}
 	
 	@Override
