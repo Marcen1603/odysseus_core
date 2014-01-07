@@ -2,12 +2,16 @@ package de.uniol.inf.is.odysseus.peer.ping.impl;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Random;
 
 import net.jxta.peer.PeerID;
 
 import org.apache.commons.math.geometry.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicator;
 import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
@@ -20,15 +24,18 @@ import de.uniol.inf.is.odysseus.peer.ping.service.PeerCommunicatorService;
 public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Pinger.class);
+	private static final Random RAND = new Random();
+	private static final int MAX_PEERS_TO_PING = 5;
 
 	private static final int PING_INTERVAL = 5000;
 
 	private static final byte PING_FLAG_BYTE = 78;
 	private static final byte PONG_FLAG_BYTE = 79;
 
+
 	private IPeerCommunicator peerCommunicator;
 	private IP2PDictionary p2pDictionary;
-	
+
 	public Pinger() {
 		super(PING_INTERVAL, "Ping Thread");
 	}
@@ -44,10 +51,11 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	@Override
 	public void doJob() {
 		Collection<PeerID> remotePeers = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> selectedPeers = selectRandomPeers(remotePeers);
 
 		byte[] message = createPingMessage();
 		try {
-			for (PeerID remotePeer : remotePeers) {
+			for (PeerID remotePeer : selectedPeers) {
 				if (peerCommunicator.isConnected(remotePeer)) {
 					peerCommunicator.send(remotePeer, message);
 				}
@@ -55,6 +63,28 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		} catch (PeerCommunicationException e) {
 			LOG.error("Could not send ping message", e);
 		}
+	}
+
+	private static Collection<PeerID> selectRandomPeers(Collection<PeerID> remotePeers) {
+		if (remotePeers.size() <= MAX_PEERS_TO_PING) {
+			return Lists.newArrayList(remotePeers);
+		}
+
+		Collection<PeerID> selectedPeers = Lists.newArrayList();
+		while (selectedPeers.size() < MAX_PEERS_TO_PING) {
+			int index = RAND.nextInt(remotePeers.size());
+			Iterator<PeerID> iterator = remotePeers.iterator();
+			PeerID lastIteratedPeer = null;
+			for (int counter = 0; counter < index; counter++) {
+				lastIteratedPeer = iterator.next();
+			}
+
+			if (!selectedPeers.contains(lastIteratedPeer)) {
+				selectedPeers.add(lastIteratedPeer);
+			}
+		}
+		
+		return selectedPeers;
 	}
 
 	private static byte[] createPingMessage() {
@@ -65,11 +95,11 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		System.arraycopy(longArray, 0, message, 1, longArray.length);
 		return message;
 	}
-	
+
 	private static byte[] createPongMessage(byte[] pingMessage) {
 		ByteBuffer buffer = ByteBuffer.wrap(pingMessage);
 		buffer.get(); // PING_FLAG_BYTE
-		
+
 		byte[] longArray = ByteBuffer.allocate(8).putLong(buffer.getLong()).array();
 		byte[] doubleXArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalPosition().getX()).array();
 		byte[] doubleYArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalPosition().getY()).array();
@@ -109,7 +139,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			double remoteX = buffer.getDouble();
 			double remoteY = buffer.getDouble();
 			double remoteZ = buffer.getDouble();
-			
+
 			PingMap.getInstance().update(senderPeer, new Vector3D(remoteX, remoteY, remoteZ), latency);
 		}
 	}
