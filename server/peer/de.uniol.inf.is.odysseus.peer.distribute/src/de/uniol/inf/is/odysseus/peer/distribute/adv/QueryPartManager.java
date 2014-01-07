@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
-import de.uniol.inf.is.odysseus.peer.distribute.service.AdvertisementManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 
 public class QueryPartManager implements IAdvertisementListener, IDataDictionaryListener {
@@ -43,6 +42,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 	private static IServerExecutor executor;
 	private static ICompiler compiler;
+	private static IAdvertisementManager advertisementManager;
 
 	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps.newConcurrentMap();
 
@@ -71,6 +71,18 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	public static void unbindExecutor(IExecutor exe) {
 		if (executor == exe) {
 			executor = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindAdvertisementManager(IAdvertisementManager serv) {
+		advertisementManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindAdvertisementManager(IAdvertisementManager serv) {
+		if (advertisementManager == serv) {
+			advertisementManager = null;
 		}
 	}
 
@@ -126,7 +138,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 						neededSources.add(source);
 						LOG.debug("Source {} needed for query {}", source, adv.getPqlStatement());
-						AdvertisementManagerService.get().refreshAdvertisements();
+						advertisementManager.refreshAdvertisements();
 
 					} while (!neededSourcesMap.replace(adv, oldNeededSources, neededSources));
 
