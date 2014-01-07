@@ -137,7 +137,6 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
 			return odyCon.getSubscriptionToSink().getOpenCalls() > 0;
 		}
-		System.out.println("Meh");
 		return false;
 	}
 

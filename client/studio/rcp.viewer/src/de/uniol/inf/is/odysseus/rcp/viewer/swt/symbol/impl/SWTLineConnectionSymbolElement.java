@@ -15,30 +15,53 @@
   */
 package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.impl.OdysseusConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.SWTConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public class SWTLineConnectionSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 
-	private Color color;
+	private final Color activeLineColor;
+	private final Color inactiveLineColor;
 	
-	public SWTLineConnectionSymbolElement( Color lineColor ) {
-		color = lineColor;
+	public SWTLineConnectionSymbolElement( Color activeLineColor, Color inactiveLineColor ) {
+		this.activeLineColor = activeLineColor;
+		this.inactiveLineColor = inactiveLineColor;
 	}
 
 	@Override
 	public void draw(Vector start, Vector end, Vector screenShift, float zoomFactor ) {
 		
-		if( getActualGC() == null ) {
+		GC actualGC = getActualGC();
+		if( actualGC == null ) {
 			return;
 		}
+		
+		if( isConnectionOpened() ) {
+			actualGC.setLineStyle(SWT.LINE_SOLID);
+			actualGC.setForeground( activeLineColor );
+		} else {
+			actualGC.setLineStyle(SWT.LINE_DOT);
+			actualGC.setForeground( inactiveLineColor );
+		}
 	
-		getActualGC().setForeground( color );
 		getActualGC().drawLine( (int)start.getX(), (int)start.getY(), (int)end.getX(), (int)end.getY() );
 	}
 	
+	private boolean isConnectionOpened() {
+		IConnectionModel<C> modelConnection = getConnectionView().getModelConnection();
+		if( modelConnection instanceof OdysseusConnectionModel ) {
+			OdysseusConnectionModel odyCon = (OdysseusConnectionModel)modelConnection;
+			return odyCon.getSubscriptionToSink().getOpenCalls() > 0;
+		}
+		return false;
+	}
+
 	@Override
 	public void update(  ) {}
 }
