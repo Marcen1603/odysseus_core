@@ -167,11 +167,6 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	}
 
 	@Override
-	public void afterJob() {
-		peerCommunicator.removeListener(this);
-	}
-
-	@Override
 	public void receivedMessage(IPeerCommunicator communicator, PeerID senderPeer, byte[] message) {
 		if (message[0] == PING_FLAG_BYTE) {
 			byte[] pongMessage = createPongMessage(message);
