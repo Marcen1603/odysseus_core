@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart;
 
 public class ImportCommand extends AbstractHandler implements IHandler {
@@ -30,7 +30,7 @@ public class ImportCommand extends AbstractHandler implements IHandler {
 		Optional<P2PSourcesViewPart> optPart = P2PSourcesViewPart.getInstance();
 		if (optPart.isPresent()) {
 			P2PSourcesViewPart part = optPart.get();
-			IP2PDictionary dictionary = P2PDictionaryService.get();
+			IP2PDictionary dictionary = RCPP2PNewPlugIn.getP2PDictionary();
 
 			List<SourceAdvertisement> selectedAdvertisements = part.getSelectedSourceAdvertisements();
 

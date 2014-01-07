@@ -7,7 +7,7 @@ public class P2PNetworkListener implements IP2PNetworkListener {
 
 	@Override
 	public void networkStarted(IP2PNetworkManager sender) {
-		RCPP2PNewPlugIn.setWindowTitleSuffix( RCPP2PNewPlugIn.determineP2PTitleSuffix(sender) );
+		RCPP2PNewPlugIn.setWindowTitleSuffix( RCPP2PNewPlugIn.determineP2PTitleSuffix() );
 	}
 
 	@Override

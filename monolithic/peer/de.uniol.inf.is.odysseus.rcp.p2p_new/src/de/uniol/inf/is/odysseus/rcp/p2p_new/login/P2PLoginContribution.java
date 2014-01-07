@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.P2PNetworkException;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContribution;
 import de.uniol.inf.is.odysseus.rcp.login.ILoginContributionContainer;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class P2PLoginContribution implements ILoginContribution {
 
@@ -137,7 +137,9 @@ public class P2PLoginContribution implements ILoginContribution {
 
 	@Override
 	public boolean onFinish() {
-		IP2PNetworkManager networkManager = P2PNetworkManagerService.get();
+		waitForP2PNetworkManager();
+		
+		IP2PNetworkManager networkManager = RCPP2PNewPlugIn.getP2PNetworkManager();
 		String currentPeerName = networkManager.getLocalPeerName();
 		String currentGroupName = networkManager.getLocalPeerGroupName();
 		
@@ -152,6 +154,15 @@ public class P2PLoginContribution implements ILoginContribution {
 			return tryStartNetwork(networkManager);
 		}
 		return true;
+	}
+
+	private static void waitForP2PNetworkManager() {
+		while( RCPP2PNewPlugIn.getP2PNetworkManager() == null ) {
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	private static boolean tryStartNetwork(IP2PNetworkManager networkManager) {

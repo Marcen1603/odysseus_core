@@ -31,8 +31,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PNetworkManagerService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListener {
 
@@ -64,7 +63,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 
 	@Override
 	public void createPartControl(Composite parent) {
-		p2pDictionary = P2PDictionaryService.get();
+		p2pDictionary = RCPP2PNewPlugIn.getP2PDictionary();
 		p2pDictionary.addListener(this);
 		
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
@@ -392,7 +391,7 @@ public class P2PSourcesViewPart extends ViewPart implements IP2PDictionaryListen
 	}
 
 	private static String determinePeerName( IP2PDictionary dict, PeerID peerID ) {
-		if( peerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+		if( peerID.equals(RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerID())) {
 			return "_local_";
 		}
 		

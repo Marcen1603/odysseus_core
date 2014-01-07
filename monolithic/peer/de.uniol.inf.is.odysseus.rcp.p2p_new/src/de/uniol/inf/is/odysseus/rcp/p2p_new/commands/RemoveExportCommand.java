@@ -10,7 +10,7 @@ import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart;
 
 public class RemoveExportCommand extends AbstractHandler implements IHandler {
@@ -26,14 +26,14 @@ public class RemoveExportCommand extends AbstractHandler implements IHandler {
 					// From sourcesView
 					Entry<?, ?> selectedEntry = (Entry<?,?>) selectedObject;
 					String sourceName = (String) selectedEntry.getKey();
-					if( P2PDictionaryService.get().removeSourceExport(sourceName) ) {
+					if( RCPP2PNewPlugIn.getP2PDictionary().removeSourceExport(sourceName) ) {
 						removedOk++;
 					}
 				} else if( selectedObject instanceof P2PSourcesViewPart.TableEntry ) {
 					// From p2pSourcesView
 					P2PSourcesViewPart.TableEntry selectedTableEntry = (P2PSourcesViewPart.TableEntry)selectedObject;
 					SourceAdvertisement adv = selectedTableEntry.advertisement;
-					if( P2PDictionaryService.get().removeSourceExport(adv.getName()) ) {
+					if( RCPP2PNewPlugIn.getP2PDictionary().removeSourceExport(adv.getName()) ) {
 						removedOk++;
 					}
 				}

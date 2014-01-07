@@ -17,9 +17,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.ServerExecutorService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class ImportAllCommand extends AbstractHandler implements IHandler {
 
@@ -28,8 +26,8 @@ public class ImportAllCommand extends AbstractHandler implements IHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IP2PDictionary dictionary = P2PDictionaryService.get();
-		IDataDictionary dataDictionary = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
+		IP2PDictionary dictionary = RCPP2PNewPlugIn.getP2PDictionary();
+		IDataDictionary dataDictionary = RCPP2PNewPlugIn.getServerExecutor().getDataDictionary(RCPP2PNewPlugIn.getActiveSession().getTenant());
 
 		ImmutableList<SourceAdvertisement> sources = dictionary.getSources();
 		int okCount = 0;
@@ -39,7 +37,7 @@ public class ImportAllCommand extends AbstractHandler implements IHandler {
 			if (!dictionary.isImported(source) && !dictionary.isExported(source.getName())) {
 
 				try {
-					if (dataDictionary.containsViewOrStream(source.getName(), SessionManagementService.getActiveSession())) {
+					if (dataDictionary.containsViewOrStream(source.getName(), RCPP2PNewPlugIn.getActiveSession())) {
 						// TODO: choose name is needed
 						throw new PeerException("The name " + source.getName() + " is already used locally");
 					}

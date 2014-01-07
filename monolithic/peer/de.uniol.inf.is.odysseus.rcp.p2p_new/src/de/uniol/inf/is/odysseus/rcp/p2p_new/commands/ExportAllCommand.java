@@ -14,9 +14,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.ServerExecutorService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.SessionManagementService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class ExportAllCommand extends AbstractHandler implements IHandler {
 
@@ -24,7 +22,7 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamsAndViews(SessionManagementService.getActiveSession());
+		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = RCPP2PNewPlugIn.getServerExecutor().getDataDictionary(RCPP2PNewPlugIn.getActiveSession().getTenant()).getStreamsAndViews(RCPP2PNewPlugIn.getActiveSession());
 		int okCount = 0;
 		for( Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews ) {
 			// FIXME: Use Resources
@@ -33,8 +31,8 @@ public class ExportAllCommand extends AbstractHandler implements IHandler {
 			
 			// TODO: Transcfg wählen lassen
 			try {
-				if( !P2PDictionaryService.get().isExported(sourceName) && !P2PDictionaryService.get().isImported(sourceName)) {
-					P2PDictionaryService.get().exportSource(sourceName, "Standard");
+				if( !RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
+					RCPP2PNewPlugIn.getP2PDictionary().exportSource(sourceName, "Standard");
 					okCount++;
 				}
 			} catch (PeerException e) {

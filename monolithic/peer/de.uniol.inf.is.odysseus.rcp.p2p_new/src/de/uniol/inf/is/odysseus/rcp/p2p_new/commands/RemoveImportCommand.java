@@ -11,7 +11,7 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 import de.uniol.inf.is.odysseus.rcp.p2p_new.views.P2PSourcesViewPart;
 
 public class RemoveImportCommand extends AbstractHandler implements IHandler {
@@ -27,7 +27,7 @@ public class RemoveImportCommand extends AbstractHandler implements IHandler {
 			if( !selectedAdvertisements.isEmpty() ) {
 				int okCount = 0;
 				for( SourceAdvertisement selectedAdvertisement : selectedAdvertisements ) {
-					if( P2PDictionaryService.get().removeSourceImport(selectedAdvertisement) ) {
+					if( RCPP2PNewPlugIn.getP2PDictionary().removeSourceImport(selectedAdvertisement) ) {
 						okCount++;
 					}
 				}

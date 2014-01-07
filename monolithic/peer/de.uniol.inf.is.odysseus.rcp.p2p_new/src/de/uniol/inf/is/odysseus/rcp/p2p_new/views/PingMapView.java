@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.PingMapService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class PingMapView extends ViewPart implements PaintListener {
 
@@ -71,11 +71,7 @@ public class PingMapView extends ViewPart implements PaintListener {
 
 	@Override
 	public void paintControl(PaintEvent e) {
-		IPingMap pingMap = PingMapService.get();
-		if( pingMap == null ) {
-			return;
-		}
-		
+		IPingMap pingMap = RCPP2PNewPlugIn.getPingMap();
 		Collection<IPingMapNode> nodes = collectNodes(pingMap); 
 		Collection<Vector3D> points = collectPoints(nodes);
 		Vector3D localPoint = pingMap.getLocalPosition();

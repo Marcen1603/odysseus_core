@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.rcp.p2p_new.PingMapService">
-   <implementation class="de.uniol.inf.is.odysseus.rcp.p2p_new.service.PingMapService"/>
-   <reference bind="bindPingMap" cardinality="1..1" interface="de.uniol.inf.is.odysseus.peer.ping.IPingMap" name="IPingMap" policy="static" unbind="unbindPingMap"/>
-</scr:component>

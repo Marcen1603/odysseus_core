@@ -9,17 +9,17 @@ import org.eclipse.core.commands.IHandler;
 
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class RemoveImportAllCommand extends AbstractHandler implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		List<SourceAdvertisement> importedSources = P2PDictionaryService.get().getImportedSources();
+		List<SourceAdvertisement> importedSources = RCPP2PNewPlugIn.getP2PDictionary().getImportedSources();
 		int okCount = 0;
 		for( SourceAdvertisement importedSource : importedSources ) {
-			if( P2PDictionaryService.get().removeSourceImport(importedSource) ) {
+			if( RCPP2PNewPlugIn.getP2PDictionary().removeSourceImport(importedSource) ) {
 				okCount++;
 			}
 		}

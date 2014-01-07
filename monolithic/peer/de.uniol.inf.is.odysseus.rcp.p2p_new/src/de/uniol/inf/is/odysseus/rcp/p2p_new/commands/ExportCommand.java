@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.p2p_new.PeerException;
 import de.uniol.inf.is.odysseus.rcp.StatusBarManager;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class ExportCommand extends AbstractHandler implements IHandler {
 
@@ -29,8 +29,8 @@ public class ExportCommand extends AbstractHandler implements IHandler {
 			// TODO: Transformationscfg wählen lassen
 			String sourceName = ((Resource) selectedObject.getKey()).getResourceName();
 			try {
-				if (!P2PDictionaryService.get().isExported(sourceName) && !P2PDictionaryService.get().isImported(sourceName)) {
-					P2PDictionaryService.get().exportSource(sourceName, "Standard");
+				if (!RCPP2PNewPlugIn.getP2PDictionary().isExported(sourceName) && !RCPP2PNewPlugIn.getP2PDictionary().isImported(sourceName)) {
+					RCPP2PNewPlugIn.getP2PDictionary().exportSource(sourceName, "Standard");
 					okCount++;
 				}
 			} catch (PeerException e) {

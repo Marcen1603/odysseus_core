@@ -42,9 +42,7 @@ import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionaryListener;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.SourceAdvertisement;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.rcp.p2p_new.service.PeerCommunicatorService;
+import de.uniol.inf.is.odysseus.rcp.p2p_new.RCPP2PNewPlugIn;
 
 public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2PDictionaryListener {
 
@@ -70,8 +68,8 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 		createChatTextfield(rootComposite);
 		createChatInput(rootComposite);
 
-		PeerCommunicatorService.get().addListener(this);
-		P2PDictionaryService.get().addListener(this);
+		RCPP2PNewPlugIn.getPeerCommunicator().addListener(this);
+		RCPP2PNewPlugIn.getP2PDictionary().addListener(this);
 	}
 
 	private void createNamesList(Composite parent) {
@@ -142,15 +140,13 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 	}
 
 	private static String determinePeerName(PeerID peerID) {
-		Optional<String> optPeerName = P2PDictionaryService.get().getRemotePeerName(peerID);
+		Optional<String> optPeerName = RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerName(peerID);
 		return optPeerName.isPresent() ? optPeerName.get() : "<unknown>";
 	}
 
 	private void updateTable() {
-		final IP2PDictionary p2pDictionary = P2PDictionaryService.get();
-
 		peerIDs.clear();
-		peerIDs.addAll(p2pDictionary.getRemotePeerIDs());
+		peerIDs.addAll(RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs());
 
 		refreshTableAsync();
 	}
@@ -200,14 +196,14 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 		try {
 			if (selectedPeerID.isPresent()) {
-				appendToChatTextAsync(getCurrentTime() + " " + P2PNetworkManagerService.get().getLocalPeerName() + " (to " + determinePeerName(selectedPeerID.get()) + "): " + text);
+				appendToChatTextAsync(getCurrentTime() + " " + RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName() + " (to " + determinePeerName(selectedPeerID.get()) + "): " + text);
 
-				PeerCommunicatorService.get().send(selectedPeerID.get(), message);
+				RCPP2PNewPlugIn.getPeerCommunicator().send(selectedPeerID.get(), message);
 			} else {
-				appendToChatTextAsync(getCurrentTime() + " " + P2PNetworkManagerService.get().getLocalPeerName() + ": " + text);
+				appendToChatTextAsync(getCurrentTime() + " " + RCPP2PNewPlugIn.getP2PNetworkManager().getLocalPeerName() + ": " + text);
 				
-				for (PeerID peerID : P2PDictionaryService.get().getRemotePeerIDs()) {
-					PeerCommunicatorService.get().send(peerID, message);
+				for (PeerID peerID : RCPP2PNewPlugIn.getP2PDictionary().getRemotePeerIDs()) {
+					RCPP2PNewPlugIn.getPeerCommunicator().send(peerID, message);
 				}
 			}
 			
@@ -276,8 +272,8 @@ public class ChatView extends ViewPart implements IPeerCommunicatorListener, IP2
 
 	@Override
 	public void dispose() {
-		P2PDictionaryService.get().removeListener(this);
-		PeerCommunicatorService.get().removeListener(this);
+		RCPP2PNewPlugIn.getP2PDictionary().removeListener(this);
+		RCPP2PNewPlugIn.getPeerCommunicator().removeListener(this);
 		super.dispose();
 	}
 
