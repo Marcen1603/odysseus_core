@@ -110,7 +110,7 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 	@Override
 	public void doJob() {
 		try {
-			if( p2pNetworkManager.isStarted()) {
+			if( p2pNetworkManager.isStarted() && serverExecutor != null ) {
 				int cpuMax = sigar.getCpuPercList().length;
 				
 				CpuPerc perc = sigar.getCpuPerc();

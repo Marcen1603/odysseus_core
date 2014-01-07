@@ -21,13 +21,13 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.Mailbox;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.JxtaServicesProviderService;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PDictionaryService;
 
 public final class Communicator implements IAdvertisementListener {
 
@@ -36,6 +36,8 @@ public final class Communicator implements IAdvertisementListener {
 	
 	private static Communicator instance;
 	private static IP2PNetworkManager p2pNetworkManager;
+	private static IP2PDictionary p2pDictionary;
+	private static IJxtaServicesProvider jxtaServicesProvider;
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private Map<ID, Mailbox<CostResponseAdvertisement>> mailboxForPlanCosts = Maps.newHashMap();
@@ -49,6 +51,30 @@ public final class Communicator implements IAdvertisementListener {
 	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		jxtaServicesProvider = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
+		if (jxtaServicesProvider == serv) {
+			jxtaServicesProvider = null;
 		}
 	}
 	
@@ -79,9 +105,9 @@ public final class Communicator implements IAdvertisementListener {
 
 		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 		adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
-		for (PeerID id : P2PDictionaryService.get().getRemotePeerIDs()) {
+		for (PeerID id : p2pDictionary.getRemotePeerIDs()) {
 			if (!id.equals(p2pNetworkManager.getLocalPeerID())) {
-				JxtaServicesProviderService.get().getDiscoveryService().remotePublish(id.toString(), adv, WAIT_TIME);
+				jxtaServicesProvider.getDiscoveryService().remotePublish(id.toString(), adv, WAIT_TIME);
 			}
 		}
 		return executorService.submit(new Callable<List<CostResponseAdvertisement>>() {
@@ -133,7 +159,7 @@ public final class Communicator implements IAdvertisementListener {
 						costAdv.setPercentageOfBearableCpuCosts(relativeCosts.getCpuCost());
 						costAdv.setPercentageOfBearableMemCosts(relativeCosts.getMemCost());
 						costAdv.setBid(bid);
-						JxtaServicesProviderService.get().getDiscoveryService().remotePublish(adv.getOwnerPeerId().toString(), costAdv, WAIT_TIME);
+						jxtaServicesProvider.getDiscoveryService().remotePublish(adv.getOwnerPeerId().toString(), costAdv, WAIT_TIME);
 						LOG.info("Sent costs ({}) for plan {} to peer {}", new String[] { sum.toString(), adv.getSharedQueryID().toString(), adv.getOwnerPeerId().toString() });
 					} catch (Exception e) {
 						e.printStackTrace();
