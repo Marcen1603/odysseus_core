@@ -1,0 +1,32 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: P2p_new
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.p2p_new
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.p2p_new.activator.P2PNewPlugIn
+Bundle-Vendor: Timo Michelsen
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: de.uniol.inf.is.odysseus.interval_latency;resolution:=optional,
+ de.uniol.inf.is.odysseus.latency;resolution:=optional,
+ de.uniol.inf.is.odysseus.parser.pql.generator,
+ de.uniol.inf.is.odysseus.ruleengine.rule,
+ de.uniol.inf.is.odysseus.ruleengine.ruleflow,
+ de.uniol.inf.is.odysseus.script.parser,
+ de.uniol.inf.is.odysseus.transform.flow,
+ de.uniol.inf.is.odysseus.transform.rule,
+ org.osgi.framework;version="1.3.0",
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.slf4j;bundle-version="1.0.0",
+ com.google.guava;bundle-version="12.0.0",
+ de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ Jxta.2.6;bundle-version="1.0.0"
+Service-Component: OSGI-INF/advertisementManager.xml, OSGI-INF/jxtaTransportHandler.xml,OSGI-INF/peerManager.xml,OSGI-INF/jxtaProtocolHandler.xml,OSGI-INF/executorService.xml,OSGI-INF/keywordProvider.xml,OSGI-INF/sourceAdvertisementReceiver.xml,OSGI-INF/p2pDictionary.xml,OSGI-INF/jxtaServicesProvider.xml,OSGI-INF/peerAssignmentProvider.xml,OSGI-INF/p2pNetworkManager.xml,OSGI-INF/p2pNetworkListenerService.xml,
+ OSGI-INF/peerCommunicator.xml
+Export-Package: de.uniol.inf.is.odysseus.p2p_new,
+ de.uniol.inf.is.odysseus.p2p_new.dictionary,
+ de.uniol.inf.is.odysseus.p2p_new.logicaloperator,
+ de.uniol.inf.is.odysseus.p2p_new.parameter,
+ de.uniol.inf.is.odysseus.p2p_new.physicaloperator,
+ de.uniol.inf.is.odysseus.p2p_new.util
+Bundle-ActivationPolicy: lazy
