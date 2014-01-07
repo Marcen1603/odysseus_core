@@ -18,8 +18,7 @@ import de.uniol.inf.is.odysseus.p2p_new.IPeerCommunicatorListener;
 import de.uniol.inf.is.odysseus.p2p_new.PeerCommunicationException;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.util.RepeatingJobThread;
-import de.uniol.inf.is.odysseus.peer.ping.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.peer.ping.service.PeerCommunicatorService;
+import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
 public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListener {
 
@@ -32,25 +31,77 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 	private static final byte PING_FLAG_BYTE = 78;
 	private static final byte PONG_FLAG_BYTE = 79;
 
-
-	private IPeerCommunicator peerCommunicator;
-	private IP2PDictionary p2pDictionary;
+	private static IP2PDictionary dictionary;
+	private static IPeerCommunicator peerCommunicator;
+	private static PingMap pingMap;
+	private static Pinger instance;
 
 	public Pinger() {
 		super(PING_INTERVAL, "Ping Thread");
 	}
 
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		dictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (dictionary == serv) {
+			dictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindPeerCommunicator(IPeerCommunicator serv) {
+		peerCommunicator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerCommunicator(IPeerCommunicator serv) {
+		if (peerCommunicator == serv) {
+			peerCommunicator = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindPingMap(IPingMap serv) {
+		pingMap = (PingMap)serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPingMap(IPingMap serv) {
+		if (pingMap == serv) {
+			pingMap = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public void activate() {
+		instance = this;
+		
+		start();
+	}
+
+	// called by OSGi-DS
+	public void deactivate() {
+		instance = null;
+		
+		stopRunning();
+	}
+
+	public static Pinger getInstance() {
+		return instance;
+	}
+	
 	@Override
 	public void beforeJob() {
-		peerCommunicator = PeerCommunicatorService.waitFor();
-		p2pDictionary = P2PDictionaryService.waitFor();
-
 		peerCommunicator.addListener(this);
 	}
 
 	@Override
 	public void doJob() {
-		Collection<PeerID> remotePeers = p2pDictionary.getRemotePeerIDs();
+		Collection<PeerID> remotePeers = dictionary.getRemotePeerIDs();
 		Collection<PeerID> selectedPeers = selectRandomPeers(remotePeers);
 
 		byte[] message = createPingMessage();
@@ -101,9 +152,9 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 		buffer.get(); // PING_FLAG_BYTE
 
 		byte[] longArray = ByteBuffer.allocate(8).putLong(buffer.getLong()).array();
-		byte[] doubleXArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalPosition().getX()).array();
-		byte[] doubleYArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalPosition().getY()).array();
-		byte[] doubleZArray = ByteBuffer.allocate(8).putDouble(PingMap.getInstance().getLocalPosition().getZ()).array();
+		byte[] doubleXArray = ByteBuffer.allocate(8).putDouble(pingMap.getLocalPosition().getX()).array();
+		byte[] doubleYArray = ByteBuffer.allocate(8).putDouble(pingMap.getLocalPosition().getY()).array();
+		byte[] doubleZArray = ByteBuffer.allocate(8).putDouble(pingMap.getLocalPosition().getZ()).array();
 
 		byte[] message = new byte[33];
 		message[0] = PONG_FLAG_BYTE;
@@ -140,7 +191,7 @@ public class Pinger extends RepeatingJobThread implements IPeerCommunicatorListe
 			double remoteY = buffer.getDouble();
 			double remoteZ = buffer.getDouble();
 
-			PingMap.getInstance().update(senderPeer, new Vector3D(remoteX, remoteY, remoteZ), latency);
+			pingMap.update(senderPeer, new Vector3D(remoteX, remoteY, remoteZ), latency);
 		}
 	}
 }

@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.peer.ping.impl;
 import java.util.Map;
 import java.util.Random;
 
+import net.jxta.peer.PeerID;
+
 import org.apache.commons.math.geometry.Vector3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.jxta.peer.PeerID;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -20,8 +20,6 @@ import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.P2PDictionaryAdapter;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
-import de.uniol.inf.is.odysseus.peer.ping.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.peer.ping.service.P2PNetworkManagerService;
 
 public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 
@@ -30,22 +28,40 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	private static final Random RAND = new Random();
 	
 	private static PingMap instance;
+	private static IP2PDictionary dictionary;
+	private static IP2PNetworkManager networkManager;
 	
 	private final Map<PeerID, PingMapNode> nodes = Maps.newHashMap();
-	private final Pinger pinger = new Pinger();
 	
 	private Vector3D localPosition = new Vector3D();
 	private double timestep = 1.0;
 	
-	private IP2PDictionary dictionary;
-	private IP2PNetworkManager networkManager;
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		dictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (dictionary == serv) {
+			dictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		networkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (networkManager == serv) {
+			networkManager = null;
+		}
+	}
 	
 	public void activate() {
-		dictionary = P2PDictionaryService.waitFor();
-		networkManager = P2PNetworkManagerService.waitFor();
 		dictionary.addListener(this);
-		
-		pinger.start();
 		
 		LOG.debug("PingMap activated");
 		
@@ -54,10 +70,6 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	
 	public void deactivate() {
 		dictionary.removeListener(this);
-		dictionary = null;
-		networkManager = null;
-		
-		pinger.stopRunning();
 		
 		LOG.debug("PingMap deactivated");
 		
