@@ -72,6 +72,9 @@ public class PingMapView extends ViewPart implements PaintListener {
 	@Override
 	public void paintControl(PaintEvent e) {
 		IPingMap pingMap = PingMapService.get();
+		if( pingMap == null ) {
+			return;
+		}
 		
 		Collection<IPingMapNode> nodes = collectNodes(pingMap); 
 		Collection<Vector3D> points = collectPoints(nodes);
