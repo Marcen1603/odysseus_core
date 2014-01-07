@@ -103,6 +103,21 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval.iterator();
 	}
+	
+	public List<T> extractOverlapsAsList(ITimeInterval t) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> iter = getElements().iterator();
+			while (iter.hasNext()) {
+				T elem = iter.next();
+				if (TimeInterval.overlaps(elem.getMetadata(), t)) {
+					retval.add(elem);
+					iter.remove();
+				}
+			}
+		}
+		return retval;
+	}
 
 	// public Iterator<T> queryElementsStartingBeforeReverse(PointInTime
 	// validity) {
