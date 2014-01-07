@@ -7,14 +7,28 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckException;
 import de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 
 public class SomePeerExistsCheck implements IDistributionChecker {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SomePeerExistsCheck.class);
 
+	private static IP2PDictionary p2pDictionary;
+
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
+	
 	@Override
 	public String getName() {
 		return "somePeerExists";
@@ -22,7 +36,7 @@ public class SomePeerExistsCheck implements IDistributionChecker {
 	
 	@Override
 	public void check(Collection<ILogicalOperator> operatorss, QueryBuildConfiguration config) throws DistributionCheckException {
-		int remotePeersCount = P2PDictionaryService.get().getRemotePeerIDs().size();
+		int remotePeersCount = p2pDictionary.getRemotePeerIDs().size();
 		if( remotePeersCount == 0 ) {
 			throw new DistributionCheckException("No remote peers known");
 		}

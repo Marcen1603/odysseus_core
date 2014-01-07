@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
@@ -36,6 +37,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.ParameterHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.util.QueryDistributorHelper;
 
 public class QueryDistributor implements IQueryDistributor {
 
@@ -43,6 +45,7 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static IPQLGenerator pqlGenerator;
 	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static IP2PDictionary p2pDictionary;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -65,6 +68,18 @@ public class QueryDistributor implements IQueryDistributor {
 	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		if (jxtaServicesProvider == serv) {
 			jxtaServicesProvider = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindP2PDictionary(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
 		}
 	}
 	
@@ -114,14 +129,14 @@ public class QueryDistributor implements IQueryDistributor {
 
 			if( ParameterHelper.isDoForceLocal(config)) {
 				allocationMap = QueryDistributorHelper.forceLocalOperators(allocationMap);
-				LoggingHelper.printAllocationMap(allocationMap);
+				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
 			} else {
 				LOG.debug("Ommitting forcing operators with 'local' to be locally executed");
 			}
 			
 			if( ParameterHelper.isDoMerge(config)) {
 				allocationMap = QueryDistributorHelper.mergeQueryPartsWithSamePeer(allocationMap);
-				LoggingHelper.printAllocationMap(allocationMap);
+				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
 			} else {
 				LOG.debug("Merging query parts omitted");
 			}

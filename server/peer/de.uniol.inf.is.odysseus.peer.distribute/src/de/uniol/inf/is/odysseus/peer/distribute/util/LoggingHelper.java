@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPostProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPreProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 
 public final class LoggingHelper {
@@ -69,11 +69,11 @@ public final class LoggingHelper {
 		}
 	}
 
-	public static void printAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap) {
+	public static void printAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, IP2PDictionary p2pDictionary) {
 		if( LOG.isDebugEnabled() ) {
 			for (ILogicalQueryPart part : allocationMap.keySet()) {
 				PeerID allocatedPeerID = allocationMap.get(part);
-				Optional<String> remotePeerName = P2PDictionaryService.get().getRemotePeerName(allocatedPeerID);
+				Optional<String> remotePeerName = p2pDictionary.getRemotePeerName(allocatedPeerID);
 				if (!allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
 					LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
 				} else {

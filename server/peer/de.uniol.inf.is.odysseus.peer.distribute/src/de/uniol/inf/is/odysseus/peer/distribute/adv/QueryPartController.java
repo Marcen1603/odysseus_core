@@ -38,8 +38,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
+import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
 
 // TODO javaDoc M.B.
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {
@@ -322,7 +322,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 		for (final Integer id : ids) {
 			if (exceptionID == null || id != exceptionID) {
 				try {
-					executor.removeQuery(id, SessionManagementService.getActiveSession());
+					executor.removeQuery(id, PeerDistributePlugIn.getActiveSession());
 				} catch (final PlanManagementException ex) {
 					LOG.error("Could not remove query with id={}", id, ex);
 				}

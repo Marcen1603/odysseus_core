@@ -31,9 +31,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.service.AdvertisementManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
 
 public class QueryPartManager implements IAdvertisementListener, IDataDictionaryListener {
 
@@ -98,7 +98,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private List<String> determineNeededSources(final QueryPartAdvertisement adv) {
 		final List<String> neededSources = Lists.newArrayList();
 		neededSourcesMap.putIfAbsent(adv, neededSources);
-		final List<IExecutorCommand> queries = compiler.translateQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), getDataDictionary(), null);
+		final List<IExecutorCommand> queries = compiler.translateQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), null);
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -120,7 +120,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 						// TODO not a good solution to concatenate user name and
 						// source name
-						ISession session = SessionManagementService.getActiveSession();
+						ISession session = PeerDistributePlugIn.getActiveSession();
 						if (getDataDictionary().containsViewOrStream(session.getUser().getName() + "." + source, session) || neededSourcesMap.get(adv).contains(source))
 							break;
 
@@ -140,7 +140,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private void callExecutor(QueryPartAdvertisement adv) {
 		try {
 			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
-			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), null, configuration);
+			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), adv.getTransCfgName(), null, configuration);
 
 			QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
 
@@ -155,7 +155,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	}
 
 	public IDataDictionary getDataDictionary() {
-		return DataDictionaryProvider.getDataDictionary(SessionManagementService.getActiveSession().getTenant());
+		return DataDictionaryProvider.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant());
 	}
 
 	public static QueryPartManager getInstance() {

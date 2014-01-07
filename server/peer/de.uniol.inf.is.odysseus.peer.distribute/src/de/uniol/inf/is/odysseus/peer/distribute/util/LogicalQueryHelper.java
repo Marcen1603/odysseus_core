@@ -20,8 +20,8 @@ import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
+import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.service.ServerExecutorService;
-import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
 
 public final class LogicalQueryHelper {
 
@@ -98,7 +98,7 @@ public final class LogicalQueryHelper {
 		for (ILogicalOperator operator : operators) {
 
 			if (operator instanceof StreamAO) {
-				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary(SessionManagementService.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), SessionManagementService.getActiveSession());
+				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), PeerDistributePlugIn.getActiveSession());
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 
