@@ -30,24 +30,24 @@ public class UserAllocator implements IQueryPartAllocator {
 	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
-	public static void bindIP2PDictionary(IP2PDictionary serv) {
+	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindIP2PDictionary(IP2PDictionary serv) {
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
 		}
 	}
 
 	// called by OSGi-DS
-	public static void bindIP2PNetworkManager(IP2PNetworkManager serv) {
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
 		p2pNetworkManager = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindIP2PNetworkManager(IP2PNetworkManager serv) {
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
 		if (p2pNetworkManager == serv) {
 			p2pNetworkManager = null;
 		}
