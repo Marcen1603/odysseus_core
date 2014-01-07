@@ -27,10 +27,10 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
@@ -41,6 +41,20 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributor.class);
 
+	private static IPQLGenerator pqlGenerator;
+
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
+	}
+	
 	@Override
 	public void distribute(final IServerExecutor serverExecutor, final ISession caller, final Collection<ILogicalQuery> queriesToDistribute, final QueryBuildConfiguration config) {
 		QueryDistributorThread thread = new QueryDistributorThread(serverExecutor, caller, queriesToDistribute, config);
@@ -197,7 +211,7 @@ public class QueryDistributor implements IQueryDistributor {
 				final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
 				adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
 				adv.setPeerID(peerID);
-				adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(part.getOperators().iterator().next()));
+				adv.setPqlStatement(pqlGenerator.generatePQLStatement(part.getOperators().iterator().next()));
 				adv.setSharedQueryID(sharedQueryID);
 				adv.setTransCfgName(parameters.getName());
 
@@ -231,7 +245,7 @@ public class QueryDistributor implements IQueryDistributor {
 		logicalQuery.setLogicalPlan(topAO, true);
 		logicalQuery.setParserId("PQL");
 		logicalQuery.setPriority(0);
-		logicalQuery.setQueryText(PQLGeneratorService.get().generatePQLStatement(topAO));
+		logicalQuery.setQueryText(pqlGenerator.generatePQLStatement(topAO));
 		LOG.debug("Created logical query with queryText = {}", logicalQuery.getQueryText());
 
 		return logicalQuery;

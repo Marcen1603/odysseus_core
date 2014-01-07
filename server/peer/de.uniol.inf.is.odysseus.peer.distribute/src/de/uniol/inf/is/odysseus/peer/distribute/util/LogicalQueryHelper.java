@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
 
@@ -29,8 +29,18 @@ public final class LogicalQueryHelper {
 
 	private static int connectionCounter = 0;
 	
-	private LogicalQueryHelper() {
-		// do not instantiate this
+	private static IPQLGenerator pqlGenerator;
+
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
 	}
 
 	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
@@ -39,7 +49,7 @@ public final class LogicalQueryHelper {
 		ILogicalQuery copy = new LogicalQuery(PQL_PARSER_ID, copyLogicalPlan(originQuery.getLogicalPlan()), originQuery.getPriority());
 
 		copy.setName(originQuery.getName());
-		copy.setQueryText(PQLGeneratorService.get().generatePQLStatement(copy.getLogicalPlan()));
+		copy.setQueryText(pqlGenerator.generatePQLStatement(copy.getLogicalPlan()));
 		copy.setUser(originQuery.getUser());
 
 		return copy;

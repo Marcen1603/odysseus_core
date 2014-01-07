@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.IQueryBuildConfigurationTemplate;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
@@ -31,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.peer.distribute.service.AdvertisementManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.service.CompilerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.service.SessionManagementService;
 
@@ -41,7 +41,8 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 
 	private static QueryPartManager instance;
 
-	private IServerExecutor executor;
+	private static IServerExecutor executor;
+	private static ICompiler compiler;
 
 	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps.newConcurrentMap();
 
@@ -49,31 +50,47 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 		instance = this;
 	}
 
+	// called by OSGi-DS
+	public static void bindCompiler(ICompiler serv) {
+		compiler = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindCompiler(ICompiler serv) {
+		if (compiler == serv) {
+			compiler = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindExecutor(IExecutor exe) {
+		executor = (IServerExecutor) exe;
+	}
+
+	// called by OSGi-DS
+	public static void unbindExecutor(IExecutor exe) {
+		if (executor == exe) {
+			executor = null;
+		}
+	}
+
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
-
 		if (advertisement instanceof QueryPartAdvertisement) {
-
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 
 			if (adv.getPeerID().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
-
 				LOG.debug("PQL statement to be executed on peer {}: {}", P2PNetworkManagerService.get().getLocalPeerName(), ((QueryPartAdvertisement) advertisement).getPqlStatement());
-
 				final List<String> neededSources = determineNeededSources(adv);
 
 				if (neededSources.isEmpty()) {
-
 					callExecutor(adv);
 					LOG.debug("All source available for advertisement {}", adv);
-
-				} else
+				} else {
 					synchronized (neededSourcesMap) {
-
 						neededSourcesMap.put(adv, neededSources);
-
 					}
-
+				}
 			}
 		}
 	}
@@ -81,7 +98,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private List<String> determineNeededSources(final QueryPartAdvertisement adv) {
 		final List<String> neededSources = Lists.newArrayList();
 		neededSourcesMap.putIfAbsent(adv, neededSources);
-		final List<IExecutorCommand> queries = CompilerService.get().translateQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), getDataDictionary(), null);
+		final List<IExecutorCommand> queries = compiler.translateQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), getDataDictionary(), null);
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -121,43 +138,20 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	}
 
 	private void callExecutor(QueryPartAdvertisement adv) {
-
 		try {
-
 			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
 			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", SessionManagementService.getActiveSession(), adv.getTransCfgName(), null, configuration);
 
 			QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
 
 		} catch (final Throwable t) {
-
 			LOG.error("Could not execute query part", t);
-
 		}
-
 	}
 
 	@Override
 	public void advertisementRemoved(IAdvertisementManager sender, Advertisement adv) {
 		// do nothing
-	}
-
-	public void bindExecutor(IExecutor exe) {
-		if (exe instanceof IServerExecutor) {
-			executor = (IServerExecutor) exe;
-
-			LOG.debug("Bound ServerExecutor {}", exe);
-		} else {
-			throw new IllegalArgumentException("Executor " + exe + " is not a ServerExecutor");
-		}
-	}
-
-	public void unbindExecutor(IExecutor exe) {
-		if (executor == exe) {
-			LOG.debug("Unbound Executor {}", exe);
-
-			executor = null;
-		}
 	}
 
 	public IDataDictionary getDataDictionary() {
