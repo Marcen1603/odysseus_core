@@ -26,12 +26,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaReceiverAO;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.JxtaSenderAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.adv.QueryPartAdvertisement;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.InterfaceParametersPair;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LoggingHelper;
@@ -46,6 +46,7 @@ public class QueryDistributor implements IQueryDistributor {
 	private static IPQLGenerator pqlGenerator;
 	private static IJxtaServicesProvider jxtaServicesProvider;
 	private static IP2PDictionary p2pDictionary;
+	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -80,6 +81,18 @@ public class QueryDistributor implements IQueryDistributor {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
 		}
 	}
 	
@@ -197,7 +210,7 @@ public class QueryDistributor implements IQueryDistributor {
 			public void beginDisconnect(ILogicalOperator sourceOperator, ILogicalOperator sinkOperator) {
 				LOG.debug("Create JXTA-Connection between {} and {}", new Object[] {sourceOperator, sinkOperator });
 				
-				pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID());
+				pipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID());
 				sourceOp = sourceOperator;
 			}
 			
@@ -226,18 +239,18 @@ public class QueryDistributor implements IQueryDistributor {
 
 	private static Collection<ILogicalQueryPart> distributeToRemotePeers(Map<ILogicalQueryPart, PeerID> correctedAllocationMap, QueryBuildConfiguration parameters) {
 		List<ILogicalQueryPart> localParts = Lists.newArrayList();
-		final ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
+		final ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), false, String.valueOf(System.currentTimeMillis()).getBytes());
 
 		for (ILogicalQueryPart part : correctedAllocationMap.keySet()) {
 			PeerID peerID = correctedAllocationMap.get(part);
 
-			if (peerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+			if (peerID.equals(p2pNetworkManager.getLocalPeerID())) {
 				localParts.add(part);
 				LOG.debug("Query part {} stays local", part);
 
 			} else {
 				final QueryPartAdvertisement adv = (QueryPartAdvertisement) AdvertisementFactory.newAdvertisement(QueryPartAdvertisement.getAdvertisementType());
-				adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
+				adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 				adv.setPeerID(peerID);
 				adv.setPqlStatement(pqlGenerator.generatePQLStatement(part.getOperators().iterator().next()));
 				adv.setSharedQueryID(sharedQueryID);

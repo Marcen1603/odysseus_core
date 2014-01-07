@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionExcept
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.peer.distribute.DistributionCheckException;
 import de.uniol.inf.is.odysseus.peer.distribute.IDistributionChecker;
@@ -36,13 +37,13 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartModificationException;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.registry.DistributionCheckerRegistry;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 
 public final class QueryDistributorHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryDistributorHelper.class);
 	
 	private static IP2PDictionary p2pDictionary;
+	private static IP2PNetworkManager p2pNetworkManager;
 
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
@@ -53,6 +54,18 @@ public final class QueryDistributorHelper {
 	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
 		}
 	}
 	
@@ -96,7 +109,7 @@ public final class QueryDistributorHelper {
 					LOG.debug("Created new query part {}", nonLocalQueryPart);
 				}
 				LogicalQueryPart localQueryPart = new LogicalQueryPart(localOperators);
-				resultMap.put(localQueryPart, P2PNetworkManagerService.get().getLocalPeerID());
+				resultMap.put(localQueryPart, p2pNetworkManager.getLocalPeerID());
 				LOG.debug("Created new local query part {}", localQueryPart);
 			}
 		}
@@ -284,7 +297,7 @@ public final class QueryDistributorHelper {
 
 		try {
 			InterfaceParametersPair<IQueryPartAllocator> firstAllocator = allocators.get(0);
-			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, p2pDictionary.getRemotePeerIDs(), P2PNetworkManagerService.get().getLocalPeerID(), config, firstAllocator.getParameters());
+			Map<ILogicalQueryPart, PeerID> allocationMap = firstAllocator.getInterface().allocate(modifiedQueryParts, p2pDictionary.getRemotePeerIDs(), p2pNetworkManager.getLocalPeerID(), config, firstAllocator.getParameters());
 			
 			if (allocationMap == null || allocationMap.isEmpty()) {
 				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");
@@ -304,7 +317,7 @@ public final class QueryDistributorHelper {
 
 	private static void checkAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
 		ImmutableList<PeerID> knownRemotePeerIDs = p2pDictionary.getRemotePeerIDs();
-		PeerID localPeerID = P2PNetworkManagerService.get().getLocalPeerID();
+		PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
 
 		for (ILogicalQueryPart queryPart : queryParts) {
 			if (allocationMap.containsKey(queryPart)) {

@@ -18,7 +18,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryDistributionPreProcessor;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartModificator;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 
 public final class LoggingHelper {
 
@@ -74,11 +73,7 @@ public final class LoggingHelper {
 			for (ILogicalQueryPart part : allocationMap.keySet()) {
 				PeerID allocatedPeerID = allocationMap.get(part);
 				Optional<String> remotePeerName = p2pDictionary.getRemotePeerName(allocatedPeerID);
-				if (!allocatedPeerID.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
-					LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
-				} else {
-					LOG.debug("Allocated query part {} --> local", part);
-				}
+				LOG.debug("Allocated query part {} --> {}", part, remotePeerName.isPresent() ? remotePeerName.get() : "<unknownName>");
 			}
 		}
 	}

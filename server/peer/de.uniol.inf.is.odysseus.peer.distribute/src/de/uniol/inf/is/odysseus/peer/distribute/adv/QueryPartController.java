@@ -37,9 +37,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.util.OutputPipeResolver;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 
 // TODO javaDoc M.B.
 public class QueryPartController implements IPlanModificationListener, PipeMsgListener {
@@ -53,6 +53,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	private static QueryPartController instance;
 	private static IServerExecutor executor;
 	private static IJxtaServicesProvider jxtaServicesProvider;
+	private static IP2PNetworkManager p2pNetworkManager;
 
 	private final Map<ID, OutputPipe> outputPipeMap = Maps.newHashMap();
 	private final Map<ID, InputPipe> inputPipeMap = Maps.newHashMap();
@@ -82,6 +83,18 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	public static void unbindJxtaServicesProvider(IJxtaServicesProvider serv) {
 		if (jxtaServicesProvider == serv) {
 			jxtaServicesProvider = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
 		}
 	}
 
@@ -273,7 +286,7 @@ public class QueryPartController implements IPlanModificationListener, PipeMsgLi
 	}
 
 	private static PipeAdvertisement createPipeAdvertisement(ID sharedQueryID) {
-		final PipeID pipeID = IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID(), sharedQueryID.toString().getBytes());
+		final PipeID pipeID = IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID(), sharedQueryID.toString().getBytes());
 
 		final PipeAdvertisement adv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 		adv.setPipeID(pipeID);

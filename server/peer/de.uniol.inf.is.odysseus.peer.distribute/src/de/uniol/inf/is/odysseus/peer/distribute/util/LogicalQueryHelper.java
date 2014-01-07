@@ -11,17 +11,18 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
-import de.uniol.inf.is.odysseus.peer.distribute.service.ServerExecutorService;
 
 public final class LogicalQueryHelper {
 
@@ -30,6 +31,7 @@ public final class LogicalQueryHelper {
 	private static int connectionCounter = 0;
 	
 	private static IPQLGenerator pqlGenerator;
+	private static IServerExecutor serverExecutor;
 
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
@@ -40,6 +42,18 @@ public final class LogicalQueryHelper {
 	public static void unbindPQLGenerator(IPQLGenerator serv) {
 		if (pqlGenerator == serv) {
 			pqlGenerator = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindExecutor(IExecutor serv) {
+		serverExecutor = (IServerExecutor)serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindExecutor(IExecutor serv) {
+		if (serverExecutor == serv) {
+			serverExecutor = null;
 		}
 	}
 
@@ -98,7 +112,7 @@ public final class LogicalQueryHelper {
 		for (ILogicalOperator operator : operators) {
 
 			if (operator instanceof StreamAO) {
-				ILogicalOperator streamPlan = ServerExecutorService.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), PeerDistributePlugIn.getActiveSession());
+				ILogicalOperator streamPlan = serverExecutor.getDataDictionary(PeerDistributePlugIn.getActiveSession().getTenant()).getStreamForTransformation(((StreamAO) operator).getStreamname(), PeerDistributePlugIn.getActiveSession());
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 

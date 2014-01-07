@@ -31,8 +31,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.PeerDistributePlugIn;
-import de.uniol.inf.is.odysseus.peer.distribute.service.P2PNetworkManagerService;
 
 public class QueryPartManager implements IAdvertisementListener, IDataDictionaryListener {
 
@@ -43,6 +43,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private static IServerExecutor executor;
 	private static ICompiler compiler;
 	private static IAdvertisementManager advertisementManager;
+	private static IP2PNetworkManager p2pNetworkManager;
 
 	private ConcurrentMap<QueryPartAdvertisement, List<String>> neededSourcesMap = Maps.newConcurrentMap();
 
@@ -86,13 +87,25 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 		}
 	}
 
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+
 	@Override
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
 		if (advertisement instanceof QueryPartAdvertisement) {
 			final QueryPartAdvertisement adv = (QueryPartAdvertisement) advertisement;
 
-			if (adv.getPeerID().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
-				LOG.debug("PQL statement to be executed on peer {}: {}", P2PNetworkManagerService.get().getLocalPeerName(), ((QueryPartAdvertisement) advertisement).getPqlStatement());
+			if (adv.getPeerID().equals(p2pNetworkManager.getLocalPeerID())) {
+				LOG.debug("PQL statement to be executed on peer {}: {}", p2pNetworkManager.getLocalPeerName(), ((QueryPartAdvertisement) advertisement).getPqlStatement());
 				final List<String> neededSources = determineNeededSources(adv);
 
 				if (neededSources.isEmpty()) {

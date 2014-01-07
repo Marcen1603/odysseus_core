@@ -7,4 +7,5 @@
    </service>
    <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler" name="ICompiler" policy="static" unbind="unbindCompiler"/>
    <reference bind="bindAdvertisementManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager" name="IAdvertisementManager" policy="static" unbind="unbindAdvertisementManager"/>
+   <reference bind="bindP2PNetworkManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager" name="IP2PNetworkManager" policy="static" unbind="unbindP2PNetworkManager"/>
 </scr:component>
