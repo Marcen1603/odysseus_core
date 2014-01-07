@@ -11,19 +11,31 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.costmodel.ICost;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
+import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.CostModelService;
 
 public final class CostCalculator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CostCalculator.class);
 
-	private CostCalculator() {
+	@SuppressWarnings("rawtypes")
+	private static OperatorCostModel costModel;
+	
+	// called by OSGi-DS
+	public static void bindCostModel(ICostModel<?> serv) {
+		costModel = (OperatorCostModel<?>)serv;
+	}
 
+	// called by OSGi-DS
+	public static void unbindCostModel(ICostModel<?> serv) {
+		if (costModel == serv) {
+			costModel = null;
+		}
 	}
 
 	public static Map<String, CostSummary> calcCostsProOperator(ILogicalQuery plan, String transCfgName, boolean discardPlan) {
@@ -52,10 +64,10 @@ public final class CostCalculator {
 			return 0;
 		}
 
-		OperatorCost<?> maximumCost = (OperatorCost<?>) CostModelService.get().getMaximumCost();
+		OperatorCost<?> maximumCost = (OperatorCost<?>) costModel.getMaximumCost();
 		LOG.debug("Maximum costs     : {}", maximumCost);
 
-		OperatorCost<?> overallCost = (OperatorCost<?>) CostModelService.get().getOverallCost();
+		OperatorCost<?> overallCost = (OperatorCost<?>) costModel.getOverallCost();
 		LOG.debug("Current costs     : {}", overallCost);
 
 		double remainingCpu = maximumCost.getCpuCost() - overallCost.getCpuCost();
@@ -121,7 +133,7 @@ public final class CostCalculator {
 			IPhysicalQuery p = Helper.getPhysicalQuery(q, transCfgName);
 			String id = getOperatorId(part);
 
-			ICost<IPhysicalOperator> cost = CostModelService.get().estimateCost(p.getPhysicalChilds(), false);
+			ICost<IPhysicalOperator> cost = costModel.estimateCost(p.getPhysicalChilds(), false);
 			OperatorCost<IPhysicalOperator> c = ((OperatorCost<IPhysicalOperator>) cost);
 
 			double cpuCost = c.getCpuCost();

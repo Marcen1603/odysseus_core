@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.PQLGeneratorService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.CostCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.DistributionHelper;
@@ -36,12 +36,35 @@ import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.SubPlanMan
 
 public final class SurveyBasedPartitionerImpl {
 
-	private SurveyBasedPartitionerImpl() {
-		
-	}
-	
 	public static interface TargetSize {
 		public double getNextSize(double totalAbsoluteCosts);
+	}
+	
+	private static IPQLGenerator pqlGenerator;
+	private static IP2PNetworkManager p2pNetworkManager;
+
+	// called by OSGi-DS
+	public static void bindPQLGenerator(IPQLGenerator serv) {
+		pqlGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPQLGenerator(IPQLGenerator serv) {
+		if (pqlGenerator == serv) {
+			pqlGenerator = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
 	}
 
 	public static List<SubPlan> partition(ILogicalOperator queryPlan, ID sharedQueryId, QueryBuildConfiguration transCfg) throws CouldNotPartitionException {
@@ -72,7 +95,7 @@ public final class SurveyBasedPartitionerImpl {
 
 	private static List<CostResponseAdvertisement> requestCostsForPlan(ILogicalOperator plan, ID sharedQueryId, String transCfgName) {
 		final CostQueryAdvertisement adv = (CostQueryAdvertisement) AdvertisementFactory.newAdvertisement(CostQueryAdvertisement.getAdvertisementType());
-		adv.setPqlStatement(PQLGeneratorService.get().generatePQLStatement(plan));
+		adv.setPqlStatement(pqlGenerator.generatePQLStatement(plan));
 		adv.setSharedQueryID(sharedQueryId);
 		adv.setTransCfgName(transCfgName);
 		Future<List<CostResponseAdvertisement>> futureResult = Communicator.getInstance().askPeersForPlanCosts(adv);
@@ -246,7 +269,7 @@ public final class SurveyBasedPartitionerImpl {
 
 		CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 		costAdv.setCostSummary(costsProOperator);
-		costAdv.setOwnerPeerId(P2PNetworkManagerService.get().getLocalPeerID());
+		costAdv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 		costAdv.setPqlStatement(null);
 		costAdv.setTransCfgName(null);
 		costAdv.setSharedQueryID(null);

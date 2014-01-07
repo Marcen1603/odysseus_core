@@ -13,17 +13,30 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartitioner;
 import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CouldNotPartitionException;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.util.Helper;
 
 public class SurveyBasedPartitioner implements IQueryPartitioner {
 
+	private static IP2PNetworkManager p2pNetworkManager;
+
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
 	@Override
 	public String getName() {
 		return "survey";
@@ -32,7 +45,7 @@ public class SurveyBasedPartitioner implements IQueryPartitioner {
 	@Override
 	public Collection<ILogicalQueryPart> partition(Collection<ILogicalOperator> operators, QueryBuildConfiguration config, List<String> partitionParameters) throws QueryPartitionException {
 		Helper.addOperatorIds(operators);
-		ID sharedQueryID = IDFactory.newContentID(P2PNetworkManagerService.get().getLocalPeerGroupID(), true);
+		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true);
 
 		// copy --> original
 		Map<ILogicalOperator, ILogicalOperator> operatorCopyMap = createOperatorCopyMap(operators);

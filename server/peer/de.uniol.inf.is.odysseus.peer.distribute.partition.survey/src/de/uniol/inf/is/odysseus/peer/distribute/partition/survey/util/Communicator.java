@@ -21,13 +21,13 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementListener;
 import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
+import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.advertisement.CostResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.CostSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.model.Mailbox;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.JxtaServicesProviderService;
 import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PDictionaryService;
-import de.uniol.inf.is.odysseus.peer.distribute.partition.survey.service.P2PNetworkManagerService;
 
 public final class Communicator implements IAdvertisementListener {
 
@@ -35,10 +35,23 @@ public final class Communicator implements IAdvertisementListener {
 	private static final long WAIT_TIME = 4000;
 	
 	private static Communicator instance;
+	private static IP2PNetworkManager p2pNetworkManager;
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
 	private Map<ID, Mailbox<CostResponseAdvertisement>> mailboxForPlanCosts = Maps.newHashMap();
 
+	// called by OSGi-DS
+	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
+		p2pNetworkManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PNetworkManager(IP2PNetworkManager serv) {
+		if (p2pNetworkManager == serv) {
+			p2pNetworkManager = null;
+		}
+	}
+	
 	public void activate() {
 		instance = this;
 	}
@@ -64,10 +77,10 @@ public final class Communicator implements IAdvertisementListener {
 			}
 		}
 
-		adv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
-		adv.setOwnerPeerId(P2PNetworkManagerService.get().getLocalPeerID());
+		adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+		adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 		for (PeerID id : P2PDictionaryService.get().getRemotePeerIDs()) {
-			if (!id.equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+			if (!id.equals(p2pNetworkManager.getLocalPeerID())) {
 				JxtaServicesProviderService.get().getDiscoveryService().remotePublish(id.toString(), adv, WAIT_TIME);
 			}
 		}
@@ -87,7 +100,7 @@ public final class Communicator implements IAdvertisementListener {
 	public void advertisementAdded(IAdvertisementManager sender, Advertisement advertisement) {
 		if (advertisement instanceof CostResponseAdvertisement) {
 			CostResponseAdvertisement adv = (CostResponseAdvertisement) advertisement;
-			if (!adv.getOwnerPeerId().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+			if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
 				LOG.debug("Received response to query to calculate costs for plan {}", adv.getSharedQueryID().toString());
 				synchronized (mailboxForPlanCosts) {
 					Mailbox<CostResponseAdvertisement> mailbox = mailboxForPlanCosts.get(adv.getSharedQueryID());
@@ -98,8 +111,8 @@ public final class Communicator implements IAdvertisementListener {
 			}
 		} else if (advertisement instanceof CostQueryAdvertisement) {
 			CostQueryAdvertisement adv = ((CostQueryAdvertisement) advertisement);
-			if (!adv.getOwnerPeerId().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
-				if (!adv.getOwnerPeerId().equals(P2PNetworkManagerService.get().getLocalPeerID())) {
+			if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
+				if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
 					try {
 						LOG.debug("Received query to calculate costs for plan {}", adv.getSharedQueryID().toString());
 						ILogicalQuery plan = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
@@ -112,11 +125,11 @@ public final class Communicator implements IAdvertisementListener {
 
 						CostResponseAdvertisement costAdv = (CostResponseAdvertisement) AdvertisementFactory.newAdvertisement(CostResponseAdvertisement.getAdvertisementType());
 						costAdv.setCostSummary(costsProOperator);
-						costAdv.setOwnerPeerId(P2PNetworkManagerService.get().getLocalPeerID());
+						costAdv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
 						costAdv.setPqlStatement(adv.getPqlStatement());
 						costAdv.setTransCfgName(adv.getTransCfgName());
 						costAdv.setSharedQueryID(adv.getSharedQueryID());
-						costAdv.setID(IDFactory.newPipeID(P2PNetworkManagerService.get().getLocalPeerGroupID()));
+						costAdv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 						costAdv.setPercentageOfBearableCpuCosts(relativeCosts.getCpuCost());
 						costAdv.setPercentageOfBearableMemCosts(relativeCosts.getMemCost());
 						costAdv.setBid(bid);
