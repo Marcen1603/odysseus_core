@@ -80,6 +80,11 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
     public SDFExpression getExpression() {
         return this.expression;
     }
+    
+    @Override
+    public List<SDFAttribute> getAttributes() {
+    	return neededAttributes;
+    }
 
     /**
      * {@inheritDoc}
