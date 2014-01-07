@@ -134,6 +134,10 @@ public class ResourceUsageCheckThread extends RepeatingJobThread {
 				
 				int runningQueries = 0;
 				int stoppedQueries = 0;
+				
+				if( serverExecutor == null ) {
+					return;
+				}
 				for( IPhysicalQuery physicalQuery : serverExecutor.getExecutionPlan().getQueries() ) {
 					if( physicalQuery.isOpened() ) {
 						runningQueries++;
