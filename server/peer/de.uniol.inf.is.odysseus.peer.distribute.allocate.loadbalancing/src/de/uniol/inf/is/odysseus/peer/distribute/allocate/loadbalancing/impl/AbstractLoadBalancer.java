@@ -7,13 +7,11 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.ILoadBalancer;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 public abstract class AbstractLoadBalancer implements ILoadBalancer {
@@ -52,10 +50,8 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 			
 			Usage minUsage = estimatedUsages.get(minPeerID);
 			
-			Optional<String> optPeerName = P2PDictionaryService.get().getRemotePeerName(minPeerID);
-			String peerName = optPeerName.isPresent() ? optPeerName.get() : "<unknown>";
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Allocated to {} with mem={} and cpu={}", new Object[] { peerName, minUsage.mem, minUsage.cpu });
+				LOG.debug("Allocated with mem={} and cpu={} to {}", new Object[] { minUsage.mem, minUsage.cpu, minPeerID});
 			}
 
 			result.put(queryPart, minPeerID);
@@ -65,7 +61,7 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 			minUsage.runningQueriesCount++;
 			
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Set usage of {} to mem={} and cpu={}", new Object[] { peerName, minUsage.mem, minUsage.cpu });
+				LOG.debug("Set usage to mem={} and cpu={} of peer {}", new Object[] { minUsage.mem, minUsage.cpu, minPeerID });
 			}
 		}
 

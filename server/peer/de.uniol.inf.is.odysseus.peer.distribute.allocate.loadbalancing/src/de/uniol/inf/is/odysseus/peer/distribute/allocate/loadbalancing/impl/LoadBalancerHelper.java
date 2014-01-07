@@ -2,16 +2,14 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.impl;
 
 import java.util.Map;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.jxta.peer.PeerID;
-
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.impl.AbstractLoadBalancer.Usage;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.service.P2PDictionaryService;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 
 final class LoadBalancerHelper {
@@ -55,8 +53,7 @@ final class LoadBalancerHelper {
 	private static void printPeerResourceUsageMap(Map<PeerID, Usage> estimatedUsages) {
 		for (PeerID peerID : estimatedUsages.keySet()) {
 			Usage estimateUsage = estimatedUsages.get(peerID);
-			Optional<String> peerName = P2PDictionaryService.get().getRemotePeerName(peerID);
-			LOG.debug("ResourceUsage of {}: mem = {}, cpu = {}", new Object[] { peerName.isPresent() ? peerName.get() : "<unknown>", estimateUsage.mem, estimateUsage.cpu });
+			LOG.debug("ResourceUsage: mem = {}, cpu = {} of peer {}", new Object[] { estimateUsage.mem, estimateUsage.cpu, peerID });
 		}
 	}
 }

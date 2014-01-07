@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.jxta.peer.PeerID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +13,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import net.jxta.peer.PeerID;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -19,7 +20,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.impl.LoadBalancerFactory;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.impl.LoadBalancerFactoryException;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.service.PeerResourceUsageManagerService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 import de.uniol.inf.is.odysseus.peer.resource.IPeerResourceUsageManager;
 import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
@@ -27,6 +27,20 @@ import de.uniol.inf.is.odysseus.peer.resource.IResourceUsage;
 public class LoadBalancingAllocator implements IQueryPartAllocator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(LoadBalancingAllocator.class);
+	
+	private static IPeerResourceUsageManager peerResourceUsageManager;
+
+	// called by OSGi-DS
+	public static void bindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		peerResourceUsageManager = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPeerResourceUsageManager(IPeerResourceUsageManager serv) {
+		if (peerResourceUsageManager == serv) {
+			peerResourceUsageManager = null;
+		}
+	}
 	
 	@Override
 	public String getName() {
@@ -65,15 +79,14 @@ public class LoadBalancingAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<PeerID, IResourceUsage> determineCurrentResourceUsagesOfPeers() {
-		IPeerResourceUsageManager usageManager = PeerResourceUsageManagerService.get();
-		Collection<PeerID> remotePeers = usageManager.getRemotePeers();
+		Collection<PeerID> remotePeers = peerResourceUsageManager.getRemotePeers();
 		
 		Map<PeerID, IResourceUsage> usages = Maps.newHashMap();
 		for( PeerID remotePeer : remotePeers ) {
-			usages.put(remotePeer, usageManager.getRemoteResourceUsage(remotePeer).get());
+			usages.put(remotePeer, peerResourceUsageManager.getRemoteResourceUsage(remotePeer).get());
 		}
 		
-		Optional<IResourceUsage> localUsage = usageManager.getLocalResourceUsage();
+		Optional<IResourceUsage> localUsage = peerResourceUsageManager.getLocalResourceUsage();
 		if( localUsage.isPresent() ) {
 			usages.put(localUsage.get().getPeerID(), localUsage.get());
 		}

@@ -9,18 +9,20 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.costmodel.ICostModel;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
+import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCostModel;
 import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.service.CostModelService;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.service.ServerExecutorService;
 import de.uniol.inf.is.odysseus.peer.distribute.util.IOperatorGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
@@ -28,8 +30,32 @@ public final class CostEstimationHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CostEstimationHelper.class);
 	
-	private CostEstimationHelper() {
-		// do not instatiate this
+	@SuppressWarnings("rawtypes")
+	private static OperatorCostModel costModel;
+	private static IServerExecutor serverExecutor;
+
+	// called by OSGi-DS
+	public static void bindExecutor(IExecutor serv) {
+		serverExecutor = (IServerExecutor)serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindExecutor(IExecutor serv) {
+		if (serverExecutor == serv) {
+			serverExecutor = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindCostModel(ICostModel<?> serv) {
+		costModel = (OperatorCostModel<?>)serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindCostModel(ICostModel<?> serv) {
+		if (costModel == serv) {
+			costModel = null;
+		}
 	}
 	
 	public static Map<ILogicalQueryPart, OperatorCost<?>> determineQueryPartCosts(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) {
@@ -66,7 +92,7 @@ public final class CostEstimationHelper {
 			IPhysicalQuery physicalQuery = getPhysicalQuery(logicalQuery, transCfg);
 			
 			@SuppressWarnings("unchecked")
-			OperatorCost<?> costs = (OperatorCost<?>)CostModelService.get().estimateCost(physicalQuery.getPhysicalChilds(), false);
+			OperatorCost<?> costs = (OperatorCost<?>)costModel.estimateCost(physicalQuery.getPhysicalChilds(), false);
 			
 			result.put(queryPart, costs);
 			LOG.debug("Query part {} costs {}", queryPart, costs);
@@ -85,7 +111,7 @@ public final class CostEstimationHelper {
 	}
 
 	private static IPhysicalQuery getPhysicalQuery(ILogicalQuery query, QueryBuildConfiguration transCfg) {
-		return ServerExecutorService.getServerExecutor().getCompiler().transform(query, transCfg.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
+		return serverExecutor.getCompiler().transform(query, transCfg.getTransformationConfiguration(), getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()));
 	}
 
 	private static ISession getActiveSession() {
