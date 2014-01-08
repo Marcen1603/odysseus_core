@@ -541,7 +541,11 @@ public final class LogicalQueryHelper {
 				ILogicalOperator originalTarget = sub.getTarget();
 				ILogicalOperator copyTarget = getCopyOfMap(originalTarget, operatorCopyMap);
 
-				copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				if( copyTarget != null ) {
+					copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				} else {
+					copyOperator.subscribeSink(originalTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				}
 			}
 		}
 	}
