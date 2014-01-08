@@ -56,14 +56,14 @@ public class TestRunnerApplication implements IApplication {
 				TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);		
 				LOG.debug("Scheduled a component test: " + component.getName());
 				List<StatusCode> results = runner.run();
-				for(StatusCode code : results){
-					LOG.debug("Total results for component "+component.getName());
-					LOG.debug(code.name());
-					LOG.debug("-------------------");
+				LOG.debug("Total results for component "+component.getName());
+				for(StatusCode code : results){					
+					LOG.debug(code.name());					
 					if(code!=StatusCode.OK){
 						oneFailed = true;
 					}
 				}
+				LOG.debug("-------------------");
 			}
 			System.out.println("All tests were run.");
 			if(oneFailed){
