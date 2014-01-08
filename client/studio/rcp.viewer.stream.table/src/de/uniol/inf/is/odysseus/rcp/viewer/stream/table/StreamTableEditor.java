@@ -250,7 +250,9 @@ public class StreamTableEditor implements IStreamEditorType {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		final int attributeIndex = getSchema().indexOf(attribute);
 
-		col.getColumn().setText(attribute.getURI());
+		
+		col.getColumn().setText(attribute.getAttributeName());
+		col.getColumn().setToolTipText(attribute.getURI());
 		col.getColumn().setAlignment(SWT.CENTER);
 		col.setLabelProvider(new CellLabelProvider() {
 			@Override
