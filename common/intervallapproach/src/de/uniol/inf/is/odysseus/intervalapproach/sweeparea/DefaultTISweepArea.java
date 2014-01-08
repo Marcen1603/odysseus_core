@@ -35,10 +35,13 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.intervalapproach.predicate.TotallyBeforePredicate;
 
 /**
- * This sweeparea implementation provides some optimizations on extract and purge. The elements are always sorted and extract and purge only remove elements, until the remove predicate first returns false. The remove predicate is fixed to the TotallyBeforePredicate
+ * This sweeparea implementation provides some optimizations on extract and
+ * purge. The elements are always sorted and extract and purge only remove
+ * elements, until the remove predicate first returns false. The remove
+ * predicate is fixed to the TotallyBeforePredicate
  */
 public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>> extends AbstractTimeIntervalSweepArea<T> implements Comparable<DefaultTISweepArea<T>>, ITimeIntervalSweepArea<T> {
-	
+
 	Comparator<T> purgeComparator = new Comparator<T>() {
 
 		@Override
@@ -76,7 +79,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval;
 	}
-	
+
 	public Iterator<T> queryOverlaps(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
@@ -103,7 +106,7 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 		return retval.iterator();
 	}
-	
+
 	public List<T> extractOverlapsAsList(ITimeInterval t) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
@@ -149,8 +152,11 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * Removes all elements from this sweep area that are totally before "element". The while loop in this method can be broken, if the next element has a start timestamp that is after or equals to the start timestamp of "element", because the elements in the sweep area are ordered by their start
-	 * timestamps.
+	 * Removes all elements from this sweep area that are totally before
+	 * "element". The while loop in this method can be broken, if the next
+	 * element has a start timestamp that is after or equals to the start
+	 * timestamp of "element", because the elements in the sweep area are
+	 * ordered by their start timestamps.
 	 */
 	@Override
 	public void purgeElements(T element, Order order) {
@@ -294,8 +300,6 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
-				// Alle Elemente entfernen, die nicht mehr verschnitten werden
-				// k�nnen (also davor liegen)
 				if (s_hat.getMetadata().getStart().equals(validity)) {
 					retval.add(s_hat);
 					li.remove();
@@ -307,14 +311,32 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return retval.iterator();
 	}
 
+	public List<T> extractEqualElementsStartingEquals(T element) {
+		ArrayList<T> retval = new ArrayList<T>();
+		synchronized (getElements()) {
+			Iterator<T> li = getElements().iterator();
+			while (li.hasNext()) {
+				T s_hat = li.next();
+				if (s_hat.getMetadata().getStart().equals(element.getMetadata().getStart())) {
+					if (s_hat.equals(element)) {
+						retval.add(s_hat);
+						li.remove();
+					}
+				} else {
+					break;
+
+				}
+			}
+		}
+		return retval;
+	}
+
 	public Iterator<T> extractElementsStartingAfter(PointInTime validity) {
 		ArrayList<T> retval = new ArrayList<T>();
 		synchronized (getElements()) {
 			Iterator<T> li = getElements().iterator();
 			while (li.hasNext()) {
 				T s_hat = li.next();
-				// Alle Elemente entfernen, die nicht mehr verschnitten werden
-				// k�nnen (also davor liegen)
 				if (s_hat.getMetadata().getStart().after(validity)) {
 					retval.add(s_hat);
 					li.remove();
@@ -346,7 +368,9 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	}
 
 	/**
-	 * @return the min start timestamp of all elements currently in the sweep area. Should be the start timestamp of the first element in the linked list.
+	 * @return the min start timestamp of all elements currently in the sweep
+	 *         area. Should be the start timestamp of the first element in the
+	 *         linked list.
 	 */
 	@Override
 	public PointInTime getMinTs() {
@@ -360,12 +384,14 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 
 	/**
 	 * 
-	 * @return the max start timestamp of all elements currently in the sweep area. Should be the start timestamp of the last element in the linked list.
+	 * @return the max start timestamp of all elements currently in the sweep
+	 *         area. Should be the start timestamp of the last element in the
+	 *         linked list.
 	 */
 	@Override
 	public PointInTime getMaxTs() {
 		if (!this.getElements().isEmpty()) {
-			return this.getElements().get(getElements().size()-1).getMetadata().getStart();
+			return this.getElements().get(getElements().size() - 1).getMetadata().getStart();
 		}
 		return null;
 	}
@@ -385,7 +411,8 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * For Debug-Purposes
 	 * 
 	 * @param baseTime
-	 * @return the current Content of the SweepArea with baseTime as origin of all points of time
+	 * @return the current Content of the SweepArea with baseTime as origin of
+	 *         all points of time
 	 */
 	public String getSweepAreaAsString(PointInTime baseTime) {
 		StringBuffer buf = new StringBuffer("SweepArea " + getElements().size() + " Elems \n");
@@ -467,25 +494,25 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			Iterator<T> it = this.getElements().iterator();
 			while (it.hasNext()) {
 				T next = it.next();
-				it.remove();				
+				it.remove();
 				result.add(next);
 			}
 		}
 		return result.iterator();
 	}
-	
-	public void insertOrUpdate(T element, Comparator<T> comparator){
+
+	public void insertOrUpdate(T element, Comparator<T> comparator) {
 		synchronized (getElements()) {
 			synchronized (getElements()) {
 				Iterator<T> it = this.getElements().iterator();
 				while (it.hasNext()) {
 					T next = it.next();
-					if(comparator.compare(next, element)==0){
+					if (comparator.compare(next, element) == 0) {
 						it.remove();
-					}												
+					}
 				}
 				insert(element);
-			}		
-		}		
+			}
+		}
 	}
 }

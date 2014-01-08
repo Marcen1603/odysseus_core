@@ -56,6 +56,10 @@ public class SimpleCSVProtocolHandler<T> extends AbstractCSVHandler<T> {
 	public String getName() {
 		return NAME;
 	}
+	
+	public T convertLine(String line){
+		return readLine(line);
+	}
 
 	@Override
 	public IProtocolHandler<T> createInstance(ITransportDirection direction,

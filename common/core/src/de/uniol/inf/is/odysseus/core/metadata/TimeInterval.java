@@ -422,6 +422,13 @@ public class TimeInterval implements ITimeInterval, Cloneable, Serializable {
 		//return "[" + getStart().toString() + "," + getEnd().toString() + ")";
 		return getStart().toString() + "|" + getEnd().toString();
 	}
+	
+	public static TimeInterval parseTimeInterval(String str){
+		String[] parts = str.split("\\|");
+		PointInTime start = PointInTime.parsePointInTime(parts[0].trim());
+		PointInTime end = PointInTime.parsePointInTime(parts[1].trim());
+		return new TimeInterval(start, end);
+	}
 
 	@Override
 	public String toString(PointInTime baseTime) {
