@@ -67,13 +67,35 @@ public final class SurveyBasedAllocatorImpl {
 		return destinationMap;
 	}
 
+	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
+		Preconditions.checkNotNull(subPlans, "SubPlans must not be null!");
+
+		List<AuctionSummary> auctions = Lists.newArrayList();
+
+		for (SubPlan subPlan : subPlans) {
+			final AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
+			adv.setPqlStatement(pqlGenerator.generatePQLStatement(subPlan.getLogicalPlan()));
+			adv.setTransCfgName(transCfg.getName());
+			adv.setAuctionId(IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true));
+			adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
+			adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
+
+			Future<Collection<Bid>> bidsFuture = Communicator.getInstance().publishAuction(adv);
+			auctions.add(new AuctionSummary(adv, bidsFuture, subPlan));
+		}
+
+		LOG.info("Auctions for {} remote sub plans listed ", auctions.size());
+
+		return auctions;
+	}
+
 	private static Map<SubPlan, PeerID> determineWinners(List<AuctionSummary> auctions) throws QueryPartAllocationException {
 		try {
 			Map<SubPlan, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
 			Map<SubPlan, Bid> bestBidPerSubPlan = determineBestBids(bidPlanMap);
 
-			return determinePeersWithBestBid( bestBidPerSubPlan );
-		} catch( QueryPartAllocationException e ) {
+			return determinePeersWithBestBid(bestBidPerSubPlan);
+		} catch (QueryPartAllocationException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new QueryPartAllocationException("Could not determine the winner of an auction", e);
@@ -82,22 +104,22 @@ public final class SurveyBasedAllocatorImpl {
 
 	private static Map<SubPlan, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions) throws InterruptedException, ExecutionException, QueryPartAllocationException {
 		Map<SubPlan, Collection<Bid>> bidPlanMap = Maps.newHashMap();
-		
+
 		IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
 		PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
 
 		for (AuctionSummary auction : auctions) {
 			Collection<Bid> bids = auction.getBidsFuture().get();
-			
+
 			Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 			if (bidValue.isPresent()) {
 				bids.add(new Bid(localPeerID, bidValue.get()));
 			}
 
-			if( bids.isEmpty() ) {
+			if (bids.isEmpty()) {
 				throw new QueryPartAllocationException("Could not allocate a subplan since there are no bids for");
 			}
-			
+
 			bidPlanMap.put(auction.getSubPlan(), bids);
 		}
 
@@ -124,34 +146,10 @@ public final class SurveyBasedAllocatorImpl {
 
 	private static Map<SubPlan, PeerID> determinePeersWithBestBid(Map<SubPlan, Bid> bestBidPerSubPlan) {
 		Map<SubPlan, PeerID> bestPeers = Maps.newHashMap();
-		for( SubPlan subPlan : bestBidPerSubPlan.keySet() ) {
+		for (SubPlan subPlan : bestBidPerSubPlan.keySet()) {
 			bestPeers.put(subPlan, bestBidPerSubPlan.get(subPlan).getBidderPeerID());
 		}
 		return bestPeers;
 	}
 
-	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
-		Preconditions.checkNotNull(subPlans, "SubPlans must not be null!");
-
-		List<AuctionSummary> auctions = Lists.newArrayList();
-
-		int auctionsCount = 0;
-		for (SubPlan subPlan : subPlans) {
-			final AuctionQueryAdvertisement adv = (AuctionQueryAdvertisement) AdvertisementFactory.newAdvertisement(AuctionQueryAdvertisement.getAdvertisementType());
-			adv.setPqlStatement(pqlGenerator.generatePQLStatement(subPlan.getLogicalPlan()));
-			adv.setTransCfgName(transCfg.getName());
-			adv.setAuctionId(IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true));
-			adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
-			adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
-
-			Future<Collection<Bid>> bidsFuture = Communicator.getInstance().publishAuction(adv);
-			auctions.add(new AuctionSummary(adv, bidsFuture, subPlan));
-
-			auctionsCount++;
-		}
-
-		LOG.info("Auctions for {} remote sub plans listed ", auctionsCount);
-
-		return auctions;
-	}
 }
