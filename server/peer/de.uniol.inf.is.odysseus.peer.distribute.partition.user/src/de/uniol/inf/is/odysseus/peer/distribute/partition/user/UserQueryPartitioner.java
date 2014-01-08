@@ -94,7 +94,8 @@ public class UserQueryPartitioner implements IQueryPartitioner {
 			return;
 		}
 
-		if (destinations.get(operator).equalsIgnoreCase(chosenDestination)) {
+		String opDestination = destinations.get(operator);
+		if (opDestination.equalsIgnoreCase(chosenDestination)) {
 
 			collectedOperators.add(operator);
 

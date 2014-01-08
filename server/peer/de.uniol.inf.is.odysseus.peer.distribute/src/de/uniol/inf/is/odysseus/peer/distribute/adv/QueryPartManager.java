@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -123,7 +124,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private List<String> determineNeededSources(final QueryPartAdvertisement adv) {
 		final List<String> neededSources = Lists.newArrayList();
 		neededSourcesMap.putIfAbsent(adv, neededSources);
-		final List<IExecutorCommand> queries = compiler.translateQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), null);
+		final List<IExecutorCommand> queries = compiler.translateQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), getDataDictionary(), Context.empty());
 		for (IExecutorCommand q : queries) {
 
 			if (q instanceof CreateQueryCommand) {
@@ -165,7 +166,7 @@ public class QueryPartManager implements IAdvertisementListener, IDataDictionary
 	private void callExecutor(QueryPartAdvertisement adv) {
 		try {
 			final List<IQueryBuildSetting<?>> configuration = determineQueryBuildSettings(executor, adv.getTransCfgName());
-			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), adv.getTransCfgName(), null, configuration);
+			final Collection<Integer> ids = executor.addQuery(adv.getPqlStatement(), "PQL", PeerDistributePlugIn.getActiveSession(), adv.getTransCfgName(), Context.empty(), configuration);
 
 			QueryPartController.getInstance().registerAsSlave(ids, adv.getSharedQueryID());
 
