@@ -18,16 +18,16 @@ public class NexmarkTestComponent extends AbstractTestComponent<BasicTestContext
 	@Override
 	public List<TestSet> createTestSets(BasicTestContext context) {
 		List<TestSet> sets = new ArrayList<>();
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 5; i++) {
 			URL query = getURL("query"+i+".qry");
 			URL result = getURL("query"+i+".csv");
 			TestSet set = TestSetFactory.createTestSetFromFile(query, result, context.getDataRootPath());
 			sets.add(set);
 		}
-		URL query = getURL("query1.qry");
-		URL result = getURL("query1_wrong.csv");
-		TestSet set = TestSetFactory.createTestSetFromFile(query, result, context.getDataRootPath());
-		sets.add(set);
+//		URL query = getURL("query1.qry");
+//		URL result = getURL("query1_wrong.csv");
+//		TestSet set = TestSetFactory.createTestSetFromFile(query, result, context.getDataRootPath());
+//		sets.add(set);
 		return sets;
 	}
 
