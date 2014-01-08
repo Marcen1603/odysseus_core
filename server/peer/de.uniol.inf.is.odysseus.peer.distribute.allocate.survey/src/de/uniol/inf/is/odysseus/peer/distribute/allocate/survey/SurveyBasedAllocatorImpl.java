@@ -92,9 +92,7 @@ public final class SurveyBasedAllocatorImpl {
 	private static Map<SubPlan, PeerID> determineWinners(List<AuctionSummary> auctions) throws QueryPartAllocationException {
 		try {
 			Map<SubPlan, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
-			Map<SubPlan, Bid> bestBidPerSubPlan = determineBestBids(bidPlanMap);
-
-			return determinePeersWithBestBid(bestBidPerSubPlan);
+			return determineBestPeers(bidPlanMap);
 		} catch (QueryPartAllocationException e) {
 			throw e;
 		} catch (Exception e) {
@@ -126,10 +124,10 @@ public final class SurveyBasedAllocatorImpl {
 		return bidPlanMap;
 	}
 
-	private static Map<SubPlan, Bid> determineBestBids(Map<SubPlan, Collection<Bid>> bidPlanMap) {
-		Map<SubPlan, Bid> bestBids = Maps.newHashMap();
+	private static Map<SubPlan, PeerID> determineBestPeers(Map<SubPlan, Collection<Bid>> bidPlanMap) {
+		Map<SubPlan, PeerID> bestBids = Maps.newHashMap();
 		for (SubPlan subPlan : bidPlanMap.keySet()) {
-			bestBids.put(subPlan, determineBestBid(bidPlanMap.get(subPlan)));
+			bestBids.put(subPlan, determineBestBid(bidPlanMap.get(subPlan)).getBidderPeerID());
 		}
 		return bestBids;
 	}
@@ -143,13 +141,4 @@ public final class SurveyBasedAllocatorImpl {
 		}
 		return bestBid;
 	}
-
-	private static Map<SubPlan, PeerID> determinePeersWithBestBid(Map<SubPlan, Bid> bestBidPerSubPlan) {
-		Map<SubPlan, PeerID> bestPeers = Maps.newHashMap();
-		for (SubPlan subPlan : bestBidPerSubPlan.keySet()) {
-			bestPeers.put(subPlan, bestBidPerSubPlan.get(subPlan).getBidderPeerID());
-		}
-		return bestPeers;
-	}
-
 }
