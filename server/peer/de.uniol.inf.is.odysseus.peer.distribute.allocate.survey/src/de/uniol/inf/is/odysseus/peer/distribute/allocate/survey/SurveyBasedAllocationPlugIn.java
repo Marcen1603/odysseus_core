@@ -5,20 +5,59 @@ import net.jxta.document.AdvertisementFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.base.Strings;
+
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisementInstantiator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisementInstanciator;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.BidProviderRegistry;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 
 public class SurveyBasedAllocationPlugIn implements BundleActivator {
 
+	public static final String DEFAULT_BID_PROVIDER_NAME = "costmodel";
+	
+	private static final String BID_PROVIDER_NAME = "peer_bidprovider";
+	
+	private static IBidProvider selectedBidProvider;
+	private static String selectedBidProviderName;
+	
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		AdvertisementFactory.registerAdvertisementInstance(AuctionQueryAdvertisement.getAdvertisementType(), new AuctionQueryAdvertisementInstantiator());
 		AdvertisementFactory.registerAdvertisementInstance(AuctionResponseAdvertisement.getAdvertisementType(), new AuctionResponseAdvertisementInstanciator());
+		
+		selectedBidProviderName = determineSelectedBidProviderName();
 	}
 
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
+	}
+	
+	public static String getSelectedBidProviderName() {
+		return selectedBidProviderName;
+	}
+	
+	public static IBidProvider getSelectedBidProvider() {
+		if( selectedBidProvider == null ) {
+			selectedBidProvider = BidProviderRegistry.getInstance().get(SurveyBasedAllocationPlugIn.getSelectedBidProviderName());
+		}
+		return selectedBidProvider;
+	}
+	
+	private static String determineSelectedBidProviderName() {
+		String bidProviderName = System.getProperty(BID_PROVIDER_NAME);
+		if (!Strings.isNullOrEmpty(bidProviderName)) {
+			return bidProviderName;
+		}
+
+		bidProviderName = OdysseusConfiguration.get(BID_PROVIDER_NAME);
+		if (!Strings.isNullOrEmpty(bidProviderName)) {
+			return bidProviderName;
+		}
+
+		return DEFAULT_BID_PROVIDER_NAME;
 	}
 }

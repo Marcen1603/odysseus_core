@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.Au
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.SubPlan;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.BidCalculator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 
@@ -78,7 +77,7 @@ public final class SurveyBasedAllocatorImpl {
 				LOG.info("Got {} bids from remote peers", bids.size());
 
 				// calc own bid
-				double bidValue = BidCalculator.calcBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
+				double bidValue = SurveyBasedAllocationPlugIn.getSelectedBidProvider().calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
 				bids.add(wrapInAuctionResponseAdvertisement(auction.getAuctionAdvertisement().getAuctionId(), bidValue));
 
 				AuctionResponseAdvertisement bid = determineBestBid(bids);
@@ -100,7 +99,7 @@ public final class SurveyBasedAllocatorImpl {
 				LOG.debug("Peer {} won auction {} with bid {}", new String[] { peerName, bid.getAuctionId(), bid.getBid() + "" });
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOG.error("Could not determine the winner of an action", e);
 		}
 		return winners;
 	}

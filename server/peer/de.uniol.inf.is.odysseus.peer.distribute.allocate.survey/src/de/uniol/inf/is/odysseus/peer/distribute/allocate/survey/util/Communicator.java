@@ -24,8 +24,10 @@ import de.uniol.inf.is.odysseus.p2p_new.IAdvertisementManager;
 import de.uniol.inf.is.odysseus.p2p_new.IJxtaServicesProvider;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.SurveyBasedAllocationPlugIn;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
 
 public class Communicator implements IAdvertisementListener {
 	
@@ -135,10 +137,13 @@ public class Communicator implements IAdvertisementListener {
 			if (!adv.getOwnerPeerId().equals(p2pNetworkManager.getLocalPeerID())) {
 				LOG.debug("Received query to bid to auction {}", adv.getAuctionId());
 				ILogicalQuery query = Helper.getLogicalQuery(adv.getPqlStatement()).get(0);
-				double bidValue = BidCalculator.calcBid(query, adv.getTransCfgName());
+				
+				IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
+				double bidValue = bidProvider.calculateBid(query, adv.getTransCfgName());
 
 				if (bidValue > 0) {
-					final AuctionResponseAdvertisement bid = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
+					
+					AuctionResponseAdvertisement bid = (AuctionResponseAdvertisement) AdvertisementFactory.newAdvertisement(AuctionResponseAdvertisement.getAdvertisementType());
 					bid.setAuctionId(adv.getAuctionId());
 					bid.setBid(bidValue);
 					bid.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
@@ -146,6 +151,7 @@ public class Communicator implements IAdvertisementListener {
 					bid.setTransCfgName(adv.getTransCfgName());
 					bid.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 					jxtaServicesProvider.getDiscoveryService().remotePublish(adv.getOwnerPeerId().toString(), bid, WAIT_TIME);
+					
 					LOG.debug("Sent bid {} to auction {} of peer {}", new String[] { "" + bidValue, adv.getAuctionId(), adv.getOwnerPeerId().toString() });
 				} else {
 					LOG.debug("Offering no bid to auction {} of peer {}", adv.getAuctionId(), adv.getOwnerPeerId().toString());
