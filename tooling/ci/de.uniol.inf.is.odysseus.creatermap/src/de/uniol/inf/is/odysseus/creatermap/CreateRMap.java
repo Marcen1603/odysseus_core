@@ -168,7 +168,7 @@ public class CreateRMap {
 		}
 		for (File f : rootDir.listFiles()) {
 			if (f.isDirectory()) {
-				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "application", "test")) {
+				if (!isOneOfIgnoreCase(f.getName(), ".metadata", "restricted", "application")) {
 					if (f.getName().endsWith("de.uniol.inf.is.odysseus.updatesite") 
 							||f.getName().endsWith("de.uniol.inf.is.odysseus.update.p2")
 							) {
