@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -41,7 +43,7 @@ public class CostModelBidProvider implements IBidProvider {
 	}
 
 	@Override
-	public double calculateBid(ILogicalQuery query, String configName) {
+	public Optional<Double> calculateBid(ILogicalQuery query, String configName) {
 		CostSummary summary = calcCostsForPlan(query, configName);
 		
 		return calcBidImpl(query.getLogicalPlan(), summary.getCpuCost(), summary.getMemCost());
@@ -59,10 +61,10 @@ public class CostModelBidProvider implements IBidProvider {
 		return new CostSummary(cpuCost, memCost, query.getLogicalPlan());
 	}
 
-	private static double calcBidImpl(ILogicalOperator query, double cpuCosts, double memCosts) {
+	private static Optional<Double> calcBidImpl(ILogicalOperator query, double cpuCosts, double memCosts) {
 		if (!Helper.allSourcesAvailable(query)) {
 			LOG.debug("Not all sources are available. Bid = 0 then.");
-			return 0;
+			return Optional.absent();
 		}
 
 		OperatorCost<?> maximumCost = (OperatorCost<?>) costModel.getMaximumCost();
@@ -77,7 +79,7 @@ public class CostModelBidProvider implements IBidProvider {
 		LOG.debug("Remaining costs   : {}", formatCosts(remainingMem, remainingCpu));
 		if (memCosts > remainingMem || cpuCosts > remainingCpu) {
 			LOG.debug("Costs are too high. Bid = 0 then.");
-			return 0;
+			return Optional.absent();
 		}
 
 		double remainingMemPerc = (remainingMem - memCosts) / maximumCost.getMemCost();
@@ -87,7 +89,7 @@ public class CostModelBidProvider implements IBidProvider {
 		double bid = ( remainingMemPerc + remainingCpuPerc ) / 2;
 		LOG.debug("Resulting bid = {}", bid);
 
-		return bid;
+		return Optional.of(bid);
 	}
 
 	private static String formatCosts(double memCost, double cpuCost) {

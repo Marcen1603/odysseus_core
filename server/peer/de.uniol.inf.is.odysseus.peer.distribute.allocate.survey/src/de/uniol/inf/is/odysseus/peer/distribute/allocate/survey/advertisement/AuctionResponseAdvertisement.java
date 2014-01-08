@@ -24,36 +24,32 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
+
 public final class AuctionResponseAdvertisement extends Advertisement implements Serializable {
+
 	private static final long serialVersionUID = 8933981347574448287L;
+	private static final Logger LOG = LoggerFactory.getLogger(AuctionResponseAdvertisement.class);
+
 	private static final String ADVERTISEMENT_TYPE = "jxta:BidAdvertisement";
 	private static final String ID_TAG = "id";
-	private static final String PQL_TAG = "pql";
-	private static final String PEER_ID_TAG = "peerId";
-	private static final String SHARED_QUERY_ID_TAG = "sharedQueryId";
-	private static final String TRANSCFG_NAME_TAG = "transcfg";
 	private static final String AUCTION_ID_TAG = "auctionId";
 	private static final String BID_TAG = "bid";
-	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, PEER_ID_TAG };
-	private static final Logger log = LoggerFactory.getLogger(AuctionResponseAdvertisement.class);
-	
+	private static final String PEER_ID_TAG = "peerid";
+	private static final String[] INDEX_FIELDS = new String[] { ID_TAG, AUCTION_ID_TAG };
+
 	private ID id;
-	private ID sharedQueryID;
-	private String auctionId;
-	private String pqlStatement;
-	private String transCfgName;
-	private PeerID ownerPeerId;
-	
-	private double bid;
+	private Bid bid;
+	private ID auctionId;
 
 	public static String getAdvertisementType() {
 		return ADVERTISEMENT_TYPE;
-	}	
-	
-	public AuctionResponseAdvertisement() {
-		
 	}
-	
+
+	public AuctionResponseAdvertisement() {
+
+	}
+
 	public AuctionResponseAdvertisement(Element<?> root) {
 		final TextElement<?> doc = (TextElement<?>) Preconditions.checkNotNull(root, "Root element must not be null!");
 
@@ -68,14 +64,10 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 		Preconditions.checkNotNull(adv, "Advertisement to copy must not be null!");
 
 		this.id = adv.id;
-		this.sharedQueryID = adv.sharedQueryID;
-		this.pqlStatement = adv.pqlStatement;
-		this.transCfgName = adv.transCfgName;
-		this.ownerPeerId = adv.ownerPeerId;
-		this.auctionId = adv.pqlStatement;
+		this.auctionId = adv.auctionId;
 		this.bid = adv.bid;
 	}
-	
+
 	@Override
 	public AuctionResponseAdvertisement clone() {
 		return new AuctionResponseAdvertisement(this);
@@ -102,12 +94,9 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 		}
 
 		appendElement(doc, ID_TAG, id.toString());
-		appendElement(doc, PQL_TAG, pqlStatement);
-		appendElement(doc, PEER_ID_TAG, ownerPeerId.toString());
 		appendElement(doc, AUCTION_ID_TAG, auctionId.toString());
-		appendElement(doc, BID_TAG, ""+bid);
-		appendElement(doc, SHARED_QUERY_ID_TAG, sharedQueryID.toString());
-		appendElement(doc, TRANSCFG_NAME_TAG, transCfgName);
+		appendElement(doc, PEER_ID_TAG, bid.getBidderPeerID().toString());
+		appendElement(doc, BID_TAG, String.valueOf(bid.getValue()));
 
 		return doc;
 	}
@@ -122,19 +111,7 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 		return INDEX_FIELDS;
 	}
 
-	public String getPqlStatement() {
-		return pqlStatement;
-	}
-	
-	public ID getSharedQueryID() {
-		return sharedQueryID;
-	}	
-	
-	public String getTransCfgName() {
-		return transCfgName;
-	}
-	
-	public String getAuctionId() {
+	public ID getAuctionId() {
 		return auctionId;
 	}
 
@@ -150,43 +127,29 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 		this.id = id;
 	}
 
-	public void setPqlStatement(String pqlStatement) {
-		this.pqlStatement = pqlStatement;
-	}
-
-	public void setSharedQueryID(ID sharedQueryID) {
-		this.sharedQueryID = sharedQueryID;
-	}	
-	
-	public void setTransCfgName(String transCfgName) {
-		this.transCfgName = transCfgName;
-	}
-	
-	public void setAuctionId(String auctionId) {
+	public void setAuctionId(ID auctionId) {
 		this.auctionId = auctionId;
-	}	
+	}
 
 	private void determineFields(TextElement<?> root) {
 		final Enumeration<?> elements = root.getChildren();
 
+		PeerID bidder = null;
+		double bidValue = -1;
 		while (elements.hasMoreElements()) {
 			final TextElement<?> elem = (TextElement<?>) elements.nextElement();
 			if (elem.getName().equals(ID_TAG)) {
-				setID(convertToID(elem.getTextValue()));
-			} else if (elem.getName().equals(PQL_TAG)) {
-				setPqlStatement(elem.getTextValue());
-			} else if (elem.getName().equals(PEER_ID_TAG)) {
-				setOwnerPeerId(convertToPeerID(elem.getTextValue()));
+				id = convertToID(elem.getTextValue());
 			} else if (elem.getName().equals(AUCTION_ID_TAG)) {
-				setAuctionId(elem.getTextValue());
+				auctionId = convertToID(elem.getTextValue());
+			} else if (elem.getName().equals(PEER_ID_TAG)) {
+				bidder = convertToPeerID(elem.getTextValue());
 			} else if (elem.getName().equals(BID_TAG)) {
-				setBid(Double.valueOf(elem.getTextValue()));				
-			} else if (elem.getName().equals(SHARED_QUERY_ID_TAG)) {
-				setSharedQueryID(convertToID(elem.getTextValue()));				
-			} else if (elem.getName().equals(TRANSCFG_NAME_TAG)) {
-				setTransCfgName(elem.getTextValue());
+				bidValue = Double.valueOf(elem.getTextValue());
 			}
 		}
+		
+		bid = new Bid(bidder, bidValue);
 	}
 
 	private static PeerID convertToPeerID(String text) {
@@ -194,11 +157,11 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 			final URI id = new URI(text);
 			return PeerID.create(id);
 		} catch (URISyntaxException | ClassCastException ex) {
-			log.error("Could not transform to pipeid: {}", text, ex);
+			LOG.error("Could not transform to pipeid: {}", text, ex);
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Element appendElement(StructuredDocument appendTo, String tag, String value) {
 		final Element createElement = appendTo.createElement(tag, value);
@@ -211,24 +174,16 @@ public final class AuctionResponseAdvertisement extends Advertisement implements
 			final URI id = new URI(elem);
 			return IDFactory.fromURI(id);
 		} catch (URISyntaxException | ClassCastException ex) {
-			log.error("Could not set id", ex);
+			LOG.error("Could not set id", ex);
 			return null;
 		}
 	}
 
-	public PeerID getOwnerPeerId() {
-		return ownerPeerId;
-	}
-
-	public void setOwnerPeerId(PeerID ownerPeerId) {
-		this.ownerPeerId = ownerPeerId;
-	}
-
-	public double getBid() {
+	public Bid getBid() {
 		return bid;
 	}
-
-	public void setBid(double bid) {
+	
+	public void setBid(Bid bid) {
 		this.bid = bid;
 	}
 }

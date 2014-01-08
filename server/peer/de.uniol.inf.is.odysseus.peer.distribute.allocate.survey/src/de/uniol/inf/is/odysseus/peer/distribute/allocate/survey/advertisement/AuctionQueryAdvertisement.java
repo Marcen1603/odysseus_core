@@ -36,7 +36,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 	private static final Logger log = LoggerFactory.getLogger(AuctionQueryAdvertisement.class);
 	
 	private ID id;
-	private String auctionId;
+	private ID auctionId;
 	private String pqlStatement;
 	private String transCfgName;
 	private PeerID ownerPeerId;
@@ -66,7 +66,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		this.pqlStatement = adv.pqlStatement;
 		this.transCfgName = adv.transCfgName;
 		this.ownerPeerId = adv.ownerPeerId;
-		this.auctionId = adv.pqlStatement;
+		this.auctionId = adv.auctionId;
 	}
 	
 	@Override
@@ -121,7 +121,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		return transCfgName;
 	}
 	
-	public String getAuctionId() {
+	public ID getAuctionId() {
 		return auctionId;
 	}
 
@@ -145,7 +145,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 		this.transCfgName = transCfgName;
 	}
 	
-	public void setAuctionId(String auctionId) {
+	public void setAuctionId(ID auctionId) {
 		this.auctionId = auctionId;
 	}	
 
@@ -161,7 +161,7 @@ public final class AuctionQueryAdvertisement extends Advertisement implements Se
 			} else if (elem.getName().equals(PEER_ID_TAG)) {
 				setOwnerPeerId(convertToPeerID(elem.getTextValue()));
 			} else if (elem.getName().equals(AUCTION_ID_TAG)) {
-				setAuctionId(elem.getTextValue());
+				setAuctionId(convertToID(elem.getTextValue()));
 			} else if (elem.getName().equals(TRANSCFG_NAME_TAG)) {
 				setTransCfgName(elem.getTextValue());
 			}

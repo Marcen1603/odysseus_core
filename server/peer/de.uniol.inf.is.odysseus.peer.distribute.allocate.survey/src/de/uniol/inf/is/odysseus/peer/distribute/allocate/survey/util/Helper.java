@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -69,7 +70,7 @@ public class Helper {
 	}
 
 	public static List<ILogicalQuery> getLogicalQuery(String pqlStatement) {
-		List<IExecutorCommand> commands = executor.getCompiler().translateQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), null);
+		List<IExecutorCommand> commands = executor.getCompiler().translateQuery(pqlStatement, "PQL", getActiveSession(), DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant()), Context.empty());
 		List<ILogicalQuery> list = Lists.newArrayList();
 		for (IExecutorCommand q : commands) {
 

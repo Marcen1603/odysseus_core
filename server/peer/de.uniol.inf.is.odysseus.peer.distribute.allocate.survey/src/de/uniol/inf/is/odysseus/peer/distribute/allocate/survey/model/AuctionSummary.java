@@ -6,21 +6,21 @@ import java.util.concurrent.Future;
 import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
-import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionResponseAdvertisement;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 
 public final class AuctionSummary {
 	
 	private final AuctionQueryAdvertisement query;
-	private final Future<Collection<AuctionResponseAdvertisement>> responses;
+	private final Future<Collection<Bid>> responses;
 	private final SubPlan subPlan;
 
-	public AuctionSummary(AuctionQueryAdvertisement query, Future<Collection<AuctionResponseAdvertisement>> responses, SubPlan subPlan) {
+	public AuctionSummary(AuctionQueryAdvertisement query, Future<Collection<Bid>> bids, SubPlan subPlan) {
 		Preconditions.checkNotNull(query, "Auction advertisement must not be null");
-		Preconditions.checkNotNull(responses, "Responses future must not be null");
+		Preconditions.checkNotNull(bids, "Responses future must not be null");
 		Preconditions.checkNotNull(subPlan, "Subplan of auction must not be null");
 		
 		this.query = query;
-		this.responses = responses;
+		this.responses = bids;
 		this.subPlan = subPlan;
 	}
 
@@ -28,7 +28,7 @@ public final class AuctionSummary {
 		return query;
 	}
 
-	public Future<Collection<AuctionResponseAdvertisement>> getResponsesFuture() {
+	public Future<Collection<Bid>> getBidsFuture() {
 		return responses;
 	}
 
