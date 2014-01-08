@@ -547,6 +547,15 @@ public final class LogicalQueryHelper {
 					copyOperator.subscribeSink(originalTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 				}
 			}
+			
+			for( LogicalSubscription sub : originalOperator.getSubscribedToSource() ) {
+				ILogicalOperator orginalSource = sub.getTarget();
+				ILogicalOperator copySource = getCopyOfMap(orginalSource, operatorCopyMap);
+				
+				if( copySource == null ) {
+					copyOperator.subscribeToSource(orginalSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				}
+			}
 		}
 	}
 	
