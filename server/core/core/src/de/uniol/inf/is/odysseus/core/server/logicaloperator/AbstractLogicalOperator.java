@@ -83,14 +83,11 @@ public abstract class AbstractLogicalOperator implements Serializable,
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
-	private String pathToDataRateFile;
-
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 		for (IPredicate<?> pred : op.predicates) {
 			this.predicates.add(pred.clone());
 		}
 		setName(op.getName());
-		this.pathToDataRateFile = op.pathToDataRateFile;
 		this.ownerHandler = new OwnerHandler(op.ownerHandler);
 		this.outputSchema = new HashMap<>(op.outputSchema);
 		// this.outputSchema = op.outputSchema;
@@ -286,17 +283,6 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	@Parameter(name = "Name", type = StringParameter.class, optional = true, doc = "Name of the operator (e.g. for visulization).")
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Override
-	@Parameter(name = "recordDataRate", type = StringParameter.class, optional = true, doc = "Specifies to record the data rate to the given destination.")
-	public void setRecordDataRate(String pathToRecordDataRate) {
-		this.pathToDataRateFile = pathToRecordDataRate;
-	}
-	
-	@Override
-	public String getRecordDataRate() {
-		return this.pathToDataRateFile;
 	}
 
 	@Override
