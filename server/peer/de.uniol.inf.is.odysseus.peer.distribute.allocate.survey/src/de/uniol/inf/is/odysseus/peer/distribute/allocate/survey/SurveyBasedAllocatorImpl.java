@@ -3,12 +3,12 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
+import net.jxta.peer.PeerID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
+import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 public final class SurveyBasedAllocatorImpl {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedAllocatorImpl.class);
-	
+
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPQLGenerator pqlGenerator;
 
@@ -60,88 +60,74 @@ public final class SurveyBasedAllocatorImpl {
 			pqlGenerator = null;
 		}
 	}
-	
-	public static Map<String, List<SubPlan>> allocate(ID sharedQueryID, Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
-		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(subPlans, transCfg);
-		return evaluateBids(auctions, subPlans);
-	}
 
-	private static Map<String, List<SubPlan>> evaluateBids(List<AuctionSummary> auctions, Collection<SubPlan> subPlans) {
-		Map<String, List<SubPlan>> destinationMap = determineWinners(auctions);
-		addLocalPlans(destinationMap, subPlans);
+	public static Map<SubPlan, PeerID> allocate(Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) throws QueryPartAllocationException {
+		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(subPlans, transCfg);
+		Map<SubPlan, PeerID> destinationMap = determineWinners(auctions);
 		return destinationMap;
 	}
 
-	private static Map<String, List<SubPlan>> determineWinners(List<AuctionSummary> auctions) {
-		Map<String, List<SubPlan>> winners = Maps.newHashMap();
+	private static Map<SubPlan, PeerID> determineWinners(List<AuctionSummary> auctions) throws QueryPartAllocationException {
 		try {
-			for (AuctionSummary auction : auctions) {
-				Collection<Bid> bids = auction.getBidsFuture().get();
+			Map<SubPlan, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
+			Map<SubPlan, Bid> bestBidPerSubPlan = determineBestBids(bidPlanMap);
 
-				LOG.info("Got {} bids from remote peers", bids.size());
-
-				// calc own bid
-				IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
-				Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
-				
-				if( bidValue.isPresent() ) {
-					bids.add(new Bid(p2pNetworkManager.getLocalPeerID(), bidValue.get()));
-				}
-				
-				Bid bid = determineBestBid(bids);
-
-				String peerName = bid.getBidderPeerID().toString();
-				if (peerName.equals(p2pNetworkManager.getLocalPeerID().toString())) {
-					peerName = "local";
-				}
-
-				List<SubPlan> list = winners.get(peerName);
-
-				if (list == null) {
-					list = Lists.newArrayList();
-					winners.put(peerName, list);
-				}
-				auction.getSubPlan().addDestinationName(peerName);
-				list.add(auction.getSubPlan());
-
-				LOG.debug("Peer {} won auction {} with bid {}", new String[] { peerName, auction.getAuctionAdvertisement().getAuctionId().toString(), String.valueOf(bid.getValue())});
-			}
+			return determinePeersWithBestBid( bestBidPerSubPlan );
+		} catch( QueryPartAllocationException e ) {
+			throw e;
 		} catch (Exception e) {
-			LOG.error("Could not determine the winner of an action", e);
+			throw new QueryPartAllocationException("Could not determine the winner of an auction", e);
 		}
-		return winners;
 	}
-	
+
+	private static Map<SubPlan, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions) throws InterruptedException, ExecutionException, QueryPartAllocationException {
+		Map<SubPlan, Collection<Bid>> bidPlanMap = Maps.newHashMap();
+		
+		IBidProvider bidProvider = SurveyBasedAllocationPlugIn.getSelectedBidProvider();
+		PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
+
+		for (AuctionSummary auction : auctions) {
+			Collection<Bid> bids = auction.getBidsFuture().get();
+			
+			Optional<Double> bidValue = bidProvider.calculateBid(Helper.getLogicalQuery(auction.getAuctionAdvertisement().getPqlStatement()).get(0), auction.getAuctionAdvertisement().getTransCfgName());
+			if (bidValue.isPresent()) {
+				bids.add(new Bid(localPeerID, bidValue.get()));
+			}
+
+			if( bids.isEmpty() ) {
+				throw new QueryPartAllocationException("Could not allocate a subplan since there are no bids for");
+			}
+			
+			bidPlanMap.put(auction.getSubPlan(), bids);
+		}
+
+		return bidPlanMap;
+	}
+
+	private static Map<SubPlan, Bid> determineBestBids(Map<SubPlan, Collection<Bid>> bidPlanMap) {
+		Map<SubPlan, Bid> bestBids = Maps.newHashMap();
+		for (SubPlan subPlan : bidPlanMap.keySet()) {
+			bestBids.put(subPlan, determineBestBid(bidPlanMap.get(subPlan)));
+		}
+		return bestBids;
+	}
+
 	private static Bid determineBestBid(Collection<Bid> bids) {
 		Bid bestBid = null;
-		for( Bid bid : bids ) {
-			if( bestBid == null || bid.getValue() > bestBid.getValue() ) {
+		for (Bid bid : bids) {
+			if (bestBid == null || bid.getValue() > bestBid.getValue()) {
 				bestBid = bid;
 			}
 		}
 		return bestBid;
 	}
-	
-	private static void addLocalPlans(Map<String, List<SubPlan>> destinationMap, Collection<SubPlan> subPlans) {
-		if (!destinationMap.containsKey("local")) {
-			destinationMap.put("local", getLocalPlans(subPlans));
-		} else {
-			List<SubPlan> localPlans = getLocalPlans(subPlans);
-			Set<SubPlan> toAdd = Sets.newHashSet();
-			for (SubPlan localPlan : localPlans) {
-				boolean alreadyExists = false;
-				for (SubPlan subPlan : destinationMap.get("local")) {
-					if (localPlan == subPlan) {
-						alreadyExists = true;
-						break;
-					}
-				}
-				if (!alreadyExists) {
-					toAdd.add(localPlan);
-				}
-			}
-			destinationMap.get("local").addAll(toAdd);
+
+	private static Map<SubPlan, PeerID> determinePeersWithBestBid(Map<SubPlan, Bid> bestBidPerSubPlan) {
+		Map<SubPlan, PeerID> bestPeers = Maps.newHashMap();
+		for( SubPlan subPlan : bestBidPerSubPlan.keySet() ) {
+			bestPeers.put(subPlan, bestBidPerSubPlan.get(subPlan).getBidderPeerID());
 		}
+		return bestPeers;
 	}
 
 	private static List<AuctionSummary> publishAuctionsForRemoteSubPlans(Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) {
@@ -157,26 +143,15 @@ public final class SurveyBasedAllocatorImpl {
 			adv.setAuctionId(IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true));
 			adv.setID(IDFactory.newPipeID(p2pNetworkManager.getLocalPeerGroupID()));
 			adv.setOwnerPeerId(p2pNetworkManager.getLocalPeerID());
-			
+
 			Future<Collection<Bid>> bidsFuture = Communicator.getInstance().publishAuction(adv);
 			auctions.add(new AuctionSummary(adv, bidsFuture, subPlan));
-			
+
 			auctionsCount++;
 		}
 
 		LOG.info("Auctions for {} remote sub plans listed ", auctionsCount);
 
 		return auctions;
-	}
-
-	private static List<SubPlan> getLocalPlans(Collection<SubPlan> subPlans) {
-		List<SubPlan> localParts = Lists.newArrayList();
-		for (SubPlan subPlan : subPlans) {
-			if (subPlan.hasLocalDestination()) {
-				localParts.add(subPlan);
-			}
-		}
-
-		return localParts;
 	}
 }

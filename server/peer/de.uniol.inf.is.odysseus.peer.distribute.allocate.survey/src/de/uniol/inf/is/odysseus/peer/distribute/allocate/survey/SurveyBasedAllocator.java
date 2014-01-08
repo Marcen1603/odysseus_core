@@ -1,16 +1,11 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import net.jxta.id.ID;
-import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -46,17 +41,14 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters) throws QueryPartAllocationException {
-		ID sharedQueryID = IDFactory.newContentID(p2pNetworkManager.getLocalPeerGroupID(), true);
-
 		// copy --> original
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
 
 		Map<SubPlan, ILogicalQueryPart> subPlans = transformToSubPlans(queryPartsCopyMap.keySet());
-		Map<String, List<SubPlan>> allocationMap = SurveyBasedAllocatorImpl.allocate(sharedQueryID, subPlans.keySet(), config);
-		Map<PeerID, List<SubPlan>> allocationMapPeerID = transformToPeerIDMap(allocationMap);
-
-		Map<PeerID, Collection<ILogicalQueryPart>> allocationMapParts = transformToLogicalQueryParts(allocationMapPeerID, subPlans, queryPartsCopyMap);
-		return revertMap(allocationMapParts);
+		Map<SubPlan, PeerID> allocationMap = SurveyBasedAllocatorImpl.allocate(subPlans.keySet(), config);
+		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToLogicalQueryParts(allocationMap, subPlans, queryPartsCopyMap);
+		
+		return allocationMapParts;
 	}
 
 	private static Map<SubPlan, ILogicalQueryPart> transformToSubPlans(Collection<ILogicalQueryPart> queryParts) {
@@ -72,65 +64,17 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return partMap;
 	}
 
-	private static Map<PeerID, List<SubPlan>> transformToPeerIDMap(Map<String, List<SubPlan>> allocationMap) {
-		Map<PeerID, List<SubPlan>> subPlanMap = Maps.newHashMap();
-
-		for (String peerName : allocationMap.keySet()) {
-
-			PeerID peerID;
-			if (isLocal(peerName)) {
-				peerID = p2pNetworkManager.getLocalPeerID();
-			} else {
-				peerID = toID(peerName);
-			}
-
-			subPlanMap.put(peerID, allocationMap.get(peerName));
-		}
-
-		return subPlanMap;
-	}
-
-	private static boolean isLocal(String peerName) {
-		return "local".equalsIgnoreCase(peerName) || p2pNetworkManager.getLocalPeerID().toString().equalsIgnoreCase(peerName);
-	}
-
-	private static PeerID toID(String text) {
-		try {
-			final URI id = new URI(text);
-			return (PeerID) IDFactory.fromURI(id);
-		} catch (URISyntaxException | ClassCastException ex) {
-			return null;
-		}
-	}
-
-	private static Map<PeerID, Collection<ILogicalQueryPart>> transformToLogicalQueryParts(Map<PeerID, List<SubPlan>> allocationMapPeerID, Map<SubPlan, ILogicalQueryPart> subPlanMap, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
-		Map<PeerID, Collection<ILogicalQueryPart>> partMap = Maps.newHashMap();
+	private static Map<ILogicalQueryPart, PeerID> transformToLogicalQueryParts(Map<SubPlan, PeerID> allocationMapPeerID, Map<SubPlan, ILogicalQueryPart> subPlanMap, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
+		Map<ILogicalQueryPart, PeerID> partMap = Maps.newHashMap();
 		
-		for( PeerID peerID : allocationMapPeerID.keySet() ) {
-			Collection<ILogicalQueryPart> queryPartsOfPeerID = Lists.newArrayList();
+		for( SubPlan subPlan : allocationMapPeerID.keySet() ) {
 			
-			for( SubPlan subPlan : allocationMapPeerID.get(peerID)) {
-				ILogicalQueryPart copyLogicalQueryPart = subPlanMap.get(subPlan);
-				ILogicalQueryPart originalQueryPart = queryPartsCopyMap.get(copyLogicalQueryPart);
-				
-				queryPartsOfPeerID.add(originalQueryPart);
-			}
+			ILogicalQueryPart copyLogicalQueryPart = subPlanMap.get(subPlan);
+			ILogicalQueryPart originalQueryPart = queryPartsCopyMap.get(copyLogicalQueryPart);
 			
-			partMap.put(peerID, queryPartsOfPeerID);
+			partMap.put(originalQueryPart, allocationMapPeerID.get(subPlan));
 		}
 		
 		return partMap;
-	}
-
-	private static Map<ILogicalQueryPart, PeerID> revertMap(Map<PeerID, Collection<ILogicalQueryPart>> allocationMapParts) {
-		Map<ILogicalQueryPart, PeerID> revertedMap = Maps.newHashMap();
-		
-		for( PeerID peerID : allocationMapParts.keySet() ) {
-			for( ILogicalQueryPart part : allocationMapParts.get(peerID)) {
-				revertedMap.put(part, peerID);
-			}
-		}
-		
-		return revertedMap;
 	}
 }
