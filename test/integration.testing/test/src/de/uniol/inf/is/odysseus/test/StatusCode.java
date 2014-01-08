@@ -16,10 +16,16 @@
 package de.uniol.inf.is.odysseus.test;
 
 /**
- * @author Merlin Wasmann
+ * @author Merlin Wasmann, Dennis Geesen
  *
  */
 public enum StatusCode {
 
-	OK, ERROR_DUPLICATES, ERROR_OUT_OF_ORDER, ERROR_NOT_EQUIVALENT, ERROR_WRONG_PARAMETERS, EQUIVALENT_FILES
+	OK, 
+	EXCEPTION_DURING_TEST,
+	ERROR_DUPLICATES, 
+	ERROR_OUT_OF_ORDER, 
+	ERROR_MISSING_DATA,
+	ERROR_NOT_EQUIVALENT, 
+	ERROR_WRONG_PARAMETERS	
 }

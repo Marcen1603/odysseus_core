@@ -2,13 +2,12 @@ package de.uniol.inf.is.odysseus.test.set;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class TestSet {
 	
 	private String query;	
-	private List<Tuple<? extends ITimeInterval>> expectedOutput;
+	private List<Pair<String, String>> expectedOutput;
 	
 	public String getQuery() {
 		return query;
@@ -18,11 +17,11 @@ public class TestSet {
 		this.query = query;
 	}
 
-	public List<Tuple<? extends ITimeInterval>> getExpectedOutput() {
+	public List<Pair<String, String>> getExpectedOutput() {
 		return expectedOutput;
 	}
 
-	public void setExpectedOutput(List<Tuple<? extends ITimeInterval>> expectedOutput) {
+	public void setExpectedOutput(List<Pair<String, String>> expectedOutput) {
 		this.expectedOutput = expectedOutput;
 	}
 	

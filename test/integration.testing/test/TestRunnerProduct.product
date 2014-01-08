@@ -3,18 +3,16 @@
 
 <product name="Test Runner Product" uid="de.uniol.inf.is.odysseus.test.runner.product" id="de.uniol.inf.is.odysseus.test.odysseustestproduct" application="de.uniol.inf.is.odysseus.test.OdysseusTestApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console -noexit -debug .options System manager C:\nexmark</programArgs>
+      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console -debug .options System manager C:\nexmark</programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
-
 
    <launcher>
       <solaris/>
@@ -23,10 +21,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
    </plugins>

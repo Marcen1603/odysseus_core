@@ -32,4 +32,5 @@ public interface ITestComponent<T extends ITestContext> {
 	public void setupTest(T context);
 	public List<StatusCode> runTest(T context);	
 	public T createTestContext();
+	public String getName();
 }

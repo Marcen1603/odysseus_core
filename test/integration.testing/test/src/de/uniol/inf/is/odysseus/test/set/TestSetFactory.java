@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class TestSetFactory {
 	
@@ -38,14 +35,14 @@ public class TestSetFactory {
 		return queryFileStr.replace("${BUNDLE-ROOT}", rootPath.getFile());		
 	}
 
-	private static List<Tuple<? extends ITimeInterval>> fileToTupleList(URL path) {
-		List<Tuple<? extends ITimeInterval>> tuples = new ArrayList<>();				
+	private static List<Pair<String, String>> fileToTupleList(URL path) {
+		List<Pair<String, String>> tuples = new ArrayList<>();				
 		try {
 			InputStreamReader is = new InputStreamReader(path.openStream());
 			BufferedReader br = new BufferedReader(is);
 			String line = br.readLine();
 			while (line != null) {
-				Tuple<? extends ITimeInterval> t = parseTupleString(line);
+				Pair<String, String> t = parseTupleString(line);
 				tuples.add(t);
 				line = br.readLine();
 			}
@@ -55,18 +52,11 @@ public class TestSetFactory {
 		}
 		return tuples;
 	}
-
-	private static Tuple<? extends ITimeInterval> parseTupleString(String line) {
+	
+	private static Pair<String, String> parseTupleString(String line) {
 		String[] parts = line.split(Pattern.quote("| META |"));
-		String[] attributes = parts[0].split("\\|");
-		Tuple<TimeInterval> t = new Tuple<>(attributes, false);
-		String[] time = parts[1].split("\\|");
-
-		PointInTime start = PointInTime.parsePointInTime(time[0]);
-		PointInTime end = PointInTime.parsePointInTime(time[1]);
-		TimeInterval ti = new TimeInterval(start, end);
-		t.setMetadata(ti);
-		return t;
+		Pair<String, String> pair = new Pair<String, String>(parts[0].trim(), parts[1].trim());		
+		return pair;
 	}
 
 	private static String fileToString(URL path) {		

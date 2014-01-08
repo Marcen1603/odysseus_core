@@ -15,11 +15,16 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.runner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.component.ITestComponent;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 
@@ -29,38 +34,35 @@ import de.uniol.inf.is.odysseus.test.context.ITestContext;
  * @author Timo Michelsen, Alexander Funk, Dennis Geesen
  * 
  */
-public class TestComponentRunner<T extends ITestContext> extends Thread {
+public class TestComponentRunner<T extends ITestContext> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestComponentRunner.class);
-	private final ITestComponent<T> component;	
-	private Object testResult;
+	private final ITestComponent<T> component;
 	private T context;
 
 	public TestComponentRunner(ITestComponent<T> component) {
-		Preconditions.checkNotNull(component, "Component must not be null!");		
-		setName("TestComponentRunner:" + component);		
+		Preconditions.checkNotNull(component, "Component must not be null!");
 		this.component = component;
 		this.context = component.createTestContext();
 		component.setupTest(context);
 	}
 
-	@Override
-	public void run() {
+	public List<StatusCode> run() {
 		LOG.debug("Start Testcomponent '" + component + "'");
 		long startTime = System.nanoTime();
-		testResult = component.runTest(context);
-		long elapsedTime = System.nanoTime() - startTime;
-		LOG.debug("End Testcomponent '" + component + "'. Duration = " + elapsedTime/1,000,000 + " ms");
-	}
-
-	public final Object getResult() {
-		if (testResult == null) {
-			throw new IllegalStateException("TestComponent " + component + " not finished.");
+		List<StatusCode> testResult = new ArrayList<>();
+		try {
+			testResult = component.runTest(context);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Arrays.asList(StatusCode.EXCEPTION_DURING_TEST);
 		}
+		long elapsedTime = System.nanoTime() - startTime;
+		LOG.debug("End Testcomponent '" + component + "'. Duration = " + (elapsedTime / 1000000) + " ms");
 		return testResult;
 	}
 
 	public final ITestComponent<T> getTestComponent() {
 		return component;
-	}	
+	}
 }

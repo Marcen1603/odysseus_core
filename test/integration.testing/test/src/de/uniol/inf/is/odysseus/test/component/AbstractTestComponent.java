@@ -1,55 +1,82 @@
 package de.uniol.inf.is.odysseus.test.component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.PlanModificationEventType;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.test.ExecutorProvider;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.TestSet;
+import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.ICompareSinkListener;
+import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.TICompareSink;
 
-public abstract class AbstractTestComponent<T extends ITestContext> implements ITestComponent<T>, IPlanModificationListener {
+public abstract class AbstractTestComponent<T extends ITestContext> implements ITestComponent<T>, ICompareSinkListener {
 
 	private static final long PROCESSING_WAIT_TIME = 1000;
 	protected static Logger LOG = LoggerFactory.getLogger(AbstractTestComponent.class);
 	private IServerExecutor executor;
 	private List<TestSet> testsets;
 	private ISession session;
-	private boolean processingDone = false;	
-
-	@Override
-	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
-		if (eventArgs.getEventType() == PlanModificationEventType.QUERY_STOP) {
-			processingDone = true;
-		}
-	}
+//	private boolean processingDone = false;
+	private StatusCode processingResult = null;
 
 	@Override
 	public void setupTest(T context) {
 		executor = ExecutorProvider.getExeuctor();
 		session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
-		executor.addPlanModificationListener(this);		
-		testsets = createTestSets(context);				
+		testsets = createTestSets(context);
 	}
 
 	private StatusCode executeTestSet(TestSet set) {
 		try {
-			processingDone = false;
-			executor.addQuery(set.getQuery(), "OdysseusScript", session, "Standard", Context.empty());					
-			waitProcessing();
-			System.out.println("ok, we are done");
-			// TODO: evaluate results
+			LOG.debug("starting component test...");
+
+			// List<IQueryBuildSetting<?>> settings = new ArrayList<>();//
+			LOG.debug("adding query...");
+			Collection<Integer> ids = executor.addQuery(set.getQuery(), "OdysseusScript", session, "Standard", Context.empty());
+			LOG.debug("adding " + ids.size() + " queries done. Preparing test...");
+			for (Integer queryId : ids) {
+				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryId);
+				executor.stopQuery(queryId, session);
+				List<IPhysicalOperator> roots = new ArrayList<>();
+				for (IPhysicalOperator operator : physicalQuery.getRoots()) {
+					// TODO: this assumes same output for all sinks -> maybe
+					// there are multiple sinks with different outputs
+					List<Pair<String, String>> expected = set.getExpectedOutput();
+					TICompareSink sink = new TICompareSink(expected);
+					sink.addListener(this);
+					roots.add(sink);
+					@SuppressWarnings("unchecked")
+					ISource<Tuple<ITimeInterval>> oldSink = (ISource<Tuple<ITimeInterval>>) operator;
+					oldSink.subscribeSink(sink, 0, 0, operator.getOutputSchema());
+				}
+				physicalQuery.setRoots(roots);
+			}
+			for (int id : ids) {
+				LOG.debug("starting query " + id + "...");
+				executor.startQuery(id, session);
+			}
+			processingResult = null;
+			LOG.debug("query started, waiting until data is processed...");
+			StatusCode result = waitProcessing();
+			LOG.debug("processing done.");
+			LOG.debug("result: " + result);
+			LOG.debug("test done.");
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
@@ -57,15 +84,14 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		} finally {
 			executor.removeAllQueries(session);
 		}
-		
-		return StatusCode.OK;
+		return this.processingResult;
 
 	}
 
 	public abstract List<TestSet> createTestSets(T context);
-	
+
 	public abstract T createTestContext();
-	
+
 	/**
 	 * Taken from de.uniol.inf.is.odysseus.test.TestComponent
 	 * 
@@ -94,11 +120,12 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		}
 	}
 
-	private void waitProcessing() throws InterruptedException {
+	private StatusCode waitProcessing() throws InterruptedException {
 		synchronized (this) {
-			while (!processingDone) {
-				this.wait(PROCESSING_WAIT_TIME);
+			while (processingResult==null) {
+				this.wait(PROCESSING_WAIT_TIME);				
 			}
+			return processingResult;
 		}
 	}
 
@@ -108,9 +135,9 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		int i = 1;
 		tryStartExecutor(executor);
 		for (TestSet set : testsets) {
-			System.out.println("Running sub test " + i + " of " + testsets.size()+"....");
+			System.out.println("Running sub test " + i + " of " + testsets.size() + "....");
 			StatusCode code = executeTestSet(set);
-			System.out.println("Running sub test " + i + " done, ended with code: "+code);
+			System.out.println("Running sub test " + i + " done, ended with code: " + code);
 			codes.add(code);
 			i++;
 		}
@@ -118,4 +145,15 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		return codes;
 	}
 
+	@Override
+	public void compareSinkProcessingDone(TICompareSink sink, boolean done, StatusCode result) {
+		synchronized (this) {
+			this.processingResult = result;			
+		}
+	}
+	
+	@Override
+	public String getName() {
+		return getClass().getSimpleName();		
+	}
 }

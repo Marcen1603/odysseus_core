@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.component.ITestComponent;
 import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 
@@ -38,8 +39,7 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
  * 
  */
 public class TestRunnerApplication implements IApplication {
-
-	private final List<TestComponentRunner<BasicTestContext>> runners = Lists.newArrayList();
+	
 	private static List<ITestComponent<BasicTestContext>> components = Lists.newArrayList();
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestRunnerApplication.class);
@@ -48,33 +48,42 @@ public class TestRunnerApplication implements IApplication {
 	public Object start(IApplicationContext context) throws Exception {	
 		System.out.println("Starting Odysseus...");
 		boolean result = startBundles(context.getBrandingBundle().getBundleContext());
+		boolean oneFailed = false;
 		if (result) {
 			System.out.println("Odysseus is up and running!");			
 			System.out.println("Starting component tests...");			
 			for (ITestComponent<BasicTestContext> component : components) {
-				startTestComponent(component);
+				TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);		
+				LOG.debug("Scheduled a component test: " + component.getName());
+				List<StatusCode> results = runner.run();
+				for(StatusCode code : results){
+					LOG.debug("Total results for component "+component.getName());
+					LOG.debug(code.name());
+					LOG.debug("-------------------");
+					if(code!=StatusCode.OK){
+						oneFailed = true;
+					}
+				}
 			}
-			System.out.println("Component test finished.");
-			return IApplication.EXIT_OK;
+			System.out.println("All tests were run.");
+			if(oneFailed){
+				System.out.println("At least one test failed!");
+				return -1;
+			}else{
+				System.out.println("All tests finished with no errors.");
+				System.out.println("Shuting down OSGi...");
+//				context.getBrandingBundle().getBundleContext().getBundle(0).stop();
+				return IApplication.EXIT_OK;
+			}
 		} else {
 			System.out.println("Odysseus could not be started! Test failed!");
-		}
-		return -1;
+			return -1;
+		}		
 	}
 
 	@Override
 	public void stop() {
-		LOG.debug("Test results");
-		for (TestComponentRunner<?> runner : runners) {
-			String result;
-			try {
-				result = runner.getResult() != null ? runner.getResult().toString() : "null";
-			} catch (IllegalStateException ignore) {
-				result = "Not finished";
-			}
-
-			LOG.debug(runner.getTestComponent() + " : " + result);
-		}
+		
 	}
 
 	public void addTestComponent(ITestComponent<BasicTestContext> component) {		
@@ -83,12 +92,6 @@ public class TestRunnerApplication implements IApplication {
 	
 	public void removeTestComponent(ITestComponent<BasicTestContext> component){
 		components.remove(component);
-	}
-
-	private void startTestComponent(ITestComponent<BasicTestContext> component) {
-		TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);		
-		LOG.debug("Scheduled a component test for " + component);
-		runner.start();
 	}
 
 	private static boolean startBundles(final BundleContext context) {
