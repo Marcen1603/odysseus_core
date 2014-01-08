@@ -7,7 +7,8 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog -console -debug .options System manager C:\nexmark</programArgs>
+      <programArgs>-nl en -consoleLog -console -debug .options System manager C:\nexmark</programArgs>
+      <programArgsLin>-os linux -ws gtk -arch x86_64</programArgsLin>
       <vmArgs>-Dosgi.requiredJavaVersion=1.7 -Xms1024m -Xmx1024m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>

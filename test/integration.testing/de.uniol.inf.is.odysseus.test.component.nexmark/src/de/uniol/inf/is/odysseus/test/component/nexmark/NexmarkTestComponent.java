@@ -47,6 +47,7 @@ public class NexmarkTestComponent extends AbstractTestComponent<BasicTestContext
 			rootPath = FileLocator.toFileURL(bundleentry);
 			testcontext.setDataRootPath(rootPath);
 		} catch (IOException e) {
+			System.out.println("Bundleentry was: "+bundleentry);
 			e.printStackTrace();
 		}
 		return testcontext;
