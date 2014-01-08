@@ -67,18 +67,15 @@ public class TestRunnerApplication implements IApplication {
 			}
 			System.out.println("All tests were run.");
 			if(oneFailed){
-				System.out.println("At least one test failed!");
-				return -1;
+				System.out.println("At least one test failed!");				
 			}else{
 				System.out.println("All tests finished with no errors.");
 				System.out.println("Shuting down OSGi...");
-//				context.getBrandingBundle().getBundleContext().getBundle(0).stop();
-				return IApplication.EXIT_OK;
 			}
 		} else {
-			System.out.println("Odysseus could not be started! Test failed!");
-			return -1;
+			System.out.println("Odysseus could not be started! Test failed!");			
 		}		
+		return IApplication.EXIT_OK;
 	}
 
 	@Override
