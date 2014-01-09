@@ -45,7 +45,7 @@ public class StoreUrgAO extends AbstractLogicalOperator {
     }
     
     @Override
-    public boolean isSource() {
+    public boolean isSourceOperator() {
     	return false;
     }
 }

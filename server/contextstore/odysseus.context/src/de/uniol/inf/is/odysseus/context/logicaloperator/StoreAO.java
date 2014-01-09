@@ -96,7 +96,7 @@ public class StoreAO extends AbstractLogicalOperator {
 	}
 	
 	@Override
-	public boolean isSource() {
+	public boolean isSourceOperator() {
 		return false;
 	}
 }

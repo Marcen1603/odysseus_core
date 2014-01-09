@@ -88,7 +88,7 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 	}
 	
 	@Override
-	public boolean isSink() {
+	public boolean isSinkOperator() {
 		return false;
 	}
 }

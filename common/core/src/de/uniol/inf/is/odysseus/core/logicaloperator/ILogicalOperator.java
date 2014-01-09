@@ -302,7 +302,7 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 */
 	String getUniqueIdentifier();
 	
-	public boolean isSink();
-	public boolean isSource();
-	public boolean isPipe();
+	public boolean isSinkOperator();
+	public boolean isSourceOperator();
+	public boolean isPipeOperator();
 }

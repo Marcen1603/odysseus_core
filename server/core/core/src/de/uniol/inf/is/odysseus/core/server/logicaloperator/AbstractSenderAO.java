@@ -267,7 +267,7 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	}
 
 	@Override
-	public boolean isSource() {
+	public boolean isSourceOperator() {
 		return false;
 	}
 }

@@ -109,7 +109,7 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 	}
 	
 	@Override
-	public boolean isSource() {
+	public boolean isSourceOperator() {
 		return false;
 	}
 	

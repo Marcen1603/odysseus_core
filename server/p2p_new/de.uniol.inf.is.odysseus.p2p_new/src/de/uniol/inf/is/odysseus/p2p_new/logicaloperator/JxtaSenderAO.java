@@ -61,7 +61,7 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 	}
 	
 	@Override
-	public boolean isSource() {
+	public boolean isSourceOperator() {
 		return false;
 	}
 }

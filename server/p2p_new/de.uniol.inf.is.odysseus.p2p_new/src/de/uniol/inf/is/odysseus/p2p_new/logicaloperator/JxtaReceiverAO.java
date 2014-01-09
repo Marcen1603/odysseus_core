@@ -129,7 +129,7 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 	}
 	
 	@Override
-	public boolean isSink() {
+	public boolean isSinkOperator() {
 		return false;
 	}
 }

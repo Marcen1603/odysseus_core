@@ -815,17 +815,17 @@ public abstract class AbstractLogicalOperator implements Serializable,
 	}
 
 	@Override
-	public boolean isPipe() {
-		return isSink() && isSource();
+	public boolean isPipeOperator() {
+		return isSinkOperator() && isSourceOperator();
 	}
 	
 	@Override
-	public boolean isSink() {
+	public boolean isSinkOperator() {
 		return true;
 	}
 	
 	@Override
-	public boolean isSource() {
+	public boolean isSourceOperator() {
 		return true;
 	}
 }
