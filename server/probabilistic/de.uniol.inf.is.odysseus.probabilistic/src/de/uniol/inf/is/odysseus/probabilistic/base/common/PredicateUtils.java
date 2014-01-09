@@ -132,7 +132,7 @@ public final class PredicateUtils {
                 }
                 return result;
             }
-            else if (predicate instanceof IPredicate) {
+            else {
                 result.addAll((Collection<? extends IPredicate<?>>) predicate.conjunctiveSplit(false));
                 return result;
             }
@@ -169,7 +169,7 @@ public final class PredicateUtils {
                 }
                 return result;
             }
-            else if (predicate instanceof IPredicate) {
+            else {
                 // result.addAll((Collection<? extends IPredicate<?>>)
                 // predicate.disconjunctiveSplit(false));
                 return result;
