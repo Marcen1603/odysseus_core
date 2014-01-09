@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 
 import com.google.common.base.Preconditions;
 
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 
@@ -12,16 +13,16 @@ public final class AuctionSummary {
 	
 	private final AuctionQueryAdvertisement query;
 	private final Future<Collection<Bid>> responses;
-	private final SubPlan subPlan;
+	private final ILogicalQueryPart queryPart;
 
-	public AuctionSummary(AuctionQueryAdvertisement query, Future<Collection<Bid>> bids, SubPlan subPlan) {
+	public AuctionSummary(AuctionQueryAdvertisement query, Future<Collection<Bid>> bids, ILogicalQueryPart queryPart) {
 		Preconditions.checkNotNull(query, "Auction advertisement must not be null");
 		Preconditions.checkNotNull(bids, "Responses future must not be null");
-		Preconditions.checkNotNull(subPlan, "Subplan of auction must not be null");
+		Preconditions.checkNotNull(queryPart, "Query part of auction must not be null");
 		
 		this.query = query;
 		this.responses = bids;
-		this.subPlan = subPlan;
+		this.queryPart = queryPart;
 	}
 
 	public AuctionQueryAdvertisement getAuctionAdvertisement() {
@@ -32,7 +33,7 @@ public final class AuctionSummary {
 		return responses;
 	}
 
-	public SubPlan getSubPlan() {
-		return subPlan;
+	public ILogicalQueryPart getLogicalQueryPart() {
+		return queryPart;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -27,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.p2p_new.logicaloperator.DummyAO;
+import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
 
 public class Helper {
@@ -110,4 +113,39 @@ public class Helper {
 			}				
 		}
 		return sourcesAvailable;
-	}}
+	}
+	
+	public static void insertDummyAOs(Collection<ILogicalQueryPart> queryParts) {
+		Preconditions.checkNotNull(queryParts, "Query part list to insert dummy AOs  must not be null!");
+
+		for (ILogicalQueryPart queryPart : queryParts) {
+			
+			Collection<ILogicalOperator> relativeSinks = LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(queryPart);
+			for (ILogicalOperator relativeSink : relativeSinks) {
+				for (LogicalSubscription subscription : relativeSink.getSubscriptions()) {
+					if (queryPart.getOperators().contains(subscription.getTarget())) {
+						continue;
+					}
+
+					ILogicalOperator srcOfAcceptor = subscription.getTarget();
+					LogicalSubscription removingSubscription = RestructHelper.determineSubscription(relativeSink, srcOfAcceptor);
+
+					relativeSink.unsubscribeSink(removingSubscription);
+
+					DummyAO dummySender = new DummyAO();
+					dummySender.setOutputSchema(relativeSink.getOutputSchema());
+
+					DummyAO dummyReceiver = new DummyAO();
+					dummyReceiver.setOutputSchema(relativeSink.getOutputSchema());
+					dummyReceiver.setSchema(relativeSink.getOutputSchema().getAttributes());
+
+					relativeSink.subscribeSink(dummySender, 0, removingSubscription.getSourceOutPort(), relativeSink.getOutputSchema());
+					dummyReceiver.subscribeSink(srcOfAcceptor, removingSubscription.getSinkInPort(), 0, dummyReceiver.getOutputSchema());
+
+					dummySender.connectWithDummySink(dummyReceiver);
+					dummyReceiver.connectWithDummySource(dummySender);
+				}
+			}
+		}
+	}
+}
