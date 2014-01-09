@@ -38,7 +38,7 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 	@Override
 	public void call(IPredicate<?> parameter) {
 		if(parameter instanceof IRelationalPredicate) {
-			((IRelationalPredicate)parameter).init(leftSchema, rightSchema);				
+			((IRelationalPredicate<?>)parameter).init(leftSchema, rightSchema);				
 		}
 	}
 

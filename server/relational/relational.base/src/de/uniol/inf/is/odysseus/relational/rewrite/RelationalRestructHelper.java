@@ -69,7 +69,7 @@ public class RelationalRestructHelper {
 		ComplexPredicateHelper.visitPredicates(predicate, new IUnaryFunctor<IPredicate<?>>() {
 			@Override
 			public void call(IPredicate<?> pred) {
-				List<SDFAttribute> attributes = ((IRelationalPredicate) pred).getAttributes();
+				List<SDFAttribute> attributes = ((IRelationalPredicate<?>) pred).getAttributes();
 				// this should be a call to sourcesOfAttributes, but
 				// there are strange compilation errors when
 				// sourcesOfAttributes
@@ -110,7 +110,7 @@ public class RelationalRestructHelper {
 			@Override
 			public void call(IPredicate<?> predicate) {
 				if (predicate instanceof IRelationalPredicate) {
-					IRelationalPredicate relPred = (IRelationalPredicate) predicate;
+					IRelationalPredicate<?> relPred = (IRelationalPredicate<?>) predicate;
 					List<SDFAttribute> tmpAttrs = relPred.getAttributes();
 					List<String> tmpUris = new ArrayList<String>(tmpAttrs.size());
 					for (SDFAttribute curAttr : tmpAttrs) {
@@ -249,7 +249,7 @@ public class RelationalRestructHelper {
 		ComplexPredicateHelper.visitPredicates(select.getPredicate(), new IUnaryFunctor<IPredicate<?>>() {
 			@Override
 			public void call(IPredicate<?> curPred) {
-				List<SDFAttribute> attributes = ((IRelationalPredicate) curPred).getAttributes();
+				List<SDFAttribute> attributes = ((IRelationalPredicate<?>) curPred).getAttributes();
 				List<SDFAttribute> tmp = new ArrayList<SDFAttribute>(attributes);
 
 				// attributes.clear();
@@ -258,7 +258,7 @@ public class RelationalRestructHelper {
 					SDFAttribute newAttr = select.getInputSchema().get(index);
 					// attributes.add(newAttr);
 					if (!curAttr.equals(newAttr)) {
-						((IRelationalPredicate) curPred).replaceAttribute(curAttr, newAttr);
+						((IRelationalPredicate<?>) curPred).replaceAttribute(curAttr, newAttr);
 					}
 				}
 			}

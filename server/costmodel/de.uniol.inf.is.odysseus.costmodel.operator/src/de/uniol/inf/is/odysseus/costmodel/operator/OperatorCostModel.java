@@ -246,7 +246,7 @@ public class OperatorCostModel<T extends ISubscriber<T, ISubscription<T>> & ISub
 	// sucht aus einem pr�dikat alle Attribute raus
 	private static void fillWithAttributes(IPredicate<?> predicate, List<SDFAttribute> attributes) {
 		if (predicate instanceof IRelationalPredicate) {
-			final IRelationalPredicate pred = (IRelationalPredicate) predicate;
+			final IRelationalPredicate<?> pred = (IRelationalPredicate<?>) predicate;
 			final List<SDFAttribute> attributeList = pred.getAttributes();
 
 			for (final SDFAttribute attribute : attributeList) {
