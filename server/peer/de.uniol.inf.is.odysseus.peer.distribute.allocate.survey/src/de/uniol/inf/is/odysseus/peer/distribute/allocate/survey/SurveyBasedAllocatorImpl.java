@@ -63,7 +63,7 @@ public final class SurveyBasedAllocatorImpl {
 
 	public static Map<SubPlan, PeerID> allocate(Collection<SubPlan> subPlans, QueryBuildConfiguration transCfg) throws QueryPartAllocationException {
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(subPlans, transCfg);
-		Map<SubPlan, PeerID> destinationMap = determineWinners(auctions);
+		Map<SubPlan, PeerID> destinationMap = determinePeers(auctions);
 		return destinationMap;
 	}
 
@@ -89,7 +89,7 @@ public final class SurveyBasedAllocatorImpl {
 		return auctions;
 	}
 
-	private static Map<SubPlan, PeerID> determineWinners(List<AuctionSummary> auctions) throws QueryPartAllocationException {
+	private static Map<SubPlan, PeerID> determinePeers(List<AuctionSummary> auctions) throws QueryPartAllocationException {
 		try {
 			Map<SubPlan, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
 			return determineBestPeers(bidPlanMap);
