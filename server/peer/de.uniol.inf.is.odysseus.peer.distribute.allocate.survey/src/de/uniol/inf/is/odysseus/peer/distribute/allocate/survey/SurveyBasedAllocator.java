@@ -18,11 +18,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
+import de.uniol.inf.is.odysseus.peer.distribute.LogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
@@ -71,13 +74,91 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters)
 			throws QueryPartAllocationException {
+		
+		List<ILogicalQueryPart> newQueryParts = createQueryPartsWithSinkQueryPart(queryParts);
+		
 		// copy --> original. Needed since allocator inserts dummyAOs
-		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(queryParts);
+		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(newQueryParts);
+		ILogicalQueryPart realSinksQueryPart = newQueryParts.get(newQueryParts.size() - 1); // see createSinkQueryPart-method
+		ILogicalQueryPart realSinksQueryPartCopy = getCopy(realSinksQueryPart, queryPartsCopyMap);
 
-		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsCopyMap.keySet(), config);
+		// survey every query part except the one with the real sinks since this must be placed locally
+		List<ILogicalQueryPart> queryPartsToSurvey = Lists.newArrayList(queryPartsCopyMap.keySet());
+		queryPartsToSurvey.remove(realSinksQueryPartCopy); 
+		
+		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, config);
 		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
+		allocationMapParts.put(realSinksQueryPart, p2pNetworkManager.getLocalPeerID());
 		return allocationMapParts;
+	}
+
+	private static ILogicalQueryPart getCopy(ILogicalQueryPart originalQueryPart, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
+		for( ILogicalQueryPart copyQueryPart : queryPartsCopyMap.keySet() ) {
+			if( queryPartsCopyMap.get(copyQueryPart).equals(originalQueryPart)) {
+				return copyQueryPart;
+			}
+		}
+		throw new RuntimeException("Could not find copy of query part " + originalQueryPart);
+	}
+
+	private static List<ILogicalQueryPart> createQueryPartsWithSinkQueryPart(Collection<ILogicalQueryPart> queryParts) {
+		LOG.debug("Creating sink query part");
+		List<ILogicalQueryPart> result = Lists.newArrayList();
+		
+		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
+		for( ILogicalQueryPart queryPart : queryParts ) {
+			LOG.debug("Check query part {}", queryPart);
+			
+			Collection<ILogicalOperator> sinks = LogicalQueryHelper.getSinks(queryPart.getOperators());
+			Collection<ILogicalOperator> realSinksOfQueryPart = determineRealSinks(sinks);
+			
+			Collection<ILogicalOperator> nonRealSinksOfQueryPart = Lists.newArrayList(sinks);
+			nonRealSinksOfQueryPart.removeAll(realSinksOfQueryPart);
+			
+			if( !nonRealSinksOfQueryPart.isEmpty() ) {
+				LOG.debug("Found non real sinks {}", nonRealSinksOfQueryPart);
+				for( ILogicalOperator nonRealSink : nonRealSinksOfQueryPart ) {
+					RenameAO renameAO = new RenameAO();
+					renameAO.setNoOp(true);
+					renameAO.setOutputSchema(nonRealSink.getOutputSchema());
+						
+					nonRealSink.subscribeSink(renameAO, 0, 0, nonRealSink.getOutputSchema());
+					
+					realSinks.add(renameAO);
+				}
+			}
+			realSinks.addAll(realSinksOfQueryPart);
+			
+			if( !realSinksOfQueryPart.isEmpty() ) {
+				LOG.debug("Found real sinks {}", realSinksOfQueryPart);
+				
+				Collection<ILogicalOperator> allOperatorsOfQueryPart = Lists.newArrayList(queryPart.getOperators());
+				allOperatorsOfQueryPart.removeAll(realSinksOfQueryPart);
+				
+				ILogicalQueryPart newQueryPart = new LogicalQueryPart(allOperatorsOfQueryPart);
+				result.add(newQueryPart);
+				LOG.debug("Created new query part {}", newQueryPart);
+			} else {
+				result.add(queryPart);
+				LOG.debug("Can use old query part without changes");
+			}
+		}
+		ILogicalQueryPart realSinksQueryPart = new LogicalQueryPart(realSinks);
+		result.add(realSinksQueryPart);
+		LOG.debug("Created query part with all real sinks {}", realSinksQueryPart);
+		
+		return result;
+	}
+
+	private static Collection<ILogicalOperator> determineRealSinks(Collection<ILogicalOperator> sinks) {
+		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
+		for( ILogicalOperator sink : sinks ) {
+			if( sink.isSinkOperator() && !sink.isSourceOperator() ) {
+				realSinks.add(sink);
+			}
+		}
+		return realSinks;
 	}
 
 	private static Map<ILogicalQueryPart, PeerID> transformToOriginalLogicalQueryParts(Map<ILogicalQueryPart, PeerID> allocationMapPeerID, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
@@ -156,13 +237,34 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return bidPlanMap;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap) {
+	private static Map<ILogicalQueryPart, PeerID> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
+		
+//		Map<ILogicalQueryPart, PeerID> fixedQueryParts = determineFixedQueryParts(bidQueryPartMap);
+		
 		Map<ILogicalQueryPart, PeerID> bestBids = Maps.newHashMap();
-		for (ILogicalQueryPart queryPart : bidPlanMap.keySet()) {
-			bestBids.put(queryPart, determineBestBid(bidPlanMap.get(queryPart)).getBidderPeerID());
+		for (ILogicalQueryPart queryPart : bidQueryPartMap.keySet()) {
+			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)).getBidderPeerID());
 		}
 		return bestBids;
 	}
+
+//	private static Map<ILogicalQueryPart, PeerID> determineFixedQueryParts(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
+//		Map<ILogicalQueryPart, PeerID> fixedQueryParts = Maps.newHashMap();
+//		for( ILogicalQueryPart queryPart : bidQueryPartMap.keySet() ) {
+//			Collection<Bid> bids = bidQueryPartMap.get(queryPart);
+//			
+//			if( bids.size() == 1 ) {
+//				fixedQueryParts.put(queryPart, bids.iterator().next().getBidderPeerID());
+//				continue;
+//			}
+//			
+//			Collection<ILogicalOperator> sinks = LogicalQueryHelper.getSinks(queryPart.getOperators());
+//			if( !sinks.isEmpty() ) {
+//				
+//			}
+//		}
+//		return fixedQueryParts;
+//	}
 
 	private static Bid determineBestBid(Collection<Bid> bids) {
 		Bid bestBid = null;
