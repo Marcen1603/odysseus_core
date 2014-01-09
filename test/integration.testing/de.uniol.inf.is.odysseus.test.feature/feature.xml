@@ -31,7 +31,7 @@ Unless required by applicable law or agreed to in writing, software
    </url>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.operator"
+         id="de.uniol.inf.is.odysseus.test.component.operator"
          download-size="0"
          install-size="0"
          version="0.0.0"
