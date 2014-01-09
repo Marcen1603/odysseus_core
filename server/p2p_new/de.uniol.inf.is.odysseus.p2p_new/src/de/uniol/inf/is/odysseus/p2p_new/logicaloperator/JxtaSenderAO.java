@@ -59,4 +59,9 @@ public class JxtaSenderAO extends AbstractLogicalOperator {
 		this.pipeID = pipeID;
 		addParameterInfo("PIPEID", "'" + pipeID + "'");
 	}
+	
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 }

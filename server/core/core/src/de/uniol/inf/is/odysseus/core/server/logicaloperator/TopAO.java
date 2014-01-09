@@ -40,4 +40,8 @@ public class TopAO extends AbstractLogicalOperator {
 		return new TopAO(this);
 	}
 
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 }

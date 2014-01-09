@@ -132,5 +132,8 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 		}
 	}
 
-
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

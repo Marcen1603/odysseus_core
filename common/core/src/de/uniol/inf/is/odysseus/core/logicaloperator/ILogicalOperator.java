@@ -301,4 +301,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @param id
 	 */
 	String getUniqueIdentifier();
+	
+	public boolean isSink();
+	public boolean isSource();
+	public boolean isPipe();
 }

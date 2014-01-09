@@ -48,4 +48,8 @@ public class SinkAO extends AbstractLogicalOperator {
 		return this.sinkname;
 	}
 
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 }

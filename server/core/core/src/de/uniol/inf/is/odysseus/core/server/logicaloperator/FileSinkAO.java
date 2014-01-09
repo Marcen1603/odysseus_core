@@ -156,4 +156,8 @@ public class FileSinkAO extends AbstractLogicalOperator {
 		return textSeperator;
 	}
 
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 }

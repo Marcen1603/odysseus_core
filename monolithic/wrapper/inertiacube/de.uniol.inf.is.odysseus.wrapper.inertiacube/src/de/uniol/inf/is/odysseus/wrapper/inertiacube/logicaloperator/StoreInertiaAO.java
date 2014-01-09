@@ -43,4 +43,9 @@ public class StoreInertiaAO extends AbstractLogicalOperator {
     public String getPath() {
         return this.path;
     }
+    
+    @Override
+    public boolean isSource() {
+    	return false;
+    }
 }

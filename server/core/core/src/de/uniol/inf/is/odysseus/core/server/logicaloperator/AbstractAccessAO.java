@@ -242,4 +242,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return v.substring(0, v.length()-1);
 	}
 
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

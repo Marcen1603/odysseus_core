@@ -86,4 +86,9 @@ public class BatchProducerAO extends AbstractLogicalOperator {
 	public void setInvertedPriorityRatio(int invertedPriorityRatio) {
 		this.invertedPriorityRatio = invertedPriorityRatio;
 	}
+	
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

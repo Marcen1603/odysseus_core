@@ -136,4 +136,8 @@ public class SourceAO extends AbstractLogicalOperator {
 		return new SourceAO(this);
 	}
 
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

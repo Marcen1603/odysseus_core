@@ -108,6 +108,9 @@ public class DatabaseSinkAO extends AbstractDatabaseOperator{
 		return batchSize;
 	}
 	
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 	
-
 }

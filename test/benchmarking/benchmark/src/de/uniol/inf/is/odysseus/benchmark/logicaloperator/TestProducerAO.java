@@ -105,4 +105,9 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	public void setDelay( long delay ) {
 		this.delayMillis = delay;
 	}
+	
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

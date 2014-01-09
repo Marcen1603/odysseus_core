@@ -34,4 +34,9 @@ public class VisualKinectSinkAO extends AbstractLogicalOperator {
     public VisualKinectSinkAO clone() {
         return new VisualKinectSinkAO(this);
     }
+    
+    @Override
+    public boolean isSource() {
+    	return false;
+    }
 }

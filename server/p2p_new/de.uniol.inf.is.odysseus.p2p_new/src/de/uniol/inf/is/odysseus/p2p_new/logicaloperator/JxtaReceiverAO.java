@@ -128,5 +128,8 @@ public class JxtaReceiverAO extends AbstractLogicalOperator {
 		this.assignedSchema = assignedSchema;
 	}
 	
-	
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

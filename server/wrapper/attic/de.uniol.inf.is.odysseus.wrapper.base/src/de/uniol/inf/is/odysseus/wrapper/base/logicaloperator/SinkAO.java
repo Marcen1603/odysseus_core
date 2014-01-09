@@ -97,4 +97,8 @@ public class SinkAO extends AbstractLogicalOperator {
 		return new SinkAO(this);
 	}
 
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 }

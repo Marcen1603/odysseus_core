@@ -77,4 +77,9 @@ public class TestProducerAO extends AbstractLogicalOperator {
 	public void setInvertedPriorityRatio(int invertedPriorityRatio) {
 		this.invertedPriorityRatio = invertedPriorityRatio;
 	}
+	
+	@Override
+	public boolean isSink() {
+		return false;
+	}
 }

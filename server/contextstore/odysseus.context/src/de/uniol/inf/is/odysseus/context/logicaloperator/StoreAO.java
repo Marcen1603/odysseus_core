@@ -94,4 +94,9 @@ public class StoreAO extends AbstractLogicalOperator {
 			throw new IllegalArgumentException("There is already a store-operator for \""+storeName+"\". Use the existing one instead, because otherwise all writes into the store will not be chronologically ordered");
 		}
 	}
+	
+	@Override
+	public boolean isSource() {
+		return false;
+	}
 }
