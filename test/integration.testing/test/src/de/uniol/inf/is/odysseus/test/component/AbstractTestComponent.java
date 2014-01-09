@@ -90,6 +90,7 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 
 	public abstract List<TestSet> createTestSets(T context);
 
+	@Override
 	public abstract T createTestContext();
 
 	/**

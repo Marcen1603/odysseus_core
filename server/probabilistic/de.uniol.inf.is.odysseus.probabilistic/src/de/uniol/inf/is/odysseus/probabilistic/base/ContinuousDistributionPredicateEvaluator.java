@@ -31,7 +31,8 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
         this.varHelper = varHelper;
     }
 
-    public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    @Override
+	public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         double jointProbability = ((IProbabilistic) input.getMetadata()).getExistence();
         synchronized (this.expression) {

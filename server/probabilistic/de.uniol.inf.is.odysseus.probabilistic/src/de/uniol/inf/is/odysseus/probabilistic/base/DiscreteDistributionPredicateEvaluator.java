@@ -29,7 +29,8 @@ public class DiscreteDistributionPredicateEvaluator implements IPredicateEvaluat
         this.probabilisticAttributePos = probabilisticAttributePos;
     }
 
-    public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    @Override
+	public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         // Dummy tuple to hold the different worlds during evaluation
         final ProbabilisticTuple<? extends IProbabilistic> selectObject = input.clone();

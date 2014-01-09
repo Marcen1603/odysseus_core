@@ -135,7 +135,8 @@ public final class ExpressionUtils {
     public static Collection<SDFExpression> conjunctiveSplitExpression(final SDFExpression expression) {
         Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
 
-            public int compare(SDFExpression o1, SDFExpression o2) {
+            @Override
+			public int compare(SDFExpression o1, SDFExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
@@ -172,7 +173,8 @@ public final class ExpressionUtils {
     public static Collection<SDFProbabilisticExpression> conjunctiveSplitExpression(final SDFProbabilisticExpression expression) {
         Set<SDFProbabilisticExpression> result = new TreeSet<SDFProbabilisticExpression>(new Comparator<SDFProbabilisticExpression>() {
 
-            public int compare(SDFProbabilisticExpression o1, SDFProbabilisticExpression o2) {
+            @Override
+			public int compare(SDFProbabilisticExpression o1, SDFProbabilisticExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
@@ -209,7 +211,8 @@ public final class ExpressionUtils {
     public static Collection<SDFExpression> disjunctiveSplitExpression(final SDFExpression expression) {
         Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
 
-            public int compare(SDFExpression o1, SDFExpression o2) {
+            @Override
+			public int compare(SDFExpression o1, SDFExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });
@@ -246,7 +249,8 @@ public final class ExpressionUtils {
     public static Collection<SDFProbabilisticExpression> disjunctiveSplitExpression(final SDFProbabilisticExpression expression) {
         Set<SDFProbabilisticExpression> result = new TreeSet<SDFProbabilisticExpression>(new Comparator<SDFProbabilisticExpression>() {
 
-            public int compare(SDFProbabilisticExpression o1, SDFProbabilisticExpression o2) {
+            @Override
+			public int compare(SDFProbabilisticExpression o1, SDFProbabilisticExpression o2) {
                 return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
             }
         });

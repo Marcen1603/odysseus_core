@@ -137,7 +137,8 @@ public class ProbabilisticRelationalPredicate extends AbstractPredicate<Probabil
         this.fromRightChannel = new boolean[neededAttributes.size()];
     }
 
-    public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
+    @Override
+	public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
         init(leftSchema, rightSchema, true);
     }
 

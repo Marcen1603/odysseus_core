@@ -25,7 +25,8 @@ public class DeterministicPredicateEvaluator implements IPredicateEvaluator {
         this.varHelper = varHelper;
     }
 
-    public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    @Override
+	public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         double jointProbability = ((IProbabilistic) input.getMetadata()).getExistence();
         int distributionIndex = -1;
