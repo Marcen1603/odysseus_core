@@ -165,9 +165,9 @@ public final class LogicalQueryHelper {
 		}
 	}
 
-	public static Collection<ILogicalOperator> getSinks(Collection<ILogicalOperator> allOperators) {
+	public static Collection<ILogicalOperator> getSinks(Collection<ILogicalOperator> operators) {
 		Collection<ILogicalOperator> sinks = Lists.newArrayList();
-		for (ILogicalOperator operator : allOperators) {
+		for (ILogicalOperator operator : operators) {
 			if (operator.getSubscriptions().isEmpty()) {
 				sinks.add(operator);
 			}

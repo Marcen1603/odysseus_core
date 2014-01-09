@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -303,8 +302,6 @@ public final class QueryDistributorHelper {
 				throw new QueryDistributionException("Query part allocation map from allocator '" + firstAllocator.getInterface().getName() + "' is null or empty!");
 			}
 
-			LOG.debug("Check allocation map returned by allocator {}", firstAllocator.getInterface().getName());
-			checkAllocationMap(allocationMap, modifiedQueryParts);
 			if (LOG.isDebugEnabled()) {
 				LoggingHelper.printAllocationMap(allocationMap, p2pDictionary);
 			}
@@ -312,22 +309,6 @@ public final class QueryDistributorHelper {
 			return allocationMap;
 		} catch (QueryPartAllocationException ex) {
 			throw new QueryDistributionException("Could not allocate query parts", ex);
-		}
-	}
-
-	private static void checkAllocationMap(Map<ILogicalQueryPart, PeerID> allocationMap, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
-		ImmutableList<PeerID> knownRemotePeerIDs = p2pDictionary.getRemotePeerIDs();
-		PeerID localPeerID = p2pNetworkManager.getLocalPeerID();
-
-		for (ILogicalQueryPart queryPart : queryParts) {
-			if (allocationMap.containsKey(queryPart)) {
-				PeerID allocatedPeer = allocationMap.get(queryPart);
-				if (!knownRemotePeerIDs.contains(allocatedPeer) && !allocatedPeer.equals(localPeerID)) {
-					throw new QueryDistributionException("Allocated query part " + queryPart + " to an unknown remote peer " + allocatedPeer);
-				}
-			} else {
-				throw new QueryDistributionException("Query part " + queryPart + " is not allocated!");
-			}
 		}
 	}
 }
