@@ -93,7 +93,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) throws QueryPartAllocationException {
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, transCfg);
-		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeers(auctions);
+		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions);
 		return destinationMap;
 	}
 
@@ -121,7 +121,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determinePeers(List<AuctionSummary> auctions) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions) throws QueryPartAllocationException {
 		try {
 			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
 			return determineBestPeers(bidPlanMap);
