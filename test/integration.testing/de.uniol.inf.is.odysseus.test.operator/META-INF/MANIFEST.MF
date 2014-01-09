@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Component - Operator
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.operator
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.component.operator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.test.operator.OperatorTestPlugin
 Bundle-Vendor: University of Oldenburg
