@@ -33,7 +33,6 @@ Export-Package: de.uniol.inf.is.odysseus.logicaloperator.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.relational.base,
  de.uniol.inf.is.odysseus.relational.base.predicate,
- de.uniol.inf.is.odysseus.relational.base.schema,
  de.uniol.inf.is.odysseus.relational.rewrite,
  de.uniol.inf.is.odysseus.relational.rewrite.rules,
  de.uniol.inf.is.odysseus.relational.transform
