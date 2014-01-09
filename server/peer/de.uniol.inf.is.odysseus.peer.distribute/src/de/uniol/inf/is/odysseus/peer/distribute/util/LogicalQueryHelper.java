@@ -29,7 +29,7 @@ public final class LogicalQueryHelper {
 	private static final String PQL_PARSER_ID = "PQL";
 
 	private static int connectionCounter = 0;
-	
+
 	private static IPQLGenerator pqlGenerator;
 	private static IServerExecutor serverExecutor;
 
@@ -44,10 +44,10 @@ public final class LogicalQueryHelper {
 			pqlGenerator = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindExecutor(IExecutor serv) {
-		serverExecutor = (IServerExecutor)serv;
+		serverExecutor = (IServerExecutor) serv;
 	}
 
 	// called by OSGi-DS
@@ -116,9 +116,9 @@ public final class LogicalQueryHelper {
 
 				ILogicalOperator streamPlanCopy = copyLogicalPlan(streamPlan);
 
-				setDestinationNames(operator, streamPlanCopy);			
+				setDestinationNames(operator, streamPlanCopy);
 				replaceWithSubplan(operator, streamPlanCopy);
-					
+
 				operatorsToRemove.add(operator);
 				operatorsToAdd.add(streamPlanCopy);
 			}
@@ -132,7 +132,7 @@ public final class LogicalQueryHelper {
 
 	private static void setDestinationNames(ILogicalOperator fromOperator, ILogicalOperator toOperator) {
 		Collection<ILogicalOperator> streamPlanOperators = getAllOperators(toOperator);
-		for( ILogicalOperator streamPlanOperator : streamPlanOperators ) {
+		for (ILogicalOperator streamPlanOperator : streamPlanOperators) {
 			streamPlanOperator.setDestinationName(fromOperator.getDestinationName());
 		}
 	}
@@ -174,200 +174,214 @@ public final class LogicalQueryHelper {
 		}
 		return sinks;
 	}
-	
+
 	/**
-	 * Collects all operators within a query part, which are subscribed to sources outside the query part.
-	 * @param part The query part to process.
+	 * Collects all operators within a query part, which are subscribed to
+	 * sources outside the query part.
+	 * 
+	 * @param part
+	 *            The query part to process.
 	 * @return A collection of all relative sources within <code>part</code>.
 	 */
-	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(
-			final ILogicalQueryPart part) {
-		
+	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(final ILogicalQueryPart part) {
+
 		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
-		
+
 		// The return value
 		final Collection<ILogicalOperator> relativeSources = Lists.newArrayList();
-		
-		for(ILogicalOperator operator : part.getOperators()) {
-			
-			if(operator.getSubscribedToSource().isEmpty()) {
-				
+
+		for (ILogicalOperator operator : part.getOperators()) {
+
+			if (operator.getSubscribedToSource().isEmpty()) {
+
 				relativeSources.add(operator);
 				continue;
-				
+
 			}
-			
-			for(LogicalSubscription subToSource : operator.getSubscribedToSource()) {
-				
-				if(!part.getOperators().contains(subToSource.getTarget())) {
-					
+
+			for (LogicalSubscription subToSource : operator.getSubscribedToSource()) {
+
+				if (!part.getOperators().contains(subToSource.getTarget())) {
+
 					relativeSources.add(operator);
 					break;
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return relativeSources;
-		
+
 	}
-	
+
 	/**
-	 * Collects all operators within a query part, which are subscribed to sinks outside the query part.
-	 * @param part The query part to process.
+	 * Collects all operators within a query part, which are subscribed to sinks
+	 * outside the query part.
+	 * 
+	 * @param part
+	 *            The query part to process.
 	 * @return A collection of all relative sinks within <code>part</code>.
 	 */
-	public static Collection<ILogicalOperator> getRelativeSinksOfLogicalQueryPart(
-			final ILogicalQueryPart part) {
-		
+	public static Collection<ILogicalOperator> getRelativeSinksOfLogicalQueryPart(final ILogicalQueryPart part) {
+
 		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
-		
+
 		// The return value
 		final Collection<ILogicalOperator> relativeSinks = Lists.newArrayList();
-		
-		for(ILogicalOperator operator : part.getOperators()) {
-			
-			
-			if(operator.getSubscriptions().isEmpty()) {
-				
+
+		for (ILogicalOperator operator : part.getOperators()) {
+
+			if (operator.getSubscriptions().isEmpty()) {
+
 				relativeSinks.add(operator);
 				continue;
-				
+
 			}
-			
-			for(LogicalSubscription subToSink : operator.getSubscriptions()) {
-				
-				if(!part.getOperators().contains(subToSink.getTarget())) {
-					
+
+			for (LogicalSubscription subToSink : operator.getSubscriptions()) {
+
+				if (!part.getOperators().contains(subToSink.getTarget())) {
+
 					relativeSinks.add(operator);
 					break;
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return relativeSinks;
-		
+
 	}
-	
+
 	/**
 	 * Collects all relative (and real) sources of a query part and it's copies. <br />
 	 * The origin query part will not be modified.
-	 * @param originPart The query part whose sources shall be collected.
-	 * @param copies A collection of all copies of <code>originPart</code>.
-	 * @return A mapping of copied relative (and real) sources to the origin ones.
-	 * @throws NullPointerException if <code>originPart</code> or <code>copies</code> is null.
-	 * @throws IllegalArgumentException if at least one entry of <code>copies</code> does not contain all sources of <code>originPart</code>.
+	 * 
+	 * @param originPart
+	 *            The query part whose sources shall be collected.
+	 * @param copies
+	 *            A collection of all copies of <code>originPart</code>.
+	 * @return A mapping of copied relative (and real) sources to the origin
+	 *         ones.
+	 * @throws NullPointerException
+	 *             if <code>originPart</code> or <code>copies</code> is null.
+	 * @throws IllegalArgumentException
+	 *             if at least one entry of <code>copies</code> does not contain
+	 *             all sources of <code>originPart</code>.
 	 */
-	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSources(
-			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
-		
+	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSources(ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
+
 		// Preconditions
-		if(originPart == null)
+		if (originPart == null)
 			throw new NullPointerException("Origin query part to collect relative sources must be not null!");
-		else if(copies == null)
+		else if (copies == null)
 			throw new NullPointerException("List of copies to collect relative sources must be not null!");
-		
+
 		// The return value
 		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSources = Maps.newHashMap();
-		
+
 		// Collect origin sinks
 		List<ILogicalOperator> originSources = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSourcesOfLogicalQueryPart(originPart);
-		for(ILogicalOperator source : originSources) {
-			
+		for (ILogicalOperator source : originSources) {
+
 			Collection<ILogicalOperator> copiedSources = Lists.newArrayList();
 			int sourceNo = -1;
-			
+
 			try {
-			
+
 				sourceNo = ((List<ILogicalOperator>) ((Collection<ILogicalOperator>) originPart.getOperators())).indexOf(source);
-				
-				for(ILogicalQueryPart copy : copies)
+
+				for (ILogicalQueryPart copy : copies)
 					copiedSources.add(((List<ILogicalOperator>) ((Collection<ILogicalOperator>) copy.getOperators())).get(sourceNo));
-				
-			} catch(IndexOutOfBoundsException e) {
-				
+
+			} catch (IndexOutOfBoundsException e) {
+
 				throw new IllegalArgumentException("At least one copy does not contain all sources of the origin!");
-				
+
 			}
-			
+
 			copiedToOriginSources.put(source, copiedSources);
-			
+
 		}
-		
+
 		return copiedToOriginSources;
-		
+
 	}
-	
+
 	/**
 	 * Collects all relative (and real) sinks of a query part and it's copies. <br />
 	 * The origin query part will not be modified.
-	 * @param originPart The query part whose sinks shall be collected.
-	 * @param copies A collection of all copies of <code>originPart</code>.
+	 * 
+	 * @param originPart
+	 *            The query part whose sinks shall be collected.
+	 * @param copies
+	 *            A collection of all copies of <code>originPart</code>.
 	 * @return A mapping of copied relative (and real) sinks to the origin ones.
-	 * @throws NullPointerException if <code>originPart</code> or <code>copies</code> is null.
-	 * @throws IllegalArgumentException if at least one entry of <code>copies</code> does not contain all sinks of <code>originPart</code>.
+	 * @throws NullPointerException
+	 *             if <code>originPart</code> or <code>copies</code> is null.
+	 * @throws IllegalArgumentException
+	 *             if at least one entry of <code>copies</code> does not contain
+	 *             all sinks of <code>originPart</code>.
 	 */
-	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(
-			ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
-		
+	public static Map<ILogicalOperator, Collection<ILogicalOperator>> collectRelativeSinks(ILogicalQueryPart originPart, Collection<ILogicalQueryPart> copies) throws NullPointerException, IllegalArgumentException {
+
 		// Preconditions
-		if(originPart == null)
+		if (originPart == null)
 			throw new NullPointerException("Origin query part to collect relative sinks must be not null!");
-		else if(copies == null)
+		else if (copies == null)
 			throw new NullPointerException("List of copies to collect relative sinks must be not null!");
-		
+
 		// The return value
 		Map<ILogicalOperator, Collection<ILogicalOperator>> copiedToOriginSinks = Maps.newHashMap();
-		
+
 		// Collect origin sinks
 		List<ILogicalOperator> originSinks = (List<ILogicalOperator>) LogicalQueryHelper.getRelativeSinksOfLogicalQueryPart(originPart);
-		for(ILogicalOperator sink : originSinks) {
-			
+		for (ILogicalOperator sink : originSinks) {
+
 			Collection<ILogicalOperator> copiedSinks = Lists.newArrayList();
 			int sinkNo = -1;
-			
+
 			try {
-			
+
 				sinkNo = ((List<ILogicalOperator>) ((Collection<ILogicalOperator>) originPart.getOperators())).indexOf(sink);
-				
-				for(ILogicalQueryPart copy : copies)
+
+				for (ILogicalQueryPart copy : copies)
 					copiedSinks.add(((List<ILogicalOperator>) ((Collection<ILogicalOperator>) copy.getOperators())).get(sinkNo));
-				
-			} catch(IndexOutOfBoundsException e) {
-				
+
+			} catch (IndexOutOfBoundsException e) {
+
 				throw new IllegalArgumentException("At least one copy does not contain all sinks of the origin!");
-				
+
 			}
-			
+
 			copiedToOriginSinks.put(sink, copiedSinks);
-			
+
 		}
-		
+
 		return copiedToOriginSinks;
-		
+
 	}
-	
-	public static void disconnectQueryParts( Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator ) {
+
+	public static void disconnectQueryParts(Collection<ILogicalQueryPart> queryParts, IOperatorGenerator generator) {
 		Preconditions.checkNotNull(generator, "Operator generator must not be null!");
-		
+
 		Map<ILogicalOperator, ILogicalQueryPart> queryPartAssignment = determineOperatorAssignment(queryParts);
 		Map<LogicalSubscription, ILogicalOperator> subsToReplace = determineSubscriptionsAcrossQueryParts(queryPartAssignment);
 
 		for (LogicalSubscription subToReplace : subsToReplace.keySet()) {
 			ILogicalOperator sourceOperator = subsToReplace.get(subToReplace);
 			ILogicalOperator sinkOperator = subToReplace.getTarget();
-			
+
 			generator.beginDisconnect(sourceOperator, sinkOperator);
 
 			ILogicalOperator source = generator.createSourceofSink(sinkOperator);
 			source.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			source.setName("RCV_" + connectionCounter);
-			
+
 			ILogicalOperator sink = generator.createSinkOfSource(sourceOperator);
 			sink.setOutputSchema(sourceOperator.getOutputSchema().clone());
 			sink.setName("SND_" + connectionCounter);
@@ -376,7 +390,7 @@ public final class LogicalQueryHelper {
 
 			sourceOperator.subscribeSink(sink, 0, subToReplace.getSourceOutPort(), sourceOperator.getOutputSchema());
 			sinkOperator.subscribeToSource(source, subToReplace.getSinkInPort(), 0, source.getOutputSchema());
-			
+
 			connectionCounter++;
 		}
 
@@ -412,43 +426,40 @@ public final class LogicalQueryHelper {
 		}
 		return subsToReplace;
 	}
-	
-	/**
-	 * Removes all subscriptions whose target is not within the given query part.
-	 * @param queryPart The query part to cut.
-	 */
+
 	public static void cutQueryPart(ILogicalQueryPart queryPart) {
-		
+
 		Preconditions.checkNotNull(queryPart, "Query part to be cut must be not null!");
-		
+
 		Collection<ILogicalOperator> operators = queryPart.getOperators();
-		for(ILogicalOperator operator : operators) {
-			
+		for (ILogicalOperator operator : operators) {
+
 			Collection<LogicalSubscription> subsToRemove = Lists.newArrayList();
-			for(LogicalSubscription subcription : operator.getSubscriptions()) {
-				
-				if(!operators.contains(subcription.getTarget()))
-					subsToRemove.add(subcription);	
-				
+			for (LogicalSubscription subcription : operator.getSubscriptions()) {
+
+				if (!operators.contains(subcription.getTarget())) {
+					subsToRemove.add(subcription);
+				}
 			}
-			
-			for(LogicalSubscription sub : subsToRemove)
+
+			for (LogicalSubscription sub : subsToRemove) {
 				operator.unsubscribeSink(sub);
-			
+			}
+
 			subsToRemove.clear();
-			for(LogicalSubscription subcription : operator.getSubscribedToSource()) {
-				
-				if(!operators.contains(subcription.getTarget()))
-					subsToRemove.add(subcription);	
-				
+			for (LogicalSubscription subcription : operator.getSubscribedToSource()) {
+
+				if (!operators.contains(subcription.getTarget())) {
+					subsToRemove.add(subcription);
+				}
 			}
-			
-			for(LogicalSubscription sub : subsToRemove)
+
+			for (LogicalSubscription sub : subsToRemove) {
 				operator.unsubscribeSink(sub);
-			
-			
+			}
+
 		}
-		
+
 	}
 
 	public static Map<ILogicalQueryPart, ILogicalQueryPart> copyQueryPartsDeep(Collection<ILogicalQueryPart> queryParts) {
@@ -476,53 +487,57 @@ public final class LogicalQueryHelper {
 
 		return map;
 	}
-	
+
 	/**
-	 * Makes as many copies of query parts as given by the number of copies. All copied query parts will be cut, so there will be no 
-	 * subscription from or to outwards a query part. <br />
+	 * Makes as many copies of query parts as given by the number of copies. All
+	 * copied query parts will be cut, so there will be no subscription from or
+	 * to outwards a query part. <br />
 	 * The origin query parts will not be modified.
-	 * @param queryParts A collection of query parts to copy.
-	 * @param numCopies The number of copies to make.
-	 * @throws NullPointerException if <code>queryParts</code> is null.
+	 * 
+	 * @param queryParts
+	 *            A collection of query parts to copy.
+	 * @param numCopies
+	 *            The number of copies to make.
+	 * @throws NullPointerException
+	 *             if <code>queryParts</code> is null.
 	 */
-	public static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyAndCutQueryParts(
-			Collection<ILogicalQueryPart> queryParts, int numCopies) throws NullPointerException {
-		
+	public static Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copyAndCutQueryParts(Collection<ILogicalQueryPart> queryParts, int numCopies) throws NullPointerException {
+
 		// Preconditions
-		if(queryParts == null)
+		if (queryParts == null)
 			throw new NullPointerException("Query parts to be copied must be not null!");
-		
+
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOriginPart = Maps.newHashMap();
-	
+
 		Collection<Map<ILogicalQueryPart, ILogicalQueryPart>> plainCopies = Lists.newArrayList();
-		for(int copyNo = 0; copyNo < numCopies; copyNo++)
+		for (int copyNo = 0; copyNo < numCopies; copyNo++)
 			plainCopies.add(LogicalQueryHelper.copyQueryPartsDeep(queryParts));
-		
-		for(Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies) {
-			
-			for(ILogicalQueryPart copy : plainCopyMap.keySet() ) {
-				
+
+		for (Map<ILogicalQueryPart, ILogicalQueryPart> plainCopyMap : plainCopies) {
+
+			for (ILogicalQueryPart copy : plainCopyMap.keySet()) {
+
 				Collection<ILogicalQueryPart> copyList = null;
-				
-				if(copiesToOriginPart.containsKey(plainCopyMap.get(copy)))
+
+				if (copiesToOriginPart.containsKey(plainCopyMap.get(copy)))
 					copyList = copiesToOriginPart.get(plainCopyMap.get(copy));
 				else {
-					
+
 					copyList = Lists.newArrayList();
 					copiesToOriginPart.put(plainCopyMap.get(copy), copyList);
-					
+
 				}
-			
+
 				LogicalQueryHelper.cutQueryPart(copy);
 				copyList.add(copy);
-				
+
 			}
-			
+
 		}
 
 		return copiesToOriginPart;
-		
+
 	}
 
 	private static Map<ILogicalOperator, ILogicalOperator> createOperatorCopyMap(Collection<ILogicalOperator> operators) {
@@ -541,24 +556,24 @@ public final class LogicalQueryHelper {
 				ILogicalOperator originalTarget = sub.getTarget();
 				ILogicalOperator copyTarget = getCopyOfMap(originalTarget, operatorCopyMap);
 
-				if( copyTarget != null ) {
+				if (copyTarget != null) {
 					copyOperator.subscribeSink(copyTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 				} else {
 					copyOperator.subscribeSink(originalTarget, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 				}
 			}
-			
-			for( LogicalSubscription sub : originalOperator.getSubscribedToSource() ) {
+
+			for (LogicalSubscription sub : originalOperator.getSubscribedToSource()) {
 				ILogicalOperator orginalSource = sub.getTarget();
 				ILogicalOperator copySource = getCopyOfMap(orginalSource, operatorCopyMap);
-				
-				if( copySource == null ) {
+
+				if (copySource == null) {
 					copyOperator.subscribeToSource(orginalSource, sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 				}
 			}
 		}
 	}
-	
+
 	public static ILogicalOperator getCopyOfMap(ILogicalOperator originalOperator, Map<ILogicalOperator, ILogicalOperator> operatorCopyMap) {
 		for (ILogicalOperator copy : operatorCopyMap.keySet()) {
 			if (operatorCopyMap.get(copy).equals(originalOperator)) {
@@ -568,12 +583,12 @@ public final class LogicalQueryHelper {
 
 		throw new RuntimeException("Could not find the copy of " + originalOperator);
 	}
-	
-	public static ILogicalOperator appendTopAO( ILogicalQueryPart queryPart ) {
+
+	public static ILogicalOperator appendTopAO(ILogicalQueryPart queryPart) {
 		Preconditions.checkNotNull(queryPart, "Query part to append TopAO must not be null!");
-		
+
 		Collection<ILogicalOperator> sinks = getSinks(getAllOperators(queryPart.getOperators().iterator().next()));
-		
+
 		TopAO topAO = new TopAO();
 		int inputPort = 0;
 		for (ILogicalOperator sink : sinks) {
@@ -583,20 +598,19 @@ public final class LogicalQueryHelper {
 		return topAO;
 	}
 
-	public static Optional<ILogicalQueryPart> determineQueryPart(
-			Collection<ILogicalQueryPart> queryParts, ILogicalOperator operator) {
-		
+	public static Optional<ILogicalQueryPart> determineQueryPart(Collection<ILogicalQueryPart> queryParts, ILogicalOperator operator) {
+
 		Preconditions.checkNotNull(queryParts, "Query parts for determination must be not null!");
 		Preconditions.checkNotNull(operator, "Operator to determine query part must be not null!");
-		
-		for(ILogicalQueryPart part : queryParts) {
-			
-			if(part.getOperators().contains(operator))
+
+		for (ILogicalQueryPart part : queryParts) {
+
+			if (part.getOperators().contains(operator))
 				return Optional.of(part);
-			
+
 		}
-		
+
 		return Optional.absent();
-		
+
 	}
 }
