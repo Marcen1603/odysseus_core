@@ -33,6 +33,7 @@ public final class CostEstimationHelper {
 	@SuppressWarnings("rawtypes")
 	private static OperatorCostModel costModel;
 	private static IServerExecutor serverExecutor;
+	private static ISession activeSession;
 
 	// called by OSGi-DS
 	public static void bindExecutor(IExecutor serv) {
@@ -115,6 +116,9 @@ public final class CostEstimationHelper {
 	}
 
 	private static ISession getActiveSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		if( activeSession == null ) {
+			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+		} 
+		return activeSession;
 	}	
 }

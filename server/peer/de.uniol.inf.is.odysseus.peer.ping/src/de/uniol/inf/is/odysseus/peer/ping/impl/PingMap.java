@@ -88,6 +88,11 @@ public class PingMap extends P2PDictionaryAdapter implements IPingMap  {
 	public Optional<IPingMapNode> getNode(PeerID peerID) {
 		Preconditions.checkNotNull(peerID, "PeerID for pingMap must not be null!");
 		
+		if( networkManager.getLocalPeerID().equals(peerID)) {
+			PingMapNode localPingMapNode = new PingMapNode(peerID);
+			localPingMapNode.setPosition(getLocalPosition());
+			return Optional.<IPingMapNode>of(localPingMapNode);
+		}
 		return Optional.fromNullable((IPingMapNode)nodes.get(peerID));
 	}
 	
