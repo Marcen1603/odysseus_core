@@ -50,6 +50,9 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 		if (getDataDictionary().getAccessPlan(operator.getStreamname()) == null) {
 			// ok, we have to transform the stream operator!
 			ILogicalOperator logicalPlan = getDataDictionary().getStreamForTransformation(operator.getStreamname(), getCaller());
+			if (logicalPlan == null){
+				logicalPlan = getDataDictionary().getView(operator.getStreamname(), getCaller());
+			}
 			// start a new sub-transformation
 			ITransformation transformation = new TransformationExecutor();
 			ArrayList<IPhysicalOperator> roots = transformation.transform(logicalPlan, transformConfig, getCaller(), getDataDictionary());
