@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.peer.PeerID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.p2p_new.IP2PNetworkManager;
+import de.uniol.inf.is.odysseus.p2p_new.dictionary.IP2PDictionary;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.peer.distribute.IQueryPartAllocator;
@@ -34,13 +35,18 @@ import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSum
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
 import de.uniol.inf.is.odysseus.peer.distribute.util.LogicalQueryHelper;
+import de.uniol.inf.is.odysseus.peer.distribute.util.QueryPartGraph;
+import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 
 public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedAllocator.class);
+//	private static final Random RAND = new Random();
 	
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPQLGenerator pqlGenerator;
+	private static IP2PDictionary p2pDictionary;
+	private static IPingMap pingMap;
 
 	// called by OSGi-DS
 	public static void bindP2PNetworkManager(IP2PNetworkManager serv) {
@@ -63,6 +69,30 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	public static void unbindPQLGenerator(IPQLGenerator serv) {
 		if (pqlGenerator == serv) {
 			pqlGenerator = null;
+		}
+	}
+	
+	// called by OSGi-DS
+	public static void bindP2PDictionay(IP2PDictionary serv) {
+		p2pDictionary = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindP2PDictionay(IP2PDictionary serv) {
+		if (p2pDictionary == serv) {
+			p2pDictionary = null;
+		}
+	}
+
+	// called by OSGi-DS
+	public static void bindPingMap(IPingMap serv) {
+		pingMap = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindPingMap(IPingMap serv) {
+		if (pingMap == serv) {
+			pingMap = null;
 		}
 	}
 
@@ -173,8 +203,9 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 
 	private static Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, QueryBuildConfiguration transCfg) throws QueryPartAllocationException {
+		QueryPartGraph partGraph = new QueryPartGraph(queryParts);
 		List<AuctionSummary> auctions = publishAuctionsForRemoteSubPlans(queryParts, transCfg);
-		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions);
+		Map<ILogicalQueryPart, PeerID> destinationMap = determinePeerAssignment(auctions, partGraph);
 		return destinationMap;
 	}
 
@@ -202,16 +233,38 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return auctions;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions) throws QueryPartAllocationException {
+	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph) throws QueryPartAllocationException {
 		try {
 			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
-			return determineBestPeers(bidPlanMap);
+			Map<ILogicalQueryPart, PeerID> bestPeers = determineBestPeers(bidPlanMap);
+			
+//			Map<ILogicalQueryPart, ForceNode> forceNodes = createForceNodes(bestPeers);
+			
+			
+			return bestPeers;
+			
 		} catch (QueryPartAllocationException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new QueryPartAllocationException("Could not determine the winner of an auction", e);
 		}
 	}
+
+//	private static Map<ILogicalQueryPart, ForceNode> createForceNodes(Map<ILogicalQueryPart, PeerID> bestPeers) {
+//		Map<ILogicalQueryPart, ForceNode> forceNodes = Maps.newHashMap();
+//		for( ILogicalQueryPart queryPart : bestPeers.keySet() ) {
+//			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestPeers.get(queryPart));
+//			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
+//			
+//			forceNodes.put(queryPart, new ForceNode(nodePosition, queryPart));
+//		}
+//		
+//		return forceNodes;
+//	}
+//
+//	private static Vector3D createRandomVector3D() {
+//		return new Vector3D(RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0);
+//	}
 
 	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions) throws InterruptedException, ExecutionException, QueryPartAllocationException {
 		Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = Maps.newHashMap();
@@ -239,32 +292,13 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static Map<ILogicalQueryPart, PeerID> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
 		
-//		Map<ILogicalQueryPart, PeerID> fixedQueryParts = determineFixedQueryParts(bidQueryPartMap);
-		
 		Map<ILogicalQueryPart, PeerID> bestBids = Maps.newHashMap();
 		for (ILogicalQueryPart queryPart : bidQueryPartMap.keySet()) {
 			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)).getBidderPeerID());
 		}
+		
 		return bestBids;
 	}
-
-//	private static Map<ILogicalQueryPart, PeerID> determineFixedQueryParts(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
-//		Map<ILogicalQueryPart, PeerID> fixedQueryParts = Maps.newHashMap();
-//		for( ILogicalQueryPart queryPart : bidQueryPartMap.keySet() ) {
-//			Collection<Bid> bids = bidQueryPartMap.get(queryPart);
-//			
-//			if( bids.size() == 1 ) {
-//				fixedQueryParts.put(queryPart, bids.iterator().next().getBidderPeerID());
-//				continue;
-//			}
-//			
-//			Collection<ILogicalOperator> sinks = LogicalQueryHelper.getSinks(queryPart.getOperators());
-//			if( !sinks.isEmpty() ) {
-//				
-//			}
-//		}
-//		return fixedQueryParts;
-//	}
 
 	private static Bid determineBestBid(Collection<Bid> bids) {
 		Bid bestBid = null;
