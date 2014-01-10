@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.peer.distribute.allocate.loadbalancing.impl;
 
+import java.util.Collection;
 import java.util.Map;
 
 import net.jxta.peer.PeerID;
@@ -7,6 +8,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.costmodel.operator.OperatorCost;
@@ -40,8 +42,9 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 			
 			long newMemCost = (long)partCosts.get(queryPart).getMemCost();
 			double newCpuCost = partCosts.get(queryPart).getCpuCost();
-
-			PeerID minPeerID = selectPeerID(estimatedUsages, newMemCost, newCpuCost);
+			Collection<PeerID> avoidingPeers = determineAvoidedPeers(queryPart, result);
+			
+			PeerID minPeerID = selectPeerID(estimatedUsages, avoidingPeers, newMemCost, newCpuCost);
 			
 			if( minPeerID == null ) {
 				// protected method --> check return value!
@@ -67,6 +70,19 @@ public abstract class AbstractLoadBalancer implements ILoadBalancer {
 
 		return result;
 	}
+
+	private static Collection<PeerID> determineAvoidedPeers(ILogicalQueryPart queryPart, Map<ILogicalQueryPart, PeerID> allocationMap) {
+		Collection<PeerID> avoidedPeers = Lists.newArrayList();
+		
+		for( ILogicalQueryPart avoidedPart : queryPart.getAvoidingQueryParts() ) {
+			PeerID avoidedPeerID = allocationMap.get(avoidedPart);
+			if( avoidedPeerID != null && !avoidedPeers.contains(avoidedPeerID)) {
+				avoidedPeers.add(avoidedPeerID);
+			}
+		}
+		
+		return avoidedPeers;
+	}
 	
-	protected abstract PeerID selectPeerID(Map<PeerID, Usage> currentUsages, long newMemCost, double newCpuCost);
+	protected abstract PeerID selectPeerID(Map<PeerID, Usage> currentUsages, Collection<PeerID> avoidingPeers, long newMemCost, double newCpuCost);
 }
