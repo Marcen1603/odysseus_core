@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base;
 
-import org.apache.commons.math3.distribution.MixtureMultivariateNormalDistribution;
 import org.apache.commons.math3.distribution.MultivariateNormalDistribution;
 import org.apache.commons.math3.util.Pair;
 
@@ -32,7 +31,7 @@ public class ContinuousDistributionPredicateEvaluator implements IPredicateEvalu
     }
 
     @Override
-	public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
+    public ProbabilisticTuple<? extends IProbabilistic> evaluate(ProbabilisticTuple<? extends IProbabilistic> input) {
         final ProbabilisticTuple<? extends IProbabilistic> output = input.clone();
         double jointProbability = ((IProbabilistic) input.getMetadata()).getExistence();
         synchronized (this.expression) {
