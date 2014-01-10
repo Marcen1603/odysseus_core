@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.jxta.peer.PeerID;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -28,12 +29,48 @@ public abstract class AbstractRoundRobinAllocator implements IQueryPartAllocator
 		Map<ILogicalQueryPart, PeerID> allocationMap = Maps.newHashMap();
 		
 		for( ILogicalQueryPart queryPart : queryParts ) {
-			allocationMap.put(queryPart, peerIDs.get(peerIDIndex));
+			Collection<PeerID> nonAllowedPeers = determineAvoidedPeers(queryPart, allocationMap);
+
+			int tries = 0;
+			int tempPeerIDIndex = peerIDIndex;
+			PeerID chosenPeerID = null;
 			
-			peerIDIndex = ( peerIDIndex + 1 ) % peerIDs.size();
+			do {
+				if( tries >= peerIDs.size() ) {
+					// checked all possibilities
+					chosenPeerID = null;
+					break;
+				}
+				tempPeerIDIndex = ( tempPeerIDIndex + 1 ) % peerIDs.size();
+				chosenPeerID = peerIDs.get(tempPeerIDIndex);
+				tries++;
+				
+			} while( nonAllowedPeers.contains(chosenPeerID) );
+			
+			if( chosenPeerID == null ) {
+				peerIDIndex = ( peerIDIndex + 1 ) % peerIDs.size();
+				chosenPeerID = peerIDs.get(peerIDIndex);
+			} else {
+				peerIDIndex = tempPeerIDIndex;
+			}
+			
+			allocationMap.put(queryPart, chosenPeerID);
 		}
 		
 		return allocationMap;
+	}
+
+	private static Collection<PeerID> determineAvoidedPeers(ILogicalQueryPart queryPart, Map<ILogicalQueryPart, PeerID> allocationMap) {
+		Collection<PeerID> avoidedPeers = Lists.newArrayList();
+		
+		for( ILogicalQueryPart avoidedPart : queryPart.getAvoidingQueryParts() ) {
+			PeerID avoidedPeerID = allocationMap.get(avoidedPart);
+			if( avoidedPeerID != null && !avoidedPeers.contains(avoidedPeerID)) {
+				avoidedPeers.add(avoidedPeerID);
+			}
+		}
+		
+		return avoidedPeers;
 	}
 
 	protected abstract List<PeerID> determineConsideredPeerIDs( Collection<PeerID> knownRemotePeers, PeerID localPeerID );
