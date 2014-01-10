@@ -42,7 +42,7 @@ public final class ParameterHelper {
 	}
 
 	public static List<InterfaceParametersPair<IQueryPartModificator>> determineQueryPartModificators(QueryBuildConfiguration config) throws QueryDistributionException {
-		List<InterfaceNameParametersPair> pairs = getPairsOfParameter(config, QueryPartModificatorParameter.class, "Query part modificator");
+		List<InterfaceNameParametersPair> pairs = getPairsOfParameter(config, QueryPartModificatorParameter.class, "Query part modificator", true);
 		
 		List<InterfaceParametersPair<IQueryPartModificator>> resultList = Lists.newArrayList();
 		for( InterfaceNameParametersPair pair : pairs ) {

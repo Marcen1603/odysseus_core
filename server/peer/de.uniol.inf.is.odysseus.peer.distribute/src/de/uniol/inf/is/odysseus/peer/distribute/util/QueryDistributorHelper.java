@@ -269,6 +269,11 @@ public final class QueryDistributorHelper {
 	}
 
 	public static Collection<ILogicalQueryPart> tryModifyQueryParts(QueryBuildConfiguration config, List<InterfaceParametersPair<IQueryPartModificator>> modificators, Collection<ILogicalQueryPart> queryParts) throws QueryDistributionException {
+		if( modificators.isEmpty() ) {
+			LOG.debug("No modificator set");
+			return queryParts;
+		}
+		
 		LOG.debug("Begin modifying query parts");
 
 		try {
