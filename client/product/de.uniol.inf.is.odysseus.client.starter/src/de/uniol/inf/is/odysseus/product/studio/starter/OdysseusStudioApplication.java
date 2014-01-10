@@ -136,10 +136,11 @@ public class OdysseusStudioApplication implements IApplication {
 	}
 
 	private static void saveNewSelectedRecentOdysseusWorkspace(List<String> recentWorkspaces, String selection) {
-		if( !recentWorkspaces.contains(selection)) {
-			recentWorkspaces = Lists.newArrayList(recentWorkspaces); // to avoid side effects for caller
-			recentWorkspaces.add(selection);
+		recentWorkspaces = Lists.newArrayList(recentWorkspaces); // to avoid side effects for caller
+		if( recentWorkspaces.contains(selection)) {
+			recentWorkspaces.remove(selection);
 		}
+		recentWorkspaces.add(0, selection); // to make sure that the last selection is on first place
 		
 		recentWorkspaces = cleanFromNullsAndDublicates(recentWorkspaces);
 		OdysseusRCPConfiguration.set(RECENT_WORKSPACES_CONFIG_KEY, fromListToString(recentWorkspaces));
