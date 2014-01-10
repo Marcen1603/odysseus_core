@@ -131,7 +131,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
-		this.optionsMap.clear();
 		for (Option option : value) {
 			optionsMap.put(option.getName().toLowerCase(), option.getValue());
 		}
