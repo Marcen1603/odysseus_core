@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.mining.physicaloperator.aggregationfunctions;
+package de.uniol.inf.is.odysseus.signal.physicaloperator.aggregationfunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions
  * 
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class FFT extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+public class FFTransformation extends AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
 
     /**
      * 
@@ -43,19 +43,32 @@ public class FFT extends AbstractListAggregation<Tuple<? extends IMetaAttribute>
     /** The FFT transformer. */
     private final FastFourierTransformer fft;
     /** The list of positions to restrict to. */
-    private final int[] restrictList;
+    private final int pos;
+
+    /**
+     * Gets an instance of {@link FFTransformation}.
+     * 
+     * @param pos
+     *            The attribute position
+     * @param partialAggregateInput
+     *            The partial aggregate input
+     * @return An instance of {@link FFTransformation}
+     */
+    public static FFTransformation getInstance(final int pos, final boolean partialAggregateInput) {
+        return new FFTransformation(pos, partialAggregateInput);
+    }
 
     /**
      * Creates a new instance of the FFT aggregation.
      * 
-     * @param restrictList
-     *            The list of positions to restrict to
+     * @param pos
+     *            The position of the attribute
      * @param partialAggregateInput
      *            The partial aggregate input
      */
-    public FFT(final int[] restrictList, final boolean partialAggregateInput) {
+    public FFTransformation(final int pos, final boolean partialAggregateInput) {
         super("FFT", partialAggregateInput);
-        this.restrictList = restrictList;
+        this.pos = pos;
         this.fft = new FastFourierTransformer(DftNormalization.STANDARD);
     }
 
@@ -69,7 +82,7 @@ public class FFT extends AbstractListAggregation<Tuple<? extends IMetaAttribute>
         final double[] values = new double[elems.size()];
         for (int i = 0; i < values.length; i++) {
             final Tuple<?> elem = elems.get(i);
-            values[i] = elem.getAttribute(this.restrictList[0]);
+            values[i] = elem.getAttribute(this.pos);
         }
         final Complex[] result = this.fft.transform(values, TransformType.FORWARD);
 
@@ -94,7 +107,7 @@ public class FFT extends AbstractListAggregation<Tuple<? extends IMetaAttribute>
      */
     @Override
     public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(final IPartialAggregate<Tuple<? extends IMetaAttribute>> p, final Tuple<? extends IMetaAttribute> toMerge, final boolean createNew) {
-        return ((ListPartialAggregate) p).addElem(toMerge.restrict(this.restrictList, true));
+        return ((ListPartialAggregate) p).addElem(toMerge.restrict(new int[] { this.pos }, true));
     }
 
 }
