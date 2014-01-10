@@ -174,15 +174,17 @@ public final class LogicalQueryHelper {
 		}
 		return sinks;
 	}
+	
+	public static Collection<ILogicalOperator> getSources(Collection<ILogicalOperator> operators) {
+		Collection<ILogicalOperator> sources = Lists.newArrayList();
+		for (ILogicalOperator operator : operators) {
+			if (operator.getSubscribedToSource().isEmpty()) {
+				sources.add(operator);
+			}
+		}
+		return sources;
+	}
 
-	/**
-	 * Collects all operators within a query part, which are subscribed to
-	 * sources outside the query part.
-	 * 
-	 * @param part
-	 *            The query part to process.
-	 * @return A collection of all relative sources within <code>part</code>.
-	 */
 	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(final ILogicalQueryPart part) {
 
 		Preconditions.checkNotNull(part, "Logical query part to process must not be null!");
