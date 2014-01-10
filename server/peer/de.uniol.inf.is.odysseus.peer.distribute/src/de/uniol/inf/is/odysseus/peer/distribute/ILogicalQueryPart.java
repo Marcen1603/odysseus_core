@@ -7,5 +7,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 public interface ILogicalQueryPart {
 
 	public ImmutableCollection<ILogicalOperator> getOperators();
+	public ImmutableCollection<ILogicalQueryPart> getAvoidingQueryParts();
 	
 }
