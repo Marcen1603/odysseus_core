@@ -21,11 +21,17 @@
             id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table50"
             label="Table - Show last 50 elements">
       </editor>
-            <editor
-                  class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable500Editor"
-                  icon="icons/application-table.png"
-                  id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table500"
-                  label="Table - Show last 500 elements">
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable500Editor"
+            icon="icons/application-table.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table500"
+            label="Table - Show last 500 elements">
+      </editor>
+      <editor
+            class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTable5000Editor"
+            icon="icons/application-table.png"
+            id="de.uniol.inf.is.odysseus.rcp.viewer.stream.Table5000"
+            label="Table - Show last 5000 elements">
       </editor>
       <editor
             class="de.uniol.inf.is.odysseus.rcp.viewer.stream.table.StreamTableInfEditor"
