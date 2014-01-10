@@ -58,6 +58,8 @@ public interface IDataDictionary {
 	Set<Entry<Resource, ILogicalOperator>> getViews(ISession caller);
 
 	ILogicalOperator getView(String viewname, ISession caller);
+	
+	ILogicalOperator getView(Resource view, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Stream Management
@@ -173,6 +175,7 @@ public interface IDataDictionary {
 	// -------------------------------------------------------------------------
 
 	IDataDictionary createInstance(ITenant t);
+
 
 
 

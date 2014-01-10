@@ -362,14 +362,19 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public ILogicalOperator getView(String view, ISession caller) {
 		Resource viewname = getResourceName(view, caller, viewDefinitions);
+		return getView(viewname, caller);
+	}
 
-		if (viewname != null) {
-			checkAccessRights(viewname, caller, DataDictionaryPermission.READ);
-			ILogicalOperator logicalPlan = this.viewDefinitions.get(viewname);
+	@SuppressWarnings("unchecked")
+	@Override
+	public ILogicalOperator getView(Resource view, ISession caller) {
+		if (view != null) {
+			checkAccessRights(view, caller, DataDictionaryPermission.READ);
+			ILogicalOperator logicalPlan = this.viewDefinitions.get(view);
 			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>((IOperatorOwner) null);
 			@SuppressWarnings("rawtypes")
 			GenericGraphWalker walker = new GenericGraphWalker();
