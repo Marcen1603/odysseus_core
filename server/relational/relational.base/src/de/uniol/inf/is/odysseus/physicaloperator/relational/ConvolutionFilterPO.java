@@ -40,7 +40,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	private double[] weights;
 	private SDFExpression expression;
 	private int size = 0;
-	private Map<Integer, LinkedList<Tuple<M>>> list = new HashMap<>();
+	private Map<Long, LinkedList<Tuple<M>>> list = new HashMap<>();
 	private IGroupProcessor<Tuple<M>, Tuple<M>> groupProcessor = null;
 	private int totalSize;
 	private ITransferArea<Tuple<M>, Tuple<M>> transferArea;
@@ -122,7 +122,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	@Override
 	protected void process_next(Tuple<M> o, int port) {
 		
-		Integer groupID = 0;
+		Long groupID = 0L;
 		if (groupProcessor != null) {
 			groupID = groupProcessor.getGroupID(o);
 		}
@@ -146,7 +146,7 @@ public class ConvolutionFilterPO<M extends IMetaAttribute> extends AbstractPipe<
 	 * @param pos
 	 * @return
 	 */
-	private double getWeightedValue(int pos, int groupID) {
+	private double getWeightedValue(int pos, long groupID) {
 		double weighted = 0.0d;
 		for (int i = 0; i < totalSize; i++) {
 			double old = ((Number) this.list.get(groupID).get(i).getAttribute(pos)).doubleValue();

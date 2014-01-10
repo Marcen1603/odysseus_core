@@ -33,8 +33,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		IGroupProcessor<Tuple<T>, Tuple<T>> {
 
-	Map<Tuple<T>, Integer> keyMap = null;
-	Map<Integer, Tuple<T>> tupleMap = null;
+	Map<Long, Tuple<T>> tupleMap = null;
 	int maxId = 0;
 	int[] gRestrict = null;
 	private final List<SDFAttribute> grAttribs;
@@ -55,19 +54,20 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	}
 
 	@Override
-	public Integer getGroupID(Tuple<T> elem) {
+	public Long getGroupID(Tuple<T> elem) {
 		// Wenn es keine Gruppierungen gibt, ist der Schl�ssel immer gleich 0
 		if (gRestrict == null || gRestrict.length == 0)
-			return Integer.valueOf(0);
+			return Long.valueOf(0);
 		// Ansonsten das Tupel auf die Gruppierungsattribute einschr�nken
 		Tuple<T> gTuple = elem.restrict(gRestrict, true);
+		// calc hash from attributes as groud id
+		long hash = gTuple.hashCode();	
+		
 		// Gibt es diese Kombination schon?
-		Integer id = keyMap.get(gTuple);
+
 		// Wenn nicht, neu eintragen
-		if (id == null) {
-			id = ++maxId;
-			keyMap.put(gTuple, id);
-			tupleMap.put(id, gTuple);
+		if (! tupleMap.containsKey(hash)) {
+			tupleMap.put(hash, gTuple);
 			// System.out.println("Created new Group "+id+" from "+gTuple+" with input "+elem);
 		}
 		/*
@@ -77,7 +77,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		 * 
 		 * }
 		 */
-		return id;
+		return hash;
 	}
 
 	@Override
@@ -89,8 +89,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 			}
 		}
 		maxId = 0;
-		keyMap = new HashMap<Tuple<T>, Integer>();
-		tupleMap = new HashMap<Integer, Tuple<T>>();
+		tupleMap = new HashMap<>();
 	}
 
 	// TODO: FIX THIS. THIS SHOULD NOT BE DONE WITH STRING COMPARE AND
@@ -118,7 +117,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 	}
 
 	@Override
-	public Tuple<T> createOutputElement(Integer groupID,
+	public Tuple<T> createOutputElement(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, Tuple<T>, ?> r) {
 		Tuple<T> returnTuple = new Tuple<T>(outputSchema.size(), false);
 
@@ -138,7 +137,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 
 	@Override
 	public Tuple<T> createOutputElement2(
-			Integer groupID,
+			Long groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<Tuple<T>>, ?> r) {
 		Tuple<T> returnTuple = new Tuple<T>(outputSchema.size(), false);
 
@@ -155,7 +154,7 @@ public class RelationalGroupProcessor<T extends IMetaAttribute> implements
 		return returnTuple;
 	}
 
-	private void addGroupingAttributes(Integer groupID, Tuple<T> returnTuple) {
+	private void addGroupingAttributes(Long groupID, Tuple<T> returnTuple) {
 		Tuple<T> gruppAttr = tupleMap.get(groupID);
 		int groupTupPos = 0;
 		for (SDFAttribute ga : grAttribs) {

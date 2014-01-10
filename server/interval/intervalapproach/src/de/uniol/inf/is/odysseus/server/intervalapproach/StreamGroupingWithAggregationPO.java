@@ -46,7 +46,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 			.getLogger(StreamGroupingWithAggregationPO.class);
 
 	final private ITransferArea<W, W> transferArea;
-	private final Map<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>>();
+	private final Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groups = new HashMap<>();
 	private int dumpAtValueCount = -1;
 	private long createOutputCounter = 0;
 	private boolean outputPA = false;
@@ -115,7 +115,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private void drainGroups() {
 		if (drainAtDone) {
-			for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+			for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 					.entrySet()) {
 				Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 						.getValue().iterator();
@@ -145,7 +145,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		// createOutput(object.getMetadata().getStart());
 
 		// Create group ID from input object
-		Integer groupID = getGroupProcessor().getGroupID(object);
+		Long groupID = getGroupProcessor().getGroupID(object);
 		// Find or create sweep area for group
 		DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa = groups
 				.get(groupID);
@@ -176,7 +176,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 		}
 
 		// Extract all Elements before current Time!
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results = entry
 					.getValue().extractElementsBefore(timestamp);
@@ -185,7 +185,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 		// Find minimal start time stamp from elements intersecting time stamp
 		PointInTime border = timestamp;
-		for (Entry<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
+		for (Entry<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groups
 				.entrySet()) {
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> iter = entry
 					.getValue().peekElementsContaing(timestamp, false);
@@ -210,7 +210,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	private void produceResults(
 			Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> results,
-			Integer groupID) {
+			Long groupID) {
 		while (results.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e = results
 					.next();
@@ -238,7 +238,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	 * 
 	 * @return State of {@link StreamGroupingWithAggregationPO}.
 	 */
-	public Map<Integer, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
+	public Map<Long, DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> getEditableGroups() {
 		return this.groups;
 	}
 

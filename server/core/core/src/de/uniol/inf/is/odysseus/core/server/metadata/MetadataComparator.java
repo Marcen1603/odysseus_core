@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
 /**
  * @author Jonas Jacobi
  */
+@SuppressWarnings("serial")
 @Deprecated
 public class MetadataComparator<T extends IClone> extends de.uniol.inf.is.odysseus.core.metadata.MetadataComparator<T>{
 

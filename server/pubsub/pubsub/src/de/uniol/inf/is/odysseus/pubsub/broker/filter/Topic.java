@@ -80,6 +80,11 @@ public class Topic implements Comparable<Topic>{
 
 	}
 
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
 	/**
 	 * Returns the child with a given name
 	 * @param name

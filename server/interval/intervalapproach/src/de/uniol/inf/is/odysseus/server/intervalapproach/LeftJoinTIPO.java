@@ -263,7 +263,7 @@ public class LeftJoinTIPO<M extends ITimeInterval, T extends IStreamObject<M>>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void process_done() {
+	protected synchronized void process_done() {
 		System.out.println("LeftJoinTIPO (" + this.hashCode()
 				+ ").processDone().");
 

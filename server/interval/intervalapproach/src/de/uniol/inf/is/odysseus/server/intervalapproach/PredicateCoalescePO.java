@@ -61,7 +61,7 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		if (predicate.evaluate(object)) {
 			PairMap<SDFSchema, AggregateFunction, IStreamObject<M>, ?> result = calcEval(currentPartialAggregates);
 			// create IStreamObject
-			IStreamObject<M> out = getGroupProcessor().createOutputElement(0,
+			IStreamObject<M> out = getGroupProcessor().createOutputElement(0L,
 					result);
 			M metadata = (M) object.getMetadata().clone();
 			metadata.setStart(currentPartialAggregates.getMetadata().getStart());

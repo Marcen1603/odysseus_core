@@ -82,6 +82,11 @@ public class LFU implements IRemovalStrategy {
 		public boolean equals(Object obj) {
 			return key.equals(((ListEntry)obj).key);
 		}
+		
+		@Override
+		public int hashCode() {
+			return key.hashCode();
+		}
 	}
 	
 	private class ListEntryComparator implements Comparator<ListEntry> {

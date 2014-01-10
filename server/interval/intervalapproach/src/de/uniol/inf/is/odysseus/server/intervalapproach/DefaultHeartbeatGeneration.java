@@ -38,18 +38,5 @@ public class DefaultHeartbeatGeneration<K extends ITimeInterval, T extends IStre
 	public DefaultHeartbeatGeneration<K, T> clone() {
 		return new DefaultHeartbeatGeneration<K, T>();
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		return true;
-	}
-	
-
 		
 }

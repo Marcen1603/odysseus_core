@@ -78,6 +78,11 @@ public class LRU implements IRemovalStrategy {
 		public boolean equals(Object obj) {
 			return this.key.equals(((ListEntry)obj).key);
 		}
+		
+		@Override
+		public int hashCode() {
+			return key.hashCode();
+		}
 	}
 	
 	public class ListEntryComparator implements Comparator<ListEntry> {

@@ -26,6 +26,11 @@ abstract public class AbstractMetadataUpdater<M extends IClone, T extends IStrea
 	}
 	
 	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+	
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof AbstractMetadataUpdater)){
 			return false;

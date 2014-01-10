@@ -22,14 +22,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
 
 public interface IGroupProcessor<R, W extends IClone> {
 
-	public Integer getGroupID(R elem);
+	public Long getGroupID(R elem);
 
 	public void init();
 
-	public W createOutputElement(Integer groupID,
+	public W createOutputElement(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, W, ?> r);
 
-	public W createOutputElement2(Integer groupID,
+	public W createOutputElement2(Long groupID,
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, ?> e);
 
 }
