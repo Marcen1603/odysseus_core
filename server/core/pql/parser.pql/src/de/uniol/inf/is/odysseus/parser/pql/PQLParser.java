@@ -67,7 +67,7 @@ public class PQLParser implements IQueryParser {
 		PQLParserImpl.setUser(user);
 		PQLParserImpl.setDataDictionary(dd);
 		boolean updateQueryId = true;
-		if (context.containsKey("tempQuery")){
+		if (context != null && context.containsKey("tempQuery")){
 			updateQueryId = !(Boolean)context.get("tempQuery");
 		}
 		PQLParserImpl.setUpdateQueryID(updateQueryId);
