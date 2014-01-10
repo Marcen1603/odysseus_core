@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="TestRunner">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" name="TestRunner">
    <implementation class="de.uniol.inf.is.odysseus.test.runner.TestRunnerApplication"/>
-   <reference bind="addTestComponent" cardinality="1..n" interface="de.uniol.inf.is.odysseus.test.component.ITestComponent" name="ITestComponent" policy="static" unbind="removeTestComponent"/>
+   <reference bind="addTestComponent" cardinality="0..n" interface="de.uniol.inf.is.odysseus.test.component.ITestComponent" name="ITestComponent" policy="static" unbind="removeTestComponent"/>
 </scr:component>

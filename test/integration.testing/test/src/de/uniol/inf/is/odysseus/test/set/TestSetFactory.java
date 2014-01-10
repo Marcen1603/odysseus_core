@@ -19,6 +19,10 @@ public class TestSetFactory {
 		return set;
 	}
 	
+	public static List<TestSet> createTestSetsFromBundleRoot(URL bundleroot){
+		return new ArrayList<>();
+	}
+	
 	public static TestSet createTestSetFromFile(URL queryFile, URL outputdata, URL replaceRootPathInQuery) {
 		TestSet set = new TestSet();
 		String queryFileStr = fileToString(queryFile);

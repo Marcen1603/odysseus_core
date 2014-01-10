@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.test.context.ITestContext;
 /**
  * Wrapper class for an implementation of ITestComponent.
  * 
- * @author Timo Michelsen, Alexander Funk, Dennis Geesen
+ * @author Dennis Geesen
  * 
  */
 public class TestComponentRunner<T extends ITestContext> {

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.runner;
 
+import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.equinox.app.IApplication;
@@ -22,6 +24,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,72 +42,91 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
  * 
  */
 public class TestRunnerApplication implements IApplication {
-	
+
 	private static List<ITestComponent<BasicTestContext>> components = Lists.newArrayList();
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestRunnerApplication.class);
-	
+
 	@Override
-	public Object start(IApplicationContext context) throws Exception {	
+	public Object start(IApplicationContext context) throws Exception {
 		System.out.println("Starting Odysseus...");
-		boolean result = startBundles(context.getBrandingBundle().getBundleContext());
+		startBundles(context.getBrandingBundle().getBundleContext());
+		trackAllTestComponentServices(context);
 		boolean oneFailed = false;
-		if (result) {
-			System.out.println("Odysseus is up and running!");			
-			System.out.println("Starting component tests...");			
-			for (ITestComponent<BasicTestContext> component : components) {
-				TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);		
-				LOG.debug("Scheduled a component test: " + component.getName());
-				List<StatusCode> results = runner.run();
-				LOG.debug("Total results for component "+component.getName());
-				for(StatusCode code : results){					
-					LOG.debug(code.name());					
-					if(code!=StatusCode.OK){
-						oneFailed = true;
-					}
+
+		System.out.println("Odysseus is up and running!");
+		System.out.println("Starting component tests...");
+		for (ITestComponent<BasicTestContext> component : components) {
+			TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);
+			LOG.debug("Scheduled a component test: " + component.getName());
+			List<StatusCode> results = runner.run();
+			LOG.debug("Total results for component " + component.getName());
+			for (StatusCode code : results) {
+				LOG.debug(code.name());
+				if (code != StatusCode.OK) {
+					oneFailed = true;
 				}
-				LOG.debug("-------------------");
 			}
-			System.out.println("All tests were run.");
-			if(oneFailed){
-				System.out.println("At least one test failed!");
-				return -1;
-			}else{
-				System.out.println("All tests finished with no errors.");
-				return IApplication.EXIT_OK;
-			}
-		} else {
-			System.out.println("Odysseus could not be started! Test failed!");
+			LOG.debug("-------------------");
+		}
+		System.out.println("All tests were run.");
+		if (oneFailed) {
+			System.out.println("At least one test failed!");
 			return -1;
-		}		
-		
+		} else {
+			System.out.println("All tests finished with no errors.");
+			return IApplication.EXIT_OK;
+		}
+
+	}
+
+	private void trackAllTestComponentServices(IApplicationContext context) {
+//		BundleContext bc = context.getBrandingBundle().getBundleContext();
+//		ServiceTracker st = new ServiceTracker(bc, ITestComponent.class.getName(), null);
+//		ServiceReference[] map = st.getServiceReferences();
+//
+//		System.out.println("...");
 	}
 
 	@Override
 	public void stop() {
-		
+
 	}
 
-	public void addTestComponent(ITestComponent<BasicTestContext> component) {		
+	public void addTestComponent(ITestComponent<BasicTestContext> component) {
+		System.out.println("ADD COMPONENT:" + component);
 		components.add(component);
 	}
-	
-	public void removeTestComponent(ITestComponent<BasicTestContext> component){
+
+	public void removeTestComponent(ITestComponent<BasicTestContext> component) {
 		components.remove(component);
 	}
 
-	private static boolean startBundles(final BundleContext context) {
+	private void startBundles(final BundleContext context) {
 		for (Bundle bundle : context.getBundles()) {
 			boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-			if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+			if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.INSTALLED) {
 				try {
+					ClassLoader classLoader = bundle.adapt(BundleWiring.class).getClassLoader();
+					Enumeration<URL> entries = bundle.findEntries("/de/uniol/inf/is/odysseus", "*.class", true);
+					while (entries.hasMoreElements()) {
+						String file = entries.nextElement().getFile();
+						int start = 1;
+						if (file.startsWith("/bin/")) {
+							start = "/bin/".length();
+						}
+						String className = file.substring(start, file.length() - 6).replace('/', '.');
+						Class<?> clazz = classLoader.loadClass(className);
+						if(ITestComponent.class.isAssignableFrom(clazz)){
+							System.out.println("FOUND COMPONENT: "+clazz);
+						}
+
+					}
+
 					bundle.start();
 				} catch (Exception e) {
-					e.printStackTrace();
-					return false;
 				}
 			}
 		}
-		return true;
 	}
 }
