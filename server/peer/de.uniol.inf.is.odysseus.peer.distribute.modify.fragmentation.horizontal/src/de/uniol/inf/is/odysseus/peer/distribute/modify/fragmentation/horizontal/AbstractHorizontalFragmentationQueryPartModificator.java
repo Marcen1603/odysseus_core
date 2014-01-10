@@ -50,7 +50,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			ILogicalOperator originSource,
 			Collection<ILogicalOperator> copiesOfOriginSource,
 			LogicalSubscription subscription,
-			Collection<IPair<ILogicalOperator, ILogicalOperator>> histroryOfOperatorsForFragmentation)
+			Collection<IPair<ILogicalOperator, ILogicalOperator>> historyOfOperatorsForFragmentation)
 			throws QueryPartModificationException {
 		
 		// Preconditions
@@ -62,7 +62,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new QueryPartModificationException("The copied sources must be not null!");
 		else if(subscription == null)
 			throw new QueryPartModificationException("The subscription to modify must be not null!");
-		else if(histroryOfOperatorsForFragmentation == null)
+		else if(historyOfOperatorsForFragmentation == null)
 			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
 		
 		// The return value
@@ -80,23 +80,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new QueryPartModificationException(e.getMessage(), e);
 			
 		}
-		
-		// Determine, if the part of the target operator is given
-		Collection<ILogicalOperator> targets = Lists.newArrayList();
-		Optional<ILogicalQueryPart> optPartOfTarget = LogicalQueryHelper.determineQueryPart(modifiedCopiesToOrigin.keySet(), subscription.getTarget());
-		if(optPartOfTarget.isPresent()) {
-			
-			int operatorNo = ((List<ILogicalOperator>) (Collection<ILogicalOperator>) 
-					optPartOfTarget.get().getOperators()).indexOf(subscription.getTarget());
-			for(ILogicalQueryPart copy : modifiedCopiesToOrigin.get(optPartOfTarget.get()))
-				targets.add(((List<ILogicalOperator>) (Collection<ILogicalOperator>) copy.getOperators()).get(operatorNo));
-			
-		} else targets.add(subscription.getTarget());
-		
-		// Subscribe the targets to the operator for fragmentation
-		for(ILogicalOperator target : targets)
-			operatorForFragmentation.subscribeToSource(target, 0, subscription.getSourceOutPort(), subscription.getSchema());
-		
+	
 		// Subscribe the operator for fragmentation to the relative sources
 		for(int copyNo = 0; copyNo < copiesOfOriginSource.size(); copyNo++) {
 			
@@ -108,7 +92,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		if(AbstractHorizontalFragmentationQueryPartModificator.log.isDebugEnabled()) {
 			
 			Collection<ILogicalOperator> copiedTargets = Lists.newArrayList();
-			for(LogicalSubscription sub : operatorForFragmentation.getSubscriptions())
+			for(LogicalSubscription sub : operatorForFragmentation.getSubscribedToSource())
 				copiedTargets.add(sub.getTarget());
 			AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for fragmentation between {} and {}", 
 				copiesOfOriginSource, copiedTargets);
@@ -119,7 +103,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		ILogicalQueryPart fragmentationPart = new LogicalQueryPart(operatorForFragmentation);
 		Collection<ILogicalQueryPart> copiesOfFragmentationPart = Lists.newArrayList(fragmentationPart);
 		modifiedCopiesToOrigin.put(fragmentationPart, copiesOfFragmentationPart);
-		histroryOfOperatorsForFragmentation.add(new Pair<ILogicalOperator, ILogicalOperator>(operatorForFragmentation, originSource));
+		historyOfOperatorsForFragmentation.add(new Pair<ILogicalOperator, ILogicalOperator>(operatorForFragmentation, originSource));
 		
 		return modifiedCopiesToOrigin;
 		
@@ -131,7 +115,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			ILogicalOperator originSource,
 			Collection<ILogicalOperator> copiesOfOriginSource,
-			Collection<IPair<ILogicalOperator, ILogicalOperator>> histroryOfOperatorsForFragmentation)
+			Collection<IPair<ILogicalOperator, ILogicalOperator>> historyOfOperatorsForFragmentation)
 			throws QueryPartModificationException {
 		
 		// Preconditions
@@ -145,37 +129,34 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			throw new QueryPartModificationException("The origin source must be not null!");
 		else if(copiesOfOriginSource == null)
 			throw new QueryPartModificationException("The copied sources must be not null!");
-		else if(histroryOfOperatorsForFragmentation == null)
+		else if(historyOfOperatorsForFragmentation == null)
 			throw new NullPointerException("The history of inserted operator for fragmentation must be not null!");
 		
 		// The return value
 		Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifiedCopiesToOrigin = Maps.newHashMap(copiesToOrigin);
 		SDFSchema sourceSchema = originSource.getOutputSchema().clone();
 		
-		// Cut off real sources, if there were any other operators within the query part
-		if(originPart.getOperators().size() > 1) {
+		Collection<ILogicalQueryPart> newCopies = Lists.newArrayList();
+		for(int copyNo = 0; copyNo < copiesToOrigin.get(originPart).size(); copyNo++) {
 		
-			Collection<ILogicalQueryPart> newCopies = Lists.newArrayList();
-			for(int copyNo = 0; copyNo < copiesToOrigin.get(originPart).size(); copyNo++) {
+			ILogicalOperator sourceToRemove = ((List<ILogicalOperator>) copiesOfOriginSource).get(copyNo);
 			
-				ILogicalOperator sourceToRemove = ((List<ILogicalOperator>) copiesOfOriginSource).get(copyNo);
-				Collection<LogicalSubscription> subsToCut = Lists.newArrayList();
+			for(LogicalSubscription subscription : sourceToRemove.getSubscriptions()) {
+			
+				sourceSchema = subscription.getSchema();
+				sourceToRemove.unsubscribeSink(subscription);
 				
-				for(LogicalSubscription subscription : sourceToRemove.getSubscriptions())
-					subsToCut.add(subscription);
-				
-				for(LogicalSubscription subToCut : subsToCut)
-					sourceToRemove.unsubscribeSink(subToCut);
-				
-				ILogicalQueryPart copy = ((List<ILogicalQueryPart>) copiesToOrigin.get(originPart)).get(copyNo);
-				Collection<ILogicalOperator> operatorsWithoutSource = Lists.newArrayList(copy.getOperators());
-				operatorsWithoutSource.remove(sourceToRemove);
+			}
+			
+			ILogicalQueryPart copy = ((List<ILogicalQueryPart>) copiesToOrigin.get(originPart)).get(copyNo);
+			Collection<ILogicalOperator> operatorsWithoutSource = Lists.newArrayList(copy.getOperators());
+			operatorsWithoutSource.remove(sourceToRemove);
+			if(originPart.getOperators().size() > 1)
 				newCopies.add(new LogicalQueryPart(operatorsWithoutSource));
-				
-			}		
-			modifiedCopiesToOrigin.put(originPart, newCopies);
 			
 		}
+		if(originPart.getOperators().size() > 1)
+			modifiedCopiesToOrigin.put(originPart, newCopies);
 		
 		// Keep only one copy of the source
 		ILogicalOperator sourceToKeep = copiesOfOriginSource.iterator().next();
@@ -236,7 +217,7 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 			newOriginPart = originPart;
 		else newOriginPart = fragmentationPart;
 		modifiedCopiesToOrigin.put(newOriginPart, copiesOfFragmentationPart);
-		histroryOfOperatorsForFragmentation.add(new Pair<ILogicalOperator, ILogicalOperator>(operatorForFragmentation, originSource));
+		historyOfOperatorsForFragmentation.add(new Pair<ILogicalOperator, ILogicalOperator>(operatorForFragmentation, originSource));
 		
 		return modifiedCopiesToOrigin;
 		
@@ -341,9 +322,10 @@ public abstract class AbstractHorizontalFragmentationQueryPartModificator extend
 		
 			ILogicalOperator replicatedSink = ((List<ILogicalOperator>) copiesOfOriginSink).get(sinkNo);
 			replicatedSink.subscribeSink(operatorForReunion, sinkNo, 0, replicatedSink.getOutputSchema());
-			AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion after {}.", replicatedSink);
 			
 		}
+		
+		AbstractHorizontalFragmentationQueryPartModificator.log.debug("Inserted an operator for reunion after {}.", copiesOfOriginSink);
 		
 		// Create the query part for the operator for fragmentation
 		ILogicalQueryPart reunionPart = new LogicalQueryPart(operatorForReunion);

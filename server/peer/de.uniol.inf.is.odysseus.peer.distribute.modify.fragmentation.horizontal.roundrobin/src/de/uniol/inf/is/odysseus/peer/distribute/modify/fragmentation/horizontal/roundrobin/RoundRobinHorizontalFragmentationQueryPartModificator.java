@@ -17,7 +17,7 @@ public class RoundRobinHorizontalFragmentationQueryPartModificator extends
 	/**
 	 * The name of this modificator.
 	 */
-	private static final String name = "roundrobinfragmentation";
+	private static final String name = "fragmentation_horizontal_roundrobin";
 	
 	/**
 	 * The class of the used operator for fragmentation.
