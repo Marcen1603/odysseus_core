@@ -104,10 +104,8 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
         this.fromRightChannel = new boolean[neededAttributes.size()];
 
         int i = 0;
-        for (SDFAttribute curAttribute : neededAttributes) {
-            if (curAttribute == null) {
-                throw new IllegalArgumentException("Needed attribute for expression " + expression + " may not be null!");
-            }
+        for (SDFAttribute curAttr : neededAttributes) {
+            SDFAttribute curAttribute = leftSchema.findAttribute(curAttr.getAttributeName());
             int pos = leftSchema.indexOf(curAttribute);
             if (pos == -1) {
                 if (rightSchema == null && checkRightSchema) {
@@ -118,7 +116,8 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     // in the predicate that does not exist
                     // in the left schema, so there must also be
                     // a right schema
-                    pos = indexOf(rightSchema, curAttribute);
+                	curAttribute = rightSchema.findAttribute(curAttr.getAttributeName());
+                    pos = rightSchema.indexOf(curAttribute);
                     if (pos == -1) {
                         throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
                     }
