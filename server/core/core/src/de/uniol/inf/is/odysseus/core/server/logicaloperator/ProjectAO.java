@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", doc="Make a projection on the input object (i.e. filter attributes)", category={LogicalOperatorCategory.BASE})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", doc = "Make a projection on the input object (i.e. filter attributes)", category = { LogicalOperatorCategory.BASE })
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
 	private List<SDFAttribute> attributes = new ArrayList<>();
@@ -65,50 +65,48 @@ public class ProjectAO extends UnaryLogicalOp {
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		attributes = outputSchema;
 	}
-	
+
 	public List<SDFAttribute> getOutputSchemaWithList() {
 		return attributes;
 	}
-	
-	@GetParameter(name ="ATTRIBUTES")
+
+	@GetParameter(name = "ATTRIBUTES")
 	public SDFSchema getOutputSchemaIntern() {
-		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
+		return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), attributes);
 	}
-	
+
 	@Parameter(type = CreateSDFAttributeParameter.class, name = "PATHS", optional = true, isList = true, doc = "for use with keyvalue objects")
 	public void setPaths(List<SDFAttribute> paths) {
 		this.paths = paths;
 	}
 
-	@GetParameter(name ="PATHS")
+	@GetParameter(name = "PATHS")
 	public List<SDFAttribute> getPaths() {
 		return this.paths;
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#getOutputSchemaIntern(int)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #getOutputSchemaIntern(int)
 	 */
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		return new SDFSchema(getInputSchema().getURI(),  getInputSchema().getType(), attributes);
+		return new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), attributes);
 	}
 
-	public static int[] calcRestrictList(SDFSchema in,
-			SDFSchema out) {
+	public static int[] calcRestrictList(SDFSchema in, SDFSchema out) {
 		int[] ret = new int[out.size()];
 		int i = 0;
-		for (SDFAttribute a : out) {
-			int j = 0;
-			int k = i;
-			for (SDFAttribute b : in) {
-				if (b.equals(a)) {
-					ret[i++] = j;
-				}
-				++j;
+		for (SDFAttribute outAttribute : out) {
+			SDFAttribute foundAttribute = in.findAttribute(outAttribute.getAttributeName());
+			if (foundAttribute == null) {
+				throw new IllegalArgumentException("no such attribute: " + outAttribute);
 			}
-			if (k == i) {
-				throw new IllegalArgumentException("no such attribute: " + a);
-			}
+			
+			ret[i++] = in.indexOf(foundAttribute);
 		}
 		return ret;
 	}
@@ -117,16 +115,15 @@ public class ProjectAO extends UnaryLogicalOp {
 	public void initialize() {
 		setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
 	}
-	
+
 	@Override
 	public boolean isValid() {
-		if(this.attributes.isEmpty() != this.paths.isEmpty()) {
+		if (this.attributes.isEmpty() != this.paths.isEmpty()) {
 			return true;
 		} else {
-			addError(new IllegalParameterException(
-					"either attributes xor paths parameter have to be set"));
+			addError(new IllegalParameterException("either attributes xor paths parameter have to be set"));
 			return false;
 		}
 	}
-	
+
 }
