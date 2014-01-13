@@ -583,7 +583,7 @@ public final class LogicalQueryHelper {
 			}
 		}
 
-		throw new RuntimeException("Could not find the copy of " + originalOperator);
+		return null;
 	}
 
 	public static ILogicalOperator appendTopAO(ILogicalQueryPart queryPart) {
