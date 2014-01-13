@@ -1,13 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Component - Operator
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.component.operator;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.test.component.operator
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.test.component.operator.Activator
 Bundle-Vendor: University of Oldenburg
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- com.google.guava;bundle-version="14.0.0",
  de.uniol.inf.is.odysseus.test;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/testOperatorComponent.xml

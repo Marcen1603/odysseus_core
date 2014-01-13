@@ -15,16 +15,14 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.test.runner;
 
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,31 +42,21 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 public class TestRunnerApplication implements IApplication {
 
 	private static List<ITestComponent<BasicTestContext>> components = Lists.newArrayList();
+	private final Object lock = new Object();
+	private long lastadded = System.currentTimeMillis();
 
 	private static final Logger LOG = LoggerFactory.getLogger(TestRunnerApplication.class);
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		boolean oneFailed = false;
 		System.out.println("Starting Odysseus...");
 		startBundles(context.getBrandingBundle().getBundleContext());
-		trackAllTestComponentServices(context);
-		boolean oneFailed = false;
 
 		System.out.println("Odysseus is up and running!");
 		System.out.println("Starting component tests...");
-		for (ITestComponent<BasicTestContext> component : components) {
-			TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);
-			LOG.debug("Scheduled a component test: " + component.getName());
-			List<StatusCode> results = runner.run();
-			LOG.debug("Total results for component " + component.getName());
-			for (StatusCode code : results) {
-				LOG.debug(code.name());
-				if (code != StatusCode.OK) {
-					oneFailed = true;
-				}
-			}
-			LOG.debug("-------------------");
-		}
+
+		oneFailed = executeComponents(context);
 		System.out.println("All tests were run.");
 		if (oneFailed) {
 			System.out.println("At least one test failed!");
@@ -80,12 +68,37 @@ public class TestRunnerApplication implements IApplication {
 
 	}
 
-	private void trackAllTestComponentServices(IApplicationContext context) {
-//		BundleContext bc = context.getBrandingBundle().getBundleContext();
-//		ServiceTracker st = new ServiceTracker(bc, ITestComponent.class.getName(), null);
-//		ServiceReference[] map = st.getServiceReferences();
-//
-//		System.out.println("...");
+	private boolean executeComponents(IApplicationContext context) {
+		boolean oneFailed = false;
+		long current = System.currentTimeMillis();
+		while ((current - lastadded) < 10000) {
+			synchronized (components) {
+				for (ITestComponent<BasicTestContext> component : components) {
+					TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);
+					LOG.debug("Scheduled a component test: " + component.getName());
+					List<StatusCode> results = runner.run();
+					LOG.debug("Total results for component " + component.getName());
+					for (StatusCode code : results) {
+						LOG.debug(code.name());
+						if (code != StatusCode.OK) {
+							oneFailed = true;
+						}
+					}
+					LOG.debug("-------------------");
+				}
+				components.clear();
+			}
+			synchronized (lock) {
+				System.out.println("no components were added since "+(current - lastadded) + "ms. Waiting... " + Thread.currentThread().getName());
+				try {
+					lock.wait(1000);
+					current = System.currentTimeMillis();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return oneFailed;
 	}
 
 	@Override
@@ -94,8 +107,15 @@ public class TestRunnerApplication implements IApplication {
 	}
 
 	public void addTestComponent(ITestComponent<BasicTestContext> component) {
-		System.out.println("ADD COMPONENT:" + component);
-		components.add(component);
+		System.out.println("ADD COMPONENT:" + component + " " + Thread.currentThread().getName());		
+		synchronized (components) {
+			components.add(component);
+			lastadded = System.currentTimeMillis();
+		}
+		synchronized (lock) {
+			lock.notify();
+		}
+
 	}
 
 	public void removeTestComponent(ITestComponent<BasicTestContext> component) {
@@ -105,28 +125,18 @@ public class TestRunnerApplication implements IApplication {
 	private void startBundles(final BundleContext context) {
 		for (Bundle bundle : context.getBundles()) {
 			boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-			if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.INSTALLED) {
+			if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
 				try {
-					ClassLoader classLoader = bundle.adapt(BundleWiring.class).getClassLoader();
-					Enumeration<URL> entries = bundle.findEntries("/de/uniol/inf/is/odysseus", "*.class", true);
-					while (entries.hasMoreElements()) {
-						String file = entries.nextElement().getFile();
-						int start = 1;
-						if (file.startsWith("/bin/")) {
-							start = "/bin/".length();
-						}
-						String className = file.substring(start, file.length() - 6).replace('/', '.');
-						Class<?> clazz = classLoader.loadClass(className);
-						if(ITestComponent.class.isAssignableFrom(clazz)){
-							System.out.println("FOUND COMPONENT: "+clazz);
-						}
-
+					if (bundle.getSymbolicName().startsWith("de.uniol.inf.is.odysseus")) {
+						bundle.start();
 					}
-
-					bundle.start();
-				} catch (Exception e) {
+				} catch (BundleException e) {
+					e.printStackTrace();
 				}
 			}
+
 		}
+
 	}
+
 }

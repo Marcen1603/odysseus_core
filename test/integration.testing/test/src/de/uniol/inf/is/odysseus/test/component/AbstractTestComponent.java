@@ -66,8 +66,9 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 	private static void tryStartExecutor(IServerExecutor executor) {
 		try {
 			LOG.debug("Starting executor");
+			System.out.println("current thread: "+Thread.currentThread().getName());
 			executor.startExecution();
-		} catch (PlanManagementException e1) {
+		} catch (PlanManagementException e1) {			
 			throw new RuntimeException(e1);
 		}
 	}
