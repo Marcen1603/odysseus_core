@@ -18,12 +18,12 @@ import de.uniol.inf.is.odysseus.test.ExecutorProvider;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
-import de.uniol.inf.is.odysseus.test.set.TestSet;
+import de.uniol.inf.is.odysseus.test.set.ITestSet;
 
-public abstract class AbstractTestComponent<T extends ITestContext> implements ITestComponent<T> {
+public abstract class AbstractTestComponent<T extends ITestContext, S extends ITestSet> implements ITestComponent<T> {
 
 	protected IServerExecutor executor;
-	protected List<TestSet> testsets;
+	protected List<S> testsets;
 	protected ISession session;
 	protected static Logger LOG = LoggerFactory.getLogger(AbstractTestComponent.class);
 
@@ -34,7 +34,7 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		testsets = createTestSets(context);
 	}
 
-	public abstract List<TestSet> createTestSets(T context);
+	public abstract List<S> createTestSets(T context);
 
 	@SuppressWarnings("unchecked")
 	public T createTestContext() {
@@ -92,7 +92,7 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		List<StatusCode> codes = new ArrayList<>();
 		int i = 1;
 		tryStartExecutor(executor);
-		for (TestSet set : testsets) {
+		for (S set : testsets) {
 			System.out.println("Running sub test " + i + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
 			StatusCode code = executeTestSet(set);
 			System.out.println("Sub test \"" + set.getName() + "\" ended with code: " + code);
@@ -104,7 +104,7 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 		return codes;
 	}
 
-	protected abstract StatusCode executeTestSet(TestSet set);
+	protected abstract StatusCode executeTestSet(S set);
 
 	@Override
 	public String getName() {

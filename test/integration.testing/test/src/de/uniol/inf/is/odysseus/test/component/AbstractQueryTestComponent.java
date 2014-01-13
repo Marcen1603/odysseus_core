@@ -5,74 +5,74 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
-import de.uniol.inf.is.odysseus.test.set.TestSet;
+import de.uniol.inf.is.odysseus.test.set.QueryTestSet;
 import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.ICompareSinkListener;
 import de.uniol.inf.is.odysseus.test.sinks.physicaloperator.TICompareSink;
 
-public abstract class AbstractQueryTestComponent<T extends ITestContext> extends AbstractTestComponent<T> implements ICompareSinkListener {
+public abstract class AbstractQueryTestComponent<T extends ITestContext, S extends QueryTestSet> extends AbstractTestComponent<T, S> implements ICompareSinkListener {
 
 	private static final long PROCESSING_WAIT_TIME = 1000;
 
 	private StatusCode processingResult = null;
 
-	protected StatusCode executeTestSet(TestSet set) {
+	private boolean waitforprocessing = true;
+	
+	public AbstractQueryTestComponent(){
+		this(true);
+	}
+	
+	public AbstractQueryTestComponent(boolean waitForProcessing){
+		this.waitforprocessing  = waitForProcessing;
+	}
+
+	protected StatusCode executeTestSet(S set) {
+		Collection<Integer> ids = new ArrayList<>();
 		try {
 			LOG.debug("starting component test...");
-
-			// List<IQueryBuildSetting<?>> settings = new ArrayList<>();//
 			LOG.debug("adding query...");
-			Collection<Integer> ids = executor.addQuery(set.getQuery(), "OdysseusScript", session, "Standard", Context.empty());
-			LOG.debug("adding " + ids.size() + " queries done. Preparing test...");
-			for (Integer queryId : ids) {
-				IPhysicalQuery physicalQuery = executor.getExecutionPlan().getQueryById(queryId);
-				executor.stopQuery(queryId, session);
-				List<IPhysicalOperator> roots = new ArrayList<>();
-				for (IPhysicalOperator operator : physicalQuery.getRoots()) {
-					// TODO: this assumes same output for all sinks -> maybe
-					// there are multiple sinks with different outputs
-					List<Pair<String, String>> expected = set.getExpectedOutput();
-					TICompareSink sink = new TICompareSink(expected);
-					sink.addListener(this);
-					roots.add(sink);
-					@SuppressWarnings("unchecked")
-					ISource<Tuple<ITimeInterval>> oldSink = (ISource<Tuple<ITimeInterval>>) operator;
-					oldSink.subscribeSink(sink, 0, 0, operator.getOutputSchema());
+			ids = executor.addQuery(set.getQuery(), "OdysseusScript", session, "Standard", Context.empty());
+		} catch (PlanManagementException e) {
+			e.printStackTrace();
+			return StatusCode.QUERY_NOT_INSTALLABLE;
+		}
+		try {
+			LOG.debug("adding " + ids.size() + " queries done.");
+			StatusCode result = prepareQueries(ids, set);
+			if(result==StatusCode.OK && waitforprocessing){
+				for (int id : ids) {
+					LOG.debug("starting query " + id + "...");
+					executor.startQuery(id, session);
 				}
-				physicalQuery.setRoots(roots);
+				processingResult = null;
+				LOG.debug("query started, waiting until data is processed...");
+				result = waitProcessing();
+				LOG.debug("processing done.");
+			}else{
+				processingResult = result;
 			}
-			for (int id : ids) {
-				LOG.debug("starting query " + id + "...");
-				executor.startQuery(id, session);
-			}
-			processingResult = null;
-			LOG.debug("query started, waiting until data is processed...");
-			StatusCode result = waitProcessing();
-			LOG.debug("processing done.");
 			LOG.debug("result: " + result);
 			LOG.debug("test done.");
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {
+		} finally {			
 			executor.removeAllQueries(session);
 		}
 		return this.processingResult;
 
 	}
 
-	public abstract List<TestSet> createTestSets(T context);
+	protected StatusCode prepareQueries(Collection<Integer> ids, S set) {		
+		return StatusCode.OK;				
+	}
 
-	private StatusCode waitProcessing() throws InterruptedException {
+	public abstract List<S> createTestSets(T context);
+
+	protected StatusCode waitProcessing() throws InterruptedException {
 		synchronized (this) {
 			while (processingResult == null) {
 				this.wait(PROCESSING_WAIT_TIME);

@@ -22,6 +22,7 @@ package de.uniol.inf.is.odysseus.test;
 public enum StatusCode {
 
 	OK, 
+	QUERY_NOT_INSTALLABLE,
 	EXCEPTION_DURING_TEST,
 	ERROR_DUPLICATES, 
 	ERROR_OUT_OF_ORDER, 

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,27 +20,26 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 public class TestSetFactory {
 
 	private static Logger LOG = LoggerFactory.getLogger(TestSetFactory.class);
-	private static final String[] OUTPUT_FILE_NAMES = { "output", "expected", "expected_output" };
-
-	public static TestSet createTestSetFromFile(URL queryFile, URL outputdata) {
-		TestSet set = new TestSet();
-		set.setQuery(fileToString(queryFile));
-		set.setExpectedOutput(fileToTupleList(outputdata));
+	private static final String[] OUTPUT_FILE_NAMES = { "output", "expected", "expected_output" };	
+	
+	public static QueryTestSet createQueryTestSetFromFile(URL queryFile, URL rootPath){
+		QueryTestSet set = new QueryTestSet();
+		String queryFileStr = fileToString(queryFile);
+		queryFileStr = replaceRootPathInFile(queryFileStr, rootPath);
+		set.setQuery(queryFileStr);	
+		File f = new File(queryFile.getFile());
+		set.setName(f.getName());
 		return set;
 	}
 
-	public static List<TestSet> createTestSetsFromBundleRoot(URL bundleroot) {
-		return seachRecursive(bundleroot);
-	}
-
-	private static List<TestSet> seachRecursive(URL bundleroot) {
-		List<TestSet> testsets = new ArrayList<>();
+	public static List<ExpectedOutputTestSet> createExpectedOutputTestSetsFromBundleRoot(URL bundleroot) {
+		List<ExpectedOutputTestSet> testsets = new ArrayList<>();
 		try {
 			File dir = new File(bundleroot.toURI());
 			List<File> queryFiles = new ArrayList<>();
 			searchQueryFilesRecursive(dir, queryFiles);
 			for (File qf : queryFiles) {
-				TestSet set = createTestSetFromQuery(qf, bundleroot);
+				ExpectedOutputTestSet set = createExpectedOutputTestSetFromQuery(qf, bundleroot);
 				if (set != null) {
 					testsets.add(set);
 				}
@@ -50,13 +50,33 @@ public class TestSetFactory {
 		return testsets;
 	}
 
-	private static TestSet createTestSetFromQuery(File qf, URL bundleroot) {
+	public static List<QueryTestSet> createQueryTestSetsFromBundleRoot(URL bundleroot) {
+		List<QueryTestSet> testsets = new ArrayList<>();
+		try {
+			File dir = new File(bundleroot.toURI());
+			List<File> queryFiles = new ArrayList<>();
+			searchQueryFilesRecursive(dir, queryFiles);
+			for (File qf : queryFiles) {
+				QueryTestSet set = createQueryTestSetFromFile(qf.toURI().toURL(), bundleroot);				
+				if (set != null) {
+					testsets.add(set);
+				}
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return testsets;
+	}
+
+	private static ExpectedOutputTestSet createExpectedOutputTestSetFromQuery(File qf, URL bundleroot) {
 		try {
 			URL queryFile = qf.toURI().toURL();
 			File outputFile = getOutputFile(qf);
 			if (outputFile != null) {
 				URL outputdata = outputFile.toURI().toURL();
-				TestSet set = createTestSetFromFile(queryFile, outputdata, bundleroot);
+				ExpectedOutputTestSet set = createExpectedOutputTestSetFromFile(queryFile, outputdata, bundleroot);
 				return set;
 			} else {
 				LOG.error("There is no corresponding outputfile for " + qf.getAbsoluteFile());
@@ -100,11 +120,11 @@ public class TestSetFactory {
 		}
 	}
 
-	public static TestSet createTestSetFromFile(URL queryFile, URL outputdata, URL replaceRootPathInQuery) {
-		TestSet set = new TestSet();
+	public static ExpectedOutputTestSet createExpectedOutputTestSetFromFile(URL queryFile, URL outputdata, URL replaceRootPathInQuery) {
+		ExpectedOutputTestSet set = new ExpectedOutputTestSet();
 		String queryFileStr = fileToString(queryFile);
 		queryFileStr = replaceRootPathInFile(queryFileStr, replaceRootPathInQuery);
-		set.setQuery(queryFileStr);
+		set.setQuery(queryFileStr);	
 		File f = new File(queryFile.getFile());
 		set.setName(f.getName());
 		set.setExpectedOutput(fileToTupleList(outputdata));
@@ -112,7 +132,6 @@ public class TestSetFactory {
 	}
 
 	private static String replaceRootPathInFile(String queryFileStr, URL rootPath) {
-
 		return queryFileStr.replace("${BUNDLE-ROOT}", rootPath.getFile());
 	}
 
