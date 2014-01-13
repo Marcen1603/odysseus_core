@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
 
-public final class ForceNode {
+final class ForceNode {
 
 	private static long idCounter = 0;
 	

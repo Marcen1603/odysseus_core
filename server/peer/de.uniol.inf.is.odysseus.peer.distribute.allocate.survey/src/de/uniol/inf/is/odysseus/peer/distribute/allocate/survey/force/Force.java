@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.force;
 
 import com.google.common.base.Preconditions;
 
-public final class Force {
+final class Force {
 
 	private final ForceNode nodeA;
 	private final ForceNode nodeB;
