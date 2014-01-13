@@ -894,16 +894,17 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public boolean removeAllQueries(ISession caller) {
-		boolean success = true;
-		for (IPhysicalQuery q : executionPlan.getQueries()) {
+		boolean success = true;			
+		List<IPhysicalQuery> queries = new ArrayList<>(executionPlan.getQueries());
+		for (IPhysicalQuery q : queries) {
 			try {
 				removeQuery(q.getID(), caller);
 			} catch (Throwable throwable) {
 				LOG.error("Exception during stopping query " + q.getID()
-						+ " caller " + caller.getId(), throwable);
+						+ " caller " + caller.getId(), throwable);				
 				success = false;
 			}
-		}
+		}		
 		return success;
 	}
 
