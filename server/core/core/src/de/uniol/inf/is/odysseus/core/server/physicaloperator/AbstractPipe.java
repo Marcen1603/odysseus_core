@@ -249,7 +249,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 
 	@Override
-	final synchronized public void close(ISink<? super W> caller, int sourcePort,
+	final public void close(ISink<? super W> caller, int sourcePort,
 			int sinkPort, List<PhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// logger.trace("CLOSE "+getName());
@@ -258,7 +258,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final synchronized public void close(IOperatorOwner owner) {
+	final public void close(IOperatorOwner owner) {
 		// Hint: This method can only be called
 		// from a query
 		this.delegateSink.close(owner);
