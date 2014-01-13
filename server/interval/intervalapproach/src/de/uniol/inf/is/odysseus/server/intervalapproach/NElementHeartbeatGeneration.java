@@ -50,7 +50,7 @@ public class NElementHeartbeatGeneration <K extends ITimeInterval, T extends ISt
 		if (counter % eachElement == 0){
 			counter = 0;
 			source.sendPunctuation(Heartbeat.createNewHeartbeat(object.getMetadata().getStart()));
-			logger.debug("Sending punctuation ... ");
+			logger.trace("Sending punctuation ... ");
 		}
 		counter++;
 	}
