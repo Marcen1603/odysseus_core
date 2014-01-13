@@ -13,6 +13,7 @@ import net.jxta.peer.PeerID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -31,6 +32,7 @@ import de.uniol.inf.is.odysseus.peer.distribute.QueryPartAllocationException;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.advertisement.AuctionQueryAdvertisement;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.Bid;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.bid.IBidProvider;
+import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.force.ForceModel;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.model.AuctionSummary;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Communicator;
 import de.uniol.inf.is.odysseus.peer.distribute.allocate.survey.util.Helper;
@@ -41,8 +43,7 @@ import de.uniol.inf.is.odysseus.peer.ping.IPingMap;
 public class SurveyBasedAllocator implements IQueryPartAllocator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SurveyBasedAllocator.class);
-//	private static final Random RAND = new Random();
-	
+
 	private static IP2PNetworkManager p2pNetworkManager;
 	private static IPQLGenerator pqlGenerator;
 	private static IP2PDictionary p2pDictionary;
@@ -59,7 +60,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			p2pNetworkManager = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindPQLGenerator(IPQLGenerator serv) {
 		pqlGenerator = serv;
@@ -71,7 +72,7 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 			pqlGenerator = null;
 		}
 	}
-	
+
 	// called by OSGi-DS
 	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
@@ -104,18 +105,20 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	@Override
 	public Map<ILogicalQueryPart, PeerID> allocate(Collection<ILogicalQueryPart> queryParts, Collection<PeerID> knownRemotePeers, PeerID localPeerID, QueryBuildConfiguration config, List<String> allocatorParameters)
 			throws QueryPartAllocationException {
-		
+
 		List<ILogicalQueryPart> newQueryParts = createQueryPartsWithSinkQueryPart(queryParts);
-		
+
 		// copy --> original. Needed since allocator inserts dummyAOs
 		Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap = LogicalQueryHelper.copyQueryPartsDeep(newQueryParts);
-		ILogicalQueryPart realSinksQueryPart = newQueryParts.get(newQueryParts.size() - 1); // see createSinkQueryPart-method
+		ILogicalQueryPart realSinksQueryPart = newQueryParts.get(newQueryParts.size() - 1); // see
+																							// createSinkQueryPart-method
 		ILogicalQueryPart realSinksQueryPartCopy = getCopy(realSinksQueryPart, queryPartsCopyMap);
 
-		// survey every query part except the one with the real sinks since this must be placed locally
+		// survey every query part except the one with the real sinks since this
+		// must be placed locally
 		List<ILogicalQueryPart> queryPartsToSurvey = Lists.newArrayList(queryPartsCopyMap.keySet());
-		queryPartsToSurvey.remove(realSinksQueryPartCopy); 
-		
+		queryPartsToSurvey.remove(realSinksQueryPartCopy);
+
 		Map<ILogicalQueryPart, PeerID> allocationMap = allocate(queryPartsToSurvey, config);
 		Map<ILogicalQueryPart, PeerID> allocationMapParts = transformToOriginalLogicalQueryParts(allocationMap, queryPartsCopyMap);
 
@@ -124,8 +127,8 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 
 	private static ILogicalQueryPart getCopy(ILogicalQueryPart originalQueryPart, Map<ILogicalQueryPart, ILogicalQueryPart> queryPartsCopyMap) {
-		for( ILogicalQueryPart copyQueryPart : queryPartsCopyMap.keySet() ) {
-			if( queryPartsCopyMap.get(copyQueryPart).equals(originalQueryPart)) {
+		for (ILogicalQueryPart copyQueryPart : queryPartsCopyMap.keySet()) {
+			if (queryPartsCopyMap.get(copyQueryPart).equals(originalQueryPart)) {
 				return copyQueryPart;
 			}
 		}
@@ -135,37 +138,37 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	private static List<ILogicalQueryPart> createQueryPartsWithSinkQueryPart(Collection<ILogicalQueryPart> queryParts) {
 		LOG.debug("Creating sink query part");
 		List<ILogicalQueryPart> result = Lists.newArrayList();
-		
+
 		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
-		for( ILogicalQueryPart queryPart : queryParts ) {
+		for (ILogicalQueryPart queryPart : queryParts) {
 			LOG.debug("Check query part {}", queryPart);
-			
+
 			Collection<ILogicalOperator> sinks = LogicalQueryHelper.getSinks(queryPart.getOperators());
 			Collection<ILogicalOperator> realSinksOfQueryPart = determineRealSinks(sinks);
-			
+
 			Collection<ILogicalOperator> nonRealSinksOfQueryPart = Lists.newArrayList(sinks);
 			nonRealSinksOfQueryPart.removeAll(realSinksOfQueryPart);
-			
-			if( !nonRealSinksOfQueryPart.isEmpty() ) {
+
+			if (!nonRealSinksOfQueryPart.isEmpty()) {
 				LOG.debug("Found non real sinks {}", nonRealSinksOfQueryPart);
-				for( ILogicalOperator nonRealSink : nonRealSinksOfQueryPart ) {
+				for (ILogicalOperator nonRealSink : nonRealSinksOfQueryPart) {
 					RenameAO renameAO = new RenameAO();
 					renameAO.setNoOp(true);
 					renameAO.setOutputSchema(nonRealSink.getOutputSchema());
-						
+
 					nonRealSink.subscribeSink(renameAO, 0, 0, nonRealSink.getOutputSchema());
-					
+
 					realSinks.add(renameAO);
 				}
 			}
 			realSinks.addAll(realSinksOfQueryPart);
-			
-			if( !realSinksOfQueryPart.isEmpty() ) {
+
+			if (!realSinksOfQueryPart.isEmpty()) {
 				LOG.debug("Found real sinks {}", realSinksOfQueryPart);
-				
+
 				Collection<ILogicalOperator> allOperatorsOfQueryPart = Lists.newArrayList(queryPart.getOperators());
 				allOperatorsOfQueryPart.removeAll(realSinksOfQueryPart);
-				
+
 				ILogicalQueryPart newQueryPart = new LogicalQueryPart(allOperatorsOfQueryPart);
 				result.add(newQueryPart);
 				LOG.debug("Created new query part {}", newQueryPart);
@@ -177,14 +180,14 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		ILogicalQueryPart realSinksQueryPart = new LogicalQueryPart(realSinks);
 		result.add(realSinksQueryPart);
 		LOG.debug("Created query part with all real sinks {}", realSinksQueryPart);
-		
+
 		return result;
 	}
 
 	private static Collection<ILogicalOperator> determineRealSinks(Collection<ILogicalOperator> sinks) {
 		Collection<ILogicalOperator> realSinks = Lists.newArrayList();
-		for( ILogicalOperator sink : sinks ) {
-			if( sink.isSinkOperator() && !sink.isSourceOperator() ) {
+		for (ILogicalOperator sink : sinks) {
+			if (sink.isSinkOperator() && !sink.isSourceOperator()) {
 				realSinks.add(sink);
 			}
 		}
@@ -236,35 +239,26 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	private static Map<ILogicalQueryPart, PeerID> determinePeerAssignment(List<AuctionSummary> auctions, QueryPartGraph partGraph) throws QueryPartAllocationException {
 		try {
 			Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = determineBidPlanMap(auctions);
-			Map<ILogicalQueryPart, PeerID> bestPeers = determineBestPeers(bidPlanMap);
+			Map<ILogicalQueryPart, Bid> bestBids = determineBestPeers(bidPlanMap);
+
+			ForceModel model = new ForceModel(bestBids, partGraph);
+			model.run();
 			
-//			Map<ILogicalQueryPart, ForceNode> forceNodes = createForceNodes(bestPeers);
-			
-			
-			return bestPeers;
-			
+//			return model.getResult();
+
+			return Maps.transformValues(bestBids, new Function<Bid, PeerID>() {
+				@Override
+				public PeerID apply(Bid input) {
+					return input.getBidderPeerID();
+				}
+			});
+
 		} catch (QueryPartAllocationException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new QueryPartAllocationException("Could not determine the winner of an auction", e);
 		}
 	}
-
-//	private static Map<ILogicalQueryPart, ForceNode> createForceNodes(Map<ILogicalQueryPart, PeerID> bestPeers) {
-//		Map<ILogicalQueryPart, ForceNode> forceNodes = Maps.newHashMap();
-//		for( ILogicalQueryPart queryPart : bestPeers.keySet() ) {
-//			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestPeers.get(queryPart));
-//			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
-//			
-//			forceNodes.put(queryPart, new ForceNode(nodePosition, queryPart));
-//		}
-//		
-//		return forceNodes;
-//	}
-//
-//	private static Vector3D createRandomVector3D() {
-//		return new Vector3D(RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0, RAND.nextDouble() * 1000.0);
-//	}
 
 	private static Map<ILogicalQueryPart, Collection<Bid>> determineBidPlanMap(List<AuctionSummary> auctions) throws InterruptedException, ExecutionException, QueryPartAllocationException {
 		Map<ILogicalQueryPart, Collection<Bid>> bidPlanMap = Maps.newHashMap();
@@ -290,13 +284,13 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 		return bidPlanMap;
 	}
 
-	private static Map<ILogicalQueryPart, PeerID> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
-		
-		Map<ILogicalQueryPart, PeerID> bestBids = Maps.newHashMap();
+	private static Map<ILogicalQueryPart, Bid> determineBestPeers(Map<ILogicalQueryPart, Collection<Bid>> bidQueryPartMap) {
+
+		Map<ILogicalQueryPart, Bid> bestBids = Maps.newHashMap();
 		for (ILogicalQueryPart queryPart : bidQueryPartMap.keySet()) {
-			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)).getBidderPeerID());
+			bestBids.put(queryPart, determineBestBid(bidQueryPartMap.get(queryPart)));
 		}
-		
+
 		return bestBids;
 	}
 
