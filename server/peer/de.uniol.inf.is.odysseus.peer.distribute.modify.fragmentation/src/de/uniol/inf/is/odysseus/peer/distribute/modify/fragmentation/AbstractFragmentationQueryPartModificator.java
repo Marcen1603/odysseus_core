@@ -422,6 +422,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 				entry.getE1().unsubscribeFromAllSources();
 				modifiedCopiesToOrigin.remove(optPartOfFragmentationOperator.get());
 				AbstractFragmentationQueryPartModificator.log.debug("Removed {} due to optimization", entry.getE1());
+				break;
 				
 			}
 			
@@ -548,7 +549,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 			
 			if(originSink.getSubscriptions().isEmpty()) {
 				
-				modifiedCopiesToOrigin = this.modifyRealSink(modifiedCopiesToOrigin, originSink, 
+				modifiedCopiesToOrigin = this.modifyRealSink(originPart, modifiedCopiesToOrigin, originSink, 
 						copiedToOriginSinks.get(originSink));
 				
 			} else {
@@ -561,8 +562,12 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 					if(originPart.getOperators().contains(target))
 						continue;
 					else if(originSink instanceof AccessAO && ((AccessAO) originSink).getAccessAOName().getResourceName().equals(sourceName))
-						continue;					
-					else if(LogicalQueryHelper.determineQueryPart(relevantParts, target).isPresent()) {
+						continue;
+					
+					Optional<ILogicalQueryPart> optDetermineQueryPart = LogicalQueryHelper.determineQueryPart(relevantParts, target);
+					
+					if(optDetermineQueryPart.isPresent() && this.canOptimizeSubscription(
+							originPart, modifiedCopiesToOrigin, originSink, copiedToOriginSinks.get(originSink), subToSink)) {
 						
 						modifiedCopiesToOrigin = AbstractFragmentationQueryPartModificator.subscribeDirect(modifiedCopiesToOrigin, originSink, 
 								copiedToOriginSinks.get(originSink), subToSink, historyOfOperatorsForFragmentation);
@@ -574,8 +579,8 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 						
 					} else {
 						
-						modifiedCopiesToOrigin = this.modifySubscriptionForReunion(
-								modifiedCopiesToOrigin, originSink, copiedToOriginSinks.get(originSink), subToSink);
+						modifiedCopiesToOrigin = this.modifySubscriptionForReunion(originPart, modifiedCopiesToOrigin, relevantParts,
+								originSink, copiedToOriginSinks.get(originSink), subToSink, historyOfOperatorsForFragmentation);
 						
 					}
 					
@@ -590,8 +595,28 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	}
 
 	/**
-	 * Modifies a subscription for insertion of an operator for reunion.
+	 * Checks, if the connection between two relevant query parts can be optimized 
+	 * (direct connections, neither operator for reunion nor operator for fragmentation.
+	 * @param originPart The query part to modify.
 	 * @param copiesToOrigin A mapping of copies to origin query parts.
+	 * @param originSink The origin, relative sink.
+	 * @param copiesOfOriginSink The copies of <code>originSink</code>.
+	 * @param subscription The origin subscription of <code>originSink</code>.
+	 * @throws QueryPartModificationException if any error occurs.
+	 */
+	protected abstract boolean canOptimizeSubscription(
+			ILogicalQueryPart originPart,
+			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
+			ILogicalOperator originSink,
+			Collection<ILogicalOperator> copiesOfOriginSink,
+			LogicalSubscription subscription)
+			throws QueryPartModificationException;
+
+	/**
+	 * Modifies a subscription for insertion of an operator for reunion.
+	 * @param originPart The query part to modify.
+	 * @param copiesToOrigin A mapping of copies to origin query parts.
+	 * @param relevantParts A collection of all relevant query parts.
 	 * @param originSink The origin, relative sink.
 	 * @param copiesOfOriginSink The copies of <code>originSink</code>.
 	 * @param subscription The origin subscription of <code>originSink</code>.
@@ -601,14 +626,18 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws QueryPartModificationException if any error occurs.
 	 */
 	protected abstract Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifySubscriptionForReunion(
+			ILogicalQueryPart originPart,
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
+			Collection<ILogicalQueryPart> relevantParts,
 			ILogicalOperator originSink,
 			Collection<ILogicalOperator> copiesOfOriginSink,
-			LogicalSubscription subscription)
+			LogicalSubscription subscription,
+			Collection<IPair<ILogicalOperator, ILogicalOperator>> historyOfOperatorsForFragmentation)
 			throws QueryPartModificationException;
 	
 	/**
 	 * Modifies a real sink for insertion of an operator for reunion.
+	 * @param originPart The query part to modify.
 	 * @param copiesToOrigin A mapping of copies to origin query parts.
 	 * @param originSink The origin, relative sink.
 	 * @param copiesOfOriginSink The copies of <code>originSink</code>.
@@ -616,6 +645,7 @@ public abstract class AbstractFragmentationQueryPartModificator implements
 	 * @throws QueryPartModificationException if any error occurs.
 	 */
 	protected abstract Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> modifyRealSink(
+			ILogicalQueryPart originPart, 
 			Map<ILogicalQueryPart, Collection<ILogicalQueryPart>> copiesToOrigin,
 			ILogicalOperator originSink, 
 			Collection<ILogicalOperator> copiesOfOriginSink)
