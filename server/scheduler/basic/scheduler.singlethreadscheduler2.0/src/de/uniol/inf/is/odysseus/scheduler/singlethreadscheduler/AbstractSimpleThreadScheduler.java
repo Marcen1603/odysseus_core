@@ -131,6 +131,7 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 		// stop the scheduler threads
 		for (ISourceExecutor sourceThread : sourceThreads) {
 			sourceThread.interrupt();
+			removeSourceThread(sourceThread);
 		}
 		for (int i = 0; i < schedulingExecutor.length; i++) {
 			schedulingExecutor[i].interrupt();
