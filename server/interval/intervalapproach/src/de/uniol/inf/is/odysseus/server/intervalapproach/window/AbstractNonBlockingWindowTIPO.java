@@ -54,12 +54,5 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 
 	protected abstract PointInTime calcWindowEnd(ITimeInterval interval);
 
-	@Override
-	public void process_open() {
-	}
-
-	@Override
-	public void process_close() {
-	}
 
 }
