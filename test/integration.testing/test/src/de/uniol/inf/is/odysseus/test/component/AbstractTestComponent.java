@@ -51,7 +51,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 		try {
 			rootPath = FileLocator.toFileURL(bundleentry);
 			testcontext.setDataRootPath(rootPath);
-		} catch (IOException e) {
+		} catch (IOException | NullPointerException e) {
 			System.out.println("Bundleentry was: " + bundleentry);
 			e.printStackTrace();
 		}
