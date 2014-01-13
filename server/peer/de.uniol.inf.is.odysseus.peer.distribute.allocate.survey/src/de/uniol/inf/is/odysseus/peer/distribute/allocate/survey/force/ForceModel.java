@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.peer.ping.IPingMapNode;
 
 public class ForceModel {
 
+	private static final int MAX_ITERATIONS = 10000;
 	private static final Logger LOG = LoggerFactory.getLogger(ForceModel.class);
 	private static final Random RAND = new Random();
 
@@ -124,8 +125,7 @@ public class ForceModel {
 			Optional<IPingMapNode> optPingMapNode = pingMap.getNode(bestBids.get(queryPart).getBidderPeerID());
 			
 			Vector3D nodePosition = optPingMapNode.isPresent() ? optPingMapNode.get().getPosition() : createRandomVector3D();
-			nodePosition = new Vector3D( nodePosition.getX(), nodePosition.getY(), bestBids.get(queryPart).getValue());
-			
+			nodePosition = new Vector3D(nodePosition.getX(), nodePosition.getY(), bestBids.get(queryPart).getValue());
 			forceNodes.add(new ForceNode(nodePosition, queryPart));
 		}
 		
@@ -171,7 +171,7 @@ public class ForceModel {
 		for( ForceNode forceNode : forceNodes ) {
 			Vector3D newPos = new Vector3D( distX > 0 ? (forceNode.getPosition().getX() - minX) / distX : 1, 
 					distY > 0 ? (forceNode.getPosition().getY() - minY) / distY : 1,
-					distZ > 0 ? (forceNode.getPosition().getZ() - minZ) / distZ : 1);
+					1 - (distZ > 0 ? (forceNode.getPosition().getZ() - minZ) / distZ : 1));
 			
 			ForceNode normalizedNode = null;
 			if( forceNode.isFixed() ) {
@@ -210,7 +210,14 @@ public class ForceModel {
 	}
 
 	public void run() {
+		for( int i = 0; i < MAX_ITERATIONS; i++ ) {
+			for( ForceNode node : normalizedForceNodes ) {
+				node.tick();
+			}
+		}
 		
+		LOG.debug("Finished model-Running");
+		printForceNodes(normalizedForceNodes);
 	}
 
 	public Map<ILogicalQueryPart, PeerID> getResult() {
