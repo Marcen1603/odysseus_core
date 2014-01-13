@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,12 +30,12 @@ import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 
 /**
- * This class is a delegate and can handle event dispatching for
- * any source that registers IEventListener. A thread pool is used
- * to allow asynchronous dispatching
+ * This class is a delegate and can handle event dispatching for any source that
+ * registers IEventListener. A thread pool is used to allow asynchronous
+ * dispatching
  * 
  * @author Marco Grawunder
- *
+ * 
  */
 public class EventHandler {
 
@@ -48,7 +48,9 @@ public class EventHandler {
 	static private EventHandler handler;
 
 	/**
-	 * Get an instance of the EventHandler and register caller as one distributor
+	 * Get an instance of the EventHandler and register caller as one
+	 * distributor
+	 * 
 	 * @param caller
 	 * @return
 	 */
@@ -79,18 +81,21 @@ public class EventHandler {
 	}
 
 	/**
-	 * Stops ALL dispatching. This should only be called before the hole instance closes 
-	 * because all threads are stopped.
+	 * Stops ALL dispatching. This should only be called before the hole
+	 * instance closes because all threads are stopped.
 	 */
 	public static synchronized void stopDispatching() {
-		for (EventDispatcher dispatcher : handler.dispatcherPool) {
-			dispatcher.interrupt();
+		if (handler != null) {
+			for (EventDispatcher dispatcher : handler.dispatcherPool) {
+				dispatcher.interrupt();
+			}
+			handler = null;
 		}
-		handler = null;
 	}
-	
+
 	private EventHandler() {
-		initThreadPool((int) Math.max(1, OdysseusConfiguration.getLong("EventHandlerDispatcherPoolSize", 10)));
+		initThreadPool((int) Math.max(1, OdysseusConfiguration.getLong(
+				"EventHandlerDispatcherPoolSize", 10)));
 	}
 
 	private void initThreadPool(int size) {
@@ -102,6 +107,7 @@ public class EventHandler {
 
 	/**
 	 * Register a new listener at caller for event type
+	 * 
 	 * @param caller
 	 * @param listener
 	 * @param type
@@ -119,9 +125,10 @@ public class EventHandler {
 			curEventListener.add(listener);
 		}
 	}
-	
+
 	/**
 	 * Remove a listener from caller for event type
+	 * 
 	 * @param caller
 	 * @param listener
 	 * @param type
@@ -136,9 +143,9 @@ public class EventHandler {
 		}
 	}
 
-
 	/**
 	 * Register a listener for all events a caller provides
+	 * 
 	 * @param caller
 	 * @param listener
 	 */
@@ -155,8 +162,9 @@ public class EventHandler {
 	}
 
 	/**
-	 * Remove a listener from all caller if it was registered for all events. Does not removed any single
-	 * event registration! 
+	 * Remove a listener from all caller if it was registered for all events.
+	 * Does not removed any single event registration!
+	 * 
 	 * @param caller
 	 * @param listener
 	 */
@@ -171,13 +179,14 @@ public class EventHandler {
 
 	/**
 	 * Deliver event from caller
+	 * 
 	 * @param caller
 	 * @param event
 	 */
 	final public void fire(Object caller, IEvent<?, ?> event) {
 		long curTime = System.nanoTime();
 		EventDispatcher eventDispatcher = dispatcherMap.get(caller);
-		if( eventDispatcher != null ) {
+		if (eventDispatcher != null) {
 			eventDispatcher.addEvent(caller, event, curTime);
 		}
 	}
@@ -191,7 +200,7 @@ public class EventHandler {
  * that should be informed
  * 
  * @author Marco Grawunder
- *
+ * 
  */
 class EventDispatcher extends Thread {
 
@@ -223,7 +232,7 @@ class EventDispatcher extends Thread {
 		IEvent<?, ?> eventToFire = null;
 		Long timeStamp = null;
 		Object caller = null;
-		
+
 		try {
 			while (!isInterrupted()) {
 				synchronized (eventQueue) {
@@ -242,7 +251,7 @@ class EventDispatcher extends Thread {
 					timeStamp = eventTimestamps.removeFirst();
 					caller = callerList.removeFirst();
 				}
-	
+
 				synchronized (handler.eventListener) {
 					Map<IEventType, ArrayList<IEventListener>> el = handler.eventListener
 							.get(caller);
@@ -253,9 +262,12 @@ class EventDispatcher extends Thread {
 							synchronized (list) {
 								for (IEventListener listener : list) {
 									try {
-										listener.eventOccured(eventToFire, timeStamp);
-									} catch( Throwable t ) {
-										logger.debug("Exception in event listener", t);
+										listener.eventOccured(eventToFire,
+												timeStamp);
+									} catch (Throwable t) {
+										logger.debug(
+												"Exception in event listener",
+												t);
 									}
 								}
 							}
@@ -268,7 +280,7 @@ class EventDispatcher extends Thread {
 								.get(caller)) {
 							try {
 								listener.eventOccured(eventToFire, timeStamp);
-							} catch( Throwable t ) {
+							} catch (Throwable t) {
 								logger.debug("Exception in event listener", t);
 							}
 						}
