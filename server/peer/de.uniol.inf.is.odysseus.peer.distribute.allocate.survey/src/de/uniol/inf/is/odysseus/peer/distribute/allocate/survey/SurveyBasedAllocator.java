@@ -73,12 +73,12 @@ public class SurveyBasedAllocator implements IQueryPartAllocator {
 	}
 	
 	// called by OSGi-DS
-	public static void bindP2PDictionay(IP2PDictionary serv) {
+	public static void bindP2PDictionary(IP2PDictionary serv) {
 		p2pDictionary = serv;
 	}
 
 	// called by OSGi-DS
-	public static void unbindP2PDictionay(IP2PDictionary serv) {
+	public static void unbindP2PDictionary(IP2PDictionary serv) {
 		if (p2pDictionary == serv) {
 			p2pDictionary = null;
 		}
