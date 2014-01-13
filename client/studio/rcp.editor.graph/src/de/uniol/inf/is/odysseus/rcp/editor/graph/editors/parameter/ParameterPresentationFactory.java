@@ -76,7 +76,10 @@ public class ParameterPresentationFactory {
 		}
 		if (parameterClass.getName().endsWith("builder.PredicateParameter")) {
 			return new PredicateParameterPresentation();
-		}				
+		}		
+		if (parameterClass.getName().endsWith("builder.SDFExpressionParameter")){
+			return new SDFExpressionParameterPresentation();
+		}
 		return new StringParameterPresentation();
 	}
 
