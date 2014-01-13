@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.peer.distribute.util;
 import java.util.Collection;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.peer.distribute.ILogicalQueryPart;
@@ -36,11 +34,11 @@ public class QueryPartGraphNode {
 		next.addAll(nodes);
 	}
 	
-	public ImmutableCollection<QueryPartGraphNode> getPreviousNodes() {
-		return ImmutableList.<QueryPartGraphNode>copyOf(previous);
+	public Collection<QueryPartGraphNode> getPreviousNodes() {
+		return previous;
 	}
 	
-	public ImmutableCollection<QueryPartGraphNode> getNextNodes() {
-		return ImmutableList.<QueryPartGraphNode>copyOf(next);
+	public Collection<QueryPartGraphNode> getNextNodes() {
+		return next;
 	}
 }
