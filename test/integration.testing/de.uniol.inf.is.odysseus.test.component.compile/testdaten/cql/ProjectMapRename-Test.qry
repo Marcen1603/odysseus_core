@@ -17,7 +17,7 @@ ATTACH STREAM person (timestamp STARTTIMESTAMP,id INTEGER,name STRING,email STRI
 #QUERY 
 SELECT * FROM bid
 #QUERY
-SELECT bid-* FROM bid
+SELECT bid.* FROM bid
 #QUERY
 SELECT price FROM bid
 #QUERY
