@@ -9,7 +9,7 @@ percentage = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '$input0'], 
+		['filename', '${BUNDLE-ROOT}\testdaten\aggregate_time\input0.csv'], 
 		['csv.delimiter', ';'],
 		['csv.trim', 'true']
 		], 
@@ -18,5 +18,4 @@ percentage = ACCESS({
 		['percentage', 'INTEGER']
 ]})
 window0 = window({size = 5, advance = 1, type = 'time', unit = 'SECONDS'}, percentage)
-aggregate0 = aggregate({aggregations=[['AVG', 'percentage', 'avgPerc', 'long']]}, window0)
-file0 = filesink({file='$output0'}, aggregate0)
+aggregate0 = aggregate({aggregations=[['AVG', 'percentage', 'avgPerc', 'double']]}, window0)

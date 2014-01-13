@@ -9,7 +9,7 @@ percentage = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '$input0'], 
+		['filename', '${BUNDLE-ROOT}\testdaten\project\input0.csv'], 
 		['csv.delimiter', ';'],
 		['csv.trim', 'true']
 		], 
@@ -18,4 +18,3 @@ percentage = ACCESS({
 		['percentage', 'INTEGER']
 ]})
 project0 = project({attributes = ['percentage']}, percentage)
-file0 = filesink({file='$output0'}, project0)

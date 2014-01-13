@@ -7,12 +7,19 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 
 public class TestSetFactory {
+
+	private static Logger LOG = LoggerFactory.getLogger(TestSetFactory.class);
+	private static final String[] OUTPUT_FILE_NAMES = { "output", "expected", "expected_output" };
 
 	public static TestSet createTestSetFromFile(URL queryFile, URL outputdata) {
 		TestSet set = new TestSet();
@@ -26,19 +33,56 @@ public class TestSetFactory {
 	}
 
 	private static List<TestSet> seachRecursive(URL bundleroot) {
+		List<TestSet> testsets = new ArrayList<>();
 		try {
 			File dir = new File(bundleroot.toURI());
 			List<File> queryFiles = new ArrayList<>();
 			searchQueryFilesRecursive(dir, queryFiles);
-			System.out.println("FOUND: ");
-			for(File qf : queryFiles){
-				System.out.println("- "+qf.getAbsolutePath());
+			for (File qf : queryFiles) {
+				TestSet set = createTestSetFromQuery(qf, bundleroot);
+				if (set != null) {
+					testsets.add(set);
+				}
 			}
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		return new ArrayList<>();
-		// return null;
+		return testsets;
+	}
+
+	private static TestSet createTestSetFromQuery(File qf, URL bundleroot) {
+		try {
+			URL queryFile = qf.toURI().toURL();
+			File outputFile = getOutputFile(qf);
+			if (outputFile != null) {
+				URL outputdata = outputFile.toURI().toURL();
+				TestSet set = createTestSetFromFile(queryFile, outputdata, bundleroot);
+				return set;
+			} else {
+				LOG.error("There is no corresponding outputfile for " + qf.getAbsoluteFile());
+				LOG.error("Use same name or one of: " + Arrays.toString(OUTPUT_FILE_NAMES));
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static File getOutputFile(File qf) {
+		File dir = qf.getParentFile();
+		String name = qf.getName().substring(0, qf.getName().length() - 4);
+		File f = new File(dir + File.separator + name + ".csv");
+		if (f.exists()) {
+			return f;
+		}
+		for (String filename : OUTPUT_FILE_NAMES) {
+			f = new File(dir + File.separator +filename + ".csv");
+			if (f.exists()) {
+				return f;
+			}
+		}
+		return null;
 	}
 
 	private static void searchQueryFilesRecursive(File dir, List<File> queryFiles) {
@@ -61,7 +105,8 @@ public class TestSetFactory {
 		String queryFileStr = fileToString(queryFile);
 		queryFileStr = replaceRootPathInFile(queryFileStr, replaceRootPathInQuery);
 		set.setQuery(queryFileStr);
-
+		File f = new File(queryFile.getFile());
+		set.setName(f.getName());
 		set.setExpectedOutput(fileToTupleList(outputdata));
 		return set;
 	}

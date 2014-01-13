@@ -9,7 +9,7 @@ percentage = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '$input0'], 
+		['filename', '${BUNDLE-ROOT}\testdaten\select\input0.csv'], 
 		['csv.delimiter', ';'],
 		['csv.trim', 'true']
 		], 
@@ -18,4 +18,3 @@ percentage = ACCESS({
 		['percentage', 'INTEGER']
 ]})
 select0 = select({predicate = RelationalPredicate('percentage >= 50')}, percentage)
-file0 = filesink({file='$output0'}, select0)

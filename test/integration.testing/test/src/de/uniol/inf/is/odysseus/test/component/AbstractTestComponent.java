@@ -20,28 +20,28 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.TestSet;
 
-public abstract class AbstractTestComponent<T extends ITestContext> implements ITestComponent<T>{
+public abstract class AbstractTestComponent<T extends ITestContext> implements ITestComponent<T> {
 
 	protected IServerExecutor executor;
 	protected List<TestSet> testsets;
 	protected ISession session;
 	protected static Logger LOG = LoggerFactory.getLogger(AbstractTestComponent.class);
-	
+
 	@Override
 	public void setupTest(T context) {
 		executor = ExecutorProvider.getExeuctor();
 		session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.getDefaultTenant());
 		testsets = createTestSets(context);
 	}
-	
+
 	public abstract List<TestSet> createTestSets(T context);
 
 	@SuppressWarnings("unchecked")
-	public T createTestContext(){
+	public T createTestContext() {
 		return (T) createBasicTestContext();
 	}
-	
-	public BasicTestContext createBasicTestContext(){
+
+	public BasicTestContext createBasicTestContext() {
 		BasicTestContext testcontext = new BasicTestContext();
 		testcontext.setPassword("manager");
 		testcontext.setUsername("System");
@@ -52,10 +52,10 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 			rootPath = FileLocator.toFileURL(bundleentry);
 			testcontext.setDataRootPath(rootPath);
 		} catch (IOException e) {
-			System.out.println("Bundleentry was: "+bundleentry);
+			System.out.println("Bundleentry was: " + bundleentry);
 			e.printStackTrace();
 		}
-		return testcontext;		
+		return testcontext;
 	}
 
 	/**
@@ -66,9 +66,9 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 	private static void tryStartExecutor(IServerExecutor executor) {
 		try {
 			LOG.debug("Starting executor");
-			System.out.println("current thread: "+Thread.currentThread().getName());
+			System.out.println("current thread: " + Thread.currentThread().getName());
 			executor.startExecution();
-		} catch (PlanManagementException e1) {			
+		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
 		}
 	}
@@ -86,31 +86,31 @@ public abstract class AbstractTestComponent<T extends ITestContext> implements I
 			LOG.error("Exception during stopping executor", e);
 		}
 	}
-	
+
 	@Override
 	public List<StatusCode> runTest(T context) {
 		List<StatusCode> codes = new ArrayList<>();
 		int i = 1;
 		tryStartExecutor(executor);
 		for (TestSet set : testsets) {
-			System.out.println("Running sub test " + i + " of " + testsets.size() + "....");
+			System.out.println("Running sub test " + i + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
 			StatusCode code = executeTestSet(set);
-			System.out.println("Running sub test " + i + " done, ended with code: " + code);
+			System.out.println("Sub test \"" + set.getName() + "\" ended with code: " + code);
+			System.out.println("--");
 			codes.add(code);
 			i++;
 		}
 		tryStopExecutor(executor);
 		return codes;
 	}
-	
-	
+
 	protected abstract StatusCode executeTestSet(TestSet set);
 
 	@Override
 	public String getName() {
-		return getClass().getSimpleName();		
+		return getClass().getSimpleName();
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();
