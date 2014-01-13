@@ -69,7 +69,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 	// private boolean allInputsDone = false;
 	final private OwnerHandler ownerHandler;
-	private final List<IOperatorOwner> openFor = new ArrayList<>();
+	private final Map<IOperatorOwner, Integer> openFor = new HashMap<>();
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -212,8 +212,14 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 		openCloseLock.lock();
 		try {
-
-			openFor.addAll(forOwners);
+			for (IOperatorOwner o: forOwners){
+				Integer count = openFor.get(o);
+				if (count == null){
+					openFor.put(o , 1);
+				}else{
+					openFor.put(o, count+1);
+				}
+			}
 			// allInputsDone = false;
 			// getLogger().trace("open() " + this);
 			// The operator can already be initialized from former calls
@@ -334,8 +340,18 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends
 
 		openCloseLock.lock();
 		try {
-
-			openFor.removeAll(forOwners);
+			for (IOperatorOwner o: forOwners){
+				Integer count = openFor.get(o);
+				if (o == null){
+					throw new IllegalArgumentException("Call from not opened sink");
+				}else{
+					if (count == 1){
+						openFor.remove(o);
+					}else{
+						openFor.put(o, count-1);
+					}
+				}
+			}
 			if (this.sinkOpen.get()) {
 				try {
 					callCloseOnChildren(callPath, forOwners);
