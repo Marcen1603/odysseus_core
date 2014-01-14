@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.interval;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -83,18 +84,13 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	}
 
 	@Override
-	public void init(ITransfer<W> po, int intputPortCount) {
+	public void init(ITransfer<W> po, int inputPortCount) {
 		this.minTs.clear();
 		this.isDone.clear();
 		synchronized (outputQueue) {
 			this.watermark = null;
 			this.po = po;
-//			for (PhysicalSubscription<ISource<? extends R>> sub : po
-//					.getSubscribedToSource()) {
-//				this.minTs.put(sub.getSinkInPort(), null);
-//				this.isDone.put(sub.getSinkInPort(), false);
-//			}
-			for (int port=0;port < intputPortCount; port++) {
+			for (int port=0;port < inputPortCount; port++) {
 				this.minTs.put(port, null);
 				this.isDone.put(port, false);
 			}
@@ -155,6 +151,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 	@Override
 	public void transfer(W object) {
 		transfer(object, outputPort);
+	}
+	
+	public void transfer(List<W> objectList){
+		for (W w:objectList){
+			transfer(w);
+		}
 	}
 	
 	@Override
@@ -247,12 +249,12 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 
 	@SuppressWarnings("unchecked")
 	protected void sendData(PointInTime minimum) {
+		PointInTime lastSendObject = null;
 		if (minimum != null && outputQueue.size() > 0) {
 			synchronized (this.outputQueue) {
 				// don't use an iterator, it does NOT guarantee ordered
 				// traversal!
 				Pair<IStreamable,Integer> elem = this.outputQueue.peek();
-				boolean elementsSend = false;
 				while (elem != null) {
 					if (elem.getE1().isPunctuation()) {
 						if (((IPunctuation) elem.getE1()).getTime().beforeOrEquals(
@@ -282,7 +284,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 								&& ((W) elem.getE1()).getMetadata().getStart()
 										.beforeOrEquals(minimum)) {
 							this.outputQueue.poll();
-							elementsSend = true;
+							lastSendObject = ((W) elem.getE1()).getMetadata().getStart();
 							po.transfer((W) elem.getE1(), elem.getE2());
 							elem = this.outputQueue.peek();
 						} else {
@@ -298,9 +300,9 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 				// po.sendPunctuation(Heartbeat.createNewHeartbeat(minimum),
 				// outputPort);
 				// }
-				if (elementsSend) {
+				if (lastSendObject != null) {
 					// Set marker to time stamp of the last send object
-					watermark = minimum;
+					watermark = lastSendObject.clone();
 				}
 			}
 		}
