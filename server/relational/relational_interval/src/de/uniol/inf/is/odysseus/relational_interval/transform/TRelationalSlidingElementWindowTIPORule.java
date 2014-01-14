@@ -1,5 +1,5 @@
 /********************************************************************************** 
-  * Copyright 2011 The Odysseus Team
+ * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,16 +46,16 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	public boolean isExecutable(AbstractWindowAO operator,
 			TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet())
-			if (operator.getWindowType() == WindowType.TUPLE
-					&& operator.getWindowSlide() == -1) {
+			if (operator.getWindowType() == WindowType.TUPLE) {
 				if (operator.isPartitioned()) {
-		if (operator.getOutputSchema().getType() == Tuple.class && transformConfig.getMetaTypes().contains(
-				ITimeInterval.class.getCanonicalName())) {
-			
+					if (operator.getOutputSchema().getType() == Tuple.class
+							&& transformConfig.getMetaTypes().contains(
+									ITimeInterval.class.getCanonicalName())) {
+
 						return true;
 					}
 				}
-		}
+			}
 		return false;
 	}
 
@@ -68,9 +68,9 @@ public class TRelationalSlidingElementWindowTIPORule extends
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super AbstractWindowAO> getConditionClass() {	
+	public Class<? super AbstractWindowAO> getConditionClass() {
 		return AbstractWindowAO.class;
 	}
 
