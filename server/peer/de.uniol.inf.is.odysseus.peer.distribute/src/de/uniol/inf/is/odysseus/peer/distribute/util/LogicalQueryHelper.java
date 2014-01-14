@@ -585,6 +585,30 @@ public final class LogicalQueryHelper {
 
 		return null;
 	}
+	
+	/**
+	 * Collects all copies of a given operator.
+	 * @param originPartOfOperator The part containing the operator.
+	 * @param copiesOfOriginPart The copies of <code>originPartOfOperator</code>
+	 * @param operator The operator, whose copies shall be collected.
+	 */
+	public static Collection<ILogicalOperator> collectCopies(ILogicalQueryPart originPartOfOperator, 
+			Collection<ILogicalQueryPart> copiesOfOriginPart, ILogicalOperator operator) {
+		
+		Preconditions.checkNotNull(operator, "The operator, whose copies shall be collected, must not be null!");
+		Preconditions.checkNotNull(originPartOfOperator, "The query part containing the operator must not be null!");
+		Preconditions.checkNotNull(copiesOfOriginPart, "The copies of the query part containing the operator must not be null!");
+		
+		// The return value
+		Collection<ILogicalOperator> copies = Lists.newArrayList();
+		
+		int operatorIndex = ((List<ILogicalOperator>) (Collection<ILogicalOperator>) originPartOfOperator.getOperators()).indexOf(operator);
+		for(ILogicalQueryPart copyOfOriginPart : copiesOfOriginPart)
+			copies.add(((List<ILogicalOperator>) (Collection<ILogicalOperator>) copyOfOriginPart.getOperators()).get(operatorIndex));
+		
+		return copies;
+		
+	}
 
 	public static ILogicalOperator appendTopAO(ILogicalQueryPart queryPart) {
 		Preconditions.checkNotNull(queryPart, "Query part to append TopAO must not be null!");
