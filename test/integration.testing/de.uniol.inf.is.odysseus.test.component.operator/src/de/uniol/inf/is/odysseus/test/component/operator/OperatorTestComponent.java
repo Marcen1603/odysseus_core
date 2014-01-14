@@ -18,5 +18,10 @@ public class OperatorTestComponent extends AbstractQueryExpectedOutputTestCompon
 	public String getName() {
 		return "Operator Test Component";
 	}
+	
+	@Override
+	public boolean isActivated() {
+		return true;
+	}
 
 }

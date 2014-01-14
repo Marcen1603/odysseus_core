@@ -22,5 +22,10 @@ public class CompileTestComponent extends AbstractQueryTestComponent<BasicTestCo
 	public String getName() {		
 		return "Compile Test Component";
 	}
+	
+	@Override
+	public boolean isActivated() {	
+		return true;
+	}
 
 }

@@ -90,10 +90,8 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> tuple, int port) {
 		List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple);
-		if (startSame.size() == 0) {
-			System.out.println("no tuple found for: "+tuple);
-			stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);
-			
+		if (startSame.size() == 0) {			
+			stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);			
 		} else {
 			if (startSame.size() == 1) {
 				Tuple<? extends ITimeInterval> other = startSame.get(0);

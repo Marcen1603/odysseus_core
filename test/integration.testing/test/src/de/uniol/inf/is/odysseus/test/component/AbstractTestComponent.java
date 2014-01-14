@@ -115,4 +115,9 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	public String toString() {
 		return getName();
 	}
+	
+	@Override
+	public boolean isActivated() {	
+		return true;
+	}
 }

@@ -33,4 +33,5 @@ public interface ITestComponent<T extends ITestContext> {
 	public List<StatusCode> runTest(T context);	
 	public T createTestContext();
 	public String getName();
+	public boolean isActivated();
 }

@@ -52,7 +52,11 @@ public class TestComponentRunner<T extends ITestContext> {
 		long startTime = System.nanoTime();
 		List<StatusCode> testResult = new ArrayList<>();
 		try {
-			testResult = component.runTest(context);
+			if (component.isActivated()) {
+				testResult = component.runTest(context);
+			}else{
+				LOG.debug("Component is deactivated, skipping...");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Arrays.asList(StatusCode.EXCEPTION_DURING_TEST);
