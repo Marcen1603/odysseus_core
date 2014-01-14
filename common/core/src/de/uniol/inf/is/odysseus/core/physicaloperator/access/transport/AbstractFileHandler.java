@@ -35,7 +35,7 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		}
 	}
 
-	private String convertForOS(String filename) {
+	protected String convertForOS(String filename) {
 		char thisos = File.separatorChar;
 		if(thisos=='/'){
 			filename = filename.replace('\\', thisos);

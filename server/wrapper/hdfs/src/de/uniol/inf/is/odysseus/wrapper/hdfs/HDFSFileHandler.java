@@ -35,7 +35,7 @@ public class HDFSFileHandler extends AbstractFileHandler {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		fileHandler.filename = options.get("filename");
+		fileHandler.filename = convertForOS(options.get("filename"));
 		fileHandler.append = (options.containsKey("append"))?Boolean.parseBoolean(options.get("append")):false;
 
 		return fileHandler;

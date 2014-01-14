@@ -46,7 +46,7 @@ public class FileHandler extends AbstractFileHandler {
 	}
 
 	@Override
-	public void processInOpen() throws IOException {
+	public void processInOpen() throws IOException {		
 		if (!preload) {
 			final File file = new File(filename);
 			try {
@@ -120,7 +120,7 @@ public class FileHandler extends AbstractFileHandler {
 	}
 
 	@Override
-	public void processOutOpen() throws IOException {
+	public void processOutOpen() throws IOException {		
 		final File file = new File(filename);
 		try {
 			out = new FileOutputStream(file, append);
@@ -145,6 +145,7 @@ public class FileHandler extends AbstractFileHandler {
 		FileHandler fh = new FileHandler(protocolHandler);
 		fh.setOptionsMap(options);
 		fh.filename = options.get(FILENAME);
+		fh.filename = convertForOS(fh.filename);
 		fh.append = (options.containsKey(APPEND)) ? Boolean
 				.parseBoolean(options.get(APPEND)) : false;
 		fh.preload = (options.containsKey(PRELOAD)) ? Boolean
