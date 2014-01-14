@@ -275,6 +275,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 							// }
 							// }
 							po.sendPunctuation((IPunctuation) elem.getE1(), elem.getE2());
+							lastSendObject = ((IPunctuation) elem.getE1()).getTime();
 							elem = this.outputQueue.peek();
 						} else {
 							elem = null;
