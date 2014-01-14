@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,9 +29,20 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 		super.setOptionsMap(options);
 		if (options.containsKey(FILENAME)){
 			filename = options.get(FILENAME);
+			filename = convertForOS(filename);
 		}else{
 			throw new IllegalArgumentException("No filename given!");			
 		}
+	}
+
+	private String convertForOS(String filename) {
+		char thisos = File.separatorChar;
+		if(thisos=='/'){
+			filename = filename.replace('\\', thisos);
+		}else{
+			filename = filename.replace('/', thisos);
+		}
+		return filename;
 	}
 
 	@Override
