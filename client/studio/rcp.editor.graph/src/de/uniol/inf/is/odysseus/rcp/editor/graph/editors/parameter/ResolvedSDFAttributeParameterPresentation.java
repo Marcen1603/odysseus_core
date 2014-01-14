@@ -83,8 +83,8 @@ public class ResolvedSDFAttributeParameterPresentation extends AbstractParameter
 		combo.add("");
 		if (getOperator().getInputSchemas() != null && getOperator().getInputSchemas().get(port) != null) {
 			for (SDFAttribute posVal : getOperator().getInputSchemas().get(port).getAttributes()) {
-				combo.add(posVal.getAttributeName());
-				if (posVal.getAttributeName().equals(attribute)) {
+				combo.add(posVal.getURI());
+				if (posVal.getURI().equals(attribute)) {
 					select = combo.getItemCount() - 1;
 				}
 			}
