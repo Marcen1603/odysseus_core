@@ -20,18 +20,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
-
 @SuppressWarnings("rawtypes")
-public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
-		Comparable<SDFSchema>, Serializable, IClone {
+public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comparable<SDFSchema>, Serializable, IClone {
 
 	private static final long serialVersionUID = 5218658682722448980L;
 
@@ -41,7 +37,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	private List<String> baseSourceNames = new ArrayList<String>();
 
 	final private Class<? extends IStreamObject> type;
-	
+
 	private Boolean outOfOrder;
 
 	protected SDFSchema(String URI, Class<? extends IStreamObject> type) {
@@ -52,7 +48,6 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 	}
 
-	
 	/**
 	 * @param schema
 	 */
@@ -60,23 +55,21 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		super(uri, schema);
 		if (schema != null) {
 			if (schema.getBaseSourceNames() != null) {
-				if (schema.getBaseSourceNames().size() == 1
-						&& schema.getBaseSourceNames().get(0).equals("")) {
+				if (schema.getBaseSourceNames().size() == 1 && schema.getBaseSourceNames().get(0).equals("")) {
 					baseSourceNames.add(uri);
 				}
 				baseSourceNames.addAll(schema.getBaseSourceNames());
 			}
 			this.type = schema.type;
 			this.outOfOrder = schema.outOfOrder;
-		}else{
+		} else {
 			type = null;
 			this.outOfOrder = null;
 		}
 
 	}
 
-	public SDFSchema(String uri, Class<? extends IStreamObject> type, SDFAttribute attribute,
-			SDFAttribute... attributes1) {
+	public SDFSchema(String uri, Class<? extends IStreamObject> type, SDFAttribute attribute, SDFAttribute... attributes1) {
 		super(uri);
 		this.type = type;
 		if (attribute != null) {
@@ -103,11 +96,11 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public Class<? extends IStreamObject> getType() {
 		return type;
 	}
-	
+
 	public boolean isInOrder() {
-		return (outOfOrder == null)||(outOfOrder == false);
+		return (outOfOrder == null) || (outOfOrder == false);
 	}
-		
+
 	@Override
 	public SDFSchema clone() {
 		return new SDFSchema(this.getURI(), this);
@@ -132,71 +125,96 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	public SDFAttribute findAttribute(String attributeName) {
-		// TODO: Mit SchemaHelper abgleichen ...
-		String[] split = attributeName.split(Pattern.quote("."));
-		List<String> splitted = new LinkedList<String>();
-		for (String s : split) {
-			splitted.add(s);
+		String[] parts = attributeName.split("\\.", 2); // the attribute can have the
+		// form a.b.c.d
+
+		// source name available
+		String path[] = null;
+		String source = null;
+		if (parts.length == 2) {
+			path = parts[1].split("\\."); // split b:c:d into {b, c, d}
+			source = parts[0];
 		}
-		return findAttribute(splitted, elements, 0);
+		// no source name available
+		else {
+			path = parts[0].split("\\."); // split b:c:d into {b, c, d}
+		}
+
+		// Test if special attribute, starting with %
+		if (source != null && source.startsWith("__") && parts.length == 2) {
+			SDFAttribute attribute = findAttribute(parts[1]);
+			if (attribute != null) {
+				return new SDFAttribute(source + "." + attribute.getSourceName(), attribute.getAttributeName(), attribute);
+			}
+
+		} else {
+
+			SDFAttribute attribute = findORAttribute(this, source, path, 0);
+			if (attribute != null)
+				return attribute;
+		}
+
+		for (SDFAttribute attr : this) {
+			// Remove UserName
+			String attrName = attr.toString();
+			if (attrName.equalsIgnoreCase(attributeName)) {
+				return attr;
+			}
+		}
+
+		// final cases: UserName.SourceName.Attribute
+		// --> remove User name from schema
+		for (SDFAttribute attr : this.elements) {
+			// Remove UserName
+			String attrName = attr.toString();
+			int pos = attrName.indexOf('.');
+			if (pos > 0) {
+				attrName = attrName.substring(pos + 1);
+				if (attrName.equalsIgnoreCase(attributeName)) {
+					return attr;
+				}
+			}
+		}
+
+		// final cases: UserName.SourceName.Attribute
+		// --> remove User name from name
+		int pos = attributeName.indexOf('.');
+		if (pos > 0) {
+			attributeName = attributeName.substring(pos + 1);
+			for (SDFAttribute attr : this.elements) {
+				if (attr.toString().equalsIgnoreCase(attributeName)) {
+					return attr;
+				}
+			}
+		}
+
+		return null;
+
 	}
 
-	public static SDFAttribute findAttribute(List<String> splitted,
-			List<SDFAttribute> elems, int position) {
+	private SDFAttribute findORAttribute(SDFSchema list, String source,
+			String[] path, int index) throws AmbiguousAttributeException {
+		String toFind = path[index];
+		SDFAttribute curRoot = null;
+		for (SDFAttribute attr : list) {
 
-		// Only in the first run, treat sourceNames
-		if (position == 0) {
-			// Find Attribute
-			if (splitted.size() > 2) {
-				for (SDFAttribute a : elems) {
-					if (a.getSourceName() != null && a.getSourceName().equals(splitted.get(0))) {
-						return findAttribute(splitted, a.getDatatype()
-								.getSchema().getAttributes(), position + 1);
-					}
+			if (attr.getAttributeName().equals(toFind)
+					&& (source == null || attr.getSourceName().equals(source))) {
+				if (curRoot == null) {
+					curRoot = attr;
+				} else {
+					throw new AmbiguousAttributeException(
+							attr.getAttributeName());
 				}
-				// Attribute found, containing source name and attribute name
-			} else if (splitted.size() == 2) {
-				for (SDFAttribute a : elems) {
-					if (a.getAttributeName().equalsIgnoreCase(splitted.get(1))
-							&& (a.getSourceName() != null && a.getSourceName()
-									.equalsIgnoreCase(splitted.get(0)))) {
-						return a;
-					}
-				}
-				// Attribute found containing attribute name
-			} else if (splitted.size() == 1) {
-				for (SDFAttribute a : elems) {
-					if (a.getAttributeName().equalsIgnoreCase(splitted.get(0))) {
-						return a;
-					}
-				}
-
 			}
-		} else { // position > 0, ignore source names!
+		}
 
-			if (splitted.size() - position > 1) {
-				for (SDFAttribute a : elems) {
-					if (a.getAttributeName().equalsIgnoreCase(
-							splitted.get(position)))
-						// Complex Types could be tuples or beans
-						if (a.getDatatype().isTuple()) {
-							return findAttribute(splitted, a.getDatatype()
-									.getSchema().getAttributes(), position + 1);
-						} else if (a.getDatatype().isBean()) {
-							return findAttribute(splitted, a.getDatatype()
-									.getSubType().getSchema().getAttributes(),
-									position + 1);
-						}
-				}
-			} else { // splitted.size()-position == 1
-				for (SDFAttribute a : elems) {
-					if (a.getAttributeName().equalsIgnoreCase(
-							splitted.get(position))) {
-						return a;
-					}
-				}
-
-			}
+		if (index == path.length - 1) {
+			return curRoot;
+		} else if (curRoot != null && curRoot.getDatatype().hasSchema()) {
+			// TODO: MG: Is this correct?
+			return findORAttribute(curRoot.getDatatype().getSchema(), null,
+					path, index + 1);
 		}
 
 		return null;
@@ -234,12 +252,8 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return newSet;
 	}
 
-	protected static String getNewName(SDFSchema attributes1,
-			SDFSchema attributes2) {
-		String name = attributes1.getURI().compareToIgnoreCase(
-				attributes2.getURI()) >= 0 ? attributes1.getURI()
-				+ attributes2.getURI() : attributes2.getURI()
-				+ attributes1.getURI();
+	protected static String getNewName(SDFSchema attributes1, SDFSchema attributes2) {
+		String name = attributes1.getURI().compareToIgnoreCase(attributes2.getURI()) >= 0 ? attributes1.getURI() + attributes2.getURI() : attributes2.getURI() + attributes1.getURI();
 		return name;
 	}
 
@@ -250,8 +264,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 * @param attributes2
 	 * @return
 	 */
-	public static SDFSchema difference(SDFSchema attributes1,
-			SDFSchema attributes2) {
+	public static SDFSchema difference(SDFSchema attributes1, SDFSchema attributes2) {
 
 		SDFSchema newSet = new SDFSchema(attributes1.getURI(), attributes1);
 		for (int j = 0; j < attributes2.size(); j++) {
@@ -275,8 +288,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	 *            Set2
 	 * @return
 	 */
-	public static SDFSchema intersection(SDFSchema attributes1,
-			SDFSchema attributes2) {
+	public static SDFSchema intersection(SDFSchema attributes1, SDFSchema attributes2) {
 		SDFSchema newSet = new SDFSchema(getNewName(attributes1, attributes2), attributes1.type);
 		for (int j = 0; j < attributes1.size(); j++) {
 			SDFAttribute nextAttr = attributes1.getAttribute(j);
@@ -366,8 +378,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	public static SDFSchema changeSourceName(SDFSchema schema, String newName) {
 		List<SDFAttribute> newattributeList = new ArrayList<SDFAttribute>();
 		for (SDFAttribute a : schema.getAttributes()) {
-			newattributeList.add(new SDFAttribute(newName,
-					a.getAttributeName(), a));
+			newattributeList.add(new SDFAttribute(newName, a.getAttributeName(), a));
 		}
 		SDFSchema newSchema = new SDFSchema(newName, schema.type, newattributeList);
 		return newSchema;
@@ -375,7 +386,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	@Override
 	public String toString() {
-		return super.toString()+" "+type;
+		return super.toString() + " " + type;
 	}
-	
+
 }

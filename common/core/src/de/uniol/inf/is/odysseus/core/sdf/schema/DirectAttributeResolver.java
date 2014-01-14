@@ -59,123 +59,15 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	public SDFAttribute getAttribute(String name)
 			throws AmbiguousAttributeException, NoSuchAttributeException {
 
-		String[] parts = name.split("\\.", 2); // the attribute can have the
-												// form a.b.c.d
-
-		// source name available
-		String path[] = null;
-		String source = null;
-		if (parts.length == 2) {
-			path = parts[1].split("\\."); // split b:c:d into {b, c, d}
-			source = parts[0];
+		SDFAttribute attribute = this.schema.findAttribute(name);
+		if(attribute==null){
+			throw new IllegalArgumentException("no such attribute: " + name);
+		}else{
+			return attribute;
 		}
-		// no source name available
-		else {
-			path = parts[0].split("\\."); // split b:c:d into {b, c, d}
-		}
-
-		// Test if special attribute, starting with %
-		if (source != null && source.startsWith("__") && parts.length == 2) {
-			SDFAttribute attribute = getAttribute(parts[1]);
-			if (attribute != null) {
-				return new SDFAttribute(source + "."
-						+ attribute.getSourceName(),
-						attribute.getAttributeName(), attribute);
-			}
-
-		} else {
-
-			SDFAttribute attribute = findORAttribute(this.schema, source, path,
-					0);
-			if (attribute != null)
-				return attribute;
-		}
-
-		for (SDFAttribute attr : this.schema) {
-			// Remove UserName
-			String attrName = attr.toString();
-			if (attrName.equalsIgnoreCase(name)) {
-				return attr;
-			}
-		}
-
-		// final cases: UserName.SourceName.Attribute 
-		// --> remove User name from schema
-		for (SDFAttribute attr : this.schema) {
-			// Remove UserName
-			String attrName = attr.toString();
-			int pos = attrName.indexOf('.');
-			if (pos > 0) {
-				attrName = attrName.substring(pos + 1);
-				if (attrName.equalsIgnoreCase(name)) {
-					return attr;
-				}
-			}
-		}
-
-		// final cases: UserName.SourceName.Attribute 
-		// --> remove User name from name
-		int pos = name.indexOf('.');
-		if (pos > 0) {
-			name = name.substring(pos + 1);
-			for (SDFAttribute attr : this.schema) {	
-				if (attr.toString().equalsIgnoreCase(name)) {
-					return attr;
-				}
-			}
-		}
-
-		throw new IllegalArgumentException("no such attribute: " + name);
-
-		// SDFAttribute found = null;
-		// for (SDFAttribute attr : schema) {
-		// if (parts.length == 1) {
-		// if ((attr).getAttributeName().equals(name)) {
-		// if (found != null) {
-		// throw new AmgigiousAttributeException(name);
-		// }
-		// found = attr;
-		// }
-		// }
-		// else {
-		// if (attr.getPointURI().equals(name)) {
-		// return attr;
-		// }
-		// }
-		// }
-		// if (found == null) {
-		// throw new NoSuchAttributeException(name);
-		// }
-		// return found;
 	}
 
-	private SDFAttribute findORAttribute(SDFSchema list, String source,
-			String[] path, int index) throws AmbiguousAttributeException {
-		String toFind = path[index];
-		SDFAttribute curRoot = null;
-		for (SDFAttribute attr : list) {
-
-			if (attr.getAttributeName().equals(toFind)
-					&& (source == null || attr.getSourceName().equals(source))) {
-				if (curRoot == null) {
-					curRoot = attr;
-				} else {
-					throw new AmbiguousAttributeException(
-							attr.getAttributeName());
-				}
-			}
-		}
-
-		if (index == path.length - 1) {
-			return curRoot;
-		} else if (curRoot != null && curRoot.getDatatype().hasSchema()) {
-			// TODO: MG: Is this correct?
-			return findORAttribute(curRoot.getDatatype().getSchema(), null,
-					path, index + 1);
-		}
-
-		return null;
-	}
+	
 
 	@Override
 	public DirectAttributeResolver clone() {
