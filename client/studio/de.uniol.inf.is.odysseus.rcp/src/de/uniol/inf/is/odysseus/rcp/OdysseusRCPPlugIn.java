@@ -74,10 +74,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin {
 		OdysseusRCPPlugIn.activeSession = session;
 	}
 
-	public static ISession getActiveSession() {
-		if(activeSession==null){
-			System.err.println("There is no session yet!!");
-		}
+	public static ISession getActiveSession() {		
 		return activeSession;
 	}
 	
