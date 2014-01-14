@@ -101,7 +101,7 @@ public class ProjectAO extends UnaryLogicalOp {
 		int[] ret = new int[out.size()];
 		int i = 0;
 		for (SDFAttribute outAttribute : out) {
-			SDFAttribute foundAttribute = in.findAttribute(outAttribute.getAttributeName());
+			SDFAttribute foundAttribute = in.findAttribute(outAttribute.getURI());
 			if (foundAttribute == null) {
 				throw new IllegalArgumentException("no such attribute: " + outAttribute);
 			}

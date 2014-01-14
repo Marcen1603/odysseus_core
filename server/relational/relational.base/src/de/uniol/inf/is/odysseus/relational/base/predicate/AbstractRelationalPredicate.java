@@ -105,7 +105,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 
         int i = 0;
         for (SDFAttribute curAttr : neededAttributes) {
-            SDFAttribute curAttribute = leftSchema.findAttribute(curAttr.getAttributeName());
+            SDFAttribute curAttribute = leftSchema.findAttribute(curAttr.getURI());
             int pos = leftSchema.indexOf(curAttribute);
             if (pos == -1) {
                 if (rightSchema == null && checkRightSchema) {
@@ -116,7 +116,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                     // in the predicate that does not exist
                     // in the left schema, so there must also be
                     // a right schema
-                	curAttribute = rightSchema.findAttribute(curAttr.getAttributeName());
+                	curAttribute = rightSchema.findAttribute(curAttr.getURI());
                     pos = rightSchema.indexOf(curAttribute);
                     if (pos == -1) {
                         throw new IllegalArgumentException("Attribute " + curAttribute + " not in " + rightSchema);
