@@ -15,12 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.physicaloperator;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 
 /**
  * Diese Klasse verarbeitet den in einem Operator u.U. notwendigen Heap, der die richtige Sortierung
@@ -39,13 +39,14 @@ public interface ITransferArea<R extends IStreamObject<?>, W extends IStreamObje
 	 * @param object Das neue Objekt aus dem Eingabedatenstrom des Operators
 	 * @param port Port, auf dem das neue Objekt im Operator angekommen ist
 	 */
-	public void newElement(IStreamable object, int inPort);
+	void newElement(IStreamable object, int inPort);
 
 	/**
 	 * Fuegt ein neues Element in den Heap ein.
 	 * @param object Objekt, das in den Heap eingefuegt werden soll.
 	 */
-	public void transfer(W object);
+	void transfer(W object);
+	void transfer(List<W> objectList);
 	void transfer(W object, int toPort);
 	/**
 	 * To avoid packing time stamps into a punctuation, this

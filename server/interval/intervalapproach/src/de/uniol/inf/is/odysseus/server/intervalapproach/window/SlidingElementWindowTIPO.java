@@ -15,41 +15,51 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.NoGroupProcessor;
 
-public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>> extends AbstractWindowTIPO<T> {
+public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
+		extends AbstractWindowTIPO<T> {
 
 	Logger LOG = LoggerFactory.getLogger(SlidingElementWindowTIPO.class);
 
-	List<IStreamable> _buffer = null;
-	boolean forceElement = true;
-	private long elemsToRemoveFromStream;
-	private final long advance;
+	private IGroupProcessor<T, T> groupProcessor = new NoGroupProcessor<T, T>();
 
-	private int realelementsize = 0;
+	private ITransferArea<T, T> transferArea = new TITransferArea<>();
+
+	final private Map<Long, List<T>> buffers = new HashMap<>();
+	boolean forceElement = true;
+	private final long advance;
 
 	public SlidingElementWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
-		_buffer = new LinkedList<IStreamable>();
 		advance = windowAdvance > 0 ? windowAdvance : 1;
+		if (windowSize < advance) {
+			throw new IllegalArgumentException(
+					"Sorry. Size < Advance currently not implemented!");
+		}
 	}
 
-	public SlidingElementWindowTIPO(SlidingElementWindowTIPO<T> po) {
-		super(po);
-		this._buffer = po._buffer;
-		advance = windowAdvance > 0 ? windowAdvance : 1;
+	public void setGroupProcessor(IGroupProcessor<T, T> groupProcessor) {
+		this.groupProcessor = groupProcessor;
 	}
 
 	@Override
@@ -58,132 +68,105 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>> ex
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
-
-		if (elemsToRemoveFromStream > 0) {
-			elemsToRemoveFromStream--;
-		} else {
-			synchronized (_buffer) {
-				_buffer.add(object);
-				this.realelementsize++;
-			}
-			processBuffer(_buffer, object);
-		}
+	public void process_open() {
+		buffers.clear();
+		groupProcessor.init();
+		transferArea.init(this, 1);
 	}
 
-	protected void processBuffer(List<IStreamable> buffer, T object) {
-		// Fall testen, dass der Strom zu Ende ist ...
-		// Fenster hat die maximale Groesse erreicht
-		// inclusive etwaiger punctuations...
-		synchronized (_buffer) {
-			if (this.realelementsize == (this.windowSize + 1)) {
-				// jetzt advance-Elemente rauswerfen
+	@Override
+	protected void process_next(T object, int port) {
+		synchronized (buffers) {
+			long bufferId = groupProcessor.getGroupID(object);
+			List<T> buffer = buffers.get(bufferId);
+			if (buffer == null) {
+				buffer = new LinkedList<T>();
+				buffers.put(bufferId, buffer);
+			}
+			buffer.add(object);
+			process(buffer, object);
+		}
+		transferArea.newElement(object, port);
+	}
+
+	private void process(List<T> buffer, T object) {
+		synchronized (buffer) {
+			// test if buffer has reached limit
+			if (buffer.size() == (this.windowSize + 1)) {
 
 				long elemsToSend = advance;
-				// Problem: Fenster ist kleiner als Schrittlaenge -->
-				// dann nur alle Elemente aus dem Fenster werfen
-				// und Tupel solange verwerfen bis advance wieder erreicht
-				if (windowSize < windowAdvance) {
-					elemsToSend = windowSize;
-					elemsToRemoveFromStream = windowAdvance - windowSize;
-				}
+				// TODO: Problem: Window size smaller than advance
+				// if (windowSize < windowAdvance) {
+				// elemsToSend = windowSize;
+				// }
+
 				transferBuffer(buffer, elemsToSend, object);
-				if (elemsToRemoveFromStream > 0) {
-					elemsToRemoveFromStream--;
-					// Geht, da noch genau 1 Element im Buffer ist!
-					buffer.clear();
-				}
+
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void transferBuffer(List<IStreamable> buffer, long numberofelements, T object) {
-		// we have to recognize the number of punctuations so far
-		synchronized (_buffer) {
-			Iterator<IStreamable> bufferIter = buffer.iterator();
-			IStreamable elem = buffer.get(0);
-			PointInTime start = elem.isPunctuation() ? ((IPunctuation) elem).getTime() : ((T) elem).getMetadata().getStart();
+	private void transferBuffer(List<T> buffer, long numberofelements, T object) {
+		synchronized (buffer) {
+			Iterator<T> bufferIter = buffer.iterator();
+
+			PointInTime start = null;
+			if (usesSlideParam) {
+				// keep start time of first element
+				T elem = buffer.get(0);
+				start = elem.getMetadata().getStart();
+			}
 			for (int i = 0; i < numberofelements; i++) {
-				IStreamable toReturn = bufferIter.next();
+				T toReturn = bufferIter.next();
 				bufferIter.remove();
 				// If slide param is used give all elements of the window
 				// the same start timestamp
-				if (!usesAdvanceParam) {
-					if (toReturn.isPunctuation()) {
-						toReturn = ((IPunctuation) toReturn).clone(start);
-					} else {
-						((T) toReturn).getMetadata().setStart(start);
-					}
+				if (usesSlideParam) {
+					toReturn.getMetadata().setStart(start);
 				}
-				if (toReturn.isPunctuation()) {
-					sendPunctuation((IPunctuation) toReturn);
-					i--;
-				} else {
-					if (((T) toReturn).getMetadata().getStart().before(object.getMetadata().getStart())) {
-						((T) toReturn).getMetadata().setEnd(object.getMetadata().getStart());
-						
-						transfer((T) toReturn);
-					} else {
-						LOG.warn("Element " + toReturn + " removed because missing granularity");
-					}
-					this.realelementsize--;
-				}
-
+				toReturn.getMetadata().setEnd(object.getMetadata().getStart());
+				transferArea.transfer(toReturn);
 			}
 		}
 	}
 
 	@Override
 	protected void process_done() {
-		synchronized (_buffer) {
-			if (!_buffer.isEmpty()) {
-				// get the last inserted real object and use this for transfering...
-
-				for (int i = _buffer.size() - 1; i >= 0; i--) {
-					IStreamable object = _buffer.get(i);
-					if (!object.isPunctuation()) {
-						@SuppressWarnings("unchecked")
-						T elem = (T) object;
-						transferBuffer(_buffer, this.realelementsize, elem);
-						return;
-					}
-				}
-				LOG.warn("Nothing written out since there were just punctuations in the window");
+		synchronized (buffers) {
+			for (List<T> b : buffers.values()) {
+				transferArea.transfer(b);
 			}
 		}
 	}
 
 	@Override
-	public SlidingElementWindowTIPO<T> clone() {
-		return new SlidingElementWindowTIPO<T>(this);
-	}
-
-	@Override
-	public void process_open() {
-		if (isPartitioned()) {
-			throw new RuntimeException("Partioning not supported in this class");
+	public void process_close() {
+		synchronized (buffers) {
+			for (List<T> b : buffers.values()) {
+				b.clear();
+			}
 		}
 	}
 
 	@Override
-	public void process_close() {
-		synchronized (_buffer) {
-			this._buffer.clear();
-			this.realelementsize = 0;
-		}		
+	public void processPunctuation(IPunctuation punctuation, int port) {
+		transferArea.sendPunctuation(punctuation, port);
+		transferArea.newElement(punctuation, port);
 	}
 
 	@Override
 	public long getElementsStored1() {
-		return this.realelementsize;
+		long size = 0;
+		Collection<List<T>> bufs = buffers.values();
+		for (List<T> b : bufs) {
+			size += b.size();
+		}
+		return size;
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-		synchronized (_buffer) {
-			this._buffer.add(punctuation);
-		}		
+	public AbstractPipe<T, T> clone() {
+		throw new IllegalArgumentException("Currently not implemented!");
 	}
 
 }

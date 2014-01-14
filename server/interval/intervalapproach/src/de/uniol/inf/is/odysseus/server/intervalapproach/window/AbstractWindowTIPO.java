@@ -32,7 +32,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	protected final long windowAdvance;
 	protected final WindowType windowType;
 	protected final boolean partitioned;
-	protected final boolean usesAdvanceParam;
+	final boolean usesSlideParam;
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
 		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(),
@@ -40,18 +40,18 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		if (ao.getWindowAdvance() > 0) {
 			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
 					ao.getWindowAdvance(), ao.getTimeUnit());
-			usesAdvanceParam = true;
+			usesSlideParam = false;
 		} else {
 			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
 					ao.getWindowSlide(), ao.getTimeUnit());
-			usesAdvanceParam = false;
+			usesSlideParam = true;
 		}
 		// this.windowAO = ao;
 		this.windowType = ao.getWindowType();
 		this.partitioned = ao.isPartitioned();
 		//setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
 		addParameterInfo("unit-based size", windowSize);
-		if (usesAdvanceParam) {
+		if (!usesSlideParam) {
 			addParameterInfo("unit-based advance", windowAdvance);
 		} else {
 			addParameterInfo("unit-based slide", windowAdvance);
@@ -66,7 +66,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		// this.windowAO = window.windowAO.clone();
 		this.windowType = window.windowType;
 		this.partitioned = window.partitioned;
-		this.usesAdvanceParam = window.usesAdvanceParam;
+		this.usesSlideParam = window.usesSlideParam;
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 				&& this.windowAdvance == awtipo.windowAdvance
 				&& this.windowType.compareTo(awtipo.windowType) == 0
 				&& this.partitioned == awtipo.isPartitioned()
-				&& this.usesAdvanceParam == awtipo.usesAdvanceParam) {
+				&& this.usesSlideParam == awtipo.usesSlideParam) {
 			// System.out.println("SAME WINDOWS - Step 3");
 			return true;
 		}

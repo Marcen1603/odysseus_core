@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.persistentqueries;
 
+import java.util.List;
 import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -112,6 +113,11 @@ public class PersistentTransferArea<R extends IStreamObject<? extends ITimeInter
 		// }
 	}
 
+	@Override
+	public void transfer(List<W> objectList) {
+		this.po.transfer(objectList);
+	}
+	
 	@Override
 	public void transfer(W object, int toPort) {
 		this.po.transfer(object, toPort);
