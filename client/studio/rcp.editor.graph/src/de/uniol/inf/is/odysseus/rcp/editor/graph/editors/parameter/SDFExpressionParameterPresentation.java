@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -30,6 +31,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 
 /**
  * @author DGeesen
@@ -37,8 +39,9 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
  */
 public class SDFExpressionParameterPresentation extends AbstractParameterPresentation<Pair<String, String>> {
 
+	private int port = 0;
 	private Text textName;	
-	private Text textExp;
+	private Combo combo;
 
 	/*
 	 * (non-Javadoc)
@@ -88,11 +91,17 @@ public class SDFExpressionParameterPresentation extends AbstractParameterPresent
 		container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		PairModifyListener pml = new PairModifyListener();
-
-		textExp = new Text(container, SWT.BORDER);
-		textExp.setText(expression);
-		textExp.addModifyListener(pml);
-		textExp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+				
+		combo = new Combo(container, SWT.BORDER | SWT.DROP_DOWN);
+		if (getOperator().getInputSchemas() != null && getOperator().getInputSchemas().get(port) != null) {
+			for (SDFAttribute posVal : getOperator().getInputSchemas().get(port).getAttributes()) {
+				combo.add(posVal.getURI());
+			}
+		} 
+		combo.setText(expression);
+		
+		combo.addModifyListener(pml);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		
 		textName = new Text(container, SWT.BORDER);
 		textName.setText(name);
@@ -127,8 +136,8 @@ public class SDFExpressionParameterPresentation extends AbstractParameterPresent
 
 	private class PairModifyListener implements ModifyListener {
 		@Override
-		public void modifyText(ModifyEvent e) {			
-			Pair<String, String> attributePair = new Pair<String, String>(textExp.getText(), textName.getText());
+		public void modifyText(ModifyEvent e) {		
+			Pair<String, String> attributePair = new Pair<String, String>(combo.getText(), textName.getText());
 			setValue(attributePair);
 		}
 	}
