@@ -86,7 +86,27 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			buffer.add(object);
 			process(buffer, object);
 		}
-		transferArea.newElement(object, port);
+		// Do not call:
+		// transferArea.newElement(object, port);
+		// Determine min element in transferBuffer and send hearbeat
+	}
+	
+	private PointInTime getMinTs(){
+		// MinTs is the oldest element of all buffers
+		// because the buffers are sorted by time, only the first element has to
+		// be treated
+		if (buffers.size() == 0){
+			return null;
+		}
+		PointInTime min = null;
+		for (List<T> buffer:buffers.values()){
+			T e = buffer.get(0);
+			PointInTime test = e.getMetadata().getStart();
+			if (min == null || min.after(test)){
+				min = test;
+			}
+		}
+		return min;
 	}
 
 	private void process(List<T> buffer, T object) {
@@ -128,6 +148,12 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				transferArea.transfer(toReturn);
 			}
 		}
+		// We need to determine the oldest element in all buffers and
+		// send a punctuation to the transfer area
+		PointInTime minTs = getMinTs();
+		if (minTs != null){
+			transferArea.newHeartbeat(minTs, 0);
+		}
 	}
 
 	@Override
@@ -151,7 +177,6 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		transferArea.sendPunctuation(punctuation, port);
-		transferArea.newElement(punctuation, port);
 	}
 
 	@Override
