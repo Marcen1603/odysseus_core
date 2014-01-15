@@ -13,6 +13,7 @@ Service-Component: OSGI-INF/testcomponent.xml,
  OSGI-INF/executor.xml
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor;bundle-version="1.0.0",
  org.eclipse.equinox.app,
  org.apache.commons.lang3,
  de.uniol.inf.is.odysseus.intervalapproach;bundle-version="1.0.0",
@@ -26,3 +27,4 @@ Export-Package: de.uniol.inf.is.odysseus.test,
  de.uniol.inf.is.odysseus.test.component,
  de.uniol.inf.is.odysseus.test.context,
  de.uniol.inf.is.odysseus.test.set
+Bundle-Vendor: University of Oldenburg
