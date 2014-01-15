@@ -30,6 +30,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  */
 public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T>{
 
+	private long offset = -1;
+
 	public SlidingAdvanceTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
@@ -39,10 +41,13 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 	}
 		
 	@Override
-	protected PointInTime calcWindowEnd(ITimeInterval time) {		
+	protected PointInTime calcWindowEnd(ITimeInterval time) {
+		if (offset <0){
+			offset = time.getStart().getMainPoint();
+		}
 		// Hint: This is an integer division!
 		return new PointInTime((time.getStart().getMainPoint() / windowAdvance)
-				* windowAdvance + windowSize);
+				* windowAdvance + windowSize+offset);
 	}
 
 	@Override
