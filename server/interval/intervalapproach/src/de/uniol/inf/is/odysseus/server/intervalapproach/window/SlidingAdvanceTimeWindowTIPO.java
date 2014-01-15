@@ -15,10 +15,10 @@
   */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 
 /**
  * Allgemeine Klasse fuer SlidingTimeWindow. Spezielle implementierungen fuer SlidingTimeWindow mit Delta = 1 und FixedWindow mit Delta = WindowSize
@@ -30,8 +30,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
  */
 public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T>{
 
-	private long offset = -1;
-
 	public SlidingAdvanceTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
@@ -41,13 +39,10 @@ public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITi
 	}
 		
 	@Override
-	protected PointInTime calcWindowEnd(ITimeInterval time) {
-		if (offset <0){
-			offset = time.getStart().getMainPoint();
-		}
+	protected PointInTime calcWindowEnd(ITimeInterval time) {		
 		// Hint: This is an integer division!
 		return new PointInTime((time.getStart().getMainPoint() / windowAdvance)
-				* windowAdvance + windowSize+offset);
+				* windowAdvance + windowSize);
 	}
 
 	@Override
