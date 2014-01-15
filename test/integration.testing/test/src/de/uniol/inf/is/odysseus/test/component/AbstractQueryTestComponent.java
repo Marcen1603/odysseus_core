@@ -55,7 +55,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 				processingResult = result;
 			}
 			LOG.debug("result: " + result);
-			LOG.debug("test done.");
+			LOG.debug("sub test done.");
 		} catch (PlanManagementException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

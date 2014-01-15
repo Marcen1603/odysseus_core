@@ -53,7 +53,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 			rootPath = FileLocator.toFileURL(bundleentry);
 			testcontext.setDataRootPath(rootPath);
 		} catch (IOException | NullPointerException e) {
-			System.out.println("Bundleentry was: " + bundleentry);
+			LOG.debug("Bundleentry was: " + bundleentry);
 			e.printStackTrace();
 		}
 		return testcontext;
@@ -66,8 +66,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	 */
 	private static void tryStartExecutor(IServerExecutor executor) {
 		try {
-			LOG.debug("Starting executor");
-			System.out.println("current thread: " + Thread.currentThread().getName());
+			LOG.debug("Starting executor...");			
 			executor.startExecution();
 		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
@@ -94,10 +93,10 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 		int i = 1;
 		tryStartExecutor(executor);
 		for (S set : testsets) {
-			System.out.println("Running sub test " + i + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
+			LOG.debug("Running sub test " + i + " of " + testsets.size() + ": \"" + set.getName() + "\" ....");
 			StatusCode code = executeTestSet(set);
-			System.out.println("Sub test \"" + set.getName() + "\" ended with code: " + code);
-			System.out.println("--");
+			LOG.debug("Sub test \"" + set.getName() + "\" ended with code: " + code);
+			LOG.debug("***************************************************************************************");
 			codes.add(code);
 			i++;
 		}

@@ -50,19 +50,19 @@ public class TestRunnerApplication implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		boolean oneFailed = false;
-		System.out.println("Starting Odysseus...");
+		LOG.debug("Starting Odysseus...");
 		startBundles(context.getBrandingBundle().getBundleContext());
 
-		System.out.println("Odysseus is up and running!");
-		System.out.println("Starting component tests...");
+		LOG.debug("Odysseus is up and running!");
+		LOG.debug("Starting component tests...");
 
 		oneFailed = executeComponents(context);
-		System.out.println("All tests were run.");
+		LOG.debug("All tests were run.");
 		if (oneFailed) {
-			System.out.println("At least one test failed!");
+			LOG.debug("At least one test failed!");
 			return -1;
 		} else {
-			System.out.println("All tests finished with no errors.");
+			LOG.debug("All tests finished with no errors.");
 			return IApplication.EXIT_OK;
 		}
 
@@ -74,22 +74,25 @@ public class TestRunnerApplication implements IApplication {
 		while ((current - lastadded) < 10000) {
 			synchronized (components) {
 				for (ITestComponent<BasicTestContext> component : components) {
-					TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);
-					LOG.debug("Scheduled a component test: " + component.getName());
+					TestComponentRunner<BasicTestContext> runner = new TestComponentRunner<BasicTestContext>(component);					
+					LOG.debug("Starting a new component test: " + component.getName());		
+					LOG.debug("#######################################################################################");
 					List<StatusCode> results = runner.run();
-					LOG.debug("Total results for component " + component.getName());
+					LOG.debug("Total results for component \"" + component.getName()+"\"");
+					int i=1;
 					for (StatusCode code : results) {
-						LOG.debug(code.name());
+						LOG.debug("Sub test "+i+": "+code.name());
 						if (code != StatusCode.OK) {
 							oneFailed = true;
 						}
-					}
-					LOG.debug("-------------------");
+						i++;
+					}					
+					LOG.debug("#######################################################################################");
 				}
 				components.clear();
 			}
 			synchronized (lock) {
-				System.out.println("no components were added since "+(current - lastadded) + "ms. Waiting... " + Thread.currentThread().getName());
+				LOG.debug("no components were added since "+(current - lastadded) + "ms. Waiting... " + Thread.currentThread().getName());
 				try {
 					lock.wait(1000);
 					current = System.currentTimeMillis();
@@ -106,8 +109,7 @@ public class TestRunnerApplication implements IApplication {
 
 	}
 
-	public void addTestComponent(ITestComponent<BasicTestContext> component) {
-		System.out.println("ADD COMPONENT:" + component + " " + Thread.currentThread().getName());		
+	public void addTestComponent(ITestComponent<BasicTestContext> component) {		
 		synchronized (components) {
 			components.add(component);
 			lastadded = System.currentTimeMillis();
