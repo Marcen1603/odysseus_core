@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.storage.IAssociativeStorag
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
+public class AssociativeStorage3D implements IAssociativeStorage<Tuple<?>> {
 
     private Map<Object, Object> store = new HashMap<Object, Object>();
     private List<Integer> sizes;
@@ -26,9 +26,9 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
      * @param sizes
      *            The size of the storage.
      */
-    public AssociativeStorage2D(List<Integer> sizes) {
+    public AssociativeStorage3D(List<Integer> sizes) {
         Objects.requireNonNull(sizes);
-        Preconditions.checkElementIndex(1, sizes.size());
+        Preconditions.checkElementIndex(2, sizes.size());
         this.sizes = sizes;
     }
 
@@ -45,9 +45,9 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
         }
         Object lastKey = path[path.length - 1];
         if (tmpStore.get(lastKey) == null) {
-            tmpStore.put(lastKey, new Double[sizes.get(0)][sizes.get(1)]);
+            tmpStore.put(lastKey, new Double[sizes.get(0)][sizes.get(1)][sizes.get(2)]);
         }
-        ((Double[][]) tmpStore.get(lastKey))[index[0]][index[1]] = value;
+        ((Double[][][]) tmpStore.get(lastKey))[index[0]][index[1]][index[2]] = value;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
             tmpStore = (Map<Object, Object>) tmpStore.get(index);
         }
         Object lastIndex = path[path.length - 1];
-        return ((Double[][]) tmpStore.get(lastIndex))[position[0]][position[1]];
+        return ((Double[][][]) tmpStore.get(lastIndex))[position[0]][position[1]][position[2]];
     }
 
     @Override
@@ -71,7 +71,6 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
             tmpStore = (Map<Object, Object>) tmpStore.get(index);
         }
         Object lastIndex = path[path.length - 1];
-        return ((Double[][]) tmpStore.get(lastIndex))[position[0]];
+        return ((Double[][][]) tmpStore.get(lastIndex))[position[0]][position[1]];
     }
-
 }

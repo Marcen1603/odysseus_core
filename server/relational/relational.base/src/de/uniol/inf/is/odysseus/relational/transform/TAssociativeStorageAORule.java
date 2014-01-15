@@ -9,7 +9,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.storage.IAssociativeStorag
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssociativeStorageAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AssociativeStoragePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.AssociativeStorage2D;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.AssociativeStorage3D;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
@@ -25,12 +27,17 @@ public class TAssociativeStorageAORule extends AbstractTransformationRule<Associ
      */
     @Override
     public void execute(AssociativeStorageAO operator, TransformationConfiguration config) {
-        // TODO Auto-generated method stub
         int dimension = operator.getDimension();
 
         IAssociativeStorage<Tuple<?>> store = null;
         if (dimension == 2) {
-            store = new AssociativeStorage2D(operator.getDepth(), operator.getSizes());
+            store = new AssociativeStorage2D(operator.getSizes());
+        }
+        else if (dimension == 3) {
+            store = new AssociativeStorage3D(operator.getSizes());
+        }
+        else {
+            throw new TransformationException("Dimension not supported");
         }
         AssociativeStorageManager.create(operator.getName(), store);
         AssociativeStoragePO<Tuple<?>> storage = new AssociativeStoragePO<Tuple<?>>(store, operator.getHierachyPositions(), operator.getIndexPositions(), operator.getValuePosition());

@@ -44,7 +44,7 @@ public class AssociativeStoragePO<T extends Tuple<?>> extends AbstractSink<T> {
         for (int i = 0; i < this.indexPos.length; i++) {
             index[i] = ((Number) object.getAttribute(this.indexPos[i])).intValue();
         }
-        Number value = (Number) object.getAttribute(valuePos);
+        Double value = (Double) object.getAttribute(valuePos);
         this.store.set(hierachy, index, value);
     }
 
