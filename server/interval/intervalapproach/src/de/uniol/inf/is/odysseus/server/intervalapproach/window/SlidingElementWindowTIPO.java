@@ -48,6 +48,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	final private Map<Long, List<T>> buffers = new HashMap<>();
 	boolean forceElement = true;
 	private final long advance;
+	private PointInTime lastTs = null;
 
 	public SlidingElementWindowTIPO(AbstractWindowAO ao) {
 		super(ao);
@@ -77,6 +78,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	@Override
 	protected void process_next(T object, int port) {
 		synchronized (buffers) {
+			lastTs = object.getMetadata().getStart();
 			long bufferId = groupProcessor.getGroupID(object);
 			List<T> buffer = buffers.get(bufferId);
 			if (buffer == null) {
@@ -84,7 +86,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				buffers.put(bufferId, buffer);
 			}
 			buffer.add(object);
-			process(buffer, object);
+			process(buffer, bufferId, lastTs);
 		}
 		// Do not call:
 		// transferArea.newElement(object, port);
@@ -109,7 +111,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		return min;
 	}
 
-	private void process(List<T> buffer, T object) {
+	private void process(List<T> buffer, Long bufferId, PointInTime ts) {
 		synchronized (buffer) {
 			// test if buffer has reached limit
 			if (buffer.size() == this.windowSize + 1) {
@@ -120,13 +122,21 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				// elemsToSend = windowSize;
 				// }
 
-				transferBuffer(buffer, elemsToSend, object);
+				transferBuffer(buffer, elemsToSend, ts);
 
+				// We need to determine the oldest element in all buffers and
+				// send a punctuation to the transfer area
+				ping();
+
+				if (buffer.size() == 0) {
+					buffers.remove(bufferId);
+				}
 			}
 		}
 	}
 
-	private void transferBuffer(List<T> buffer, long numberofelements, T object) {
+	private void transferBuffer(List<T> buffer, long numberofelements,
+			PointInTime ts) {
 		synchronized (buffer) {
 			Iterator<T> bufferIter = buffer.iterator();
 
@@ -144,12 +154,16 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 				if (usesSlideParam) {
 					toReturn.getMetadata().setStart(start);
 				}
-				toReturn.getMetadata().setEnd(object.getMetadata().getStart());
-				transferArea.transfer(toReturn);
+				// We can produce tuple with no validity --> Do not send them
+				if (toReturn.getMetadata().getStart().before(ts)) {
+					toReturn.getMetadata().setEnd(ts);
+					transferArea.transfer(toReturn);
+				}
 			}
 		}
-		// We need to determine the oldest element in all buffers and
-		// send a punctuation to the transfer area
+	}
+
+	public void ping() {
 		PointInTime minTs = getMinTs();
 		if (minTs != null) {
 			transferArea.newHeartbeat(minTs, 0);
@@ -160,13 +174,16 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	protected void process_done() {
 		synchronized (buffers) {
 			for (List<T> b : buffers.values()) {
+				transferBuffer(b, b.size(), lastTs);
 				transferArea.transfer(b);
 			}
 		}
+		transferArea.newHeartbeat(lastTs, 0);
 	}
 
 	@Override
 	public void process_close() {
+		process_done();
 		synchronized (buffers) {
 			for (List<T> b : buffers.values()) {
 				b.clear();
