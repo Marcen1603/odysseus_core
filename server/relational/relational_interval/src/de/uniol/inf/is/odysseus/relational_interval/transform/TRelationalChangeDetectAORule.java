@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ChangeDetectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalGroupProcessor;
@@ -60,6 +61,10 @@ public class TRelationalChangeDetectAORule extends
 					operator.getGroupingAttributes(),
 					null);
 			po.setGroupProcessor(r);
+		}
+		SDFAttribute suppressAttribute = operator.getSuppressCountAttribute();
+		if (suppressAttribute != null){
+			po.setSuppressAttribute(operator.getOutputSchema().indexOf(suppressAttribute));
 		}
 		defaultExecute(operator, po, config, true, true);
 	}

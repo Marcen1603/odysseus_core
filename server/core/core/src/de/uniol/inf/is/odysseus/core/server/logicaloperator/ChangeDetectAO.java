@@ -20,6 +20,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
  * This operator can reduce traffic. It lets an event pass if its different than
@@ -47,6 +49,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 	private int rate;
 	private boolean deliverFirstElement = false;
 	private List<SDFAttribute> groupingAttributes = new ArrayList<>();
+	private SDFAttribute suppressCountAttribute;
 
 	public ChangeDetectAO(ChangeDetectAO po) {
 		super(po);
@@ -56,6 +59,7 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		this.groupingAttributes = new ArrayList<>(po.getGroupingAttributes());
 		this.tolerance = po.tolerance;
 		this.isRelativeTolerance = po.isRelativeTolerance;
+		this.suppressCountAttribute = po.suppressCountAttribute;
 	}
 
 	public ChangeDetectAO() {
@@ -112,6 +116,15 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		this.isRelativeTolerance = isRelativeTolerance;
 	}
 	
+	@Parameter(type = StringParameter.class, name = "suppressCountAttribute", optional = true)
+	public void setSuppressCountAttribute_(String name){
+		this.suppressCountAttribute = new SDFAttribute(null,name,SDFDatatype.INTEGER);
+	}
+	
+	public SDFAttribute getSuppressCountAttribute() {
+		return suppressCountAttribute;
+	}
+	
 	public boolean isRelativeTolerance() {
 		return isRelativeTolerance;
 	}
@@ -135,6 +148,19 @@ public class ChangeDetectAO extends UnaryLogicalOp {
 		}
 	}
 
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		if (suppressCountAttribute == null){
+			return super.getOutputSchemaIntern(pos);
+		}
+		SDFSchema inputSchema = getInputSchema();
+		List<SDFAttribute> attributes = new ArrayList<>(inputSchema.getAttributes());
+		attributes.add(suppressCountAttribute);
+		SDFSchema outputSchema = new SDFSchema(inputSchema.getURI(), inputSchema.getType(), attributes);
+		
+		return outputSchema;
+	}
+	
 	@Override
 	public boolean isValid() {
 		boolean isValid = true;

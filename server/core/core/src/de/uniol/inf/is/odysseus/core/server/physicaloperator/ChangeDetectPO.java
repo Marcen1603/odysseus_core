@@ -45,6 +45,7 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 	private IHeartbeatGenerationStrategy<R> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<R>();
 	private boolean deliverFirstElement = false;
 	private IGroupProcessor<R, R> groupProcessor = null;
+	private long suppressedElements = 0; 
 
 	public ChangeDetectPO() {
 	}
@@ -79,14 +80,15 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 		if (lastElem == null) {
 			newLastElement = object;
 			if (deliverFirstElement) {
-				transfer(object);
+				transferInternal(object);
 			}
 		} else {
 			if (object != null && areDifferent(object, lastElem)) {
 				newLastElement = object;
-				transfer(object);
+				transferInternal(object);
 			} else {
 				heartbeatGenerationStrategy.generateHeartbeat(object, this);
+				suppressedElements++;
 			}
 		}
 
@@ -97,6 +99,16 @@ public class ChangeDetectPO<R extends IStreamObject<?>> extends
 				lastElement = newLastElement;
 			}
 		}
+	}
+
+
+	private void transferInternal(R object) {
+		transfer(enrichObject(object, suppressedElements));
+		this.suppressedElements = 0;
+	}
+	
+	protected R enrichObject(R object, long suppressedElements) {
+		return object;
 	}
 
 	protected boolean areDifferent(R object, R lastElement) {

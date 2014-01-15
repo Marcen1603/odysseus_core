@@ -22,15 +22,16 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.ChangeDetectPO;
 public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 
 	final protected int[] comparePositions;
+	private int suppressAttributePos = -1;
 
 	public RelationalChangeDetectPO(int[] comparePositions) {
 		super();
 		this.comparePositions = comparePositions;
 		StringBuffer tmp = new StringBuffer(" ");
-		for (int i:comparePositions){
+		for (int i : comparePositions) {
 			tmp.append(i).append(",");
 		}
-		setName(getName()+tmp);
+		setName(getName() + tmp);
 	}
 
 	public RelationalChangeDetectPO(RelationalChangeDetectPO pipe) {
@@ -39,32 +40,50 @@ public class RelationalChangeDetectPO extends ChangeDetectPO<Tuple<?>> {
 	}
 
 	@Override
-	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement){
+	public de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode getOutputMode() {
+		return suppressAttributePos < 0 ? OutputMode.INPUT
+				: OutputMode.NEW_ELEMENT;
+	}
+
+	public void setSuppressAttribute(int suppressAttributePos) {
+		this.suppressAttributePos = suppressAttributePos;
+	}
+
+	@Override
+	protected boolean areDifferent(Tuple<?> object, Tuple<?> lastElement) {
 		return !Tuple.equalsAt(object, lastElement, comparePositions);
-	}		
-	
+	}
+
+	@Override
+	protected Tuple<?> enrichObject(Tuple<?> object, long suppressedElements) {
+		if (suppressAttributePos > 0) {
+			object = object.append(suppressedElements);
+		}
+		return object;
+	}
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (! (ipo instanceof RelationalChangeDetectPO)){
-			return false;
-		}
-		
-		RelationalChangeDetectPO other = (RelationalChangeDetectPO) ipo;
-			
-		boolean result = super.isSemanticallyEqual(other) ;
-		
-		if (this.comparePositions.length != other.comparePositions.length){
+		if (!(ipo instanceof RelationalChangeDetectPO)) {
 			return false;
 		}
 
-		for (int i=0;i<this.comparePositions.length;i++){
-			if (comparePositions[i] != other.comparePositions[i]){
+		RelationalChangeDetectPO other = (RelationalChangeDetectPO) ipo;
+
+		boolean result = super.isSemanticallyEqual(other);
+
+		if (this.comparePositions.length != other.comparePositions.length) {
+			return false;
+		}
+
+		for (int i = 0; i < this.comparePositions.length; i++) {
+			if (comparePositions[i] != other.comparePositions[i]) {
 				return false;
 			}
 		}
-		
+
 		return result;
-		
+
 	}
-	
+
 }
