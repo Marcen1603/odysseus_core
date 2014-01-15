@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-@LogicalOperator(name = "ASSOCIATIVESTORAGE", minInputPorts = 1, maxInputPorts = 1, doc = "This operator streaming data in an associative storage", category = { LogicalOperatorCategory.ADVANCED })
+@LogicalOperator(name = "ASSOCIATIVESTORAGE", minInputPorts = 1, maxInputPorts = 1, doc = "This operator stores streaming data in an associative storage", category = { LogicalOperatorCategory.ADVANCED })
 public class AssociativeStorageAO extends AbstractLogicalOperator {
     /**
      * 

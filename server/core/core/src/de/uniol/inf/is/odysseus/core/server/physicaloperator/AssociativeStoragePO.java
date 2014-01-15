@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.IAssociativeStorage;
+import de.uniol.inf.is.odysseus.core.physicaloperator.storage.IAssociativeStorage;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>

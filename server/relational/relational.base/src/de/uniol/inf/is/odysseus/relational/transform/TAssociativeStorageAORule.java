@@ -4,11 +4,11 @@
 package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.physicaloperator.storage.AssociativeStorageManager;
+import de.uniol.inf.is.odysseus.core.physicaloperator.storage.IAssociativeStorage;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AssociativeStorageAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AssociativeStoragePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.AssociativeStorage2D;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.AssociativeStorageManager;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.storage.IAssociativeStorage;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

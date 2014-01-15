@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.storage;
+package de.uniol.inf.is.odysseus.core.physicaloperator.storage;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 
