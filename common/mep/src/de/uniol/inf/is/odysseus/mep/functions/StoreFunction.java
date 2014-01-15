@@ -50,9 +50,8 @@ public class StoreFunction extends AbstractFunction<Double> {
     @Override
     public Double getValue() {
         String name = getInputValue(0);
-        Object[] path = Doubles.asList(((double[][])getInputValue(1))[0]).toArray();
+        Object[] path = Doubles.asList(((double[][]) getInputValue(1))[0]).toArray();
         int[] index = Ints.toArray(Doubles.asList(((double[][]) getInputValue(2))[0]));
-        getInputValue(2);
         Objects.requireNonNull(name);
         Objects.requireNonNull(path);
         Objects.requireNonNull(index);

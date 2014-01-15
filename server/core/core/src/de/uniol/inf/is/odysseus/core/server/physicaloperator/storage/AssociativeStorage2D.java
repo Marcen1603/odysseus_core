@@ -34,7 +34,7 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void set(Object[] path, int[] index, Double value) {
+    public void set(Object[] path, int[] index, double value) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
             Object key = path[i];
@@ -45,33 +45,33 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
         }
         Object lastKey = path[path.length - 1];
         if (tmpStore.get(lastKey) == null) {
-            tmpStore.put(lastKey, new Double[sizes.get(0)][sizes.get(1)]);
+            tmpStore.put(lastKey, new double[sizes.get(0)][sizes.get(1)]);
         }
-        ((Double[][]) tmpStore.get(lastKey))[index[0]][index[1]] = value;
+        ((double[][]) tmpStore.get(lastKey))[index[0]][index[1]] = value;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Double get(Object[] path, int[] position) {
+    public double get(Object[] path, int[] position) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
             Object index = path[i];
             tmpStore = (Map<Object, Object>) tmpStore.get(index);
         }
         Object lastIndex = path[path.length - 1];
-        return ((Double[][]) tmpStore.get(lastIndex))[position[0]][position[1]];
+        return ((double[][]) tmpStore.get(lastIndex))[position[0]][position[1]];
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Double[] getLine(Object[] path, int[] position) {
+    public double[] getLine(Object[] path, int[] position) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
             Object index = path[i];
             tmpStore = (Map<Object, Object>) tmpStore.get(index);
         }
         Object lastIndex = path[path.length - 1];
-        return ((Double[][]) tmpStore.get(lastIndex))[position[0]];
+        return ((double[][]) tmpStore.get(lastIndex))[position[0]];
     }
 
 }

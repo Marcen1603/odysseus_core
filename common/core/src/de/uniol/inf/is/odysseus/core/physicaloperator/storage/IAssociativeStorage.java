@@ -11,10 +11,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
  */
 public interface IAssociativeStorage<T extends Tuple<?>> {
 
-    void set(Object[] path, int[] index, Double value);
+    void set(Object[] path, int[] index, double value);
 
-    Double get(Object[] path, int[] index);
+    double get(Object[] path, int[] index);
 
-    Double[] getLine(Object[] path, int[] index);
+    double[] getLine(Object[] path, int[] index);
 
 }

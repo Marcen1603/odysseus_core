@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * @author Christian Kuka <christian@kuka.cc>
  * 
  */
-public class StoreLineFunction extends AbstractFunction<Double[][]> {
+public class StoreLineFunction extends AbstractFunction<double[][]> {
 
     /**
      * 
@@ -48,7 +48,7 @@ public class StoreLineFunction extends AbstractFunction<Double[][]> {
     }
 
     @Override
-    public Double[][] getValue() {
+    public double[][] getValue() {
         String name = getInputValue(0);
         Object[] path = Doubles.asList(((double[][]) getInputValue(1))[0]).toArray();
         int[] index = Ints.toArray(Doubles.asList(((double[][]) getInputValue(2))[0]));
@@ -58,10 +58,10 @@ public class StoreLineFunction extends AbstractFunction<Double[][]> {
         Objects.requireNonNull(index);
         IAssociativeStorage<Tuple<?>> store = AssociativeStorageManager.get(name);
         if (store != null) {
-            return new Double[][] { store.getLine(path, new int[] { index[0] }) };
+            return new double[][] { store.getLine(path, new int[] { index[0] }) };
         }
         else {
-            return new Double[][] { { 0.0 } };
+            return new double[][] { { 0.0 } };
         }
     }
 
