@@ -28,20 +28,20 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    public void set(Object[] path, int[] position, Object value) {
+    public void set(Object[] path, int[] index, Object value) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
-            Object index = path[i];
-            if (!tmpStore.containsKey(index)) {
-                tmpStore.put(index, new HashMap<Object, Object>());
+            Object key = path[i];
+            if (!tmpStore.containsKey(key)) {
+                tmpStore.put(key, new HashMap<Object, Object>());
             }
-            tmpStore = (Map<Object, Object>) tmpStore.get(index);
+            tmpStore = (Map<Object, Object>) tmpStore.get(key);
         }
-        Object lastIndex = path[path.length - 1];
-        if (tmpStore.get(lastIndex) == null) {
-            tmpStore.put(lastIndex, new Object[sizes.get(0)][sizes.get(1)]);
+        Object lastKey = path[path.length - 1];
+        if (tmpStore.get(lastKey) == null) {
+            tmpStore.put(lastKey, new Object[sizes.get(0)][sizes.get(1)]);
         }
-        ((Object[][]) tmpStore.get(lastIndex))[position[0]][position[1]] = value;
+        ((Object[][]) tmpStore.get(lastKey))[index[0]][index[1]] = value;
     }
 
     @SuppressWarnings("unchecked")

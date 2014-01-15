@@ -42,6 +42,10 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
      * @param associativeStorage
      */
     public AssociativeStorageAO(AssociativeStorageAO operator) {
+        this.hierarchyAttributes = operator.hierarchyAttributes;
+        this.indexAttributes = operator.indexAttributes;
+        this.valueAttribute = operator.valueAttribute;
+        this.sizes = operator.sizes;
     }
 
     @Parameter(name = "HIERARCHY", optional = false, type = ResolvedSDFAttributeParameter.class, isList = true)
@@ -93,6 +97,7 @@ public class AssociativeStorageAO extends AbstractLogicalOperator {
     }
 
     public int getDimension() {
+        Objects.requireNonNull(this.sizes);
         return this.sizes.size();
     }
 
