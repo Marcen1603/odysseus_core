@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
@@ -54,14 +55,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	private boolean openedWindow;
 
 	public PredicateWindowTIPO(IPredicate<? super T> start,
-			IPredicate<? super T> end, long maxWindowTime, boolean sameStarttime, TimeUnit unit) {
+			IPredicate<? super T> end, TimeValueItem maxWindowTime, boolean sameStarttime) {
 		this.start = start.clone();
 		if (end != null) {
 			this.end = end.clone();
 		} else {
 			this.end = null;
 		}
-		this.maxWindowTime = TimeUnit.MILLISECONDS.convert(maxWindowTime, unit);
+		this.maxWindowTime = TimeUnit.MILLISECONDS.convert(maxWindowTime.getTime(), maxWindowTime.getUnit());
 		this.sameStarttime = sameStarttime;
 	}
 

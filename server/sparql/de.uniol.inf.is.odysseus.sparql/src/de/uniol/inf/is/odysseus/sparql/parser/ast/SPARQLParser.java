@@ -8,8 +8,10 @@ package de.uniol.inf.is.odysseus.sparql.parser.ast;
 
 import java.util.List;
 import java.util.ArrayList;
+
 import de.uniol.inf.is.odysseus.core.collection.*;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
@@ -1175,8 +1177,8 @@ import de.uniol.inf.is.odysseus.sparql.*;
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
     window = new WindowAO(WindowType.TIME);
-    window.setWindowSize(range);
-    window.setWindowAdvance(delta);
+    window.setWindowSize(new TimeValueItem(range, null));
+    window.setWindowAdvance(new TimeValueItem(delta, null));
     {if (true) return window;}
       } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -1234,8 +1236,8 @@ import de.uniol.inf.is.odysseus.sparql.*;
       delta = Long.parseLong(deltaToken.toString());
     }
     window = new WindowAO(WindowType.TUPLE);
-    window.setWindowSize(range);
-    window.setWindowAdvance(delta);
+    window.setWindowSize(new TimeValueItem(range, null));
+    window.setWindowAdvance(new TimeValueItem(delta, null));
     {if (true) return window;}
       } finally {
     if (jjtc000) {

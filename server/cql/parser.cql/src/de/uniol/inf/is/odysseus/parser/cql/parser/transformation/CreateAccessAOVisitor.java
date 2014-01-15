@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
@@ -30,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema.AttributeResolver;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -138,11 +140,12 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		window.setWindowType(windowNode.getType());
 
 		if (!windowNode.isUnbounded()) {
-			window.setWindowSize(windowNode.getSize());
+			window.setWindowSize(new TimeValueItem(windowNode.getSize(), TimeUnit.MILLISECONDS));
 			Long advance = windowNode.getAdvance();
-			window.setWindowAdvance(advance != null ? advance : 1);
+			long advanceValue = advance != null ? advance : 1;
+			window.setWindowAdvance(new TimeValueItem(advanceValue, TimeUnit.MILLISECONDS));
 			if (windowNode.getSlide() != null) {
-				window.setWindowSlide(windowNode.getSlide());
+				window.setWindowSlide(new TimeValueItem(windowNode.getSlide(), TimeUnit.MILLISECONDS));
 			}
 		}
 		return window;

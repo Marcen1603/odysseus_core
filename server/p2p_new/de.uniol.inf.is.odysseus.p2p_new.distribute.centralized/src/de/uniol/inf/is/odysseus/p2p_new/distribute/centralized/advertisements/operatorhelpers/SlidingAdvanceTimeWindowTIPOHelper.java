@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.p2p_new.distribute.centralized.advertisements.o
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Enumeration;
+import java.util.concurrent.TimeUnit;
 
 import net.jxta.document.Element;
 import net.jxta.document.MimeMediaType;
@@ -11,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.server.intervalapproach.window.SlidingAdvanceTimeWindowTIPO;
 
 @SuppressWarnings("rawtypes")
@@ -67,14 +69,16 @@ public class SlidingAdvanceTimeWindowTIPOHelper extends AbstractPhysicalOperator
 				windowIsSliding = Boolean.parseBoolean(elem.getTextValue());
 			}
 		}
-		AbstractWindowAO logicalWindow = new TimeWindowAO();
-		logicalWindow.setWindowSize(windowSize);
+		//TODO this uses the same unit for all sizes, but one single unit is deprecated
+		TimeUnit unit = TimeUnit.valueOf(usedTimeUnit);
+		AbstractWindowAO logicalWindow = new TimeWindowAO();		
+		logicalWindow.setWindowSize(new TimeValueItem(windowSize, unit));
 		if(windowIsSliding) {
-			logicalWindow.setWindowSlide(windowAdvance);
+			logicalWindow.setWindowSlide(new TimeValueItem(windowAdvance, unit));
 		} else {
-			logicalWindow.setWindowAdvance(windowAdvance);
+			logicalWindow.setWindowAdvance(new TimeValueItem(windowAdvance, unit));
 		}
-		logicalWindow.setUnit(usedTimeUnit);
+//		logicalWindow.setUnit(usedTimeUnit);
 		logicalWindow.setWindowType(windowType);
 
 		

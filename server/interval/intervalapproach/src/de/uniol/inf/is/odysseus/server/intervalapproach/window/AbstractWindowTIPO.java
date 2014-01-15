@@ -35,15 +35,19 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	final boolean usesSlideParam;
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
-		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize(),
-				ao.getTimeUnit());
-		if (ao.getWindowAdvance() > 0) {
+		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize().getTime(),
+				ao.getWindowSize().getUnit());
+		if (ao.getWindowAdvance() != null) {
 			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
-					ao.getWindowAdvance(), ao.getTimeUnit());
+					ao.getWindowAdvance().getTime(), ao.getWindowAdvance().getUnit());
 			usesSlideParam = false;
 		} else {
+			if(ao.getWindowSlide()!=null){
 			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
-					ao.getWindowSlide(), ao.getTimeUnit());
+					ao.getWindowSlide().getTime(), ao.getWindowSlide().getUnit());			
+			}else{
+				this.windowAdvance = 1;
+			}
 			usesSlideParam = true;
 		}
 		// this.windowAO = ao;
@@ -55,8 +59,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 			addParameterInfo("unit-based advance", windowAdvance);
 		} else {
 			addParameterInfo("unit-based slide", windowAdvance);
-		}
-		addParameterInfo("used unit", ao.getTimeUnit());
+		}		
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {

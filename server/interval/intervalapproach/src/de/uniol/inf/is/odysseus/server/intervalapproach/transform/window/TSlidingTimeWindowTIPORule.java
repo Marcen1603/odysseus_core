@@ -44,8 +44,8 @@ public class TSlidingTimeWindowTIPORule extends
 			TransformationConfiguration transformConfig) {
 		if (operator.isAllPhysicalInputSet()) {
 			if (operator.getWindowType() == WindowType.TIME
-					&& operator.getWindowSlide() == -1
-					&& operator.getWindowAdvance() == -1) {
+					&& operator.getWindowSlide() == null
+					&& operator.getWindowAdvance() == null) {
 		if (transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
 			

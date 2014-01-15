@@ -45,7 +45,7 @@ public class TSlidingAdvanceTimeWindowTIPORule extends
 	public boolean isExecutable(AbstractWindowAO operator,
 			TransformationConfiguration transformConfig) {
 		if ((operator.getWindowType() == WindowType.TIME && operator
-				.getWindowSlide() == -1)) {
+				.getWindowSlide() == null)) {
 			if (operator.isAllPhysicalInputSet()) {
 		if (transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {

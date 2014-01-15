@@ -25,9 +25,10 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
@@ -35,12 +36,10 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 	private WindowType windowType = null;
 
-	private long windowSize = -1;
+	private TimeValueItem windowSize = null;
 
-	private long windowAdvance = -1;
+	private TimeValueItem windowAdvance = null;
 
-	private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-	
 	// For predicate based windows
 	private IPredicate<?> startCondition;
 	private IPredicate<?> endCondition;
@@ -48,7 +47,10 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 	private List<SDFAttribute> partitionedBy;
 
-	private long windowSlide = -1;
+	private TimeValueItem windowSlide = null;
+
+	@Deprecated
+	private TimeUnit timeUnit = null;
 
 	public AbstractWindowAO(WindowType windowType) {
 		super();
@@ -65,24 +67,23 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		this.startCondition = windowPO.startCondition;
 		this.endCondition = windowPO.endCondition;
 		this.sameStarttime = windowPO.sameStarttime;
-		this.timeUnit = windowPO.timeUnit;
 	}
 
 	public AbstractWindowAO() {
 		super();
 	}
 
-	public long getWindowSize() {
+	public TimeValueItem getWindowSize() {
 		return windowSize;
 	}
 
-	@Parameter(type = LongParameter.class, name = "SIZE", optional = true)
-	public void setWindowSize(long windowSize) {
+	@Parameter(type = TimeParameter.class, name = "SIZE", optional = true)
+	public void setWindowSize(TimeValueItem windowSize) {
 		this.windowSize = windowSize;
 	}
 
-	public void setWindowSizeString(String size) {
-		this.windowSize = Long.parseLong(size);
+	public void setWindowSizeString(TimeValueItem size) {
+		this.windowSize = size;
 	}
 
 	public WindowType getWindowType() {
@@ -92,8 +93,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 	public void setWindowType(WindowType windowType) {
 		this.windowType = windowType;
 	}
-	
-	public List<String> getWindowTypes(){
+
+	public List<String> getWindowTypes() {
 		return WindowType.getValues();
 	}
 
@@ -113,19 +114,19 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		this.partitionedBy = partitionedBy;
 	}
 
-	public long getWindowAdvance() {
+	public TimeValueItem getWindowAdvance() {
 		return windowAdvance;
 	}
 
-	public long getWindowSlide() {
+	public TimeValueItem getWindowSlide() {
 		return windowSlide;
 	}
 
-	public void setWindowSlide(long slide) {
+	public void setWindowSlide(TimeValueItem slide) {
 		this.windowSlide = slide;
 	}
 
-	public void setWindowAdvance(long windowAdvance) {
+	public void setWindowAdvance(TimeValueItem windowAdvance) {
 		this.windowAdvance = windowAdvance;
 	}
 
@@ -140,18 +141,11 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 	public void setEndCondition(IPredicate<?> endCondition) {
 		this.endCondition = endCondition;
 	}
-	
-	@Parameter(type = StringParameter.class, name = "Unit", optional = true, possibleValues="__JAVA_TIMEUNITS")
-	public void setUnit(String unit){
+
+	@Deprecated
+	@Parameter(type = StringParameter.class, name = "Unit", optional = true, possibleValues = "__JAVA_TIMEUNITS", deprecated = true)
+	public void setUnit(String unit) {
 		this.timeUnit = TimeUnit.valueOf(unit);
-	}
-	
-	public String getUnit() {
-		return timeUnit.toString();
-	}
-	
-	public TimeUnit getTimeUnit() {
-		return timeUnit;
 	}
 
 	public IPredicate<?> getEndCondition() {
@@ -192,9 +186,13 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		return pred;
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator#providesPredicates()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
+	 * #providesPredicates()
 	 */
 	@Override
 	public boolean providesPredicates() {
@@ -206,55 +204,99 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		switch (windowType) {
 		case TIME:
 			if (this.partitionedBy != null) {
-				addError(new IllegalParameterException(
-						"can't use partition in time window"));
+				addError(new IllegalParameterException("can't use partition in time window"));
 				return false;
 			}
-			if (this.windowSlide > 0 && this.windowAdvance > 0) {
-				addError(new IllegalParameterException(
-						"can't use slide and advance at the same time"));
+			if (this.windowSlide != null && this.windowAdvance != null) {
+				addError(new IllegalParameterException("can't use slide and advance at the same time"));
 				return false;
 			}
-			return true;
+			return checkTimeUnit();
 		case TUPLE:
-			if (this.windowSlide > 0 && this.windowAdvance > 0) {
-				addError(new IllegalParameterException(
-						"can't use slide and advance at the same time"));
+			if (this.windowSlide != null && this.windowAdvance != null) {
+				addError(new IllegalParameterException("can't use slide and advance at the same time"));
 				return false;
-			}
-			return true;
+			}			
+			return checkTimeUnit();
 		case UNBOUNDED:
 			boolean isValid = true;
-			if (this.windowSize != -1) {
+			if (this.windowSize != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use size in unbounded window"));
+				addError(new IllegalParameterException("can't use size in unbounded window"));
 			}
-			if (this.windowAdvance != -1) {
+			if (this.windowAdvance != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use advance in unbounded window"));
+				addError(new IllegalParameterException("can't use advance in unbounded window"));
 			}
 			if (this.partitionedBy != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use partition in unbounded window"));
+				addError(new IllegalParameterException("can't use partition in unbounded window"));
 			}
-			if (this.windowSlide != -1) {
+			if (this.windowSlide != null) {
 				isValid = false;
-				addError(new IllegalParameterException(
-						"can't use slide in unbounded window"));
+				addError(new IllegalParameterException("can't use slide in unbounded window"));
 			}
+			isValid = checkTimeUnit();
 			return isValid;
 		case PREDICATE:
 			isValid = true;
-			// Todo check validity 
+			// Todo check validity
 			// esp. check predicates!
 			return isValid;
 		default:
 			break;
 		}
+
 		return true;
+	}
+
+	private boolean checkTimeUnit() {
+		// TODO: remove this, when deprecated "timeUnit" value is removed!
+		if (timeUnit != null) {
+			if (windowSize != null) {
+				if (windowSize.getUnit() != null && !timeUnit.equals(windowSize.getUnit())) {
+					addError(new IllegalParameterException("window size unit must be equals to unit (remark: unit is deprecated)!"));
+					return false;
+				}
+			}
+			if (windowAdvance != null) {
+				if (windowAdvance.getUnit() != null && !timeUnit.equals(windowAdvance.getUnit())) {
+					addError(new IllegalParameterException("window advance unit must be equals to unit (remark: unit is deprecated)!"));
+					return false;
+				}
+			}
+			if (windowSlide != null) {
+				if (windowSlide.getUnit() != null && !timeUnit.equals(windowSlide.getUnit())) {
+					addError(new IllegalParameterException("window slide unit must be equals to unit (remark: unit is deprecated)!"));
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void initialize() {
+		// overwrite values, if only unit parameter is used (old version)
+		// TODO: remove this, when deprecated "timeUnit" value is removed!
+		TimeUnit useTime = TimeUnit.MILLISECONDS;
+		if (this.timeUnit != null) {
+			useTime = timeUnit;
+		}
+		if (this.windowSize != null && this.windowSize.getUnit()==null) {
+			TimeValueItem newTimeUnit = new TimeValueItem(this.windowSize.getTime(), useTime);
+			this.windowSize = newTimeUnit;
+		}
+		if (this.windowAdvance != null && this.windowAdvance.getUnit()==null) {
+			TimeValueItem newTimeUnit = new TimeValueItem(this.windowAdvance.getTime(), useTime);
+			this.windowAdvance = newTimeUnit;
+		}
+		if (this.windowSlide != null && this.windowSlide.getUnit()==null) {
+			TimeValueItem newTimeUnit = new TimeValueItem(this.windowSlide.getTime(), useTime);
+			this.windowSlide = newTimeUnit;
+		}
+
+		super.initialize();
 	}
 
 }

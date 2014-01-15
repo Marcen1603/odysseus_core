@@ -47,7 +47,7 @@ public class TSlidingPeriodicWindowTIPORule extends
 		if (operator.isAllPhysicalInputSet()) {
 			WindowType windowType = operator.getWindowType();
 			if ( windowType == WindowType.TIME
-					&& operator.getWindowSlide() > 0) {
+					&& operator.getWindowSlide() != null) {
 		if (transformConfig.getMetaTypes().contains(
 				ITimeInterval.class.getCanonicalName())) {
 			

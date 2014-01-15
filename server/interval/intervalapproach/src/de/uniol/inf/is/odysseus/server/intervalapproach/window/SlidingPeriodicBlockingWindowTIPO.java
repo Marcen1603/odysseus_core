@@ -65,7 +65,7 @@ public class SlidingPeriodicBlockingWindowTIPO<R extends IStreamObject<? extends
 	public SlidingPeriodicBlockingWindowTIPO(AbstractWindowAO logical) {
 		super(logical);
 		this.windowSlide = TimeUnit.MILLISECONDS.convert(
-				logical.getWindowSlide(), logical.getTimeUnit());
+				logical.getWindowSlide().getTime(), logical.getWindowSlide().getUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
 

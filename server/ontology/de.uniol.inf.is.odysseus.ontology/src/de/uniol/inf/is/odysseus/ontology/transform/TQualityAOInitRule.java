@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ontology.logicaloperator.QualityAO;
 import de.uniol.inf.is.odysseus.ontology.model.MeasurementCapability;
@@ -304,13 +305,13 @@ public class TQualityAOInitRule extends AbstractTransformationRule<QualityAO> {
 
         if (frequency > 0.0) {
             windowAO.setWindowType(WindowType.TIME);
-            windowAO.setWindowAdvance(1L);
-            windowAO.setWindowSize((long) (1.0 / frequency));
+            windowAO.setWindowAdvance(new TimeValueItem(1L, null));
+            windowAO.setWindowSize(new TimeValueItem((long) (1.0 / frequency), null));
         }
         else {
             windowAO.setWindowType(WindowType.TUPLE);
-            windowAO.setWindowAdvance(1L);
-            windowAO.setWindowSize(1L);
+            windowAO.setWindowAdvance(new TimeValueItem(1L, null));
+            windowAO.setWindowSize(new TimeValueItem(1L, null));
         }
         return windowAO;
     }

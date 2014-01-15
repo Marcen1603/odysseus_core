@@ -46,16 +46,16 @@ public class WindowAOEstimator implements IOperatorEstimator<AbstractWindowAO> {
 
 		/** 3. Datarate **/
 		// depends on the windowType
-		long windowSize = instance.getWindowSize();
-		long windowAdvance = instance.getWindowAdvance();
+		long windowSize = instance.getWindowSize().getTime();
+		long windowAdvance = instance.getWindowAdvance().getTime();
 		if(windowType.equals(WindowType.TIME)) {
-			windowSize = TimeUnit.MILLISECONDS.convert(windowSize, instance.getTimeUnit()) / 1000;
+			windowSize = TimeUnit.MILLISECONDS.convert(instance.getWindowSize().getTime(), instance.getWindowSize().getUnit()) / 1000;
 
 			if(windowAdvance > 0) {
-				windowAdvance = TimeUnit.MILLISECONDS.convert(windowAdvance, instance.getTimeUnit()) / 1000;
+				windowAdvance = TimeUnit.MILLISECONDS.convert(instance.getWindowAdvance().getTime(), instance.getWindowAdvance().getUnit()) / 1000;
 			} else {
 				windowAdvance = TimeUnit.MILLISECONDS.convert(
-						instance.getWindowSlide(), instance.getTimeUnit()) / 1000;
+						instance.getWindowSlide().getTime(), instance.getWindowSlide().getUnit()) / 1000;
 			}
 		}
 

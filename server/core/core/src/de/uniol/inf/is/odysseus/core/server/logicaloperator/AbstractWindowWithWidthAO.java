@@ -1,7 +1,8 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 abstract public class AbstractWindowWithWidthAO extends AbstractWindowAO {
 
@@ -9,20 +10,20 @@ abstract public class AbstractWindowWithWidthAO extends AbstractWindowAO {
 	
 	
 	@Override
-	@Parameter(type = LongParameter.class, name = "SIZE", optional = false)
-	public void setWindowSize(long windowSize) {
+	@Parameter(type = TimeParameter.class, name = "SIZE", optional = false)
+	public void setWindowSize(TimeValueItem windowSize) {
 		super.setWindowSize(windowSize);
 	}
 
 	@Override
-	@Parameter(type = LongParameter.class, name = "SLIDE", optional = true)
-	public void setWindowSlide(long slide) {
+	@Parameter(type = TimeParameter.class, name = "SLIDE", optional = true)
+	public void setWindowSlide(TimeValueItem slide) {
 		super.setWindowSlide(slide);
 	}
 
 	@Override
-	@Parameter(type = LongParameter.class, name = "ADVANCE", optional = true)
-	public void setWindowAdvance(long windowAdvance) {
+	@Parameter(type = TimeParameter.class, name = "ADVANCE", optional = true)
+	public void setWindowAdvance(TimeValueItem windowAdvance) {
 		super.setWindowAdvance(windowAdvance);
 	}
 
