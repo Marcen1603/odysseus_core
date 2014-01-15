@@ -34,7 +34,7 @@ public class NexmarkTestComponent extends AbstractQueryExpectedOutputTestCompone
 	
 	@Override
 	public boolean isActivated() {
-		return false;
+		return true;
 	}
 
 

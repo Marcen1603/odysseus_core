@@ -49,6 +49,8 @@ import de.uniol.inf.is.odysseus.test.StatusCode;
  */
 public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> {
 
+	private static final int MAX_TUPLES = 10;
+
 	Logger logger = LoggerFactory.getLogger(TICompareSink.class);
 
 	private List<Pair<String, String>> expectedOriginals = new ArrayList<>();
@@ -100,10 +102,11 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 			stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);	
 			logger.debug(StatusCode.ERROR_NOT_EQUIVALENT.name()+": Following tuple has no counterpart in expected values: ");
 			logger.debug("\t"+tuple.toString());	
-			logger.debug("\tCurrently the following expected data remains:");
-			logger.debug(expected.getSweepAreaAsString("\t"));
-			logger.debug("\tReceived the following data until now:");
-			for(Tuple<? extends ITimeInterval> t : inputdata){
+			logger.debug("\tCurrently the following expected data remains (shows only last "+MAX_TUPLES+" tuples):");
+			logger.debug(expected.getSweepAreaAsString("\t", MAX_TUPLES, true));
+			logger.debug("\tReceived the following data until now (shows only last "+MAX_TUPLES+" tuples):");
+			for(int i=Math.min(MAX_TUPLES, inputdata.size())-1;i>=0;i--){
+				Tuple<? extends ITimeInterval> t =  inputdata.get(i);
 				logger.debug("\t "+t);
 			}
 			
@@ -146,8 +149,8 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 		logger.debug("Received done...");
 		if (expected.size() > 0) {
 			stopOperation(true, StatusCode.ERROR_MISSING_DATA);
-			logger.debug(StatusCode.ERROR_MISSING_DATA.name() + ": Some expected data was not part of the processing. Expected output still contains the following tuples:");
-			logger.debug(expected.getSweepAreaAsString("\t"));
+			logger.debug(StatusCode.ERROR_MISSING_DATA.name() + ": Some expected data was not part of the processing. Expected output still contains the following tuples (last "+MAX_TUPLES+"):");
+			logger.debug(expected.getSweepAreaAsString("\t", MAX_TUPLES, true));
 
 		} else {
 			stopOperation(true, StatusCode.OK);

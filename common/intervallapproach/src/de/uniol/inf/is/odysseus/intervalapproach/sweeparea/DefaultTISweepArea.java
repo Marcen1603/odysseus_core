@@ -423,12 +423,24 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		return buf.toString();
 	}
 
-	public String getSweepAreaAsString(String tab) {
+	public String getSweepAreaAsString(String tab, int max, boolean tail) {
 		StringBuffer buf = new StringBuffer(tab);
-		for (T element : getElements()) {
-			buf.append(" "+element).append(" ").append("\n"+tab);
+		if (!tail) {
+			for(int i=0;i<Math.min(max, getElements().size());i++){
+				T element = getElements().get(i);
+				buf.append(" " + element).append(" ").append("\n" + tab);
+			}
+		} else {
+			for(int i=Math.min(max, getElements().size())-1;i>=0;i--){
+				T element = getElements().get(i);
+				buf.append(" " + element).append(" ").append("\n" + tab);
+			}
 		}
 		return buf.toString();
+	}
+
+	public String getSweepAreaAsString(String tab) {
+		return getSweepAreaAsString(tab, getElements().size(), false);
 	}
 	
 	public String getSweepAreaAsString() {
@@ -519,4 +531,6 @@ public class DefaultTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 			}
 		}
 	}
+
+	
 }
