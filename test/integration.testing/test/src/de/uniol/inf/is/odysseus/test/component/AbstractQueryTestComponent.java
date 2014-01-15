@@ -44,7 +44,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 			StatusCode result = prepareQueries(ids, set);
 			if(result==StatusCode.OK && waitforprocessing){
 				for (int id : ids) {
-					LOG.debug("starting query " + id + "...");
+					LOG.debug("starting query with ID " + id + "...");
 					executor.startQuery(id, session);
 				}
 				processingResult = null;
@@ -86,7 +86,9 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 	@Override
 	public void compareSinkProcessingDone(TICompareSink sink, boolean done, StatusCode result) {
 		synchronized (this) {
-			this.processingResult = result;
+			if(this.processingResult==null){
+				this.processingResult = result;
+			}
 		}
 	}
 

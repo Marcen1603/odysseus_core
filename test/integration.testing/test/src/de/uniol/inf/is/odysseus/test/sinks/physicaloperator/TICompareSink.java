@@ -91,16 +91,22 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	protected void process_next(Tuple<? extends ITimeInterval> tuple, int port) {
 		List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple);
 		if (startSame.size() == 0) {			
-			stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);			
+			stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);	
+			logger.debug(StatusCode.ERROR_NOT_EQUIVALENT.name()+": Following tuple has no counterpart in expected values: ");
+			logger.debug(tuple.toString());			
 		} else {
 			if (startSame.size() == 1) {
 				Tuple<? extends ITimeInterval> other = startSame.get(0);
 				if (tuple.getMetadata().getEnd().equals(other.getMetadata().getEnd())) {
 					// ok - exactly same metadata
-//					System.out.println("FOUND EXACTLY MATCH");
+					//System.out.println("FOUND EXACTLY MATCH");
 				} else {
-					System.out.println("different METADATA");
+					logger.debug("Found a match with same starttime, but endtimestamp is different! Tuples are:");
+					logger.debug("Processed: "+tuple.toString());
+					logger.debug("Expected:"+tuple.toString());					
 				}
+			}else{
+				logger.debug("There are more than one matching values. Just removed one from expected outputs!");
 			}
 
 		}
@@ -113,9 +119,10 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 
 	private void stopOperation(StatusCode code) {
 		stopOperation(false, code);
+		done(0);
 	}
 
-	private void stopOperation(boolean done, StatusCode code) {
+	private void stopOperation(boolean done, StatusCode code) {				
 		for (ICompareSinkListener listener : this.listeners) {
 			listener.compareSinkProcessingDone(this, done, code);
 		}
@@ -125,6 +132,9 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	protected void process_done(int port) {
 		if (expected.size() > 0) {
 			stopOperation(true, StatusCode.ERROR_MISSING_DATA);
+			logger.debug(StatusCode.ERROR_MISSING_DATA.name()+": Some expected data was not part of the processing. Expected output still contains the following tuples:");
+			logger.debug(expected.getSweepAreaAsString());
+			
 		} else {
 			stopOperation(true, StatusCode.OK);
 		}
