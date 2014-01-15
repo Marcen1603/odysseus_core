@@ -90,19 +90,19 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		// transferArea.newElement(object, port);
 		// Determine min element in transferBuffer and send hearbeat
 	}
-	
-	private PointInTime getMinTs(){
+
+	private PointInTime getMinTs() {
 		// MinTs is the oldest element of all buffers
 		// because the buffers are sorted by time, only the first element has to
 		// be treated
-		if (buffers.size() == 0){
+		if (buffers.size() == 0) {
 			return null;
 		}
 		PointInTime min = null;
-		for (List<T> buffer:buffers.values()){
+		for (List<T> buffer : buffers.values()) {
 			T e = buffer.get(0);
 			PointInTime test = e.getMetadata().getStart();
-			if (min == null || min.after(test)){
+			if (min == null || min.after(test)) {
 				min = test;
 			}
 		}
@@ -112,7 +112,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	private void process(List<T> buffer, T object) {
 		synchronized (buffer) {
 			// test if buffer has reached limit
-			if (buffer.size() == (this.windowSize + 1)) {
+			if (buffer.size() == this.windowSize + 1) {
 
 				long elemsToSend = advance;
 				// TODO: Problem: Window size smaller than advance
@@ -151,7 +151,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		// We need to determine the oldest element in all buffers and
 		// send a punctuation to the transfer area
 		PointInTime minTs = getMinTs();
-		if (minTs != null){
+		if (minTs != null) {
 			transferArea.newHeartbeat(minTs, 0);
 		}
 	}
