@@ -23,6 +23,7 @@ public class QueryTestSet implements ITestSet{
 		this.name = name;
 	}
 	
+	@Override
 	public String getName(){
 		return this.name;
 	}

@@ -36,6 +36,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 
 	public abstract List<S> createTestSets(T context);
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T createTestContext() {
 		return (T) createBasicTestContext();

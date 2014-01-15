@@ -28,6 +28,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 		this.waitforprocessing  = waitForProcessing;
 	}
 
+	@Override
 	protected StatusCode executeTestSet(S set) {
 		Collection<Integer> ids = new ArrayList<>();
 		try {
@@ -70,6 +71,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 		return StatusCode.OK;				
 	}
 
+	@Override
 	public abstract List<S> createTestSets(T context);
 
 	protected StatusCode waitProcessing() throws InterruptedException {

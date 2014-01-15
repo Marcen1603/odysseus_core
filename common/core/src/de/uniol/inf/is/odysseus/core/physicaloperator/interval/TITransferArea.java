@@ -153,6 +153,7 @@ public class TITransferArea<R extends IStreamObject<? extends ITimeInterval>, W 
 		transfer(object, outputPort);
 	}
 	
+	@Override
 	public void transfer(List<W> objectList){
 		for (W w:objectList){
 			transfer(w);

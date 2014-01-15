@@ -22,6 +22,7 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 		super(true);		
 	}
 
+	@Override
 	protected StatusCode prepareQueries(Collection<Integer> ids, S set) {
 		try {
 			for (Integer queryId : ids) {

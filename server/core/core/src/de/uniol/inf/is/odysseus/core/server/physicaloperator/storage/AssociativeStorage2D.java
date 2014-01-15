@@ -27,7 +27,8 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
         this.sizes = sizes;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public void set(Object[] path, int[] index, Object value) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
@@ -44,7 +45,8 @@ public class AssociativeStorage2D implements IAssociativeStorage<Tuple<?>> {
         ((Object[][]) tmpStore.get(lastKey))[index[0]][index[1]] = value;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public Object get(Object[] path, int[] position) {
         Map<Object, Object> tmpStore = this.store;
         for (int i = 0; i < path.length - 1; i++) {
