@@ -8,6 +8,9 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
  de.uniol.inf.is.odysseus.core.datahandler,
+ de.uniol.inf.is.odysseus.core.metadata,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol,
+ de.uniol.inf.is.odysseus.core.physicaloperator.access.transport,
  de.uniol.inf.is.odysseus.core.sdf.schema,
  de.uniol.inf.is.odysseus.wrapper.base,
  de.uniol.inf.is.odysseus.wrapper.base.model,
