@@ -40,7 +40,9 @@ public class TimestampToPayloadAO extends AbstractLogicalOperator {
 
 	public TimestampToPayloadAO(TimestampToPayloadAO timestampToPayloadAO) {
 		super(timestampToPayloadAO);
-		this.attributes = new ArrayList<String>(timestampToPayloadAO.attributes);
+        if (timestampToPayloadAO.attributes != null) {
+            this.attributes = new ArrayList<String>(timestampToPayloadAO.attributes);
+        }
 	}
 
 	@Parameter(name="attributes", type=StringParameter.class, isList=true, optional=true,  doc="Names of the attributes for the start and endtimestamp (default meta_valid_start and meta_valid_end.")
