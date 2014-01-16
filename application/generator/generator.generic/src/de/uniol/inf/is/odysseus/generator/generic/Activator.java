@@ -102,10 +102,11 @@ public class Activator implements BundleActivator {
      */
     @Override
     public void start(BundleContext bundleContext) throws Exception {
-        Activator.context = bundleContext;
+        if (bundleContext != null) {
+            Activator.context = bundleContext;
 
-        bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
-
+            bundleContext.registerService(CommandProvider.class.getName(), new ConsoleCommands(), null);
+        }
         StreamServer genericServer = new StreamServer(54325, new GenericProvider("schema.txt"));
         genericServer.start();
         server.add(genericServer);

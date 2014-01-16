@@ -177,12 +177,13 @@ public class GenericProvider extends AbstractDataGenerator {
     }
 
     public static void main(final String[] args) {
-        final GenericProvider provider = new GenericProvider("schema.txt");
-        provider.process_init();
-        System.out.println(provider.next());
-        System.out.println(provider.next());
-
-        System.out.println(provider.next());
+        Activator activator = new Activator();
+        try {
+            activator.start(null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
