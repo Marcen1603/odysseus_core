@@ -35,17 +35,23 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 	final boolean usesSlideParam;
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
-		this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize().getTime(),
-				ao.getWindowSize().getUnit());
+		if (ao.getWindowSize() != null) {
+			this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize()
+					.getTime(), ao.getWindowSize().getUnit());
+		}else{
+			this.windowSize = -1;
+		}
 		if (ao.getWindowAdvance() != null) {
-			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
-					ao.getWindowAdvance().getTime(), ao.getWindowAdvance().getUnit());
+			this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao
+					.getWindowAdvance().getTime(), ao.getWindowAdvance()
+					.getUnit());
 			usesSlideParam = false;
 		} else {
-			if(ao.getWindowSlide()!=null){
-			this.windowAdvance = TimeUnit.MILLISECONDS.convert(
-					ao.getWindowSlide().getTime(), ao.getWindowSlide().getUnit());			
-			}else{
+			if (ao.getWindowSlide() != null) {
+				this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao
+						.getWindowSlide().getTime(), ao.getWindowSlide()
+						.getUnit());
+			} else {
 				this.windowAdvance = 1;
 			}
 			usesSlideParam = true;
@@ -53,13 +59,13 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		// this.windowAO = ao;
 		this.windowType = ao.getWindowType();
 		this.partitioned = ao.isPartitioned();
-		//setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
+		// setName(getName() + " s=" + windowSize + " a=" + windowAdvance);
 		addParameterInfo("unit-based size", windowSize);
 		if (!usesSlideParam) {
 			addParameterInfo("unit-based advance", windowAdvance);
 		} else {
 			addParameterInfo("unit-based slide", windowAdvance);
-		}		
+		}
 	}
 
 	public AbstractWindowTIPO(AbstractWindowTIPO<T> window) {
@@ -111,7 +117,7 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 		}
 		return false;
 	}
-	
+
 	@Override
 	abstract public void processPunctuation(IPunctuation punctuation, int port);
 
