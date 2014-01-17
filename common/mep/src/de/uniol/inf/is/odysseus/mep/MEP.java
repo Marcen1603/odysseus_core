@@ -148,6 +148,7 @@ import de.uniol.inf.is.odysseus.mep.functions.time.WeekdayStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.time.YearsFunction;
+import de.uniol.inf.is.odysseus.mep.functions.transform.DateToLongFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DateToStringFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToBooleanFunction;
 import de.uniol.inf.is.odysseus.mep.functions.transform.DoubleToByteFunction;
@@ -306,6 +307,7 @@ public class MEP implements IExpressionParser {
         registerFunction(new ToDateFromStringFunction());      
         registerFunction(new ToDateFromNumberFunction());
         registerFunction(new DateToStringFunction()); 
+        registerFunction(new DateToLongFunction()); 
         
         registerFunction(new DatePlusOperator()); 
         registerFunction(new DatePlusNumberOperator()); 
