@@ -18,13 +18,12 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl ${target.nl} -data @noDefault</programArgs>
+      <programArgs>-console -debug debug.options -nl ${target.nl} -data @noDefault</programArgs>
       <vmArgs>-Xms8000M -Xmx12000M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="icons/16_16.gif" i32="icons/32_32.gif" i48="icons/48_48.gif" i64="icons/64_64.gif" i128="icons/128_128.gif"/>
-
 
    <launcher>
       <solaris/>
@@ -33,10 +32,8 @@ http://odysseus.informatik.uni-oldenburg.de/
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>

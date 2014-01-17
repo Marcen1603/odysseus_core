@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Mining
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining;singleton:=true
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mining
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.mining.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -37,3 +37,4 @@ Export-Package: de.uniol.inf.is.odysseus.mining,
  de.uniol.inf.is.odysseus.mining.logicaloperator,
  de.uniol.inf.is.odysseus.mining.physicaloperator,
  de.uniol.inf.is.odysseus.mining.transform
+Bundle-ActivationPolicy: lazy
