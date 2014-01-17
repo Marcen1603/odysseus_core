@@ -189,6 +189,27 @@ public class MEP implements IExpressionParser {
     }
 
     @Override
+    public IExpression<?> parse(String expressionStr) throws ParseException {
+    	return parse(expressionStr, (List<SDFSchema>) null);
+    }
+    
+    @Override
+    public IExpression<?> parse(String expressionStr, List<SDFSchema> schema) throws ParseException {
+    	
+        MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
+        SimpleNode expressionNode;
+        try {
+            expressionNode = impl.Expression();
+        }
+        catch (Exception e) {
+            throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
+        }
+        ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
+        IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(builder, null);
+        return ExpressionOptimizer.simplifyExpression(expression);
+    }
+    
+    @Override
     public IExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException {
     	
         MEPImpl impl = new MEPImpl(new StringReader(expressionStr));

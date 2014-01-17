@@ -33,6 +33,8 @@ package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.schema;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -73,9 +75,11 @@ public class AttributeResolver implements IAttributeResolver {
 	}
 
 	@Override
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		SDFSchema schema = new SDFSchema("", Tuple.class, this.attributes);
-		return schema;
+		List<SDFSchema> schemaList = new LinkedList<>();
+		schemaList.add(schema);
+		return schemaList;
 	}
 
 	public ILogicalOperator getSource(String name) {

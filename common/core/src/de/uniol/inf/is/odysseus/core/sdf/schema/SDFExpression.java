@@ -69,7 +69,7 @@ public class SDFExpression implements Serializable, IClone {
 
 	private IAttributeResolver attributeResolver;
 	/** The schema */
-	private SDFSchema schema;
+	private List<SDFSchema> schema;
 
 	private transient IExpressionParser expressionParser;
 	
@@ -175,7 +175,7 @@ public class SDFExpression implements Serializable, IClone {
 			// Try to determine own attribute resolver from expression
 			try {
 				IExpression<?> tmpExpression = expressionParser.parse(
-						expressionString, null);
+						expressionString);
 				this.attributeResolver = new DirectAttributeResolver(
 						tmpExpression.getVariables());
 				this.schema = this.attributeResolver.getSchema();
@@ -233,7 +233,7 @@ public class SDFExpression implements Serializable, IClone {
 		}
 	}
 
-	public SDFSchema getSchema() {
+	public List<SDFSchema> getSchema() {
 		return this.schema;
 	}
 	

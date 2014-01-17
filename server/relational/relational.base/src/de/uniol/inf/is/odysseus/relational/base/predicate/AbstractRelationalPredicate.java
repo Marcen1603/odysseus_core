@@ -94,6 +94,17 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
         init(leftSchema, rightSchema, true);
     }
 
+    public void init(List<SDFSchema> schema, boolean checkRightSchema){
+    	if (schema.size() == 1){
+    		init(schema.get(0), null, checkRightSchema);
+    	}else if (schema.size()==2){
+    		init(schema.get(0), schema.get(1), checkRightSchema);    		
+    	}else{
+    		throw new IllegalArgumentException("Predicate cannot have more than two input schema");
+    	}
+    	
+    }
+    
     public void init(SDFSchema leftSchema, SDFSchema rightSchema, boolean checkRightSchema) {
         logger.debug("Init ("+this+"): Left "+leftSchema+" Right "+rightSchema);
         this.leftSchema = leftSchema;
@@ -195,7 +206,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
                 else {
                     SDFExpression expr = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
                     RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
-                    relationalPredicate.init(expression.getSchema(), null, false);
+                    relationalPredicate.init(expression.getSchema(), false);
                     result.add(relationalPredicate);
                 }
             }

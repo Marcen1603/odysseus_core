@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.mep.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +33,15 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 public class ExpressionBuilderVisitor implements MEPImplVisitor {
 
     private Map<String, Variable> symbolTable = new HashMap<String, Variable>();
-    private final SDFSchema schema;
+    private final List<SDFSchema> schema;
 
-    public ExpressionBuilderVisitor(SDFSchema schema) {
+    public ExpressionBuilderVisitor(List<SDFSchema> schema) {
         this.schema = schema;
+    }
+    
+    public ExpressionBuilderVisitor(SDFSchema schema) {
+        this.schema = new LinkedList<>();
+        this.schema.add(schema);
     }
 
     @Override
@@ -184,7 +190,13 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         }
         Variable variable;
         if (this.schema != null) {
-            SDFAttribute attribute = schema.findAttribute(identifier);
+        	SDFAttribute attribute = null;
+        	for (SDFSchema s:schema){
+        		attribute = s.findAttribute(identifier);
+        		if (attribute != null){
+        			break;
+        		}
+        	}
             if (attribute != null) {
                 variable = new Variable(identifier, attribute.getDatatype());
             }

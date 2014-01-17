@@ -35,7 +35,7 @@ public class TestExpressionBuilderVisitor {
 		BufferedReader inRead = new BufferedReader(new InputStreamReader(
 				System.in));
 		try {
-			IExpression<?> expression = MEP.getInstance().parse(inRead.readLine(),null);
+			IExpression<?> expression = MEP.getInstance().parse(inRead.readLine());
 			
 			for (Variable curVar : expression.getVariables()) {
 				System.out

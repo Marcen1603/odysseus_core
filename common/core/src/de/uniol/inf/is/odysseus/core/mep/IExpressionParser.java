@@ -15,6 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.mep;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
@@ -33,6 +35,10 @@ public interface IExpressionParser {
 	 * @return an IExpression object that contains the parsed expression
 	 * @throws ParseException 
 	 */
+	IExpression<?> parse(String expressionStr, List<SDFSchema> schema) throws ParseException;
+
 	IExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException;
+
+	IExpression<?> parse(String expressionStr) throws ParseException;
 
 }

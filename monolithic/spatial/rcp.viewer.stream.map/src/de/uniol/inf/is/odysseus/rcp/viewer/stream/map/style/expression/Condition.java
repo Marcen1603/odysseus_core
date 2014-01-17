@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.rcp.viewer.stream.map.style.expression;
 
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -24,7 +25,7 @@ public abstract class Condition<T>{
 		this.expressionStr = condition.expression;
 		if (this.defaultValue == null){
 			try {
-				IExpression<?> exp = MEP.getInstance().parse(expressionStr, null);
+				IExpression<?> exp = MEP.getInstance().parse(expressionStr, (List<SDFSchema>)null);
 				if (exp.isConstant()){
 					this.defaultValue = getValue(exp.getValue());
 				}					

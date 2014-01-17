@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Jonas Jacobi
@@ -23,7 +24,7 @@ import java.io.Serializable;
  */
 public interface IAttributeResolver extends Serializable {
 
-    public SDFSchema getSchema();
+    public List<SDFSchema> getSchema();
 	public SDFAttribute getAttribute(String name) throws AmbiguousAttributeException, NoSuchAttributeException;
 	public IAttributeResolver clone() ;
 	

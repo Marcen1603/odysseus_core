@@ -48,37 +48,37 @@ public class SPARQLDirectAttributeResolver extends DirectAttributeResolver{
         super(directAttributeResolver);
     }
     
-    /**
-     * Returns the first attribute with the name "name". Source
-     * information will be completely ignored.
-     */
-    @Override
-	public SDFAttribute getAttribute(String name)
-            throws AmbiguousAttributeException, NoSuchAttributeException {
-    	String[] parts = name.split("\\.", 2);
-    	SDFAttribute found = null;
-        for (SDFAttribute attr : schema) {
-        	if (parts.length == 1) {
-	        	if ((attr).getAttributeName().equals(name)) {
-	                found = attr;
-	            	break;
-	            }
-        	}
-        	// sourceName.attrName
-        	else{
-	        	if ((attr).getURI().equals(name)) {
-	                found = attr;
-	            	break;
-	            }
-        	}
-        }
-        if (found == null) {
-        	System.err.println("ERROR, no such attribute " + name);
-        	throw new NoSuchAttributeException(name);
-            
-        }
-        return found;
-    }
+//    /**
+//     * Returns the first attribute with the name "name". Source
+//     * information will be completely ignored.
+//     */
+//    @Override
+//	public SDFAttribute getAttribute(String name)
+//            throws AmbiguousAttributeException, NoSuchAttributeException {
+//    	String[] parts = name.split("\\.", 2);
+//    	SDFAttribute found = null;
+//        for (SDFAttribute attr : schema) {
+//        	if (parts.length == 1) {
+//	        	if ((attr).getAttributeName().equals(name)) {
+//	                found = attr;
+//	            	break;
+//	            }
+//        	}
+//        	// sourceName.attrName
+//        	else{
+//	        	if ((attr).getURI().equals(name)) {
+//	                found = attr;
+//	            	break;
+//	            }
+//        	}
+//        }
+//        if (found == null) {
+//        	System.err.println("ERROR, no such attribute " + name);
+//        	throw new NoSuchAttributeException(name);
+//            
+//        }
+//        return found;
+//    }
     
     @Override
 	public SPARQLDirectAttributeResolver clone(){

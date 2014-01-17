@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,16 +170,14 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 
 		// check parameters
 		for (IParameter<?> parameter : getParameters()) {
-			SDFSchema schema = null;
-			// TODO: this is not suitable for JOINs, because it is not an union 
+			List<SDFSchema> inputSchema = new LinkedList<>();
 			int port = 0;
 			for (InputOperatorItem opItem : inputOperators.values()) {
 				parameter.setInputSchema(port++, opItem.operator.getOutputSchema(opItem.outputPort));
-				schema = SDFSchema.union(schema,
-						opItem.operator.getOutputSchema(opItem.outputPort));
+				inputSchema.add(opItem.operator.getOutputSchema(opItem.outputPort));
 			}
 			IAttributeResolver attributeResolver = new DirectAttributeResolver(
-					schema);
+					inputSchema);
 			parameter.setAttributeResolver(attributeResolver);
 			parameter.setDataDictionary(getDataDictionary());
 			parameter.setCaller(getCaller());

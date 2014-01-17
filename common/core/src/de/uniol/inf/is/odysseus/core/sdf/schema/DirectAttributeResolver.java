@@ -16,17 +16,13 @@
 package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
-import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Jonas Jacobi
@@ -34,10 +30,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public class DirectAttributeResolver implements IAttributeResolver, IClone {
 
 	private static final long serialVersionUID = 692060392529144987L;
-	protected final SDFSchema schema;
+	private final List<SDFSchema> schemas = new LinkedList<SDFSchema>();
 
 	public DirectAttributeResolver(SDFSchema schema) {
-		this.schema = schema;
+		this.schemas.clear();
+		this.schemas.add(schema);
+	}
+
+	public DirectAttributeResolver(List<SDFSchema> schemaList) {
+		this.schemas.clear();
+		this.schemas.addAll(schemaList);
 	}
 
 	public DirectAttributeResolver(Set<Variable> vars) {
@@ -47,27 +49,27 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 					var.getReturnType());
 			attribs.add(a);
 		}
-		schema = new SDFSchema("", Tuple.class, attribs);
+		SDFSchema schema = new SDFSchema("", Tuple.class, attribs);
+		this.schemas.clear();
+		this.schemas.add(schema);
 	}
 
 	public DirectAttributeResolver(
 			DirectAttributeResolver directAttributeResolver) {
-		this.schema = directAttributeResolver.schema.clone();
+		schemas.addAll(directAttributeResolver.schemas);
 	}
 
 	@Override
 	public SDFAttribute getAttribute(String name)
 			throws AmbiguousAttributeException, NoSuchAttributeException {
-
-		SDFAttribute attribute = this.schema.findAttribute(name);
-		if(attribute==null){
-			throw new IllegalArgumentException("no such attribute: " + name);
-		}else{
-			return attribute;
+		for (SDFSchema schema : schemas) {
+			SDFAttribute attribute = schema.findAttribute(name);
+			if (attribute != null) {
+				return attribute;
+			}
 		}
+		throw new IllegalArgumentException("no such attribute: " + name);
 	}
-
-	
 
 	@Override
 	public DirectAttributeResolver clone() {
@@ -75,7 +77,7 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	}
 
 	@Override
-	public SDFSchema getSchema() {
-		return this.schema;
+	public List<SDFSchema> getSchema() {
+		return this.schemas;
 	}
 }
