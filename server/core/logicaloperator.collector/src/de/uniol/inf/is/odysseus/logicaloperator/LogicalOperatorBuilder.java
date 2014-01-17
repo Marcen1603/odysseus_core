@@ -20,8 +20,10 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.framework.Bundle;
@@ -43,6 +45,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IUserDefinedFunctio
 public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 
 	Logger logger = LoggerFactory.getLogger(LogicalOperatorBuilder.class);
+	
+	private List<Class<?>> loadedOperatorClasses = new ArrayList<>();
 
 	// private static final Map<String, GenericOperatorBuilder> operatorBuilders
 	// = new HashMap<String, GenericOperatorBuilder>();
@@ -223,6 +227,11 @@ public class LogicalOperatorBuilder implements BundleActivator, BundleListener {
 	}
 
 	private void addLogicalOperator(Class<? extends ILogicalOperator> curOp) {
+		// avoid double loading of the same operator
+		if(loadedOperatorClasses.contains(curOp)){
+			return;
+		}
+		loadedOperatorClasses.add(curOp);
 		Map<Parameter, Method> parameters = new HashMap<Parameter, Method>();
 
 		LogicalOperator logicalOperatorAnnotation = curOp
