@@ -3,9 +3,10 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
 
@@ -14,46 +15,87 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunct
  * 
  */
 public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
-    List<Double> values = new ArrayList<Double>();
+    private final Queue<Double> upper = new PriorityQueue<Double>();
 
-    public MedianPartialAggregate(Double value) {
-        this.values.add(value);
+    private final Queue<Double> lower = new PriorityQueue<Double>(11, new Comparator<Double>() {
+        @Override
+        public int compare(final Double a, final Double b) {
+            if (a < b) {
+                return 1;
+            }
+            else if (a > b) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        }
+    });
+
+    public MedianPartialAggregate(final Double value) {
+        this.add(value);
     }
 
-    public MedianPartialAggregate(List<Double> values) {
-        this.values.addAll(values);
+    public MedianPartialAggregate(final Queue<Double> lower, final Queue<Double> upper) {
+        this.lower.addAll(lower);
+        this.upper.addAll(upper);
     }
 
-    public MedianPartialAggregate(MedianPartialAggregate<R> avgSumPartialAggregate) {
-        this.values.addAll(avgSumPartialAggregate.values);
+    public MedianPartialAggregate(final List<Double> values) {
+        this.addAll(values);
+    }
+
+    public MedianPartialAggregate(final MedianPartialAggregate<R> avgSumPartialAggregate) {
+        this.lower.addAll(avgSumPartialAggregate.lower);
+        this.upper.addAll(avgSumPartialAggregate.upper);
     }
 
     public Double getAggValue() {
-        // Collections.sort(values);
-        if (values.size() % 2 == 1)
-            return values.get((values.size() + 1) / 2 - 1);
+        if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
+            return null;
+        }
+        else if (this.lower.size() == this.upper.size()) {
+            return (this.lower.peek() + this.upper.peek()) / 2;
+        }
         else {
-            double lower = values.get(values.size() / 2 - 1);
-            double upper = values.get(values.size() / 2);
-
-            return (lower + upper) / 2.0;
+            if (this.lower.size() < this.upper.size()) {
+                return this.upper.peek();
+            }
+            else {
+                return this.lower.peek();
+            }
         }
     }
 
-    public List<Double> getValues() {
-        return Collections.unmodifiableList(values);
-    }
-
-    public void add(Double value) {
-        int index = Collections.binarySearch(values, value);
-        if (index < 0) {
-            index = -(index + 1);
+    public void add(final Double value) {
+        if ((this.lower.isEmpty()) && (this.upper.isEmpty())) {
+            this.lower.add(value);
         }
-        this.values.add(index, value);
+        else {
+            if (value <= this.lower.peek()) {
+                this.lower.add(value);
+            }
+            else {
+                this.upper.add(value);
+            }
+            this.rebalance();
+        }
     }
 
-    public void addAll(List<Double> values) {
-        for (Double val : values) {
+    public void add(final MedianPartialAggregate<?> value) {
+        this.lower.addAll(value.lower);
+        this.upper.addAll(value.upper);
+        this.rebalance();
+    }
+
+    public void remove(Double value) {
+        if ((lower.remove(value)) || (upper.remove(value))) {
+            rebalance();
+        }
+    }
+
+    public void addAll(final List<Double> values) {
+        for (final Double val : values) {
             this.add(val);
         }
     }
@@ -65,18 +107,26 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
 
     @Override
     public String toString() {
-        return "MEDIAN= " + getAggValue();
+        return "MEDIAN= " + this.getAggValue();
     }
 
-    public static void main(String[] args) {
-        MedianPartialAggregate<?> agg = new MedianPartialAggregate<>(1.0);
+    private void rebalance() {
+        if (this.lower.size() < (this.upper.size() - 1)) {
+            this.lower.add(this.upper.remove());
+        }
+        else if (this.upper.size() < (this.lower.size() - 1)) {
+            this.upper.add(this.lower.remove());
+        }
+    }
+
+    public static void main(final String[] args) {
+        final MedianPartialAggregate<?> agg = new MedianPartialAggregate<>(1.0);
         agg.add(3.0);
         agg.add(2.0);
         agg.add(0.0);
         agg.add(5.0);
         agg.add(4.0);
-        assert (agg.getValues().get(0) == 0.0);
-        assert (agg.getValues().get(agg.getValues().size() - 1) == 5.0);
         assert (agg.getAggValue() == 2.5);
+        System.out.println(agg);
     }
 }

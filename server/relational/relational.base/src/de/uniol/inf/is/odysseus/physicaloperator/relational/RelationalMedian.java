@@ -60,7 +60,7 @@ public class RelationalMedian extends Median<Tuple<?>, Tuple<?>> {
         MedianPartialAggregate<Tuple> pa = null;
         if (createNew) {
             MedianPartialAggregate<Tuple> h = (MedianPartialAggregate<Tuple>) p;
-            pa = new MedianPartialAggregate<Tuple>(h.getValues());
+            pa = new MedianPartialAggregate<Tuple>(h);
 
         }
         else {
@@ -85,7 +85,7 @@ public class RelationalMedian extends Median<Tuple<?>, Tuple<?>> {
         MedianPartialAggregate<Tuple<?>> pa = null;
         if (createNew) {
             MedianPartialAggregate<Tuple<?>> h = (MedianPartialAggregate<Tuple<?>>) p;
-            pa = new MedianPartialAggregate<Tuple<?>>(h.getValues());
+            pa = new MedianPartialAggregate<Tuple<?>>(h);
         }
         else {
             pa = (MedianPartialAggregate<Tuple<?>>) p;
@@ -100,7 +100,7 @@ public class RelationalMedian extends Median<Tuple<?>, Tuple<?>> {
      */
     public IPartialAggregate<Tuple<?>> merge(MedianPartialAggregate<Tuple<?>> pa, IPartialAggregate<Tuple<?>> toMerge) {
         MedianPartialAggregate paToMerge = (MedianPartialAggregate) toMerge;
-        pa.add(paToMerge.getAggValue().doubleValue());
+        pa.add(paToMerge);
         return pa;
     }
 
