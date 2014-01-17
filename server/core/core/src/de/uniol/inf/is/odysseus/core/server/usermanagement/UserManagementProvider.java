@@ -73,6 +73,8 @@ public class UserManagementProvider {
 				UserManagementProvider.class.wait(10000);
 				logger.debug("Waiting for UserManagement "
 						+ OdysseusConfiguration.get("StoretypeUserMgmt"));
+				ret = usrMgmt.get(OdysseusConfiguration.get(
+						"StoretypeUserMgmt").toLowerCase());
 			} catch (InterruptedException e) {
 			}
 		}
