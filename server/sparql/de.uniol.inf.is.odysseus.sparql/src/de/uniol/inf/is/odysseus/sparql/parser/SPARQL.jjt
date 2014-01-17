@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
 import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
 import de.uniol.inf.is.odysseus.sparql.parser.*;
 import de.uniol.inf.is.odysseus.sparql.*;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 @ SuppressWarnings("all") public class SPARQLParser extends SPARQLParserBase
 {
 }
@@ -355,8 +356,8 @@ WindowAO SlidingTimeWindow() :
   (	<ADVANCE> delta = ValueSpecification() )?
   {
     window = new WindowAO(WindowType.TIME);
-    window.setWindowSize(range);
-    window.setWindowAdvance(delta);
+   window.setWindowSize(new TimeValueItem(range, null));
+    window.setWindowAdvance(new TimeValueItem(delta, null));
     return window;
   }
 }
@@ -376,9 +377,9 @@ WindowAO SlidingTupelWindow() :
     range = Long.parseLong(rangeToken.toString());
     if(deltaToken != null){      delta = Long.parseLong(deltaToken.toString());
     }
-    window = new WindowAO(WindowType.TUPLE);
-    window.setWindowSize(range);
-    window.setWindowAdvance(delta);
+    window = new WindowAO(WindowType.TUPLE);    
+    window.setWindowSize(new TimeValueItem(range, null));
+    window.setWindowAdvance(new TimeValueItem(delta, null));
     return window;
   }
 }

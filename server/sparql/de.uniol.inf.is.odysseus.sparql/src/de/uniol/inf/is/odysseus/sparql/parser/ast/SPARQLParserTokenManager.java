@@ -5,8 +5,17 @@
  */
 
 package de.uniol.inf.is.odysseus.sparql.parser.ast;
+import java.util.List;
+import java.util.ArrayList;
+import de.uniol.inf.is.odysseus.core.collection.*;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.*;
+import de.uniol.inf.is.odysseus.sparql.parser.helper.*;
+import de.uniol.inf.is.odysseus.sparql.parser.*;
+import de.uniol.inf.is.odysseus.sparql.*;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class SPARQLParserTokenManager implements SPARQLParserConstants
 {
 
@@ -14,7 +23,6 @@ public class SPARQLParserTokenManager implements SPARQLParserConstants
   public  java.io.PrintStream debugStream = System.out;
   /** Set debug output. */
   public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
-@SuppressWarnings("unused")
 private int jjStopAtPos(int pos, int kind)
 {
    jjmatchedKind = kind;
@@ -2038,7 +2046,7 @@ private int jjMoveNfa_0(int startState, int curPos)
       }
       else
       {
-         int hiByte = curChar >> 8;
+         int hiByte = (int)(curChar >> 8);
          int i1 = hiByte >> 6;
          long l1 = 1L << (hiByte & 077);
          int i2 = (curChar & 0xff) >> 6;
