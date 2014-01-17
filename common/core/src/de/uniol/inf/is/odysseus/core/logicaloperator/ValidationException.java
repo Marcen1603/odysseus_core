@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
+package de.uniol.inf.is.odysseus.core.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;

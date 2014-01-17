@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IOperatorBui
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.InputOperatorItem;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateItem;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ValidationException;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
 import de.uniol.inf.is.odysseus.parser.pql.PQLParser;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
