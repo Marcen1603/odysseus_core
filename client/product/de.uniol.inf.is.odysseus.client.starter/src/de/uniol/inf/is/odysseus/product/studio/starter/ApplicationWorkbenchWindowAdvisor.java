@@ -42,7 +42,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setTitle("Odysseus Studio 2");
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(true);
-
+		org.eclipse.ui.ide.IDE.registerAdapters();
 		PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
 	}
 	

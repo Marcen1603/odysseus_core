@@ -21,15 +21,18 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 /**
  * @author DGeesen
  * 
  */
-public class Graph extends Observable implements Observer{
+public class Graph extends Observable implements Observer {
 
 	private List<OperatorNode> nodes;
 	private IProject project;
+	private IResource graphFile;
+	private List<GraphProblem> currentMarker = new ArrayList<>();
 
 	public List<OperatorNode> getNodes() {
 		if (nodes == null) {
@@ -39,24 +42,27 @@ public class Graph extends Observable implements Observer{
 	}
 
 	public synchronized void addNode(OperatorNode node) {
-		getNodes().add(node);	
+		getNodes().add(node);
 		resetUniqueIds();
 		node.setGraph(this);
 		node.addObserver(this);
+		node.recalcSatisfied();
 		setChanged();
 		notifyObservers();
 	}
 
 	public synchronized void removeNode(OperatorNode node) {
 		getNodes().remove(node);
-		resetUniqueIds();		
+		resetUniqueIds();
 		node.deleteObserver(this);
 		node.setGraph(null);
 		setChanged();
 		notifyObservers();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
@@ -64,29 +70,37 @@ public class Graph extends Observable implements Observer{
 		setChanged();
 		notifyObservers();		
 	}
+
 	
-	public synchronized void resetUniqueIds(){
+
+	public synchronized void resetUniqueIds() {
 		int id = 1;
-		for(OperatorNode node : this.getNodes()){
+		for (OperatorNode node : this.getNodes()) {
 			node.setId(id);
 			id++;
 		}
 	}
-	
-	public OperatorNode getOperatorNodeById(int id){
-		for(OperatorNode node : this.getNodes()){
-			if(node.getId()==id){
+
+	public OperatorNode getOperatorNodeById(int id) {
+		for (OperatorNode node : this.getNodes()) {
+			if (node.getId() == id) {
 				return node;
 			}
 		}
 		return null;
 	}
-	
+
 	public void updateInformation() {
-		for(OperatorNode node : getNodes()){
+		for (OperatorNode node : getNodes()) {
 			node.updateInformations();
 			node.recalcSatisfied();
 		}		
+	}
+	
+	public void recalcSatisfied(){
+		for (OperatorNode node : this.getNodes()) {
+			node.recalcSatisfied();
+		}
 	}
 
 	public IProject getProject() {
@@ -96,5 +110,23 @@ public class Graph extends Observable implements Observer{
 	public void setProject(IProject project) {
 		this.project = project;
 	}
+
+	public IResource getGraphFile() {
+		return graphFile;
+	}
+
+	public void setGraphFile(IResource graphFile) {
+		this.graphFile = graphFile;
+	}
+
+	public void addProblem(String message, OperatorNode operatorNode) {
+		GraphProblem problem = new GraphProblem(operatorNode, message);
+		if (!this.currentMarker .contains(problem)) {
+			this.currentMarker.add(problem);
+		}
+	}
 	
+	public List<GraphProblem> getCurrentMarker() {
+		return currentMarker;
+	}
 }

@@ -34,6 +34,7 @@ import org.w3c.dom.NodeList;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ValidationException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.OperatorGraphSelectionProvider;
@@ -48,7 +49,6 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.parameter.ParameterPres
 public class OperatorNode extends Observable implements Observer {
 
 	private int id = -1;
-
 	private Rectangle constraint;
 
 	private List<Connection> sourceConnections = new ArrayList<>();
@@ -161,8 +161,10 @@ public class OperatorNode extends Observable implements Observer {
 					inputSchemas.put(port, schema);
 				}
 			} catch (Exception e) {
-				// this could be normal during editing - so no exception throwing!
-				// System.out.println("tried to resolve inputschema for " + this + " but this failed");
+				// this could be normal during editing - so no exception
+				// throwing!
+				// System.out.println("tried to resolve inputschema for " + this
+				// + " but this failed");
 			}
 
 		}
@@ -181,12 +183,13 @@ public class OperatorNode extends Observable implements Observer {
 			}
 		} catch (Exception e) {
 			// this could be normal during editing - so no exception throwing!
-			// System.out.println("tried to resolve outputschema for " + this + " but this failed");
+			// System.out.println("tried to resolve outputschema for " + this +
+			// " but this failed");
 		}
 	}
 
 	private void update() {
-		if(this.graph!=null){
+		if (this.graph != null) {
 			this.graph.updateInformation();
 		}
 		setChanged();
@@ -199,19 +202,23 @@ public class OperatorNode extends Observable implements Observer {
 		boolean ok = true;
 		if (this.getTargetConnections().size() < this.operatorInformation.getMinPorts()) {
 			ok = false;
+			addProblemMarker("Operator needs at least " + this.operatorInformation.getMinPorts() + " input operators");
 		}
 		if (this.getTargetConnections().size() > this.operatorInformation.getMaxPorts()) {
 			ok = false;
+			addProblemMarker("Operator may not have more than " + this.operatorInformation.getMaxPorts() + " input operators");
 		}
 		for (LogicalParameterInformation lpi : this.operatorInformation.getParameters()) {
 			if (this.parameterValues.get(lpi) == null) {
 				if (lpi.isMandatory()) {
 					ok = false;
+					addProblemMarker("Operators parameter is mandatory but missing");
 				}
 			} else {
 				if (!this.parameterValues.get(lpi).hasValidValue()) {
 					if (lpi.isMandatory()) {
 						ok = false;
+						addProblemMarker("Operators parameter is mandatory but missing");
 					}
 				}
 			}
@@ -221,6 +228,10 @@ public class OperatorNode extends Observable implements Observer {
 			ok = false;
 		}
 		this.satisfied = ok;
+	}
+
+	private void addProblemMarker(String message) {
+		getGraph().addProblem(message, this);
 	}
 
 	/**
@@ -233,19 +244,40 @@ public class OperatorNode extends Observable implements Observer {
 			nodes.add(this);
 			completeQuery = ScriptGenerator.buildPQL(nodes);
 			// for (Connection connection : getTargetConnections()) {
-			// completeQuery = completeQuery + ScriptGenerator.buildPQLInputPlan(this, connection.getTargetPort())+System.lineSeparator();
+			// completeQuery = completeQuery +
+			// ScriptGenerator.buildPQLInputPlan(this,
+			// connection.getTargetPort())+System.lineSeparator();
 			// }
 			// completeQuery = completeQuery+ScriptGenerator.buildPQL(graph);
 			// TODO: Determine Context?
 			Context context = null;
 			if (!completeQuery.isEmpty()) {
-				Activator.getDefault().getExecutor().determineOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0,context);
+				Activator.getDefault().getExecutor().determineOutputSchema(completeQuery, "PQL", Activator.getDefault().getCaller(), 0, context);
 			}
 		} catch (Exception e) {
+			addProblemMarker("Operator \"" + getOperatorInformation().getOperatorName() + "\" is not satisfied because: " + getRootmessage(e));
 			return false;
 		}
 
 		return true;
+	}
+
+	private String getRootmessage(Exception t) {
+		Throwable result = t;
+		while (result.getCause() != null) {
+			result = result.getCause();
+		}
+		if (result instanceof ValidationException) {
+			ValidationException vex = (ValidationException) result;
+			if (vex.getExceptions().size() > 0) {
+				return vex.getExceptions().get(vex.getExceptions().size() - 1).getMessage();
+			}
+		}
+		if (result.getMessage() == null) {
+			return "unknown reason";
+		}
+		return result.getMessage();
+
 	}
 
 	public boolean isSatisfied() {

@@ -46,7 +46,8 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.views.OperatorGraphPropertyView
 import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 /**
- * An example showing how to create a multi-page editor. This example has 3 pages:
+ * An example showing how to create a multi-page editor. This example has 3
+ * pages:
  * <ul>
  * <li>page 0 contains a nested text editor.
  * <li>page 1 allows you to change the font used in page 2
@@ -146,6 +147,7 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 	private void modelChanged() {
 		reloadTextEditor();
 		setDirty(true);
+		graphEditor.updateGraph();
 	}
 
 	@Override
@@ -310,7 +312,8 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 									closeEditor(resource);
 								}
 							}
-							// TODO: handle IResourceDelta.CHANGED events by offering
+							// TODO: handle IResourceDelta.CHANGED events by
+							// offering
 							// to reload the file
 						}
 
@@ -340,7 +343,8 @@ public class MultiPageGraphEditor extends MultiPageEditorPart implements IResour
 		// }
 		//
 		// if (event.getDelta().getKind() == IResourceDelta.REMOVED) {
-		// if (event.getDelta().getResource().equals(((FileEditorInput) getEditorInput()).getFile())) {
+		// if (event.getDelta().getResource().equals(((FileEditorInput)
+		// getEditorInput()).getFile())) {
 		// closeEditor(event.getDelta().getResource());
 		// }
 		// }

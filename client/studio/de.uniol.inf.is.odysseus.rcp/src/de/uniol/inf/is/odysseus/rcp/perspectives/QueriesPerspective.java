@@ -40,7 +40,7 @@ public class QueriesPerspective implements IPerspectiveFactory {
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.60f, editorArea);
 		bottom.addView(OdysseusRCPPlugIn.QUERY_VIEW_ID);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
-		bottom.addView("org.eclipse.pde.runtime.LogView");
+		bottom.addView("org.eclipse.pde.runtime.LogView");		
 
 		// Wizards
 		layout.addNewWizardShortcut(OdysseusRCPPlugIn.WIZARD_PROJECT_ID);

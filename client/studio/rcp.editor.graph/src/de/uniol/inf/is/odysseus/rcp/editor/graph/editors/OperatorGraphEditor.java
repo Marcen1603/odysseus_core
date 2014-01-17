@@ -32,8 +32,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.draw2d.ColorConstants;
@@ -81,6 +83,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.editparts.factories.Gra
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.generator.ScriptGenerator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Connection;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.Graph;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.GraphProblem;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
 
 /**
@@ -89,8 +92,12 @@ import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
  */
 public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implements ISelectionChangedListener {
 
+	private static String MARKER_ID = "de.uniol.inf.is.odysseus.rcp.editor.graph.marker.notsatisfied";
+
 	private Graph graph;
 	private DefaultEditDomain editDomain;
+
+	private List<GraphProblem> currentMarker = new ArrayList<>();
 
 	public OperatorGraphEditor() {
 		editDomain = new DefaultEditDomain(this);
@@ -101,7 +108,9 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.ui.parts.GraphicalEditor#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 * @see
+	 * org.eclipse.gef.ui.parts.GraphicalEditor#init(org.eclipse.ui.IEditorSite,
+	 * org.eclipse.ui.IEditorInput)
 	 */
 	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
@@ -115,7 +124,9 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette#getAdapter(java.lang.Class)
+	 * @see
+	 * org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette#getAdapter(
+	 * java.lang.Class)
 	 */
 	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class type) {
@@ -126,6 +137,35 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 			return ((ScalableRootEditPart) getGraphicalViewer().getRootEditPart()).getZoomManager();
 		}
 		return super.getAdapter(type);
+	}
+
+	@Override
+	public void setFocus() {
+		super.setFocus();
+		updateGraph();
+	}
+
+	public void updateGraph() {
+		if (graph != null) {	
+			graph.recalcSatisfied();
+			updateMarkers();
+		}
+	}
+
+	private void updateMarkers() {
+		try {
+			IResource target = graph.getGraphFile();
+			target.deleteMarkers(MARKER_ID, true, IResource.DEPTH_INFINITE);
+
+			for (GraphProblem prob : currentMarker) {
+				IMarker marker = graph.getGraphFile().createMarker(MARKER_ID);
+				marker.setAttribute(IMarker.MESSAGE, prob.getMessage());
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+				marker.setAttribute(IMarker.LOCATION, prob.getNode().getOperatorInformation().getOperatorName());
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void saveToXML(FileEditorInput fileInput) {
@@ -150,7 +190,8 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				operatorsElement.appendChild(opNode);
 				connections.addAll(p.getSourceConnections());
 			}
-			// we have to handle connections separately since we don't know the end and start point before
+			// we have to handle connections separately since we don't know the
+			// end and start point before
 			Element connectionsElement = doc.createElement("connections");
 			root.appendChild(connectionsElement);
 			for (Connection c : connections) {
@@ -191,6 +232,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 
 		try {
 			this.graph.setProject(input.getFile().getProject());
+			this.graph.setGraphFile(input.getFile());
 			InputStream is = input.getFile().getContents();
 
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -202,7 +244,7 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 			Map<String, Element> mainNodes = getChildNodes(root);
 
 			Map<String, OperatorNode> currentIdToNodes = new TreeMap<>();
-			
+
 			List<Element> operatorNodes = getChildList(mainNodes.get("operators"));
 			for (Element opNode : operatorNodes) {
 				String typeName = opNode.getAttributes().getNamedItem("type").getNodeValue();
@@ -221,10 +263,10 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 				OperatorNode targetNode = currentIdToNodes.get(values.get("target"));
 				int sourcePort = 0;
 				int targetPort = 0;
-				if(values.get("sourcePort")!=null){
+				if (values.get("sourcePort") != null) {
 					sourcePort = Integer.parseInt(values.get("sourcePort"));
 				}
-				if(values.get("targetPort")!=null){
+				if (values.get("targetPort") != null) {
 					targetPort = Integer.parseInt(values.get("targetPort"));
 				}
 				Connection con = new Connection();
@@ -281,7 +323,8 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	}
 
 	private void initGraphEditorListener() {
-		// editDomain.getCommandStack().addCommandStackListener(new GraphEditorListener(actionRegistry));
+		// editDomain.getCommandStack().addCommandStackListener(new
+		// GraphEditorListener(actionRegistry));
 	}
 
 	/*
@@ -326,7 +369,9 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette#getPaletteRoot()
+	 * @see
+	 * org.eclipse.gef.ui.parts.GraphicalEditorWithFlyoutPalette#getPaletteRoot
+	 * ()
 	 */
 	@Override
 	protected PaletteRoot getPaletteRoot() {
@@ -336,7 +381,8 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.
+	 * IProgressMonitor)
 	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
@@ -374,7 +420,9 @@ public class OperatorGraphEditor extends GraphicalEditorWithFlyoutPalette implem
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 * @see
+	 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(
+	 * org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {

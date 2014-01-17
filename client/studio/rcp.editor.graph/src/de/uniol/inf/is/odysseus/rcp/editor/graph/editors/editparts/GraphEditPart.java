@@ -60,6 +60,7 @@ public class GraphEditPart extends AbstractGraphicalEditPart implements Observer
 		installEditPolicy(EditPolicy.LAYOUT_ROLE, new GraphXYLayoutEditPolicy());
 	}
 	
+	
 	@Override
 	public void activate() {
 		if (!isActive())

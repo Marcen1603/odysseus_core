@@ -32,13 +32,16 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public String getInitialWindowPerspectiveId() {
 		return "de.uniol.inf.is.odysseus.rcp.perspectives.QueriesPerspective";
 	}
-
+	
 	@Override
 	public void initialize(IWorkbenchConfigurer configurer) {
 		super.initialize(configurer);
 		configurer.setSaveAndRestore(true);
 
 		IDE.registerAdapters();
+		
+
+	   BrokenIDEImagesLoader.redeclareImages(configurer);
 	}
 
 	@Override
@@ -47,4 +50,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		NavigatorHelper.reloadNavigator();
 
 	}
+	
+	
 }
