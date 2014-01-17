@@ -44,7 +44,6 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	private IAttributeResolver resolver;
 	private IDataDictionary dd;
 	private ISession caller;
-	private Map<Integer, SDFSchema> inputSchema = new HashMap<>();
 	private final List<Exception> errors;
 	private final List<Exception> warnings;
 	protected Object inputValue;
@@ -205,15 +204,6 @@ public abstract class AbstractParameter<T> implements IParameter<T> {
 	@Override
 	public void setAttributeResolver(IAttributeResolver resolver) {
 		this.resolver = resolver;
-	}
-
-	@Override
-	public void setInputSchema(int port, SDFSchema schema) {
-		this.inputSchema.put(port,schema);
-	}
-	
-	protected SDFSchema getInputSchema(int port){
-		return inputSchema.get(port);
 	}
 	
 	@Override

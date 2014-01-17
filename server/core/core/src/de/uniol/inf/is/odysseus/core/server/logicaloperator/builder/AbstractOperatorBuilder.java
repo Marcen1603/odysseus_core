@@ -168,16 +168,16 @@ public abstract class AbstractOperatorBuilder implements IOperatorBuilder {
 		// inputPorts
 		// e.g. is input port 0, 2, 3 set, but 1 not set allowed?
 
+		List<SDFSchema> inputSchema = new LinkedList<>();
+		for (InputOperatorItem opItem : inputOperators.values()) {
+			inputSchema.add(opItem.operator.getOutputSchema(opItem.outputPort));
+		}
+		IAttributeResolver attributeResolver = new DirectAttributeResolver(
+				inputSchema);
+		
 		// check parameters
 		for (IParameter<?> parameter : getParameters()) {
-			List<SDFSchema> inputSchema = new LinkedList<>();
-			int port = 0;
-			for (InputOperatorItem opItem : inputOperators.values()) {
-				parameter.setInputSchema(port++, opItem.operator.getOutputSchema(opItem.outputPort));
-				inputSchema.add(opItem.operator.getOutputSchema(opItem.outputPort));
-			}
-			IAttributeResolver attributeResolver = new DirectAttributeResolver(
-					inputSchema);
+
 			parameter.setAttributeResolver(attributeResolver);
 			parameter.setDataDictionary(getDataDictionary());
 			parameter.setCaller(getCaller());

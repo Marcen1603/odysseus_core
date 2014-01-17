@@ -58,5 +58,4 @@ public interface IParameter<T> extends Serializable {
 	public void setPossibleValueMethod(String possibleValueMethod);
 	public boolean arePossibleValuesDynamic();
 	public void setPossibleValuesAreDynamic(boolean possibleValuesAreDynamic);
-	public void setInputSchema(int i, SDFSchema outputSchema);
 }

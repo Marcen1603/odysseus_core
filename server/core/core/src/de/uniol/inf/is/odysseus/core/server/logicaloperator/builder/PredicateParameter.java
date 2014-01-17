@@ -41,7 +41,10 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 			predicateType = pItem.getPredicateType();
 			predicate = pItem.getPredicate();
 		} else if (inputValue instanceof String) {
-			predicateType = getInputSchema(0).getType().getName();
+			if (getAttributeResolver().getSchema().size() > 0) {
+				predicateType = getAttributeResolver().getSchema().get(0)
+						.getType().getName();
+			}
 			predicate = (String) inputValue;
 		}
 		IPredicateBuilder pBuilder = OperatorBuilderFactory
