@@ -165,10 +165,10 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 	protected synchronized void updateSA(
 			DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> sa,
 			R elemToAdd) {
-//		System.err.println("");
-//		System.err
-//				.println("-------------------------------------------------------------------------");
-//		System.err.println("INPUT " + elemToAdd);
+		System.err.println("");
+		System.err
+				.println("-------------------------------------------------------------------------");
+		System.err.println("INPUT " + elemToAdd);
 		assert (elemToAdd != null);
 		R newElement = elemToAdd;
 		Q t_probe = elemToAdd.getMetadata();
@@ -318,7 +318,7 @@ public abstract class AggregateTIPO<Q extends ITimeInterval, R extends IStreamOb
 		if (logger.isTraceEnabled()) {
 			logger.trace(sa.toString());
 		}
-		//System.err.println(sa.toString());
+		System.err.println(sa.toString());
 	}
 
 	// Updates SA by splitting all partial aggregates before split point
