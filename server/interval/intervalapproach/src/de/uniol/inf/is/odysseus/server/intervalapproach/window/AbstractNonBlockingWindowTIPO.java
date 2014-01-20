@@ -39,7 +39,7 @@ public abstract class AbstractNonBlockingWindowTIPO<T extends IStreamObject<? ex
 
 	@Override
 	protected void process_next(T object, int port) {
-		System.err.println("MG WINDOW DEBUG: IN " + object);
+//		System.err.println("MG WINDOW DEBUG: IN " + object);
 
 		ITimeInterval time = object.getMetadata();
 		PointInTime end = this.calcWindowEnd(time);
