@@ -63,7 +63,7 @@ public class SAAggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>
 			super.updateSA(sa, elemToAdd);
 			LOG.debug("evaluated");
 		} else {
-			LOG.debug("nicht evaluated");
+			LOG.debug("not evaluated");
 		}
 	}
 
