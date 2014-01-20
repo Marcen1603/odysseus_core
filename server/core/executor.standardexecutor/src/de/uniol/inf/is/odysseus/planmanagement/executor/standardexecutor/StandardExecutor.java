@@ -747,7 +747,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public SDFSchema determineOutputSchema(String query, String parserID,
 			ISession user, int port, Context context) {
-		if (context == null){
+		if (context == null) {
 			context = Context.empty();
 		}
 		context.put("tempQuery", true);
@@ -894,17 +894,18 @@ public class StandardExecutor extends AbstractExecutor implements
 
 	@Override
 	public boolean removeAllQueries(ISession caller) {
-		boolean success = true;			
-		List<IPhysicalQuery> queries = new ArrayList<>(executionPlan.getQueries());
+		boolean success = true;
+		List<IPhysicalQuery> queries = new ArrayList<>(
+				executionPlan.getQueries());
 		for (IPhysicalQuery q : queries) {
 			try {
 				removeQuery(q.getID(), caller);
 			} catch (Throwable throwable) {
 				LOG.error("Exception during stopping query " + q.getID()
-						+ " caller " + caller.getId(), throwable);				
+						+ " caller " + caller.getId(), throwable);
 				success = false;
 			}
-		}		
+		}
 		return success;
 	}
 
@@ -918,43 +919,47 @@ public class StandardExecutor extends AbstractExecutor implements
 	@Override
 	public void startQuery(int queryID, ISession caller) {
 		IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID);
-		validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
-		if (queryToStart.isOpened() || queryToStart.isStarting()) {
-			LOG.info("Query (ID: " + queryID + ") is already started.");
-			return;
-		}
-
-		if (hasAdmissionControl()) {
-			if (!getAdmissionControl().canStartQuery(queryToStart)) {
-				throw new RuntimeException(
-						"Query not started because it would exceed maximum total cost");
+		synchronized (queryToStart) {
+			validateUserRight(queryToStart, caller,
+					ExecutorPermission.START_QUERY);
+			if (queryToStart.isOpened() || queryToStart.isStarting()) {
+				LOG.info("Query (ID: " + queryID + ") is already started.");
+				return;
 			}
-		}
 
-		LOG.info("Starting query (ID: " + queryID + ")...");
+			if (hasAdmissionControl()) {
+				if (!getAdmissionControl().canStartQuery(queryToStart)) {
+					throw new RuntimeException(
+							"Query not started because it would exceed maximum total cost");
+				}
+			}
 
-		try {
-			this.executionPlanLock.lock();
-			getOptimizer().beforeQueryStart(queryToStart, this.executionPlan);
-			executionPlanChanged(PlanModificationEventType.QUERY_START,
-					queryToStart);
-			queryToStart.open(this);
-			LOG.info("Query " + queryID + " started.");
-			firePlanModificationEvent(new QueryPlanModificationEvent(this,
-					PlanModificationEventType.QUERY_START, queryToStart));
-		} catch (Exception e) {
-			LOG.warn(
-					"Query not started. An Error during optimizing occurd (ID: "
-							+ queryID + ").", e);
-			throw new RuntimeException(
-					"Query not started. An Error during optimizing occurd (ID: "
-							+ queryID + "). " + e.getMessage(), e);
-		} finally {
-			this.executionPlanLock.unlock();
-		}
+			LOG.info("Starting query (ID: " + queryID + ")...");
 
-		if (hasPlanAdaptionEngine()) {
-			getPlanAdaptionEngine().setQueryAsStarted(queryToStart);
+			try {
+				this.executionPlanLock.lock();
+				getOptimizer().beforeQueryStart(queryToStart,
+						this.executionPlan);
+				executionPlanChanged(PlanModificationEventType.QUERY_START,
+						queryToStart);
+				queryToStart.open(this);
+				LOG.info("Query " + queryID + " started.");
+				firePlanModificationEvent(new QueryPlanModificationEvent(this,
+						PlanModificationEventType.QUERY_START, queryToStart));
+			} catch (Exception e) {
+				LOG.warn(
+						"Query not started. An Error during optimizing occurd (ID: "
+								+ queryID + ").", e);
+				throw new RuntimeException(
+						"Query not started. An Error during optimizing occurd (ID: "
+								+ queryID + "). " + e.getMessage(), e);
+			} finally {
+				this.executionPlanLock.unlock();
+			}
+
+			if (hasPlanAdaptionEngine()) {
+				getPlanAdaptionEngine().setQueryAsStarted(queryToStart);
+			}
 		}
 	}
 
@@ -1032,7 +1037,9 @@ public class StandardExecutor extends AbstractExecutor implements
 	}
 
 	private void stopQuery(IPhysicalQuery queryToStop) {
-		// There are two ways, a query can be stopped. By a scheduler or by the executor. Run into this method only once, else there will be a deadlock!
+		// There are two ways, a query can be stopped. By a scheduler or by the
+		// executor. Run into this method only once, else there will be a
+		// deadlock!
 		if (!queryToStop.isMarkedAsStopping()) {
 			queryToStop.setAsStopping(true);
 			if (hasPlanAdaptionEngine()) {
