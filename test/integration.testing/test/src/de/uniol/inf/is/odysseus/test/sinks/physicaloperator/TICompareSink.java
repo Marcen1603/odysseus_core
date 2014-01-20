@@ -75,57 +75,59 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		this.expected.clear();
-		this.inputdata.clear();
-		@SuppressWarnings("unchecked")
-		IDataHandler<Tuple<ITimeInterval>> dh = (IDataHandler<Tuple<ITimeInterval>>) DataHandlerRegistry.getDataHandler("TUPLE", getOutputSchema());
-		Map<String, String> options = new HashMap<>();
-		options.put(AbstractCSVHandler.DELIMITER, "|");
-		SimpleCSVProtocolHandler<Tuple<ITimeInterval>> csvreader = new SimpleCSVProtocolHandler<Tuple<ITimeInterval>>(ITransportDirection.IN, IAccessPattern.PULL, dh);
-		csvreader = (SimpleCSVProtocolHandler<Tuple<ITimeInterval>>) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
-		for (Pair<String, String> csv : expectedOriginals) {
-			Tuple<ITimeInterval> tuple = csvreader.convertLine(csv.getE1());
-			TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
-			tuple.setMetadata(ti);
-			this.expected.insert(tuple);
+		synchronized (expected) {
+			this.expected.clear();
+			this.inputdata.clear();
+			@SuppressWarnings("unchecked")
+			IDataHandler<Tuple<ITimeInterval>> dh = (IDataHandler<Tuple<ITimeInterval>>) DataHandlerRegistry.getDataHandler("TUPLE", getOutputSchema());
+			Map<String, String> options = new HashMap<>();
+			options.put(AbstractCSVHandler.DELIMITER, "|");
+			SimpleCSVProtocolHandler<Tuple<ITimeInterval>> csvreader = new SimpleCSVProtocolHandler<Tuple<ITimeInterval>>(ITransportDirection.IN, IAccessPattern.PULL, dh);
+			csvreader = (SimpleCSVProtocolHandler<Tuple<ITimeInterval>>) csvreader.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
+			for (Pair<String, String> csv : expectedOriginals) {
+				Tuple<ITimeInterval> tuple = csvreader.convertLine(csv.getE1());
+				TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
+				tuple.setMetadata(ti);
+				this.expected.insert(tuple);
+			}
+			logger.debug("expected data loaded");
 		}
 	}
 
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> tuple, int port) {
 		synchronized (expected) {
-			
-		
-		inputdata.add(tuple);
-		List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple);
-		if (startSame.size() == 0) {			
-			stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);	
-			logger.debug(StatusCode.ERROR_NOT_EQUIVALENT.name()+": Following tuple has no counterpart in expected values: ");
-			logger.debug("\t"+tuple.toString());	
-			logger.debug("\tCurrently the following expected data remains (shows only last "+MAX_TUPLES+" tuples):");
-			logger.debug(expected.getSweepAreaAsString("\t", MAX_TUPLES, true));
-			logger.debug("\tReceived the following data until now (shows only last "+MAX_TUPLES+" tuples):");
-			for(int i=Math.min(MAX_TUPLES, inputdata.size())-1;i>=0;i--){
-				Tuple<? extends ITimeInterval> t =  inputdata.get(i);
-				logger.debug("\t "+t);
-			}
-			
-		} else {
-			if (startSame.size() == 1) {
-				Tuple<? extends ITimeInterval> other = startSame.get(0);
-				if (tuple.getMetadata().getEnd().equals(other.getMetadata().getEnd())) {
-					// ok - exactly same metadata
-					//System.out.println("FOUND EXACTLY MATCH");
-				} else {
-					logger.debug("Found a match with same starttime, but endtimestamp is different! Tuples are:");
-					logger.debug("\t"+"Processed: "+tuple.toString());
-					logger.debug("\t"+"Expected:"+tuple.toString());					
-				}
-			}else{
-				logger.debug("There are more than one matching values. Just removed one from expected outputs!");
-			}
 
-		}
+			inputdata.add(tuple);
+			List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple);
+			if (startSame.size() == 0) {
+				stopOperation(StatusCode.ERROR_NOT_EQUIVALENT);
+				logger.debug(StatusCode.ERROR_NOT_EQUIVALENT.name() + ": Following tuple has no counterpart in expected values: ");
+				logger.debug("\t" + tuple.toString());
+				logger.debug("\tCurrently the following expected data remains (shows only last " + MAX_TUPLES + " tuples):");
+				logger.debug(expected.getSweepAreaAsString("\t", MAX_TUPLES, true));
+				logger.debug("\tReceived the following data until now (shows only last " + MAX_TUPLES + " tuples):");
+				for (int i = Math.min(MAX_TUPLES, inputdata.size()) - 1; i >= 0; i--) {
+					Tuple<? extends ITimeInterval> t = inputdata.get(i);
+					logger.debug("\t " + t);
+				}
+
+			} else {
+				if (startSame.size() == 1) {
+					Tuple<? extends ITimeInterval> other = startSame.get(0);
+					if (tuple.getMetadata().getEnd().equals(other.getMetadata().getEnd())) {
+						// ok - exactly same metadata
+						// System.out.println("FOUND EXACTLY MATCH");
+					} else {
+						logger.debug("Found a match with same starttime, but endtimestamp is different! Tuples are:");
+						logger.debug("\t" + "Processed: " + tuple.toString());
+						logger.debug("\t" + "Expected:" + tuple.toString());
+					}
+				} else {
+					logger.debug("There are more than one matching values. Just removed one from expected outputs!");
+				}
+
+			}
 		}
 	}
 
@@ -146,14 +148,16 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 
 	@Override
 	protected void process_done(int port) {
-		logger.debug("Received done...");
-		if (expected.size() > 0) {
-			stopOperation(true, StatusCode.ERROR_MISSING_DATA);
-			logger.debug(StatusCode.ERROR_MISSING_DATA.name() + ": Some expected data was not part of the processing. Expected output still contains the following tuples (last "+MAX_TUPLES+"):");
-			logger.debug(expected.getSweepAreaAsString("\t", MAX_TUPLES, true));
+		synchronized (expected) {
+			logger.debug("Received done...");
+			if (expected.size() > 0) {
+				stopOperation(true, StatusCode.ERROR_MISSING_DATA);
+				logger.debug(StatusCode.ERROR_MISSING_DATA.name() + ": Some expected data was not part of the processing. Expected output still contains the following tuples (last " + MAX_TUPLES + "):");
+				logger.debug(expected.getSweepAreaAsString("\t", MAX_TUPLES, true));
 
-		} else {
-			stopOperation(true, StatusCode.OK);
+			} else {
+				stopOperation(true, StatusCode.OK);
+			}
 		}
 	}
 
