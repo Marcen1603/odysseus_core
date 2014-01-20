@@ -52,6 +52,7 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	private static final int MAX_TUPLES = 10;
 
 	Logger logger = LoggerFactory.getLogger(TICompareSink.class);
+	private boolean tracing = false;
 
 	private List<Pair<String, String>> expectedOriginals = new ArrayList<>();
 	private DefaultTISweepArea<Tuple<? extends ITimeInterval>> expected = new DefaultTISweepArea<>();
@@ -66,6 +67,7 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 
 	public TICompareSink(TICompareSink s) {
 		this.expectedOriginals = s.expectedOriginals;
+		this.tracing = s.tracing;
 		this.listeners = new ArrayList<>(s.listeners);
 	}
 
@@ -89,6 +91,9 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 				TimeInterval ti = TimeInterval.parseTimeInterval(csv.getE2());
 				tuple.setMetadata(ti);
 				this.expected.insert(tuple);
+				if(tracing){
+					System.out.println("load expected tuple: "+tuple);
+				}
 			}
 			logger.debug("expected data loaded");
 		}
@@ -97,7 +102,9 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	@Override
 	protected void process_next(Tuple<? extends ITimeInterval> tuple, int port) {
 		synchronized (expected) {
-
+			if(tracing){
+				System.out.println("Process next: "+tuple);
+			}
 			inputdata.add(tuple);
 			List<Tuple<? extends ITimeInterval>> startSame = expected.extractEqualElementsStartingEquals(tuple);
 			if (startSame.size() == 0) {
@@ -169,6 +176,15 @@ public class TICompareSink extends AbstractSink<Tuple<? extends ITimeInterval>> 
 	@Override
 	public TICompareSink clone() {
 		return new TICompareSink(this);
+	}
+
+	public boolean isTracing() {
+		return tracing;
+	}
+
+	public void setTracing(boolean tracing) {
+		logger.debug("set tracing to: "+tracing);
+		this.tracing = tracing;
 	}
 
 }
