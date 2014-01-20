@@ -919,7 +919,7 @@ public class StandardExecutor extends AbstractExecutor implements
 	public void startQuery(int queryID, ISession caller) {
 		IPhysicalQuery queryToStart = this.executionPlan.getQueryById(queryID);
 		validateUserRight(queryToStart, caller, ExecutorPermission.START_QUERY);
-		if (queryToStart.isOpened()) {
+		if (queryToStart.isOpened() || queryToStart.isStarting()) {
 			LOG.info("Query (ID: " + queryID + ") is already started.");
 			return;
 		}

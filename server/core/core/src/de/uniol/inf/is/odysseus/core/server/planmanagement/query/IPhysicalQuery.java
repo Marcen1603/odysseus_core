@@ -103,6 +103,7 @@ IReoptimizeRequester<AbstractQueryReoptimizeRule>, IOperatorOwner, IHasRoots, IQ
 	 */
 	public void removeOwnerschip();
 	
+	public boolean isStarting();
 	public boolean isOpened();
 	
 	public Set<IPhysicalOperator> getSharedOperators(IPhysicalQuery otherQuery);

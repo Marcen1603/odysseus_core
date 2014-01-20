@@ -168,8 +168,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	private IQueryStarter queryListener;
 
-	
 	boolean markedToStopped = false;
+
+	boolean isStarting = false;
 	
 	/**
 	 * Creates a query based on a physical plan and
@@ -466,6 +467,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void open(IQueryStarter queryListener) throws OpenFailedException {
 		this.markedToStopped = false;
+		this.isStarting = true;
 		doneRoots.clear();
 		this.queryListener = queryListener;
 		for (IPhysicalOperator curRoot : getRoots()) {
@@ -480,6 +482,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			}
 		}
 		opened = true;
+		this.isStarting = false;
 	}
 
 	@Override
@@ -514,6 +517,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public boolean isOpened() {
 		return opened;
+	}
+	
+	@Override
+	public boolean isStarting(){
+		return isStarting;
 	}
 
 	/*
