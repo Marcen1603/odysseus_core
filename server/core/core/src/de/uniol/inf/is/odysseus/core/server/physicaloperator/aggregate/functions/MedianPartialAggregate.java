@@ -45,9 +45,9 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
         this.addAll(values);
     }
 
-    public MedianPartialAggregate(final MedianPartialAggregate<R> avgSumPartialAggregate) {
-        this.lower.addAll(avgSumPartialAggregate.lower);
-        this.upper.addAll(avgSumPartialAggregate.upper);
+    public MedianPartialAggregate(final MedianPartialAggregate<R> medianPartialAggregate) {
+        this.lower.addAll(medianPartialAggregate.lower);
+        this.upper.addAll(medianPartialAggregate.upper);
     }
 
     public Double getAggValue() {
@@ -88,9 +88,9 @@ public class MedianPartialAggregate<R> implements IPartialAggregate<R> {
         this.rebalance();
     }
 
-    public void remove(Double value) {
-        if ((lower.remove(value)) || (upper.remove(value))) {
-            rebalance();
+    public void remove(final Double value) {
+        if ((this.lower.remove(value)) || (this.upper.remove(value))) {
+            this.rebalance();
         }
     }
 

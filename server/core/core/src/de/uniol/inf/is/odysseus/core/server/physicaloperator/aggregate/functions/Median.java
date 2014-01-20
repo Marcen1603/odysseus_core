@@ -16,7 +16,7 @@ abstract public class Median<R, W> extends AbstractAggregateFunction<R, W> {
      */
     private static final long serialVersionUID = -6053900953263781699L;
 
-    protected Median(boolean partialAggregateInput) {
+    protected Median(final boolean partialAggregateInput) {
         super("MEDIAN", partialAggregateInput);
     }
 
