@@ -34,9 +34,9 @@ public abstract class AbstractQueryExpectedOutputTestComponent<T extends ITestCo
 					// there are multiple sinks with different outputs
 					List<Pair<String, String>> expected = set.getExpectedOutput();					
 					TICompareSink sink = new TICompareSink(expected);
-					if(set.getName().equalsIgnoreCase("aggregate_time.qry")){
-						sink.setTracing(true);
-					}
+//					if(set.getName().equalsIgnoreCase("aggregate_time.qry")){
+//						sink.setTracing(true);
+//					}
 					sink.addListener(this);
 					roots.add(sink);
 					@SuppressWarnings("unchecked")
