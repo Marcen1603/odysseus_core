@@ -15,55 +15,141 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.AbstractListAggregation;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.ListPartialAggregate;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.StandardDeviation;
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.StandardDeviationPartialAggregate;
 
-public class RelationalStdDev
-		extends
-		AbstractListAggregation<Tuple<? extends IMetaAttribute>, Tuple<? extends IMetaAttribute>> {
+/**
+ * Estimates the standard deviation of the given attribute.
+ * 
+ * @author Christian Kuka <christian@kuka.cc>
+ * 
+ */
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class RelationalStdDev extends StandardDeviation<Tuple<?>, Tuple<?>> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8289285906323304991L;
-	final int attribPos;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7920248360169482197L;
+    private final int pos;
 
-	public RelationalStdDev(int[] pos, boolean partialAggregateInput) {
-		super("STDDEV", partialAggregateInput);
-		this.attribPos = pos[0];
-	}
+    static public RelationalStdDev getInstance(final int pos, final boolean partialAggregateInput) {
+        return new RelationalStdDev(pos, partialAggregateInput);
+    }
 
-	@Override
-	public Tuple<? extends IMetaAttribute> evaluate(
-			IPartialAggregate<Tuple<? extends IMetaAttribute>> p) {
-		ListPartialAggregate<Tuple<? extends IMetaAttribute>> list = (ListPartialAggregate<Tuple<? extends IMetaAttribute>>) p;
-		int n = list.size();
-		if (n > 0) {
-			// Calc Average
-			double sum = 0;
-			for (Tuple<? extends IMetaAttribute> tuple : list) {
-				sum = sum
-						+ ((Number) (tuple.getAttribute(attribPos)))
-								.doubleValue();
-			}
-			double avg = sum / n;
-			// Calc Sum
-			double stddev = 0.0;
-			for (Tuple<? extends IMetaAttribute> tuple : list) {
-				stddev += Math.pow((((Number) (tuple.getAttribute(attribPos)))
-						.doubleValue() - avg), 2);
-			}
-			stddev = (1.0 / (n-1.0)) * stddev;
-			stddev = Math.sqrt(stddev);
-			Tuple<IMetaAttribute> returnVal = new Tuple<IMetaAttribute>(
-					1, false);
-			returnVal.setAttribute(0, stddev);
-			return returnVal;
-		}
-        return null;
-	}
+    private RelationalStdDev(final int pos, final boolean partialAggregateInput) {
+        super(partialAggregateInput);
+        this.pos = pos;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public IPartialAggregate<Tuple<?>> init(final Tuple in) {
+        if (this.isPartialAggregateInput()) {
+            return this.init((StandardDeviationPartialAggregate<Tuple<?>>) in.getAttribute(this.pos));
+        }
+        else {
+            return new StandardDeviationPartialAggregate<Tuple<?>>(((Number) in.getAttribute(this.pos)).doubleValue());
+        }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public IPartialAggregate<Tuple<?>> init(final IPartialAggregate<Tuple<?>> in) {
+        return new StandardDeviationPartialAggregate<Tuple<?>>((StandardDeviationPartialAggregate<Tuple<?>>) in);
+    }
+
+    /**
+     * 
+     * @param p
+     * @param toMerge
+     * @param createNew
+     * @return
+     */
+    @Override
+    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate p, final Tuple toMerge, final boolean createNew) {
+        StandardDeviationPartialAggregate<Tuple<?>> pa = null;
+        if (createNew) {
+            final StandardDeviationPartialAggregate<Tuple<?>> h = (StandardDeviationPartialAggregate<Tuple<?>>) p;
+            pa = new StandardDeviationPartialAggregate<Tuple<?>>(h);
+
+        }
+        else {
+            pa = (StandardDeviationPartialAggregate<Tuple<?>>) p;
+        }
+        return this.merge(pa, toMerge);
+    }
+
+    /**
+     * 
+     * @param p
+     * @param toMerge
+     * @return
+     */
+    public IPartialAggregate<Tuple<? extends IMetaAttribute>> merge(final IPartialAggregate p, final Tuple<?> toMerge) {
+        final StandardDeviationPartialAggregate pa = (StandardDeviationPartialAggregate) p;
+        if (this.isPartialAggregateInput()) {
+            return this.merge(p, (IPartialAggregate) toMerge.getAttribute(this.pos), false);
+        }
+        else {
+            pa.add(((Number) toMerge.getAttribute(this.pos)).doubleValue());
+            return pa;
+        }
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public IPartialAggregate<Tuple<?>> merge(final IPartialAggregate<Tuple<?>> p, final IPartialAggregate<Tuple<?>> toMerge, final boolean createNew) {
+        StandardDeviationPartialAggregate<Tuple<?>> pa = null;
+        if (createNew) {
+            final StandardDeviationPartialAggregate<Tuple<?>> h = (StandardDeviationPartialAggregate<Tuple<?>>) p;
+            pa = new StandardDeviationPartialAggregate<Tuple<?>>(h);
+        }
+        else {
+            pa = (StandardDeviationPartialAggregate<Tuple<?>>) p;
+        }
+        return this.merge(pa, toMerge);
+    }
+
+    /**
+     * @param pa
+     * @param toMerge
+     * @return
+     */
+    public IPartialAggregate<Tuple<?>> merge(final StandardDeviationPartialAggregate<Tuple<?>> pa, final IPartialAggregate<Tuple<?>> toMerge) {
+        final StandardDeviationPartialAggregate paToMerge = (StandardDeviationPartialAggregate) toMerge;
+        pa.add(paToMerge);
+        return pa;
+    }
+
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public Tuple evaluate(final IPartialAggregate p) {
+        final StandardDeviationPartialAggregate pa = (StandardDeviationPartialAggregate) p;
+        final Tuple<? extends IMetaAttribute> r = new Tuple(1, false);
+        r.setAttribute(0, new Double(pa.getAggValue().doubleValue()));
+        return r;
+    }
+
+    @Override
+    public SDFDatatype getPartialAggregateType() {
+        return SDFDatatype.STDDEV_PARTIAL_AGGREGATE;
+    }
 
 }
