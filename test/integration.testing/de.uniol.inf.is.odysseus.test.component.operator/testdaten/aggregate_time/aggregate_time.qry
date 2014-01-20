@@ -1,7 +1,7 @@
 ///OdysseusScript
 #PARSER PQL
 #TRANSCFG Standard
-#RUNQUERY
+#ADDQUERY
 percentage = ACCESS({
 	source='percentage', 
 	wrapper='GenericPull',
