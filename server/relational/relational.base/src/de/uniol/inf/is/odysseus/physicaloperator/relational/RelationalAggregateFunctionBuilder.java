@@ -68,7 +68,9 @@ public class RelationalAggregateFunctionBuilder implements
 			aggFunc = RelationalMinMax.getInstance(pos[0],
 					(key.getName().equalsIgnoreCase("MAX")) ? true : false, partialAggregateInput, datatype);
 		}else if ((key.getName().equalsIgnoreCase("STDDEV"))){
-			aggFunc = new RelationalStdDev(pos, partialAggregateInput);
+			aggFunc = RelationalStdDev.getInstance(pos[0], partialAggregateInput);
+	     }else if ((key.getName().equalsIgnoreCase("CORR"))){
+	        aggFunc = RelationalCorr.getInstance(pos[0], pos[1], partialAggregateInput);
         } else if (key.getName().equalsIgnoreCase(MEDIAN)) {
             aggFunc = RelationalMedian.getInstance(pos[0], partialAggregateInput);
 		} else if ((key.getName().equalsIgnoreCase("NEST"))) {
