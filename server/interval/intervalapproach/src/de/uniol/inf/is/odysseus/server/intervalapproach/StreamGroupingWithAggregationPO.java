@@ -51,7 +51,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	private long createOutputCounter = 0;
 	private boolean outputPA = false;
 	private boolean drainAtDone = true;
-	
+
 	// public StreamGroupingWithAggregationPO(SDFSchema inputSchema,
 	// SDFSchema outputSchema, List<SDFAttribute> groupingAttributes,
 	// Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations,
@@ -95,7 +95,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
-	
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -103,14 +103,20 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		getGroupProcessor().init();
-		transferArea.init(this, getSubscribedToSource().size());
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			g.init();
+			transferArea.init(this, getSubscribedToSource().size());
+		}
 	}
 
 	@Override
 	protected void process_done() {
-		// Drain all groups
-		drainGroups();
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			// Drain all groups
+			drainGroups();
+		}
 	}
 
 	private void drainGroups() {
@@ -128,9 +134,12 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 
 	@Override
 	protected void process_close() {
-		logger.debug("closing "+this.getName());
-		drainGroups();
-	
+		IGroupProcessor<R, W> g = getGroupProcessor();
+		synchronized (g) {
+			logger.debug("closing " + this.getName());
+			drainGroups();
+		}
+
 	}
 
 	@Override
@@ -141,6 +150,7 @@ public class StreamGroupingWithAggregationPO<Q extends ITimeInterval, R extends 
 	@Override
 	protected void process_next(R object, int port) {
 
+		System.err.println("AGGREGATE DEBUG MG: IN " + object);
 		// Determine if there is any data from previous runs to write
 		// createOutput(object.getMetadata().getStart());
 
