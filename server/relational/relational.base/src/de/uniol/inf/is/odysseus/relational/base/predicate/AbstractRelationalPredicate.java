@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -569,24 +568,24 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
         return expression.isFunction() && expression.toFunction().getSymbol().equalsIgnoreCase("&&");
     }
 
-    private int indexOf(SDFSchema schema, SDFAttribute attr) {
-        SDFAttribute cqlAttr = getReplacement(attr);
-        Iterator<SDFAttribute> it = schema.iterator();
-        for (int i = 0; it.hasNext(); ++i) {
-            SDFAttribute a = it.next();
-            if (cqlAttr.equalsCQL(a)) {
-                return i;
-            }
-        }
-        return -1;
-    }
+//    private int indexOf(SDFSchema schema, SDFAttribute attr) {
+//        SDFAttribute cqlAttr = getReplacement(attr);
+//        Iterator<SDFAttribute> it = schema.iterator();
+//        for (int i = 0; it.hasNext(); ++i) {
+//            SDFAttribute a = it.next();
+//            if (cqlAttr.equalsCQL(a)) {
+//                return i;
+//            }
+//        }
+//        return -1;
+//    }
 
-    private SDFAttribute getReplacement(SDFAttribute a) {
-        SDFAttribute ret = a;
-        SDFAttribute tmp = null;
-        while ((tmp = replacementMap.get(ret)) != null) {
-            ret = tmp;
-        }
-        return ret;
-    }
+//    private SDFAttribute getReplacement(SDFAttribute a) {
+//        SDFAttribute ret = a;
+//        SDFAttribute tmp = null;
+//        while ((tmp = replacementMap.get(ret)) != null) {
+//            ret = tmp;
+//        }
+//        return ret;
+//    }
 }
