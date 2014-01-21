@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -383,7 +386,65 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements Comp
 		SDFSchema newSchema = new SDFSchema(newName, schema.type, newattributeList);
 		return newSchema;
 	}
+	
+    /**
+     * Returns the positions of all attributes in the
+     * schema with the given datatype.
+     * 
+     * @param datatype
+     *            The {@link SDFDatatype datatype}
+     * @return An array of all attribute indexes in the schema that are discrete
+     *         {@link SDFProbabilisticDatatype probabilistic attributes}
+     */
+    public int[] getSDFDatatypeAttributePositions(final SDFDatatype datatype) {
+        Objects.requireNonNull(datatype);
+        final Collection<SDFAttribute> attributes = getSDFDatatypeAttributes(datatype);
+        final int[] pos = new int[attributes.size()];
+        int i = 0;
+        for (final SDFAttribute attribute : attributes) {
+            pos[i++] = indexOf(attribute);
+        }
+        return pos;
+    }
 
+    /**
+     * Returns all attributes of the schema with the given datatype.
+     * 
+     * @param datatype
+     *            The {@link SDFDatatype datatype}
+     * @return A list of all attributes that are of the given datatype.
+     */
+    public Collection<SDFAttribute> getSDFDatatypeAttributes(final SDFDatatype datatype) {
+        Objects.requireNonNull(datatype);
+        Objects.requireNonNull(getAttributes());
+        final List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+        for (final SDFAttribute attribute : getAttributes()) {
+            if (attribute.getDatatype().equals(datatype)) {
+                attributes.add(attribute);
+            }
+        }
+        return attributes;
+    }
+
+    /**
+     * Returns the indexes in the schema of the given list of attributes.
+     * 
+     * @param attributes
+     *            The {@link Collection attributes}
+     * @return An array with the indexes of the attributes in the schema
+     */
+    public int[] indexesOf(final Collection<SDFAttribute> attributes) {
+        Objects.requireNonNull(attributes);
+        final int[] pos = new int[attributes.size()];
+        int i = 0;
+        for (final SDFAttribute attribute : attributes) {
+            Preconditions.checkArgument(contains(attribute));
+            pos[i] = indexOf(attribute);
+            i++;
+        }
+        return pos;
+    }
+    
 	@Override
 	public String toString() {
 		return super.toString() + " " + type;
