@@ -6,10 +6,9 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +19,13 @@ import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.mep.MEP;
+import de.uniol.inf.is.odysseus.mep.IBinaryOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
-import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
@@ -168,11 +167,11 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
     }
 
     public boolean isAndPredicate() {
-        return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction() instanceof AndOperator;
+        return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction().getSymbol().equalsIgnoreCase("&&");
     }
 
     public boolean isOrPredicate() {
-        return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction() instanceof OrOperator;
+        return expression.getMEPExpression().isFunction() && expression.getMEPExpression().toFunction().getSymbol().equalsIgnoreCase("||");
     }
 
     public boolean isNotPredicate() {
@@ -191,32 +190,108 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
     }
 
     @SuppressWarnings("rawtypes")
-    public List<IPredicate> splitPredicate() {
-        List<IPredicate> result = new LinkedList<IPredicate>();
-        if (isAndPredicate()) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
-            expressionStack.push(expression.getMEPExpression());
+    abstract public List<IPredicate> splitPredicate();
 
-            while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
-                if (isAndExpression(curExpression)) {
-                    expressionStack.push(curExpression.toFunction().getArgument(0));
-                    expressionStack.push(curExpression.toFunction().getArgument(1));
+
+    /**
+     * Return true if the given relational predicate is of the form:
+     * 
+     * A.x=B.y AND A.y=B.z AND * ...
+     * 
+     * @return <code>true</code> iff the relational predicate is of the given
+     *         form
+     */
+    public boolean isEquiPredicate() {
+        Objects.requireNonNull(this.getExpression());
+        Objects.requireNonNull(this.getExpression().getMEPExpression());
+        final IExpression<?> expression = this.getExpression().getMEPExpression();
+        return isEquiExpression(expression);
+    }
+    
+    /**
+     * Return the map of attributes used in an equi predicate.
+     * 
+     * @param resolver
+     *            The attribute resolver
+     * @return The map of attributes
+     */
+    public Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IAttributeResolver resolver) {
+        Objects.requireNonNull(this.getExpression());
+        Objects.requireNonNull(this.getExpression().getMEPExpression());
+        final IExpression<?> expression = this.getExpression().getMEPExpression();
+        return getEquiExpressionAtributes(expression, resolver);
+    }
+    
+    /**
+     * Return the map of attributes used in an equi expression.
+     * 
+     * @param expression
+     *            The expression
+     * @param resolver
+     *            The attribute resolver
+     * @return The map of attributes
+     */
+    private Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IExpression<?> expression, final IAttributeResolver resolver) {
+        Objects.requireNonNull(expression);
+        Objects.requireNonNull(resolver);
+        final Map<SDFAttribute, List<SDFAttribute>> attributes = new HashMap<SDFAttribute, List<SDFAttribute>>();
+        if ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("&&"))) {
+            final Map<SDFAttribute, List<SDFAttribute>> leftAttributes = getEquiExpressionAtributes(((AndOperator) expression).getArgument(0), resolver);
+            for (final SDFAttribute key : leftAttributes.keySet()) {
+                if (!attributes.containsKey(key)) {
+                    attributes.put(key, new ArrayList<SDFAttribute>());
                 }
-                else {
-                    SDFExpression expr = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
-                    RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
-                    relationalPredicate.init(expression.getSchema(), false);
-                    result.add(relationalPredicate);
-                }
+                attributes.get(key).addAll(leftAttributes.get(key));
             }
-            return result;
+            final Map<SDFAttribute, List<SDFAttribute>> rigthAttributes = getEquiExpressionAtributes(((AndOperator) expression).getArgument(1), resolver);
+            for (final SDFAttribute key : rigthAttributes.keySet()) {
+                if (!attributes.containsKey(key)) {
+                    attributes.put(key, new ArrayList<SDFAttribute>());
+                }
+                attributes.get(key).addAll(rigthAttributes.get(key));
+            }
+        }
+        if ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("=="))) {
+            final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
+            final IExpression<?> arg1 = eq.getArgument(0);
+            final IExpression<?> arg2 = eq.getArgument(1);
+            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
+                final SDFAttribute key = resolver.getAttribute(((Variable) arg1).getIdentifier());
+                if (!attributes.containsKey(key)) {
+                    attributes.put(key, new ArrayList<SDFAttribute>());
+                }
+                attributes.get(key).add(resolver.getAttribute(((Variable) arg2).getIdentifier()));
+            }
+        }
+        return attributes;
+    }
+    
+    /**
+     * Return true if the given expression is of the form:
+     * 
+     * A.x=B.y AND A.y=B.z AND * ...
+     * 
+     * @param expression
+     *            The expression
+     * @return <code>true</code> iff the expression is of the given form
+     */
+    private boolean isEquiExpression(final IExpression<?> expression) {
+        Objects.requireNonNull(expression);
+        if (expression instanceof AndOperator) {
+            return isEquiExpression(((AndOperator) expression).getArgument(0)) && isEquiExpression(((AndOperator) expression).getArgument(1));
 
         }
-        result.add(this);
-        return result;
+        if ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("=="))) {
+            final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
+            final IExpression<?> arg1 = eq.getArgument(0);
+            final IExpression<?> arg2 = eq.getArgument(1);
+            if ((arg1 instanceof Variable) && (arg2 instanceof Variable)) {
+                return true;
+            }
+        }
+        return false;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -490,9 +565,8 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
         return this.expression.toString();
     }
 
-    private boolean isAndExpression(IExpression<?> expression) {
-        return expression.isFunction() && expression.toFunction() instanceof AndOperator;
-
+    protected boolean isAndExpression(IExpression<?> expression) {
+        return expression.isFunction() && expression.toFunction().getSymbol().equalsIgnoreCase("&&");
     }
 
     private int indexOf(SDFSchema schema, SDFAttribute attr) {

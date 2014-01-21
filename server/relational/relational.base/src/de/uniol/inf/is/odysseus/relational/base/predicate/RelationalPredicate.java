@@ -17,14 +17,19 @@ package de.uniol.inf.is.odysseus.relational.base.predicate;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -64,6 +69,32 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
         super(expression);
     }
 
+    @SuppressWarnings("rawtypes")
+    public List<IPredicate> splitPredicate() {
+        List<IPredicate> result = new LinkedList<IPredicate>();
+        if (isAndPredicate()) {
+            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            expressionStack.push(expression.getMEPExpression());
+
+            while (!expressionStack.isEmpty()) {
+                IExpression<?> curExpression = expressionStack.pop();
+                if (isAndExpression(curExpression)) {
+                    expressionStack.push(curExpression.toFunction().getArgument(0));
+                    expressionStack.push(curExpression.toFunction().getArgument(1));
+                }
+                else {
+                    SDFExpression expr = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    RelationalPredicate relationalPredicate = new RelationalPredicate(expr);
+                    relationalPredicate.init(expression.getSchema(), false);
+                    result.add(relationalPredicate);
+                }
+            }
+            return result;
+
+        }
+        result.add(this);
+        return result;
+    }
     // @Override
     // public void init(SDFSchema leftSchema, SDFSchema rightSchema) {
     // init(leftSchema, rightSchema, true);
