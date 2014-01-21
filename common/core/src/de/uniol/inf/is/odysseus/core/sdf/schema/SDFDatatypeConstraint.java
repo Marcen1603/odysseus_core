@@ -18,24 +18,27 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 
 public class SDFDatatypeConstraint extends SDFElement {
+	
+	final static public String BASE_TIME_UNIT = "basetimeunit"; 
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2738703926500426135L;
-	private String cType = null;
+	final private Object value;
 	
-	public SDFDatatypeConstraint(String URI, String cType) {
+	public SDFDatatypeConstraint(String URI, Object value) {
 		super(URI);
-		this.cType = cType;
+		this.value = value;
 	}
 
 	public SDFDatatypeConstraint(SDFDatatypeConstraint sdfDatatypeConstraint) {
 		super(sdfDatatypeConstraint);
-		this.cType = sdfDatatypeConstraint.cType;
+		this.value = sdfDatatypeConstraint.value;
 	}
 
-	public String getCType() {
-		return cType;
+	public Object getValue() {
+		return value;
 	}
 	
 	@Override

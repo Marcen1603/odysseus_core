@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.costmodel.operator.relational.logical;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
@@ -49,12 +48,12 @@ public class WindowAOEstimator implements IOperatorEstimator<AbstractWindowAO> {
 		long windowSize = instance.getWindowSize().getTime();
 		long windowAdvance = instance.getWindowAdvance().getTime();
 		if(windowType.equals(WindowType.TIME)) {
-			windowSize = TimeUnit.MILLISECONDS.convert(instance.getWindowSize().getTime(), instance.getWindowSize().getUnit()) / 1000;
+			windowSize = instance.getBaseTimeUnit().convert(instance.getWindowSize().getTime(), instance.getWindowSize().getUnit()) / 1000;
 
 			if(windowAdvance > 0) {
-				windowAdvance = TimeUnit.MILLISECONDS.convert(instance.getWindowAdvance().getTime(), instance.getWindowAdvance().getUnit()) / 1000;
+				windowAdvance = instance.getBaseTimeUnit().convert(instance.getWindowAdvance().getTime(), instance.getWindowAdvance().getUnit()) / 1000;
 			} else {
-				windowAdvance = TimeUnit.MILLISECONDS.convert(
+				windowAdvance = instance.getBaseTimeUnit().convert(
 						instance.getWindowSlide().getTime(), instance.getWindowSlide().getUnit()) / 1000;
 			}
 		}

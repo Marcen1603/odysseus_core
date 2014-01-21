@@ -15,11 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.sparql.parser.helper;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.AmbiguousAttributeException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.NoSuchAttributeException;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * This attribute resolver is the same as the DirectAttributeResolver

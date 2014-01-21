@@ -147,12 +147,20 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		}
 
 		if (parentElement instanceof SDFAttribute) {
+			Collection<Object> children = new ArrayList<Object>();
 			if (((SDFAttribute) parentElement).getDatatype().hasSchema()) {
-				return ((SDFAttribute) parentElement).getDatatype().getSchema().toArray();
+				children.addAll(((SDFAttribute) parentElement).getDatatype().getSchema().getAttributes());
 			}
+			if (((SDFAttribute) parentElement).getDtConstraints().size() > 0) {
+				children.addAll(((SDFAttribute) parentElement).getDtConstraints());
+			}
+			if (((SDFAttribute) parentElement).getUnit() != null) {
+				children.add(((SDFAttribute) parentElement).getUnit());
+			}	
+			return children.toArray();
 		}
 
-		return null;
+		return null;	
 	}
 
 	@Override
@@ -196,7 +204,9 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 		if (element instanceof SDFSchema)
 			return true;
 		if (element instanceof SDFAttribute) {
-			return ((SDFAttribute) element).getDatatype().getSubattributeCount() > 0;
+			return ((SDFAttribute) element).getDatatype().getSubattributeCount() > 0 ||
+					((SDFAttribute) element).getDtConstraints().size() > 0 ||
+					((SDFAttribute) element).getUnit() != null;
 		}
 		if (element instanceof StringNode) {
 			return true;

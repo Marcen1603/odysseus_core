@@ -17,9 +17,8 @@ package de.uniol.inf.is.odysseus.parser.cql.parser.transformation;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -98,7 +97,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = null;
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
-		Map<String, SDFDatatypeConstraint> dtConstrains = new HashMap<String, SDFDatatypeConstraint>();
+		List<SDFDatatypeConstraint> dtConstrains = new LinkedList<>();
 		
 		// we allow user defined types, so check
 		// whether the defined type exists or not
@@ -113,7 +112,7 @@ public class CreateTypeVisitor extends AbstractDefaultVisitor {
 			}
 			
 			if (attribType.isDate()) {
-				dtConstrains.put("format", astAttrType.getDateFormat());
+				dtConstrains.add(new SDFDatatypeConstraint("format", astAttrType.getDateFormat()));
 			}
 			
 			if (attribType.isMeasurementValue()

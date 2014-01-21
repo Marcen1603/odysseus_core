@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -37,8 +40,8 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 	private WindowType windowType = null;
 
 	private TimeValueItem windowSize = null;
-
 	private TimeValueItem windowAdvance = null;
+	private TimeUnit baseTimeUnit = null;
 
 	// For predicate based windows
 	private IPredicate<?> startCondition;
@@ -67,6 +70,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		this.startCondition = windowPO.startCondition;
 		this.endCondition = windowPO.endCondition;
 		this.sameStarttime = windowPO.sameStarttime;
+		this.baseTimeUnit = windowPO.baseTimeUnit;
 	}
 
 	public AbstractWindowAO() {
@@ -92,6 +96,35 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 
 	public void setWindowType(WindowType windowType) {
 		this.windowType = windowType;
+	}
+
+	public TimeUnit getBaseTimeUnit() {
+		if (baseTimeUnit == null) {
+			// Find input schema attribute with type start timestamp
+			// It provides the correct base unit 
+			// if not given use MILLISECONDS as default
+			Collection<SDFAttribute> attrs = getInputSchema()
+					.getSDFDatatypeAttributes(SDFDatatype.START_TIMESTAMP);
+			if (attrs.isEmpty()) {
+				attrs = getInputSchema().getSDFDatatypeAttributes(
+						SDFDatatype.START_TIMESTAMP_STRING);
+			}
+			if (attrs.size() > 0) {
+				SDFAttribute attr = attrs.iterator().next();
+				SDFDatatypeConstraint constr = attr.getDtConstraint(SDFDatatypeConstraint.BASE_TIME_UNIT);
+				if (constr != null){
+					baseTimeUnit = (TimeUnit) constr.getValue();
+				}
+			} else {
+				baseTimeUnit = TimeUnit.MILLISECONDS;
+			}
+
+		}
+		return baseTimeUnit;
+	}
+
+	public void setBaseTimeUnit(TimeUnit baseTimeUnit) {
+		this.baseTimeUnit = baseTimeUnit;
 	}
 
 	public List<String> getWindowTypes() {
@@ -204,37 +237,44 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		switch (windowType) {
 		case TIME:
 			if (this.partitionedBy != null) {
-				addError(new IllegalParameterException("can't use partition in time window"));
+				addError(new IllegalParameterException(
+						"can't use partition in time window"));
 				return false;
 			}
 			if (this.windowSlide != null && this.windowAdvance != null) {
-				addError(new IllegalParameterException("can't use slide and advance at the same time"));
+				addError(new IllegalParameterException(
+						"can't use slide and advance at the same time"));
 				return false;
 			}
 			return checkTimeUnit();
 		case TUPLE:
 			if (this.windowSlide != null && this.windowAdvance != null) {
-				addError(new IllegalParameterException("can't use slide and advance at the same time"));
+				addError(new IllegalParameterException(
+						"can't use slide and advance at the same time"));
 				return false;
-			}			
+			}
 			return checkTimeUnit();
 		case UNBOUNDED:
 			boolean isValid = true;
 			if (this.windowSize != null) {
 				isValid = false;
-				addError(new IllegalParameterException("can't use size in unbounded window"));
+				addError(new IllegalParameterException(
+						"can't use size in unbounded window"));
 			}
 			if (this.windowAdvance != null) {
 				isValid = false;
-				addError(new IllegalParameterException("can't use advance in unbounded window"));
+				addError(new IllegalParameterException(
+						"can't use advance in unbounded window"));
 			}
 			if (this.partitionedBy != null) {
 				isValid = false;
-				addError(new IllegalParameterException("can't use partition in unbounded window"));
+				addError(new IllegalParameterException(
+						"can't use partition in unbounded window"));
 			}
 			if (this.windowSlide != null) {
 				isValid = false;
-				addError(new IllegalParameterException("can't use slide in unbounded window"));
+				addError(new IllegalParameterException(
+						"can't use slide in unbounded window"));
 			}
 			isValid = checkTimeUnit();
 			return isValid;
@@ -254,20 +294,26 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		// TODO: remove this, when deprecated "timeUnit" value is removed!
 		if (timeUnit != null) {
 			if (windowSize != null) {
-				if (windowSize.getUnit() != null && !timeUnit.equals(windowSize.getUnit())) {
-					addError(new IllegalParameterException("window size unit must be equals to unit (remark: unit is deprecated)!"));
+				if (windowSize.getUnit() != null
+						&& !timeUnit.equals(windowSize.getUnit())) {
+					addError(new IllegalParameterException(
+							"window size unit must be equals to unit (remark: unit is deprecated)!"));
 					return false;
 				}
 			}
 			if (windowAdvance != null) {
-				if (windowAdvance.getUnit() != null && !timeUnit.equals(windowAdvance.getUnit())) {
-					addError(new IllegalParameterException("window advance unit must be equals to unit (remark: unit is deprecated)!"));
+				if (windowAdvance.getUnit() != null
+						&& !timeUnit.equals(windowAdvance.getUnit())) {
+					addError(new IllegalParameterException(
+							"window advance unit must be equals to unit (remark: unit is deprecated)!"));
 					return false;
 				}
 			}
 			if (windowSlide != null) {
-				if (windowSlide.getUnit() != null && !timeUnit.equals(windowSlide.getUnit())) {
-					addError(new IllegalParameterException("window slide unit must be equals to unit (remark: unit is deprecated)!"));
+				if (windowSlide.getUnit() != null
+						&& !timeUnit.equals(windowSlide.getUnit())) {
+					addError(new IllegalParameterException(
+							"window slide unit must be equals to unit (remark: unit is deprecated)!"));
 					return false;
 				}
 			}
@@ -283,16 +329,19 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp {
 		if (this.timeUnit != null) {
 			useTime = timeUnit;
 		}
-		if (this.windowSize != null && this.windowSize.getUnit()==null) {
-			TimeValueItem newTimeUnit = new TimeValueItem(this.windowSize.getTime(), useTime);
+		if (this.windowSize != null && this.windowSize.getUnit() == null) {
+			TimeValueItem newTimeUnit = new TimeValueItem(
+					this.windowSize.getTime(), useTime);
 			this.windowSize = newTimeUnit;
 		}
-		if (this.windowAdvance != null && this.windowAdvance.getUnit()==null) {
-			TimeValueItem newTimeUnit = new TimeValueItem(this.windowAdvance.getTime(), useTime);
+		if (this.windowAdvance != null && this.windowAdvance.getUnit() == null) {
+			TimeValueItem newTimeUnit = new TimeValueItem(
+					this.windowAdvance.getTime(), useTime);
 			this.windowAdvance = newTimeUnit;
 		}
-		if (this.windowSlide != null && this.windowSlide.getUnit()==null) {
-			TimeValueItem newTimeUnit = new TimeValueItem(this.windowSlide.getTime(), useTime);
+		if (this.windowSlide != null && this.windowSlide.getUnit() == null) {
+			TimeValueItem newTimeUnit = new TimeValueItem(
+					this.windowSlide.getTime(), useTime);
 			this.windowSlide = newTimeUnit;
 		}
 

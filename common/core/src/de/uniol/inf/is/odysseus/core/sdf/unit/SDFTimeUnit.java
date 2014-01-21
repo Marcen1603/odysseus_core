@@ -24,7 +24,7 @@ public class SDFTimeUnit extends SDFUnit {
 	 */
 	private static final long serialVersionUID = 6664287621378148997L;
 
-	protected SDFTimeUnit(String URI) {
+	public SDFTimeUnit(String URI) {
 		super(URI);
 	}
 	

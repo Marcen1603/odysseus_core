@@ -15,14 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
-import java.util.concurrent.TimeUnit;
-
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
 
@@ -36,19 +34,19 @@ public abstract class AbstractWindowTIPO<T extends IStreamObject<? extends ITime
 
 	public AbstractWindowTIPO(AbstractWindowAO ao) {
 		if (ao.getWindowSize() != null) {
-			this.windowSize = TimeUnit.MILLISECONDS.convert(ao.getWindowSize()
+			this.windowSize = ao.getBaseTimeUnit().convert(ao.getWindowSize()
 					.getTime(), ao.getWindowSize().getUnit());
 		}else{
 			this.windowSize = -1;
 		}
 		if (ao.getWindowAdvance() != null) {
-			this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao
+			this.windowAdvance = ao.getBaseTimeUnit().convert(ao
 					.getWindowAdvance().getTime(), ao.getWindowAdvance()
 					.getUnit());
 			usesSlideParam = false;
 		} else {
 			if (ao.getWindowSlide() != null) {
-				this.windowAdvance = TimeUnit.MILLISECONDS.convert(ao
+				this.windowAdvance = ao.getBaseTimeUnit().convert(ao
 						.getWindowSlide().getTime(), ao.getWindowSlide()
 						.getUnit());
 			} else {

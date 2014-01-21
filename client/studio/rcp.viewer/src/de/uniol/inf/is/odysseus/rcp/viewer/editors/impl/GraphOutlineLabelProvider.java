@@ -32,7 +32,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.PhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
@@ -72,6 +74,14 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			return OdysseusRCPViewerPlugIn.getImageManager().get("attribute");
 		}
 
+		if (element instanceof SDFDatatypeConstraint){
+			return OdysseusRCPViewerPlugIn.getImageManager().get("constraint");
+		}
+		
+		if (element instanceof SDFUnit){
+			return OdysseusRCPViewerPlugIn.getImageManager().get("unit");
+		}
+		
 		if (element instanceof NamedList) {
 			NamedList e = (NamedList) element;
 			if (e.getValues().isEmpty()) {
@@ -176,6 +186,17 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 					StyledString.QUALIFIER_STYLER);
 			return styledString;
 		}
+		
+		if (element instanceof SDFDatatypeConstraint){
+			SDFDatatypeConstraint dt = (SDFDatatypeConstraint)element;
+			return styledString.append(dt.getURI()).append(" = "+dt.getValue());
+		}
+		
+		if (element instanceof SDFUnit){
+			SDFUnit unit = (SDFUnit) element;
+			return styledString.append("Unit: "+unit.getURI());
+		}
+		
 		if (element instanceof IMonitoringData<?>) {
 			final IMonitoringData<?> monData = (IMonitoringData<?>) element;
 			final String type = monData.getType();

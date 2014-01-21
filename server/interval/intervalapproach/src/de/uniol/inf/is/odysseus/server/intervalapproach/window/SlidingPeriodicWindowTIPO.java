@@ -24,8 +24,6 @@
 
 package de.uniol.inf.is.odysseus.server.intervalapproach.window;
 
-import java.util.concurrent.TimeUnit;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -52,7 +50,7 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 	/** Creates a new instance of SlidingDeltaWindowPO */
 	public SlidingPeriodicWindowTIPO(AbstractWindowAO logical) {
 		super(logical);
-		this.windowSlide = TimeUnit.MILLISECONDS.convert(logical.getWindowSlide().getTime(), logical.getWindowSlide().getUnit());
+		this.windowSlide = logical.getBaseTimeUnit().convert(logical.getWindowSlide().getTime(), logical.getWindowSlide().getUnit());
 		setName(getName() + " slide=" + windowSlide);
 	}
 

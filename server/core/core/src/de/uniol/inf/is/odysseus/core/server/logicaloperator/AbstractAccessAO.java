@@ -19,13 +19,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.unit.SDFTimeUnit;
+import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IllegalParameterException;
@@ -105,10 +110,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.dataHandler = dataHandler;
 	}
 
-	public List<String> getDataHandlerValues(){
+	public List<String> getDataHandlerValues() {
 		return DataHandlerRegistry.getStreamableDataHandlerNames();
 	}
-	
+
 	public String getDataHandler() {
 		return dataHandler;
 	}
@@ -149,7 +154,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return optionsMap;
 	}
 
-	@Parameter(type = StringParameter.class, name = "inputSchema", isList = true, optional = true, possibleValues="__DD_DATATYPES", possibleValuesAreDynamic=true, doc = "A list of data types describing the input format. Must be compatible with output schema!")
+	@Parameter(type = StringParameter.class, name = "inputSchema", isList = true, optional = true, possibleValues = "__DD_DATATYPES", possibleValuesAreDynamic = true, doc = "A list of data types describing the input format. Must be compatible with output schema!")
 	public void setInputSchema(List<String> inputSchema) {
 		this.inputSchema = inputSchema;
 	}
@@ -179,25 +184,48 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema schema = null;
-
+		
 		@SuppressWarnings("rawtypes")
 		Class<? extends IStreamObject> type = DataHandlerRegistry
 				.getCreatedType(dataHandler);
 		if (type == null) {
 			type = Tuple.class;
 		}
+		
+		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+		
+		if (optionsMap.containsKey(SDFDatatypeConstraint.BASE_TIME_UNIT)){
+			String unit = optionsMap.get(SDFDatatypeConstraint.BASE_TIME_UNIT);
+			TimeUnit btu = TimeUnit.valueOf(unit);
+			if (btu != null){
+				timeUnit = btu;
+			}else{
+				throw new IllegalParameterException("Illegal time unit "+unit);
+			}
+		}
 
 		if (attributes != null && attributes.size() > 0) {
 			List<SDFAttribute> s2 = new ArrayList<>();
 			// Add source name to attributes
 			for (SDFAttribute a : attributes) {
-				s2.add(new SDFAttribute(getName(), a.getAttributeName(), a));
+				SDFAttribute newAttr;
+				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP || a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING){
+					List<SDFDatatypeConstraint> c = new ArrayList<>();
+					c.add(new SDFDatatypeConstraint(SDFDatatypeConstraint.BASE_TIME_UNIT, timeUnit));
+					SDFUnit unit = new SDFTimeUnit(timeUnit.toString());
+					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a, unit, c);
+				}else{
+					newAttr = new SDFAttribute(getName(), a.getAttributeName(), a);
+				}
+				s2.add(newAttr);
 			}
-
+			
 			schema = new SDFSchema(getName(), type, s2);
 		} else {
 			schema = new SDFSchema(getName(), type, null);
 		}
+		
+
 
 		return schema;
 	}
@@ -231,14 +259,13 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 
 		return true;
 	}
-	
-	
+
 	protected String buildString(List<String> elements, String sep) {
 		StringBuffer v = new StringBuffer();
-		for (String s:elements){
+		for (String s : elements) {
 			v.append(s).append(sep);
 		}
-		return v.substring(0, v.length()-1);
+		return v.substring(0, v.length() - 1);
 	}
 
 	@Override

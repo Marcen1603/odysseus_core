@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -176,7 +177,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		String attrName = ((ASTIdentifier) node.jjtGetChild(0)).getName();
 		SDFAttribute attribute = null;
 		ASTAttributeType astAttrType = (ASTAttributeType) node.jjtGetChild(1);
-		Map<String, SDFDatatypeConstraint> dtConstrains = new HashMap<String, SDFDatatypeConstraint>();
+		List<SDFDatatypeConstraint> dtConstrains = new LinkedList<>();
 
 		// we allow user defined types, so check
 		// whether the defined type exists or not
@@ -189,7 +190,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		}
 
 		if (attribType.isDate()) {
-			dtConstrains.put("format", astAttrType.getDateFormat());
+			dtConstrains.add(new SDFDatatypeConstraint("format", astAttrType.getDateFormat()));
 		}
 		Resource resource = new Resource(this.caller.getUser(), this.name);
 		if (attribType.isMeasurementValue() && astAttrType.jjtGetNumChildren() > 0) {

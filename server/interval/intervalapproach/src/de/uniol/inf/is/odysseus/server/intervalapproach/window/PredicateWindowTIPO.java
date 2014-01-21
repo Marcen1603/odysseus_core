@@ -55,14 +55,14 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>>
 	private boolean openedWindow;
 
 	public PredicateWindowTIPO(IPredicate<? super T> start,
-			IPredicate<? super T> end, TimeValueItem maxWindowTime, boolean sameStarttime) {
+			IPredicate<? super T> end, TimeValueItem maxWindowTime, boolean sameStarttime, TimeUnit baseTimeUnit) {
 		this.start = start.clone();
 		if (end != null) {
 			this.end = end.clone();
 		} else {
 			this.end = null;
 		}
-		this.maxWindowTime = TimeUnit.MILLISECONDS.convert(maxWindowTime.getTime(), maxWindowTime.getUnit());
+		this.maxWindowTime = baseTimeUnit.convert(maxWindowTime.getTime(), maxWindowTime.getUnit());
 		this.sameStarttime = sameStarttime;
 	}
 
