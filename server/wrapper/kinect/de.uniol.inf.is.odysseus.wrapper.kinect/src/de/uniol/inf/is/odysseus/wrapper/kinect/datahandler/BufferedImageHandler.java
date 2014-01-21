@@ -57,8 +57,7 @@ public class BufferedImageHandler extends AbstractDataHandler<BufferedImage> {
 	@Override
 	public BufferedImage readData(ObjectInputStream inputStream)
 			throws IOException {
-		try {
-			@SuppressWarnings("unchecked")
+		try {			
 			BufferedImage rect = (BufferedImage) inputStream.readObject();
 			return rect;
 		} catch (ClassNotFoundException e) {
