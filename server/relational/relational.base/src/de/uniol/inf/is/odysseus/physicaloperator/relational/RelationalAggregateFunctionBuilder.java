@@ -33,7 +33,6 @@ public class RelationalAggregateFunctionBuilder implements
     private final static String FIRST = "FIRST";
     private final static String NTH = "NTH";
     private final static String RATE = "RATE";
-    private final static String MEDIAN = "MEDIAN";
     private final static String COMPLETENESS = "COMPLETENESS";
     
 	private static Collection<String> names = new LinkedList<String>();
@@ -43,7 +42,6 @@ public class RelationalAggregateFunctionBuilder implements
 		names.add("COUNT");
 		names.add("MIN");
 		names.add("MAX");
-		names.add(MEDIAN);
 		names.add("NEST");
 		names.add("STDDEV");
         names.add(LAST);
@@ -71,8 +69,6 @@ public class RelationalAggregateFunctionBuilder implements
 			aggFunc = RelationalStdDev.getInstance(pos[0], partialAggregateInput);
 	     }else if ((key.getName().equalsIgnoreCase("CORR"))){
 	        aggFunc = RelationalCorr.getInstance(pos[0], pos[1], partialAggregateInput);
-        } else if (key.getName().equalsIgnoreCase(MEDIAN)) {
-            aggFunc = RelationalMedian.getInstance(pos[0], partialAggregateInput);
 		} else if ((key.getName().equalsIgnoreCase("NEST"))) {
 			aggFunc = new RelationalNest(pos, partialAggregateInput);
 		} else if (key.getName().equalsIgnoreCase(LAST)) {

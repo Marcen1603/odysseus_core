@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions;
+package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions;
 
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.AbstractAggregateFunction;
 

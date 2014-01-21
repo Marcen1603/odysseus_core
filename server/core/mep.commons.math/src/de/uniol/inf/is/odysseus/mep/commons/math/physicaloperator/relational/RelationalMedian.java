@@ -1,13 +1,13 @@
 /**
  * 
  */
-package de.uniol.inf.is.odysseus.physicaloperator.relational;
+package de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.relational;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IPartialAggregate;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.Median;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.functions.MedianPartialAggregate;
+import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions.Median;
+import de.uniol.inf.is.odysseus.mep.commons.math.physicaloperator.aggregate.functions.MedianPartialAggregate;
 
 /**
  * Estimates the median of the given attribute.

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MEP Commons Math
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.mep.commons.math
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.mep.commons.math.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.apache.commons.math3.stat.descriptive;version="3.2.0",
+ org.osgi.framework,
+ org.slf4j
+Require-Bundle: de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.core
+Service-Component: OSGI-INF/*
