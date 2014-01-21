@@ -15,10 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.mep;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
+import java.util.TreeSet;
 
 import de.uniol.inf.is.odysseus.core.mep.Constant;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -26,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.core.mep.Variable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
@@ -44,6 +49,122 @@ public class ExpressionOptimizer {
 		return expression;
 	}
 
+
+    /**
+     * Conjunctive split the given expression into a set of expressions.
+     * 
+     * @param expression
+     *            The expression
+     * 
+     * @return A set of expressions
+     */
+    public static Collection<SDFExpression> conjunctiveSplitExpression(final SDFExpression expression) {
+        Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
+
+            @Override
+            public int compare(SDFExpression o1, SDFExpression o2) {
+                return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
+            }
+        });
+        if (isAndOperator(expression.getMEPExpression())) {
+            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            expressionStack.push(expression.getMEPExpression());
+
+            while (!expressionStack.isEmpty()) {
+                IExpression<?> curExpression = expressionStack.pop();
+                if (isAndOperator(curExpression)) {
+                    expressionStack.push(curExpression.toFunction().getArgument(0));
+                    expressionStack.push(curExpression.toFunction().getArgument(1));
+                }
+                else {
+                    SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    result.add(sdfExpression);
+                }
+            }
+            return result;
+
+        }
+        result.add(expression);
+        return result;
+    }
+
+    /**
+     * Disjunctive split the given expression into a set of expressions.
+     * 
+     * @param expression
+     *            The expression
+     * 
+     * @return A set of expressions
+     */
+    public static Collection<SDFExpression> disjunctiveSplitExpression(final SDFExpression expression) {
+        Set<SDFExpression> result = new TreeSet<SDFExpression>(new Comparator<SDFExpression>() {
+
+            @Override
+            public int compare(SDFExpression o1, SDFExpression o2) {
+                return Integer.compare(o1.getAllAttributes().size(), o2.getAllAttributes().size());
+            }
+        });
+        if (isOrOperator(expression.getMEPExpression())) {
+            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            expressionStack.push(expression.getMEPExpression());
+
+            while (!expressionStack.isEmpty()) {
+                IExpression<?> curExpression = expressionStack.pop();
+                if (isOrOperator(curExpression)) {
+                    expressionStack.push(curExpression.toFunction().getArgument(0));
+                    expressionStack.push(curExpression.toFunction().getArgument(1));
+                }
+                else {
+                    SDFExpression sdfExpression = new SDFExpression(curExpression, expression.getAttributeResolver(), MEP.getInstance());
+                    result.add(sdfExpression);
+                }
+            }
+            return result;
+
+        }
+        result.add(expression);
+        return result;
+    }
+    
+    /**
+     * Checks whether the given expression is an AND operator.
+     * 
+     * A AND B AND C ...
+     * 
+     * @param expression
+     *            The expression
+     * @return <code>true</code> if the given expression is an AND operator
+     */
+    public static boolean isAndOperator(final IExpression<?> expression) {
+        return ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("&&")));
+    }
+
+    /**
+     * Checks whether the given expression is an OR operator.
+     * 
+     * A OR B OR C ...
+     * 
+     * @param expression
+     *            The expression
+     * @return <code>true</code> if the given expression is an OR operator
+     */
+    public static boolean isOrOperator(final IExpression<?> expression) {
+        return ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("||")));
+    }
+
+    /**
+     * Checks whether the given expression is an NOT operator.
+     * 
+     * NOT A ...
+     * 
+     * @param expression
+     *            The expression
+     * @return <code>true</code> if the given expression is an NOT operator
+     */
+    public static boolean isNotOperator(final IExpression<?> expression) {
+        return ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("!")));
+    }
+    
 	/**
 	 * combines all constants in a nested call of the same (commutative and associative) operator to a single constant.
 	 */
