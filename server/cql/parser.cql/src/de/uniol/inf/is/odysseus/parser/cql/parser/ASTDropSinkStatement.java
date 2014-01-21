@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
-@SuppressWarnings("all")
 class ASTDropSinkStatement extends SimpleNode {
   public ASTDropSinkStatement(int id) {
     super(id);
@@ -19,4 +18,4 @@ class ASTDropSinkStatement extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=fd7fd181a9dbd5db78bde0c2747c0cf9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=8e4bd477b1429413e69bc829f40ecff3 (do not edit this line) */

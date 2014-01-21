@@ -3,7 +3,6 @@
 package de.uniol.inf.is.odysseus.parser.cql.parser;
 
 public
-@SuppressWarnings("all")
 class ASTCreateTenant extends SimpleNode {
   public ASTCreateTenant(int id) {
     super(id);
@@ -19,4 +18,4 @@ class ASTCreateTenant extends SimpleNode {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=72431ba993809ce8e34cbe80a4120b01 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4fc4309c55dc89817f5494f2118320e9 (do not edit this line) */
