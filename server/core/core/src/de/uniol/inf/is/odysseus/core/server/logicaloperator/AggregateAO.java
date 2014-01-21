@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
-@LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc="Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", category={LogicalOperatorCategory.BASE})
+@LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", category = { LogicalOperatorCategory.BASE })
 public class AggregateAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 2539966167342852544L;
@@ -117,7 +117,7 @@ public class AggregateAO extends UnaryLogicalOp {
 
 	@GetParameter(name = "AGGREGATIONS")
 	public Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> getAggregations() {
-		return this.aggregations;
+		return Collections.unmodifiableMap(this.aggregations);
 	}
 
 	public boolean hasAggregations() {
@@ -173,32 +173,35 @@ public class AggregateAO extends UnaryLogicalOp {
 	public SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema outputSchema;
 		List<SDFAttribute> outAttribs = new ArrayList<>();
-		
+
 		for (Pair<SDFAttribute, Boolean> a : outputAttributList) {
 			if (outputPA && a.getE2()) {
 				SDFDatatype type = SDFDatatype.PARTIAL_AGGREGATE;
-				AggregateFunction f = this.outAttributeToAggregation.get(a.getE1());
-				
+				AggregateFunction f = this.outAttributeToAggregation.get(a
+						.getE1());
+
 				// Determine the real PartialAggregate type
-				IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry.getBuilder(
-						getInputSchema().getType(), f.getName());
+				IAggregateFunctionBuilder builder = AggregateFunctionBuilderRegistry
+						.getBuilder(getInputSchema().getType(), f.getName());
 				int[] posArray = new int[1];
 				posArray[0] = 0;
-				IAggregateFunction<?, ?> realAggFunc = builder.createAggFunction(f, getInputSchema(), posArray, false, type.getURI());
+				IAggregateFunction<?, ?> realAggFunc = builder
+						.createAggFunction(f, getInputSchema(), posArray,
+								false, type.getURI());
 				type = realAggFunc.getPartialAggregateType();
-				
+
 				outAttribs.add(new SDFAttribute(a.getE1().getSourceName(), a
-						.getE1().getAttributeName(),
-						type));
+						.getE1().getAttributeName(), type));
 			} else {
 				outAttribs.add(a.getE1());
 			}
 		}
-		
+
 		if (getInputSchema() != null) {
-			outputSchema = new SDFSchema(getInputSchema().getURI(), getInputSchema().getType(), outAttribs);
+			outputSchema = new SDFSchema(getInputSchema().getURI(),
+					getInputSchema().getType(), outAttribs);
 		} else {
-			outputSchema = new SDFSchema("<tmp>", Tuple.class,outAttribs);
+			outputSchema = new SDFSchema("<tmp>", Tuple.class, outAttribs);
 		}
 		return outputSchema;
 	}
@@ -220,8 +223,8 @@ public class AggregateAO extends UnaryLogicalOp {
 	public boolean isOutputPA() {
 		return outputPA;
 	}
-	
-	@Parameter(name="drain", type = BooleanParameter.class, optional = true, doc="If set to true (default), elements are not yet written will be written at done or close. ")
+
+	@Parameter(name = "drain", type = BooleanParameter.class, optional = true, doc = "If set to true (default), elements are not yet written will be written at done or close. ")
 	public void setDrainAtDone(boolean drainAtDone) {
 		this.drainAtDone = drainAtDone;
 	}
