@@ -8,7 +8,10 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatypeConstraint;
+import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.rcp.server.OdysseusRCPServerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 
 public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider {
 
@@ -20,6 +23,13 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 	public Image getImage(Object element) {		
 		if (element instanceof SDFAttribute) {
 			return OdysseusRCPServerPlugIn.getImageManager().get("attribute");
+		}
+		if (element instanceof SDFDatatypeConstraint){
+			return OdysseusRCPViewerPlugIn.getImageManager().get("constraint");
+		}
+		
+		if (element instanceof SDFUnit){
+			return OdysseusRCPViewerPlugIn.getImageManager().get("unit");
 		}
 		return null;
 	}
@@ -55,6 +65,19 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 			// name.append(":").append(a.getDatatype().getURI());
 			return name.toString();
 		}
+		
+		if (element instanceof SDFDatatypeConstraint){
+			StringBuilder sb = new StringBuilder();
+			SDFDatatypeConstraint dt = (SDFDatatypeConstraint)element;
+			return sb.append(dt.getURI()).append(" = "+dt.getValue()).toString();
+		}
+		
+		if (element instanceof SDFUnit){
+			StringBuilder sb = new StringBuilder();
+			SDFUnit unit = (SDFUnit) element;
+			return sb.append(unit.getClass().getSimpleName()+": "+unit.getURI()).toString();
+		}
+		
 		return null;
 	}
 

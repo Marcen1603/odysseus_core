@@ -194,7 +194,7 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 		
 		if (element instanceof SDFUnit){
 			SDFUnit unit = (SDFUnit) element;
-			return styledString.append("Unit: "+unit.getURI());
+			return styledString.append(unit.getClass().getSimpleName()+": "+unit.getURI());
 		}
 		
 		if (element instanceof IMonitoringData<?>) {

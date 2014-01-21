@@ -30,7 +30,11 @@
 
 package de.uniol.inf.is.odysseus.rcp.server.views;
 
+// TODO: Double code (see also GraphOutlineContentProvider)
+
 import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -69,10 +73,18 @@ public class OperatorViewContentProvider implements ITreeContentProvider {
 			ILogicalOperator op = (ILogicalOperator) entry.getValue();
 			return op.getOutputSchema().toArray();
 		}
-		if( parentElement instanceof SDFAttribute ) {
-			if(((SDFAttribute)parentElement).getDatatype().hasSchema()){
-				return ((SDFAttribute)parentElement).getDatatype().getSchema().toArray();
+		if (parentElement instanceof SDFAttribute) {
+			Collection<Object> children = new ArrayList<Object>();
+			if (((SDFAttribute) parentElement).getDatatype().hasSchema()) {
+				children.addAll(((SDFAttribute) parentElement).getDatatype().getSchema().getAttributes());
 			}
+			if (((SDFAttribute) parentElement).getDtConstraints().size() > 0) {
+				children.addAll(((SDFAttribute) parentElement).getDtConstraints());
+			}
+			if (((SDFAttribute) parentElement).getUnit() != null) {
+				children.add(((SDFAttribute) parentElement).getUnit());
+			}	
+			return children.toArray();
 		}
 		return null;
 	}
@@ -87,7 +99,9 @@ public class OperatorViewContentProvider implements ITreeContentProvider {
 		if( element instanceof Entry ) 
 			return true;
 		if( element instanceof SDFAttribute )
-			return ((SDFAttribute)element).getDatatype().getSubattributeCount() > 0;
+			return ((SDFAttribute) element).getDatatype().getSubattributeCount() > 0 ||
+					((SDFAttribute) element).getDtConstraints().size() > 0 ||
+					((SDFAttribute) element).getUnit() != null;
 		return false;
 	}
 

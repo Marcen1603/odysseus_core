@@ -38,6 +38,8 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusGraphView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.IOdysseusNodeView;
 
+// TODO: Double Code see also OperatorViewContentProvider
+
 public class GraphOutlineContentProvider implements ITreeContentProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GraphOutlineContentProvider.class);
